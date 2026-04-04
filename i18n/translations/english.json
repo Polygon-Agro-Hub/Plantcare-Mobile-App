@@ -381,7 +381,6 @@
     "ValidForMonths": "Valid for next {{months}} months",
     "NoActiveCertificate": "No active certificate"
   },
-
   "ReportComplaint": {
     "LNG": "en",
     "fillAllFields": "Please fill in all fields.",
@@ -502,9 +501,19 @@
     "Humidity": "Humidity",
     "Rain": "Rain",
     "Today": "Today",
-    "Days": "To5 days day",
+    "Days": "5 days",
     "Forecast": "No forecast data available",
-    "NoWeather": "No weather data available! Try Again"
+    "NoWeather": "No weather data available! Try Again",
+    "SearchLocation": "Search location",
+    "NoInternet": "No Internet",
+    "CheckInternet": "Please check your internet connection and try again.",
+    "LocationNotFound": "Location not found.",
+    "NoForecastAvailable": "No forecast data available.",
+    "ErrorFetching": "An error occurred while fetching weather data.",
+    "PermissionDenied": "Permission Denied",
+    "LocationAccessRequired": "Location access is required to fetch weather data for your current location. You can search for a location manually.",
+    "Error": "Error",
+    "UnableToFetchLocation": "Unable to fetch current location."
   },
   "FiveDayForcast": {
     "LNG": "en",
@@ -586,20 +595,17 @@
     "fertilizers": "Fertilizers",
     "livestock_for_sale": "Livestock for sale",
     "seeds_and_seedlings": "Seeds and Seedlings",
-
     "Calf": "Calf",
     "Chick": "Chick",
     "Dairy Cow Feed": "Dairy Cattle Feed",
     "Layer": "Layer",
     "Milking cow": "Milking Cow",
     "Poultry feed": "Poultry Feed",
-
     "Buffaloes": "Buffaloes",
     "Cattle": "Cattle",
     "Chicken": "Chicken",
     "Goats": "Goats",
     "Pigs": "Pigs",
-
     "AMAA 1G": "AMAA 1G",
     "ARI 1": "ARI 1",
     "Abha F1": "Abha F1",
@@ -785,7 +791,6 @@
     "Watermelon": "Watermelon",
     "Winter Dawn": "Winter Dawn",
     "Yolo Wonder": "Yolo Wonder",
-
     "Albert Solution": "Albert Solution",
     "Ammonium Nitrate": "Ammonium Nitrate",
     "Ammonium Sulfate": "Ammonium Sulfate",
@@ -863,7 +868,6 @@
     "purchaseDateCannotBeFuture": "The purchase date cannot be in the future.",
     "expireDateCannotBeFuture": "The expiration date cannot be earlier than the purchase date.",
     "isRequired": "is required",
-
     "buildings": "Building and Infrastructures",
     "lands": "Land",
     "machineryVehicles": "Machinery, Vehicles",
@@ -904,21 +908,17 @@
     "startDate": "Lease Start Date",
     "paymentAnnuallyEnter": "Enter Annual Payment Fee(LKR)",
     "estimatedValueEnter": "Enter Estimated Value (LKR)",
-
     "warrantyStatus": "Warranty coverage status",
     "additionalOption": "Additional Option",
-
     "ha": "ha",
     "ac": "ac",
     "p": "p",
     "selectLandCategory": "Select Land Category is required",
     "entertLandExtent": "Land Area is required",
     "estimatedValueLKR": "Estimated value (LKR)",
-
     "duration": "Duration",
     "enterDuration": "Duration is required",
     "enterstartDate": "Start Date is required",
-
     "leasedAmountAnnuallyLKR": "Enter Annual Leased Amount(LKR)",
     "enterLeasedAmountAnnuallyLKR": "Annual Lease Amount (LKR) is required",
     "issuedDate": "Issued Date",
@@ -927,7 +927,6 @@
     "enterPermitAnnuallyLKR": "Annual permit fee (LKR) is required",
     "paymentAnnuallyLKR": "Annual Payment Fee (LKR)",
     "enterPaymentAnnuallyLKR": "Annual payment fee is required",
-
     "isLandFenced": "Is the land fenced?",
     "areThereAnyPerennialCrops": "Does the land have perennial crops?",
     "mentionOther": "Mention Other details",
@@ -942,7 +941,6 @@
     "enterEstimatedBuildingValueLKR": "Estimated Building Value is required",
     "permitFeeAnnuallyLKR": "Annual Permit Fee (LKR)",
     "enterPermitFeeAnnuallyLKR": "Annual permit Fee (LKR) is required",
-
     "estimateValue": "Estimated Value (LKR)",
     "enterEstimateValue": "Estimated Value (LKR) is required",
     "EnterpermitAnnually": "Enter Annual Permit Fee (LKR)",
@@ -950,7 +948,6 @@
     "No assets available for this category": "No assets available for this category",
     "deleteSelected": "Delete Selected",
     "updateSelected": "Update Selected",
-
     "selectOwnershipCategory": "Select Ownership Category is required",
     "ownBuilding": "Owned Building (with title ownership)",
     "leasedBuilding": "Leased Building",
@@ -959,7 +956,6 @@
     "good": "Good",
     "average": "Moderate",
     "poor": "Poor",
-
     "Ampara": "Ampara",
     "Anuradhapura": "Anuradhapura",
     "Badulla": "Badulla",
@@ -985,12 +981,10 @@
     "Rathnapura": "Rathnapura",
     "Trincomalee": "Trincomalee",
     "Vavuniya": "Vavuniya",
-
     "OwnLand": "Owned Land",
     "LeaseLand": "Leased Land",
     "PermittedLand": "Permitted Land",
     "SharedOwnership": "Shared/No Ownership",
-
     "barn": "Barn",
     "silo": "Silo",
     "greenhouseStructure": "Greenhouse structure",
@@ -1037,7 +1031,6 @@
     "waterPump": "Water pump",
     "waterTank": "Watertank",
     "other": "Other",
-
     "Lakloha": "Lakloha",
     "Crocodile": "Crocodile",
     "Chillington": "Chillington",
@@ -1056,7 +1049,6 @@
     "Singer": "Singer",
     "INGCO": "INGCO",
     "Jinasena": "Jinasena",
-
     "2WD": "2WD",
     "4WD": "4WD",
     "Paddytransplanter": "Paddy transplanter",
@@ -1076,7 +1068,6 @@
     "Environmentalfriendlysprayer": "Environmental friendly sprayer",
     "Dronesprayer": "Drone sprayer",
     "PressureSprayer": "Pressure Sprayer",
-
     "EKubota": "E Kubota EK3 - 471 Hayles",
     "KubotaL4508": "Kubota L4508 4wd Tractor Hayles",
     "KubotaL3408": "Kubota L3408 4wd Tractor - Hayles",
@@ -1100,17 +1091,14 @@
     "Kartar": "Kartar",
     "Shakthiman": "Shakthiman",
     "Ginhua": "Ginhua",
-
     "ShaktimanRotavator": "Shaktiman Fighter Rotavator",
     "AgrotechKool": "Agrotech Kool Combine Harvester - Hayleys",
     "AgrotechEco": "Agrotech Eco Combine Harvester - Hayleys",
     "KubotaDC70G": "Kubota DC-70G Plus Combine Harvester - Hayleys",
-
     "KubotaNSP4W": "Kubota NSP - 4W Rice Transplanter - Hayleys",
     "TransplantersDimo": "Transplanters - Dimo",
     "ARBOS": "ARBOS",
     "NationalTransplanter": "National",
-
     "TyneCultivator": "13 Tyne Cultivator Spring Loaded -  ME",
     "TerracerBlade": "Terracer Blade/Leveller  ME",
     "RotaryTiller": "Rotary Tiller - ME",
@@ -1124,7 +1112,6 @@
     "Browns": "Browns",
     "Hayles": "Hayles",
     "Dimo": "Dimo",
-
     "SeedSowingMachine": "Seed Sowing Machine - ME",
     "AutomaticSeedSowingMachine": "Automatic Seed Sowing Machine - ME",
     "CombineHarvesterME": "Combine harvester - ME",
@@ -1134,10 +1121,8 @@
     "YanmarBrowns": "Yanmar - Browns",
     "TAF360": "360 TAF",
     "AGRIUNNION": "AGRIUNNION",
-
     "MiniCombineCutter": "Mini Combine Cutter Thresher - ME",
     "MultiCropCutter": "Multi Crop Cutter Thresher - ME",
-
     "GrillMagneticSeparator": "Grill Type Magnetic Separator - ME",
     "VibrioSeparator": "Vibrio Separator Machine - ME",
     "CentrifugalStifer": "Centrifugal Sifter Machine - ME",
@@ -1145,10 +1130,8 @@
     "GrainClassifier": "Grain Classifier Separator - ME",
     "GrainCleaningMachine": "Grain Cleaning Machine - ME",
     "DestonerMachineME": "Destoner Machine - ME",
-
     "FarmWeedingDitching": "FarmWeeding Ditching - ME",
     "Slasher": "Slasher",
-
     "KnapsackPowerSprayer": "Knapsack Power Sprayer - ME",
     "OregonSprayer": "Oregon Sprayer",
     "ChemicalSprayers": "Chemical Sprayer",
@@ -1156,13 +1139,10 @@
     "DBL": "DBL",
     "Gardena": "Gardena",
     "TractorMountedSprayer": "Tractor Mounted Sprayer - ME",
-
     "MaizeProcessingMachine": "Maize Processing Machine - ME",
     "MaizeCoenThresher": "Maize Corn Thresher - ME",
-
     "SteelSeedSowing": "Steel and Plastic Seed Sowing Machine",
     "TractorMountedSpray": "Tractor Mounted Sprayer ",
-
     "Tractors": "Tractors",
     "Rotavator": "Rotavator",
     "CombineHarvesters": "Combine Harvesters",
@@ -1176,7 +1156,6 @@
     "Sprayers": "Sprayers",
     "ShellingGrindingMachine": "Shelling and Grinding Machine",
     "Sowing": "Sowing",
-
     "noToolsSelectedTitle": "No Tools Selected",
     "noToolsSelectedMessage": "Select at least one tool to update.",
     "noToolsSelectedDeleteMessage": "Select at least one tool to delete.",
@@ -1192,11 +1171,9 @@
     "assetsUpdatedSuccessfully": "Asset details updated successfully!",
     "failToUpdateAssets": "Failed to update asset details. Please try again!",
     "successMessage": "New asset added successfully!",
-
     "serverErrorMessage": "Server error: {{message}}",
     "noResponseMessage": "No response from the server. Please try again later.",
     "generalErrorMessage": "Failed to add the asset. Please try again.",
-
     "districtRequired": "District is required",
     "extentRequired": "At least one extent type is required",
     "ownershipRequired": "Ownership is required",
@@ -1226,7 +1203,6 @@
     "expireDateRequired": "Expire date is required",
     "mentionOtherBrand": "Mention Other Brand Name",
     "enterCustomBrand": "Enter brand name",
-
     "Deselect All": "Deselect All",
     "Select All": "Select All",
     "Delete Selected": "Delete Selected",
@@ -1252,13 +1228,13 @@
     "enterBuildingName": "Building Name is required",
     "enterLandName": "Land Name is required",
     "duplicateError": "Can not duplicate Building Name or Land Name",
-    "Enter Floor Area":"Enter Floor Area",
-    "Annual Lease Amount":"Annual Lease Amount (LKR)",
-    "Purchased Date is required":"Purchased Date is required",
-    "Expire Date is required":"Expire Date is required",
-    "Select Date":"Select Date",
-    "warrantypurchasedDate":"Warranty Purchased Date is required",
-    "warrantyDatesexpireDate":"Warranty Expire Date is required"
+    "Enter Floor Area": "Enter Floor Area",
+    "Annual Lease Amount": "Annual Lease Amount (LKR)",
+    "Purchased Date is required": "Purchased Date is required",
+    "Expire Date is required": "Expire Date is required",
+    "Select Date": "Select Date",
+    "warrantypurchasedDate": "Warranty Purchased Date is required",
+    "warrantyDatesexpireDate": "Warranty Expire Date is required"
   },
   "AddressDetails": {
     "LNG": "en",
@@ -1281,16 +1257,13 @@
     "PrivacyPolicy": "Privacy Policy",
     "By": "By",
     "explain": "GoViCare is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our mobile application designed to provide farming guidance, asset management, weather reports, monitoring support, and a public forum for farmers. By using our App, you agree to the terms of this Privacy Policy. If you do not agree, please discontinue use of our App.",
-
     "InformationWeCollect": "Information We Collect",
     "RegistrationInformation": "Registration Information:",
     "RegistrationInformationTxt": "To use our App, you must register by providing your name, contact details, address, and other personal information. Bank details may also be collected for specific features, such as financial planning or asset management.",
-
     "LocationInformation": "Location Information:",
     "LocationInformationTxt": "We collect your location data to provide weather reports and tailored farming advice. This data is collected only when you enable location services.",
     "UsageData": "Usage Data:",
     "UsageDataTxt": "We collect information about your interaction with our App, including features accessed, activity logs, and preferences to improve our services and provide better recommendations. Public Forum Content: Any information shared by you in the public forum, such as issues, questions, or advice, is public and may be visible to other users. Please do not share sensitive information in this forum.",
-
     "HowWeUseYourInformation": "How We Use Your Information",
     "ToProvideServices": "To Provide Services:",
     "ToProvideServicesTxt": "We use your information to deliver farming guidance, weather reports, asset management, and support features.",
@@ -1302,7 +1275,6 @@
     "PublicForumTxt": "Information shared in the forum is used to create a collaborative environment where farmers can interact and solve problems.",
     "ResearchandDevelopment": "Research and Development:",
     "ResearchandDevelopmentTxt": "We use aggregated data to improve our services, including app features and user experience.",
-
     "InformationSharingandDisclosure": "Information Sharing and Disclosure",
     "InformationSharingandDisclosuretxt": "We do not share your personal information with third parties except as described in this Privacy Policy.",
     "ServiceProviders": "Service Providers:",
@@ -1311,16 +1283,12 @@
     "LegalRequirementsTxt": "We may disclose your information to comply with legal obligations or in response to valid requests by public authorities.",
     "AggregatedData": "Aggregated Data:",
     "AggregatedDataTxt": "Non-identifiable data may be shared for research and statistical purposes to improve the agricultural industry.",
-
     "SecurityofYourInformation": "Security of Your Information",
     "SecurityofYourInformationTxt": "We implement industry-standard security measures to protect your information. However, no online platform is entirely secure, so we cannot guarantee absolute security. Please notify us of any suspected security breaches.",
-
     "YourPrivacyChoices": "Your Privacy Choices",
     "YourPrivacyChoicesTxt": "You can manage your privacy settings through the App, including enabling/disabling location services. You may also request data access, updates, or deletion as per applicable data protection laws.",
-
     "ChildrensPrivacy": "Children’s Privacy",
     "ChildrensPrivacyTxt": "Our App is not intended for individuals under the age of 16. We do not knowingly collect personal information from minors.",
-
     "UpdatestothisPrivacyPolicy": "Updates to this Privacy Policy",
     "UpdatestothisPrivacyPolicyTxt": "We may update this Privacy Policy periodically. The latest version will always be available in the App. Your continued use of our App after changes are made will constitute acceptance of the updated policy."
   },
@@ -1341,38 +1309,29 @@
     "bullet3": "• Attempting to access unauthorized areas of the App or its data.",
     "bullet4": "• Sharing or posting inappropriate content in the public forum.",
     "bullet5": "• Engaging in activities that interfere with or disrupt the App's operation.",
-
     "UserRegistrationandAccountSecurity": "User Registration and Account Security",
     "UserRegistrationandAccountSecurityTxt": "To use some features of the App, you will need to create an account. You agree to.",
     "bullet6": "• Provide accurate and up-to-date information.",
     "bullet7": "• Maintain the security of your account password.",
     "bullet8": "• Notify us immediately of any unauthorized access or security breach.",
     "bullet9": "• Take responsibility for all activities that occur under your account.",
-
     "PublicForum": "Public Forum",
     "UserContent": "User Content:",
     "UserContentTxt": "By posting content in the public forum, you grant GoViCare a non-exclusive, royalty-free, worldwide license to use, display, and share your content within the App. You are solely responsible for the content you post, including its accuracy, legality, and compliance with these Terms.",
     "CodeofConduct": "Code of Conduct:",
     "CodeofConductTxt": "Please refrain from posting inappropriate, offensive, defamatory, or unlawful content in the forum. GoViCare reserves the right to remove or moderate content that violates these Terms.",
-
     "Privacy": "Privacy",
     "PrivacyTxt": "Your use of the App is subject to our Privacy Policy, which explains how we collect, use, and safeguard your information. By using the App, you agree to our Privacy Policy.",
-
     "DisclaimerofWarranties": "Disclaimer of Warranties",
     "DisclaimerofWarrantiesTxt": "The App is provided \"as is\" and \"as available.\" GoViCare disclaims all warranties, whether express or implied, regarding the App’s operation, reliability, accuracy, or suitability for any particular purpose. We do not warrant that the App will be error-free, secure, or available at all times.",
-
     "LimitationofLiability": "Limitation of Liability",
     "LimitationofLiabilityTxt": "To the fullest extent permitted by law, GoViCare and its affiliates, employees, or agents shall not be liable for any damages, whether direct, indirect, incidental, special, or consequential, arising out of your use or inability to use the App, including any reliance on advice or information provided through the App.",
-
     "ModificationstotheApp": "Modifications to the App and Terms",
     "ModificationstotheAppTxt": "GoViCare reserves the right to modify, update, or discontinue the App at any time, with or without notice. We may also amend these Terms from time to time. Your continued use of the App after any changes to these Terms constitutes acceptance of the revised Terms.",
-
     "Termination": "Termination",
     "TerminationTxt": "GoViCare reserves the right to terminate or suspend your account and access to the App at our sole discretion, with or without notice, for conduct that we believe violates these Terms, disrupts the App, or is harmful to other users.",
-
     "GoverningLaw": "Governing Law",
     "GoverningLawTxt": "These Terms and your use of the App are governed by and construed in accordance with the laws of [Your Country/Region], without regard to its conflict of laws principles.",
-
     "ContactUs": "Contact Us",
     "ContactUsTxt": "For any questions or concerns about these Terms, please contact us at"
   },
@@ -1670,7 +1629,6 @@
     "This will remove the completion for this task. Are you sure you want to continue?": "This will remove the completion for this task. Are you sure you want to continue?",
     "Completion removed successfully": "Completion removed successfully"
   },
-
   "ImageViewerModal": {
     "Uploaded By": "Uploaded By :",
     "out of": "out of",
@@ -1678,7 +1636,6 @@
     "Photos": "Photos",
     "You": "You"
   },
-
   "EarnCertificate": {
     "Earn a Certificate": "Earn a Certificate",
     "month": "month",
@@ -1765,7 +1722,6 @@
     "noData": "--You have no requests added yet--",
     "noFarmTitle": "No Farm Available",
     "noFarmMessage": "You must create a farm and enroll in at least one crop variety before you can continue.",
-
     "Scheduled": "Scheduled to :",
     "Request History": "Request History",
     "status": {
@@ -1995,7 +1951,6 @@
     "to Receive": "to Receive",
     "No investment transactions found": "No investment transactions found"
   },
-
   "Calculator": {
     "calculator": "Calculator",
     "RequiredFields": "Please fill all required fields!",
@@ -2040,7 +1995,6 @@
     "FetchError": "Failed to load crops. Please try again.",
     "Error": "Error"
   },
-
   "IrrigationWaterCalculators": {
     "LNG": "en",
     "Title": "Irrigation & Water Calculators",
@@ -2185,5 +2139,59 @@
     "Products": "Products",
     "NoShopsFound": "No shops found",
     "NoProductsAvailable": "--No products available--"
+  },
+  "LocationAccess": {
+    "locationAccess": "Location Access",
+    "enableLocationMessage": "Enable location access to access location information.",
+    "allow": "Allow",
+    "requesting": "Requesting...",
+    "success": "Success",
+    "locationEnabled": "Location access enabled successfully!",
+    "permissionDenied": "Permission Denied",
+    "enableLocationManually": "Location access is required. Please enable it in settings.",
+    "openSettings": "Open Settings",
+    "permissionError": "Unable to request location permission. Please try again.",
+    "skipLocation": "Skip Location?",
+    "skipMessage": "Some features may not work properly without location access. Are you sure?",
+    "skip": "Skip",
+    "skipForNow": "Skip for now"
+  },
+  "WeatherNames": {
+    "Sunny": "Sunny",
+    "ClearSky": "Clear Sky",
+    "PartlyCloudy": "Partly Cloudy",
+    "Cloudy": "Cloudy",
+    "Thunderclouds": "Thunderclouds",
+    "Thunderstorms": "Thunderstorms",
+    "HeavyRain": "Heavy Rain",
+    "LightRain": "Light Rain",
+    "Mist": "Mist",
+    "Snow": "Snow",
+    "Unknown": "Unknown",
+    "Place": "Place",
+    "NightPlace": "Night Place"
+  },
+  "Months": {
+    "Jan": "January",
+    "Feb": "February",
+    "Mar": "March",
+    "Apr": "April",
+    "May": "May",
+    "Jun": "June",
+    "Jul": "July",
+    "Aug": "August",
+    "Sep": "September",
+    "Oct": "October",
+    "Nov": "November",
+    "Dec": "December"
+  },
+  "Days": {
+    "Sun": "Sun",
+    "Mon": "Mon",
+    "Tue": "Tue",
+    "Wed": "Wed",
+    "Thu": "Thu",
+    "Fri": "Fri",
+    "Sat": "Sat"
   }
 }

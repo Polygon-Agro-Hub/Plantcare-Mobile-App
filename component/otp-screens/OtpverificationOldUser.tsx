@@ -9,6 +9,11 @@ import {
   Keyboard,
   ActivityIndicator,
   BackHandler,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
+  Dimensions,
+  StatusBar as RNStatusBar,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import {
@@ -23,6 +28,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { setUserData } from "../../store/userSlice";
 import CustomHeader from "../common/CustomHeader";
+import { LinearGradient } from "expo-linear-gradient";
 
 const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   const { mobileNumber } = route.params;
@@ -39,6 +45,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   const [isOtpValid, setIsOtpValid] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
+  const screenWidth = Dimensions.get("window").width;
 
   useEffect(() => {
     const selectedLanguage = t("OtpVerification.LNG");
@@ -270,115 +277,168 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
     return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
   };
 
+  const dynamicStyles = {
+    imageHeight: screenWidth < 400 ? wp(50) : wp(45),
+  };
+
   return (
-    <View className="flex-1 bg-[#FFFFFF]">
-      <StatusBar style="dark" />
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1, backgroundColor: "white" }}
+      enabled
+    >
+      <RNStatusBar barStyle="dark-content" backgroundColor="#fff" />
       <CustomHeader
         title=""
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
       />
-      <View className="flex justify-center items-center mt-0">
-        <Text className="text-black" style={{ fontSize: wp(8) }}>
-          {t("OtpVerification.OTPVerification")}
-        </Text>
-      </View>
 
-      <View
-        className="flex justify-center items-center"
-        style={{ marginTop: hp(4) }}
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        <Image
-          source={require("../../assets/images/otp/otp.webp")}
-          style={{ width: 280, height: 140 }}
-          resizeMode="contain"
-        />
-        {language === "en" ? (
-          <View className="mt-10">
-            <Text className="text-md text-gray-400">
-              {t("OtpVerification.OTPCode")}
+        <View className="flex-1 bg-white justify-center">
+          <View className="items-center justify-center px-4">
+            <Text
+              className=" font-semibold text-center mb-6"
+              style={{
+                fontSize:
+                  i18n.language === "si" || i18n.language === "ta" ? 18 : 25,
+              }}
+            >
+              {t("OtpVerification.OTPVerification")}
             </Text>
-            <Text className="text-md text-[#0085FF] text-center pt-1">
-              {mobileNumber}
-            </Text>
+            <Image
+              source={require("../../assets/images/otp/otp.webp")}
+              resizeMode="contain"
+              style={{ height: dynamicStyles.imageHeight, width: "100%" }}
+            />
+
+            {language === "en" ? (
+              <View className="mt-6 items-center">
+                <Text className="text-md text-gray-400 text-center">
+                  {t("OtpVerification.OTPCode")}
+                </Text>
+                <Text className="text-md text-[#0085FF] text-center pt-4 font-semibold">
+                  {mobileNumber}
+                </Text>
+              </View>
+            ) : (
+              <View className="mt-6 items-center">
+                <Text className="text-md text-[#0085FF] text-center font-semibold">
+                  {mobileNumber}
+                </Text>
+                <Text className="text-md text-[#818080] pt-4 text-center">
+                  {t("OtpVerification.OTPCode")}
+                </Text>
+              </View>
+            )}
+
+            {/* OTP Input */}
+            <View className="mt-6 w-full items-center">
+              <TextInput
+                style={{
+                  width: wp(60),
+                  height: hp(7),
+                  textAlign: "center",
+                  fontSize: wp(6),
+                  letterSpacing: wp(4),
+                  borderBottomWidth: 2,
+                  borderBottomColor: "#D5D5D5",
+                  color: "black",
+                  fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
+                }}
+                keyboardType="numeric"
+                maxLength={5}
+                value={otpCode}
+                onChangeText={handleInputChange}
+                placeholder={maskedCode}
+                placeholderTextColor="#B0B0B0"
+                underlineColorAndroid="transparent"
+                cursorColor="#141415ff"
+                autoFocus
+              />
+            </View>
+
+            {/* Timer and Resend */}
+            <View className="mt-8 items-center">
+              <Text className="text-base text-[#707070] text-center">
+                {t("OtpVerification.didntreceived")}
+              </Text>
+              <TouchableOpacity
+                onPress={disabledResend ? undefined : handleResendOTP}
+                disabled={disabledResend}
+                activeOpacity={0.7}
+              >
+                <Text
+                  className="mt-2 text-lg text-center underline"
+                  style={{
+                    color: disabledResend ? "#9CA3AF" : "#0085FF",
+                    fontSize: 16,
+                  }}
+                >
+                  {timer > 0
+                    ? `${t("OtpVerification.Count")} ${formatTime(timer)}`
+                    : `${t("OtpVerification.Resendagain")}`}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Verify Button */}
+            <View className="mt-8 w-full items-center">
+              <View
+                className="w-2/3 rounded-full"
+                style={{
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.2,
+                  shadowRadius: 6,
+                  elevation: 6,
+                  backgroundColor: "transparent",
+                }}
+              >
+                <TouchableOpacity
+                  onPress={handleVerify}
+                  disabled={!isOtpValid || disabledVerify}
+                  activeOpacity={0.8}
+                >
+                  <LinearGradient
+                    colors={
+                      !isOtpValid || disabledVerify
+                        ? ["#353535", "#353535"]
+                        : ["#0FC7B2", "#10A37D"]
+                    }
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    className="w-full rounded-full h-14 justify-center items-center"
+                  >
+                    {isLoading ? (
+                      <ActivityIndicator size="small" color="#fff" />
+                    ) : (
+                      <Text
+                        className="text-white font-semibold text-center"
+                        style={{
+                          fontSize:
+                            i18n.language === "si"
+                              ? 13
+                              : i18n.language === "ta"
+                                ? 12
+                                : 20,
+                        }}
+                      >
+                        {t("OtpVerification.Verify")}
+                      </Text>
+                    )}
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
-        ) : (
-          <View className="mt-10">
-            <Text className="text-md text-[#0085FF] text-center ">
-              {mobileNumber}
-            </Text>
-
-            <Text className="text-md text-[#818080] pt-1">
-              {t("OtpVerification.OTPCode")}
-            </Text>
-          </View>
-        )}
-
-        <View className="pt-6">
-          <TextInput
-            style={{
-              width: wp(60),
-              height: hp(7),
-              textAlign: "center",
-              fontSize: wp(6),
-              letterSpacing: wp(6),
-              borderBottomWidth: 1,
-              borderBottomColor: "gray",
-              color: "black",
-            }}
-            keyboardType="numeric"
-            maxLength={5}
-            value={otpCode}
-            onChangeText={handleInputChange}
-            placeholder={maskedCode}
-            placeholderTextColor="lightgray"
-          />
         </View>
-
-        <View className="mt-10">
-          <Text className="mt-3 text-base text-[#707070] text-center">
-            {t("OtpVerification.didntreceived")}
-          </Text>
-        </View>
-
-        <View className="mt-1 mb-9">
-          <Text
-            className="mt-3 text-lg text-black text-center underline"
-            onPress={disabledResend ? undefined : handleResendOTP}
-            style={{ color: disabledResend ? "#393939" : "blue" }}
-          >
-            {timer > 0
-              ? `${t("OtpVerification.Count")} ${formatTime(timer)}`
-              : `${t("OtpVerification.Resendagain")}`}
-          </Text>
-        </View>
-
-        <TouchableOpacity
-          className={` mt-2 rounded-3xl mb-2 items-center justify-center ${
-            !isOtpValid || disabledVerify ? "bg-gray-500" : "bg-[#353535]"
-          }`}
-          onPress={handleVerify}
-          disabled={!isOtpValid || disabledVerify}
-          style={{
-            width: wp(72),
-            height: hp(7),
-            shadowColor: "#000000",
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.25,
-            shadowRadius: 4,
-            elevation: 4,
-          }}
-        >
-          {isLoading ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <Text className="text-white  font-semibold text-base">
-              {t("OtpVerification.Verify")}
-            </Text>
-          )}
-        </TouchableOpacity>
-      </View>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
