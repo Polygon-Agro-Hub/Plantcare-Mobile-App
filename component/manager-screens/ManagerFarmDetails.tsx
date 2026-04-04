@@ -29,6 +29,7 @@ import * as Progress from "react-native-progress";
 import ContentLoader, { Rect } from "react-content-loader/native";
 import { useSelector } from "react-redux";
 import { RootState } from "@/services/reducxStore";
+import LottieView from "lottie-react-native";
 
 type ManagerFarmDetailsNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -301,7 +302,7 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
   };
 
   return (
-    <View className="flex-1 bg-gray-50">
+    <View className="flex-1 bg-white">
       <StatusBar style="dark" />
 
       <ScrollView
@@ -338,6 +339,16 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
           <TouchableOpacity
             className="bg-white border border-gray-200 rounded-2xl px-5 py-4 flex-row items-center justify-between shadow-sm"
             onPress={handleManageWorkersPress}
+            style={{
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.12,
+              shadowRadius: 4,
+              elevation: 4,
+              backgroundColor: "#fff",
+              borderRadius: 8,
+              marginBottom: 8,
+            }}
           >
             <View className="flex-row items-center">
               <View className="rounded-full w-12 h-12 items-center justify-center mr-3">
@@ -367,8 +378,14 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
             <SkeletonLoader />
           ) : crops.length === 0 ? (
             <View className="items-center justify-center py-10">
-              <Text className="text-gray-500 text-base">
-                {t("Manager.No ongoing cultivations found")}
+              <LottieView
+                source={require("../../assets/jsons/NoComplaints.json")}
+                style={{ width: wp(50), height: hp(50) }}
+                autoPlay
+                loop
+              />
+              <Text className="text-center text-gray-600 mt-[-30%]">
+                --{t("Manager.No ongoing cultivations found")}--
               </Text>
             </View>
           ) : (
@@ -406,6 +423,8 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
                     backgroundColor: "white",
                     opacity: crop.isBlock === 1 ? 0.6 : 1,
                     position: "relative",
+
+                    elevation: 4,
                   }}
                 >
                   <Image

@@ -23,6 +23,7 @@ import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
 import assetData from "../../assets/jsons/fixed-assets.json";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import LottieView from "lottie-react-native";
 
 type RootStackParamList = {
   UpdateAsset: { selectedTools: number[]; category: string; toolId: any };
@@ -721,7 +722,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
       {loading ? (
         <View className="flex-1 justify-center items-center bg-white">
-          <ActivityIndicator size="large" color="#00ff00" />
+          <View className="flex-1 justify-center items-center">
+            <LottieView
+              source={require("../../assets/jsons/loader.json")}
+              autoPlay
+              loop
+              style={{ width: 300, height: 300 }}
+            />
+          </View>
         </View>
       ) : (
         <ScrollView className="bg-white">
@@ -761,7 +769,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     <Text className="pb-2 pt-2 font-bold">
                       {t("FixedAssets.extent")} *
                     </Text>
-                    <View className="flex-row justify-between items-center pb-2 w-full">
+                    <View className="flex-row justify-between items-center  w-full">
                       <Text className="pr-1 font-[#3A3A3A]">
                         {t("FixedAssets.ha")}
                       </Text>
@@ -1048,7 +1056,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           {t("FixedAssets.leasedAmountAnnually")} *
                         </Text>
                         <TextInput
-                          placeholder={t("FixedAssets.leasedAmountAnnually")}
+                          placeholder={t("FixedAssets.leasedAmountAnnuallyLKR")}
                           value={
                             updatedDetails[
                               tool.id
@@ -1164,10 +1172,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           ))}
 
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.paymentAnnually")} *
+                          {t("FixedAssets.permitAnnuallyLKR")} *
                         </Text>
                         <TextInput
-                          placeholder={t("FixedAssets.paymentAnnually")}
+                          placeholder={t("FixedAssets.EnterpermitAnnually")}
                           value={
                             updatedDetails[
                               tool.id
@@ -1230,7 +1238,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     <Text className="font-bold pb-2 pt-2">
                       {t("FixedAssets.isLandFenced")} *
                     </Text>
-                    <View className="flex-row justify-around mb-5">
+                    <View className="flex-row justify-around mb-1">
                       {["yes", "no"].map((val) => (
                         <TouchableOpacity
                           key={val}
@@ -1257,7 +1265,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     <Text className="font-bold pb-2">
                       {t("FixedAssets.areThereAnyPerennialCrops")} *
                     </Text>
-                    <View className="flex-row justify-around mb-5">
+                    <View className="flex-row justify-around mb-1">
                       {["yes", "no"].map((val) => (
                         <TouchableOpacity
                           key={val}
@@ -1628,7 +1636,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           {t("FixedAssets.leasedAmountAnnually")} *
                         </Text>
                         <TextInput
-                          placeholder={t("FixedAssets.leasedAmountAnnually")}
+                          placeholder={t("FixedAssets.leasedAmountAnnuallyLKR")}
                           value={
                             updatedDetails[
                               tool.id
@@ -1781,10 +1789,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       "Shared / No Ownership" && (
                       <>
                         <Text className="pb-2 font-bold">
-                          Annual Payment Fee (LKR) *
+                          {t("FixedAssets.paymentAnnuallyLKR")} *
                         </Text>
                         <TextInput
-                          placeholder="Annual Payment Fee (LKR)"
+                          placeholder={t("FixedAssets.paymentAnnuallyEnter")}
                           value={
                             updatedDetails[
                               tool.id
@@ -1795,7 +1803,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             handleInputChange(
                               tool.id,
                               "ownershipDetails.paymentAnnually",
-                              formatInt(text),
+                              formatDecimal(text),
                             );
                             clearFieldError(tool.id, "paymentAnnually");
                           }}

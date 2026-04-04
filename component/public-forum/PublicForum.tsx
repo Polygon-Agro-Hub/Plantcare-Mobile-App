@@ -617,7 +617,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
         title={title}
         showBackButton={true}
         navigation={navigation}
-        onBackPress={() => navigation.goBack()}
+        onBackPress={() => navigation.navigate("Main" as any)}
       />
 
       <View className="p-4 bg-white">

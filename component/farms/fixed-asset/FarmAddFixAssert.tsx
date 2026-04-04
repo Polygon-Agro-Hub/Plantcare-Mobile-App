@@ -473,8 +473,14 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
         newErrors.numberOfUnits = t("FixedAssets.enterNumberofUnits");
       if (!unitPrice) newErrors.unitPrice = t("FixedAssets.enterUnitPrice");
       if (!warranty) newErrors.warranty = t("FixedAssets.selectWarranty");
-      if (warranty === "yes" && (!purchasedDate || !expireDate))
-        newErrors.warrantyDates = t("FixedAssets.warrantyDatesRequired");
+      if (warranty === "yes" && !purchasedDate)
+        newErrors.warrantypurchasedDate = t(
+          "FixedAssets.warrantypurchasedDate",
+        );
+      if (warranty === "yes" && !expireDate)
+        newErrors.warrantyDatesexpireDate = t(
+          "FixedAssets.warrantyDatesexpireDate",
+        );
     }
 
     if (category === "Tools") {
@@ -487,9 +493,14 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
       if (!numberOfUnits)
         newErrors.numberOfUnits = t("FixedAssets.enterNumberofUnits");
       if (!unitPrice) newErrors.unitPrice = t("FixedAssets.enterUnitPrice");
-      if (!warranty) newErrors.warranty = t("FixedAssets.selectWarranty");
-      if (warranty === "yes" && (!purchasedDate || !expireDate))
-        newErrors.warrantyDates = t("FixedAssets.warrantyDatesRequired");
+      if (warranty === "yes" && !purchasedDate)
+        newErrors.warrantypurchasedDate = t(
+          "FixedAssets.warrantypurchasedDate",
+        );
+      if (warranty === "yes" && !expireDate)
+        newErrors.warrantyDatesexpireDate = t(
+          "FixedAssets.warrantyDatesexpireDate",
+        );
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -705,6 +716,11 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
               />
             ))}
 
+          {errorMessage ? (
+            <Text className="text-red-500 mt-2">{errorMessage}</Text>
+          ) : null}
+          <FieldError field="warrantypurchasedDate" />
+
           {/* Expire Date */}
           <Text className="pt-5 pb-3">
             {t("FixedAssets.warrantyExpireDate")} *
@@ -746,7 +762,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
           {errorMessage ? (
             <Text className="text-red-500 mt-2">{errorMessage}</Text>
           ) : null}
-          <FieldError field="warrantyDates" />
+          <FieldError field="warrantyDatesexpireDate" />
 
           {/* Warranty Status */}
           <Text className="mt-4 text-sm">
@@ -878,7 +894,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             </Text>
             <DropdownButton
               value={getLabelFromOptions(categoryOptions, category)}
-              placeholder={t("FixedAssets.selectCategory")}
+              placeholder={t("CurrentAssets.selectcategory")}
               onPress={() => openModal("category")}
               hasError={!!errors.category}
             />
@@ -1168,7 +1184,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       placeholder={t(
-                        "FixedAssets.enterLeasedAmountAnnuallyLKR",
+                        "FixedAssets.leasedAmountAnnuallyLKR",
                       )}
                       value={formatWithCommas(leastAmountAnnually)}
                       onChangeText={(text) => {
@@ -1226,11 +1242,11 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                         />
                       ))}
                     <Text className="pb-2 mt-4">
-                      {t("FixedAssets.permitAnnually")} *
+                      {t("FixedAssets.permitFeeAnnuallyLKR")} *
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
-                      placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
+                      placeholder={t("FixedAssets.EnterpermitAnnually")}
                       value={formatWithCommas(permitFeeAnnually)}
                       onChangeText={(text) => {
                         handleNumericInput(text, setPermitFeeAnnually);
@@ -1256,7 +1272,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                         clearError("paymentAnnually");
                       }}
                       keyboardType="numeric"
-                      placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
+                      placeholder={t("FixedAssets.paymentAnnuallyEnter")}
                     />
                     <FieldError field="paymentAnnually" />
                   </View>
@@ -1267,7 +1283,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   <Text className="pt-5 pb-3 font-bold">
                     {t("FixedAssets.isLandFenced")} *
                   </Text>
-                  <View className="flex-row justify-around mb-5">
+                  <View className="flex-row justify-around mb-1">
                     {["yes", "no"].map((opt) => (
                       <TouchableOpacity
                         key={opt}
@@ -1289,7 +1305,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   <Text className="pt-5 pb-3 font-bold">
                     {t("FixedAssets.areThereAnyPerennialCrops")} *
                   </Text>
-                  <View className="flex-row justify-around mb-5">
+                  <View className="flex-row justify-around mb-1">
                     {["yes", "no"].map((opt) => (
                       <TouchableOpacity
                         key={opt}
@@ -1407,7 +1423,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 </Text>
                 <TextInput
                   className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-[#F4F4F4]"
-                  placeholder={t("FixedAssets.enterFloorArea")}
+                  placeholder={t("FixedAssets.Enter Floor Area")}
                   value={floorArea}
                   onChangeText={(text) => {
                     setFloorArea(formatDecimalInput(text));
@@ -1436,7 +1452,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
-                      placeholder={t("FixedAssets.estimatedBuildingValueLKR")}
+                      placeholder={t("FixedAssets.estimatedValueEnter")}
                       value={formatWithCommas(estimateValue)}
                       onChangeText={(text) => {
                         handleNumericInput(text, setEstimatedValue);
@@ -1545,7 +1561,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
                       placeholder={t(
-                        "FixedAssets.enterLeasedAmountAnnuallyLKR",
+                        "FixedAssets.leasedAmountAnnuallyLKR",
                       )}
                       value={formatWithCommas(leastAmountAnnually)}
                       onChangeText={(text) => {
@@ -1618,7 +1634,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
-                      placeholder={t("FixedAssets.enterPermitAnnuallyLKR")}
+                      placeholder={t("FixedAssets.EnterpermitAnnually")}
                       value={formatWithCommas(permitFeeAnnually)}
                       onChangeText={(text) => {
                         handleNumericInput(text, setPermitFeeAnnually);
@@ -1644,7 +1660,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                         clearError("paymentAnnually");
                       }}
                       keyboardType="numeric"
-                      placeholder={t("FixedAssets.enterPaymentAnnuallyLKR")}
+                      placeholder={t("FixedAssets.paymentAnnuallyEnter")}
                     />
                     <FieldError field="paymentAnnually" />
                   </View>

@@ -879,6 +879,7 @@
     "selectAsset": "Select Asset is required",
     "assetType": "Asset Type",
     "selectAssetType": "Select Asset Type is required",
+    "AssetTypeselect": "Select Asset Type is required",
     "assetAddSuccessfuly": "Asset added successfully!",
     "numberofUnits": "Number of Units",
     "enterNumberofUnits": "Number of units is required",
@@ -901,8 +902,8 @@
     "months": "Months",
     "leasedAmountAnnually": "Annual Lease Amount (LKR)",
     "startDate": "Lease Start Date",
-    "paymentAnnually": "Annual Payment (LKR)",
-    "estimatedValue": "Estimated Value (LKR)",
+    "paymentAnnuallyEnter": "Enter Annual Payment Fee(LKR)",
+    "estimatedValueEnter": "Enter Estimated Value (LKR)",
 
     "warrantyStatus": "Warranty coverage status",
     "additionalOption": "Additional Option",
@@ -918,8 +919,8 @@
     "enterDuration": "Duration is required",
     "enterstartDate": "Start Date is required",
 
-    "leasedAmountAnnuallyLKR": "Leased Amount Annually (LKR)",
-    "enterLeasedAmountAnnuallyLKR": "Leased Amount Annually (LKR) is required",
+    "leasedAmountAnnuallyLKR": "Enter Annual Leased Amount(LKR)",
+    "enterLeasedAmountAnnuallyLKR": "Annual Lease Amount (LKR) is required",
     "issuedDate": "Issued Date",
     "selectIssuedDate": "Date issued is required",
     "permitAnnuallyLKR": "Annual Permit Fee (LKR)",
@@ -944,7 +945,7 @@
 
     "estimateValue": "Estimated Value (LKR)",
     "enterEstimateValue": "Estimated Value (LKR) is required",
-    "permitAnnually": "Annual Permit Fee (LKR)",
+    "EnterpermitAnnually": "Enter Annual Permit Fee (LKR)",
     "notoolsavailable": "No tools available for this category.",
     "No assets available for this category": "No assets available for this category",
     "deleteSelected": "Delete Selected",
@@ -1255,7 +1256,9 @@
     "Annual Lease Amount":"Annual Lease Amount (LKR)",
     "Purchased Date is required":"Purchased Date is required",
     "Expire Date is required":"Expire Date is required",
-    "Select Date":"Select Date"
+    "Select Date":"Select Date",
+    "warrantypurchasedDate":"Warranty Purchased Date is required",
+    "warrantyDatesexpireDate":"Warranty Expire Date is required"
   },
   "AddressDetails": {
     "LNG": "en",
@@ -1421,7 +1424,7 @@
     "Unit Price(Rs.)": "Unit Price(Rs.)",
     "Quantity(kg)": "Quantity(kg)",
     "Sub Total(Rs.)": "Sub Total(Rs.)",
-    "Full Total (Rs.)": "Full Total (Rs.)",
+    "Full Total (Rs.)": "Full Total (Rs.) : ",
     "Note": "Note",
     "This Goods Receipt Note": "This Goods Receipt Note (GRN) serves as a provisional acknowledgment based on initial measurements taken by front-line staff. Final verification will be conducted at the Collection Centre. The measurement recorded at the Collection Centre shall be deemed conclusive and binding in all cases of discrepancy. The organization reserves the right to rectify any revenue impacts arising from measurement variances and shall not be liable for losses due to initial miscalculations.",
     "Download": "Download",
@@ -1840,7 +1843,7 @@
     "The project details are as follows": "The project details are as follows:",
     "This investment is essential for covering the costs of high-quality seeds, fertilizers, pesticides, irrigation facilities, and labor expenses for the projected year. The expected harvest is sufficient to generate sufficient revenue for the timely repayment of the loan, along with accrued interest.": "This investment is essential for covering the costs of high-quality seeds, fertilizers, pesticides, irrigation, and labor required to achieve the projected yield. The expected harvest is projected to generate sufficient revenue for the timely repayment of the investment along with the accrued interest.",
     "I have attached the necessary documents for your perusal.": "I have attached the necessary documents for your perusal.",
-    "I am confident in the success of this venture and request you to kindly approve my loan application. I look forward to your favorable time and consideration.": "I am confident in the success of this venture and request you to kindly approve my loan application.",
+    "I am confident in the success of this venture and request you to kindly approve my loan application. I look forward to your favorable time and consideration.": "I am confident in the success of this venture and request you to kindly approve my investment application at the earliest. Thank you for your time and consideration.",
     "Sincerely,": "Sincerely,",
     "[Farmer's Name]": "[Farmer's Name]",
     "[Contact Number]": "[Contact Number]",

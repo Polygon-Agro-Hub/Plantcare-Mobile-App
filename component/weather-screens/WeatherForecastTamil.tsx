@@ -14,7 +14,7 @@ import {
   BackHandler,
 } from "react-native";
 import * as Location from "expo-location";
-import { Ionicons } from "@expo/vector-icons";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import debounce from "lodash.debounce";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
@@ -23,7 +23,12 @@ import { AntDesign } from "@expo/vector-icons";
 import { Dimensions, StyleSheet } from "react-native";
 import axios from "axios";
 import NetInfo from "@react-native-community/netinfo";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
+
 const { width } = Dimensions.get("window");
 
 const isSmallScreen = width < 400;
@@ -405,21 +410,21 @@ const WeatherForecastTamil: React.FC<WeatherForecastTamilProps> = ({
   );
 
   return (
-    <View style={{ flex: 1 }}>
-      <View className="flex-1 bg-white">
+    <View style={{ flex: 1 }} className="bg-white">
+      <View className="flex-1 ">
         <View className="relative w-full">
-          <Image
-            source={require("../../assets/images/news/group-image.webp")}
-            className="w-full h-36 -mt-8 "
-            resizeMode="contain"
-          />
-          <View className="absolute top-0 left-0 right-0 flex-row items-center justify-between mt-2 px-4 pt-4">
+          <View className="flex-row items-center justify-between mt-2 px-4 ">
             <TouchableOpacity className="p-2 bg-transparent">
-              <AntDesign
-                name="left"
+              <Entypo
+                name="chevron-left"
                 size={24}
                 color="#000502"
                 onPress={() => navigation.navigate("Dashboard")}
+                style={{
+                  backgroundColor: "#F6F6F6CC",
+                  borderRadius: 50,
+                  padding: wp(2.5),
+                }}
               />
             </TouchableOpacity>
             <View className="relative flex-1">
@@ -468,10 +473,17 @@ const WeatherForecastTamil: React.FC<WeatherForecastTamilProps> = ({
               className="p-2 bg-transparent ml-2"
               onPress={handleLocationIconPress}
             >
-              <Image
-                source={require("../../assets/images/weather icons/common/location.webp")}
-                style={{ width: 24, height: 24 }}
-                resizeMode="contain"
+              <AntDesign
+                name="aim"
+                size={18}
+                color="#000502"
+                style={[
+                  {
+                    backgroundColor: "#F8F8F8",
+                    borderRadius: 10,
+                    padding: wp(2.5),
+                  },
+                ]}
               />
             </TouchableOpacity>
           </View>

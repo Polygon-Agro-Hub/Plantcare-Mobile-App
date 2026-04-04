@@ -15,11 +15,12 @@ import { environment } from "@/environment/environment";
 import { RootStackParamList } from "../types/types";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
-import * as FileSystem from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 import CustomHeader from "../common/CustomHeader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import LottieView from "lottie-react-native";
 
 const api = axios.create({
   baseURL: environment.API_BASE_URL,
@@ -89,6 +90,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
   navigation,
 }) => {
   const [details, setDetails] = useState<PersonalAndBankDetails | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const route = useRoute<TransactionReportRouteProp>();
   const { registeredFarmerId, userId, centerId, companyId, transactionDate } =
@@ -138,6 +140,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
   }, []);
 
   const fetchDetails = async () => {
+    setLoading(true);
     try {
       try {
         const detailsResponse = await api.get(
@@ -187,6 +190,8 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         [{ text: t("PublicForum.OK") }],
       );
       setCrops([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -359,8 +364,8 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
 
         <div class="total-row">
           <div class="total-box">
-            <div class="total-label">${t("TransactionList.Full Total (Rs.)")} :</div>
-            <div class="total-value">Rs.${formatNumberWithCommas(total)}</div>
+            <div class="total-label">${t("TransactionList.Full Total (Rs.)")} </div>
+            <div class="total-value">: Rs. ${formatNumberWithCommas(total)}</div>
           </div>
         </div>
 
@@ -518,6 +523,27 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
     return {};
   };
 
+  if (loading) {
+    return (
+      <View className="flex-1 bg-white">
+        <CustomHeader
+          title={t("TransactionList.Goods Received Note")}
+          showBackButton={true}
+          navigation={navigation}
+          onBackPress={() => navigation.goBack()}
+        />
+        <View className="flex-1 justify-center items-center mt-[45%]">
+          <LottieView
+            source={require("../../assets/jsons/loader.json")}
+            autoPlay
+            loop
+            style={{ width: 300, height: 300 }}
+          />
+        </View>
+      </View>
+    );
+  }
+
   return (
     <ScrollView className="flex-1 bg-white">
       <CustomHeader
@@ -664,7 +690,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         {/* Total */}
         <View className="mb-2 mt-2 items-end">
           <Text className="font-bold" style={getTextStyle(i18next.language)}>
-            {t("TransactionList.Full Total (Rs.)")} Rs.
+            {t("TransactionList.Full Total (Rs.)")} : Rs.{" "}
             {formatNumberWithCommas(totalSum)}
           </Text>
         </View>
