@@ -66,7 +66,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.navigate("SignupForum");
+        navigation.navigate("Signup");
         return true;
       };
 

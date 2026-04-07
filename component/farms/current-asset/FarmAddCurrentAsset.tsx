@@ -612,7 +612,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                 handleCategoryChange(val);
                 clearError("selectedCategory");
               }}
-              searchPlaceholder={t("SignupForum.TypeSomething")}
+              searchPlaceholder={t("Signup.TypeSomething")}
               showSearch={true}
               multiSelect={false}
             />
@@ -675,7 +675,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                   handleAssetChange(val);
                   clearError("selectedAsset");
                 }}
-                searchPlaceholder={t("SignupForum.TypeSomething")}
+                searchPlaceholder={t("Signup.TypeSomething")}
                 showSearch={true}
                 multiSelect={false}
               />
@@ -743,7 +743,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                     setBrand(items[0] ?? "");
                     clearError("brand");
                   }}
-                  searchPlaceholder={t("SignupForum.TypeSomething")}
+                  searchPlaceholder={t("Signup.TypeSomething")}
                   showSearch={true}
                   multiSelect={false}
                 />

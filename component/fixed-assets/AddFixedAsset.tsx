@@ -571,7 +571,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             setBrand("");
             clearError("selectedFarm");
           }}
-          searchPlaceholder={t("SignupForum.TypeSomething")}
+          searchPlaceholder={t("Signup.TypeSomething")}
         />
 
         {/* Category */}
@@ -599,7 +599,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             setPerennialCrop("");
             clearError("category");
           }}
-          searchPlaceholder={t("SignupForum.TypeSomething")}
+          searchPlaceholder={t("Signup.TypeSomething")}
         />
 
         {/* Machine asset */}
@@ -615,7 +615,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             setBrand("");
             clearError("asset");
           }}
-          searchPlaceholder={t("SignupForum.TypeSomething")}
+          searchPlaceholder={t("Signup.TypeSomething")}
         />
 
         {/* Asset type (Machine) */}
@@ -632,7 +632,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 setAssetType(items[0] ?? "");
                 clearError("assetType");
               }}
-              searchPlaceholder={t("SignupForum.TypeSomething")}
+              searchPlaceholder={t("Signup.TypeSomething")}
             />
           )}
 
@@ -650,7 +650,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 setBrand(items[0] ?? "");
                 clearError("brand");
               }}
-              searchPlaceholder={t("SignupForum.TypeSomething")}
+              searchPlaceholder={t("Signup.TypeSomething")}
             />
           )}
 
@@ -666,7 +666,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               setLandOwnership(items[0] ?? "");
               clearError("landownership");
             }}
-            searchPlaceholder={t("SignupForum.TypeSomething")}
+            searchPlaceholder={t("Signup.TypeSomething")}
           />
         )}
 
@@ -683,7 +683,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               setOthertool("");
               clearError("assetname");
             }}
-            searchPlaceholder={t("SignupForum.TypeSomething")}
+            searchPlaceholder={t("Signup.TypeSomething")}
           />
         )}
 
@@ -699,7 +699,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               setToolbrand(items[0] ?? "");
               clearError("toolbrand");
             }}
-            searchPlaceholder={t("SignupForum.TypeSomething")}
+            searchPlaceholder={t("Signup.TypeSomething")}
           />
         )}
 
@@ -715,7 +715,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               setType(items[0] ?? "");
               clearError("type");
             }}
-            searchPlaceholder={t("SignupForum.TypeSomething")}
+            searchPlaceholder={t("Signup.TypeSomething")}
           />
         )}
 
@@ -731,7 +731,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               setOwnership(items[0] ?? "");
               clearError("ownership");
             }}
-            searchPlaceholder={t("SignupForum.TypeSomething")}
+            searchPlaceholder={t("Signup.TypeSomething")}
           />
         )}
 
@@ -747,7 +747,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               setGeneralCondition(items[0] ?? "");
               clearError("generalCondition");
             }}
-            searchPlaceholder={t("SignupForum.TypeSomething")}
+            searchPlaceholder={t("Signup.TypeSomething")}
             showSearch={false}
           />
         )}

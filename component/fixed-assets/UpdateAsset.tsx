@@ -873,7 +873,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           clearFieldError(tool.id, "ownership");
                         }
                       }}
-                      searchPlaceholder={t("SignupForum.TypeSomething")}
+                      searchPlaceholder={t("Signup.TypeSomething")}
                     />
 
                     {/* Own */}
@@ -1321,7 +1321,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           clearFieldError(tool.id, "type");
                         }
                       }}
-                      searchPlaceholder={t("SignupForum.TypeSomething")}
+                      searchPlaceholder={t("Signup.TypeSomething")}
                     />
                     {/* Building Name */}
                     <Text className="pb-2 font-bold">
@@ -1414,7 +1414,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           clearFieldError(tool.id, "ownership");
                         }
                       }}
-                      searchPlaceholder={t("SignupForum.TypeSomething")}
+                      searchPlaceholder={t("Signup.TypeSomething")}
                     />
 
                     {/* General Condition */}
@@ -1450,7 +1450,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           clearFieldError(tool.id, "generalCondition");
                         }
                       }}
-                      searchPlaceholder={t("SignupForum.TypeSomething")}
+                      searchPlaceholder={t("Signup.TypeSomething")}
                       showSearch={false}
                     />
 
@@ -1851,7 +1851,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           clearFieldError(tool.id, "asset");
                         }
                       }}
-                      searchPlaceholder={t("SignupForum.TypeSomething")}
+                      searchPlaceholder={t("Signup.TypeSomething")}
                     />
 
                     {selectedAsset && assetTypesForAssets[selectedAsset] && (
@@ -1884,7 +1884,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               clearFieldError(tool.id, "assetType");
                             }
                           }}
-                          searchPlaceholder={t("SignupForum.TypeSomething")}
+                          searchPlaceholder={t("Signup.TypeSomething")}
                         />
                       </>
                     )}
@@ -2300,7 +2300,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           clearFieldError(tool.id, "asset");
                         }
                       }}
-                      searchPlaceholder={t("SignupForum.TypeSomething")}
+                      searchPlaceholder={t("Signup.TypeSomething")}
                     />
 
                     {updatedDetails[tool.id]?.asset === "Other" && (

@@ -1059,7 +1059,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           setSelectedFarm(items[0] ?? "");
           clearError("selectedFarm");
         }}
-        searchPlaceholder={t("SignupForum.TypeSomething")}
+        searchPlaceholder={t("Signup.TypeSomething")}
       />
 
       <GlobalSearchModal
@@ -1073,7 +1073,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           handleCategoryChange(val);
           clearError("selectedCategory");
         }}
-        searchPlaceholder={t("SignupForum.TypeSomething")}
+        searchPlaceholder={t("Signup.TypeSomething")}
       />
 
       <GlobalSearchModal
@@ -1087,7 +1087,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           handleAssetChange(val);
           clearError("selectedAsset");
         }}
-        searchPlaceholder={t("SignupForum.TypeSomething")}
+        searchPlaceholder={t("Signup.TypeSomething")}
       />
 
       <GlobalSearchModal
@@ -1100,7 +1100,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           setBrand(items[0] ?? "");
           clearError("brand");
         }}
-        searchPlaceholder={t("SignupForum.TypeSomething")}
+        searchPlaceholder={t("Signup.TypeSomething")}
       />
 
       <GlobalSearchModal

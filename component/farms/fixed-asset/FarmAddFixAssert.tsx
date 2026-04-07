@@ -1761,7 +1761,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             setPerennialCrop("");
             setErrors({});
           }}
-          searchPlaceholder={t("SignupForum.TypeSomething")}
+          searchPlaceholder={t("Signup.TypeSomething")}
         />
 
         {/* Machine Asset */}
@@ -1777,7 +1777,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             setBrand("");
             clearError("asset");
           }}
-          searchPlaceholder={t("SignupForum.TypeSomething")}
+          searchPlaceholder={t("Signup.TypeSomething")}
         />
 
         {/* Asset Type (Machine) */}
@@ -1795,7 +1795,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             setAssetType(items[0] || "");
             clearError("assetType");
           }}
-          searchPlaceholder={t("SignupForum.TypeSomething")}
+          searchPlaceholder={t("Signup.TypeSomething")}
         />
 
         {/* Brand (Machine) */}
@@ -1813,7 +1813,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             setBrand(items[0] || "");
             clearError("brand");
           }}
-          searchPlaceholder={t("SignupForum.TypeSomething")}
+          searchPlaceholder={t("Signup.TypeSomething")}
         />
 
         {/* Land Ownership */}
@@ -1842,7 +1842,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             setOthertool("");
             clearError("assetname");
           }}
-          searchPlaceholder={t("SignupForum.TypeSomething")}
+          searchPlaceholder={t("Signup.TypeSomething")}
         />
 
         {/* Tool Brand */}
@@ -1856,7 +1856,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             setToolbrand(items[0] || "");
             clearError("toolbrand");
           }}
-          searchPlaceholder={t("SignupForum.TypeSomething")}
+          searchPlaceholder={t("Signup.TypeSomething")}
         />
 
         {/* Building Type */}

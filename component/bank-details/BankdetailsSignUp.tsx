@@ -233,7 +233,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       setAccountHolderName(trimmedText);
       setHoldernameNameError("");
     } else {
-      setHoldernameNameError(t("SignupForum.Startwithletter"));
+      setHoldernameNameError(t("Signup.Startwithletter"));
     }
   };
 
@@ -558,7 +558,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         onSelect={(items) => {
           if (items.length > 0) setBankName(items[0]);
         }}
-        searchPlaceholder={t("SignupForum.TypeSomething")}
+        searchPlaceholder={t("Signup.TypeSomething")}
         multiSelect={false}
       />
 
@@ -571,7 +571,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         onSelect={(items) => {
           if (items.length > 0) setBranchName(items[0]);
         }}
-        searchPlaceholder={t("SignupForum.TypeSomething")}
+        searchPlaceholder={t("Signup.TypeSomething")}
         multiSelect={false}
       />
     </KeyboardAvoidingView>

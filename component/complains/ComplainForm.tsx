@@ -319,7 +319,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
             onSelect={(items) => {
               if (items.length > 0) setSelectedCategory(items[0]);
             }}
-            searchPlaceholder={t("SignupForum.TypeSomething")}
+            searchPlaceholder={t("Signup.TypeSomething")}
             multiSelect={false}
           />
         </>

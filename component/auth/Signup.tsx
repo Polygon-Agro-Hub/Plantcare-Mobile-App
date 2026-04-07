@@ -30,14 +30,15 @@ import countryData from "../../assets/jsons/countryflag.json";
 import districtData from "../../assets/jsons/district.json";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
+import { LinearGradient } from "expo-linear-gradient";
 
-type SignupForumNavigationProp = StackNavigationProp<
+type SignupNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "SignupForum"
+  "Signup"
 >;
 
-interface SignupForumProps {
-  navigation: SignupForumNavigationProp;
+interface SignupProps {
+  navigation: SignupNavigationProp;
 }
 
 const Bottom = require("../../assets/images/auth/sign-up-bg-vector-bottom.webp");
@@ -51,7 +52,7 @@ const countryItems = countryData.map((country) => ({
   dialCode: country.dial_code,
 }));
 
-const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
+const Signup: React.FC<SignupProps> = ({ navigation }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
@@ -82,7 +83,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   }));
 
   useEffect(() => {
-    const selectedLanguage = t("SignupForum.LNG");
+    const selectedLanguage = t("Signup.LNG");
     setLanguage(selectedLanguage);
   }, [t]);
 
@@ -130,7 +131,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
 
   const validateMobileNumber = (number: string) => {
     const regex = /^[1-9][0-9]{8}$/;
-    setError(regex.test(number) ? "" : t("SignupForum.Enteravalidmobile"));
+    setError(regex.test(number) ? "" : t("Signup.Enteravalidmobile"));
   };
 
   const handleMobileNumberChange = (text: string) => {
@@ -146,16 +147,16 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     setErr: React.Dispatch<React.SetStateAction<string>>,
   ) => {
     if (name.startsWith(" ")) {
-      setErr(t("SignupForum.CannotStartWithSpace"));
+      setErr(t("Signup.CannotStartWithSpace"));
       return false;
     }
     if (name.includes(" ")) {
-      setErr(t("SignupForum.NoSpacesAllowed"));
+      setErr(t("Signup.NoSpacesAllowed"));
       return false;
     }
     const regex = /^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]+$/u;
     if (name && !regex.test(name)) {
-      setErr(t("SignupForum.OnlyLettersAllowed"));
+      setErr(t("Signup.OnlyLettersAllowed"));
       return false;
     }
     if (name) {
@@ -173,10 +174,10 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
 
     if (blocked) {
       const msg = text.startsWith(" ")
-        ? t("SignupForum.CannotStartWithSpace")
+        ? t("Signup.CannotStartWithSpace")
         : text.includes(" ")
-          ? t("SignupForum.NoSpacesAllowed")
-          : t("SignupForum.OnlyLettersAllowed");
+          ? t("Signup.NoSpacesAllowed")
+          : t("Signup.OnlyLettersAllowed");
       setFirstNameError(msg);
       setSpaceAttempted(true);
       setTimeout(() => {
@@ -201,10 +202,10 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
 
     if (blocked) {
       const msg = text.startsWith(" ")
-        ? t("SignupForum.CannotStartWithSpace")
+        ? t("Signup.CannotStartWithSpace")
         : text.includes(" ")
-          ? t("SignupForum.NoSpacesAllowed")
-          : t("SignupForum.OnlyLettersAllowed");
+          ? t("Signup.NoSpacesAllowed")
+          : t("Signup.OnlyLettersAllowed");
       setLastNameError(msg);
       setLastNameSpaceAttempted(true);
       setTimeout(() => {
@@ -224,7 +225,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   const validateNic = (value: string) => {
     const nicRegex = /^(\d{12}|\d{9}[VvXx])$/;
     setEre(
-      value && !nicRegex.test(value) ? t("SignupForum.Enteravalidenic") : "",
+      value && !nicRegex.test(value) ? t("Signup.Enteravalidenic") : "",
     );
   };
 
@@ -280,7 +281,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       !selectedCountryCode ||
       !district
     ) {
-      Alert.alert(t("Main.Sorry"), t("SignupForum.fillAllFields"), [
+      Alert.alert(t("Main.Sorry"), t("Signup.fillAllFields"), [
         { text: t("PublicForum.OK") },
       ]);
       return;
@@ -304,10 +305,10 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
 
       const msg = checkResponse.data.message;
       if (msg === "This Phone Number already exists.") {
-        Alert.alert(t("Main.Sorry"), t("SignupForum.phoneExists"), [
+        Alert.alert(t("Main.Sorry"), t("Signup.phoneExists"), [
           {
             text: t("PublicForum.OK"),
-            onPress: () => navigation.navigate("SignupForum"),
+            onPress: () => navigation.navigate("Signup"),
           },
         ]);
         setIsLoading(false);
@@ -315,10 +316,10 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
         return;
       }
       if (msg === "This NIC already exists.") {
-        Alert.alert(t("Main.Sorry"), t("SignupForum.nicExists"), [
+        Alert.alert(t("Main.Sorry"), t("Signup.nicExists"), [
           {
             text: t("PublicForum.OK"),
-            onPress: () => navigation.navigate("SignupForum"),
+            onPress: () => navigation.navigate("Signup"),
           },
         ]);
         setIsLoading(false);
@@ -326,10 +327,10 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
         return;
       }
       if (msg === "This Phone Number and NIC already exist.") {
-        Alert.alert(t("Main.Sorry"), t("SignupForum.phoneNicExist"), [
+        Alert.alert(t("Main.Sorry"), t("Signup.phoneNicExist"), [
           {
             text: t("PublicForum.OK"),
-            onPress: () => navigation.navigate("SignupForum"),
+            onPress: () => navigation.navigate("Signup"),
           },
         ]);
         setIsLoading(false);
@@ -383,7 +384,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       Alert.alert(t("Main.Sorry"), t("Main.somethingWentWrong"), [
         {
           text: t("PublicForum.OK"),
-          onPress: () => navigation.navigate("SignupForum"),
+          onPress: () => navigation.navigate("Signup"),
         },
       ]);
       setIsButtonDisabled(false);
@@ -426,13 +427,13 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
 
           <View className="flex-1 items-center">
             <Text className="font-bold" style={{ fontSize: wp(6) }}>
-              {t("SignupForum.Create Account")}
+              {t("Signup.Create Account")}
             </Text>
 
             <View className="flex-1 w-full px-4">
               <View className="pt-6">
                 <Text className="text-[#070707] text-sm mb-2">
-                  {t("SignupForum.Mobile Number")}
+                  {t("Signup.Mobile Number")}
                 </Text>
                 <View className="mt-2 flex-row items-center gap-2">
                   <TouchableOpacity
@@ -474,10 +475,10 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
 
               <View>
                 <Text className="text-[#070707] text-sm mt-2">
-                  {t("SignupForum.FirstName")}
+                  {t("Signup.FirstName")}
                 </Text>
                 <TextInput
-                  placeholder={t("SignupForum.Enter First Name Here")}
+                  placeholder={t("Signup.Enter First Name Here")}
                   placeholderTextColor="#585858"
                   underlineColorAndroid="transparent"
                   cursorColor="#141415ff"
@@ -502,10 +503,10 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                 ) : null}
 
                 <Text className="text-[#070707] text-sm mt-2">
-                  {t("SignupForum.LastName")}
+                  {t("Signup.LastName")}
                 </Text>
                 <TextInput
-                  placeholder={t("SignupForum.Enter Last Name Here")}
+                  placeholder={t("Signup.Enter Last Name Here")}
                   value={lastName}
                   placeholderTextColor="#585858"
                   underlineColorAndroid="transparent"
@@ -530,11 +531,11 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                 ) : null}
 
                 <Text className="text-[#070707] text-sm mt-2">
-                  {t("SignupForum.NICNumber")}
+                  {t("Signup.NICNumber")}
                 </Text>
                 <TextInput
                   ref={nicInputRef}
-                  placeholder={t("SignupForum.Enter NIC Here")}
+                  placeholder={t("Signup.Enter NIC Here")}
                   value={nic}
                   underlineColorAndroid="transparent"
                   cursorColor="#141415ff"
@@ -553,7 +554,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                 ) : null}
 
                 <Text className="text-[#070707] text-sm mt-2">
-                  {t("SignupForum.District")}
+                  {t("Signup.District")}
                 </Text>
                 <TouchableOpacity
                   onPress={() => {
@@ -569,7 +570,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                     {district
                       ? (districtItems.find((d) => d.value === district)
                           ?.label ?? district)
-                      : t("SignupForum.Select Your District")}
+                      : t("Signup.Select Your District")}
                   </Text>
                   <AntDesign name="caret-down" size={14} color="#555" />
                 </TouchableOpacity>
@@ -689,40 +690,50 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                 </Text>
               </View>
 
-              <View className="flex items-center justify-center mt-6">
+              <View
+                className="flex m-auto w-2/3 rounded-3xl"
+                style={{
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.2,
+                  shadowRadius: 6,
+                  elevation: 6,
+                  backgroundColor: "transparent",
+                }}
+              >
                 <TouchableOpacity
-                  className={`py-3 rounded-3xl w-2/3 mb-2 ${
-                    isButtonDisabled || !isChecked
-                      ? "bg-gray-400"
-                      : "bg-[#353535]"
-                  }`}
                   onPress={handleRegister}
                   disabled={isButtonDisabled || !isChecked}
-                  style={{
-                    shadowColor: "#000000",
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 4,
-                    elevation: 4,
-                  }}
+                  activeOpacity={0.8}
                 >
-                  {isLoading ? (
-                    <ActivityIndicator size="small" color="#fff" />
-                  ) : (
-                    <Text className="text-white text-center font-semibold text-base">
-                      {t("SignupForum.SignUp")}
-                    </Text>
-                  )}
+                  <LinearGradient
+                    colors={
+                      isButtonDisabled
+                        ? ["#353535", "#353535"]
+                        : ["#0FC7B2", "#10A37D"]
+                    }
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    className="w-full rounded-3xl h-[50px] justify-center items-center"
+                  >
+                    {isLoading ? (
+                      <ActivityIndicator size="small" color="#fff" />
+                    ) : (
+                      <Text className="text-white text-center font-semibold text-lg">
+                        {t("Signup.SignUp")}
+                      </Text>
+                    )}
+                  </LinearGradient>
                 </TouchableOpacity>
               </View>
 
               <View className="flex-row items-center justify-center mt-4">
                 <Text className="font-bold text-black">
-                  {t("SignupForum.AlreadyAccount")}{" "}
+                  {t("Signup.AlreadyAccount")}{" "}
                 </Text>
                 <TouchableOpacity onPress={() => navigation.navigate("Signin")}>
                   <Text className="text-[#fff] font-semibold underline">
-                    {t("SignupForum.SignIn")}
+                    {t("Signup.SignIn")}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -756,11 +767,11 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
       <GlobalSearchModal
         visible={districtModalVisible}
         onClose={() => setDistrictModalVisible(false)}
-        title={t("SignupForum.Select Your District")}
+        title={t("Signup.Select Your District")}
         data={districtItems}
         selectedItems={district ? [district] : []}
         onSelect={handleDistrictSelect}
-        searchPlaceholder={t("SignupForum.TypeSomething")}
+        searchPlaceholder={t("Signup.TypeSomething")}
         searchKeys={["label", "districtName"]}
         multiSelect={false}
       />
@@ -768,4 +779,4 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   );
 };
 
-export default SignupForum;
+export default Signup;
