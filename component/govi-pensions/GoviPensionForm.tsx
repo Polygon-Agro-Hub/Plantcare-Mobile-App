@@ -330,7 +330,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     const nicRegex = /^(\d{12}|\d{9}[VvXx])$/;
     setNicError(
       final && !nicRegex.test(final)
-        ? t("SignupForum.Enteravalidenic") || "Enter a valid NIC number"
+        ? t("Signup.Enteravalidenic") || "Enter a valid NIC number"
         : "",
     );
 
@@ -346,7 +346,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     const nicRegex = /^(\d{12}|\d{9}[VvXx])$/;
     setSuccessorNicError(
       final && !nicRegex.test(final)
-        ? t("SignupForum.Enteravalidenic") || "Enter a valid NIC number"
+        ? t("Signup.Enteravalidenic") || "Enter a valid NIC number"
         : "",
     );
 

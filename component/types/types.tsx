@@ -1,15 +1,7 @@
 export type RootStackParamList = {
   Lanuage: undefined;
-  SigninSelection: undefined;
-  SigninSinhala: undefined;
-  SigninSeTamil: undefined;
-  SignupForumTamil: undefined;
-  SigninTamil: undefined;
-  SuccessScreen: undefined;
-  SigninSinhalasc: undefined;
   Signin: undefined;
-  SigninOldUser: undefined;
-  SignupForum: undefined;
+  Signup: undefined;
   Selectedcrop: undefined;
   SignumpFS: undefined;
   SignupFT: undefined;

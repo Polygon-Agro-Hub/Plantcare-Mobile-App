@@ -20,7 +20,7 @@
     "startwithletter": "Username must start with a letter and contain no spaces",
     "enteravalidenic": "Please enter a valid National Identity Card (NIC) number"
   },
-  "SignupForum": {
+  "Signup": {
     "LNG": "en",
     "FillAccountDetails": "Complete Your Account Details",
     "FirstName": "First Name",

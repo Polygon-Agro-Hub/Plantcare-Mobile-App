@@ -20,7 +20,7 @@ import Splash from "../component/auth/Splash";
 import Lanuage from "../component/common/Lanuage";
 import Signin from "@/component/auth/Signin";
 import News from "../component/news/News";
-import SignupForum from "@/component/auth/SignupForum";
+import Signup from "@/component/auth/Signup";
 import Verify from "@/component/otp-screens/Verify";
 import Otpverification from "@/component/otp-screens/Otpverification";
 import Dashboard from "@/component/dashboard/Dashbord";
@@ -345,7 +345,7 @@ function AppContent() {
             <Stack.Screen name="Splash" component={Splash} />
             <Stack.Screen name="Lanuage" component={Lanuage} />
             <Stack.Screen name="Signin" component={Signin} />
-            <Stack.Screen name="SignupForum" component={SignupForum} />
+            <Stack.Screen name="Signup" component={Signup} />
             <Stack.Screen name="Verify" component={Verify} />
             <Stack.Screen name="OTPE" component={Otpverification} />
             <Stack.Screen

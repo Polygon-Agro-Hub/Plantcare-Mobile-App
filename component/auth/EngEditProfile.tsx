@@ -550,7 +550,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
         data={districtItems}
         selectedItems={district ? [district] : []}
         onSelect={handleDistrictSelect}
-        searchPlaceholder={t("SignupForum.TypeSomething")}
+        searchPlaceholder={t("Signup.TypeSomething")}
         searchKeys={["label", "districtName"]}
         multiSelect={false}
       />

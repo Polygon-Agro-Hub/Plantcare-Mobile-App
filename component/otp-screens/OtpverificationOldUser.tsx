@@ -412,22 +412,12 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
                     }
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
-                    className="w-full rounded-full h-14 justify-center items-center"
+                    className="w-full rounded-3xl h-[50px] justify-center items-center"
                   >
                     {isLoading ? (
                       <ActivityIndicator size="small" color="#fff" />
                     ) : (
-                      <Text
-                        className="text-white font-semibold text-center"
-                        style={{
-                          fontSize:
-                            i18n.language === "si"
-                              ? 13
-                              : i18n.language === "ta"
-                                ? 12
-                                : 20,
-                        }}
-                      >
+                      <Text className="text-white font-semibold text-center text-lg">
                         {t("OtpVerification.Verify")}
                       </Text>
                     )}

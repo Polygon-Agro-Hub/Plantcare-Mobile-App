@@ -48,7 +48,7 @@ const countryItems = countryData.map((country) => ({
   dialCode: country.dial_code,
 }));
 
-const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
+const Signin: React.FC<SigninProps> = ({ navigation }) => {
   const [phonenumber, setPhonenumber] = useState("");
   const [selectedCountryCode, setSelectedCountryCode] = useState("+94");
   const [selectedCountryFlag, setSelectedCountryFlag] = useState("🇱🇰");
@@ -65,7 +65,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
     const regex = /^[1-9][0-9]{8}$/;
 
     if (!regex.test(localNumber)) {
-      setError(t("SignupForum.Enteravalidmobile"));
+      setError(t("Signup.Enteravalidmobile"));
       setIsButtonDisabled(true);
       setIsValid(false);
     } else {
@@ -81,7 +81,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.navigate("SignupForum");
+        navigation.navigate("Signup");
         return true;
       };
       const subscription = BackHandler.addEventListener(
@@ -180,7 +180,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
             setIsButtonDisabled(false);
             setIsLoading(false);
           } catch (error) {
-            Alert.alert(t("Main.error"), t("SignupForum.otpSendFailed"), [
+            Alert.alert(t("Main.error"), t("Signup.otpSendFailed"), [
               {
                 text: t("PublicForum.OK"),
                 onPress: () => navigation.navigate("Signin"),
@@ -321,7 +321,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
                   >
                     <TextInput
                       className="flex-1 px-4"
-                      placeholder={t("SignupForum.PhoneNumber")}
+                      placeholder={t("Signup.PhoneNumber")}
                       value={phonenumber}
                       onChangeText={handlePhoneNumberChange}
                       keyboardType="phone-pad"
@@ -361,7 +361,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
 
             <View className="mt-8">
               <View
-                className="flex m-auto w-2/3 rounded-full"
+                className="flex m-auto w-2/3 rounded-3xl"
                 style={{
                   shadowColor: "#000",
                   shadowOffset: { width: 0, height: 4 },
@@ -384,21 +384,12 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
                     }
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
-                    className="w-full rounded-full h-14 justify-center items-center"
+                    className="w-full rounded-3xl h-[50px] justify-center items-center"
                   >
                     {isLoading ? (
                       <ActivityIndicator size="small" color="#fff" />
                     ) : (
-                      <Text
-                        className="text-white font-semibold text-center"
-                        style={
-                          i18n.language === "si"
-                            ? { fontSize: 13 }
-                            : i18n.language === "ta"
-                              ? { fontSize: 12 }
-                              : { fontSize: 20 }
-                        }
-                      >
+                      <Text className="text-white font-semibold text-center text-lg">
                         {t("signinForm.signin")}
                       </Text>
                     )}
@@ -416,7 +407,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
                   onPress={async () => {
                     try {
                       await AsyncStorage.removeItem("@user_language");
-                      navigation.navigate("SignupForum");
+                      navigation.navigate("Signup");
                     } catch (error) {
                       console.error("Error clearing language:", error);
                     }
@@ -448,4 +439,4 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
   );
 };
 
-export default SigninOldUser;
+export default Signin;
