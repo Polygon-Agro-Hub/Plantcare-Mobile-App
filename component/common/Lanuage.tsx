@@ -70,58 +70,66 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
   );
 
   return (
-    <View className="flex-1 bg-white items-center">
-      <Image
-        className="mt-10 w-full"
-        source={lg}
-        resizeMode="contain"
-        style={{ height: dynamicStyles.imageHeight }}
-      />
-      <Text className="text-3xl pt-[10%] font-semibold">Language</Text>
-      <Text className="text-lg pt-[4%] font-extralight">
-        மொழியைத் தேர்ந்தெடுக்கவும்
-      </Text>
-      <Text className="text-lg pt-[4%] mb-0 font-extralight">
-        කරුණාකර භාෂාව තෝරන්න
-      </Text>
+    <View className="flex-1 bg-white justify-center">
+      <View className="items-center px-4">
+        <Image
+          source={lg}
+          resizeMode="contain"
+          style={{ height: dynamicStyles.imageHeight, width: wp(80) }}
+        />
 
-      <View
-        className="flex-1 justify-center w-64 px-2 mt-0"
-        style={{ paddingTop: dynamicStyles.paddingTopForLngBtns }}
-      >
-        <TouchableOpacity
-          className="bg-gray-900 p-[7%] rounded-3xl mb-6"
-          onPress={() => handleLanguageSelect("en")}
+        <Text className="text-3xl pt-[10%] font-semibold text-center">
+          Language
+        </Text>
+
+        <Text className="text-lg pt-[4%] font-extralight text-center">
+          மொழியைத் தேர்ந்தெடுக்கவும்
+        </Text>
+
+        <Text className="text-lg pt-[4%] mb-0 font-extralight text-center">
+          කරුණාකර භාෂාව තෝරන්න
+        </Text>
+
+        <View
+          className="w-2/3 px-2 mt-8"
+          style={{ paddingTop: dynamicStyles.paddingTopForLngBtns }}
         >
-          <Text
-            className="text-white text-center"
-            style={{ fontSize: dynamicStyles.fontSize }}
+          <TouchableOpacity
+            className="bg-[#353535] py-3 rounded-3xl mb-6"
+            onPress={() => handleLanguageSelect("en")}
           >
-            ENGLISH
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          className="bg-gray-900 p-[7%] rounded-3xl mb-6"
-          onPress={() => handleLanguageSelect("si")}
-        >
-          <Text
-            className="text-white text-center"
-            style={{ fontSize: dynamicStyles.fontSize }}
+            <Text
+              className="text-white text-center"
+              style={{ fontSize: dynamicStyles.fontSize }}
+            >
+              ENGLISH
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="bg-[#353535] py-3 rounded-3xl mb-6"
+            onPress={() => handleLanguageSelect("si")}
           >
-            සිංහල
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          className="bg-gray-900 p-[7%] rounded-3xl mb-12"
-          onPress={() => handleLanguageSelect("ta")}
-        >
-          <Text
-            className="text-white text-center"
-            style={{ fontSize: dynamicStyles.fontSize }}
+            <Text
+              className="text-white text-center"
+              style={{ fontSize: dynamicStyles.fontSize }}
+            >
+              සිංහල
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="bg-[#353535] py-3 rounded-3xl mb-12"
+            onPress={() => handleLanguageSelect("ta")}
           >
-            தமிழ்
-          </Text>
-        </TouchableOpacity>
+            <Text
+              className="text-white text-center"
+              style={{ fontSize: dynamicStyles.fontSize }}
+            >
+              தமிழ்
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );

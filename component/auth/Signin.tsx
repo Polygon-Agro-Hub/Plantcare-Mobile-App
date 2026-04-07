@@ -11,7 +11,6 @@ import {
   ActivityIndicator,
   BackHandler,
   Dimensions,
-  StatusBar,
   TextInput,
 } from "react-native";
 import React, { useState } from "react";
@@ -30,7 +29,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import countryData from "../../assets/jsons/countryflag.json";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
-import { Entypo, MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import CustomHeader from "../common/CustomHeader";
 
 type SigninNavigationProp = StackNavigationProp<RootStackParamList, "Signin">;
@@ -248,28 +247,29 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       enabled
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: "white" }}
     >
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        keyboardShouldPersistTaps="handled"
-      >
-        <StatusBar barStyle="dark-content" animated backgroundColor="#fff" />
-        <View className="flex-1 bg-white ">
-          <CustomHeader
-            title=""
-            navigation={navigation}
-            onBackPress={() => navigation.navigate("Lanuage")}
-          />
-          <Image
-            source={sign}
-            resizeMode="contain"
-            style={{ height: dynamicStyles.imageHeight, width: "100%" }}
-          />
+      <CustomHeader
+        title=""
+        navigation={navigation}
+        onBackPress={() => navigation.navigate("Lanuage")}
+      />
 
-          <View className="items-center">
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <View className="flex-1 bg-white justify-center">
+          <View className="items-center justify-center px-4">
+            <Image
+              source={sign}
+              resizeMode="contain"
+              style={{ height: dynamicStyles.imageHeight, width: "100%" }}
+            />
+
             <Text
-              className="pt-4 font-semibold"
+              className="pt-10 font-semibold text-center"
               style={
                 i18n.language === "si" || i18n.language === "ta"
                   ? { fontSize: 18 }
@@ -278,8 +278,9 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
             >
               {t("signinForm.welcome")}
             </Text>
+
             <Text
-              className="pt-4 text-center w-[95%]"
+              className="pt-4 text-center w-full px-8"
               style={
                 i18n.language === "si"
                   ? { fontSize: 12 }
@@ -292,14 +293,14 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
             </Text>
           </View>
 
-          <View className="flex-1 bg-white px-4 pt-8">
+          <View className="px-4 pt-8 pb-8">
             <View className="flex">
               <View className="flex w-full">
                 <View className="flex-row items-center gap-2 w-full">
                   {/* Country Picker */}
                   <TouchableOpacity
                     onPress={() => setCountryModalVisible(true)}
-                    className="border border-gray-300 rounded-full flex-row items-center justify-center px-2 gap-1 h-14"
+                    className="border border-[#D5D5D5] rounded-3xl flex-row items-center justify-center px-3 gap-1 h-[50px]"
                     style={{ flex: 3 }}
                   >
                     <Text style={{ fontSize: 20 }}>{selectedCountryFlag}</Text>
@@ -315,7 +316,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
 
                   {/* Phone Input */}
                   <View
-                    className="flex-row items-center border border-gray-300 rounded-full bg-white h-14"
+                    className="flex-row items-center border border-[#D5D5D5] rounded-3xl bg-white h-[50px]"
                     style={{ flex: 7 }}
                   >
                     <TextInput
@@ -326,11 +327,6 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
                       keyboardType="phone-pad"
                       maxLength={10}
                       autoFocus
-                      style={{
-                        fontSize: getFontSizeByLanguage(),
-                        borderWidth: 0,
-                        backgroundColor: "transparent",
-                      }}
                       underlineColorAndroid="transparent"
                       cursorColor="#141415ff"
                     />
@@ -363,9 +359,9 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
               )}
             </View>
 
-            <View className="mt-8 mx-8">
+            <View className="mt-8">
               <View
-                className="w-full rounded-full"
+                className="flex m-auto w-2/3 rounded-full"
                 style={{
                   shadowColor: "#000",
                   shadowOffset: { width: 0, height: 4 },
@@ -383,7 +379,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
                   <LinearGradient
                     colors={
                       isButtonDisabled
-                        ? ["#9CA3AF", "#9CA3AF"]
+                        ? ["#353535", "#353535"]
                         : ["#0FC7B2", "#10A37D"]
                     }
                     start={{ x: 0, y: 0 }}
@@ -411,16 +407,8 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
               </View>
 
               {/* Signup Link */}
-              <View className="mt-3 flex-row justify-center items-center">
-                <Text
-                  style={
-                    i18n.language === "si"
-                      ? { fontSize: 13 }
-                      : i18n.language === "ta"
-                        ? { fontSize: 10 }
-                        : { fontSize: 14 }
-                  }
-                >
+              <View className="mt-6 flex-row justify-center items-center ">
+                <Text className="font-bold text-[#3F3F3F] mr-2">
                   {t("signinForm.donthaveanaccount")}
                 </Text>
 
@@ -434,16 +422,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
                     }
                   }}
                 >
-                  <Text
-                    className="text-blue-600 underline pl-1"
-                    style={
-                      i18n.language === "si"
-                        ? { fontSize: 13 }
-                        : i18n.language === "ta"
-                          ? { fontSize: 10 }
-                          : { fontSize: 14 }
-                    }
-                  >
+                  <Text className="text-[#0085FF] font-semibold underline">
                     {t("signinForm.signuphere")}
                   </Text>
                 </TouchableOpacity>
@@ -453,7 +432,7 @@ const SigninOldUser: React.FC<SigninProps> = ({ navigation }) => {
         </View>
       </ScrollView>
 
-      {/* ── Country Code Modal ── */}
+      {/* Country Code Modal */}
       <GlobalSearchModal
         visible={countryModalVisible}
         onClose={() => setCountryModalVisible(false)}

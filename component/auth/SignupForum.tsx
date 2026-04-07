@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
   BackHandler,
 } from "react-native";
-import { StatusBar, Platform } from "react-native";
+import { Platform } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import axios from "axios";
@@ -66,15 +66,11 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
   const [spaceAttempted, setSpaceAttempted] = useState(false);
   const [lastNameSpaceAttempted, setLastNameSpaceAttempted] = useState(false);
   const [language, setLanguage] = useState("en");
-
   const [selectedCountryCode, setSelectedCountryCode] = useState("+94");
   const [selectedCountryFlag, setSelectedCountryFlag] = useState("🇱🇰");
   const [countryModalVisible, setCountryModalVisible] = useState(false);
-
   const [district, setDistrict] = useState("");
-
   const [districtModalVisible, setDistrictModalVisible] = useState(false);
-
   const nicInputRef = useRef<TextInput>(null);
   const { t, i18n } = useTranslation();
 
@@ -89,9 +85,6 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     const selectedLanguage = t("SignupForum.LNG");
     setLanguage(selectedLanguage);
   }, [t]);
-
-  const getFontSizeByLanguage = () =>
-    language === "si" || language === "ta" ? wp(3) : wp(4);
 
   const adjustFontSize = (size: number) =>
     language !== "en" ? size * 0.9 : size;
@@ -398,38 +391,19 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
     }
   };
 
-  const inputStyle = {
-    backgroundColor: "#F4F4F4",
-    borderRadius: 25,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    borderWidth: 0,
-    borderColor: "transparent",
-    elevation: 0,
-    shadowOpacity: 0,
-    marginBottom: 8,
-    marginTop: 10,
-  };
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       style={{ flex: 1, backgroundColor: "white" }}
       enabled
     >
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="transparent"
-        translucent={false}
-      />
-
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
       >
         <Image
           source={Top}
-          className="w-[100%] -mt-[46%] absolute"
+          className="w-[100%] -mt-[40%] absolute"
           resizeMode="contain"
         />
 
@@ -446,16 +420,17 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                   console.error("Error clearing language:", e);
                 }
               }}
+              transparent
             />
           </View>
 
-          <View className="flex-1 items-center pt-[4%]">
+          <View className="flex-1 items-center">
             <Text className="font-bold" style={{ fontSize: wp(6) }}>
               {t("SignupForum.Create Account")}
             </Text>
 
             <View className="flex-1 w-full px-4">
-              <View className="pt-5">
+              <View className="pt-6">
                 <Text className="text-[#070707] text-sm mb-2">
                   {t("SignupForum.Mobile Number")}
                 </Text>
@@ -465,22 +440,10 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                       Keyboard.dismiss();
                       setCountryModalVisible(true);
                     }}
-                    style={{
-                      height: hp(5.5),
-                      width: wp(30),
-                      backgroundColor: "#F4F4F4",
-                      borderRadius: 25,
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: 4,
-                      paddingHorizontal: 10,
-                    }}
+                    className="bg-[#F4F4F4] rounded-3xl flex-row items-center justify-center px-3 h-[50px] min-w-[100px]"
                   >
-                    <Text style={{ fontSize: 18 }}>{selectedCountryFlag}</Text>
-                    <Text
-                      style={{ fontSize: 13, color: "#333", paddingInline: 8 }}
-                    >
+                    <Text className="text-[18px]">{selectedCountryFlag}</Text>
+                    <Text className="text-[#333] text-center text-[13px] ml-1">
                       {selectedCountryCode}
                     </Text>
                   </TouchableOpacity>
@@ -493,15 +456,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                     maxLength={10}
                     placeholderTextColor="#585858"
                     autoFocus
-                    style={{
-                      flex: 1,
-                      height: hp(5.5),
-                      fontSize: getFontSizeByLanguage(),
-                      backgroundColor: "#F4F4F4",
-                      borderRadius: 25,
-                      paddingHorizontal: 16,
-                      borderWidth: 0,
-                    }}
+                    className="flex-1 bg-[#F4F4F4] rounded-3xl py-3 px-4 h-[50px]"
                     underlineColorAndroid="transparent"
                     cursorColor="#141415ff"
                   />
@@ -523,7 +478,6 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                 </Text>
                 <TextInput
                   placeholder={t("SignupForum.Enter First Name Here")}
-                  style={inputStyle}
                   placeholderTextColor="#585858"
                   underlineColorAndroid="transparent"
                   cursorColor="#141415ff"
@@ -535,7 +489,9 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                   }
                   maxLength={20}
                   autoComplete="given-name"
+                  className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px]"
                 />
+
                 {firstNameError ? (
                   <Text
                     className="text-red-500 mb-4"
@@ -545,13 +501,12 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                   </Text>
                 ) : null}
 
-                <Text className="text-[#070707] text-sm">
+                <Text className="text-[#070707] text-sm mt-2">
                   {t("SignupForum.LastName")}
                 </Text>
                 <TextInput
                   placeholder={t("SignupForum.Enter Last Name Here")}
                   value={lastName}
-                  style={inputStyle}
                   placeholderTextColor="#585858"
                   underlineColorAndroid="transparent"
                   cursorColor="#141415ff"
@@ -562,7 +517,9 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                   }
                   maxLength={20}
                   autoComplete="family-name"
+                  className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px]"
                 />
+
                 {lastNameError ? (
                   <Text
                     className="text-red-500 mb-4"
@@ -572,19 +529,19 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                   </Text>
                 ) : null}
 
-                <Text className="text-[#070707] text-sm">
+                <Text className="text-[#070707] text-sm mt-2">
                   {t("SignupForum.NICNumber")}
                 </Text>
                 <TextInput
                   ref={nicInputRef}
                   placeholder={t("SignupForum.Enter NIC Here")}
                   value={nic}
-                  style={inputStyle}
                   underlineColorAndroid="transparent"
                   cursorColor="#141415ff"
                   maxLength={12}
                   onChangeText={handleNicChange}
                   placeholderTextColor="#585858"
+                  className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px]"
                 />
                 {ere ? (
                   <Text
@@ -595,7 +552,7 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                   </Text>
                 ) : null}
 
-                <Text className="text-[#070707] text-sm">
+                <Text className="text-[#070707] text-sm mt-2">
                   {t("SignupForum.District")}
                 </Text>
                 <TouchableOpacity
@@ -603,15 +560,12 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                     Keyboard.dismiss();
                     setDistrictModalVisible(true);
                   }}
-                  style={{
-                    ...inputStyle,
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    paddingVertical: 18,
-                  }}
+                  className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px] flex-row items-center justify-between"
                 >
-                  <Text style={{ fontSize: 14, color: "#585858", flex: 1 }}>
+                  <Text
+                    className="text-[14px] flex-1"
+                    style={{ color: district ? "#070707" : "#585858" }}
+                  >
                     {district
                       ? (districtItems.find((d) => d.value === district)
                           ?.label ?? district)
@@ -620,172 +574,158 @@ const SignupForum: React.FC<SignupForumProps> = ({ navigation }) => {
                   <AntDesign name="caret-down" size={14} color="#555" />
                 </TouchableOpacity>
               </View>
-            </View>
 
-            <View className="flex items-center justify-center mt-10">
-              {language === "en" || (language !== "si" && language !== "ta") ? (
-                <View className="flex-row justify-center flex-wrap">
-                  <Text className="text-sm text-black font-thin">See </Text>
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("TermsConditions")}
-                  >
-                    <Text className="text-sm text-black font-bold underline">
-                      Terms & Conditions
-                    </Text>
-                  </TouchableOpacity>
-                  <Text className="text-sm text-black font-thin"> and </Text>
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("PrivacyPolicy")}
-                  >
-                    <Text className="text-sm text-black font-bold underline">
-                      Privacy Policy
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              ) : language === "si" ? (
-                <View className="flex-row justify-center flex-wrap">
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("TermsConditions")}
-                  >
-                    <Text
-                      className="text-black font-bold underline"
-                      style={{ fontSize: adjustFontSize(12) }}
+              <View className="flex items-center justify-center mt-6">
+                {language === "en" ||
+                (language !== "si" && language !== "ta") ? (
+                  <View className="flex-row justify-center flex-wrap">
+                    <Text className="text-sm text-black font-thin">See </Text>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("TermsConditions")}
                     >
-                      නියමයන් සහ කොන්දේසි
-                    </Text>
-                  </TouchableOpacity>
-                  <Text
-                    className="text-black font-thin"
-                    style={{
-                      fontSize: adjustFontSize(12),
-                      marginHorizontal: 2,
-                    }}
-                  >
-                    {""} සහ
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("PrivacyPolicy")}
-                  >
-                    <Text
-                      className="text-black font-bold underline"
-                      style={{ fontSize: adjustFontSize(12) }}
+                      <Text className="text-sm text-black font-bold underline">
+                        Terms & Conditions
+                      </Text>
+                    </TouchableOpacity>
+                    <Text className="text-sm text-black font-thin"> and </Text>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("PrivacyPolicy")}
                     >
-                      {""} රහස්‍යතා ප්‍රතිපත්තිය
-                    </Text>
-                  </TouchableOpacity>
-                  <Text
-                    className="text-black font-thin"
-                    style={{ fontSize: adjustFontSize(12), marginLeft: 2 }}
-                  >
-                    {""} බලන්න
-                  </Text>
-                </View>
-              ) : (
-                <View className="flex-row justify-center flex-wrap">
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("TermsConditions")}
-                  >
-                    <Text
-                      className="text-black font-bold"
-                      style={{ fontSize: adjustFontSize(12) }}
+                      <Text className="text-sm text-black font-bold underline">
+                        Privacy Policy
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : language === "si" ? (
+                  <View className="flex-row justify-center flex-wrap">
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("TermsConditions")}
                     >
-                      விதிமுறைகள் மற்றும் நிபந்தனைகள்
-                    </Text>
-                  </TouchableOpacity>
-                  <Text
-                    className="text-black font-thin"
-                    style={{
-                      fontSize: adjustFontSize(12),
-                      marginHorizontal: 2,
-                    }}
-                  >
-                    {""} மற்றும்
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("PrivacyPolicy")}
-                  >
+                      <Text
+                        className="text-black font-bold underline"
+                        style={{ fontSize: adjustFontSize(12) }}
+                      >
+                        නියමයන් සහ කොන්දේසි
+                      </Text>
+                    </TouchableOpacity>
                     <Text
-                      className="text-black font-bold"
-                      style={{ fontSize: adjustFontSize(12) }}
+                      className="text-black font-thin"
+                      style={{
+                        fontSize: adjustFontSize(12),
+                        marginHorizontal: 2,
+                      }}
                     >
-                      {""} தனியுரிமைக் கொள்கை
+                      {""} සහ
                     </Text>
-                  </TouchableOpacity>
-                  <Text
-                    className="text-black font-thin"
-                    style={{ fontSize: adjustFontSize(12), marginLeft: 2 }}
-                  >
-                    {""} பார்க்க
-                  </Text>
-                </View>
-              )}
-            </View>
-
-            <View className="flex-row items-center justify-center p-4">
-              <Checkbox
-                value={isChecked}
-                onValueChange={setIsChecked}
-                color={isChecked ? "#00A896" : undefined}
-              />
-              <Text
-                className="text-[#282828] ml-2 font-semibold"
-                style={{ fontSize: adjustFontSize(12) }}
-              >
-                {t("Membership.AgreeToT&C")}
-              </Text>
-            </View>
-
-            <View style={{ width: wp(72), paddingBottom: wp(5) }}>
-              <TouchableOpacity
-                className={`p-3 mt-2 rounded-3xl mb-2 ${
-                  isButtonDisabled || !isChecked
-                    ? "bg-gray-400"
-                    : "bg-[#353535]"
-                }`}
-                onPress={handleRegister}
-                disabled={isButtonDisabled || !isChecked}
-                style={{
-                  shadowColor: "#000000",
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.25,
-                  shadowRadius: 4,
-                  elevation: 4,
-                }}
-              >
-                {isLoading ? (
-                  <ActivityIndicator size="small" color="#fff" />
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("PrivacyPolicy")}
+                    >
+                      <Text
+                        className="text-black font-bold underline"
+                        style={{ fontSize: adjustFontSize(12) }}
+                      >
+                        {""} රහස්‍යතා ප්‍රතිපත්තිය
+                      </Text>
+                    </TouchableOpacity>
+                    <Text
+                      className="text-black font-thin"
+                      style={{ fontSize: adjustFontSize(12), marginLeft: 2 }}
+                    >
+                      {""} බලන්න
+                    </Text>
+                  </View>
                 ) : (
-                  <Text
-                    className="text-white text-center font-semibold text-base"
-                  
-                  >
-                    {t("SignupForum.SignUp")}
-                  </Text>
+                  <View className="flex-row justify-center flex-wrap">
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("TermsConditions")}
+                    >
+                      <Text
+                        className="text-black font-bold"
+                        style={{ fontSize: adjustFontSize(12) }}
+                      >
+                        விதிமுறைகள் மற்றும் நிபந்தனைகள்
+                      </Text>
+                    </TouchableOpacity>
+                    <Text
+                      className="text-black font-thin"
+                      style={{
+                        fontSize: adjustFontSize(12),
+                        marginHorizontal: 2,
+                      }}
+                    >
+                      {""} மற்றும்
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("PrivacyPolicy")}
+                    >
+                      <Text
+                        className="text-black font-bold"
+                        style={{ fontSize: adjustFontSize(12) }}
+                      >
+                        {""} தனியுரிமைக் கொள்கை
+                      </Text>
+                    </TouchableOpacity>
+                    <Text
+                      className="text-black font-thin"
+                      style={{ fontSize: adjustFontSize(12), marginLeft: 2 }}
+                    >
+                      {""} பார்க்க
+                    </Text>
+                  </View>
                 )}
-              </TouchableOpacity>
-            </View>
+              </View>
 
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Text className="font-bold">
-                {t("SignupForum.AlreadyAccount")}{" "}
-              </Text>
-              <TouchableOpacity onPress={() => navigation.navigate("Signin")}>
+              <View className="flex-row items-center justify-center p-6">
+                <Checkbox
+                  value={isChecked}
+                  onValueChange={setIsChecked}
+                  color={isChecked ? "#00A896" : undefined}
+                />
                 <Text
+                  className="text-[#282828] ml-2 font-semibold"
+                  style={{ fontSize: adjustFontSize(12) }}
+                >
+                  {t("Membership.AgreeToT&C")}
+                </Text>
+              </View>
+
+              <View className="flex items-center justify-center mt-6">
+                <TouchableOpacity
+                  className={`py-3 rounded-3xl w-2/3 mb-2 ${
+                    isButtonDisabled || !isChecked
+                      ? "bg-gray-400"
+                      : "bg-[#353535]"
+                  }`}
+                  onPress={handleRegister}
+                  disabled={isButtonDisabled || !isChecked}
                   style={{
-                    color: "#FFFFFF",
-                    fontWeight: "600",
-                    textDecorationLine: "underline",
+                    shadowColor: "#000000",
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 4,
+                    elevation: 4,
                   }}
                 >
-                  {t("SignupForum.SignIn")}
+                  {isLoading ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <Text className="text-white text-center font-semibold text-base">
+                      {t("SignupForum.SignUp")}
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+
+              <View className="flex-row items-center justify-center mt-4">
+                <Text className="font-bold text-black">
+                  {t("SignupForum.AlreadyAccount")}{" "}
                 </Text>
-              </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate("Signin")}>
+                  <Text className="text-[#fff] font-semibold underline">
+                    {t("SignupForum.SignIn")}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </View>

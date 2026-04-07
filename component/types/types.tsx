@@ -51,14 +51,10 @@ export type RootStackParamList = {
   TamilNewCrop: undefined;
   EngProfile: undefined;
   EngQRcode: undefined;
-  WeatherForecastEng: undefined;
-  FiveDayForecastEng: undefined;
-  FiveDayForecastSinhala: undefined;
-  WeatherForecastSinhala: undefined;
+  WeatherForecast: undefined;
+  FiveDayForecast: undefined;
   SinProfile: undefined;
   SinEditProfile: undefined;
-  WeatherForecastTamil: undefined;
-  FiveDayForecastTamil: undefined;
   TamilProfile: undefined;
   TamilEditProfile: undefined;
   SinQRcode: undefined;
@@ -374,6 +370,7 @@ export type RootStackParamList = {
   ExploreShopsScreen: undefined;
   GoviShopCartScreen: undefined;
   GoviShopProfileScreen: undefined;
+  LocationAccess: undefined;
 };
 
 export interface RequestItem {
