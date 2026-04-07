@@ -241,7 +241,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       setAccountHolderName(trimmedText);
       setHoldernameNameError("");
     } else {
-      setHoldernameNameError(t("SignupForum.Startwithletter"));
+      setHoldernameNameError(t("Signup.Startwithletter"));
     }
   };
 
@@ -314,7 +314,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             setBranchName("");
           }
         }}
-        searchPlaceholder={t("SignupForum.TypeSomething")}
+        searchPlaceholder={t("Signup.TypeSomething")}
         multiSelect={false}
       />
 
@@ -327,7 +327,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         onSelect={(items) => {
           setBranchName(items[0] ?? "");
         }}
-        searchPlaceholder={t("SignupForum.TypeSomething")}
+        searchPlaceholder={t("Signup.TypeSomething")}
         multiSelect={false}
         isLoading={loading && !!bankName}
       />
