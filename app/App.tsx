@@ -156,6 +156,7 @@ import ExploreShopsScreen from "@/component/govi-shop/ExploreShops";
 import GoviShopCartScreen from "@/component/govi-shop/GoviShopCartScreen";
 import GoviShopProfileScreen from "@/component/govi-shop/GoviShopProfileScreen";
 import LocationAccess from "@/component/permission/LocationAccess";
+import ViewProduct from "@/component/govi-shop/ViewProduct";
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -673,6 +674,10 @@ function AppContent() {
             <Stack.Screen
               name="LocationAccess"
               component={LocationAccess as any}
+            />
+            <Stack.Screen
+              name="ViewProduct"
+              component={ViewProduct as any}
             />
           </Stack.Navigator>
         </NavigationContainer>

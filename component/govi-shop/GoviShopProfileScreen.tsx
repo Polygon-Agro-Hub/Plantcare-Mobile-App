@@ -48,6 +48,8 @@ interface Product {
   normalPrice: number;
   image: string;
   categoryId: string;
+  availableQty?: number;
+  description?: string;
 }
 
 const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
@@ -120,6 +122,8 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
       image:
         "https://images.unsplash.com/photo-1585699324551-f6c309eedeca?w=200&h=200&fit=crop",
       categoryId: "1",
+       availableQty: 50.125,
+    description: "Pesticide powder is a dry, finely ground chemical formulation used to control or eliminate pests such as insects, weeds, fungi, or rodents.",
     },
     {
       id: "2",
@@ -130,6 +134,8 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
       image:
         "https://images.unsplash.com/photo-1531674250511-9c7e9e2c7c3a?w=200&h=200&fit=crop",
       categoryId: "1",
+      availableQty: 50.125,
+      
     },
     {
       id: "3",
@@ -141,6 +147,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
       image:
         "https://images.unsplash.com/photo-1585699324551-f6c309eedeca?w=200&h=200&fit=crop",
       categoryId: "1",
+      availableQty: 50.125,
     },
     // Fertilizers Products
     {
@@ -153,6 +160,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
       image:
         "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=200&h=200&fit=crop",
       categoryId: "2",
+      availableQty: 50.125,
     },
     {
       id: "5",
@@ -164,6 +172,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
       image:
         "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=200&h=200&fit=crop",
       categoryId: "2",
+      availableQty: 50.125,
     },
     {
       id: "6",
@@ -174,6 +183,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
       image:
         "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=200&h=200&fit=crop",
       categoryId: "2",
+      availableQty: 50.125,
     },
     // Seeds Products
     {
@@ -299,8 +309,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
       }}
       activeOpacity={0.7}
       onPress={() => {
-        console.log("Product pressed:", item.name);
-        // Navigate to product detail screen
+        navigation.navigate("ViewProduct", { product: item });
       }}
     >
       <View className="flex-row p-4">

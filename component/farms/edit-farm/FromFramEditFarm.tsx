@@ -572,7 +572,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
                 onChangeText={setFarmName}
                 placeholder={t("Farms.Enter Farm Name Here")}
                 placeholderTextColor="#9CA3AF"
-                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
                 autoCapitalize="words"
                 returnKeyType="next"
               />
@@ -587,7 +587,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
                 <View className="flex-row items-center space-x-2">
                   <Text className="font-semibold">{t("Farms.ha")}</Text>
                   <TextInput
-                    className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
+                    className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
                     value={extentha}
                     onChangeText={(text) =>
                       setExtentha(validateNumericInput(text))
@@ -602,7 +602,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
                 <View className="flex-row items-center space-x-2">
                   <Text className="font-semibold">{t("Farms.ac")}</Text>
                   <TextInput
-                    className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
+                    className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
                     value={extentac}
                     onChangeText={(text) =>
                       setExtentac(validateNumericInput(text))
@@ -617,7 +617,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
                 <View className="flex-row items-center space-x-2">
                   <Text className="font-semibold">{t("Farms.p")}</Text>
                   <TextInput
-                    className="bg-[#F4F4F4] p-2 w-20 px-4 rounded-2xl text-center"
+                    className="bg-[#F4F4F4] p-2 w-20 px-4 rounded-3xl h-[50px] text-center"
                     value={extentp}
                     onChangeText={(text) =>
                       setExtentp(validateNumericInput(text))
@@ -637,7 +637,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
                 {t("Farms.District")}
               </Text>
               <TouchableOpacity
-                className="bg-[#F4F4F4] p-3 rounded-full flex-row justify-between items-center"
+                className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] flex-row justify-between items-center"
                 onPress={() => setDistrictModalVisible(true)}
                 accessibilityLabel="Select district"
               >
@@ -662,7 +662,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
                 onChangeText={setPlotNo}
                 placeholder={t("Farms.Enter Plot Number Here")}
                 placeholderTextColor="#9CA3AF"
-                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
                 autoCapitalize="characters"
               />
             </View>
@@ -677,7 +677,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
                 onChangeText={setStreetName}
                 placeholder={t("Farms.Enter Street Name")}
                 placeholderTextColor="#9CA3AF"
-                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
                 autoCapitalize="words"
               />
             </View>
@@ -692,7 +692,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
                 onChangeText={setCity}
                 placeholder={t("Farms.Enter City Name")}
                 placeholderTextColor="#9CA3AF"
-                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
                 autoCapitalize="words"
               />
             </View>
@@ -711,7 +711,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
                 }
                 placeholder={t("Farms.Enter Number of Staff")}
                 placeholderTextColor="#9CA3AF"
-                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
                 keyboardType="numeric"
                 maxLength={4}
               />
@@ -721,7 +721,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
           {/* Update Button */}
           <View className="mt-8 mb-[40%]">
             <TouchableOpacity
-              className="bg-black py-3 mx-6 rounded-full"
+              className="bg-black h-[50px] mx-6 rounded-full justify-center"
               onPress={handleUpdateFarm}
               disabled={loading}
               accessibilityLabel="Update farm details"

@@ -703,10 +703,10 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
 
             <View className="px-5">
               <View className="mb-2">
-                <Text className="text-xs text-black mb-1">
+                <Text className="text-base text-black mb-1">
                   {t("CurrentAssets.Asset")}
                 </Text>
-                <View className="bg-[#F6F6F6] rounded-full">
+                <View className="bg-[#F6F6F6] rounded-3xl h-[50px] justify-center">
                   <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
@@ -716,35 +716,35 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
                     }}
                     style={{ maxHeight: 38 }}
                   >
-                    <Text className="text-sm">{selectedItem?.asset}</Text>
+                    <Text className="text-base">{selectedItem?.asset}</Text>
                   </ScrollView>
                 </View>
               </View>
 
               {/* Batch Number */}
-              <View className="mb-2">
-                <Text className="text-xs text-black mb-1">
+              <View className="mb-2 ">
+                <Text className="text-base text-black mb-1">
                   {t("CurrentAssets.Batch No")}
                 </Text>
-                <View className="bg-[#F6F6F6] rounded-full px-3 py-2">
-                  <Text className="text-sm">{selectedItem?.batchNum}</Text>
+                <View className="bg-[#F6F6F6] rounded-3xl px-3 justify-center h-[50px]">
+                  <Text className="text-base">{selectedItem?.batchNum}</Text>
                 </View>
               </View>
 
               {/* Quantity */}
               <View className="mb-2">
-                <Text className="text-xs text-black mb-1">
+                <Text className="text-base text-black mb-1">
                   {t("CurrentAssets.Quantity")}
                 </Text>
                 <View className="flex-row items-center justify-between bg-[#F6F6F6] rounded-full px-3 py-2">
                   <TouchableOpacity onPress={() => handleQuantityChange(false)}>
                     <Image
                       source={require("../../../assets/images/farms/farm-minus.webp")}
-                      className="w-[20px] h-[20px]"
+                      className="w-[30px] h-[30px]"
                     />
                   </TouchableOpacity>
                   <TextInput
-                    className="text-sm font-semibold text-center flex-1 mx-2 py-0"
+                    className="text-base font-semibold text-center flex-1 mx-2 py-0 h-[40px]"
                     value={updateQuantity.toString()}
                     onChangeText={(text) => {
                       const numValue = parseInt(text) || 0;
@@ -756,7 +756,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
                   <TouchableOpacity onPress={() => handleQuantityChange(true)}>
                     <Image
                       source={require("../../../assets/images/farms/farm-plus.webp")}
-                      className="w-[20px] h-[20px]"
+                      className="w-[30px] h-[30px]"
                     />
                   </TouchableOpacity>
                 </View>
@@ -771,10 +771,10 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
 
               <View className="flex-row gap-x-2 mb-3">
                 <View className="flex-1">
-                  <Text className="text-xs text-black mb-1">
+                  <Text className="text-base text-black mb-1">
                     {t("CurrentAssets.Unit Price")}
                   </Text>
-                  <View className="bg-[#F6F6F6] rounded-full px-3 py-2">
+                  <View className="bg-[#F6F6F6] rounded-3xl h-[50px] justify-center px-3 py-2">
                     <Text className="text-sm" numberOfLines={1}>
                       {t("CurrentAssets.Rs")}.{" "}
                       {parseFloat(updateUnitPrice || "0").toLocaleString(
@@ -789,10 +789,10 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
                 </View>
 
                 <View className="flex-1">
-                  <Text className="text-xs text-black mb-1">
+                  <Text className="text-base text-black mb-1">
                     {t("CurrentAssets.Total Amount")}
                   </Text>
-                  <View className="bg-[#F6F6F6] rounded-full px-3 py-2">
+                  <View className="bg-[#F6F6F6] rounded-full px-3 h-[50px] justify-center">
                     <Text className="text-sm font-semibold" numberOfLines={1}>
                       {t("CurrentAssets.Rs")}.{" "}
                       {(
@@ -811,22 +811,22 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
             <View className="px-5 pb-5 pt-1 gap-y-2">
               <TouchableOpacity
                 onPress={() => setModalVisible(false)}
-                className="bg-[#ECECEC] rounded-full py-3 justify-center items-center"
+                className="bg-[#ECECEC] rounded-full h-[50px] justify-center items-center"
                 disabled={isUpdating}
               >
-                <Text className="text-[#8E8E8E] font-semibold">
+                <Text className="text-[#8E8E8E] font-semibold text-lg">
                   {t("CurrentAssets.Cancel")}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={handleUpdateAsset}
-                className="bg-black rounded-full py-3 justify-center items-center"
+                className="bg-black rounded-full h-[50px] justify-center items-center"
                 disabled={isUpdating}
               >
                 {isUpdating ? (
                   <ActivityIndicator color="#fff" />
                 ) : (
-                  <Text className="text-center font-semibold text-white">
+                  <Text className="text-center font-semibold text-white text-lg">
                     {t("CurrentAssets.Update")}
                   </Text>
                 )}

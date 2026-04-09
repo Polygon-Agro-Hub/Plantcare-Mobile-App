@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
-  ActivityIndicator,
   BackHandler,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";

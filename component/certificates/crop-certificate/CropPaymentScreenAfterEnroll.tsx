@@ -453,7 +453,7 @@ const CropPaymentScreenAfterEnroll: React.FC<
           </View>
 
           <TextInput
-            className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
+            className="rounded-3xl h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
             placeholder={t("Payment.Enter Card Number") ?? "Enter Card Number"}
             keyboardType="numeric"
             maxLength={19}
@@ -462,13 +462,13 @@ const CropPaymentScreenAfterEnroll: React.FC<
           />
 
           <TextInput
-            className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
+            className="rounded-3xl h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
             placeholder={t("Payment.Enter Name on Card")}
             value={cardHolderName}
             onChangeText={handleCardHolderNameChange}
           />
 
-          <View className="flex-row items-center h-12 border border-gray-300 bg-[#F6F6F6] rounded-full px-3 mb-8">
+          <View className="flex-row items-center rounded-3xl h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-full px-3 mb-8">
             <TextInput
               className="flex-1 h-full text-base"
               placeholder={t("Payment.Enter Expiration Date (MM/YY)")}
@@ -481,7 +481,7 @@ const CropPaymentScreenAfterEnroll: React.FC<
           </View>
 
           <TextInput
-            className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-5 text-base"
+            className="rounded-3xl h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-5 text-base"
             placeholder={t("Payment.Enter CVV")}
             keyboardType="numeric"
             maxLength={3}
@@ -491,7 +491,7 @@ const CropPaymentScreenAfterEnroll: React.FC<
           />
 
           <TouchableOpacity
-            className="bg-black py-3 rounded-full mt-5 mb-24"
+            className="bg-black py-3 rounded-3xl h-[50px] mt-5 mb-24"
             onPress={handlePayNow}
             disabled={isProcessing}
             style={{

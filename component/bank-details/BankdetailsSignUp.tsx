@@ -341,7 +341,6 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             onChangeText={handleFirstNameChange}
             style={{
               backgroundColor: "#F4F4F4",
-              borderRadius: 25,
               paddingHorizontal: 16,
               paddingVertical: 16,
               borderWidth: 0,
@@ -350,6 +349,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             }}
             underlineColorAndroid="transparent"
             cursorColor="#000000"
+            className="rounded-3xl h-[50px]"
           />
           {holdernameNameError ? (
             <Text
@@ -372,9 +372,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             keyboardType="number-pad"
             value={accountNumber}
             onChangeText={handleAccountNumberChange}
+            className="rounded-3xl h-[50px]"
             style={{
               backgroundColor: "#F4F4F4",
-              borderRadius: 25,
               paddingHorizontal: 16,
               paddingVertical: 16,
               borderWidth: 0,
@@ -405,9 +405,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             keyboardType="number-pad"
             value={confirmAccountNumber}
             onChangeText={handleConfirmAccountNumberChange}
+            className="rounded-3xl h-[50px]"
             style={{
               backgroundColor: "#F4F4F4",
-              borderRadius: 25,
               paddingHorizontal: 16,
               paddingVertical: 16,
               borderWidth: 0,
@@ -443,9 +443,10 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           </Text>
           <TouchableOpacity
             onPress={() => setBankModalVisible(true)}
+            className="rounded-3xl h-[50px]"
             style={{
               backgroundColor: "#F4F4F4",
-              borderRadius: 25,
+
               paddingHorizontal: 16,
               paddingVertical: 16,
               flexDirection: "row",
@@ -483,9 +484,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
               }
               setBranchModalVisible(true);
             }}
+            className="rounded-3xl h-[50px]"
             style={{
               backgroundColor: "#F4F4F4",
-              borderRadius: 25,
               paddingHorizontal: 16,
               paddingVertical: 16,
               flexDirection: "row",
@@ -507,7 +508,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
         <View className="flex items-center justify-center pb-4">
           <TouchableOpacity
-            className="rounded-full p-4 mt-4 mb-3 w-60 bg-[#ECECEC]"
+            className="rounded-3xl p-4 mt-4 mb-3 w-2/3 bg-[#ECECEC] h-[50px]"
             onPress={() => navigation.navigate("Main", { screen: "Dashboard" })}
             style={{
               shadowColor: "#000000",
@@ -527,8 +528,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             disabled={disableSubmit || !isFormValid()}
             className={`${
               disableSubmit || !isFormValid()
-                ? "bg-gray-400 rounded-full p-4 mt-2 w-60"
-                : "bg-[#353535] rounded-full p-4 mt-2 w-60"
+                ? "bg-gray-400 rounded-3xl p-4 mt-2 w-60 h-[50px]"
+                : "bg-[#353535] rounded-3xl p-4 mt-2 w-60 h-[50px]"
             }`}
             style={{
               shadowColor: "#000000",

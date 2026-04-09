@@ -361,7 +361,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
 
             <View className="mt-8">
               <View
-                className="flex m-auto w-2/3 rounded-3xl"
+                className="flex m-auto w-2/3 rounded-3xl h-[50px]"
                 style={{
                   shadowColor: "#000",
                   shadowOffset: { width: 0, height: 4 },

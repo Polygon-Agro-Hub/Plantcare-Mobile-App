@@ -62,13 +62,13 @@ const DropdownButton = ({
       borderWidth: 1,
       borderColor: hasError ? "#DC2626" : "#F4F4F4",
       backgroundColor: "#F4F4F4",
-      borderRadius: 30,
       paddingHorizontal: 12,
       paddingVertical: 14,
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
     }}
+    className="h-[50px] rounded-3xl"
   >
     <Text style={{ color: value ? "#111827" : "#6B7280", fontSize: 14 }}>
       {value || placeholder}
@@ -799,7 +799,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
         {t("FixedAssets.numberofUnits")} *
       </Text>
       <TextInput
-        className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
+        className="border border-[#F4F4F4] p-3 pl-4 h-[50px] rounded-3xl bg-gray-100"
         placeholder={t("FixedAssets.enterNumberofUnits")}
         value={numberOfUnits}
         onChangeText={(text) => {
@@ -812,7 +812,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
 
       <Text className="mt-4 text-sm pb-2">{t("FixedAssets.unitPrice")} *</Text>
       <TextInput
-        className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
+        className="border border-[#F4F4F4] p-3 pl-4 rounded-3xl h-[50px] bg-gray-100"
         placeholder={t("FixedAssets.enterUnitPrice")}
         value={formatWithCommas(unitPrice)}
         onChangeText={(text) => {
@@ -937,7 +937,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   <View className="mt-4">
                     <Text>{t("FixedAssets.Mention")}</Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-2 rounded-full mt-2 bg-gray-100"
+                      className="border border-[#F4F4F4] p-2 rounded-3xl h-[50px] mt-2 bg-gray-100"
                       placeholder={t("FixedAssets.Mention")}
                       value={mentionOther}
                       onChangeText={(v) => {
@@ -974,7 +974,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       {t("FixedAssets.mentionOtherBrand")} *
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-4 rounded-full bg-gray-100 pl-4"
+                      className="border border-[#F4F4F4] p-4 rounded-3xl h-[50px] bg-gray-100 pl-4"
                       placeholder={t("FixedAssets.enterCustomBrand")}
                       value={customBrand}
                       onChangeText={(v) => {
@@ -995,7 +995,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   {t("FixedAssets.Land Name")} *
                 </Text>
                 <TextInput
-                  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
+                  className="border border-[#F4F4F4] p-3 pl-4 rounded-3xl h-[50px] bg-gray-100"
                   placeholder={t("FixedAssets.Enter Land Name")}
                   value={landName}
                   autoCapitalize="sentences"
@@ -1036,7 +1036,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                     >
                       <Text className="text-right">{label}</Text>
                       <TextInput
-                        className="border border-[#F4F4F4] p-2 px-4 w-20 rounded-full bg-gray-100"
+                        className="border border-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] bg-gray-100"
                         value={value}
                         onChangeText={(text) => {
                           setter(text.replace(/[-.*#]/g, ""));
@@ -1071,7 +1071,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       {t("FixedAssets.estimateValue")} *
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
+                      className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
                       placeholder={t("FixedAssets.estimatedBuildingValueLKR")}
                       value={formatWithCommas(estimateValue)}
                       onChangeText={(text) => {
@@ -1146,7 +1146,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                         {t("FixedAssets.years")}
                       </Text>
                       <TextInput
-                        className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-full bg-gray-100"
+                        className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-3xl h-[50px] bg-gray-100"
                         value={durationYears}
                         onChangeText={(text) => {
                           setDurationYears(
@@ -1162,7 +1162,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                         {t("FixedAssets.months")}
                       </Text>
                       <TextInput
-                        className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-full bg-[#F4F4F4]"
+                        className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-3xl h-[50px] bg-[#F4F4F4]"
                         value={durationMonths}
                         onChangeText={(text) => {
                           const c = text.replace(/[-.*#]/g, "");
@@ -1182,10 +1182,8 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       {t("FixedAssets.leasedAmountAnnually")} *
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
-                      placeholder={t(
-                        "FixedAssets.leasedAmountAnnuallyLKR",
-                      )}
+                      className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
+                      placeholder={t("FixedAssets.leasedAmountAnnuallyLKR")}
                       value={formatWithCommas(leastAmountAnnually)}
                       onChangeText={(text) => {
                         handleNumericInput(text, setLeastAmountAnnually);
@@ -1245,7 +1243,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       {t("FixedAssets.permitFeeAnnuallyLKR")} *
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
+                      className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
                       placeholder={t("FixedAssets.EnterpermitAnnually")}
                       value={formatWithCommas(permitFeeAnnually)}
                       onChangeText={(text) => {
@@ -1265,7 +1263,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       {t("FixedAssets.paymentAnnually")} *
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
+                      className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
                       value={formatWithCommas(paymentAnnually)}
                       onChangeText={(text) => {
                         handleNumericInput(text, setPaymentAnnually);
@@ -1344,7 +1342,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       {t("FixedAssets.mentionOther")} *
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-4 rounded-full bg-[#F4F4F4] pl-4"
+                      className="border border-[#F4F4F4] p-4 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
                       value={othertool}
                       onChangeText={(v) => {
                         setOthertool(v);
@@ -1373,7 +1371,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       {t("FixedAssets.mentionOtherBrand")} *
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-4 rounded-full bg-[#F4F4F4] pl-4"
+                      className="border border-[#F4F4F4] p-4 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
                       placeholder={t("FixedAssets.enterCustomBrand")}
                       value={customBrand}
                       onChangeText={(v) => {
@@ -1405,7 +1403,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   {t("FixedAssets.Building Name")} *
                 </Text>
                 <TextInput
-                  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-[#F4F4F4]"
+                  className="border border-[#F4F4F4] p-3 pl-4 rounded-3xl h-[50px] bg-[#F4F4F4]"
                   placeholder={t("FixedAssets.Enter Building Name")}
                   value={buildingName}
                   onChangeText={(text) => {
@@ -1422,7 +1420,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   {t("FixedAssets.floorAreaSqrFt")} *
                 </Text>
                 <TextInput
-                  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-[#F4F4F4]"
+                  className="border border-[#F4F4F4] p-3 pl-4 rounded-3xl h-[50px] bg-[#F4F4F4]"
                   placeholder={t("FixedAssets.Enter Floor Area")}
                   value={floorArea}
                   onChangeText={(text) => {
@@ -1451,7 +1449,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       {t("FixedAssets.estimatedBuildingValueLKR")} *
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
+                      className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
                       placeholder={t("FixedAssets.estimatedValueEnter")}
                       value={formatWithCommas(estimateValue)}
                       onChangeText={(text) => {
@@ -1526,7 +1524,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                           {t("FixedAssets.years")}
                         </Text>
                         <TextInput
-                          className="border border-[#F4F4F4] p-2 text-left px-4 rounded-full bg-[#F4F4F4] w-[30%]"
+                          className="border border-[#F4F4F4] p-2 text-left px-4 rounded-3xl h-[50px] bg-[#F4F4F4] w-[30%]"
                           value={durationYears}
                           onChangeText={(text) => {
                             setDurationYears(text.replace(/[-.*#]/g, ""));
@@ -1538,7 +1536,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                           {t("FixedAssets.months")}
                         </Text>
                         <TextInput
-                          className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-full bg-[#F4F4F4]"
+                          className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-3xl h-[50px] bg-[#F4F4F4]"
                           value={durationMonths}
                           onChangeText={(text) => {
                             const c = text.replace(/[-.*#]/g, "");
@@ -1559,10 +1557,8 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       {t("FixedAssets.leasedAmountAnnually")} *
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
-                      placeholder={t(
-                        "FixedAssets.leasedAmountAnnuallyLKR",
-                      )}
+                      className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
+                      placeholder={t("FixedAssets.leasedAmountAnnuallyLKR")}
                       value={formatWithCommas(leastAmountAnnually)}
                       onChangeText={(text) => {
                         handleNumericInput(text, setLeastAmountAnnually);
@@ -1633,7 +1629,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       {t("FixedAssets.permitAnnuallyLKR")} *
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
+                      className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
                       placeholder={t("FixedAssets.EnterpermitAnnually")}
                       value={formatWithCommas(permitFeeAnnually)}
                       onChangeText={(text) => {
@@ -1653,7 +1649,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       {t("FixedAssets.paymentAnnuallyLKR")} *
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
+                      className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
                       value={formatWithCommas(paymentAnnually)}
                       onChangeText={(text) => {
                         handleNumericInput(text, setPaymentAnnually);

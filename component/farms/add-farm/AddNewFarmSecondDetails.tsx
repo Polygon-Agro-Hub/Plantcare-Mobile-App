@@ -457,7 +457,7 @@ const AddNewFarmSecondDetails = () => {
                   onChangeText={handleNumberOfStaffChange}
                   placeholder={t("Farms.Total number of staff working")}
                   placeholderTextColor="#585858"
-                  className="bg-[#F4F4F4] p-3 rounded-full text-gray-800 mt-2"
+                  className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800 mt-2"
                   keyboardType="number-pad"
                   style={{
                     textAlign: "center",
@@ -486,7 +486,7 @@ const AddNewFarmSecondDetails = () => {
                   onChangeText={handleLoginCredentialsChange}
                   placeholder={t("Farms.Number of login credentials needed")}
                   placeholderTextColor="#585858"
-                  className="bg-[#F4F4F4] p-3 rounded-full text-gray-800 mt-2"
+                  className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800 mt-2"
                   keyboardType="number-pad"
                   style={{
                     textAlign: "center",
@@ -513,7 +513,7 @@ const AddNewFarmSecondDetails = () => {
 
           <View className="mt-5 mb-2">
             <TouchableOpacity
-              className="bg-[#F3F3F5] py-3 mx-6 rounded-full"
+              className="bg-[#F3F3F5] py-3  mx-6 rounded-3xl"
               onPress={handleGoBack}
               disabled={isSubmitting}
             >

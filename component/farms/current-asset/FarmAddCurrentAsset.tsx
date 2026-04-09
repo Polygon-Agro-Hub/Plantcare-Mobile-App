@@ -490,7 +490,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
         onPress();
       }}
       disabled={disabled}
-      className="bg-[#F4F4F4] rounded-[30px] flex-row items-center justify-between px-4"
+      className="bg-[#F4F4F4] rounded-3xl h-[50px] flex-row items-center justify-between px-4"
       style={{ height: 50 }}
       activeOpacity={0.7}
     >
@@ -630,7 +630,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                   clearError("selectedAsset");
                   setSelectedAsset(preventLeadingSpace(text));
                 }}
-                className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
+                className="bg-[#F4F4F4] p-2 rounded-3xl h-[50px] mt-2"
               />
               <ErrorText field="selectedAsset" />
 
@@ -646,7 +646,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                       clearError("brand");
                       setBrand(preventLeadingSpace(text));
                     }}
-                    className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
+                    className="bg-[#F4F4F4] p-2 rounded-3xl h-[50px] mt-2"
                   />
                 </>
               )}
@@ -692,7 +692,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                       clearError("customAsset");
                       setCustomAsset(preventLeadingSpace(text));
                     }}
-                    className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
+                    className="bg-[#F4F4F4] p-2 rounded-3xl h-[50px] mt-2"
                   />
                   <ErrorText field="customAsset" />
 
@@ -708,7 +708,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                           clearError("brand");
                           setBrand(preventLeadingSpace(text));
                         }}
-                        className="bg-[#F4F4F4] p-2 rounded-[30px] h-[50px] mt-2"
+                        className="bg-[#F4F4F4] p-2 rounded-3xl h-[50px] mt-2"
                       />
                       <ErrorText field="brand" />
                     </>
@@ -757,7 +757,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             placeholder={t("CurrentAssets.batchnumber")}
             value={batchNum}
             onChangeText={handleBatchNumChange}
-            className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
+            className="bg-[#F4F4F4] p-2 pl-4 rounded-3xl h-[50px]"
             keyboardType="numeric"
           />
           <ErrorText field="batchNum" />
@@ -771,9 +771,9 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
               value={volume}
               onChangeText={handleVolumeChange}
               keyboardType="decimal-pad"
-              className="flex-1 mr-2 py-2 p-4 bg-[#F4F4F4] rounded-full"
+              className="flex-1 mr-2 h-[50px] p-4 bg-[#F4F4F4] rounded-3xl"
             />
-            <View className="rounded-full w-32">
+            <View className="rounded-3xl h-[50px] w-32">
               <PickerTrigger
                 value={unit}
                 placeholder="unit"
@@ -802,7 +802,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             keyboardType="numeric"
             value={numberOfUnits}
             onChangeText={handleNumberOfUnitsChange}
-            className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
+            className="bg-[#F4F4F4] p-2 pl-4 rounded-3xl h-[50px]"
           />
           <ErrorText field="numberOfUnits" />
 
@@ -814,7 +814,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             keyboardType="decimal-pad"
             value={unitPrice}
             onChangeText={handleUnitPriceChange}
-            className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
+            className="bg-[#F4F4F4] p-2 pl-4 rounded-3xl h-[50px]"
           />
           <ErrorText field="unitPrice" />
 
@@ -830,7 +830,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                 : ""
             }
             editable={false}
-            className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
+            className="bg-[#F4F4F4] p-2 pl-4 rounded-3xl h-[50px]"
           />
 
           <Text className="text-gray-600">
@@ -939,15 +939,15 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             value={warranty}
             onChangeText={setWarranty}
             keyboardType="numeric"
-            className="bg-[#F4F4F4] p-2 pl-4 rounded-[30px] h-[50px]"
+            className="bg-[#F4F4F4] p-2 pl-4 rounded-3xl h-[50px]"
             editable={false}
           />
 
           <Text className="text-gray-600">{t("CurrentAssets.status")}</Text>
-          <View className="bg-[#F4F4F4] rounded-[40px] p-3 items-center justify-center">
+          <View className="bg-[#F4F4F4] rounded-3xl h-[50px] p-3 items-center justify-center">
             {status ? (
               <Text
-                className={`font-bold ${
+                className={`font-bold text-lg ${
                   status === t("CurrentAssets.expired")
                     ? "text-red-500"
                     : "text-green-500"
@@ -958,13 +958,13 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                   : t("CurrentAssets.stillvalide")}
               </Text>
             ) : (
-              <Text className="text-gray-400">{t("CurrentAssets.status")}</Text>
+              <Text className="text-gray-400 text-lg">{t("CurrentAssets.status")}</Text>
             )}
           </View>
 
           <TouchableOpacity
             onPress={validateAndSubmit}
-            className="bg-[#353535] rounded-[30px] p-3 mt-4 mb-16"
+            className="bg-[#353535] rounded-3xl h-[50px] p-3 mt-4 mb-16 justify-center"
             style={{
               shadowColor: "#000",
               shadowOffset: { width: 0, height: 6 },
@@ -973,7 +973,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
               elevation: 8,
             }}
           >
-            <Text className="text-white text-center">
+            <Text className="text-white text-center text-lg">
               {t("CurrentAssets.AddAsset")}
             </Text>
           </TouchableOpacity>

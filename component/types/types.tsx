@@ -363,6 +363,21 @@ export type RootStackParamList = {
   GoviShopCartScreen: undefined;
   GoviShopProfileScreen: undefined;
   LocationAccess: undefined;
+  ViewProduct: {
+  product: {
+    id: string;
+    name: string;
+    level: string;
+    unit: string;
+    discountPrice?: number;
+    normalPrice: number;
+    image: string;
+    categoryId: string;
+    availableQty?: number;
+  description?: string;
+
+  };
+};
 };
 
 export interface RequestItem {

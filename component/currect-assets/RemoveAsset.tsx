@@ -449,7 +449,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                   placeholder={t("CurrentAssets.brand")}
                   value={brand}
                   onChangeText={setBrand}
-                  className="bg-gray-200 p-2 pl-4 mt-2 rounded-[30px] h-[50px]"
+                  className="bg-gray-200 p-2 pl-4 mt-2 rounded-3xl h-[50px]"
                   editable={false}
                 />
               )}
@@ -482,7 +482,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                 placeholder={t("CurrentAssets.batchnumber")}
                 value={batchNum}
                 onChangeText={setBatchNum}
-                className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
+                className="bg-gray-200 p-2 pl-4 rounded-3xl h-[50px]"
                 editable={false}
               />
             )}
@@ -498,7 +498,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                 placeholder={t("CurrentAssets.unitvolume_weight")}
                 value={volume}
                 editable={false}
-                className="flex-1 mr-2 py-2 pl-4 p-3 bg-gray-200 rounded-full"
+                className="flex-1 mr-2 py-2 pl-4 p-3 bg-gray-200 rounded-3xl h-[50px]"
               />
               <TouchableOpacity
                 onPress={() => {
@@ -555,7 +555,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
               onChangeText={setUnitPrice}
               keyboardType="numeric"
               editable={false}
-              className="bg-gray-200 p-2 rounded-[30px] pl-4 h-[50px]"
+              className="bg-gray-200 p-2 rounded-3xl pl-4 h-[50px]"
             />
           </View>
 

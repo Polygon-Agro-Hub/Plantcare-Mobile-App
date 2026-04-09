@@ -589,7 +589,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
               {t("Farms.First Name")}
             </Text>
             <TextInput
-              className="bg-gray-100 px-4 py-3 rounded-full text-base text-gray-700"
+              className="bg-gray-100 px-4 h-[50px] rounded-3xl text-base text-gray-700"
               placeholder={t("Farms.Enter First Name")}
               placeholderTextColor="#9CA3AF"
               value={firstName}
@@ -605,7 +605,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
               {t("Farms.Last Name")}
             </Text>
             <TextInput
-              className="bg-gray-100 px-4 py-3 rounded-full text-base text-gray-700"
+              className="bg-gray-100 px-4 rounded-3xl h-[50px] text-base text-gray-700"
               placeholder={t("Farms.Enter Last Name")}
               placeholderTextColor="#9CA3AF"
               value={lastName}
@@ -637,7 +637,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
               {/* Phone Input */}
               <View style={{ flex: 1 }}>
                 <TextInput
-                  className="bg-[#F4F4F4] rounded-full px-4"
+                  className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4"
                   placeholder="7X XXXXXXX"
                   value={phoneNumber}
                   onChangeText={handlePhoneChange}
@@ -693,7 +693,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
               onChangeText={handleNicChange}
               placeholder={t("Farms.Enter NIC")}
               placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+              className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
               editable={!isSubmitting}
               autoCapitalize="characters"
               maxLength={12}
@@ -720,7 +720,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
         </View>
 
         {/* Save Button */}
-        <View className="pt-10 pb-6 px-[15%]">
+        <View className="pt-10 pb-6 px-[15%] ">
           <TouchableOpacity
             onPress={handleSave}
             className={`${isSubmitting || checkingNumber || checkingNIC ? "bg-gray-400" : "bg-black"} rounded-full py-3 items-center justify-center`}

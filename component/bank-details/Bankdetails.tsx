@@ -364,10 +364,10 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           </Text>
           <TextInput
             placeholder={t("BankDetails.EnterAccountHolderName")}
-            className="pb-2 bg-[#F4F4F4] rounded-full p-4"
+           className="rounded-3xl h-[50px]"
             placeholderTextColor="#5e5d5d"
             value={accountHolderName}
-            onChangeText={handleFirstNameChange}
+            onChangeText={handleFirstNameChange}     
             style={{
               backgroundColor: "#F4F4F4",
               borderRadius: 25,
@@ -402,7 +402,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           <TextInput
             placeholder={t("BankDetails.Enter Account Number")}
             placeholderTextColor="#5e5d5d"
-            className="pb-2 bg-[#F4F4F4] rounded-full p-4"
+            className="pb-2 bg-[#F4F4F4] rounded-3xl h-[50px] p-4"
             keyboardType="number-pad"
             value={accountNumber}
             onChangeText={handleAccountNumberChange}
@@ -425,7 +425,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           <TextInput
             placeholder={t("BankDetails.Re-enter Account Number")}
             placeholderTextColor="#5e5d5d"
-            className="pb-2 bg-[#F4F4F4] rounded-full p-4"
+            className="pb-2 bg-[#F4F4F4] rounded-3xl h-[50px] p-4"
             keyboardType="number-pad"
             value={confirmAccountNumber}
             onChangeText={handleConfirmAccountNumberChange}
@@ -457,6 +457,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           </Text>
           <TouchableOpacity
             onPress={() => setBankModalVisible(true)}
+             className="rounded-3xl h-[50px]"
             style={{
               backgroundColor: "#F4F4F4",
               borderRadius: 25,
@@ -507,6 +508,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
               alignItems: "center",
               opacity: bankName ? 1 : 0.5,
             }}
+             className="rounded-3xl h-[50px]"
           >
             <Text
               style={{

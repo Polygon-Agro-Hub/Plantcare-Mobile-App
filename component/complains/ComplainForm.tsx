@@ -247,9 +247,10 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
                 </View>
 
                 {/* Category Selector */}
-                <View className="w-full rounded-lg mb-4">
+                <View className="w-full mb-4">
                   <TouchableOpacity
                     onPress={() => setCategoryModalVisible(true)}
+                    className="rounded-3xl h-[50px]"
                     style={{
                       borderWidth: 1,
                       borderColor: "#F4F4F4",
@@ -291,7 +292,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
                 />
 
                 <TouchableOpacity
-                  className="w-full bg-gray-800 py-4 rounded-lg items-center"
+                  className="w-full bg-gray-800 rounded-3xl h-[50px] items-center justify-center"
                   onPress={handleSubmit}
                 >
                   {isLoading ? (

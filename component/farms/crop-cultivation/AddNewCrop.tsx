@@ -536,11 +536,11 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
           onPress={handlePress}
           className="flex-row justify-center"
         >
-          <View className="flex-row items-center bg-gray-100 rounded-lg p-1 w-full max-w-md">
-            <EvilIcons name="search" size={24} color="gray" />
+          <View className="flex-row items-center bg-gray-100 rounded-3xl h-[50px] p-1 w-full max-w-md">
+            <EvilIcons name="search" size={26} color="gray" />
             <TextInput
               ref={inputRef}
-              className="ml-2 mr-6 text-base flex-1"
+              className="ml-2 mr-6 text-lg flex-1"
               placeholder={t("NewCrop.Search")}
               placeholderTextColor="gray"
               style={{ textAlignVertical: "center" }}

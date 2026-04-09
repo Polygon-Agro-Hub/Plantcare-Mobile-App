@@ -210,9 +210,9 @@ const EarnCertificate: React.FC = () => {
         }
       />
       <View className="bg-white px-4 pb-4 shadow-sm">
-        <View className="bg-[#F6F6F6CC] rounded-full flex-row items-center px-4">
+        <View className="bg-[#F6F6F6CC] rounded-3xl h-[50px] flex-row items-center px-4">
           <TextInput
-            className="flex-1 text-base text-gray-700"
+            className="flex-1 text-lg text-gray-700"
             placeholder={t("EarnCertificate.Search")}
             placeholderTextColor="#9CA3AF"
             value={searchQuery}

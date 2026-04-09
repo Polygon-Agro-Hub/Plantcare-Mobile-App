@@ -392,7 +392,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
           <Text className="text-[#070707] mb-2">{t("Govicapital.Crop")} *</Text>
           <TouchableOpacity
             onPress={() => setModalVisible(true)}
-            className="bg-[#F4F4F4] rounded-full px-4 py-3 flex-row justify-between items-center border border-[#F4F4F4]"
+            className="bg-[#F4F4F4] rounded-full px-4 h-[50px] flex-row justify-between items-center border border-[#F4F4F4]"
             disabled={loadingCrops}
           >
             <Text
@@ -413,7 +413,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center space-x-2">
               <TextInput
-                className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
+                className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
                 value={extentha}
                 onChangeText={(text) => {
                   const validatedText = validateNumericInput(text);
@@ -428,7 +428,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
 
             <View className="flex-row items-center space-x-2">
               <TextInput
-                className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
+                className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
                 value={extentac}
                 onChangeText={(text) => {
                   const validatedText = validateNumericInput(text);
@@ -443,7 +443,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
 
             <View className="flex-row items-center space-x-2">
               <TextInput
-                className="bg-[#F4F4F4] p-2 w-20 px-4 rounded-2xl text-center"
+                className="bg-[#F4F4F4] p-2 w-20 px-4 rounded-3xl h-[50px] text-center"
                 value={extentp}
                 onChangeText={(text) => {
                   const validatedText = validateNumericInput(text);
@@ -473,7 +473,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             placeholder="0.00"
             placeholderTextColor="#D1D5DB"
             keyboardType="numeric"
-            className="bg-[#F4F4F4] rounded-full px-4 py-3 text-gray-900 text-sm border border-[#F4F4F4]"
+            className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
           />
         </View>
 
@@ -491,7 +491,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             placeholder={t("Govicapital.Type here")}
             placeholderTextColor="#D1D5DB"
             keyboardType="numeric"
-            className="bg-[#F4F4F4] rounded-full px-4 py-3 text-gray-900 text-sm border border-[#F4F4F4]"
+            className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
           />
         </View>
 
@@ -502,7 +502,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
           </Text>
           <TouchableOpacity
             onPress={() => setShowDatePicker(true)}
-            className="bg-[#F4F4F4] rounded-full px-4 py-3 flex-row justify-between items-center border border-[#F4F4F4]"
+            className="bg-[#F4F4F4] rounded-full px-4 h-[50px] flex-row justify-between items-center border border-[#F4F4F4]"
           >
             <Text
               className={`text-sm ${startDate ? "text-gray-900" : "text-gray-400"}`}
@@ -511,7 +511,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             </Text>
             <MaterialCommunityIcons
               name="calendar-blank"
-              size={18}
+              size={22}
               color="#6B7280"
             />
           </TouchableOpacity>
@@ -611,7 +611,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             onChangeText={(text) => setPlotNumber(text.trimStart())}
             placeholder={t("Govicapital.plotnumberplaceholder")}
             placeholderTextColor="#D1D5DB"
-            className="bg-[#F4F4F4] rounded-full px-4 py-3 text-gray-900 text-sm border border-[#F4F4F4]"
+            className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
           />
         </View>
 
@@ -625,7 +625,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             onChangeText={(text) => setStreetName(text.trimStart())}
             placeholder={t("Govicapital.Type here")}
             placeholderTextColor="#D1D5DB"
-            className="bg-[#F4F4F4] rounded-full px-4 py-3 text-gray-900 text-sm border border-[#F4F4F4]"
+            className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
           />
         </View>
 
@@ -644,7 +644,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             }}
             placeholder={t("Govicapital.Type here")}
             placeholderTextColor="#D1D5DB"
-            className="bg-[#F4F4F4] rounded-full px-4 py-3 text-gray-900 text-sm border border-[#F4F4F4]"
+            className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
           />
         </View>
 

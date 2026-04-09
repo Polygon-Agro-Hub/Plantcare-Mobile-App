@@ -314,7 +314,8 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     );
   }
 
-  const inputStyle = "h-10 px-3 bg-[#F4F4F4] rounded-full text-sm py-3";
+  const inputStyle =
+    "h-10 px-3 bg-[#F4F4F4] rounded-3xl text-sm h-[50px] item-center justify-center";
 
   return (
     <KeyboardAvoidingView
@@ -372,36 +373,39 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                     <Text className="text-sm text-gray-700 mb-1">
                       {t("EditProfile.FirstName")}
                     </Text>
-                    <TextInput
-                      className={inputStyle}
-                      value={firstName}
-                      onChangeText={setFirstName}
-                      maxLength={20}
-                    />
+                    <View className={inputStyle}>
+                      <TextInput
+                        value={firstName}
+                        onChangeText={setFirstName}
+                        maxLength={20}
+                      />
+                    </View>
                   </View>
 
                   <View>
                     <Text className="text-sm text-gray-700 mb-1">
                       {t("EditProfile.LastName")}
                     </Text>
-                    <TextInput
-                      className={inputStyle}
-                      value={lastName}
-                      onChangeText={setLastName}
-                      maxLength={20}
-                    />
+                    <View className={inputStyle}>
+                      <TextInput
+                        value={lastName}
+                        onChangeText={setLastName}
+                        maxLength={20}
+                      />
+                    </View>
                   </View>
 
                   <View>
                     <Text className="text-sm text-gray-700 mb-1">
                       {t("EditProfile.PhoneNumber")}
                     </Text>
-                    <TextInput
-                      className={`${inputStyle} text-[#8492A3]`}
-                      value={phoneNumber}
-                      keyboardType="phone-pad"
-                      editable={false}
-                    />
+                    <View className={`${inputStyle} text-[#8492A3]`}>
+                      <TextInput
+                        value={phoneNumber}
+                        keyboardType="phone-pad"
+                        editable={false}
+                      />
+                    </View>
                     {phoneNumberError ? (
                       <Text className="text-xs text-red-500 mt-1">
                         {phoneNumberError}
@@ -413,55 +417,56 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                     <Text className="text-sm text-gray-700 mb-1">
                       {t("EditProfile.NIC")}
                     </Text>
-                    <TextInput
-                      className={`${inputStyle} text-[#8492A3]`}
-                      value={NICnumber}
-                      editable={false}
-                    />
+                    <View className={`${inputStyle} text-[#8492A3]`}>
+                      <TextInput value={NICnumber} editable={false} />
+                    </View>
                   </View>
 
                   <View>
                     <Text className="text-sm text-gray-700 mb-1">
                       {t("AddressDetails.Building")}
                     </Text>
-                    <TextInput
-                      className={inputStyle}
-                      placeholder={
-                        t("AddressDetails.EnterBuildingHouse") ||
-                        "Enter House / Building No"
-                      }
-                      value={buidingname}
-                      onChangeText={setBuildingName}
-                    />
+                    <View className={inputStyle}>
+                      <TextInput
+                        placeholder={
+                          t("AddressDetails.EnterBuildingHouse") ||
+                          "Enter House / Building No"
+                        }
+                        value={buidingname}
+                        onChangeText={setBuildingName}
+                      />
+                    </View>
                   </View>
 
                   <View>
                     <Text className="text-sm text-gray-700 mb-1">
                       {t("AddressDetails.Streetname")}
                     </Text>
-                    <TextInput
-                      className={inputStyle}
-                      placeholder={
-                        t("AddressDetails.EnterStreetName") ||
-                        "Enter Street Name"
-                      }
-                      value={streetname}
-                      onChangeText={setStreetName}
-                    />
+                    <View className={inputStyle}>
+                      <TextInput
+                        placeholder={
+                          t("AddressDetails.EnterStreetName") ||
+                          "Enter Street Name"
+                        }
+                        value={streetname}
+                        onChangeText={setStreetName}
+                      />
+                    </View>
                   </View>
 
                   <View>
                     <Text className="text-sm text-gray-700 mb-1">
                       {t("AddressDetails.City")}
                     </Text>
-                    <TextInput
-                      className={inputStyle}
-                      placeholder={
-                        t("AddressDetails.EnterCityName") || "Enter City Name"
-                      }
-                      value={city}
-                      onChangeText={setCity}
-                    />
+                    <View className={inputStyle}>
+                      <TextInput
+                        placeholder={
+                          t("AddressDetails.EnterCityName") || "Enter City Name"
+                        }
+                        value={city}
+                        onChangeText={setCity}
+                      />
+                    </View>
                   </View>
 
                   <View>
@@ -469,14 +474,13 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                       {t("FixedAssets.district")}
                     </Text>
                     <TouchableOpacity
+                      className="h-[50px] rounded-3xl"
                       onPress={() => {
                         Keyboard.dismiss();
                         setDistrictModalVisible(true);
                       }}
                       style={{
-                        height: 40,
                         backgroundColor: "#F4F4F4",
-                        borderRadius: 30,
                         paddingHorizontal: 14,
                         flexDirection: "row",
                         alignItems: "center",
@@ -500,10 +504,10 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                   </View>
                 </View>
 
-                <View className="flex-1 items-center mt-10 mb-12">
+                <View className="flex-1 items-center justify-center mt-10 mb-12">
                   <TouchableOpacity
                     onPress={handleSave}
-                    className={`bg-gray-800 rounded-full py-3 w-60 h-12 ${
+                    className={`bg-gray-800 rounded-3xl justify-center w-2/3 h-[50px] ${
                       isLoading ? "opacity-50" : ""
                     }`}
                     disabled={isLoading}
@@ -518,7 +522,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                     {isLoading ? (
                       <ActivityIndicator size="small" color="#fff" />
                     ) : (
-                      <Text className="text-center text-white text-sm">
+                      <Text className="text-center text-white text-lg">
                         {t("EditProfile.Save")}
                       </Text>
                     )}
