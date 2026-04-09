@@ -316,7 +316,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                 onChangeText={setFarmName}
                 placeholder={t("Farms.Enter Farm Name Here")}
                 placeholderTextColor="#9CA3AF"
-                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
               />
             </View>
 
@@ -328,7 +328,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                 <View className="flex-row items-center space-x-2">
                   <Text className="font-semibold">{t("Farms.ha")}</Text>
                   <TextInput
-                    className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
+                    className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
                     value={extentha}
                     onChangeText={(text) =>
                       setExtentha(validateNumericInput(text))
@@ -341,7 +341,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                 <View className="flex-row items-center space-x-2">
                   <Text className="font-semibold">{t("Farms.ac")}</Text>
                   <TextInput
-                    className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
+                    className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
                     value={extentac}
                     onChangeText={(text) =>
                       setExtentac(validateNumericInput(text))
@@ -354,7 +354,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                 <View className="flex-row items-center space-x-2">
                   <Text className="font-semibold">{t("Farms.p")}</Text>
                   <TextInput
-                    className="bg-[#F4F4F4] p-2 w-20 px-4 rounded-2xl text-center"
+                    className="bg-[#F4F4F4] p-2 w-20 px-4 rounded-3xl h-[50px] text-center"
                     value={extentp}
                     onChangeText={(text) =>
                       setExtentp(validateNumericInput(text))
@@ -372,7 +372,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                 {t("Farms.District")}
               </Text>
               <TouchableOpacity
-                className="bg-[#F4F4F4] p-3 rounded-full flex-row items-center justify-between"
+                className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] flex-row items-center justify-between"
                 onPress={() => setDistrictModalVisible(true)}
               >
                 <Text
@@ -406,7 +406,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                 onChangeText={setPlotNo}
                 placeholder={t("Farms.Enter Plot Number Here")}
                 placeholderTextColor="#9CA3AF"
-                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
               />
             </View>
 
@@ -419,7 +419,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                 onChangeText={setStreetName}
                 placeholder={t("Farms.Enter Street Name")}
                 placeholderTextColor="#9CA3AF"
-                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
               />
             </View>
 
@@ -432,14 +432,14 @@ const AddNewFarmBasicDetails: React.FC = () => {
                 onChangeText={setCity}
                 placeholder={t("Farms.Enter City Name")}
                 placeholderTextColor="#9CA3AF"
-                className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
               />
             </View>
           </View>
 
           <View className="mt-8 mb-[30%]">
             <TouchableOpacity
-              className="bg-black py-3 mx-6 rounded-full"
+              className="bg-black py-3 mx-6 rounded-3xl h-[50px]"
               onPress={handleContinue}
               style={{
                 shadowColor: "#000000",

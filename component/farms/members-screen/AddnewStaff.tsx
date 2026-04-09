@@ -509,7 +509,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
               {t("Farms.First Name")}
             </Text>
             <TextInput
-              className="bg-gray-100 px-4 py-3 rounded-full text-base text-gray-700"
+              className="bg-gray-100 px-4 rounded-3xl h-[50px] text-base text-gray-700"
               placeholder={t("Farms.Enter First Name")}
               placeholderTextColor="#9CA3AF"
               value={firstName}
@@ -525,7 +525,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
               {t("Farms.Last Name")}
             </Text>
             <TextInput
-              className="bg-gray-100 px-4 py-3 rounded-full text-base text-gray-700"
+              className="bg-gray-100 px-4 py-3 rounded-3xl h-[50px] text-base text-gray-700"
               placeholder={t("Farms.Enter Last Name")}
               placeholderTextColor="#9CA3AF"
               value={lastName}
@@ -544,7 +544,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
               {/* Country Code Trigger */}
               <TouchableOpacity
                 onPress={() => !isSubmitting && setCountryModalVisible(true)}
-                className="bg-[#F4F4F4] rounded-full flex-row items-center justify-between px-4 mr-2"
+                className="bg-[#F4F4F4] rounded-3xl h-[50px] flex-row items-center justify-between px-4 mr-2"
                 style={{ width: wp(33), height: hp(7) }}
                 activeOpacity={0.7}
               >
@@ -558,7 +558,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
               {/* Phone Input */}
               <View style={{ flex: 1 }}>
                 <TextInput
-                  className="bg-[#F4F4F4] rounded-full px-4"
+                  className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4"
                   placeholder="7X XXXXXXX"
                   value={phoneNumber}
                   onChangeText={handlePhoneChange}
@@ -614,7 +614,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
               onChangeText={(text: string) => handleNicChange(text)}
               placeholder={t("Farms.Enter NIC")}
               placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] p-4 rounded-full text-gray-800  text-base"
+              className="bg-[#F4F4F4] p-4 mx-4 rounded-3xl h-[50px] text-gray-800  text-base"
               editable={!isSubmitting}
               autoCapitalize="characters"
               maxLength={12}
@@ -648,7 +648,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
               isSubmitting || checkingNumber || checkingNIC
                 ? "bg-gray-400"
                 : "bg-black"
-            } rounded-full py-3 items-center justify-center`}
+            } rounded-3xl h-[50px] items-center justify-center`}
             activeOpacity={0.8}
             disabled={isSubmitting || checkingNumber || checkingNIC}
             style={{

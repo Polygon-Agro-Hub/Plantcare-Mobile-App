@@ -296,7 +296,7 @@ const PaymentGatewayeRenew: React.FC<PaymentGatewayeRenewProps> = ({
           </View>
 
           <TextInput
-            className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
+            className="h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl p-3 mb-8 text-base"
             placeholder="Enter Card Number"
             keyboardType="numeric"
             maxLength={19}
@@ -305,14 +305,14 @@ const PaymentGatewayeRenew: React.FC<PaymentGatewayeRenewProps> = ({
           />
 
           <TextInput
-            className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
+            className="h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl p-3 mb-8 text-base"
             placeholder="Enter Name on Card"
             value={cardHolderName}
             onChangeText={setCardHolderName}
           />
 
           <View
-            className={`flex-row items-center h-12 border border-gray-300 bg-[#F6F6F6] rounded-full px-3 mb-8`}
+            className={`flex-row items-center h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl px-3 mb-8`}
           >
             <TextInput
               className="flex-1 h-full text-base"
@@ -326,7 +326,7 @@ const PaymentGatewayeRenew: React.FC<PaymentGatewayeRenewProps> = ({
           </View>
 
           <TextInput
-            className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-5 text-base"
+            className="h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl p-3 mb-5 text-base"
             placeholder="Enter CVV"
             keyboardType="numeric"
             maxLength={3}

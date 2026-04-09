@@ -26,7 +26,7 @@ import { useSelector } from "react-redux";
 import { selectUserPersonal } from "@/store/userSlice";
 import { setUserPersonalData } from "../../store/userSlice";
 import { useDispatch } from "react-redux";
-import CustomHeader from "./CustomHeader";
+import CustomHeader from "../common/CustomHeader";
 
 type EngProfileNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -191,7 +191,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
       />
       <View className="flex-1 bg-white px-6">
         <ScrollView
-          className="p-2"
+          className="py-2"
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 40 }}
         >
@@ -233,14 +233,14 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
             onPress={() => setLanguageDropdownOpen(!isLanguageDropdownOpen)}
             className="flex-row items-center py-3"
           >
-            <Ionicons name="globe-outline" size={20} color="black" />
-            <Text className="flex-1 text-lg ml-2">
+            <Ionicons name="globe-outline" size={20} color="#434343" />
+            <Text className="flex-1 text-lg ml-2 text-[#434343]">
               {t("Profile.LanguageSettings")}
             </Text>
-            <Ionicons
-              name={isLanguageDropdownOpen ? "chevron-up" : "chevron-down"}
+            <AntDesign
+              name={isLanguageDropdownOpen ? "caret-up" : "caret-down"}
               size={20}
-              color="black"
+              color="#434343"
             />
           </TouchableOpacity>
 
@@ -261,7 +261,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
                       className={`text-base ${
                         selectedLanguage === language
                           ? "text-black"
-                          : "text-gray-700"
+                          : "text-[#434343]"
                       }`}
                     >
                       {displayLanguage}
@@ -283,8 +283,10 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
             className="flex-row items-center py-3"
             onPress={() => navigation.navigate("Main", { screen: "EngQRcode" })}
           >
-            <Ionicons name="qr-code" size={20} color="black" />
-            <Text className="flex-1 text-lg ml-2">{t("Profile.ViewQR")}</Text>
+            <Ionicons name="qr-code" size={20} color="#434343" />
+            <Text className="flex-1 text-lg ml-2 text-[#434343]">
+              {t("Profile.ViewQR")}
+            </Text>
           </TouchableOpacity>
 
           <View className="h-0.5 bg-[#D2D2D2] my-4" />
@@ -293,8 +295,8 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
             className="flex-row items-center py-3"
             onPress={() => setModalVisible(true)}
           >
-            <Ionicons name="person" size={20} color="black" />
-            <Text className="flex-1 text-lg ml-2">
+            <Ionicons name="person" size={20} color="#434343" />
+            <Text className="flex-1 text-lg ml-2 text-[#434343]">
               {t("Profile.GoViCareHelp")}
             </Text>
           </TouchableOpacity>
@@ -305,14 +307,14 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
             onPress={() => setComplaintDropdownOpen(!isComplaintDropdownOpen)}
             className="flex-row items-center py-3"
           >
-            <AntDesign name="warning" size={20} color="black" />
-            <Text className="flex-1 text-lg ml-2">
+            <AntDesign name="warning" size={20} color="#434343" />
+            <Text className="flex-1 text-lg ml-2 text-[#434343]">
               {t("Profile.Complaints")}
             </Text>
-            <Ionicons
-              name={isComplaintDropdownOpen ? "chevron-up" : "chevron-down"}
+            <AntDesign
+              name={isComplaintDropdownOpen ? "caret-up" : "caret-down"}
               size={20}
-              color="black"
+              color="#434343"
             />
           </TouchableOpacity>
 
@@ -330,7 +332,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
                     className={`text-base ${
                       selectedComplaint === complaint
                         ? "text-black"
-                        : "text-gray-700"
+                        : "text-[#434343]"
                     }`}
                   >
                     {complaint}
@@ -350,8 +352,8 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
             className="flex-row items-center py-3"
             onPress={() => navigation.navigate("PrivacyPolicy")}
           >
-            <MaterialIcons name="privacy-tip" size={20} color="black" />
-            <Text className="flex-1 text-lg ml-2">
+            <MaterialIcons name="privacy-tip" size={20} color="#434343" />
+            <Text className="flex-1 text-lg ml-2 text-[#434343]">
               {t("Profile.PrivacyPolicy")}
             </Text>
           </TouchableOpacity>
@@ -365,9 +367,9 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
             <MaterialCommunityIcons
               name="text-box-check-outline"
               size={20}
-              color="black"
+              color="#434343"
             />
-            <Text className="flex-1 text-lg ml-2">
+            <Text className="flex-1 text-lg ml-2 text-[#434343]">
               {t("Profile.Terms&Conditions")}
             </Text>
           </TouchableOpacity>

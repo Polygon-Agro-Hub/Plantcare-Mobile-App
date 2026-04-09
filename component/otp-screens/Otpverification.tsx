@@ -66,7 +66,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.navigate("SignupForum");
+        navigation.navigate("Signup");
         return true;
       };
 
@@ -360,7 +360,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
           <View className="mt-4">
             <TouchableOpacity
-              className={`mt-2 rounded-3xl mb-2 items-center justify-center ${
+              className={`mt-2 rounded-3xl mb-2 h-[50px] items-center justify-center ${
                 !isOtpValid || disabledVerify ? "bg-gray-500" : "bg-[#353535]"
               }`}
               onPress={handleVerify}

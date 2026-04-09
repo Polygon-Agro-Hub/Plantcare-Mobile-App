@@ -214,7 +214,7 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
             dismissKeyboard();
             setCropModalVisible(true);
           }}
-          className="bg-[#F4F4F4] rounded-full px-4 py-4 flex-row justify-between items-center"
+          className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px]  flex-row justify-between items-center"
           disabled={cropsLoading}
         >
           {cropsLoading ? (
@@ -252,7 +252,7 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
               setUnitModalVisible(true);
             }}
             style={{ width: 140 }}
-            className="bg-[#F4F4F4] rounded-full px-4 py-4 flex-row justify-between items-center"
+            className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] flex-row justify-between items-center"
           >
             <Text className="text-sm text-gray-900">
               {getSelectedUnitLabel()}
@@ -265,7 +265,7 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
           {t("CropPlanningCalculators.RowSpacing")}
         </Text>
-        <View className="bg-[#F4F4F4] rounded-full px-4 py-4">
+        <View className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
           <Text
             className={`text-sm ${
               selectedCrop ? "text-[#287097]" : "text-gray-400"
@@ -281,7 +281,7 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
           {t("CropPlanningCalculators.PlantSpacing")}
         </Text>
-        <View className="bg-[#F4F4F4] rounded-full px-4 py-4">
+        <View className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
           <Text
             className={`text-sm ${
               selectedCrop ? "text-[#287097]" : "text-gray-400"
@@ -297,7 +297,7 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
           {t("CropPlanningCalculators.AverageYieldPerPlant")}
         </Text>
-        <View className="bg-[#F4F4F4] rounded-full px-4 py-4">
+        <View className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
           <Text
             className={`text-sm ${
               selectedCrop ? "text-[#287097]" : "text-gray-400"
@@ -312,10 +312,10 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
         {/* Calculate Button */}
         <TouchableOpacity
           onPress={handleCalculate}
-          className="bg-[#2D2D2D] rounded-full py-4 items-center mt-10"
+          className="bg-[#2D2D2D] rounded-3xl h-[50px] items-center justify-center mt-10"
           activeOpacity={0.8}
         >
-          <Text className="text-white text-base font-bold">
+          <Text className="text-white text-lg font-bold">
             {t("CropPlanningCalculators.Calculate")}
           </Text>
         </TouchableOpacity>

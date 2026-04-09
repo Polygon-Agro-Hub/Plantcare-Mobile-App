@@ -217,7 +217,7 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
               {t("PublicForum.title")}
             </Text>
             <TextInput
-              className=" border-gray-300  bg-[#F4F7FF] rounded-[25px] px-4 py-3 mt-2"
+              className=" border-gray-300  bg-[#F4F7FF] rounded-3xl px-4 h-[50px] mt-2"
               placeholder={t("PublicForum.addyourtitlehere")}
               value={heading}
               onChangeText={setHeading}

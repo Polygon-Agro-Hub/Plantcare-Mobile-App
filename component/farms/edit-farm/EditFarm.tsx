@@ -499,7 +499,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
               onChangeText={setFarmName}
               placeholder={t("Farms.Enter Farm Name Here")}
               placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+              className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
               autoCapitalize="words"
               returnKeyType="next"
             />
@@ -519,7 +519,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
                 <View key={label} className="flex-row items-center space-x-2">
                   <Text className="font-semibold">{label}</Text>
                   <TextInput
-                    className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-2xl text-center"
+                    className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl text-center h-[50px]"
                     value={value}
                     onChangeText={(text) => setter(validateNumericInput(text))}
                     keyboardType="numeric"
@@ -539,7 +539,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
             </Text>
             <TouchableOpacity
               onPress={() => setDistrictModalVisible(true)}
-              className="bg-[#F4F4F4] px-4 rounded-full flex-row items-center justify-between"
+              className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] flex-row items-center justify-between"
               style={{ height: hp(7) }}
               activeOpacity={0.7}
             >
@@ -581,7 +581,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
               onChangeText={setPlotNo}
               placeholder={t("Farms.Enter Plot Number Here")}
               placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+              className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
               autoCapitalize="characters"
             />
           </View>
@@ -596,7 +596,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
               onChangeText={setStreetName}
               placeholder={t("Farms.Enter Street Name")}
               placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+              className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
               autoCapitalize="words"
             />
           </View>
@@ -611,7 +611,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
               onChangeText={setCity}
               placeholder={t("Farms.Enter City Name")}
               placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+              className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
               autoCapitalize="words"
             />
           </View>
@@ -628,7 +628,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
               }
               placeholder={t("Farms.Enter Number of Staff")}
               placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+              className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
               keyboardType="numeric"
               maxLength={4}
             />
@@ -638,7 +638,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
         {/* Update Button */}
         <View className="mt-8 mb-[40%]">
           <TouchableOpacity
-            className="bg-black py-3 mx-6 rounded-full"
+            className="bg-black py-3 mx-6 rounded-3xl h-[50px]"
             onPress={handleUpdateFarm}
             disabled={loading}
             accessibilityLabel="Update farm details"
@@ -651,7 +651,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
             }}
           >
             <Text
-              className="text-white text-center font-semibold"
+              className="text-white text-center font-semibold text-lg"
               style={[
                 i18n.language === "si"
                   ? { fontSize: 15 }

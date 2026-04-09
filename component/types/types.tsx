@@ -1,15 +1,7 @@
 export type RootStackParamList = {
   Lanuage: undefined;
-  SigninSelection: undefined;
-  SigninSinhala: undefined;
-  SigninSeTamil: undefined;
-  SignupForumTamil: undefined;
-  SigninTamil: undefined;
-  SuccessScreen: undefined;
-  SigninSinhalasc: undefined;
   Signin: undefined;
-  SigninOldUser: undefined;
-  SignupForum: undefined;
+  Signup: undefined;
   Selectedcrop: undefined;
   SignumpFS: undefined;
   SignupFT: undefined;
@@ -51,14 +43,10 @@ export type RootStackParamList = {
   TamilNewCrop: undefined;
   EngProfile: undefined;
   EngQRcode: undefined;
-  WeatherForecastEng: undefined;
-  FiveDayForecastEng: undefined;
-  FiveDayForecastSinhala: undefined;
-  WeatherForecastSinhala: undefined;
+  WeatherForecast: undefined;
+  FiveDayForecast: undefined;
   SinProfile: undefined;
   SinEditProfile: undefined;
-  WeatherForecastTamil: undefined;
-  FiveDayForecastTamil: undefined;
   TamilProfile: undefined;
   TamilEditProfile: undefined;
   SinQRcode: undefined;
@@ -374,6 +362,22 @@ export type RootStackParamList = {
   ExploreShopsScreen: undefined;
   GoviShopCartScreen: undefined;
   GoviShopProfileScreen: undefined;
+  LocationAccess: undefined;
+  ViewProduct: {
+  product: {
+    id: string;
+    name: string;
+    level: string;
+    unit: string;
+    discountPrice?: number;
+    normalPrice: number;
+    image: string;
+    categoryId: string;
+    availableQty?: number;
+  description?: string;
+
+  };
+};
 };
 
 export interface RequestItem {

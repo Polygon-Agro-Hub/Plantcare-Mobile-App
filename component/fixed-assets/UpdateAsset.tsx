@@ -786,7 +786,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           );
                           clearFieldError(tool.id, "extent");
                         }}
-                        className="border border-gray-300 bg-[#F4F4F4] p-2 mb-2 px-4 rounded-full w-[25%]"
+                        className="border border-gray-300 bg-[#F4F4F4] p-2 mb-2 px-4 rounded-3xl h-[50px] w-[25%]"
                         keyboardType="numeric"
                       />
                       <Text className="pl-2 pr-1 font-[#3A3A3A]">
@@ -806,7 +806,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           clearFieldError(tool.id, "extent");
                         }}
                         keyboardType="numeric"
-                        className="border border-gray-300 bg-[#F4F4F4] rounded-full p-2 px-4 mb-2 w-[25%]"
+                        className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-2 px-4 mb-2 w-[25%]"
                       />
                       <Text className="pl-2 pr-1 font-[#3A3A3A]">
                         {t("FixedAssets.p")}
@@ -873,7 +873,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           clearFieldError(tool.id, "ownership");
                         }
                       }}
-                      searchPlaceholder={t("SignupForum.TypeSomething")}
+                      searchPlaceholder={t("Signup.TypeSomething")}
                     />
 
                     {/* Own */}
@@ -898,7 +898,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             clearFieldError(tool.id, "estimateValue");
                           }}
                           keyboardType="numeric"
-                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-1 pl-4"
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-4 mb-1 pl-4"
                         />
                         {fieldErrors[tool.id]?.estimateValue ? (
                           <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1021,7 +1021,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               );
                               clearFieldError(tool.id, "duration");
                             }}
-                            className="border border-gray-300 p-2 w-[30%] px-4 rounded-full bg-gray-100"
+                            className="border border-gray-300 p-2 w-[30%] px-4 rounded-3xl h-[50px] bg-gray-100"
                           />
                           <Text className="w-[20%] text-right pr-2">
                             {t("FixedAssets.months")}
@@ -1072,7 +1072,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             clearFieldError(tool.id, "leastAmountAnnually");
                           }}
                           keyboardType="numeric"
-                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-1 pl-4"
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-4 mb-1 pl-4"
                         />
                         {fieldErrors[tool.id]?.leastAmountAnnually ? (
                           <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1191,7 +1191,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             clearFieldError(tool.id, "permitFeeAnnually");
                           }}
                           keyboardType="numeric"
-                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-1 pl-4"
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-4 mb-1 pl-4"
                         />
                         {fieldErrors[tool.id]?.permitFeeAnnually ? (
                           <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1224,7 +1224,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             clearFieldError(tool.id, "paymentAnnually");
                           }}
                           keyboardType="numeric"
-                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-1 pl-4"
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-4 mb-1 pl-4"
                         />
                         {fieldErrors[tool.id]?.paymentAnnually ? (
                           <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1321,7 +1321,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           clearFieldError(tool.id, "type");
                         }
                       }}
-                      searchPlaceholder={t("SignupForum.TypeSomething")}
+                      searchPlaceholder={t("Signup.TypeSomething")}
                     />
                     {/* Building Name */}
                     <Text className="pb-2 font-bold">
@@ -1337,7 +1337,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         handleInputChange(tool.id, "buildingName", capitalized);
                         clearFieldError(tool.id, "buildingName");
                       }}
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-1 pl-4"
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-3 mb-1 pl-4"
                     />
                     {fieldErrors[tool.id]?.buildingName ? (
                       <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1362,7 +1362,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         );
                         clearFieldError(tool.id, "floorArea");
                       }}
-                      className="border bg-[#F4F4F4] border-gray-300 rounded-full p-3 mb-1 pl-4"
+                      className="border bg-[#F4F4F4] border-gray-300 rounded-3xl h-[50px] p-3 mb-1 pl-4"
                       keyboardType="numeric"
                     />
                     {fieldErrors[tool.id]?.floorArea ? (
@@ -1414,7 +1414,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           clearFieldError(tool.id, "ownership");
                         }
                       }}
-                      searchPlaceholder={t("SignupForum.TypeSomething")}
+                      searchPlaceholder={t("Signup.TypeSomething")}
                     />
 
                     {/* General Condition */}
@@ -1450,7 +1450,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           clearFieldError(tool.id, "generalCondition");
                         }
                       }}
-                      searchPlaceholder={t("SignupForum.TypeSomething")}
+                      searchPlaceholder={t("Signup.TypeSomething")}
                       showSearch={false}
                     />
 
@@ -1477,7 +1477,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             clearFieldError(tool.id, "estimateValue");
                           }}
                           keyboardType="numeric"
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-3 mb-1 pl-4"
+                          className="border bg-[#F4F4F4] border-gray-300 rounded-3xl h-[50px] p-3 mb-1 pl-4"
                         />
                         {fieldErrors[tool.id]?.estimateValue ? (
                           <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1601,7 +1601,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               );
                               clearFieldError(tool.id, "duration");
                             }}
-                            className="border border-gray-300 p-2 w-[30%] px-4 rounded-full bg-gray-100"
+                            className="border border-gray-300 p-2 w-[30%] px-4 rounded-3xl h-[50px] bg-gray-100"
                           />
                           <Text className="w-[20%] text-right pr-2">
                             {t("FixedAssets.months")}
@@ -1623,7 +1623,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               );
                               clearFieldError(tool.id, "duration");
                             }}
-                            className="border border-gray-300 p-2 w-24 rounded-full bg-gray-100 px-4"
+                            className="border border-gray-300 p-2 w-24 rounded-3xl h-[50px] bg-gray-100 px-4"
                           />
                         </View>
                         {fieldErrors[tool.id]?.duration ? (
@@ -1774,7 +1774,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             clearFieldError(tool.id, "permitFeeAnnually");
                           }}
                           keyboardType="numeric"
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-1 pl-4"
+                          className="border bg-[#F4F4F4] border-gray-300 rounded-3xl h-[50px] p-4 mb-1 pl-4"
                         />
                         {fieldErrors[tool.id]?.permitFeeAnnually ? (
                           <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1808,7 +1808,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             clearFieldError(tool.id, "paymentAnnually");
                           }}
                           keyboardType="numeric"
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-3 mb-1 pl-4"
+                          className="border bg-[#F4F4F4] border-gray-300 rounded-3xl h-[50px] p-3 mb-1 pl-4"
                         />
                         {fieldErrors[tool.id]?.paymentAnnually ? (
                           <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1851,7 +1851,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           clearFieldError(tool.id, "asset");
                         }
                       }}
-                      searchPlaceholder={t("SignupForum.TypeSomething")}
+                      searchPlaceholder={t("Signup.TypeSomething")}
                     />
 
                     {selectedAsset && assetTypesForAssets[selectedAsset] && (
@@ -1884,7 +1884,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               clearFieldError(tool.id, "assetType");
                             }
                           }}
-                          searchPlaceholder={t("SignupForum.TypeSomething")}
+                          searchPlaceholder={t("Signup.TypeSomething")}
                         />
                       </>
                     )}
@@ -1905,7 +1905,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             );
                             clearFieldError(tool.id, "mentionOther");
                           }}
-                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 pl-4 mb-1"
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-3 pl-4 mb-1"
                         />
                         {fieldErrors[tool.id]?.mentionOther ? (
                           <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1922,7 +1922,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       placeholder={t("FixedAssets.selectBrand")}
                       value={updatedDetails[tool.id]?.brand ?? ""}
                       editable={false}
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-1 pl-4"
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-3 mb-1 pl-4"
                     />
                     {fieldErrors[tool.id]?.brand ? (
                       <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1947,7 +1947,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         clearFieldError(tool.id, "numberOfUnits");
                       }}
                       keyboardType="numeric"
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-1 pl-4"
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-3 mb-1 pl-4"
                     />
                     {fieldErrors[tool.id]?.numberOfUnits ? (
                       <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1972,7 +1972,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         clearFieldError(tool.id, "unitPrice");
                       }}
                       keyboardType="numeric"
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-1 pl-4"
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-3 mb-1 pl-4"
                     />
                     {fieldErrors[tool.id]?.unitPrice ? (
                       <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -2300,7 +2300,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           clearFieldError(tool.id, "asset");
                         }
                       }}
-                      searchPlaceholder={t("SignupForum.TypeSomething")}
+                      searchPlaceholder={t("Signup.TypeSomething")}
                     />
 
                     {updatedDetails[tool.id]?.asset === "Other" && (
@@ -2319,7 +2319,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             );
                             clearFieldError(tool.id, "mentionOther");
                           }}
-                          className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-1 pl-4"
+                          className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-3 mb-1 pl-4"
                         />
                         {fieldErrors[tool.id]?.mentionOther ? (
                           <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -2336,7 +2336,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       placeholder={t("FixedAssets.selectBrand")}
                       value={updatedDetails[tool.id]?.brand ?? ""}
                       editable={false}
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-1 pl-4"
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-3 mb-1 pl-4"
                     />
                     {fieldErrors[tool.id]?.brand ? (
                       <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -2361,7 +2361,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         clearFieldError(tool.id, "numberOfUnits");
                       }}
                       keyboardType="numeric"
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-1 pl-4"
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-3 mb-1 pl-4"
                     />
                     {fieldErrors[tool.id]?.numberOfUnits ? (
                       <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -2386,7 +2386,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         clearFieldError(tool.id, "unitPrice");
                       }}
                       keyboardType="numeric"
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-1 pl-4"
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-3 mb-1 pl-4"
                     />
                     {fieldErrors[tool.id]?.unitPrice ? (
                       <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -2416,7 +2416,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           : ""
                       }
                       editable={false}
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-4 pl-4"
+                      className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-3 mb-4 pl-4"
                     />
 
                     <Text className="pb-2 font-bold">

@@ -775,7 +775,7 @@ const AddMemberDetails: React.FC = () => {
                   onChangeText={(text) => updateStaff(index, "firstName", text)}
                   placeholder={t("Farms.Enter First Name")}
                   placeholderTextColor="#9CA3AF"
-                  className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                  className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
                   editable={!isSubmitting}
                 />
                 {firstNameErrors[index] && (
@@ -795,7 +795,7 @@ const AddMemberDetails: React.FC = () => {
                   onChangeText={(text) => updateStaff(index, "lastName", text)}
                   placeholder={t("Farms.Enter Last Name")}
                   placeholderTextColor="#9CA3AF"
-                  className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                  className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
                   editable={!isSubmitting}
                 />
                 {lastNameErrors[index] && (
@@ -815,7 +815,7 @@ const AddMemberDetails: React.FC = () => {
                   <TouchableOpacity
                     onPress={() => openModal(index, "countryCode")}
                     disabled={isSubmitting}
-                    className="bg-[#F4F4F4] rounded-full px-3 flex-row items-center justify-between"
+                    className="bg-[#F4F4F4] rounded-full px-3 h-[50px] flex-row items-center justify-between"
                     style={{ width: wp(33), height: hp(7) }}
                   >
                     <Text style={{ fontSize: 14, color: "#374151" }}>
@@ -827,13 +827,13 @@ const AddMemberDetails: React.FC = () => {
                   {/* Phone input */}
                   <View style={{ flex: 1 }}>
                     <TextInput
-                      className="bg-[#F4F4F4] rounded-full px-4"
+                      className="bg-[#F4F4F4] rounded-full px-4 h-[50px]"
                       placeholder="7X XXXXXXX"
                       value={member.phone}
                       onChangeText={(text) => handlePhoneChange(text, index)}
                       keyboardType="phone-pad"
                       maxLength={9}
-                      style={{ height: hp(7), fontSize: 14, borderWidth: 0 }}
+                      style={{  fontSize: 14, borderWidth: 0 }}
                       underlineColorAndroid="transparent"
                       cursorColor="#141415ff"
                       editable={!isSubmitting}
@@ -871,7 +871,7 @@ const AddMemberDetails: React.FC = () => {
                   onChangeText={(text) => handleNicChange(index, text)}
                   placeholder={t("Farms.Enter NIC")}
                   placeholderTextColor="#9CA3AF"
-                  className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+                  className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
                   editable={!isSubmitting}
                   autoCapitalize="characters"
                   maxLength={12}

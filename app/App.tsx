@@ -20,21 +20,17 @@ import Splash from "../component/auth/Splash";
 import Lanuage from "../component/common/Lanuage";
 import Signin from "@/component/auth/Signin";
 import News from "../component/news/News";
-import SignupForum from "@/component/auth/SignupForum";
+import Signup from "@/component/auth/Signup";
 import Verify from "@/component/otp-screens/Verify";
 import Otpverification from "@/component/otp-screens/Otpverification";
 import Dashboard from "@/component/dashboard/Dashbord";
 import NewCrop from "@/component/crop-cultivation/NewCrop";
 import SelectCrop from "@/component/crop-cultivation/SelectCrop";
-import EngProfile from "@/component/common/EngProfile";
+import EngProfile from "@/component/auth/UserProfile";
 import EngQRcode from "@/component/qr-code/EngQRcode";
 import EngEditProfile from "@/component/auth/EngEditProfile";
-import WeatherForecastEng from "@/component/weather-screens/WeatherForecastEng";
-import FiveDayForecastEng from "@/component/weather-screens/FiveDayForecastEng";
-import FiveDayForecastSinhala from "@/component/weather-screens/FiveDayForecastSinhala";
-import WeatherForecastSinhala from "@/component/weather-screens/WeatherForecastSinhala";
-import WeatherForecastTamil from "@/component/weather-screens/WeatherForecastTamil";
-import FiveDayForecastTamil from "@/component/weather-screens/FiveDayForecastTamil";
+import WeatherForecast from "@/component/weather-screens/WeatherForecast";
+import FiveDayForecast from "@/component/weather-screens/FiveDayForecast";
 import CurrentAssert from "@/component/currect-assets/CurrentAssert";
 import AddAsset from "@/component/currect-assets/AddAsset";
 import RemoveAsset from "@/component/currect-assets/RemoveAsset";
@@ -159,6 +155,8 @@ import GoviShopLoadingScreen from "@/component/govi-shop/GoviShopLoading";
 import ExploreShopsScreen from "@/component/govi-shop/ExploreShops";
 import GoviShopCartScreen from "@/component/govi-shop/GoviShopCartScreen";
 import GoviShopProfileScreen from "@/component/govi-shop/GoviShopProfileScreen";
+import LocationAccess from "@/component/permission/LocationAccess";
+import ViewProduct from "@/component/govi-shop/ViewProduct";
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -216,28 +214,12 @@ function MainTabNavigator() {
       <Tab.Screen name="CropCalander" component={CropCalander as any} />
       <Tab.Screen name="CurrentAssert" component={CurrentAssert} />
       <Tab.Screen name="EngEditProfile" component={EngEditProfile} />
-      <Tab.Screen name="FiveDayForecastEng" component={FiveDayForecastEng} />
-      <Tab.Screen
-        name="FiveDayForecastSinhala"
-        component={FiveDayForecastSinhala}
-      />
-      <Tab.Screen
-        name="FiveDayForecastTamil"
-        component={FiveDayForecastTamil}
-      />
+      <Tab.Screen name="FiveDayForecast" component={FiveDayForecast as any} />
       <Tab.Screen name="fixedDashboard" component={FixedDashboard} />
       <Tab.Screen name="NewCrop" component={NewCrop} />
       <Tab.Screen name="News" component={News as any} />
       <Tab.Screen name="RemoveAsset" component={RemoveAsset} />
-      <Tab.Screen name="WeatherForecastEng" component={WeatherForecastEng} />
-      <Tab.Screen
-        name="WeatherForecastSinhala"
-        component={WeatherForecastSinhala}
-      />
-      <Tab.Screen
-        name="WeatherForecastTamil"
-        component={WeatherForecastTamil}
-      />
+      <Tab.Screen name="WeatherForecast" component={WeatherForecast as any} />
       <Tab.Screen
         name="TransactionHistory"
         component={TransactionHistory as any}
@@ -364,7 +346,7 @@ function AppContent() {
             <Stack.Screen name="Splash" component={Splash} />
             <Stack.Screen name="Lanuage" component={Lanuage} />
             <Stack.Screen name="Signin" component={Signin} />
-            <Stack.Screen name="SignupForum" component={SignupForum} />
+            <Stack.Screen name="Signup" component={Signup} />
             <Stack.Screen name="Verify" component={Verify} />
             <Stack.Screen name="OTPE" component={Otpverification} />
             <Stack.Screen
@@ -688,6 +670,14 @@ function AppContent() {
             <Stack.Screen
               name="GoviShopProfileScreen"
               component={GoviShopProfileScreen}
+            />
+            <Stack.Screen
+              name="LocationAccess"
+              component={LocationAccess as any}
+            />
+            <Stack.Screen
+              name="ViewProduct"
+              component={ViewProduct as any}
             />
           </Stack.Navigator>
         </NavigationContainer>

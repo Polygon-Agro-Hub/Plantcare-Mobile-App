@@ -132,7 +132,7 @@ const ColdStorageCalculatorScreen: React.FC<ColdStorageProps> = ({
           placeholder={t("PostHarvestStorageCalculators.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
-          className="bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900 mb-6"
+          className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"
         />
 
         {/* Cooling Power per Unit Input */}
@@ -147,16 +147,16 @@ const ColdStorageCalculatorScreen: React.FC<ColdStorageProps> = ({
           placeholder={t("PostHarvestStorageCalculators.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
-          className="bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900 mb-6"
+          className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"
         />
 
         {/* Calculate Button */}
         <TouchableOpacity
           onPress={handleCalculate}
-          className="bg-[#2D2D2D] rounded-full py-4 items-center mt-4"
+          className="bg-[#2D2D2D] rounded-3xl h-[50px] items-center justify-center mt-4"
           activeOpacity={0.8}
         >
-          <Text className="text-white text-base font-bold">
+          <Text className="text-white text-lg font-bold">
             {t("PostHarvestStorageCalculators.Calculate")}
           </Text>
         </TouchableOpacity>

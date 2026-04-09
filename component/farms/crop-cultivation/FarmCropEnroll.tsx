@@ -534,7 +534,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         <View key={label} className="flex-row items-center space-x-1">
           <Text className="text-right">{label}</Text>
           <TextInput
-            className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
+            className="border border-gray-300 p-2 px-4 w-20 rounded-3xl bg-gray-100 text-left"
             value={value}
             onChangeText={(text) => setter(text.replace(/[-*#.]/g, ""))}
             keyboardType="numeric"
