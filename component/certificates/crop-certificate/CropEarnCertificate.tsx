@@ -366,7 +366,7 @@ const CropEarnCertificate: React.FC = () => {
           {filteredCertificates.length > 0 && (
             <TouchableOpacity
               onPress={handleProceedWithout}
-              className="bg-[#F3F3F5] rounded-full py-3 px-6 mt-6 mb-8 shadow-sm"
+              className="bg-[#F3F3F5] rounded-3xl h-[50px] justify-center px-6 mt-6 mb-8 shadow-sm"
               activeOpacity={0.7}
               style={{
                 shadowColor: "#000000",
@@ -383,7 +383,7 @@ const CropEarnCertificate: React.FC = () => {
                     ? { fontSize: 14 }
                     : i18n.language === "ta"
                       ? { fontSize: 12 }
-                      : { fontSize: 16 },
+                      : { fontSize: 18 },
                 ]}
               >
                 {t("EarnCertificate.Proceed without a certificate")}
@@ -444,7 +444,7 @@ const CropEarnCertificate: React.FC = () => {
             <View className="flex-row justify-between gap-3">
               <TouchableOpacity
                 onPress={handleGoBack}
-                className="flex-1 bg-[#ECECEC] rounded-lg py-3 px-4"
+                className="flex-1 bg-[#ECECEC] rounded-lg h-[50px] justify-center px-4"
                 activeOpacity={0.7}
               >
                 <Text
@@ -463,7 +463,7 @@ const CropEarnCertificate: React.FC = () => {
 
               <TouchableOpacity
                 onPress={handleContinue}
-                className="flex-1 bg-black rounded-lg py-3 px-4"
+                className="flex-1 bg-black rounded-lg h-[50px] justify-center px-4"
                 activeOpacity={0.8}
               >
                 <Text

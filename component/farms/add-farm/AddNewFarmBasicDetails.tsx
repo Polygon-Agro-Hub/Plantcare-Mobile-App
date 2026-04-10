@@ -220,7 +220,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
     if (language === "si") {
       return { fontSize: 12, lineHeight: 20 };
     }
-    return { fontSize: 14, lineHeight: 25 };
+    return { fontSize: 16, lineHeight: 25 };
   };
 
   const selectedDistrictLabel =
@@ -293,10 +293,10 @@ const AddNewFarmBasicDetails: React.FC = () => {
               <TouchableOpacity onPress={() => setModalVisible(true)}>
                 <Image
                   source={getImageSource(selectedImageId)}
-                  className="w-20 h-20 rounded-full"
+                  className="w-24 h-24 rounded-full"
                   resizeMode="cover"
                 />
-                <View className="w-6 h-6 bg-black rounded-full absolute bottom-0 right-0 items-center justify-center">
+                <View className="w-7 h-7 bg-black rounded-full absolute bottom-0 right-0 items-center justify-center">
                   <Image
                     source={require("../../../assets/images/farms/pen.webp")}
                     className="w-3 h-3"
@@ -437,9 +437,9 @@ const AddNewFarmBasicDetails: React.FC = () => {
             </View>
           </View>
 
-          <View className="mt-8 mb-[30%]">
+          <View className="mt-8 mb-[30%] items-center justify-center">
             <TouchableOpacity
-              className="bg-black py-3 mx-6 rounded-3xl h-[50px]"
+              className="bg-black  rounded-3xl h-[50px] w-2/3 justify-center"
               onPress={handleContinue}
               style={{
                 shadowColor: "#000000",
@@ -498,18 +498,18 @@ const AddNewFarmBasicDetails: React.FC = () => {
               </ScrollView>
               <View className="flex-row space-x-3 mt-4">
                 <TouchableOpacity
-                  className="flex-1 bg-gray-300 py-3 rounded-full"
+                  className="flex-1 bg-gray-300 justify-center rounded-3xl h-[50px]"
                   onPress={() => setModalVisible(false)}
                 >
                   <Text
                     className="text-center text-gray-800 font-semibold"
-                    style={[{ fontSize: 14 }, getTextStyle(i18n.language)]}
+                    style={[{ fontSize: 16 }, getTextStyle(i18n.language)]}
                   >
                     {t("Farms.Cancel")}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  className="flex-1 bg-black py-3 rounded-full"
+                  className="flex-1 bg-black h-[50px] rounded-3xl justify-center"
                   onPress={() => setModalVisible(false)}
                 >
                   <Text

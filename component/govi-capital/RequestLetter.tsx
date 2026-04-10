@@ -492,7 +492,7 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
         <View className="mb-8 mt-2">
           <TouchableOpacity
             onPress={handleGoBack}
-            className="bg-gray-200 rounded-full py-3.5 mb-3"
+            className="bg-gray-200 rounded-3xl h-[50px] justify-center mb-3"
             disabled={submitting}
             style={{
               shadowColor: "#000000",
@@ -502,14 +502,14 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
               elevation: 4,
             }}
           >
-            <Text className="text-gray-700 text-center font-medium text-sm">
+            <Text className="text-gray-700 text-center font-medium text-lg">
               {t("Govicapital.Go Back")}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={handleSendForApproval}
-            className="bg-gray-900 rounded-full py-4"
+            className="bg-gray-900 rounded-3xl h-[50px] justify-center "
             disabled={submitting}
             style={{
               shadowColor: "#000000",
@@ -523,12 +523,12 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
             {submitting ? (
               <View className="flex-row justify-center items-center">
                 <ActivityIndicator size="small" color="#fff" />
-                <Text className="text-white text-center font-medium text-sm ml-2">
+                <Text className="text-white text-center font-medium text-lg ml-1">
                   {t("Govicapital.Submitting")}
                 </Text>
               </View>
             ) : (
-              <Text className="text-white text-center font-medium text-sm">
+              <Text className="text-white text-center font-medium text-lg">
                 {t("Govicapital.Send for Approval")}
               </Text>
             )}

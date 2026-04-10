@@ -641,14 +641,14 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
         </View>
 
         {/* Save Button */}
-        <View className="pt-10 pb-32 px-[15%]">
+        <View className="pt-10 pb-32 items-center">
           <TouchableOpacity
             onPress={handleSave}
             className={`${
               isSubmitting || checkingNumber || checkingNIC
                 ? "bg-gray-400"
                 : "bg-black"
-            } rounded-3xl h-[50px] items-center justify-center`}
+            } rounded-3xl h-[50px] items-center justify-center w-2/3`}
             activeOpacity={0.8}
             disabled={isSubmitting || checkingNumber || checkingNIC}
             style={{

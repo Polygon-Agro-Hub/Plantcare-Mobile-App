@@ -266,7 +266,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
 
         <View className="justify-center items-center">
           <TouchableOpacity
-            className={`rounded-full py-4 w-64 mt-6 mb-3 bg-[#353535] shadow-lg`}
+            className={`rounded-3xl w-2/3 h-[50px] mt-6 mb-3 bg-[#353535] shadow-lg justify-center items-center`}
             onPress={async () => {
               navigation.navigate("BankDetailsSignUp" as any);
             }}

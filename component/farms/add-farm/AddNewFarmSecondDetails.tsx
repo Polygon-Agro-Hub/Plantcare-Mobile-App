@@ -524,7 +524,7 @@ const AddNewFarmSecondDetails = () => {
                     ? { fontSize: 16 }
                     : i18n.language === "ta"
                       ? { fontSize: 13 }
-                      : { fontSize: 15 },
+                      : { fontSize: 16 },
                 ]}
               >
                 {t("Farms.Go Back")}
@@ -559,7 +559,7 @@ const AddNewFarmSecondDetails = () => {
                       ? { fontSize: 15 }
                       : i18n.language === "ta"
                         ? { fontSize: 13 }
-                        : { fontSize: 15 },
+                        : { fontSize: 16 },
                   ]}
                 >
                   {isSubmitting ? t("Farms.Saving...") : t("Farms.Add Staff")}

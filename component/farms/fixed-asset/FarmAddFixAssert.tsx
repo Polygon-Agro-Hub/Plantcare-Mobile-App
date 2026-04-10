@@ -1680,7 +1680,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             )}
 
             {/* ── Submit Button ── */}
-            <View className="flex-1 items-center pt-8 mb-16 ml-10 mr-10">
+            <View className="flex-1 items-center pt-8 mb-16 ">
               <TouchableOpacity
                 className={`${
                   category !== "Machine and Vehicles" &&
@@ -1691,7 +1691,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   expireDate < new Date()
                     ? "bg-gray-400"
                     : "bg-gray-900"
-                } p-3 rounded-3xl mb-6 h-13 w-72`}
+                } p-3 rounded-3xl mb-6 h-[50px] w-2/3`}
                 onPress={submitData}
                 disabled={
                   loading ||

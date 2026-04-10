@@ -342,7 +342,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
 
           {/* Card Number Input */}
           <TextInput
-            className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
+            className="h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl p-3 mb-8 text-base"
             placeholder="Enter Card Number"
             keyboardType="numeric"
             maxLength={19}
@@ -352,14 +352,14 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
 
           {/* Card Holder Name Input */}
           <TextInput
-            className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
+            className="h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl p-3 mb-8 text-base"
             placeholder="Enter Name on Card"
             value={cardHolderName}
             onChangeText={formatCardHolderName}
           />
 
           {/* Card Expiry Date Input */}
-          <View className="flex-row items-center h-12 border border-gray-300 bg-[#F6F6F6] rounded-full px-3 mb-8">
+          <View className="flex-row items-center h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl px-3 mb-8">
             <TextInput
               className="flex-1 h-full text-base"
               placeholder="Enter Expiration Date (MM/YY)"
@@ -373,7 +373,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
 
           {/* CVV Input */}
           <TextInput
-            className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-5 text-base"
+            className="h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl p-3 mb-5 text-base"
             placeholder="Enter CVV"
             keyboardType="numeric"
             maxLength={3}
@@ -384,7 +384,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
 
           {/* Pay Now Button */}
           <TouchableOpacity
-            className="bg-black py-3 rounded-full mt-5 mb-24"
+            className="bg-black h-[50px] justify-center rounded-full mt-5 mb-24"
             onPress={handlePayNow}
             disabled={isProcessing}
             style={{

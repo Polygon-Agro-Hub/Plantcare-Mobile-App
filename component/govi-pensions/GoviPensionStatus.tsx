@@ -227,7 +227,7 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
       <View className="px-5 pb-6 pt-4 bg-white">
         <TouchableOpacity
           onPress={config.onPress}
-          className={`${config.buttonStyle} rounded-full py-4`}
+          className={`${config.buttonStyle} rounded-3xl h-[50px] justify-center `}
           activeOpacity={0.8}
         >
           <Text

@@ -857,7 +857,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   <View className="mt-4">
                     <Text>{t("FixedAssets.Mention")}</Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-2 rounded-full mt-2 bg-gray-100"
+                      className="border border-[#F4F4F4] p-2 rounded-3xl h-[50px] mt-2 bg-gray-100"
                       placeholder={t("FixedAssets.Mention")}
                       value={mentionOther}
                       onChangeText={(text) => {
@@ -893,7 +893,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.mentionOtherBrand")}
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-4 rounded-full bg-gray-100 pl-4"
+                      className="border border-[#F4F4F4] p-4 rounded-3xl h-[50px] bg-gray-100 pl-4"
                       placeholder={t("FixedAssets.enterCustomBrand")}
                       value={customBrand}
                       onChangeText={(text) => {
@@ -910,7 +910,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.numberofUnits")} *
                 </Text>
                 <TextInput
-                  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
+                  className="border border-[#F4F4F4] p-3 pl-4 rounded-3xl h-[50px] bg-gray-100"
                   placeholder={t("FixedAssets.enterNumberofUnits")}
                   value={numberOfUnits}
                   onChangeText={(text) => {
@@ -926,7 +926,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.unitPrice")} *
                 </Text>
                 <TextInput
-                  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
+                  className="border border-[#F4F4F4] p-3 pl-4 rounded-3xl h-[50px] bg-gray-100"
                   placeholder={t("FixedAssets.enterUnitPrice")}
                   value={unitPrice}
                   onChangeText={(text) => {
@@ -1170,7 +1170,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.Land Name")} *
                 </Text>
                 <TextInput
-                  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-gray-100"
+                  className="border border-[#F4F4F4] p-3 pl-4 rounded-3xl h-[50px] bg-gray-100"
                   placeholder={t("FixedAssets.Enter Land Name")}
                   value={landName}
                   autoCapitalize="sentences"
@@ -1210,7 +1210,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                     >
                       <Text className="text-right">{label}</Text>
                       <TextInput
-                        className="border border-[#F4F4F4] p-2 px-4 w-20 rounded-full bg-gray-100"
+                        className="border border-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] bg-gray-100"
                         value={val}
                         onChangeText={(text) =>
                           setter(text.replace(/[-.*#+]/g, ""))
@@ -1244,7 +1244,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.estimateValue")} *
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-2 rounded-full bg-gray-100 pl-4"
+                      className="border border-[#F4F4F4] p-2 rounded-3xl h-[50px] bg-gray-100 pl-4"
                       placeholder={t("FixedAssets.estimatedValueEnter")}
                       value={estimateValue}
                       onChangeText={(text) => {
@@ -1325,7 +1325,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         {t("FixedAssets.years")}
                       </Text>
                       <TextInput
-                        className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-full bg-gray-100"
+                        className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-3xl h-[50px] bg-gray-100"
                         value={durationYears}
                         onChangeText={(text) => {
                           setDurationYears(
@@ -1340,7 +1340,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         {t("FixedAssets.months")}
                       </Text>
                       <TextInput
-                        className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-full bg-[#F4F4F4]"
+                        className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-3xl h-[50px] bg-[#F4F4F4]"
                         value={durationMonths}
                         onChangeText={(text) => {
                           const cleaned = text
@@ -1362,7 +1362,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.leasedAmountAnnually")} *
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
+                      className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
                       value={leastAmountAnnually}
                       onChangeText={(text) => {
                         setLeastAmountAnnually(formatCurrency(text));
@@ -1420,7 +1420,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.permitFeeAnnuallyLKR")} *
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
+                      className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
                       placeholder={t("FixedAssets.EnterpermitAnnually")}
                       value={permitFeeAnnually}
                       onChangeText={(text) => {
@@ -1440,7 +1440,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.paymentAnnually")} *
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
+                      className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
                       value={paymentAnnually}
                       onChangeText={(text) => {
                         setPaymentAnnually(formatCurrency(text.trimStart()));
@@ -1530,7 +1530,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.mentionOther")}
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-4 rounded-full bg-[#F4F4F4] pl-4"
+                      className="border border-[#F4F4F4] p-4 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
                       value={othertool}
                       onChangeText={(text) => {
                         setOthertool(text.replace(/^\s+/, ""));
@@ -1562,7 +1562,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.mentionOtherBrand")}
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-4 rounded-full bg-[#F4F4F4] pl-4"
+                      className="border border-[#F4F4F4] p-4 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
                       placeholder={t("FixedAssets.enterCustomBrand")}
                       value={customBrand}
                       onChangeText={(text) =>
@@ -1578,7 +1578,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.numberofUnits")} *
                 </Text>
                 <TextInput
-                  className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
+                  className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
                   placeholder={t("FixedAssets.enterNumberofUnits")}
                   value={numberOfUnits}
                   onChangeText={(text) =>
@@ -1592,7 +1592,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.unitPrice")} *
                 </Text>
                 <TextInput
-                  className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
+                  className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
                   placeholder={t("FixedAssets.enterUnitPrice")}
                   value={unitPrice}
                   onChangeText={(text) => {
@@ -1843,7 +1843,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.Building Name")} *
                 </Text>
                 <TextInput
-                  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-[#F4F4F4]"
+                  className="border border-[#F4F4F4] p-3 pl-4 rounded-3xl h-[50px] bg-[#F4F4F4]"
                   placeholder={t("FixedAssets.Enter Building Name")}
                   value={buildingName}
                   onChangeText={(text) => {
@@ -1861,7 +1861,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.floorAreaSqrFt")} *
                 </Text>
                 <TextInput
-                  className="border border-[#F4F4F4] p-3 pl-4 rounded-full bg-[#F4F4F4]"
+                  className="border border-[#F4F4F4] p-3 pl-4 rounded-3xl h-[50px] bg-[#F4F4F4]"
                   placeholder={t("FixedAssets.Enter Floor Area")}
                   value={floorArea}
                   onChangeText={(text) => {
@@ -1897,7 +1897,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.estimatedBuildingValueLKR")} *
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
+                      className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
                       placeholder={t("FixedAssets.estimatedValueEnter")}
                       value={estimateValue}
                       onChangeText={(text) => {
@@ -1976,7 +1976,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                           {t("FixedAssets.years")}
                         </Text>
                         <TextInput
-                          className="border border-[#F4F4F4] p-2 px-4 rounded-full bg-[#F4F4F4] w-[30%]"
+                          className="border border-[#F4F4F4] p-2 px-4 rounded-3xl h-[50px] bg-[#F4F4F4] w-[30%]"
                           value={durationYears}
                           onChangeText={(text) => {
                             setDurationYears(
@@ -1991,7 +1991,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                           {t("FixedAssets.months")}
                         </Text>
                         <TextInput
-                          className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-full bg-[#F4F4F4]"
+                          className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-3xl h-[50px] bg-[#F4F4F4]"
                           value={durationMonths}
                           onChangeText={(text) => {
                             const cleaned = text
@@ -2014,7 +2014,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.leasedAmountAnnually")} *
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
+                      className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
                       value={leastAmountAnnually}
                       onChangeText={(text) => {
                         setLeastAmountAnnually(
@@ -2091,7 +2091,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.permitAnnuallyLKR")} *
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
+                      className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
                       value={permitFeeAnnually}
                       onChangeText={(text) => {
                         setPermitFeeAnnually(formatCurrency(text.trimStart()));
@@ -2111,7 +2111,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.paymentAnnuallyLKR")} *
                     </Text>
                     <TextInput
-                      className="border border-[#F4F4F4] p-3 rounded-full bg-[#F4F4F4] pl-4"
+                      className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
                       value={paymentAnnually}
                       onChangeText={(text) => {
                         setPaymentAnnually(formatCurrency(text.trimStart()));
@@ -2141,9 +2141,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             )}
 
             {/* Save button */}
-            <View className="flex-1 items-center pt-8 mb-16 ml-10 mr-10">
+            <View className="flex-1 items-center pt-8 mb-16 ">
               <TouchableOpacity
-                className="bg-gray-900 p-3 rounded-3xl mb-6 h-13 w-72"
+                className="bg-gray-900 p-3 rounded-3xl h-[50px] mb-6 h-13 w-2/3"
                 onPress={submitData}
                 style={{
                   shadowColor: "#000000",

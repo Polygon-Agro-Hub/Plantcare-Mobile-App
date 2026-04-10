@@ -1038,7 +1038,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   : t("CurrentAssets.stillvalide")}
               </Text>
             ) : (
-              <Text className="text-gray-400">{t("CurrentAssets.status")}</Text>
+              <Text className="text-gray-400 text-lg">{t("CurrentAssets.status")}</Text>
             )}
           </View>
 
@@ -1054,7 +1054,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               elevation: 8,
             }}
           >
-            <Text className="text-white text-center">
+            <Text className="text-white text-center text-lg">
               {t("CurrentAssets.AddAsset")}
             </Text>
           </TouchableOpacity>

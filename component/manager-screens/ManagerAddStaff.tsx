@@ -14,10 +14,6 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
@@ -523,7 +519,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
             <Text className="text-gray-900 text-base">{t("Farms.Role")}</Text>
             <TouchableOpacity
               onPress={() => setRoleModalVisible(true)}
-              className="bg-[#F4F4F4] rounded-full px-4 py-3 flex-row justify-between items-center"
+              className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] flex-row justify-between items-center"
               style={{ minHeight: 48 }}
               disabled={isSubmitting}
             >
@@ -541,7 +537,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
               {t("Farms.First Name")}
             </Text>
             <TextInput
-              className="bg-gray-100 px-4 py-3 rounded-full text-base text-gray-700"
+              className="bg-gray-100 px-4 h-[50px] rounded-3xl text-base text-gray-700"
               placeholder={t("Farms.Enter First Name")}
               placeholderTextColor="#9CA3AF"
               value={firstName}
@@ -556,7 +552,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
               {t("Farms.Last Name")}
             </Text>
             <TextInput
-              className="bg-gray-100 px-4 py-3 rounded-full text-base text-gray-700"
+              className="bg-gray-100 px-4 h-[50px] rounded-3xl text-base text-gray-700"
               placeholder={t("Farms.Enter Last Name")}
               placeholderTextColor="#9CA3AF"
               value={lastName}
@@ -573,8 +569,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
             <View className="flex-row items-center space-x-2">
               <TouchableOpacity
                 onPress={() => setCountryCodeModalVisible(true)}
-                className="bg-[#F4F4F4] rounded-full px-3 justify-center items-center"
-                style={{ width: wp(33), height: hp(7) }}
+                className="bg-[#F4F4F4] rounded-3xl h-[50px] w-1/3 px-3 justify-center items-center"
                 disabled={isSubmitting}
               >
                 <Text className="text-base text-gray-900">
@@ -584,14 +579,13 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
 
               <View style={{ flex: 1 }}>
                 <TextInput
-                  className="bg-[#F4F4F4] rounded-full px-4"
+                  className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4"
                   placeholder="7X XXXXXXX"
                   value={phoneNumber}
                   onChangeText={handlePhoneChange}
                   keyboardType="phone-pad"
                   maxLength={9}
                   style={{
-                    height: hp(7),
                     fontSize: 14,
                     borderWidth: 0,
                   }}
@@ -629,7 +623,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
               onChangeText={(text: string) => handleNicChange(text)}
               placeholder={t("Farms.Enter NIC")}
               placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+              className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
               editable={!isSubmitting}
               autoCapitalize="characters"
               maxLength={12}
@@ -658,7 +652,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
         <View className="pt-10 pb-32 px-[15%]">
           <TouchableOpacity
             onPress={handleSave}
-            className={`${isSubmitting || checkingNumber || checkingNIC ? "bg-gray-400" : "bg-black"} rounded-full py-3 items-center justify-center`}
+            className={`${isSubmitting || checkingNumber || checkingNIC ? "bg-gray-400" : "bg-black"} rounded-3xl h-[50px] items-center justify-center`}
             activeOpacity={0.8}
             disabled={isSubmitting || checkingNumber || checkingNIC}
           >

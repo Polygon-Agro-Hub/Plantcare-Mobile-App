@@ -240,9 +240,9 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
       </View>
 
       {/* Apply Button */}
-      <View className="px-4 mb-4">
+      <View className="px-4 mb-4   ">
         <TouchableOpacity
-          className="bg-[#353535] py-4 rounded-full"
+          className="bg-[#353535] h-[50px] rounded-3xl justify-center"
           onPress={handleApplyPress}
           activeOpacity={0.8}
           disabled={isCheckingEligibility}
