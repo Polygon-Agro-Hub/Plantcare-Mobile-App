@@ -23,10 +23,10 @@ import { AntDesign } from "@expo/vector-icons";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import moment from "moment";
-import LottieView from "lottie-react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../../common/CustomHeader";
 import GlobalSearchModal from "@/component/common/GlobalSearchModal";
+import LoadingPage from "@/component/common/LoadingPage";
 
 type FarmCropEnrollRouteProp = RouteProp<RootStackParamList, "FarmCropEnroll">;
 
@@ -92,13 +92,14 @@ const DropdownButton = ({
       borderWidth: 1,
       borderColor: "#ccc",
       backgroundColor: "#FFFFFF",
-      borderRadius: 30,
+
       paddingHorizontal: 12,
       paddingVertical: 14,
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
     }}
+    className="h-[50px] rounded-3xl"
   >
     <Text style={{ color: value ? "#000000" : "#6B7280", fontSize: 14 }}>
       {value || placeholder}
@@ -513,14 +514,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
 
   if (loading) {
     return (
-      <View className="flex-1 bg-white justify-center items-center">
-        <LottieView
-          source={require("../../../assets/jsons/loader.json")}
-          autoPlay
-          loop
-          style={{ width: 300, height: 300 }}
-        />
-      </View>
+     <LoadingPage fullScreen />
     );
   }
 
@@ -534,7 +528,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         <View key={label} className="flex-row items-center space-x-1">
           <Text className="text-right">{label}</Text>
           <TextInput
-            className="border border-gray-300 p-2 px-4 w-20 rounded-3xl bg-gray-100 text-left"
+            className="border border-gray-300 p-2 px-4 w-20 rounded-3xl h-[50px] bg-gray-100 text-left"
             value={value}
             onChangeText={(text) => setter(text.replace(/[-*#.]/g, ""))}
             keyboardType="numeric"
@@ -618,25 +612,26 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
             />
 
             {/* Search button */}
-            <TouchableOpacity
-              onPress={handleSearch}
-              className={`p-3 mx-5 mt-8 items-center rounded-full ${
-                isLoading ? "bg-gray-400" : "bg-gray-800"
-              }`}
-              disabled={isLoading}
-              style={{
-                shadowColor: "#000000",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.25,
-                shadowRadius: 4,
-                elevation: 4,
-              }}
-            >
-              <Text className="text-white text-base font-bold">
-                {t("Cropenroll.search")}
-              </Text>
-            </TouchableOpacity>
-
+            <View className="justify-center items-center">
+              <TouchableOpacity
+                onPress={handleSearch}
+                className={`p-3  mt-8 items-center rounded-3xl h-[50px] w-2/3  ${
+                  isLoading ? "bg-gray-400" : "bg-gray-800"
+                }`}
+                disabled={isLoading}
+                style={{
+                  shadowColor: "#000000",
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 4,
+                  elevation: 4,
+                }}
+              >
+                <Text className="text-white text-lg font-bold">
+                  {t("Cropenroll.search")}
+                </Text>
+              </TouchableOpacity>
+            </View>
             {/* Results */}
             {search && (
               <>
@@ -653,9 +648,11 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
                 </TouchableOpacity>
                 {renderDatePicker()}
 
+                <View className="justify-center items-center">
+
                 <TouchableOpacity
                   onPress={HandleEnrollBtn}
-                  className={`rounded-full mb-4 p-3 mx-5 mt-8 items-center ${
+                  className={`rounded-3xl h-[50px] mb-4  w-2/3 mt-8 justify-center items-center ${
                     isLoading ? "bg-gray-500" : "bg-gray-900"
                   }`}
                   disabled={isLoading}
@@ -670,11 +667,12 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
                   {isLoading ? (
                     <ActivityIndicator size="small" color="#fff" />
                   ) : (
-                    <Text className="text-white text-base font-bold">
+                    <Text className="text-white text-lg font-bold">
                       {t("Cropenroll.enroll")}
                     </Text>
                   )}
                 </TouchableOpacity>
+                </View>
               </>
             )}
           </View>

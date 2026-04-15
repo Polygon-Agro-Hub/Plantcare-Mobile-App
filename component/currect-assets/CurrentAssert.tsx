@@ -20,6 +20,7 @@ import LottieView from "lottie-react-native";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../services/reducxStore";
 import CustomHeader from "../common/CustomHeader";
+import LoadingPage from "../common/LoadingPage";
 interface Asset {
   category: string;
   totalSum: number;
@@ -192,18 +193,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
     : [];
 
   if (loading) {
-    return (
-      <View className="flex-1 bg-white">
-        <View className="flex-1 justify-center items-center">
-          <LottieView
-            source={require("../../assets/jsons/loader.json")}
-            autoPlay
-            loop
-            style={{ width: 300, height: 300 }}
-          />
-        </View>
-      </View>
-    );
+    return <LoadingPage fullScreen />;
   }
 
   const totalPopulation = pieData.reduce(

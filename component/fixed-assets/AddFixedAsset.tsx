@@ -228,6 +228,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
     setExpireDate(null);
     setLandName("");
     setBuildingName("");
+    setErrors({});
+    setErrorMessage("");
   };
 
   useFocusEffect(
@@ -369,18 +371,19 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             "FixedAssets.enterLeasedAmountAnnuallyLKR",
           );
       }
-      if (ownership === "Permitted Building" && !permitFeeAnnually)
+      if (ownership === "Permitted Building") {
         if (!lbissuedDate)
           newErrors.lbissuedDate = t("FixedAssets.issuedDateRequired");
-      if (!permitFeeAnnually)
-        newErrors.permitFeeAnnually = t("FixedAssets.enterPermitAnnuallyLKR");
+        if (!permitFeeAnnually)
+          newErrors.permitFeeAnnually = t("FixedAssets.enterPermitAnnuallyLKR");
+      }
       if (ownership === "Shared / No Ownership" && !paymentAnnually)
         newErrors.paymentAnnually = t("FixedAssets.enterPaymentAnnuallyLKR");
     }
 
     if (category === "Land") {
       if (!landownership)
-        newErrors.landownership = t("FixedAssets.selectLandCategory");
+        newErrors.landownership = t("FixedAssets.selectOwnershipCategory");
       const nonZeroExtent = [extentha, extentac, extentp].filter(
         (f) => f && f !== "0",
       );
@@ -584,6 +587,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           onSelect={(items) => {
             const val = items[0] ?? "";
             setCategory(val);
+            setOwnership("");
+            setLbIssuedDate(null);
+            setPermitFeeAnnually("");
             setAsset("");
             setAssetname("");
             setBrand("");
@@ -659,7 +665,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
           <GlobalSearchModal
             visible={modalLandOwnership}
             onClose={() => setModalLandOwnership(false)}
-            title={t("FixedAssets.selectLandCategory")}
+            title={t("FixedAssets.ownership")}
             data={landOwnershipOptions}
             selectedItems={landownership ? [landownership] : []}
             onSelect={(items) => {
@@ -1225,11 +1231,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
 
                 {/* Land ownership */}
                 <Text className="mt-4 text-sm pb-2">
-                  {t("FixedAssets.selectLandCategory")} *
+                  {t("FixedAssets.ownership")} *
                 </Text>
                 <SelectorButton
                   label={getLabel(landOwnershipOptions, landownership)}
-                  placeholder={t("FixedAssets.selectLandCategory")}
+                  placeholder={t("FixedAssets.selectOwnershipCategory")}
                   onPress={() => {
                     Keyboard.dismiss();
                     setModalLandOwnership(true);
@@ -1437,7 +1443,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 {landownership === "Shared" && (
                   <View className="mt-4">
                     <Text className="pb-2">
-                      {t("FixedAssets.paymentAnnually")} *
+                      {t("FixedAssets.paymentAnnuallyLKR")} *
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"

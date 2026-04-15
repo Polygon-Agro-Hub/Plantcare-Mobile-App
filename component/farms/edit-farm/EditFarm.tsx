@@ -16,7 +16,6 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
-import LottieView from "lottie-react-native";
 import { useTranslation } from "react-i18next";
 import i18n from "@/i18n/i18n";
 import ImageData from "@/assets/jsons/farmImage.json";
@@ -26,6 +25,7 @@ import { RootStackParamList } from "../../types/types";
 import CustomHeader from "../../common/CustomHeader";
 import GlobalSearchModal from "../../common/GlobalSearchModal";
 import { AntDesign } from "@expo/vector-icons";
+import LoadingPage from "@/component/common/LoadingPage";
 
 type EditFarmNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -411,16 +411,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
   };
 
   if (loading) {
-    return (
-      <View className="flex-1 bg-white justify-center items-center">
-        <LottieView
-          source={require("../../../assets/jsons/loader.json")}
-          autoPlay
-          loop
-          style={{ width: 300, height: 300 }}
-        />
-      </View>
-    );
+    return <LoadingPage fullScreen />;
   }
 
   if (error && !farmData) {
@@ -464,206 +455,215 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
           }
         />
         <View className="px-4">
-
-        {/* Farm Image Selector */}
-        <View
-          className="items-center mb-8 mt-3"
-          style={{ paddingVertical: hp(2) }}
-        >
-          <TouchableOpacity
-            onPress={openImageModal}
-            accessibilityLabel="Change farm image"
+          {/* Farm Image Selector */}
+          <View
+            className="items-center mb-8 mt-3"
+            style={{ paddingVertical: hp(2) }}
           >
-            <Image
-              source={getImageSource(images[selectedImage]?.source)}
-              className="w-20 h-20 rounded-full"
-              resizeMode="cover"
-            />
-            <View className="w-6 h-6 bg-black rounded-full absolute bottom-0 right-0 items-center justify-center">
+            <TouchableOpacity
+              onPress={openImageModal}
+              accessibilityLabel="Change farm image"
+            >
               <Image
-                source={require("../../../assets/images/farms/pen.webp")}
-                className="w-3 h-3"
+                source={getImageSource(images[selectedImage]?.source)}
+                className="w-24 h-24 rounded-full"
+                resizeMode="cover"
+              />
+              <View className="w-7 h-7 bg-black rounded-full absolute bottom-0 right-0 items-center justify-center">
+                <Image
+                  source={require("../../../assets/images/farms/pen.webp")}
+                  className="w-3 h-3"
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          <View className="space-y-6">
+            {/* Farm Name */}
+            <View>
+              <Text className="text-[#070707] font-medium mb-2">
+                {t("Farms.Farm Name")}
+              </Text>
+              <TextInput
+                value={farmName}
+                onChangeText={setFarmName}
+                placeholder={t("Farms.Enter Farm Name Here")}
+                placeholderTextColor="#9CA3AF"
+                className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
+                autoCapitalize="words"
+                returnKeyType="next"
               />
             </View>
-          </TouchableOpacity>
-        </View>
 
-        <View className="space-y-6">
-          {/* Farm Name */}
-          <View>
-            <Text className="text-[#070707] font-medium mb-2">
-              {t("Farms.Farm Name")}
-            </Text>
-            <TextInput
-              value={farmName}
-              onChangeText={setFarmName}
-              placeholder={t("Farms.Enter Farm Name Here")}
-              placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
-              autoCapitalize="words"
-              returnKeyType="next"
-            />
-          </View>
+            {/* Extent */}
+            <View>
+              <Text className="text-[#070707] font-medium mb-2">
+                {t("Farms.Extent")}
+              </Text>
+              <View className="flex-row items-center justify-between">
+                {[
+                  {
+                    label: t("Farms.ha"),
+                    value: extentha,
+                    setter: setExtentha,
+                  },
+                  {
+                    label: t("Farms.ac"),
+                    value: extentac,
+                    setter: setExtentac,
+                  },
+                  { label: t("Farms.p"), value: extentp, setter: setExtentp },
+                ].map(({ label, value, setter }) => (
+                  <View key={label} className="flex-row items-center space-x-2">
+                    <Text className="font-semibold">{label}</Text>
+                    <TextInput
+                      className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl text-center h-[50px]"
+                      value={value}
+                      onChangeText={(text) =>
+                        setter(validateNumericInput(text))
+                      }
+                      keyboardType="numeric"
+                      placeholder="0"
+                      placeholderTextColor="#9CA3AF"
+                      maxLength={5}
+                    />
+                  </View>
+                ))}
+              </View>
+            </View>
 
-          {/* Extent */}
-          <View>
-            <Text className="text-[#070707] font-medium mb-2">
-              {t("Farms.Extent")}
-            </Text>
-            <View className="flex-row items-center justify-between">
-              {[
-                { label: t("Farms.ha"), value: extentha, setter: setExtentha },
-                { label: t("Farms.ac"), value: extentac, setter: setExtentac },
-                { label: t("Farms.p"), value: extentp, setter: setExtentp },
-              ].map(({ label, value, setter }) => (
-                <View key={label} className="flex-row items-center space-x-2">
-                  <Text className="font-semibold">{label}</Text>
-                  <TextInput
-                    className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl text-center h-[50px]"
-                    value={value}
-                    onChangeText={(text) => setter(validateNumericInput(text))}
-                    keyboardType="numeric"
-                    placeholder="0"
-                    placeholderTextColor="#9CA3AF"
-                    maxLength={5}
-                  />
-                </View>
-              ))}
+            {/* District */}
+            <View>
+              <Text className="text-[#070707] font-medium mb-2">
+                {t("Farms.District")}
+              </Text>
+              <TouchableOpacity
+                onPress={() => setDistrictModalVisible(true)}
+                className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] flex-row items-center justify-between"
+                style={{ height: hp(7) }}
+                activeOpacity={0.7}
+              >
+                <Text
+                  className={
+                    district
+                      ? "text-gray-700 text-base"
+                      : "text-gray-400 text-base"
+                  }
+                >
+                  {district
+                    ? districtItems.find((d) => d.value === district)?.label
+                    : t("Farms.Select District")}
+                </Text>
+                <AntDesign name="caret-down" size={14} color="#5e5d5d" />
+              </TouchableOpacity>
+
+              <GlobalSearchModal
+                visible={districtModalVisible}
+                onClose={() => setDistrictModalVisible(false)}
+                title={t("Farms.District")}
+                data={districtItems}
+                selectedItems={district ? [district] : []}
+                onSelect={(items) => setDistrict(items[0] ?? "")}
+                searchPlaceholder={t("Farms.Search district..")}
+                searchKeys={["label"]}
+                showSearch={true}
+                multiSelect={false}
+              />
+            </View>
+
+            {/* Plot No */}
+            <View>
+              <Text className="text-[#070707] font-medium mb-2">
+                {t("Farms.Plot No")}
+              </Text>
+              <TextInput
+                value={plotNo}
+                onChangeText={setPlotNo}
+                placeholder={t("Farms.Enter Plot Number Here")}
+                placeholderTextColor="#9CA3AF"
+                className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
+                autoCapitalize="characters"
+              />
+            </View>
+
+            {/* Street Name */}
+            <View>
+              <Text className="text-[#070707] font-medium mb-2">
+                {t("Farms.Street Name")}
+              </Text>
+              <TextInput
+                value={streetName}
+                onChangeText={setStreetName}
+                placeholder={t("Farms.Enter Street Name")}
+                placeholderTextColor="#9CA3AF"
+                className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
+                autoCapitalize="words"
+              />
+            </View>
+
+            {/* City */}
+            <View>
+              <Text className="text-[#070707] font-medium mb-2">
+                {t("Farms.City")}
+              </Text>
+              <TextInput
+                value={city}
+                onChangeText={setCity}
+                placeholder={t("Farms.Enter City Name")}
+                placeholderTextColor="#9CA3AF"
+                className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
+                autoCapitalize="words"
+              />
+            </View>
+
+            {/* Number of Staff */}
+            <View>
+              <Text className="text-[#070707] font-medium mb-2">
+                {t("Farms.Number of Staff")} *
+              </Text>
+              <TextInput
+                value={numberOfStaff}
+                onChangeText={(text) =>
+                  setNumberOfStaff(validateNumericInput(text))
+                }
+                placeholder={t("Farms.Enter Number of Staff")}
+                placeholderTextColor="#9CA3AF"
+                className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
+                keyboardType="numeric"
+                maxLength={4}
+              />
             </View>
           </View>
 
-          {/* District */}
-          <View>
-            <Text className="text-[#070707] font-medium mb-2">
-              {t("Farms.District")}
-            </Text>
+          {/* Update Button */}
+          <View className="mt-8 mb-[40%] items-center">
             <TouchableOpacity
-              onPress={() => setDistrictModalVisible(true)}
-              className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] flex-row items-center justify-between"
-              style={{ height: hp(7) }}
-              activeOpacity={0.7}
+              className="bg-black justify-center w-2/3 rounded-3xl h-[50px]"
+              onPress={handleUpdateFarm}
+              disabled={loading}
+              accessibilityLabel="Update farm details"
+              style={{
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 6 },
+                shadowOpacity: 0.25,
+                shadowRadius: 6,
+                elevation: 8,
+              }}
             >
               <Text
-                className={
-                  district
-                    ? "text-gray-700 text-base"
-                    : "text-gray-400 text-base"
-                }
+                className="text-white text-center font-semibold text-lg"
+                style={[
+                  i18n.language === "si"
+                    ? { fontSize: 15 }
+                    : i18n.language === "ta"
+                      ? { fontSize: 13 }
+                      : { fontSize: 18 },
+                ]}
               >
-                {district
-                  ? districtItems.find((d) => d.value === district)?.label
-                  : t("Farms.Select District")}
+                {loading ? t("Farms.Updating...") : t("Farms.Update")}
               </Text>
-              <AntDesign name="caret-down" size={14} color="#5e5d5d" />
             </TouchableOpacity>
-
-            <GlobalSearchModal
-              visible={districtModalVisible}
-              onClose={() => setDistrictModalVisible(false)}
-              title={t("Farms.District")}
-              data={districtItems}
-              selectedItems={district ? [district] : []}
-              onSelect={(items) => setDistrict(items[0] ?? "")}
-              searchPlaceholder={t("Farms.Search district..")}
-              searchKeys={["label"]}
-              showSearch={true}
-              multiSelect={false}
-            />
           </View>
-
-          {/* Plot No */}
-          <View>
-            <Text className="text-[#070707] font-medium mb-2">
-              {t("Farms.Plot No")}
-            </Text>
-            <TextInput
-              value={plotNo}
-              onChangeText={setPlotNo}
-              placeholder={t("Farms.Enter Plot Number Here")}
-              placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
-              autoCapitalize="characters"
-            />
-          </View>
-
-          {/* Street Name */}
-          <View>
-            <Text className="text-[#070707] font-medium mb-2">
-              {t("Farms.Street Name")}
-            </Text>
-            <TextInput
-              value={streetName}
-              onChangeText={setStreetName}
-              placeholder={t("Farms.Enter Street Name")}
-              placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
-              autoCapitalize="words"
-            />
-          </View>
-
-          {/* City */}
-          <View>
-            <Text className="text-[#070707] font-medium mb-2">
-              {t("Farms.City")}
-            </Text>
-            <TextInput
-              value={city}
-              onChangeText={setCity}
-              placeholder={t("Farms.Enter City Name")}
-              placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
-              autoCapitalize="words"
-            />
-          </View>
-
-          {/* Number of Staff */}
-          <View>
-            <Text className="text-[#070707] font-medium mb-2">
-              {t("Farms.Number of Staff")} *
-            </Text>
-            <TextInput
-              value={numberOfStaff}
-              onChangeText={(text) =>
-                setNumberOfStaff(validateNumericInput(text))
-              }
-              placeholder={t("Farms.Enter Number of Staff")}
-              placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
-              keyboardType="numeric"
-              maxLength={4}
-            />
-          </View>
-        </View>
-
-        {/* Update Button */}
-        <View className="mt-8 mb-[40%]">
-          <TouchableOpacity
-            className="bg-black py-3 mx-6 rounded-3xl h-[50px]"
-            onPress={handleUpdateFarm}
-            disabled={loading}
-            accessibilityLabel="Update farm details"
-            style={{
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 6 },
-              shadowOpacity: 0.25,
-              shadowRadius: 6,
-              elevation: 8,
-            }}
-          >
-            <Text
-              className="text-white text-center font-semibold text-lg"
-              style={[
-                i18n.language === "si"
-                  ? { fontSize: 15 }
-                  : i18n.language === "ta"
-                    ? { fontSize: 13 }
-                    : { fontSize: 17 },
-              ]}
-            >
-              {loading ? t("Farms.Updating...") : t("Farms.Update")}
-            </Text>
-          </TouchableOpacity>
-        </View>
         </View>
       </ScrollView>
 
@@ -711,7 +711,6 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
                   </TouchableOpacity>
                 ))}
               </View>
-              
             </ScrollView>
             <View className="flex-row space-x-3 mt-4">
               <TouchableOpacity

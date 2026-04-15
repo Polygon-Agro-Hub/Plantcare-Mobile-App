@@ -5,9 +5,9 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
-import LottieView from 'lottie-react-native';
 import CustomHeader from '../common/CustomHeader';
 import { useTranslation } from 'react-i18next';
+import LoadingPage from '../common/LoadingPage';
 
 const { width } = Dimensions.get('window');
 const isSmallScreen = width < 400;
@@ -229,11 +229,7 @@ const FiveDayForecast: React.FC<FiveDayForecastProps> = ({ navigation }) => {
 
   if (loading) {
     return (
-      <View className="flex-1 bg-white justify-center items-center">
-        <View className="flex-1 justify-center items-center">
-          <LottieView source={require('../../assets/jsons/loader.json')} autoPlay loop style={{ width: 300, height: 300 }} />
-        </View>
-      </View>
+     <LoadingPage fullScreen />
     );
   }
 

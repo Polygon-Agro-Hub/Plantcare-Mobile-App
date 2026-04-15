@@ -26,6 +26,7 @@ import { useSelector } from "react-redux";
 import { selectUserPersonal } from "@/store/userSlice";
 import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../common/CustomHeader";
+import LoadingPage from "../common/LoadingPage";
 
 interface complainItem {
   id: number;
@@ -166,14 +167,7 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
         />
 
         {loading ? (
-          <View className="flex-1 justify-center items-center">
-            <LottieView
-              source={require("../../assets/jsons/loader.json")}
-              autoPlay
-              loop
-              style={{ width: 300, height: 300 }}
-            />
-          </View>
+          <LoadingPage fullScreen  />
         ) : complains.length === 0 ? (
           <View className="flex-1 items-center justify-center -mt-[70%]">
             <LottieView

@@ -148,7 +148,12 @@ export type RootStackParamList = {
     farmId: Number;
   };
   FarmDetailsScreen: { farmId: Number; farmName: string };
-  EditManagersScreen: { farmId: number; membership: string; renew: string ,regCode:string};
+  EditManagersScreen: {
+    farmId: number;
+    membership: string;
+    renew: string;
+    regCode: string;
+  };
   ManageMembersManager: {
     farmId?: Number;
     farmName?: string;
@@ -163,14 +168,14 @@ export type RootStackParamList = {
   FarmCropVariety: undefined;
   EditFarm: { farmId: number };
   FromFramEditFarm: { farmId: number };
-  AddnewStaff: { farmId: number ,regCode:string};
+  AddnewStaff: { farmId: number; regCode: string };
   ManagerAddStaff: { farmId: number };
   EditStaffMember: {
     staffMemberId: number;
     farmId: number;
     membership: string;
     renew: string;
-    regCode:string;
+    regCode: string;
   };
   SupervisorAddStaff: { farmId: number };
   ManageEditscreen: { staffMemberId: number; farmId: number; farmName: string };
@@ -334,7 +339,7 @@ export type RootStackParamList = {
   GoviPensionForm: undefined;
   GoviPensionStatus: undefined;
   MyPensionAccount: undefined;
-  ProjectStatus: {jobid:string , id:string};
+  ProjectStatus: { jobid: string; id: string };
   FarmCalMenu: undefined;
   CropPlanningCalculatorsMenu: undefined;
   IrrigationWaterCalculatorsMenu: undefined;
@@ -364,20 +369,22 @@ export type RootStackParamList = {
   GoviShopProfileScreen: undefined;
   LocationAccess: undefined;
   ViewProduct: {
-  product: {
-    id: string;
-    name: string;
-    level: string;
-    unit: string;
-    discountPrice?: number;
-    normalPrice: number;
-    image: string;
-    categoryId: string;
-    availableQty?: number;
-  description?: string;
-
+    product: {
+      id: string;
+      name: string;
+      level: string;
+      unit: string;
+      discountPrice?: number;
+      normalPrice: number;
+      image: string;
+      categoryId: string;
+      availableQty?: number;
+      description?: string;
+    };
+    LoadingPage: {
+      messageStyle: string;
+    };
   };
-};
 };
 
 export interface RequestItem {

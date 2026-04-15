@@ -27,6 +27,7 @@ import LottieView from "lottie-react-native";
 import { useSelector } from "react-redux";
 import { selectUserFarmCount } from "../../store/userSlice";
 import CustomHeader from "../common/CustomHeader";
+import LoadingPage from "../common/LoadingPage";
 
 type RequestHistoryNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -290,14 +291,7 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
 
   if (loading) {
     return (
-      <View className="flex-1 justify-center items-center">
-        <LottieView
-          source={require("../../assets/jsons/loader.json")}
-          autoPlay
-          loop
-          style={{ width: 300, height: 300 }}
-        />
-      </View>
+     <LoadingPage fullScreen />
     );
   }
 

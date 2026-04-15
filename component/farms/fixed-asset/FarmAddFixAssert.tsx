@@ -400,7 +400,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
 
     if (category === "Land") {
       if (!landownership)
-        newErrors.landownership = t("FixedAssets.selectLandCategory");
+        newErrors.landownership = t("FixedAssets.selectOwnershipCategory");
       const nonZeroFields = [
         extentp || "0",
         extentac || "0",
@@ -1051,14 +1051,14 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
 
                 {/* Land Category */}
                 <Text className="mt-4 text-sm pb-2">
-                  {t("FixedAssets.selectLandCategory")} *
+                  {t("FixedAssets.ownership")} *
                 </Text>
                 <DropdownButton
                   value={getLabelFromOptions(
                     landOwnershipOptions,
                     landownership,
                   )}
-                  placeholder={t("FixedAssets.selectLandCategory")}
+                  placeholder={t("FixedAssets.selectOwnershipCategory")}
                   onPress={() => openModal("landOwnership")}
                   hasError={!!errors.landownership}
                 />
@@ -1260,7 +1260,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 {landownership === "Shared" && (
                   <View className="mt-4">
                     <Text className="pb-2">
-                      {t("FixedAssets.paymentAnnually")} *
+                      {t("FixedAssets.paymentAnnuallyLKR")} *
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
@@ -1816,7 +1816,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
         <GlobalSearchModal
           visible={activeModal === "landOwnership"}
           onClose={closeModal}
-          title={t("FixedAssets.selectLandCategory")}
+          title={t("FixedAssets.ownership")}
           data={landOwnershipOptions}
           selectedItems={landownership ? [landownership] : []}
           onSelect={(items) => {

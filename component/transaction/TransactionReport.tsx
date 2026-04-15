@@ -690,7 +690,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         {/* Total */}
         <View className="mb-2 mt-2 items-end">
           <Text className="font-bold" style={getTextStyle(i18next.language)}>
-            {t("TransactionList.Full Total (Rs.)")} : Rs.{" "}
+            {t("TransactionList.Full Total (Rs.)")} Rs.{" "}
             {formatNumberWithCommas(totalSum)}
           </Text>
         </View>

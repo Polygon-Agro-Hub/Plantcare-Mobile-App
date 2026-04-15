@@ -23,7 +23,7 @@ import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
 import assetData from "../../assets/jsons/fixed-assets.json";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import LottieView from "lottie-react-native";
+import LoadingPage from "../common/LoadingPage";
 
 type RootStackParamList = {
   UpdateAsset: { selectedTools: number[]; category: string; toolId: any };
@@ -721,16 +721,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       />
 
       {loading ? (
-        <View className="flex-1 justify-center items-center bg-white">
-          <View className="flex-1 justify-center items-center">
-            <LottieView
-              source={require("../../assets/jsons/loader.json")}
-              autoPlay
-              loop
-              style={{ width: 300, height: 300 }}
-            />
-          </View>
-        </View>
+        <LoadingPage fullScreen />
       ) : (
         <ScrollView className="bg-white">
           {tools.map((tool) => (
@@ -1043,7 +1034,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               );
                               clearFieldError(tool.id, "duration");
                             }}
-                            className="border border-gray-300 p-2 w-24 rounded-full bg-gray-100 px-4"
+                            className="border border-gray-300 p-2 w-24 rounded-3xl h-[50px] bg-gray-100 px-4"
                           />
                         </View>
                         {fieldErrors[tool.id]?.duration ? (
@@ -1205,10 +1196,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {updatedDetails[tool.id]?.ownership === "Shared" && (
                       <>
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.paymentAnnually")} *
+                          {t("FixedAssets.paymentAnnuallyLKR")} *
                         </Text>
                         <TextInput
-                          placeholder={t("FixedAssets.paymentAnnually")}
+                          placeholder={t("FixedAssets.paymentAnnuallyEnter")}
                           value={
                             updatedDetails[
                               tool.id
@@ -1652,7 +1643,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             clearFieldError(tool.id, "leastAmountAnnually");
                           }}
                           keyboardType="numeric"
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-3 mb-1 pl-4"
+                          className="border bg-[#F4F4F4] border-gray-300 rounded-3xl h-[50px] p-3 mb-1 pl-4"
                         />
                         {fieldErrors[tool.id]?.leastAmountAnnually ? (
                           <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -2691,7 +2682,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                 <View className="flex-1 items-center pt-8">
                   <TouchableOpacity
                     onPress={handleUpdateTools}
-                    className={`p-3 rounded-3xl mb-6 h-13 w-72 ${isLoading ? "bg-gray-500" : "bg-gray-900"}`}
+                    className={`p-3 rounded-3xl mb-6 h-[50px] w-2/3 ${isLoading ? "bg-gray-500" : "bg-gray-900"}`}
                     disabled={isLoading}
                     style={{
                       shadowColor: "#000000",
@@ -2704,7 +2695,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {isLoading ? (
                       <ActivityIndicator size="small" color="#fff" />
                     ) : (
-                      <Text className="text-white text-center text-base">
+                      <Text className="text-white text-center text-lg">
                         {t("FixedAssets.updateAsset")}
                       </Text>
                     )}

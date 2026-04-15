@@ -21,9 +21,9 @@ import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { AntDesign } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 import { useFocusEffect } from "@react-navigation/native";
-import LottieView from "lottie-react-native";
 import GlobalSearchModal from "../common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
+import LoadingPage from "../common/LoadingPage";
 
 type ComplainFormNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -197,14 +197,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
       style={{ flex: 1, backgroundColor: "#F9F9FA" }}
     >
       {loading ? (
-        <View className="flex-1 justify-center items-center">
-          <LottieView
-            source={require("../../assets/jsons/loader.json")}
-            autoPlay
-            loop
-            style={{ width: 300, height: 300 }}
-          />
-        </View>
+        <LoadingPage fullScreen message={t("Custom.LoadingMessage")} />
       ) : (
         <>
           <ScrollView className="flex-1" keyboardShouldPersistTaps="handled">

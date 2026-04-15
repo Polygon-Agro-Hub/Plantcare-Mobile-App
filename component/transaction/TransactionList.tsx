@@ -21,6 +21,7 @@ import {
 } from "react-native-responsive-screen";
 import LottieView from "lottie-react-native";
 import CustomHeader from "../common/CustomHeader";
+import LoadingPage from "../common/LoadingPage";
 
 type TransactionHistoryNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -268,14 +269,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
           ListEmptyComponent={
             <View className="items-center justify-center mt-8">
               {loading ? (
-                <View className="flex-1 justify-center items-center mt-[45%]">
-                  <LottieView
-                    source={require("../../assets/jsons/loader.json")}
-                    autoPlay
-                    loop
-                    style={{ width: 300, height: 300 }}
-                  />
-                </View>
+               <LoadingPage fullScreen />
               ) : (
                 <View className="flex-1 items-center justify-center">
                   <LottieView

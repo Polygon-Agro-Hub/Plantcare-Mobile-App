@@ -33,6 +33,7 @@ import {
 } from "react-native-responsive-screen";
 import LottieView from "lottie-react-native";
 import ImageData from "@/assets/jsons/farmImage.json";
+import LoadingPage from "@/component/common/LoadingPage";
 
 interface CropCardProps {
   id: number;
@@ -810,16 +811,7 @@ const FarmDetailsScreen = () => {
   };
 
   if (pageLoading) {
-    return (
-      <View className="flex-1 bg-gray-50 justify-center items-center">
-        <LottieView
-          source={require("../../../assets/jsons/loader.json")}
-          autoPlay
-          loop
-          style={{ width: 300, height: 300 }}
-        />
-      </View>
-    );
+    return <LoadingPage fullScreen />;
   }
 
   return (

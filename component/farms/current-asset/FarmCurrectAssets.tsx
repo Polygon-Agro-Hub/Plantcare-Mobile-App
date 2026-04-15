@@ -26,6 +26,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "@/services/reducxStore";
 import { FontAwesome } from "@expo/vector-icons";
 import CustomHeader from "../../common/CustomHeader";
+import LoadingPage from "@/component/common/LoadingPage";
 
 interface AssetItem {
   id: number;
@@ -353,18 +354,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
       : [];
 
   if (loading) {
-    return (
-      <View className="flex-1 bg-white">
-        <View className="flex-1 justify-center items-center">
-          <LottieView
-            source={require("../../../assets/jsons/loader.json")}
-            autoPlay
-            loop
-            style={{ width: 300, height: 300 }}
-          />
-        </View>
-      </View>
-    );
+    return <LoadingPage fullScreen />;
   }
 
   const totalPopulation = pieData.reduce(

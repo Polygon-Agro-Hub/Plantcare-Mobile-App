@@ -16,15 +16,14 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { environment } from "@/environment/environment";
-import LottieView from "lottie-react-native";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import i18n from "i18next";
 import countryData from "../../assets/jsons/countryflag.json";
 import CustomHeader from "../common/CustomHeader";
 import GlobalSearchModal from "../common/GlobalSearchModal";
+import LoadingPage from "../common/LoadingPage";
 
 type RouteParams = {
   farmId: number;
@@ -553,14 +552,7 @@ const SupervisorEditScreen: React.FC<SupervisorEditScreenProps> = ({
 
   if (loading) {
     return (
-      <View className="flex-1 bg-white justify-center items-center">
-        <LottieView
-          source={require("../../assets/jsons/loader.json")}
-          autoPlay
-          loop
-          style={{ width: 300, height: 300 }}
-        />
-      </View>
+     <LoadingPage fullScreen />
     );
   }
 
@@ -596,7 +588,7 @@ const SupervisorEditScreen: React.FC<SupervisorEditScreenProps> = ({
           {/* Role */}
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.Role")}</Text>
-            <View className="bg-gray-100 px-4 py-3 rounded-full">
+            <View className="bg-gray-100 px-4 h-[50px] rounded-3xl justify-center">
               <Text className="text-base text-gray-700">
                 {t("Farms.Worker")}
               </Text>
@@ -609,7 +601,7 @@ const SupervisorEditScreen: React.FC<SupervisorEditScreenProps> = ({
               {t("Farms.First Name")}
             </Text>
             <TextInput
-              className="bg-gray-100 px-4 py-3 rounded-full text-base text-gray-700"
+              className="bg-gray-100 px-4 h-[50px] rounded-3xl text-base text-gray-700"
               placeholder={t("Farms.Enter First Name")}
               placeholderTextColor="#9CA3AF"
               value={firstName}
@@ -625,7 +617,7 @@ const SupervisorEditScreen: React.FC<SupervisorEditScreenProps> = ({
               {t("Farms.Last Name")}
             </Text>
             <TextInput
-              className="bg-gray-100 px-4 py-3 rounded-full text-base text-gray-700"
+              className="bg-gray-100 px-4 h-[50px]  rounded-3xl text-base text-gray-700"
               placeholder={t("Farms.Enter Last Name")}
               placeholderTextColor="#9CA3AF"
               value={lastName}
@@ -643,8 +635,8 @@ const SupervisorEditScreen: React.FC<SupervisorEditScreenProps> = ({
             <View className="flex-row items-center gap-2">
               <TouchableOpacity
                 onPress={() => !isSubmitting && setCountryModalVisible(true)}
-                style={{ height: hp(7) }}
-                className="bg-[#F4F4F4] rounded-full px-4 flex-row items-center justify-center"
+              
+                className="bg-[#F4F4F4] rounded-3xl w-1/3 h-[50px] px-4 flex-row items-center justify-center"
                 disabled={isSubmitting}
               >
                 <Text className="text-base">
@@ -655,13 +647,13 @@ const SupervisorEditScreen: React.FC<SupervisorEditScreenProps> = ({
               {/* Phone Input */}
               <View style={{ flex: 1 }}>
                 <TextInput
-                  className="bg-[#F4F4F4] rounded-full px-4"
+                  className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4"
                   placeholder="7X XXXXXXX"
                   value={phoneNumber}
                   onChangeText={handlePhoneChange}
                   keyboardType="phone-pad"
                   maxLength={9}
-                  style={{ height: hp(7), fontSize: 14, borderWidth: 0 }}
+                  style={{ fontSize: 14, borderWidth: 0 }}
                   underlineColorAndroid="transparent"
                   cursorColor="#141415ff"
                   editable={!isSubmitting}
@@ -697,7 +689,7 @@ const SupervisorEditScreen: React.FC<SupervisorEditScreenProps> = ({
               onChangeText={handleNicChange}
               placeholder={t("Farms.Enter NIC")}
               placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+              className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
               editable={!isSubmitting}
               autoCapitalize="characters"
               maxLength={12}
@@ -731,7 +723,7 @@ const SupervisorEditScreen: React.FC<SupervisorEditScreenProps> = ({
               isSubmitting || checkingNumber || checkingNIC
                 ? "bg-gray-400"
                 : "bg-black"
-            } rounded-full py-3 items-center justify-center`}
+            } rounded-full h-[50px] items-center justify-center`}
             activeOpacity={0.8}
             disabled={isSubmitting || checkingNumber || checkingNIC}
           >
@@ -792,20 +784,20 @@ const SupervisorEditScreen: React.FC<SupervisorEditScreenProps> = ({
               <View className="px-4">
                 <TouchableOpacity
                   onPress={handleDeleteStaff}
-                  className="px-6 py-2 bg-[#000000] rounded-full"
+                  className="px-6 h-[50px] justify-center bg-[#000000] rounded-3xl"
                 >
                   <View className="justify-center items-center">
-                    <Text className="text-white">{t("Farms.Yes, Delete")}</Text>
+                    <Text className="text-white text-lg">{t("Farms.Yes, Delete")}</Text>
                   </View>
                 </TouchableOpacity>
               </View>
               <View className="px-4 mt-4">
                 <TouchableOpacity
                   onPress={() => setShowDeleteModal(false)}
-                  className="px-6 py-2 bg-[#D9D9D9] rounded-full"
+                  className="px-6 h-[50px] justify-center bg-[#D9D9D9] rounded-3xl"
                 >
                   <View className="justify-center items-center">
-                    <Text className="text-gray-700">
+                    <Text className="text-gray-700 text-lg">
                       {t("Farms.No, Go Back")}
                     </Text>
                   </View>

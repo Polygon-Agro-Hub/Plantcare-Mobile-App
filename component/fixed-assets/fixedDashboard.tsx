@@ -17,7 +17,7 @@ import CustomHeader from "../common/CustomHeader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { environment } from "@/environment/environment";
-import LottieView from "lottie-react-native";
+import LoadingPage from "../common/LoadingPage";
 
 type fixedDashboardNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -159,18 +159,7 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
   }, []);
 
   if (loading) {
-    return (
-      <View className="flex-1 bg-white">
-        <View className="flex-1 justify-center items-center">
-          <LottieView
-            source={require("../../assets/jsons/loader.json")}
-            autoPlay
-            loop
-            style={{ width: 300, height: 300 }}
-          />
-        </View>
-      </View>
-    );
+    return <LoadingPage fullScreen />;
   }
 
   return (

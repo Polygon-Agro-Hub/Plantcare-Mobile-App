@@ -20,6 +20,7 @@ import { useTranslation } from "react-i18next";
 import type { NativeEventSubscription } from "react-native";
 import LottieView from "lottie-react-native";
 import CustomHeader from "../common/CustomHeader";
+import LoadingPage from "../common/LoadingPage";
 
 type EngQRcodeNavigationPrps = StackNavigationProp<
   RootStackParamList,
@@ -187,16 +188,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
 
   if (loading) {
     return (
-      <View className="flex-1 bg-white">
-        <View className="flex-1 justify-center items-center">
-          <LottieView
-            source={require("../../assets/jsons/loader.json")}
-            autoPlay
-            loop
-            style={{ width: 300, height: 300 }}
-          />
-        </View>
-      </View>
+      <LoadingPage fullScreen />
     );
   }
 
@@ -305,7 +297,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
               )}
             </View>
             <TouchableOpacity
-              className=" bg-black mt-4 px-6 py-2 rounded-3xl"
+              className=" bg-black mt-4 px-6 items-center justify-center h-[50px] rounded-3xl"
               onPress={async () => {
                 navigation.navigate("MembershipScreen");
               }}
@@ -322,7 +314,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
                   source={require("../../assets/images/qr-code/generate-qr.webp")}
                   style={{ width: 32, height: 32 }}
                 />
-                <Text className="text-white text-center">
+                <Text className="text-white text-center text-lg " >
                   {t("QRcode.GenerateQr")}
                 </Text>
               </View>

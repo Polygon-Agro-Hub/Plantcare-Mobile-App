@@ -377,14 +377,20 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
           {loading ? (
             <SkeletonLoader />
           ) : crops.length === 0 ? (
-            <View className="items-center justify-center py-10">
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               <LottieView
                 source={require("../../assets/jsons/NoComplaints.json")}
-                style={{ width: wp(50), height: hp(50) }}
+                style={{ width: wp(50), height: hp(25) }}
                 autoPlay
                 loop
               />
-              <Text className="text-center text-gray-600 mt-[-30%]">
+              <Text className="text-center text-gray-600 ">
                 --{t("Manager.No ongoing cultivations found")}--
               </Text>
             </View>

@@ -28,6 +28,8 @@ import {
 } from "react-native-responsive-screen";
 import ContentLoader, { Rect } from "react-content-loader/native";
 import { StatusBar } from "expo-status-bar";
+import LottieView from "lottie-react-native";
+import CustomHeader from "../common/CustomHeader";
 
 interface CropCardProps {
   id: number;
@@ -317,52 +319,23 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
       <StatusBar style="dark" />
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: 16,
-          backgroundColor: "white",
-          borderBottomWidth: 1,
-          borderBottomColor: "#ccc",
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
+
+      <CustomHeader
+        title={t("Farms.Cultivation")}
+        navigation={navigation}
+        onBackPress={() => {
+          const userRole = user?.role;
+          let screenName = "LabororDashbord";
+
+          if (userRole === "Manager") screenName = "ManagerDashbord";
+          else if (userRole === "Supervisor") screenName = "SupervisorDashbord";
+
+          (navigation as any).navigate("Main", {
+            screen: screenName,
+          });
         }}
-      >
-        <TouchableOpacity
-          onPress={() => {
-            const userRole = user?.role;
-            let screenName = "LabororDashbord";
-
-            if (userRole === "Manager") screenName = "ManagerDashbord";
-            else if (userRole === "Supervisor")
-              screenName = "SupervisorDashbord";
-
-            (navigation as any).navigate("Main", {
-              screen: screenName,
-            });
-          }}
-        >
-          <AntDesign
-            name="left"
-            size={24}
-            color="#000502"
-            style={{
-              paddingHorizontal: wp(3),
-              paddingVertical: hp(1.5),
-              backgroundColor: "#F6F6F680",
-              borderRadius: 50,
-            }}
-          />
-        </TouchableOpacity>
-        <Text style={{ fontSize: 20, fontWeight: "bold", color: "#333" }}>
-          {t("Farms.Cultivation")}
-        </Text>
-        <View style={{ width: 24 }} />
-      </View>
+      />
+      <View className="border border-[0.5px] border-gray-200" />
       {loading ? (
         <SkeletonLoader />
       ) : crops.length === 0 ? (
@@ -371,21 +344,15 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
             flex: 1,
             justifyContent: "center",
             alignItems: "center",
-            padding: 16,
           }}
         >
-          <Image
-            source={noCropsImage}
-            style={{
-              width: wp("60%"),
-              height: hp("30%"),
-              resizeMode: "contain",
-            }}
+          <LottieView
+            source={require("../../assets/jsons/NoComplaints.json")}
+            style={{ width: wp(50), height: hp(25) }}
+            autoPlay
+            loop
           />
-          <Text
-            style={{ fontSize: 18, color: "#888", marginTop: 20 }}
-            className="text-center w-[80%] "
-          >
+          <Text className="text-center text-gray-600 ">
             --{t("MyCrop.NoAlreasdyEnrolled")}--
           </Text>
         </View>

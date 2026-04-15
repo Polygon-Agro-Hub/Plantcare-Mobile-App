@@ -23,10 +23,10 @@ import { useTranslation } from "react-i18next";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/services/reducxStore";
-import LottieView from "lottie-react-native";
 import CustomHeader from "../../common/CustomHeader";
 import GlobalSearchModal from "../../common/GlobalSearchModal";
 import { RootStackParamList } from "../../types/types";
+import LoadingPage from "@/component/common/LoadingPage";
 
 type FarmAddCurrentAssetNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -504,16 +504,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
   );
 
   if (loading) {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <LottieView
-          source={require("../../../assets/jsons/loader.json")}
-          autoPlay
-          loop
-          style={{ width: 300, height: 300 }}
-        />
-      </View>
-    );
+    return <LoadingPage fullScreen />;
   }
 
   const categoryItems = [
@@ -958,7 +949,9 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                   : t("CurrentAssets.stillvalide")}
               </Text>
             ) : (
-              <Text className="text-gray-400 text-lg">{t("CurrentAssets.status")}</Text>
+              <Text className="text-gray-400 text-lg">
+                {t("CurrentAssets.status")}
+              </Text>
             )}
           </View>
 
