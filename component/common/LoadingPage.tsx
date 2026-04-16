@@ -34,7 +34,7 @@ const LoadingPage: React.FC<LoadingPageProps> = ({
     >
       <View className="flex-1 justify-center items-center">
         <LottieView
-          source={require("../../assets/jsons/loader.json")}
+          source={require("@/assets/jsons/common/loader.json")}
           autoPlay
           loop
           style={{ width: 300, height: 300 }}

@@ -382,7 +382,7 @@ const AddFarmList = () => {
         ) : farms.length === 0 ? (
           <View className="flex-1 justify-center items-center">
             <LottieView
-              source={require("../../../assets/jsons/NoComplaints.json")}
+              source={require("@/assets/jsons/common/no-data.json")}
               style={{ width: wp(50), height: hp(50) }}
               autoPlay
               loop

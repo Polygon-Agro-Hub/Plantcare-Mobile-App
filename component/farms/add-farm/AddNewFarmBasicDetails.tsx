@@ -19,8 +19,8 @@ import {
 } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import ImageData from "@/assets/jsons/farmImage.json";
-import districtData from "@/assets/jsons/district.json";
+import ImageData from "@/assets/jsons/farm/farm-image.json";
+import districtData from "@/assets/jsons/common/district.json";
 import { RootStackParamList } from "../../types/types";
 import {
   widthPercentageToDP as wp,

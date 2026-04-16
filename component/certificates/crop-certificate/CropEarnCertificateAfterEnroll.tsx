@@ -301,7 +301,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
                 }}
               >
                 <LottieView
-                  source={require("../../../assets/jsons/NoComplaints.json")}
+                  source={require("@/assets/jsons/common/no-data.json")}
                   style={{ width: "100%", height: "100%" }}
                   autoPlay
                   loop

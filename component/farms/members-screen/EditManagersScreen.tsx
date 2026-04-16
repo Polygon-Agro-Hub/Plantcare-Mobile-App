@@ -23,7 +23,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
-import ImageData from "@/assets/jsons/farmImage.json";
+import ImageData from "@/assets/jsons/farm/farm-image.json";
 import CustomHeader from "@/component/common/CustomHeader";
 import { MaterialIcons } from "@expo/vector-icons";
 import LoadingPage from "@/component/common/LoadingPage";

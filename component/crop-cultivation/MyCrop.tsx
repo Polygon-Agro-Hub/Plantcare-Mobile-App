@@ -347,7 +347,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
           }}
         >
           <LottieView
-            source={require("../../assets/jsons/NoComplaints.json")}
+            source={require("@/assets/jsons/common/no-data.json")}
             style={{ width: wp(50), height: hp(25) }}
             autoPlay
             loop

@@ -375,7 +375,7 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
 
               <View className="w-48 h-48 mb-6 items-center justify-center">
                 <LottieView
-                  source={require("../../assets/jsons/StayTuned.json")}
+                  source={require("@/assets/jsons/govi-capital/stay-tuned.json")}
                   style={{ width: 200, height: 200 }}
                   autoPlay
                   loop

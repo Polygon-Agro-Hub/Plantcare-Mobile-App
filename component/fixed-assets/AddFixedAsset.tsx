@@ -25,7 +25,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import Icon from "react-native-vector-icons/Ionicons";
 import CustomHeader from "../common/CustomHeader";
-import assetData from "../../assets/jsons/fixed-assets.json";
+import assetData from "@/assets/jsons/fixed-asset/fixed-assets.json";
 
 type AddAssetNavigationProp = StackNavigationProp<
   RootStackParamList,

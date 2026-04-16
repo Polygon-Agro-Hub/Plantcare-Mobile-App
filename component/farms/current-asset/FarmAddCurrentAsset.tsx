@@ -137,7 +137,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
   useEffect(() => {
     setLoading(true);
     try {
-      const data = require("../../../assets/jsons/current-asset.json");
+      const data = require("@/assets/jsons/current-asset/current-asset.json");
       setCategories(Object.keys(data));
     } catch {
       Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
@@ -202,7 +202,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
-    const assetsJson = require("../../../assets/jsons/current-asset.json");
+    const assetsJson = require("@/assets/jsons/current-asset/current-asset.json");
     setAssets(assetsJson[category] || []);
     setSelectedAsset("");
     setBrand("");

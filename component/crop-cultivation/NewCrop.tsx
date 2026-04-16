@@ -28,7 +28,7 @@ import ContentLoader, { Rect } from "react-content-loader/native";
 import { useFocusEffect } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import CustomHeader from "../common/CustomHeader";
-import districtData from "../../assets/jsons/district.json";
+import districtData from "@/assets/jsons/common/district.json";
 
 type NewCropNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -575,7 +575,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
                   }}
                 >
                   <LottieView
-                    source={require("../../assets/jsons/NoComplaints.json")}
+                    source={require("@/assets/jsons/common/no-data.json")}
                     autoPlay
                     loop
                     style={{ width: 150, height: 150 }}
@@ -643,7 +643,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
                       }}
                     >
                       <LottieView
-                        source={require("../../assets/jsons/NoComplaints.json")}
+                        source={require("@/assets/jsons/common/no-data.json")}
                         autoPlay
                         loop
                         style={{ width: 150, height: 150 }}

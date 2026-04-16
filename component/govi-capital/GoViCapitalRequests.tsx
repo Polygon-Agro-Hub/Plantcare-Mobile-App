@@ -267,7 +267,7 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
         >
           <View className="flex-1 items-center justify-center mt-[-40%]">
             <LottieView
-              source={require("../../assets/jsons/NoComplaints.json")}
+              source={require("@/assets/jsons/common/no-data.json")}
               style={{ width: 200, height: 200 }}
               autoPlay
               loop

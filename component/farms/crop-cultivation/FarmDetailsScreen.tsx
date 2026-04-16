@@ -32,7 +32,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import LottieView from "lottie-react-native";
-import ImageData from "@/assets/jsons/farmImage.json";
+import ImageData from "@/assets/jsons/farm/farm-image.json";
 import LoadingPage from "@/component/common/LoadingPage";
 
 interface CropCardProps {
@@ -1105,7 +1105,7 @@ const FarmDetailsScreen = () => {
           {crops.length === 0 ? (
             <View className="justify-center items-center p-4 min-h-[300px] -mt-8">
               <LottieView
-                source={require("../../../assets/jsons/NoComplaints.json")}
+                source={require("@/assets/jsons/common/no-data.json")}
                 style={{ width: wp(50), height: hp(30) }}
                 autoPlay
                 loop

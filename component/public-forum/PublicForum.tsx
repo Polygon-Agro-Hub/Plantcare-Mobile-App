@@ -671,7 +671,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
       ).length === 0 && !loading ? (
         <View className="flex-1 items-center justify-center">
           <LottieView
-            source={require("../../assets/jsons/NoComplaints.json")}
+            source={require("@/assets/jsons/common/no-data.json")}
             autoPlay
             loop
             style={{ width: 150, height: 150 }}

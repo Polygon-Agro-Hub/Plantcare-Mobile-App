@@ -110,7 +110,7 @@ const RequestReview: React.FC<RequestReviewProps> = ({ navigation, route }) => {
             {requestStatus === "approved" && (
               <View className="items-center justify-center">
                 <LottieView
-                  source={require("../../assets/jsons/Congratulations.json")}
+                  source={require("@/assets/jsons/govi-capital/congratulation.json")}
                   style={{ width: 200, height: 200 }}
                   autoPlay
                   loop
@@ -121,7 +121,7 @@ const RequestReview: React.FC<RequestReviewProps> = ({ navigation, route }) => {
             {requestStatus === "rejected" && (
               <View className=" items-center justify-center">
                 <LottieView
-                  source={require("../../assets/jsons/RequestRejected.json")}
+                  source={require("@/assets/jsons/govi-capital/request-rejected.json")}
                   style={{ width: 200, height: 200 }}
                   autoPlay
                   loop
@@ -132,7 +132,7 @@ const RequestReview: React.FC<RequestReviewProps> = ({ navigation, route }) => {
             {(requestStatus === "pending" ||
               requestStatus === "under_review") && (
               <LottieView
-                source={require("../../assets/jsons/StayTuned.json")}
+                source={require("@/assets/jsons/govi-capital/stay-tuned.json")}
                 style={{ width: 200, height: 200 }}
                 autoPlay
                 loop

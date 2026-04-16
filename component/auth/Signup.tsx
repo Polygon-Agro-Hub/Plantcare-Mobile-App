@@ -26,8 +26,8 @@ import {
 } from "react-native-responsive-screen";
 import Checkbox from "expo-checkbox";
 import { useFocusEffect } from "@react-navigation/native";
-import countryData from "../../assets/jsons/countryflag.json";
-import districtData from "../../assets/jsons/district.json";
+import countryData from "@/assets/jsons/common/country-flag.json";
+import districtData from "@/assets/jsons/common/district.json";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
 import { LinearGradient } from "expo-linear-gradient";
@@ -404,7 +404,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
       >
         <Image
           source={Top}
-          className="w-[100%] -mt-[40%] absolute"
+          className="w-[100%] -mt-[45%] absolute"
           resizeMode="contain"
         />
 

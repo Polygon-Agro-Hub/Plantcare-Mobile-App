@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -8,8 +8,10 @@ import {
   Dimensions,
   StatusBar,
   Platform,
+  Modal,
+  Animated,
 } from "react-native";
-import { FontAwesome5, FontAwesome6, Ionicons } from "@expo/vector-icons";
+import { FontAwesome6, Fontisto, Ionicons } from "@expo/vector-icons";
 import { RootStackParamList } from "../types/types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/core";
@@ -18,13 +20,7 @@ type ViewProductNavigationProp = StackNavigationProp<
   RootStackParamList,
   "ViewProduct"
 >;
-
 type ViewProductRouteProp = RouteProp<RootStackParamList, "ViewProduct">;
-
-interface ViewProductProps {
-  navigation: ViewProductNavigationProp;
-  route: ViewProductRouteProp;
-}
 
 interface Product {
   id: string;
@@ -37,11 +33,13 @@ interface Product {
   availableQty?: number;
   description?: string;
   categoryId?: string;
-  qty?:number
+  qty?: number;
 }
 
 interface ViewProductProps {
-  product: Product;
+  navigation: ViewProductNavigationProp;
+  route: ViewProductRouteProp;
+  product?: Product;
   onClose?: () => void;
   onViewDetails?: (product: Product, quantity: number) => void;
 }
@@ -82,6 +80,101 @@ const DEMO_PRODUCT: Product = {
     "Pesticide powder is a dry, finely ground chemical formulation used to control or eliminate pests such as insects, weeds, fungi, or rodents. It is one of the simplest and oldest forms of pesticides and is widely used in agriculture, gardening, and public health.",
 };
 
+interface ConfirmOption {
+  label: string;
+  qty: number;
+  breakdown?: { qty: number; price: number; unit: string }[];
+  pricePerUnit: number;
+  unit: string;
+}
+
+interface ConfirmModalProps {
+  visible: boolean;
+  product: Product;
+  quantity: number;
+  onClose: () => void;
+  onConfirm: (selectedOption: ConfirmOption) => void;
+}
+
+const ConfirmModal: React.FC<ConfirmModalProps> = ({
+  visible,
+  product,
+  quantity,
+  onClose,
+  onConfirm,
+}) => {
+  return (
+    <Modal
+      visible={visible}
+      transparent
+      animationType="none"
+      statusBarTranslucent
+      onRequestClose={onClose}
+    >
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={onClose}
+        style={{
+          flex: 1,
+          backgroundColor: "rgba(0,0,0,0.60)",
+          alignItems: "center",
+          justifyContent: "center",
+          paddingHorizontal: 24,
+        }}
+      >
+        <TouchableOpacity activeOpacity={1}>
+          <View
+            style={{
+              backgroundColor: "white",
+              borderRadius: 20,
+              paddingHorizontal: 20,
+              paddingTop: 16,
+              paddingBottom: 20,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 8 },
+              shadowOpacity: 0.2,
+              shadowRadius: 20,
+              elevation: 12,
+              minWidth: 220,
+            }}
+          >
+            <TouchableOpacity
+              onPress={onClose}
+              style={{
+                position: "absolute",
+                top: 10,
+                right: 10,
+                width: 24,
+                height: 24,
+                borderRadius: 12,
+                backgroundColor: "#E5E7EB",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Ionicons name="close" size={14} color="#999" />
+            </TouchableOpacity>
+
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 8,
+                marginTop: 4,
+              }}
+            >
+              <Fontisto name="shopping-bag" size={18} color="#FF8000" />
+              <Text style={{ fontSize: 15, color: "#111" }}>
+                Added to the Cart
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </TouchableOpacity>
+    </Modal>
+  );
+};
+
 const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
   const product = route?.params?.product || DEMO_PRODUCT;
 
@@ -89,6 +182,7 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
   const minOrder = stepSize;
 
   const [quantity, setQuantity] = useState<number>(minOrder);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const activePrice = product.discountPrice ?? product.normalPrice;
 
@@ -101,11 +195,15 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
       return next < minOrder ? minOrder : next;
     });
 
-     const getImageSource = () => {
+  const getImageSource = () => {
     if (!product.image) {
       return require("@/assets/images/govi-shop/no-image.webp");
     }
     return { uri: product.image };
+  };
+
+  const handleConfirm = (selectedOption: ConfirmOption) => {
+    console.log("Added to cart:", product.name, selectedOption);
   };
 
   return (
@@ -140,17 +238,6 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
           resizeMode="cover"
         />
 
-        <View
-          style={{
-            position: "absolute",
-            top: 60,
-            left: 0,
-            right: 0,
-
-            zIndex: 2,
-          }}
-        />
-
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           activeOpacity={0.85}
@@ -164,7 +251,6 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
             backgroundColor: "rgba(255,255,255,0.92)",
             alignItems: "center",
             justifyContent: "center",
-
             shadowOpacity: 0.2,
             shadowRadius: 6,
             elevation: 4,
@@ -206,10 +292,6 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
           <Text style={{ fontSize: 18, fontWeight: "800", color: "#FF8000" }}>
             Rs. {formatPrice(activePrice)}
           </Text>
-          {/* <Text style={{ fontSize: 13, fontWeight: "600", color: "#FF8000" }}>
-            {" "}
-            /{product.unit}
-          </Text> */}
         </View>
 
         {product.availableQty && (
@@ -238,7 +320,7 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
           }}
         >
           {product.description ??
-            `${product.name} is a professionally formulated agricultural product suitable for a wide range of farming applications. Trusted by farmers and agribusinesses across the region. Ensure safe handling, proper storage, and follow all manufacturer guidelines and local regulations when using this product.`}
+            `${product.name} is a professionally formulated agricultural product suitable for a wide range of farming applications.`}
         </Text>
       </ScrollView>
 
@@ -255,13 +337,7 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
           gap: 12,
         }}
       >
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
+        <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
           <TouchableOpacity
             onPress={decrement}
             activeOpacity={0.8}
@@ -299,25 +375,33 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity
-          onPress={() => {
-            console.log("Added to cart:", product.name, quantity);
-          }}
-          activeOpacity={0.85}
-          style={{
-            flex: 1,
-            height: 50,
-            borderRadius: 30,
-            backgroundColor: "#1A1A2E",
-            alignItems: "center",
-            justifyContent: "center",
-            flexDirection: "row",
-            gap: 10,
-          }}
-        >
-          <FontAwesome6 name="arrow-right-long" size={25} color="white" />
-        </TouchableOpacity>
+        <View className="pl-[10%]">
+          <TouchableOpacity
+            onPress={() => setModalVisible(true)}
+            activeOpacity={0.85}
+            style={{
+              width: 120,
+              borderRadius: 30,
+              backgroundColor: "#1A1A2E",
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "row",
+              height: 50,
+            }}
+            className="h-[50px]"
+          >
+            <FontAwesome6 name="arrow-right-long" size={25} color="white" />
+          </TouchableOpacity>
+        </View>
       </View>
+
+      <ConfirmModal
+        visible={modalVisible}
+        product={product}
+        quantity={quantity}
+        onClose={() => setModalVisible(false)}
+        onConfirm={handleConfirm}
+      />
     </View>
   );
 };

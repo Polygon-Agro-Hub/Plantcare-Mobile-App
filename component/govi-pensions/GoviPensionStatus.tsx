@@ -91,7 +91,7 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
     switch (currentStatus) {
       case "To Review":
         return {
-          lottieSource: require("../../assets/jsons/StayTuned.json"),
+          lottieSource: require("@/assets/jsons/govi-capital/stay-tuned.json"),
           title: t("GoviPensionStatus.Stay Tuned!"),
           content: t(
             "GoviPensionStatus.We're taking a closer look at your pension application and will update you soon. This process might take a while.",
@@ -103,7 +103,7 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
         };
       case "Approved":
         return {
-          lottieSource: require("../../assets/jsons/Congratulations.json"),
+          lottieSource: require("@/assets/jsons/govi-capital/congratulation.json"),
           title: t("GoviPensionStatus.Congratulations!"),
           content: t(
             "GoviPensionStatus.You are now eligible for the pension scheme.",
@@ -132,7 +132,7 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
         };
       case "Rejected":
         return {
-          lottieSource: require("../../assets/jsons/RequestRejected.json"),
+          lottieSource: require("@/assets/jsons/govi-capital/request-rejected.json"),
           title: t("GoviPensionStatus.Try Again!"),
           content: t(
             "GoviPensionStatus.We're sorry to inform you that your pension request has been rejected. Please feel free to try again in the future.",
@@ -144,7 +144,7 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
         };
       default:
         return {
-          lottieSource: require("../../assets/jsons/StayTuned.json"),
+          lottieSource: require("@/assets/jsons/govi-capital/stay-tuned.json"),
           title: t("GoviPensionStatus.Stay Tuned!"),
           content: t(
             "GoviPensionStatus.We're taking a closer look at your pension application and will update you soon. This process might take a while.",

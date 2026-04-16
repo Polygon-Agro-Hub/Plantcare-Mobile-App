@@ -33,6 +33,7 @@ interface Shop {
   id: string;
   shopName: string;
   logo: string;
+  approvedStatus: string;
   productCount: number;
 }
 
@@ -45,7 +46,6 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [cartCount, setCartCount] = useState(3);
 
-  // Fetch shops
   const fetchShops = async (search = "") => {
     try {
       setLoading(true);
@@ -60,7 +60,6 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
         return;
       }
 
-      // API call with token
       const response = await axios.get(
         `${environment.API_BASE_URL}api/govi-shop/shops`,
         {
@@ -81,12 +80,10 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
     }
   };
 
-  // Initial load
   useEffect(() => {
     fetchShops();
   }, []);
 
-  // Debounced search
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
       fetchShops(searchQuery);
@@ -95,7 +92,6 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
     return () => clearTimeout(delayDebounce);
   }, [searchQuery]);
 
-  // Pull to refresh
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchShops(searchQuery);
@@ -199,7 +195,9 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
           <FlatList
             data={shops}
             renderItem={renderShopItem}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item, index) =>
+              item?.id?.toString() ?? index.toString()
+            }
             showsVerticalScrollIndicator={false}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

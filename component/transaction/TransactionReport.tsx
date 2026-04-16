@@ -21,6 +21,7 @@ import i18next from "i18next";
 import CustomHeader from "../common/CustomHeader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LottieView from "lottie-react-native";
+import LoadingPage from "../common/LoadingPage";
 
 const api = axios.create({
   baseURL: environment.API_BASE_URL,
@@ -533,12 +534,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
           onBackPress={() => navigation.goBack()}
         />
         <View className="flex-1 justify-center items-center mt-[45%]">
-          <LottieView
-            source={require("../../assets/jsons/loader.json")}
-            autoPlay
-            loop
-            style={{ width: 300, height: 300 }}
-          />
+          <LoadingPage fullScreen />
         </View>
       </View>
     );

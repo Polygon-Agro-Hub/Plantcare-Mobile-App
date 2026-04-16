@@ -24,7 +24,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import Entypo from "react-native-vector-icons/Entypo";
 import { useFocusEffect } from "@react-navigation/native";
 import * as ImageManipulator from "expo-image-manipulator";
-import districtData from "../../assets/jsons/district.json";
+import districtData from "@/assets/jsons/common/district.json";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../../component/common/CustomHeader";
 import LoadingPage from "../common/LoadingPage";

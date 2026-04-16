@@ -12,8 +12,8 @@ import {
 } from "react-native";
 import { StatusBar } from "react-native";
 import { RouteProp, useFocusEffect } from "@react-navigation/native";
-import ImageData from "@/assets/jsons/farmImage.json";
-import districtData from "@/assets/jsons/district.json";
+import ImageData from "@/assets/jsons/farm/farm-image.json";
+import districtData from "@/assets/jsons/common/district.json";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";

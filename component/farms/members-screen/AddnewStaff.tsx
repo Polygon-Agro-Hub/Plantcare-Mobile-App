@@ -22,7 +22,7 @@ import {
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
-import countryData from "../../../assets/jsons/countryflag.json";
+import countryData from "@/assets/jsons/common/country-flag.json";
 import CustomHeader from "../../common/CustomHeader";
 import GlobalSearchModal from "../../common/GlobalSearchModal";
 

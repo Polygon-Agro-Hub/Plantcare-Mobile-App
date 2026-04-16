@@ -477,7 +477,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
           ) : (
             <View className="self-center">
               <LottieView
-                source={require("../../../assets/jsons/currentassetempty.json")}
+                source={require("@/assets/jsons/current-asset/current-asset-empty.json")}
                 autoPlay
                 loop
                 style={{ width: 200, height: 200 }}

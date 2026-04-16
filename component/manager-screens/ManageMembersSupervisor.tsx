@@ -339,7 +339,7 @@ const ManageMembersSupervisor = () => {
             <View className="items-center justify-center py-10">
               <View className="items-center justify-center mt-[-25%]">
                 <LottieView
-                  source={require("../../assets/jsons/NoComplaints.json")}
+                  source={require("@/assets/jsons/common/no-data.json")}
                   style={{ width: wp(50), height: hp(50) }}
                   autoPlay
                   loop
