@@ -366,7 +366,13 @@ export type RootStackParamList = {
   GoviShopLoadingScreen: undefined;
   ExploreShopsScreen: undefined;
   GoviShopCartScreen: undefined;
-  GoviShopProfileScreen: undefined;
+  GoviShopProfileScreen: {
+    shopId:number; 
+    branchId:number;
+    shopname:string,
+          logo:string,
+          adress:string
+  };
   LocationAccess: undefined;
   ViewProduct: {
     product: {

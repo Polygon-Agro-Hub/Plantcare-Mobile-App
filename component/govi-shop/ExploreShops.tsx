@@ -30,11 +30,15 @@ interface ExploreShopsProps {
 }
 
 interface Shop {
-  id: string;
+  shopId: string;
   shopName: string;
   logo: string;
   approvedStatus: string;
-  productCount: number;
+  branchId: string;
+  branchName: string;
+  district: string;
+  province: string;
+  mobilePhone: string;
 }
 
 const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
@@ -101,7 +105,11 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
     <TouchableOpacity
       onPress={() => {
         navigation.navigate("GoviShopProfileScreen" as any, {
-          shopId: item.id,
+          shopId: item.shopId,
+          branchId: item.branchId,
+          shopname: item.shopName,
+          logo: item.logo,
+          adress: item.district,
         });
       }}
       className="flex-row items-center bg-white rounded-xl p-4 mb-3 border border-gray-100"
@@ -130,9 +138,13 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
             {item.shopName}
           </Text>
 
-          <Text className="text-sm text-gray-500">
-            {item.productCount} {t("ExploreShops.Products") || "Products"}
-          </Text>
+          <Text className="text-sm text-gray-500">{item.branchName}</Text>
+
+          {item.district ? (
+            <Text className="text-xs text-gray-400 mt-0.5">
+              {item.district}
+            </Text>
+          ) : null}
         </View>
 
         <Ionicons name="chevron-forward" size={24} color="#9CA3AF" />
@@ -196,7 +208,7 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
             data={shops}
             renderItem={renderShopItem}
             keyExtractor={(item, index) =>
-              item?.id?.toString() ?? index.toString()
+              item?.branchId?.toString() ?? index.toString()
             }
             showsVerticalScrollIndicator={false}
             refreshControl={

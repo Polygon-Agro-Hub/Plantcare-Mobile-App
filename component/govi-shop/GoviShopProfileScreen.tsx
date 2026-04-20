@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,13 +8,19 @@ import {
   FlatList,
   ScrollView,
   Dimensions,
+  ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { RootStackParamList } from "../types/types";
 import CustomHeader from "../common/CustomHeader";
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { environment } from "@/environment/environment";
+import { RouteProp } from "@react-navigation/core";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -23,8 +29,14 @@ type GoviShopProfileNavigationProp = StackNavigationProp<
   "GoviShopProfileScreen"
 >;
 
+type GoviShopProfileRouteProp = RouteProp<
+  RootStackParamList,
+  "GoviShopProfileScreen"
+>;
+
 interface GoviShopProfileProps {
   navigation: GoviShopProfileNavigationProp;
+  route: GoviShopProfileRouteProp;
 }
 
 interface ProductCategory {
@@ -32,11 +44,6 @@ interface ProductCategory {
   name: string;
   image: string;
   productCount: number;
-}
-
-interface FilterButton {
-  id: string;
-  name: string;
 }
 
 interface Product {
@@ -52,413 +59,717 @@ interface Product {
   description?: string;
 }
 
+interface SubProduct {
+  id: string;
+  label: string;
+  price: number;
+  discountPrice?: number;
+}
+
+interface FilterButton {
+  id: string;
+  name: string;
+}
+
+interface CartItem {
+  productId: string;
+  productName: string;
+  subProductId: string;
+  subProductLabel: string;
+  price: number;
+  quantity: number;
+  image: string;
+}
+
+const CHIP_COLUMNS = 4;
+const CHIP_GAP = 6;
+
+const CARD_INNER_WIDTH = screenWidth - 32 - 28 - 2;
+const CHIP_WIDTH =
+  (CARD_INNER_WIDTH - CHIP_GAP * (CHIP_COLUMNS - 1)) / CHIP_COLUMNS;
+const MAX_CHIP_ROWS = 3;
+const MAX_CHIPS_VISIBLE = CHIP_COLUMNS * MAX_CHIP_ROWS;
+
 const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
   navigation,
+  route,
 }) => {
   const { t } = useTranslation();
+  const { shopId, branchId, shopname, logo, adress } = route.params;
+
+  const DEFAULT_SUB_PRODUCTS: SubProduct[] = [
+    { id: "default_25ml", label: "25 ml", price: 0 },
+    { id: "default_100ml", label: "100 ml", price: 0 },
+    { id: "default_500ml", label: "500 ml", price: 0 },
+    { id: "default_1l", label: "1 L", price: 0 },
+    { id: "default_2l", label: "2 L", price: 0 },
+    { id: "default_5l", label: "5 L", price: 0 },
+    { id: "default_10l", label: "10 L", price: 0 },
+    { id: "default_20l", label: "20 L", price: 0 },
+    { id: "default_25l", label: "25 L", price: 0 },
+    { id: "default_30l", label: "30 L", price: 0 },
+    { id: "default_50l", label: "50 L", price: 0 },
+  ];
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("All");
+  const [refreshing, setRefreshing] = useState(false);
 
-  // Filter buttons data
-  const filterButtons: FilterButton[] = [
-    { id: "1", name: "All" },
-    { id: "2", name: "Chemicals" },
-    { id: "3", name: "Fertilizers" },
-    { id: "4", name: "Seeds" },
-    { id: "5", name: "Equipment" },
-  ];
+  const [categories, setCategories] = useState<ProductCategory[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(false);
 
-  // Shop data
-  const shopName = "Green Valley Farm";
-  const shopLogo =
-    "https://pub-79ee03a4a23e4dbbb70c7d799d3cb786.r2.dev/govishops/logos/ca894a7d-c384-4b69-92b5-f91b0ad9f71d.png";
+  const [products, setProducts] = useState<Product[]>([]);
+  const [productsLoading, setProductsLoading] = useState(false);
 
-  // Shop address
-  const shopAddress = "11/A, Galle Road, Bambalapitiya";
-  const shopDistrict = "Bambalapitiya";
+  const [filterButtons, setFilterButtons] = useState<FilterButton[]>([
+    { id: "all", name: "All" },
+  ]);
 
-  // Product Categories data
-  const productCategories: ProductCategory[] = [
-    {
-      id: "1",
-      name: "Chemicals",
-      image:
-        "https://images.unsplash.com/photo-1585699324551-f6c309eedeca?w=200&h=200&fit=crop",
-      productCount: 8,
-    },
-    {
-      id: "2",
-      name: "Fertilizers",
-      image:
-        "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=200&h=200&fit=crop",
-      productCount: 6,
-    },
-    {
-      id: "3",
-      name: "Seeds",
-      image:
-        "https://images.unsplash.com/photo-1592417817098-8fd3d9db67b6?w=200&h=200&fit=crop",
-      productCount: 12,
-    },
-    {
-      id: "4",
-      name: "Equipment",
-      image:
-        "https://images.unsplash.com/photo-1592982537447-6f2a6a0c7f5c?w=200&h=200&fit=crop",
-      productCount: 9,
-    },
-  ];
+  const [expandedProductId, setExpandedProductId] = useState<string | null>(
+    null,
+  );
+  const [subProducts, setSubProducts] = useState<Record<string, SubProduct[]>>(
+    {},
+  );
+  const [subProductsLoading, setSubProductsLoading] = useState<
+    Record<string, boolean>
+  >({});
+  const [selectedSubProductId, setSelectedSubProductId] = useState<
+    Record<string, string>
+  >({});
 
-  // Products data linked to categories
-  const products: Product[] = [
-    // Chemicals Products
-    {
-      id: "1",
-      name: "Chlorine",
-      level: "Professional Grade",
-      unit: "20 ml Bottle",
-      discountPrice: 10000.0,
-      normalPrice: 12000.0,
-      image:
-        "https://images.unsplash.com/photo-1585699324551-f6c309eedeca?w=200&h=200&fit=crop",
-      categoryId: "1",
-       availableQty: 50.125,
-    description: "Pesticide powder is a dry, finely ground chemical formulation used to control or eliminate pests such as insects, weeds, fungi, or rodents.",
-    },
-    {
-      id: "2",
-      name: "Herbicide",
-      level: "Industrial Grade",
-      unit: "Min 2 L - By Volume",
-      normalPrice: 2500.0,
-      image:
-        "https://images.unsplash.com/photo-1531674250511-9c7e9e2c7c3a?w=200&h=200&fit=crop",
-      categoryId: "1",
-      availableQty: 50.125,
-      
-    },
-    {
-      id: "3",
-      name: "Pesticide",
-      level: "Organic",
-      unit: "Min 1 L - By Volume",
-      discountPrice: 3200.0,
-      normalPrice: 4000.0,
-      image:
-        "https://images.unsplash.com/photo-1585699324551-f6c309eedeca?w=200&h=200&fit=crop",
-      categoryId: "1",
-      availableQty: 50.125,
-    },
-    // Fertilizers Products
-    {
-      id: "4",
-      name: "Organic Fertilizer",
-      level: "Premium Quality",
-      unit: "Min 1 kg - By Weight",
-      discountPrice: 850.0,
-      normalPrice: 1000.0,
-      image:
-        "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=200&h=200&fit=crop",
-      categoryId: "2",
-      availableQty: 50.125,
-    },
-    {
-      id: "5",
-      name: "Urea Fertilizer",
-      level: "High Grade",
-      unit: "Min 5 kg - By Weight",
-      discountPrice: 1600.0,
-      normalPrice: 1800.0,
-      image:
-        "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=200&h=200&fit=crop",
-      categoryId: "2",
-      availableQty: 50.125,
-    },
-    {
-      id: "6",
-      name: "NPK Fertilizer",
-      level: "Balanced",
-      unit: "Min 2 kg - By Weight",
-      normalPrice: 1200.0,
-      image:
-        "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=200&h=200&fit=crop",
-      categoryId: "2",
-      availableQty: 50.125,
-    },
-    // Seeds Products
-    {
-      id: "7",
-      name: "Tomato Seeds",
-      level: "Hybrid",
-      unit: "500g Pack",
-      discountPrice: 450.0,
-      normalPrice: 600.0,
-      image:
-        "https://images.unsplash.com/photo-1592417817098-8fd3d9db67b6?w=200&h=200&fit=crop",
-      categoryId: "3",
-    },
-    {
-      id: "8",
-      name: "Cucumber Seeds",
-      level: "Premium",
-      unit: "250g Pack",
-      normalPrice: 350.0,
-      image:
-        "https://images.unsplash.com/photo-1592417817098-8fd3d9db67b6?w=200&h=200&fit=crop",
-      categoryId: "3",
-    },
-    {
-      id: "9",
-      name: "Carrot Seeds",
-      level: "Organic",
-      unit: "100g Pack",
-      discountPrice: 280.0,
-      normalPrice: 350.0,
-      image:
-        "https://images.unsplash.com/photo-1592417817098-8fd3d9db67b6?w=200&h=200&fit=crop",
-      categoryId: "3",
-    },
-    // Equipment Products
-    {
-      id: "10",
-      name: "Tractor",
-      level: "Heavy Duty",
-      unit: "Per Day Rental",
-      discountPrice: 5000.0,
-      normalPrice: 6500.0,
-      image:
-        "https://images.unsplash.com/photo-1592982537447-6f2a6a0c7f5c?w=200&h=200&fit=crop",
-      categoryId: "4",
-    },
-    {
-      id: "11",
-      name: "Water Pump",
-      level: "Industrial",
-      unit: "Min 1 unit",
-      normalPrice: 15000.0,
-      image:
-        "https://images.unsplash.com/photo-1592982537447-6f2a6a0c7f5c?w=200&h=200&fit=crop",
-      categoryId: "4",
-    },
-    {
-      id: "12",
-      name: "Sprayer",
-      level: "Professional",
-      unit: "16 L Capacity",
-      discountPrice: 3500.0,
-      normalPrice: 4500.0,
-      image:
-        "https://images.unsplash.com/photo-1592982537447-6f2a6a0c7f5c?w=200&h=200&fit=crop",
-      categoryId: "4",
-    },
-  ];
+  const [showAllChips, setShowAllChips] = useState<Record<string, boolean>>({});
 
-  // Filter categories based on search query (when "All" is selected)
-  const getFilteredCategories = () => {
-    if (searchQuery) {
-      return productCategories.filter((category) =>
-        category.name.toLowerCase().includes(searchQuery.toLowerCase()),
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [showViewCart, setShowViewCart] = useState(false);
+
+  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  const fetchCategories = async () => {
+    try {
+      setCategoriesLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) return;
+
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/govi-shop/branches/${branchId}/categories`,
+        { headers: { Authorization: `Bearer ${token}` } },
       );
+
+      const fetchedCategories: ProductCategory[] = response.data.map(
+        (cat: any) => ({
+          id: String(cat.categoryId),
+          name: cat.catName,
+          image: cat.thumbnail ?? "",
+          productCount: cat.productCount ?? 0,
+        }),
+      );
+
+      setCategories(fetchedCategories);
+      setFilterButtons([
+        { id: "all", name: "All" },
+        ...fetchedCategories.map((cat) => ({ id: cat.id, name: cat.name })),
+      ]);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      setCategories([]);
+    } finally {
+      setCategoriesLoading(false);
     }
-    return productCategories;
   };
 
-  // Get products for selected filter
-  const getFilteredProducts = () => {
-    let filteredProducts = products;
+  const fetchProducts = async (categoryName = "All", search = "") => {
+    try {
+      setProductsLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) return;
 
-    if (selectedFilter !== "All") {
-      // Find category id that matches the filter name
-      const category = productCategories.find(
-        (cat) => cat.name === selectedFilter,
+      const selectedCategory =
+        categoryName !== "All"
+          ? categories.find((cat) => cat.name === categoryName)
+          : null;
+
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/govi-shop/branches/${branchId}/products`,
+        {
+          params: { categoryId: selectedCategory?.id ?? "", search },
+          headers: { Authorization: `Bearer ${token}` },
+        },
       );
-      if (category) {
-        filteredProducts = filteredProducts.filter(
-          (product) => product.categoryId === category.id,
-        );
+
+      const mappedProducts: Product[] = response.data.map((p: any) => ({
+        id: String(p.productId),
+        name: p.prodName,
+        level: p.catName ?? "",
+        unit: p.minQty
+          ? `Min ${p.minQty} ${p.baseUom ?? ""}`.trim()
+          : (p.baseUom ?? ""),
+        normalPrice: p.normalPrice ?? 0,
+        discountPrice: p.discountPrice ?? undefined,
+        image: p.thumbnail ?? "",
+        categoryId: String(p.categoryId),
+        availableQty: p.maxQty ?? undefined,
+        description: p.discription ?? "",
+      }));
+
+      setProducts(mappedProducts);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setProducts([]);
+    } finally {
+      setProductsLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  const fetchSubProducts = async (productId: string) => {
+    try {
+      setSubProductsLoading((prev) => ({ ...prev, [productId]: true }));
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) return;
+
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/govi-shop/products/${productId}/variants`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+
+      const mapped: SubProduct[] = response.data.map((v: any) => ({
+        id: String(v.variantId),
+        label: `${v.qty} ${v.uom ?? ""}`.trim(),
+        price: v.normalPrice ?? 0,
+        discountPrice: v.discountPrice ?? undefined,
+      }));
+
+      const finalSubs = mapped.length > 0 ? mapped : DEFAULT_SUB_PRODUCTS;
+
+      setSubProducts((prev) => ({ ...prev, [productId]: finalSubs }));
+      setSelectedSubProductId((prev) => ({
+        ...prev,
+        [productId]: finalSubs[0].id,
+      }));
+    } catch (error) {
+      console.error("Error fetching sub-products:", error);
+      setSubProducts((prev) => ({
+        ...prev,
+        [productId]: DEFAULT_SUB_PRODUCTS,
+      }));
+      setSelectedSubProductId((prev) => ({
+        ...prev,
+        [productId]: DEFAULT_SUB_PRODUCTS[0].id,
+      }));
+    } finally {
+      setSubProductsLoading((prev) => ({ ...prev, [productId]: false }));
+    }
+  };
+
+  const handlePlusPress = (productId: string) => {
+    if (expandedProductId === productId) {
+      setExpandedProductId(null);
+      setShowViewCart(false);
+    } else {
+      setExpandedProductId(productId);
+      if (!subProducts[productId]) {
+        fetchSubProducts(productId);
       }
     }
+  };
 
-    if (searchQuery) {
-      filteredProducts = filteredProducts.filter((product) =>
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()),
+  const getCartQty = (productId: string, subProductId: string): number => {
+    const item = cart.find(
+      (c) => c.productId === productId && c.subProductId === subProductId,
+    );
+    return item?.quantity ?? 0;
+  };
+
+  const addToCart = (product: Product, sub: SubProduct) => {
+    setCart((prev) => {
+      const exists = prev.find(
+        (c) => c.productId === product.id && c.subProductId === sub.id,
       );
-    }
-
-    return filteredProducts;
+      if (exists) {
+        return prev.map((c) =>
+          c.productId === product.id && c.subProductId === sub.id
+            ? { ...c, quantity: c.quantity + 1 }
+            : c,
+        );
+      }
+      return [
+        ...prev,
+        {
+          productId: product.id,
+          productName: product.name,
+          subProductId: sub.id,
+          subProductLabel: sub.label,
+          price: sub.discountPrice ?? sub.price,
+          quantity: 1,
+          image: product.image,
+        },
+      ];
+    });
   };
 
-  // Handle category click from "All" section
-  const handleCategoryPress = (categoryName: string) => {
-    setSelectedFilter(categoryName);
-    setSearchQuery(""); // Clear search when changing to products view
+  const removeFromCart = (productId: string, subProductId: string) => {
+    setCart((prev) => {
+      const updated = prev
+        .map((c) =>
+          c.productId === productId && c.subProductId === subProductId
+            ? { ...c, quantity: c.quantity - 1 }
+            : c,
+        )
+        .filter((c) => c.quantity > 0);
+      if (updated.length === 0) setShowViewCart(false);
+      return updated;
+    });
   };
 
-  const renderProductItem = ({ item }: { item: Product }) => (
-    <TouchableOpacity
-      className="bg-white rounded-xl mb-4 border border-gray-100 overflow-hidden"
-      style={{
-        shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 2,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 3.84,
-        elevation: 5,
-      }}
-      activeOpacity={0.7}
-      onPress={() => {
-        navigation.navigate("ViewProduct", { product: item });
-      }}
-    >
-      <View className="flex-row p-4">
-        {/* Product Image */}
-        <View className="w-24 h-24 rounded-lg bg-gray-100 mr-4 overflow-hidden">
-          <Image
-            source={{ uri: item.image }}
-            className="w-full h-full"
-            resizeMode="cover"
-          />
-        </View>
+  useEffect(() => {
+    fetchCategories();
+    fetchProducts("All", "");
+  }, [branchId]);
 
-        {/* Product Details */}
-        <View className="flex-1 pr-8">
-          {/* Product Name */}
-          <Text className="text-base font-bold text-black mb-1">
-            {item.name}
-          </Text>
+  useEffect(() => {
+    setExpandedProductId(null);
+    fetchProducts(selectedFilter, searchQuery);
+  }, [selectedFilter]);
 
-          {/* Level */}
-          <Text className="text-xs text-[#2E2E2E] mb-1">{item.unit}</Text>
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      fetchProducts(selectedFilter, searchQuery);
+    }, 500);
+    return () => clearTimeout(delay);
+  }, [searchQuery]);
 
-          {/* Price Section */}
-          <View className="flex">
-            {item.discountPrice ? (
-              <>
-                <Text className="text-lg font-bold text-[#FF8000] mr-2">
-                  Rs. {item.discountPrice.toFixed(2)}
-                </Text>
-                <Text className="text-sm text-[#2E2E2E] line-through">
-                  Rs. {item.normalPrice.toFixed(2)}
-                </Text>
-              </>
-            ) : (
-              <Text className="text-lg font-bold text-[#FF8000]">
-                Rs. {item.normalPrice.toFixed(2)}
-              </Text>
-            )}
-          </View>
-        </View>
-      </View>
-
-      {/* Add Button */}
-      <TouchableOpacity
-        className="absolute bottom-2 right-2 bg-[#3F3C57] rounded-full p-2"
-        style={{
-          shadowColor: "#000",
-          shadowOffset: {
-            width: 0,
-            height: 2,
-          },
-          shadowOpacity: 0.25,
-          shadowRadius: 3.84,
-          elevation: 5,
-        }}
-        onPress={() => {
-          console.log("Add to cart:", item.name);
-          // Add to cart logic here
-        }}
-      >
-        <Ionicons name="add" size={24} color="white" />
-      </TouchableOpacity>
-    </TouchableOpacity>
-  );
-
-  const renderCategoryItem = ({ item }: { item: ProductCategory }) => (
-    <TouchableOpacity
-      onPress={() => handleCategoryPress(item.name)}
-      className="flex-row items-center bg-white rounded-xl p-4 mb-3 border border-gray-100"
-      style={{
-        shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 2,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 3.84,
-        elevation: 5,
-      }}
-      activeOpacity={0.7}
-    >
-      {/* Left side - Category Image */}
-      <View className="w-24 h-24 rounded-lg bg-gray-100 mr-4 overflow-hidden">
-        <Image
-          source={{ uri: item.image }}
-          className="w-full h-full"
-          resizeMode="cover"
-        />
-      </View>
-
-      {/* Right side content */}
-      <View className="flex-1 flex-row justify-between items-center">
-        <View className="flex-1">
-          {/* Category Name */}
-          <Text className="text-base font-bold text-gray-800 mb-1">
-            {item.name}
-          </Text>
-          {/* Product Count */}
-          <Text className="text-sm text-gray-500">
-            {item.productCount} Products
-          </Text>
-        </View>
-
-        {/* Right arrow icon */}
-        <Ionicons name="chevron-forward" size={24} color="#9CA3AF" />
-      </View>
-    </TouchableOpacity>
-  );
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setExpandedProductId(null);
+    fetchCategories();
+    fetchProducts(selectedFilter, searchQuery);
+  }, [selectedFilter, searchQuery]);
 
   const renderFilterButton = ({ item }: { item: FilterButton }) => (
     <TouchableOpacity
       onPress={() => {
         setSelectedFilter(item.name);
-        setSearchQuery(""); // Clear search when changing filters
+        setSearchQuery("");
       }}
-      className={`px-6 py-2 rounded-full mr-3 ${
-        selectedFilter === item.name
-          ? "bg-[#FF8000]"
-          : "bg-white border border-[#7A9BC9]"
-      }`}
+      style={{
+        paddingHorizontal: 20,
+        paddingVertical: 8,
+        borderRadius: 20,
+        marginRight: 10,
+        backgroundColor: selectedFilter === item.name ? "#FF8000" : "#FFFFFF",
+        borderWidth: 1,
+        borderColor: selectedFilter === item.name ? "#FF8000" : "#7A9BC9",
+      }}
       activeOpacity={0.8}
     >
       <Text
-        className={`font-semibold ${
-          selectedFilter === item.name ? "text-white" : "text-[#7A9BC9]"
-        }`}
+        style={{
+          fontWeight: "600",
+          fontSize: 13,
+          color: selectedFilter === item.name ? "#FFFFFF" : "#7A9BC9",
+        }}
       >
         {item.name}
       </Text>
     </TouchableOpacity>
   );
 
-  const filteredCategories = getFilteredCategories();
-  const filteredProducts = getFilteredProducts();
+  const renderProductItem = ({ item }: { item: Product }) => {
+    const isExpanded = expandedProductId === item.id;
+    const subs = subProducts[item.id] ?? [];
+    const isLoadingSubs = subProductsLoading[item.id] ?? false;
+    const activeSubId = selectedSubProductId[item.id];
+    const activeSub = subs.find((s) => s.id === activeSubId);
+    const cartQty = activeSub ? getCartQty(item.id, activeSub.id) : 0;
+    const inCart = cartQty > 0;
+    const availableQty = item.availableQty;
+    const isShowingAll = showAllChips[item.id] ?? false;
+
+    const visibleSubs = isShowingAll ? subs : subs.slice(0, MAX_CHIPS_VISIBLE);
+    const hasMore = subs.length > MAX_CHIPS_VISIBLE;
+
+    return (
+      <View
+        style={{
+          backgroundColor: "#FFFFFF",
+          borderRadius: 16,
+          marginBottom: 14,
+          overflow: "hidden",
+          borderWidth: 1,
+          borderColor: "#F0F0F0",
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.08,
+          shadowRadius: 6,
+          elevation: 4,
+        }}
+      >
+        <TouchableOpacity
+          activeOpacity={0.97}
+          onPress={() => {
+            if (isExpanded) {
+              setExpandedProductId(null);
+            } else {
+              navigation.navigate("ViewProduct" as any, {
+                productId: item.id,
+                productName: item.name,
+                image: item.image,
+                categoryId: item.categoryId,
+                branchId,
+                shopId,
+              });
+            }
+          }}
+        >
+          <View
+            style={{ flexDirection: "row", padding: 14, alignItems: "center" }}
+          >
+            <View
+              style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
+            >
+              <View
+                style={{
+                  width: 72,
+                  height: 72,
+                  borderRadius: 12,
+                  backgroundColor: "#F3F4F6",
+                  marginRight: 12,
+                  overflow: "hidden",
+                  borderWidth: 1,
+                  borderColor: "#F0F0F0",
+                }}
+              >
+                <Image
+                  source={{ uri: item.image }}
+                  style={{ width: "100%", height: "100%" }}
+                  resizeMode="cover"
+                />
+              </View>
+
+              <Text
+                style={{
+                  flex: 1,
+                  fontSize: 14,
+                  fontWeight: "700",
+                  color: "#111827",
+                  lineHeight: 20,
+                }}
+                numberOfLines={2}
+              >
+                {item.name}
+              </Text>
+            </View>
+
+            {!isExpanded && (
+              <TouchableOpacity
+                onPress={(e) => {
+                  e.stopPropagation();
+                  handlePlusPress(item.id);
+                }}
+                activeOpacity={0.8}
+                style={{
+                  backgroundColor: "#3F3C57",
+                  borderRadius: 20,
+                  padding: 5,
+                  marginLeft: 10,
+                  shadowColor: "#3F3C57",
+                  shadowOffset: { width: 0, height: 3 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 4,
+                  elevation: 5,
+                }}
+              >
+                <Ionicons name="add" size={22} color="white" />
+              </TouchableOpacity>
+            )}
+          </View>
+        </TouchableOpacity>
+
+        {isExpanded && (
+          <View style={{ paddingHorizontal: 14, paddingBottom: 14 }}>
+            <View
+              style={{
+                height: 1,
+                backgroundColor: "#F0F0F0",
+                marginBottom: 12,
+              }}
+            />
+
+            {isLoadingSubs ? (
+              <ActivityIndicator
+                size="small"
+                color="#FF8000"
+                style={{ marginVertical: 10 }}
+              />
+            ) : subs.length === 0 ? (
+              <Text
+                style={{
+                  color: "#AAA",
+                  fontSize: 13,
+                  textAlign: "center",
+                  paddingVertical: 8,
+                }}
+              >
+                No variants available
+              </Text>
+            ) : (
+              <>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    marginRight: -CHIP_GAP,
+                    marginBottom: 4,
+                  }}
+                >
+                  {visibleSubs.map((sub) => {
+                    const isSelected = activeSubId === sub.id;
+                    return (
+                      <TouchableOpacity
+                        key={sub.id}
+                        onPress={() =>
+                          setSelectedSubProductId((prev) => ({
+                            ...prev,
+                            [item.id]: sub.id,
+                          }))
+                        }
+                        activeOpacity={0.7}
+                        style={{
+                          width: CHIP_WIDTH,
+                          marginRight: CHIP_GAP,
+                          marginBottom: CHIP_GAP,
+                          paddingVertical: 7,
+                          borderRadius: 20,
+                          borderWidth: 1.5,
+                          borderColor: isSelected ? "#FF8000" : "#E0E0E0",
+                          backgroundColor: "#FFFFFF",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 12,
+                            fontWeight: "600",
+                            color: isSelected ? "#FF8000" : "#888888",
+                          }}
+                          numberOfLines={1}
+                        >
+                          {sub.label}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+
+                {activeSub && (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      marginTop: 4,
+                    }}
+                  >
+                    <View style={{ gap: 2 }}>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          gap: 4,
+                        }}
+                      >
+                        <FontAwesome5 name="coins" size={14} color="black" />
+                        <Text
+                          style={{
+                            color: "#FF8000",
+                            fontWeight: "800",
+                            fontSize: 16,
+                            marginLeft: 5,
+                          }}
+                        >
+                          Rs.{" "}
+                          {(
+                            activeSub.discountPrice ?? activeSub.price
+                          ).toLocaleString("en-LK", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                        </Text>
+                      </View>
+
+                      {activeSub.discountPrice !== undefined && (
+                        <Text
+                          style={{
+                            color: "#AAAAAA",
+                            fontSize: 11,
+                            textDecorationLine: "line-through",
+                          }}
+                        >
+                          Rs.{" "}
+                          {activeSub.price.toLocaleString("en-LK", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                        </Text>
+                      )}
+
+                      {availableQty !== undefined && (
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: 3,
+                          }}
+                        >
+                          <Ionicons
+                            name="information-circle-outline"
+                            size={12}
+                            color="#AAAAAA"
+                          />
+                          <Text style={{ color: "#AAAAAA", fontSize: 11 }}>
+                            {availableQty} Left
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: 8,
+                      }}
+                    >
+                      {!inCart ? (
+                        <TouchableOpacity
+                          style={{
+                            backgroundColor: "#3F3C57",
+                            borderRadius: 25,
+                            paddingHorizontal: 9,
+                            paddingVertical: 9,
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: 4,
+                          }}
+                          onPress={() => addToCart(item, activeSub)}
+                          activeOpacity={0.85}
+                        >
+                          <Ionicons name="add" size={18} color="white" />
+                        </TouchableOpacity>
+                      ) : (
+                        <>
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              alignItems: "center",
+                              backgroundColor: "#FF80001A",
+                              borderRadius: 20,
+                              borderWidth: 1,
+                              borderColor: "#E8E8E8",
+                              overflow: "hidden",
+                            }}
+                          >
+                            <TouchableOpacity
+                              onPress={() =>
+                                removeFromCart(item.id, activeSub.id)
+                              }
+                              style={{
+                                backgroundColor: "#FF8000",
+                                width: 34,
+                                height: 34,
+                                alignItems: "center",
+                                justifyContent: "center",
+                                borderRadius: 17,
+                              }}
+                            >
+                              {cartQty === 1 ? (
+                                <Ionicons
+                                  name="trash-outline"
+                                  size={16}
+                                  color="white"
+                                />
+                              ) : (
+                                <Ionicons
+                                  name="remove"
+                                  size={18}
+                                  color="white"
+                                />
+                              )}
+                            </TouchableOpacity>
+
+                            <Text
+                              style={{
+                                paddingHorizontal: 12,
+                                fontWeight: "700",
+                                fontSize: 15,
+                                color: "#3F3C57",
+                                minWidth: 28,
+                                textAlign: "center",
+                              }}
+                            >
+                              {cartQty}
+                            </Text>
+
+                            <TouchableOpacity
+                              onPress={() => addToCart(item, activeSub)}
+                              style={{
+                                backgroundColor: "#FF8000",
+                                width: 34,
+                                height: 34,
+                                alignItems: "center",
+                                justifyContent: "center",
+                                borderRadius: 17,
+                              }}
+                            >
+                              <Ionicons name="add" size={18} color="white" />
+                            </TouchableOpacity>
+                          </View>
+
+                          {!showViewCart && (
+                            <TouchableOpacity
+                              style={{
+                                backgroundColor: "#3F3C57",
+                                width: 36,
+                                height: 36,
+                                borderRadius: 18,
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                              onPress={() => setShowViewCart(true)}
+                              activeOpacity={0.85}
+                            >
+                              <Ionicons
+                                name="cart-outline"
+                                size={18}
+                                color="white"
+                              />
+                            </TouchableOpacity>
+                          )}
+                        </>
+                      )}
+                    </View>
+                  </View>
+                )}
+              </>
+            )}
+          </View>
+        )}
+      </View>
+    );
+  };
 
   return (
-    <View className="flex-1 bg-white">
-      {/* Header Image */}
-      <View className="absolute top-0 left-0 right-0 z-0">
+    <View style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+      <View
+        style={{ position: "absolute", top: 0, left: 0, right: 0, zIndex: 0 }}
+      >
         <Image
           source={require("@/assets/images/govi-shop/shop-profile-header.webp")}
-          style={{
-            width: screenWidth,
-            height: 100,
-          }}
+          style={{ width: screenWidth, height: 100 }}
           resizeMode="cover"
         />
-
-        {/* Shop Logo (OVERLAP) */}
         <View
           style={{
             position: "absolute",
@@ -468,70 +779,98 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
             elevation: 10,
           }}
         >
-          <View className="w-32 h-32 bg-gray-100 overflow-hidden">
+          <View
+            style={{
+              width: 128,
+              height: 128,
+              backgroundColor: "#F3F4F6",
+              overflow: "hidden",
+            }}
+          >
             <Image
-              source={{ uri: shopLogo }}
-              className="w-full h-full"
+              source={{ uri: logo }}
+              style={{ width: "100%", height: "100%" }}
               resizeMode="cover"
             />
           </View>
         </View>
       </View>
 
-      {/* Custom Header with transparent background */}
       <CustomHeader
         title=""
         showBackButton={true}
         navigation={navigation}
         transparent={true}
-        rightComponent={
-          <TouchableOpacity
-            onPress={() => navigation.navigate("GoviShopCartScreen" as any)}
-            className="bg-[#3F3C57] rounded-full p-2"
-          >
-            <View className="flex-row items-center gap-2 px-3 py-1">
-              <Ionicons name="bag-handle" size={20} color="white" />
-              <Text className="text-white text-xs font-bold">1</Text>
-            </View>
-          </TouchableOpacity>
-        }
       />
 
       <ScrollView
-        className="flex-1"
+        style={{ flex: 1, marginTop: 130 }}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 40 }}
-        style={{ marginTop: 130 }}
+        contentContainerStyle={{ paddingBottom: showViewCart ? 100 : 40 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
-        {/* Shop Info Section */}
-        <View className="items-center pb-4 px-4 bg-white">
-          {/* Shop Name */}
-          <Text className="text-xl font-bold text-black mb-2">{shopName}</Text>
-
-          {/* Address Section */}
-          <View className="flex-row items-center">
-            <Ionicons name="location" size={16} color="#FF0000" />
-            <Text className="text-sm text-[#626786] ml-1">{shopDistrict}</Text>
-          </View>
-
-          <View className="flex-row items-center mt-1">
-            <Text className="text-sm text-[#626786]">{shopAddress}</Text>
-          </View>
+        <View
+          style={{
+            alignItems: "center",
+            paddingBottom: 16,
+            paddingHorizontal: 16,
+            backgroundColor: "#FFFFFF",
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: "700",
+              color: "#000000",
+              marginBottom: 6,
+            }}
+          >
+            {shopname}
+          </Text>
+          {adress ? (
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Ionicons name="location" size={16} color="#FF0000" />
+              <Text style={{ fontSize: 13, color: "#626786", marginLeft: 4 }}>
+                {adress}
+              </Text>
+            </View>
+          ) : null}
         </View>
 
-        {/* Search Section */}
-        <View className="px-4 pb-2 bg-white">
-          <View className="bg-[#E8E9EDCC] rounded-full px-4 py-1 flex-row items-center">
+        <View
+          style={{
+            paddingHorizontal: 16,
+            paddingBottom: 8,
+            backgroundColor: "#FFFFFF",
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "#E8E9EDCC",
+              borderRadius: 28,
+              paddingHorizontal: 16,
+              paddingVertical: 4,
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
             <TextInput
               value={searchQuery}
               onChangeText={setSearchQuery}
-              placeholder={
-                selectedFilter === "All"
-                  ? "Search Categories..."
-                  : `Search ${selectedFilter} Products...`
-              }
+              placeholder={`Search ${
+                selectedFilter === "All" ? "" : selectedFilter + " "
+              }Products...`}
               placeholderTextColor="#373737"
-              className="flex-1 ml-2 text-base text-gray-800 py-2 h-12"
+              style={{
+                flex: 1,
+                marginLeft: 8,
+                fontSize: 15,
+                color: "#1F2937",
+                paddingVertical: 8,
+                height: 48,
+              }}
             />
             {searchQuery.length === 0 ? (
               <Ionicons name="search-outline" size={20} color="#373737" />
@@ -543,68 +882,142 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
           </View>
         </View>
 
-        {/* Filter Buttons - Horizontal Scroll */}
-        <View className="px-4 pt-4 pb-2 bg-white">
-          <FlatList
-            data={filterButtons}
-            renderItem={renderFilterButton}
-            keyExtractor={(item) => item.id}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingRight: 20 }}
-          />
+        <View
+          style={{
+            paddingHorizontal: 16,
+            paddingTop: 14,
+            paddingBottom: 8,
+            backgroundColor: "#FFFFFF",
+          }}
+        >
+          {categoriesLoading ? (
+            <ActivityIndicator size="small" color="#FF8000" />
+          ) : (
+            <FlatList
+              data={filterButtons}
+              renderItem={renderFilterButton}
+              keyExtractor={(item) => item.id}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingRight: 20 }}
+            />
+          )}
         </View>
 
-        {/* Content Section - Categories or Products */}
-        <View className="px-4 pt-2 bg-white">
-          {selectedFilter === "All" ? (
-            // Show Categories when "All" is selected
+        <View
+          style={{
+            paddingHorizontal: 16,
+            paddingTop: 8,
+            backgroundColor: "#FFFFFF",
+          }}
+        >
+          {productsLoading ? (
+            <View style={{ paddingVertical: 40, alignItems: "center" }}>
+              <ActivityIndicator size="large" color="#FF8000" />
+            </View>
+          ) : (
             <FlatList
-              data={filteredCategories}
-              renderItem={renderCategoryItem}
-              keyExtractor={(item) => item.id}
+              data={products}
+              renderItem={renderProductItem}
+              keyExtractor={(item, index) =>
+                item?.id?.toString() ?? index.toString()
+              }
               scrollEnabled={false}
               ListEmptyComponent={
-                <View className="flex-1 justify-center items-center py-10">
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    paddingVertical: 40,
+                  }}
+                >
                   <LottieView
                     source={require("@/assets/jsons/common/no-data.json")}
                     autoPlay
                     loop
                     style={{ width: 250, height: 250 }}
                   />
-                  <Text className="text-[#7A9BC9] text-base mt-4 text-center">
-                    {t("ExploreShops.NoCategoriesAvailable") ||
-                      "No categories available"}
+                  <Text
+                    style={{
+                      color: "#7A9BC9",
+                      fontSize: 15,
+                      marginTop: 16,
+                      textAlign: "center",
+                    }}
+                  >
+                    {searchQuery
+                      ? `No results for "${searchQuery}"`
+                      : `No ${
+                          selectedFilter === "All" ? "" : selectedFilter + " "
+                        }products available`}
                   </Text>
                 </View>
               }
             />
-          ) : (
-            // Show Products when filter is Chemicals, Fertilizers, Seeds, or Equipment
-            <>
-              <FlatList
-                data={filteredProducts}
-                renderItem={renderProductItem}
-                keyExtractor={(item) => item.id}
-                scrollEnabled={false}
-                ListEmptyComponent={
-                  <View className="flex-1 justify-center items-center py-10">
-                    <LottieView
-                      source={require("@/assets/jsons/common/no-data.json")}
-                      autoPlay
-                      loop
-                      style={{ width: 250, height: 250 }}
-                    />
-                    <Text className="text-[#7A9BC9] text-base mt-4 text-center">
-                      No {selectedFilter} products available
-                    </Text>
-                  </View>
-                }
-              />
-            </>
           )}
         </View>
       </ScrollView>
+
+      {showViewCart && cartCount > 0 && (
+        <View
+          style={{
+            position: "absolute",
+            bottom: 100,
+            left: "25%",
+            right: "25%",
+            zIndex: 999,
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => navigation.navigate("CartScreen" as any)}
+            activeOpacity={0.9}
+            style={{
+              backgroundColor: "#FF8000CC",
+              borderRadius: 50,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              paddingVertical: 14,
+              paddingHorizontal: 20,
+              shadowColor: "#3F3C57",
+              shadowOffset: { width: 0, height: 6 },
+              shadowOpacity: 0.4,
+              shadowRadius: 12,
+              elevation: 10,
+            }}
+          >
+            <View style={{ flexDirection: "column" }}>
+              <Text
+                style={{
+                  color: "white",
+                  fontWeight: "700",
+                  fontSize: 15,
+                  letterSpacing: 0.3,
+                }}
+              >
+                View Cart
+              </Text>
+              <Text style={{ color: "white", fontSize: 12, opacity: 0.85 }}>
+                {cartCount} {cartCount === 1 ? "item" : "items"}
+              </Text>
+            </View>
+
+            <View
+              style={{
+                height: 40,
+                width: 40,
+                backgroundColor: "white",
+                borderRadius: 20,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Ionicons name="chevron-forward" size={20} color="#FF8000" />
+            </View>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };
