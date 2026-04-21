@@ -1026,7 +1026,7 @@ const RequestInspectionForm = () => {
             {loadingServices ? (
               <ActivityIndicator size="small" color="#9CA3AF" />
             ) : (
-            <AntDesign name="caret-down" size={14} color="#555" />
+              <AntDesign name="caret-down" size={14} color="#555" />
             )}
           </TouchableOpacity>
         </View>
@@ -1040,7 +1040,7 @@ const RequestInspectionForm = () => {
             onChangeText={setPrice}
             placeholder="0.00"
             keyboardType="numeric"
-            className="bg-[#F4F4F4] rounded-full p-3 border border-[#F4F4F4] text-gray-900"
+            className="bg-[#F4F4F4] rounded-3xl h-[50px] p-3 border border-[#F4F4F4] text-gray-900"
             editable={false}
           />
         </View>
@@ -1071,7 +1071,7 @@ const RequestInspectionForm = () => {
           </TouchableOpacity>
         </View>
 
-        <View className="mb-4">
+        <View className="mb-4 ">
           <Text className="text-sm text-gray-600 mb-2">
             {t("RequestInspectionForm.Plot No")}
           </Text>
@@ -1079,7 +1079,7 @@ const RequestInspectionForm = () => {
             value={plotNo}
             onChangeText={(text) => handleTextInputChange(text, setPlotNo)}
             placeholder={t("RequestInspectionForm.Enter plot number")}
-            className="bg-[#F4F4F4] rounded-full p-3 border border-[#F4F4F4] text-gray-900"
+            className="bg-[#F4F4F4] rounded-3xl h-[50px] p-3 border border-[#F4F4F4] text-gray-900"
           />
         </View>
 
@@ -1091,7 +1091,7 @@ const RequestInspectionForm = () => {
             value={streetName}
             onChangeText={(text) => handleTextInputChange(text, setStreetName)}
             placeholder={t("RequestInspectionForm.Enter street name")}
-            className="bg-[#F4F4F4] rounded-full p-3 border border-[#F4F4F4] text-gray-900"
+            className="bg-[#F4F4F4] rounded-3xl h-[50px] p-3 border border-[#F4F4F4] text-gray-900"
           />
         </View>
 
@@ -1103,7 +1103,7 @@ const RequestInspectionForm = () => {
             value={city}
             onChangeText={(text) => handleTextInputChange(text, setCity)}
             placeholder={t("RequestInspectionForm.Enter city")}
-            className="bg-[#F4F4F4] rounded-full p-3 border border-[#F4F4F4] text-gray-900"
+            className="bg-[#F4F4F4] rounded-3xl h-[50px] p-3 border border-[#F4F4F4] text-gray-900"
           />
         </View>
 
@@ -1182,9 +1182,9 @@ const RequestInspectionForm = () => {
         <View className="pr-10 pl-10">
           <TouchableOpacity
             onPress={handleAddMore}
-            className="bg-gray-800 rounded-full py-4 items-center mb-6"
+            className="bg-gray-800 rounded-3xl h-[50px] justify-center items-center mb-6"
           >
-            <Text className="text-white font-semibold text-base">
+            <Text className="text-white font-semibold text-lg">
               {t("RequestInspectionForm.Add More")}
             </Text>
           </TouchableOpacity>
@@ -1205,11 +1205,11 @@ const RequestInspectionForm = () => {
         </View>
         <TouchableOpacity
           onPress={handleSubmit}
-          className="bg-teal-500 rounded-full px-8 py-3"
+          className="bg-teal-500 rounded-3xl px-8 h-[50px] justify-center"
           disabled={addedItems.length === 0}
           style={{ opacity: addedItems.length === 0 ? 0.5 : 1 }}
         >
-          <Text className="text-white font-semibold">
+          <Text className="text-white font-semibold text-lg">
             {t("RequestInspectionForm.Done")}
           </Text>
         </TouchableOpacity>

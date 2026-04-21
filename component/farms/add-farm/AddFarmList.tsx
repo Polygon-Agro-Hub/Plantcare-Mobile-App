@@ -22,6 +22,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { useTranslation } from "react-i18next";
+import LoadingPage from "@/component/common/LoadingPage";
 
 interface FarmItem {
   id: number;
@@ -270,8 +271,6 @@ const AddFarmList = () => {
     }
   };
 
- 
-
   const handleFarmPress = (farm: FarmItem) => {
     if (farm.isBlock === 1 && membership.toLowerCase() === "pro") {
       Alert.alert(
@@ -323,9 +322,11 @@ const AddFarmList = () => {
         <View className="flex-row items-start">
           <Image
             source={getImageSource(farm.imageId)}
-            className="w-14 h-14 mr-4 mt-1 rounded-full"
+            className="mr-4  rounded-full "
+            style={{ width: wp(20), height: wp(20) }}
             resizeMode="cover"
           />
+
           <View className="flex-1">
             <View className="flex-row justify-between items-start">
               <View className="flex-1">
@@ -377,18 +378,11 @@ const AddFarmList = () => {
         </View>
 
         {loading ? (
-          <View className="flex-1 justify-center items-center">
-            <LottieView
-              source={require("../../../assets/jsons/loader.json")}
-              autoPlay
-              loop
-              style={{ width: 300, height: 300 }}
-            />
-          </View>
+          <LoadingPage fullScreen />
         ) : farms.length === 0 ? (
           <View className="flex-1 justify-center items-center">
             <LottieView
-              source={require("../../../assets/jsons/NoComplaints.json")}
+              source={require("@/assets/jsons/common/no-data.json")}
               style={{ width: wp(50), height: hp(50) }}
               autoPlay
               loop

@@ -24,10 +24,10 @@ import { ScrollView } from "react-native-gesture-handler";
 import Entypo from "react-native-vector-icons/Entypo";
 import { useFocusEffect } from "@react-navigation/native";
 import * as ImageManipulator from "expo-image-manipulator";
-import LottieView from "lottie-react-native";
-import districtData from "../../assets/jsons/district.json";
+import districtData from "@/assets/jsons/common/district.json";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../../component/common/CustomHeader";
+import LoadingPage from "../common/LoadingPage";
 
 type EngEditProfileNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -302,16 +302,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   };
 
   if (isDataLoading) {
-    return (
-      <View className="flex-1 bg-white justify-center items-center">
-        <LottieView
-          source={require("../../assets/jsons/loader.json")}
-          autoPlay
-          loop
-          style={{ width: 300, height: 300 }}
-        />
-      </View>
-    );
+    return <LoadingPage fullScreen />;
   }
 
   const inputStyle =

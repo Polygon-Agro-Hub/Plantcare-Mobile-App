@@ -18,8 +18,8 @@ import { RootStackParamList } from "../types/types";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import type { NativeEventSubscription } from "react-native";
-import LottieView from "lottie-react-native";
 import CustomHeader from "../common/CustomHeader";
+import LoadingPage from "../common/LoadingPage";
 
 type EngQRcodeNavigationPrps = StackNavigationProp<
   RootStackParamList,
@@ -171,18 +171,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   };
 
   if (loading) {
-    return (
-      <View className="flex-1 bg-white">
-        <View className="flex-1 justify-center items-center">
-          <LottieView
-            source={require("../../assets/jsons/loader.json")}
-            autoPlay
-            loop
-            style={{ width: 300, height: 300 }}
-          />
-        </View>
-      </View>
-    );
+    return <LoadingPage fullScreen />;
   }
 
   return (

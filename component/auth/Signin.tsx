@@ -27,7 +27,7 @@ import {
 } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import countryData from "../../assets/jsons/countryflag.json";
+import countryData from "@/assets/jsons/common/country-flag.json";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import { MaterialIcons } from "@expo/vector-icons";
 import CustomHeader from "../common/CustomHeader";

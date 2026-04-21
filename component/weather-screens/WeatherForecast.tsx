@@ -25,9 +25,9 @@ import axios from 'axios';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import NetInfo from '@react-native-community/netinfo';
 import { useFocusEffect } from '@react-navigation/native';
-import LottieView from 'lottie-react-native';
 import LocationAccess from '../permission/LocationAccess';
 import { useTranslation } from 'react-i18next';
+import LoadingPage from '../common/LoadingPage';
 
 const { width } = Dimensions.get('window');
 const isSmallScreen = width < 400;
@@ -444,7 +444,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
             </View>
 
             <View className="relative flex-1 items-center">
-              <View className="flex-row items-center bg-[#F6F6F6CC] rounded-lg max-w-[300px] h-[50px]">
+              <View className="flex-row items-center bg-[#F6F6F6CC] rounded-3xl max-w-[300px] h-[50px]">
                 <TextInput
                   className="flex-1 p-1 text-lg text-black ml-4"
                   placeholder={t('WeatherForecast.SearchLocation')}
@@ -492,9 +492,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
         >
           <View className="p-1 pt-0 mt-0 pb-4">
             {loading ? (
-              <View className="flex-1 justify-center items-center mt-[45%]">
-                <LottieView source={require('../../assets/jsons/loader.json')} autoPlay loop style={{ width: 300, height: 300 }} />
-              </View>
+              <LoadingPage fullScreen />
             ) : weatherData ? (
               <View className="items-center">
                 <Image

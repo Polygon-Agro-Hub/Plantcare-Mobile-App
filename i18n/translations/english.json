@@ -922,7 +922,7 @@
     "leasedAmountAnnuallyLKR": "Enter Annual Leased Amount(LKR)",
     "enterLeasedAmountAnnuallyLKR": "Annual Lease Amount (LKR) is required",
     "issuedDate": "Issued Date",
-    "selectIssuedDate": "Date issued is required",
+    "selectIssuedDate": "Issued Date is required",
     "permitAnnuallyLKR": "Annual Permit Fee (LKR)",
     "enterPermitAnnuallyLKR": "Annual permit fee (LKR) is required",
     "paymentAnnuallyLKR": "Annual Payment Fee (LKR)",

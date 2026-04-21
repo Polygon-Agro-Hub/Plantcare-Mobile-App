@@ -25,8 +25,9 @@ import { useFocusEffect } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import { RootStackParamList } from "../../types/types";
 import CustomHeader from "../../common/CustomHeader";
-import districtData from "../../../assets/jsons/district.json";
-import assetData from "../../../assets/jsons/fixed-assets.json";
+import districtData from "@/assets/jsons/common/district.json";
+import assetData from "@/assets/jsons/fixed-asset/fixed-assets.json";
+import LoadingPage from "@/component/common/LoadingPage";
 
 type Props = NativeStackScreenProps<RootStackParamList, "FarmAssertsFixedView">;
 
@@ -478,14 +479,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         contentContainerStyle={{ paddingBottom: 100 }}
       >
         {loading ? (
-          <View className="flex-1 justify-center items-center">
-            <LottieView
-              source={require("../../../assets/jsons/loader.json")}
-              autoPlay
-              loop
-              style={{ width: 300, height: 300 }}
-            />
-          </View>
+          <LoadingPage fullScreen />
         ) : tools.length > 0 ? (
           tools.map((tool) => (
             <View
@@ -536,7 +530,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         ) : (
           <View className="flex-1 justify-center items-center">
             <LottieView
-              source={require("../../../assets/jsons/NoComplaints.json")}
+              source={require("@/assets/jsons/common/no-data.json")}
               style={{ width: wp(50), height: hp(50) }}
               autoPlay
               loop

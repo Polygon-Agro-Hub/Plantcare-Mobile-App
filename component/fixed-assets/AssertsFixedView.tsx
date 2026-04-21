@@ -24,8 +24,9 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
 import CustomHeader from "../common/CustomHeader";
-import districtData from "../../assets/jsons/district.json";
-import assetData from "../../assets/jsons/fixed-assets.json";
+import districtData from "@/assets/jsons/common/district.json";
+import assetData from "@/assets/jsons/fixed-asset/fixed-assets.json";
+import LoadingPage from "../common/LoadingPage";
 
 type RootStackParamList = {
   AssertsFixedView: { category: string; toolId: any };
@@ -361,18 +362,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   );
 
   if (loading) {
-    return (
-      <View className="flex-1 bg-[#F7F7F7]">
-       <View className="flex-1 justify-center items-center">
-                 <LottieView
-                   source={require("../../assets/jsons/loader.json")}
-                   autoPlay
-                   loop
-                   style={{ width: 300, height: 300 }}
-                 />
-               </View>
-      </View>
-    );
+    return <LoadingPage fullScreen />;
   }
 
   return (
@@ -395,7 +385,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
             </TouchableOpacity>
 
             {showDropdown && (
-              <View className="absolute top-5 mb-4 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
+              <View className="absolute top-6 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
                 <TouchableOpacity
                   onPress={handleSelectAll}
                   className="px-4 py-2"
@@ -414,18 +404,33 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
       {/* Delete bar */}
       {showDeleteOptions && (
-        <View className="px-4 mb-2">
-          <TouchableOpacity
-            className={`bg-red-500 p-3 rounded-full self-end w-[48%] ${
-              selectedTools.length === 0 ? "opacity-50" : ""
-            }`}
-            disabled={selectedTools.length === 0}
-            onPress={handleDeleteSelected}
-          >
-            <Text className="text-white text-center font-bold">
-              {t("FixedAssets.Delete Selected")}
-            </Text>
-          </TouchableOpacity>
+        // <View className="px-4 mb-2">
+        //   <TouchableOpacity
+        //     className={`bg-red-500 p-3 rounded-full self-end w-[48%] ${
+        //       selectedTools.length === 0 ? "opacity-50" : ""
+        //     }`}
+        //     disabled={selectedTools.length === 0}
+        //     onPress={handleDeleteSelected}
+        //   >
+        //     <Text className="text-white text-center font-bold">
+        //       {t("FixedAssets.Delete Selected")}
+        //     </Text>
+        //   </TouchableOpacity>
+        // </View>
+        <View className="mt-2 px-4">
+          <View className="flex-row justify-end mb-2">
+            <TouchableOpacity
+              className={`bg-red-500 p-3 w-[48%] rounded-full justify-end ${
+                selectedTools.length === 0 ? "opacity-50" : ""
+              }`}
+              disabled={selectedTools.length === 0}
+              onPress={handleDeleteSelected}
+            >
+              <Text className="text-white text-center font-bold">
+                {t("FixedAssets.Delete Selected")}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
 
@@ -484,7 +489,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         ) : (
           <View className="flex-1 justify-center items-center">
             <LottieView
-              source={require("../../assets/jsons/NoComplaints.json")}
+              source={require("@/assets/jsons/common/no-data.json")}
               style={{ width: wp(50), height: hp(50) }}
               autoPlay
               loop

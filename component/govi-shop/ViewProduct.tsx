@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,17 +8,20 @@ import {
   Dimensions,
   StatusBar,
   Platform,
+  ActivityIndicator,
 } from "react-native";
-import { FontAwesome5, FontAwesome6, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { RootStackParamList } from "../types/types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/core";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { environment } from "@/environment/environment";
 
 type ViewProductNavigationProp = StackNavigationProp<
   RootStackParamList,
   "ViewProduct"
 >;
-
 type ViewProductRouteProp = RouteProp<RootStackParamList, "ViewProduct">;
 
 interface ViewProductProps {
@@ -26,29 +29,21 @@ interface ViewProductProps {
   route: ViewProductRouteProp;
 }
 
-interface Product {
+interface SubProduct {
   id: string;
-  name: string;
-  image: string;
-  normalPrice: number;
+  label: string;
+  price: number;
   discountPrice?: number;
-  unit: string;
-  level?: string;
   availableQty?: number;
-  description?: string;
-  categoryId?: string;
-  qty?:number
-}
-
-interface ViewProductProps {
-  product: Product;
-  onClose?: () => void;
-  onViewDetails?: (product: Product, quantity: number) => void;
 }
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const { width: screenWidth } = Dimensions.get("window");
-const IMAGE_HEIGHT = SCREEN_WIDTH * 0.9;
+const IMAGE_HEIGHT = SCREEN_WIDTH * 0.85;
+
+const CHIP_COLUMNS = 4;
+const CHIP_GAP = 8;
+const CHIP_WIDTH =
+  (SCREEN_WIDTH - 32 - CHIP_GAP * (CHIP_COLUMNS - 1)) / CHIP_COLUMNS;
 
 const formatPrice = (price: number): string =>
   price.toLocaleString("en-LK", {
@@ -56,82 +51,98 @@ const formatPrice = (price: number): string =>
     maximumFractionDigits: 2,
   });
 
-const getStepSize = (unit: string): number => {
-  const u = unit?.toLowerCase() ?? "";
-  if (u.includes("ml")) return 50;
-  if (u.includes("litre") || u === "l") return 0.5;
-  if (u.includes("kg")) return 0.5;
-  if (u.includes("g")) return 100;
-  return 1;
-};
-
-const formatQty = (val: number, step: number): string => {
-  const decimals = step < 1 ? (step.toString().split(".")[1]?.length ?? 1) : 0;
-  return val.toFixed(decimals);
-};
-
-const DEMO_PRODUCT: Product = {
-  id: "1",
-  name: "Pesticide Powder",
-  image: "https://images.unsplash.com/photo-1592997572594-34be38511e46?w=800",
-  normalPrice: 500,
-  unit: "kg",
-  level: "Premium",
-  availableQty: 50.125,
-  description:
-    "Pesticide powder is a dry, finely ground chemical formulation used to control or eliminate pests such as insects, weeds, fungi, or rodents. It is one of the simplest and oldest forms of pesticides and is widely used in agriculture, gardening, and public health.",
-};
+const DEFAULT_SUB_PRODUCTS: SubProduct[] = [
+  { id: "d_25ml",  label: "25 ml",  price: 100 },
+  { id: "d_100ml", label: "100 ml", price: 200 },
+  { id: "d_500ml", label: "500 ml", price: 500 },
+  { id: "d_1l",    label: "1 L",    price: 1000 },
+  { id: "d_2l",    label: "2 L",    price: 2000 },
+  { id: "d_5l",    label: "5 L",    price: 5000 },
+  { id: "d_10l",   label: "10 L",   price: 10000 },
+  { id: "d_20l",   label: "20 L",   price: 20000 },
+  { id: "d_25l",   label: "25 L",   price: 25000 },
+  { id: "d_30l",   label: "30 L",   price: 30000 },
+  { id: "d_50l",   label: "50 L",   price: 50000 },
+];
 
 const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
-  const product = route?.params?.product || DEMO_PRODUCT;
+  const { productId, productName, image } = route.params as any;
 
-  const stepSize = getStepSize(product.unit);
-  const minOrder = stepSize;
+  const [subProducts, setSubProducts] = useState<SubProduct[]>([]);
+  const [loading, setLoading]         = useState(true);
+  const [selectedSubId, setSelectedSubId] = useState<string>("");
+  const [quantity, setQuantity]       = useState(1);
+  const [showViewCart, setShowViewCart] = useState(false);
 
-  const [quantity, setQuantity] = useState<number>(minOrder);
+  // ── Fetch variants ──────────────────────────────────────────────────
+  useEffect(() => {
+    const fetchVariants = async () => {
+      try {
+        setLoading(true);
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) return;
 
-  const activePrice = product.discountPrice ?? product.normalPrice;
+        const response = await axios.get(
+          `${environment.API_BASE_URL}api/govi-shop/products/${productId}/variants`,
+          { headers: { Authorization: `Bearer ${token}` } },
+        );
 
-  const increment = () =>
-    setQuantity((prev) => parseFloat((prev + stepSize).toFixed(4)));
+        const mapped: SubProduct[] = response.data.map((v: any) => ({
+          id:            String(v.variantId),
+          label:         `${v.qty} ${v.uom ?? ""}`.trim(),
+          price:         v.normalPrice ?? 0,
+          discountPrice: v.discountPrice ?? undefined,
+          availableQty:  v.availableQty ?? undefined,
+        }));
 
-  const decrement = () =>
-    setQuantity((prev) => {
-      const next = parseFloat((prev - stepSize).toFixed(4));
-      return next < minOrder ? minOrder : next;
-    });
+        const finalSubs = mapped.length > 0 ? mapped : DEFAULT_SUB_PRODUCTS;
+        setSubProducts(finalSubs);
+        setSelectedSubId(finalSubs[0].id);
+      } catch {
+        setSubProducts(DEFAULT_SUB_PRODUCTS);
+        setSelectedSubId(DEFAULT_SUB_PRODUCTS[0].id);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-     const getImageSource = () => {
-    if (!product.image) {
-      return require("@/assets/images/govi-shop/no-image.webp");
-    }
-    return { uri: product.image };
-  };
+    fetchVariants();
+  }, [productId]);
+
+  // ── Derived values ──────────────────────────────────────────────────
+  const activeSub    = subProducts.find((s) => s.id === selectedSubId);
+  const activePrice  = activeSub ? (activeSub.discountPrice || activeSub.price || 0) : 0;
+  const originalPrice = activeSub?.price ?? 0;
+  const hasDiscount  = activeSub?.discountPrice !== undefined && activeSub.discountPrice < activeSub.price;
+  const availableQty = activeSub?.availableQty;
+  const subtotal     = activePrice * quantity;
+
+  // ── Handlers ────────────────────────────────────────────────────────
+  const increment = () => setQuantity((q) => q + 1);
+  const decrement = () => setQuantity((q) => (q <= 1 ? 1 : q - 1));
 
   return (
-    <View className="flex-1 bg-[#1A1A1A]" style={{ overflow: "hidden" }}>
+    <View style={{ flex: 1, backgroundColor: "#1A1A1A" }}>
       <StatusBar barStyle="light-content" />
 
+      {/* ── Image section ──────────────────────────────────────────── */}
       <View style={{ height: IMAGE_HEIGHT }}>
         <Image
           source={require("@/assets/images/govi-shop/shop-profile-header.webp")}
           style={{
             position: "absolute",
-            top: 0,
-            left: 0,
-            width: screenWidth,
-            height: 100,
+            top: 0, left: 0,
+            width: SCREEN_WIDTH, height: 100,
             zIndex: 0,
           }}
           resizeMode="cover"
         />
 
         <Image
-          source={getImageSource()}
+          source={image ? { uri: image } : require("@/assets/images/govi-shop/no-image.webp")}
           style={{
             position: "absolute",
-            bottom: 0,
-            left: 0,
+            bottom: 0, left: 0,
             width: SCREEN_WIDTH,
             height: IMAGE_HEIGHT - 40,
             zIndex: 1,
@@ -140,17 +151,7 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
           resizeMode="cover"
         />
 
-        <View
-          style={{
-            position: "absolute",
-            top: 60,
-            left: 0,
-            right: 0,
-
-            zIndex: 2,
-          }}
-        />
-
+        {/* Close / back button */}
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           activeOpacity={0.85}
@@ -158,61 +159,101 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
             position: "absolute",
             top: Platform.OS === "android" ? 45 : 44,
             left: 14,
-            width: 32,
-            height: 32,
+            width: 32, height: 32,
             borderRadius: 16,
             backgroundColor: "rgba(255,255,255,0.92)",
-            alignItems: "center",
-            justifyContent: "center",
-
-            shadowOpacity: 0.2,
-            shadowRadius: 6,
-            elevation: 4,
-            zIndex: 10,
+            alignItems: "center", justifyContent: "center",
+            shadowOpacity: 0.2, shadowRadius: 6,
+            elevation: 4, zIndex: 10,
           }}
         >
           <Ionicons name="close" size={18} color="#1A1A2E" />
         </TouchableOpacity>
       </View>
 
+      {/* ── Scrollable content ─────────────────────────────────────── */}
       <ScrollView
-        className="flex-1 bg-white"
+        style={{ flex: 1, backgroundColor: "#FFFFFF" }}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingHorizontal: 16,
           paddingTop: 16,
-          paddingBottom: 20,
+          paddingBottom: 24,
         }}
       >
-        <Text
-          style={{
-            fontSize: 20,
-            fontWeight: "700",
-            color: "#1A1A2E",
-            marginBottom: 4,
-          }}
-        >
-          {product.name}
+        {/* Product name */}
+        <Text style={{ fontSize: 20, fontWeight: "700", color: "#1A1A2E", marginBottom: 12 }}>
+          {productName}
         </Text>
 
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "baseline",
-            gap: 2,
-            marginBottom: 10,
-          }}
-        >
-          <Text style={{ fontSize: 18, fontWeight: "800", color: "#FF8000" }}>
-            Rs. {formatPrice(activePrice)}
-          </Text>
-          {/* <Text style={{ fontSize: 13, fontWeight: "600", color: "#FF8000" }}>
-            {" "}
-            /{product.unit}
-          </Text> */}
-        </View>
+        {/* Variant chips */}
+        {loading ? (
+          <ActivityIndicator size="small" color="#FF8000" style={{ marginVertical: 12 }} />
+        ) : (
+          <View
+            style={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+              marginRight: -CHIP_GAP,
+              marginBottom: 16,
+            }}
+          >
+            {subProducts.map((sub) => {
+              const isSelected = selectedSubId === sub.id;
+              return (
+                <TouchableOpacity
+                  key={sub.id}
+                  onPress={() => {
+                    setSelectedSubId(sub.id);
+                    setQuantity(1);
+                    setShowViewCart(false);
+                  }}
+                  activeOpacity={0.7}
+                  style={{
+                    width: CHIP_WIDTH,
+                    marginRight: CHIP_GAP,
+                    marginBottom: CHIP_GAP,
+                    paddingVertical: 8,
+                    borderRadius: 20,
+                    borderWidth: 1.5,
+                    borderColor: isSelected ? "#FF8000" : "#E0E0E0",
+                    backgroundColor: "#FFFFFF",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      fontWeight: "600",
+                      color: isSelected ? "#FF8000" : "#888888",
+                    }}
+                    numberOfLines={1}
+                  >
+                    {sub.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        )}
 
-        {product.availableQty && (
+        {/* Price row */}
+        {activeSub && (
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 10 }}>
+            <Text style={{ fontSize: 18, fontWeight: "800", color: "#FF8000" }}>
+              Rs. {formatPrice(activePrice)}
+            </Text>
+            {hasDiscount && (
+              <Text style={{ fontSize: 14, color: "#AAAAAA", textDecorationLine: "line-through" }}>
+                Rs. {formatPrice(originalPrice)}
+              </Text>
+            )}
+          </View>
+        )}
+
+        {/* Available qty badge */}
+        {availableQty !== undefined && availableQty > 0 && (
           <View
             style={{
               alignSelf: "flex-start",
@@ -224,24 +265,66 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
             }}
           >
             <Text style={{ fontSize: 12, color: "#555555", fontWeight: "500" }}>
-              {formatQty(product.availableQty, stepSize)} Available
+              {availableQty} Left
             </Text>
           </View>
         )}
-
-        <Text
-          style={{
-            fontSize: 13,
-            color: "#666",
-            lineHeight: 20,
-            textAlign: "justify",
-          }}
-        >
-          {product.description ??
-            `${product.name} is a professionally formulated agricultural product suitable for a wide range of farming applications. Trusted by farmers and agribusinesses across the region. Ensure safe handling, proper storage, and follow all manufacturer guidelines and local regulations when using this product.`}
-        </Text>
       </ScrollView>
 
+      {/* ── "View Cart" floating pill (appears on cart icon press) ─── */}
+      {showViewCart && (
+        <View
+          style={{
+            position: "absolute",
+            bottom: Platform.OS === "ios" ? 120 : 104,
+            left: "15%",
+            right: "15%",
+            zIndex: 999,
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => navigation.navigate("CartScreen" as any)}
+            activeOpacity={0.9}
+            style={{
+              backgroundColor: "#FF8000CC",
+              borderRadius: 50,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              paddingVertical: 12,
+              paddingHorizontal: 20,
+              shadowColor: "#3F3C57",
+              shadowOffset: { width: 0, height: 6 },
+              shadowOpacity: 0.4,
+              shadowRadius: 12,
+              elevation: 10,
+            }}
+          >
+            <View>
+              <Text style={{ color: "white", fontWeight: "700", fontSize: 15, letterSpacing: 0.3 }}>
+                View Cart
+              </Text>
+              <Text style={{ color: "white", fontSize: 12, opacity: 0.85 }}>
+                {quantity} {quantity === 1 ? "item" : "items"}
+              </Text>
+            </View>
+
+            <View
+              style={{
+                height: 36, width: 36,
+                backgroundColor: "white",
+                borderRadius: 18,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Ionicons name="chevron-forward" size={18} color="#FF8000" />
+            </View>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {/* ── Bottom bar ─────────────────────────────────────────────── */}
       <View
         style={{
           backgroundColor: "white",
@@ -252,70 +335,89 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
           borderTopColor: "#F1F1F4",
           flexDirection: "row",
           alignItems: "center",
-          gap: 12,
+          justifyContent: "space-between",
         }}
       >
+        {/* Subtotal */}
+        <View>
+          <Text style={{ fontSize: 11, color: "#AAAAAA", fontWeight: "500" }}>Subtotal :</Text>
+          <Text style={{ fontSize: 16, fontWeight: "800", color: "#FF8000" }}>
+            Rs. {formatPrice(subtotal)}
+          </Text>
+        </View>
+
+        {/* Qty stepper */}
         <View
           style={{
-            flex: 1,
             flexDirection: "row",
             alignItems: "center",
+            backgroundColor: "#FF80001A",
+            borderRadius: 30,
+            borderWidth: 1,
+            borderColor: "#E8E8E8",
+            overflow: "hidden",
           }}
         >
           <TouchableOpacity
             onPress={decrement}
-            activeOpacity={0.8}
             style={{
-              width: 30,
-              height: 30,
-              borderRadius: 20,
               backgroundColor: "#FF8000",
-              alignItems: "center",
-              justifyContent: "center",
+              width: 38, height: 38,
+              alignItems: "center", justifyContent: "center",
+              borderRadius: 19,
             }}
           >
-            <Ionicons name="remove" size={20} color="white" />
+            {quantity <= 1 ? (
+              <Ionicons name="trash-outline" size={16} color="white" />
+            ) : (
+              <Ionicons name="remove" size={18} color="white" />
+            )}
           </TouchableOpacity>
 
-          <View style={{ flex: 1, alignItems: "center" }}>
-            <Text style={{ fontSize: 15, fontWeight: "700", color: "#1A1A2E" }}>
-              {formatQty(quantity, stepSize)}
-            </Text>
-          </View>
+          <Text
+            style={{
+              paddingHorizontal: 14,
+              fontWeight: "700",
+              fontSize: 15,
+              color: "#3F3C57",
+              minWidth: 30,
+              textAlign: "center",
+            }}
+          >
+            {quantity}
+          </Text>
 
           <TouchableOpacity
             onPress={increment}
-            activeOpacity={0.8}
             style={{
-              width: 30,
-              height: 30,
-              borderRadius: 20,
               backgroundColor: "#FF8000",
-              alignItems: "center",
-              justifyContent: "center",
+              width: 38, height: 38,
+              alignItems: "center", justifyContent: "center",
+              borderRadius: 19,
             }}
           >
-            <Ionicons name="add" size={20} color="white" />
+            <Ionicons name="add" size={18} color="white" />
           </TouchableOpacity>
         </View>
 
+        {/* Cart icon — tap to show the View Cart pill */}
         <TouchableOpacity
-          onPress={() => {
-            console.log("Added to cart:", product.name, quantity);
-          }}
           activeOpacity={0.85}
+          onPress={() => setShowViewCart(true)}
           style={{
-            flex: 1,
-            height: 50,
-            borderRadius: 30,
-            backgroundColor: "#1A1A2E",
+            width: 46, height: 46,
+            borderRadius: 23,
+            backgroundColor: "#3F3C57",
             alignItems: "center",
             justifyContent: "center",
-            flexDirection: "row",
-            gap: 10,
+            shadowColor: "#3F3C57",
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.3,
+            shadowRadius: 6,
+            elevation: 6,
           }}
         >
-          <FontAwesome6 name="arrow-right-long" size={25} color="white" />
+          <Ionicons name="cart-outline" size={22} color="white" />
         </TouchableOpacity>
       </View>
     </View>

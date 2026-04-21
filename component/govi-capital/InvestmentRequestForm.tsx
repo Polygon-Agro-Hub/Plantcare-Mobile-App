@@ -543,7 +543,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
                 />
                 <TouchableOpacity
                   onPress={() => setNicFrontImage(null)}
-                  className="absolute right-2 top-2 rounded-full items-center justify-center"
+                  className="absolute right-2 top-2 rounded-3xl h-[50px] items-center justify-center"
                 >
                   <Ionicons name="close-circle" size={28} color="red" />
                 </TouchableOpacity>
@@ -553,10 +553,10 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
 
           <TouchableOpacity
             onPress={() => pickImageFromGallery("front")}
-            className="bg-white border border-gray-300 rounded-full px-6 py-3 flex-row justify-center items-center"
+            className="bg-white border border-gray-300 rounded-full px-6 h-[50px] flex-row justify-center items-center"
           >
             <FontAwesome6 name="cloud-arrow-up" size={14} color="black" />
-            <Text className="text-gray-900 ml-2 font-medium text-sm">
+            <Text className="text-gray-900 ml-2 font-medium ">
               {nicFrontImage
                 ? t("Govicapital.Re-upload image")
                 : t("Govicapital.Upload Image")}
@@ -580,7 +580,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
                 />
                 <TouchableOpacity
                   onPress={() => setNicBackImage(null)}
-                  className="absolute right-2 top-2 rounded-full items-center justify-center"
+                  className="absolute right-2 top-2 rounded-3xl h-[50px] items-center justify-center"
                 >
                   <Ionicons name="close-circle" size={28} color="red" />
                 </TouchableOpacity>
@@ -590,7 +590,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
 
           <TouchableOpacity
             onPress={() => pickImageFromGallery("back")}
-            className="bg-white border border-gray-300 rounded-full px-6 py-3 flex-row justify-center items-center"
+            className="bg-white border border-gray-300 rounded-3xl p-[50px] px-6 py-3 flex-row justify-center items-center"
           >
             <FontAwesome6 name="cloud-arrow-up" size={14} color="black" />
             <Text className="text-gray-900 ml-2 font-medium text-sm">
@@ -652,7 +652,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
         <View className="mb-8 mt-4">
           <TouchableOpacity
             onPress={handleCancel}
-            className="bg-gray-200 rounded-full py-3.5 mb-3"
+            className="bg-gray-200 rounded-3xl justify-center h-[50px] mb-3"
             style={{
               shadowColor: "#000000",
               shadowOffset: { width: 0, height: 4 },
@@ -661,14 +661,14 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
               elevation: 4,
             }}
           >
-            <Text className="text-gray-500 text-center font-medium text-sm">
+            <Text className="text-gray-500 text-center font-medium text-lg">
               {t("Govicapital.Cancel")}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={handleContinue}
-            className={`rounded-full py-4 ${isFormValid() ? "bg-black" : "bg-gray-400"}`}
+            className={`rounded-3xl h-[50px] justify-center ${isFormValid() ? "bg-black" : "bg-gray-400"}`}
             disabled={!isFormValid()}
             style={{
               shadowColor: "#000000",
@@ -678,7 +678,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
               elevation: 4,
             }}
           >
-            <Text className="text-white text-center font-medium text-sm">
+            <Text className="text-white text-center font-medium text-lg">
               {t("Govicapital.Continue")}
             </Text>
           </TouchableOpacity>

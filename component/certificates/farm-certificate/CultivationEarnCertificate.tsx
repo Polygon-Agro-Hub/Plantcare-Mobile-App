@@ -275,7 +275,7 @@ const CultivationEarnCertificate: React.FC = () => {
                 }}
               >
                 <LottieView
-                  source={require("../../../assets/jsons/NoComplaints.json")}
+                  source={require("@/assets/jsons/common/no-data.json")}
                   style={{ width: "100%", height: "100%" }}
                   autoPlay
                   loop
@@ -295,7 +295,7 @@ const CultivationEarnCertificate: React.FC = () => {
           {filteredCertificates.length > 0 && (
             <TouchableOpacity
               onPress={handleProceedWithout}
-              className="bg-[#F3F3F5] rounded-full py-3 px-6 mt-6 mb-8 shadow-sm"
+              className="bg-[#F3F3F5] rounded-3xl h-[50px] justify-center px-6 mt-6 mb-8 shadow-sm"
               activeOpacity={0.7}
               style={{
                 shadowColor: "#000000",
@@ -312,7 +312,7 @@ const CultivationEarnCertificate: React.FC = () => {
                     ? { fontSize: 14 }
                     : i18n.language === "ta"
                       ? { fontSize: 12 }
-                      : { fontSize: 16 },
+                      : { fontSize: 18 },
                 ]}
               >
                 {t("EarnCertificate.Proceed without a certificate")}
@@ -373,11 +373,11 @@ const CultivationEarnCertificate: React.FC = () => {
             <View className="flex-row justify-between gap-3">
               <TouchableOpacity
                 onPress={handleGoBack}
-                className="flex-1 bg-[#ECECEC] rounded-lg py-3 px-4"
+                className="flex-1 bg-[#ECECEC] rounded-lg h-[50px] justify-center px-4"
                 activeOpacity={0.7}
               >
                 <Text
-                  className="text-center text-[#8E8E8E] text-base font-medium"
+                  className="text-center text-[#8E8E8E] text-lg font-medium"
                   style={[
                     i18n.language === "si"
                       ? { fontSize: 14 }
@@ -392,11 +392,11 @@ const CultivationEarnCertificate: React.FC = () => {
 
               <TouchableOpacity
                 onPress={handleContinue}
-                className="flex-1 bg-black rounded-lg py-3 px-4"
+                className="flex-1 bg-black rounded-lg h-[50px] justify-center px-4"
                 activeOpacity={0.8}
               >
                 <Text
-                  className="text-center text-white text-base font-medium"
+                  className="text-center text-white text-lg font-medium"
                   style={[
                     i18n.language === "si"
                       ? { fontSize: 14 }

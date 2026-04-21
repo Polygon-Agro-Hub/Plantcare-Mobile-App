@@ -520,7 +520,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
 
             <View className="flex-row items-center relative">
               <TextInput
-                className="flex-1 text-gray-500 bg-[#F2F2F2] text-sm py-1 px-4 pr-10 rounded-full"
+                className="flex-1 text-gray-500 bg-[#F2F2F2] text-sm  h-[50px] px-4 pr-10 rounded-3xl"
                 placeholder={t("PublicForum.writeacomment")}
                 value={comment[item.id] || ""}
                 onChangeText={(text) =>
@@ -621,9 +621,9 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
       />
 
       <View className="p-4 bg-white">
-        <View className="flex-row items-center bg-white border rounded-full  shadow-sm">
+        <View className="flex-row items-center bg-white border rounded-3xl  shadow-sm">
           <TextInput
-            className="flex-1 text-gray-600  px-4 py-2 text-base"
+            className="flex-1 text-gray-600  px-4 h-[50px] text-lg"
             placeholder={t("PublicForum.search")}
             value={searchText}
             onChangeText={(text) => {
@@ -671,7 +671,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
       ).length === 0 && !loading ? (
         <View className="flex-1 items-center justify-center">
           <LottieView
-            source={require("../../assets/jsons/NoComplaints.json")}
+            source={require("@/assets/jsons/common/no-data.json")}
             autoPlay
             loop
             style={{ width: 150, height: 150 }}

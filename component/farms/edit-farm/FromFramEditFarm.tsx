@@ -12,19 +12,19 @@ import {
 } from "react-native";
 import { StatusBar } from "react-native";
 import { RouteProp, useFocusEffect } from "@react-navigation/native";
-import ImageData from "@/assets/jsons/farmImage.json";
-import districtData from "@/assets/jsons/district.json";
+import ImageData from "@/assets/jsons/farm/farm-image.json";
+import districtData from "@/assets/jsons/common/district.json";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
 import { RootStackParamList } from "../../types/types";
-import LottieView from "lottie-react-native";
 import { useTranslation } from "react-i18next";
 import i18n from "@/i18n/i18n";
 import CustomHeader from "../../common/CustomHeader";
 import GlobalSearchModal from "../../common/GlobalSearchModal";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import LoadingPage from "@/component/common/LoadingPage";
 
 type FromFramEditFarmNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -488,14 +488,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
 
   if (loading) {
     return (
-      <View className="flex-1 bg-white justify-center items-center">
-        <LottieView
-          source={require("../../../assets/jsons/loader.json")}
-          autoPlay
-          loop
-          style={{ width: 300, height: 300 }}
-        />
-      </View>
+      <LoadingPage fullScreen  />
     );
   }
 
@@ -548,10 +541,10 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
             >
               <Image
                 source={getImageSource(images[selectedImage]?.source)}
-                className="w-20 h-20 rounded-full"
+                className="w-24 h-24 rounded-full"
                 resizeMode="cover"
               />
-              <View className="w-6 h-6 bg-black rounded-full absolute bottom-0 right-0 items-center justify-center">
+              <View className="w-7 h-7 bg-black rounded-full absolute bottom-0 right-0 items-center justify-center">
                 <Image
                   source={require("../../../assets/images/farms/pen.webp")}
                   className="w-3 h-3"
@@ -719,9 +712,9 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
           </View>
 
           {/* Update Button */}
-          <View className="mt-8 mb-[40%]">
+          <View className="mt-8 mb-[40%] items-center">
             <TouchableOpacity
-              className="bg-black h-[50px] mx-6 rounded-full justify-center"
+              className="bg-black h-[50px]  rounded-3xl w-2/3 justify-center"
               onPress={handleUpdateFarm}
               disabled={loading}
               accessibilityLabel="Update farm details"
