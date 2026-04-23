@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -61,6 +61,12 @@ interface Product {
   description?: string;
 }
 
+interface Batch {
+  qty: number;
+  salePrice: number;
+  originalPrice: number | null;
+}
+
 interface SubProduct {
   id: string;
   label: string;
@@ -70,8 +76,7 @@ interface SubProduct {
   colors?: string[];
   availableQty?: number;
   isMRP?: number;
-  nextBatchPrice?: number;
-  nextBatchQty?: number;
+  batches?: Batch[];
 }
 
 interface FilterButton {
@@ -92,12 +97,7 @@ interface CartItem {
 interface BatchModalData {
   product: Product;
   sub: SubProduct;
-  currentBatchQty: number;
-  currentBatchPrice: number;
-  nextBatchPrice: number;
-  nextBatchQty?: number;
-  requestedQty: number;
-  mode: "add" | "review";
+  cartQty: number;
 }
 
 type UomDisplayMode = "DEFAULT" | "LOOSE" | "ROLL" | "COLOR" | "EQUIPMENT";
@@ -172,22 +172,18 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showViewCart, setShowViewCart] = useState(false);
 
-  const [batchModal, setBatchModal] = useState<{
+  const [boundaryModal, setBoundaryModal] = useState<{
     visible: boolean;
-    data: BatchModalData | null;
-  }>({ visible: false, data: null });
+    product: Product | null;
+    sub: SubProduct | null;
+    currentBatchPrice: number;
+    nextBatchPrice: number;
+  } | null>(null);
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const getTotalCap = (sub: SubProduct): number | undefined => {
-    if (sub.isMRP !== 1 || sub.nextBatchPrice == null) {
-      return sub.availableQty;
-    }
-    if (sub.availableQty !== undefined && sub.nextBatchQty !== undefined) {
-      return sub.availableQty + sub.nextBatchQty;
-    }
-
-    return undefined;
+    return sub.availableQty;
   };
 
   const fetchCategories = async () => {
@@ -280,7 +276,6 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
         const basePrice = Number(v.normalPrice ?? 0);
         const salePrice =
           v.discountPrice != null ? Number(v.discountPrice) : undefined;
-        const stockQty = Number(v.availableQty ?? 0);
         let label = "";
         if (mode === "ROLL") {
           const w = v.width != null ? parseFloat(String(v.width)) : "";
@@ -305,13 +300,16 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
           discountPrice: salePrice,
           colorCode: v.color ?? undefined,
           colors: Array.isArray(v.colors) ? v.colors : undefined,
-          availableQty: stockQty,
+          availableQty: Number(v.availableQty ?? 0),
           isMRP: v.isMRP ?? 0,
-          nextBatchPrice:
-            v.nextBatchPrice != null ? Number(v.nextBatchPrice) : undefined,
-
-          nextBatchQty:
-            v.nextBatchQty != null ? Number(v.nextBatchQty) : undefined,
+          batches: Array.isArray(v.batches)
+            ? v.batches.map((b: any) => ({
+                qty: Number(b.qty),
+                salePrice: Number(b.salePrice),
+                originalPrice:
+                  b.originalPrice != null ? Number(b.originalPrice) : null,
+              }))
+            : undefined,
         };
       });
 
@@ -360,9 +358,6 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
       (c) => c.productId === productId && c.subProductId === subProductId,
     )?.quantity ?? 0;
 
-  const getCombinedCartQty = (productId: string, subId: string): number =>
-    getCartQty(productId, subId) + getCartQty(productId, `${subId}_next`);
-
   const addToCart = (product: Product, sub: SubProduct) => {
     setCart((prev) => {
       const exists = prev.find(
@@ -391,99 +386,46 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
   };
 
   const tryAddToCart = (product: Product, sub: SubProduct) => {
-    const available = sub.availableQty ?? product.availableQty ?? Infinity;
-    const originalQty = getCartQty(product.id, sub.id);
-    const nextQty = getCartQty(product.id, `${sub.id}_next`);
-    const combined = originalQty + nextQty;
+    const currentQty = getCartQty(product.id, sub.id);
     const totalCap = getTotalCap(sub);
 
-    if (totalCap !== undefined && combined >= totalCap) return;
+    if (totalCap !== undefined && currentQty >= totalCap) return;
 
-    if (sub.isMRP === 1) {
-      if (originalQty < available) {
-        addToCart(product, sub);
-      } else if (sub.nextBatchPrice != null) {
-        if (nextQty === 0) {
-          setBatchModal({
-            visible: true,
-            data: {
+    if (sub.isMRP === 1 && sub.batches && sub.batches.length > 1) {
+      let cumulative = 0;
+      for (let i = 0; i < sub.batches.length - 1; i++) {
+        cumulative += sub.batches[i].qty;
+
+        if (currentQty === cumulative) {
+          const currentBatchPrice = sub.batches[i].salePrice;
+          const nextBatchPrice = sub.batches[i + 1].salePrice;
+          if (nextBatchPrice !== currentBatchPrice) {
+            setBoundaryModal({
+              visible: true,
               product,
               sub,
-              currentBatchQty: available as number,
-              currentBatchPrice: sub.discountPrice ?? sub.price,
-              nextBatchPrice: sub.nextBatchPrice,
-              nextBatchQty: sub.nextBatchQty,
-              requestedQty: originalQty + 1,
-              mode: "add",
-            },
-          });
-        } else {
-          const nextBatchSub: SubProduct = {
-            ...sub,
-            id: `${sub.id}_next`,
-            price: sub.nextBatchPrice,
-            discountPrice: undefined,
-            availableQty: undefined,
-            isMRP: 0,
-            nextBatchPrice: undefined,
-            nextBatchQty: undefined,
-          };
-          addToCart(product, nextBatchSub);
-          setShowViewCart(true);
+              currentBatchPrice,
+              nextBatchPrice,
+            });
+            return;
+          }
+          break;
         }
       }
-    } else {
-      addToCart(product, sub);
     }
+
+    addToCart(product, sub);
   };
 
-  const handleRemoveCombined = (product: Product, sub: SubProduct) => {
-    const originalQty = getCartQty(product.id, sub.id);
-    const nextQty = getCartQty(product.id, `${sub.id}_next`);
-    const combined = originalQty + nextQty;
-
-    if (combined === 1) {
+  const handleRemove = (product: Product, sub: SubProduct) => {
+    const qty = getCartQty(product.id, sub.id);
+    if (qty === 1) {
       setLooseStateMap((prev) => ({ ...prev, [product.id]: "preview" }));
-    }
-
-    if (nextQty > 0) {
-      setCart((prev) => {
-        const updated = prev
-          .map((c) =>
-            c.productId === product.id && c.subProductId === `${sub.id}_next`
-              ? { ...c, quantity: c.quantity - 1 }
-              : c,
-          )
-          .filter((c) => c.quantity > 0);
-        if (updated.length === 0) setShowViewCart(false);
-        return updated;
-      });
-    } else {
-      setCart((prev) => {
-        const updated = prev
-          .map((c) =>
-            c.productId === product.id && c.subProductId === sub.id
-              ? { ...c, quantity: c.quantity - 1 }
-              : c,
-          )
-          .filter((c) => c.quantity > 0);
-        if (updated.length === 0) setShowViewCart(false);
-        return updated;
-      });
-    }
-  };
-
-  const removeFromCart = (productId: string, subProductId: string) => {
-    const existingItem = cart.find(
-      (c) => c.productId === productId && c.subProductId === subProductId,
-    );
-    if (existingItem && existingItem.quantity === 1) {
-      setLooseStateMap((prev) => ({ ...prev, [productId]: "preview" }));
     }
     setCart((prev) => {
       const updated = prev
         .map((c) =>
-          c.productId === productId && c.subProductId === subProductId
+          c.productId === product.id && c.subProductId === sub.id
             ? { ...c, quantity: c.quantity - 1 }
             : c,
         )
@@ -493,29 +435,9 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
     });
   };
 
-  const handleCartIconPress = (product: Product, sub: SubProduct) => {
-    const nextQty = getCartQty(product.id, `${sub.id}_next`);
-
-    if (sub.isMRP === 1 && sub.nextBatchPrice != null && nextQty > 0) {
-      const available = sub.availableQty ?? product.availableQty ?? 0;
-      const originalQty = getCartQty(product.id, sub.id);
-      const combined = originalQty + nextQty;
-      setBatchModal({
-        visible: true,
-        data: {
-          product,
-          sub,
-          currentBatchQty: available as number,
-          currentBatchPrice: sub.discountPrice ?? sub.price,
-          nextBatchPrice: sub.nextBatchPrice,
-          nextBatchQty: sub.nextBatchQty,
-          requestedQty: combined,
-          mode: "review",
-        },
-      });
-    } else {
-      setShowViewCart(true);
-    }
+  // REPLACE the entire handleCartIconPress function with:
+  const handleCartIconPress = (_product: Product, _sub: SubProduct) => {
+    setShowViewCart(true);
   };
 
   const handleLoosePlusPress = async (productId: string) => {
@@ -906,27 +828,14 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
   const renderPriceActionRow = (
     item: Product,
     activeSub: SubProduct,
-    combinedQty: number,
+    cartQty: number,
   ) => {
     const displayPrice = activeSub.discountPrice ?? activeSub.price;
-    const availableQty = activeSub.availableQty ?? item.availableQty;
-    const nextQty = getCartQty(item.id, `${activeSub.id}_next`);
     const totalCap = getTotalCap(activeSub);
 
-    let isPlusDisabled = false;
-    if (activeSub.isMRP === 1 && activeSub.nextBatchPrice != null) {
-      if (totalCap !== undefined) {
-        isPlusDisabled = combinedQty >= totalCap;
-      } else {
-        isPlusDisabled = false;
-      }
-    } else {
-      isPlusDisabled =
-        availableQty !== undefined && combinedQty >= availableQty;
-    }
+    const isPlusDisabled = totalCap !== undefined && cartQty >= totalCap;
 
-    const isInTwoBatchMode = nextQty > 0;
-    const showCartIcon = combinedQty > 0 && (isInTwoBatchMode || !showViewCart);
+    const showCartIcon = cartQty > 0 && !showViewCart;
 
     return (
       <View
@@ -955,7 +864,8 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
               })}
             </Text>
           </View>
-          {availableQty !== undefined && (
+
+          {totalCap !== undefined && (
             <View
               style={{ flexDirection: "row", alignItems: "center", gap: 3 }}
             >
@@ -965,14 +875,14 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                 color="#AAAAAA"
               />
               <Text style={{ color: "#AAAAAA", fontSize: 11 }}>
-                {availableQty} Left
+                {totalCap} Left
               </Text>
             </View>
           )}
         </View>
 
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-          {combinedQty === 0 ? (
+          {cartQty === 0 ? (
             <TouchableOpacity
               onPress={() => tryAddToCart(item, activeSub)}
               activeOpacity={isPlusDisabled ? 1 : 0.85}
@@ -1004,7 +914,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                 }}
               >
                 <TouchableOpacity
-                  onPress={() => handleRemoveCombined(item, activeSub)}
+                  onPress={() => handleRemove(item, activeSub)}
                   style={{
                     backgroundColor: "#FF8000",
                     width: 34,
@@ -1014,7 +924,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                     borderRadius: 17,
                   }}
                 >
-                  {combinedQty === 1 ? (
+                  {cartQty === 1 ? (
                     <Ionicons name="trash-outline" size={16} color="white" />
                   ) : (
                     <Ionicons name="remove" size={18} color="white" />
@@ -1031,7 +941,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                     textAlign: "center",
                   }}
                 >
-                  {combinedQty}
+                  {cartQty}
                 </Text>
 
                 <TouchableOpacity
@@ -1074,63 +984,26 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
     );
   };
 
-  const BatchSplitModal = () => {
-    const [choice, setChoice] = useState<"current" | "split">("current");
+  const BoundaryConfirmModal = () => {
+    if (!boundaryModal?.visible) return null;
+    const { product, sub, currentBatchPrice, nextBatchPrice } = boundaryModal;
+    if (!product || !sub) return null;
 
-    if (!batchModal.visible || !batchModal.data) return null;
-    const {
-      product,
-      sub,
-      currentBatchQty,
-      currentBatchPrice,
-      nextBatchPrice,
-      nextBatchQty,
-      requestedQty,
-      mode,
-    } = batchModal.data;
+    const handleIDontWant = () => {
+      setBoundaryModal(null);
+    };
 
-    const extraQty = requestedQty - currentBatchQty;
-    const isReview = mode === "review";
-
-    const handleAction = () => {
-      setBatchModal({ visible: false, data: null });
-
-      if (isReview) {
-        navigation.navigate("CartScreen" as any);
-        return;
-      }
-
-      if (choice === "current") {
-        const alreadyInCart = getCartQty(product.id, sub.id);
-        const toAdd = currentBatchQty - alreadyInCart;
-        for (let i = 0; i < toAdd; i++) addToCart(product, sub);
-      } else {
-        const alreadyInCart = getCartQty(product.id, sub.id);
-        const toAddCurrent = currentBatchQty - alreadyInCart;
-        for (let i = 0; i < toAddCurrent; i++) addToCart(product, sub);
-
-        const nextBatchSub: SubProduct = {
-          ...sub,
-          id: `${sub.id}_next`,
-          price: nextBatchPrice,
-          discountPrice: undefined,
-          availableQty: undefined,
-          isMRP: 0,
-          nextBatchPrice: undefined,
-          nextBatchQty: undefined,
-        };
-        for (let i = 0; i < extraQty; i++) addToCart(product, nextBatchSub);
-      }
-
-      setShowViewCart(true);
+    const handleAddToCart = () => {
+      setBoundaryModal(null);
+      addToCart(product, sub);
     };
 
     return (
       <Modal
         transparent
-        visible={batchModal.visible}
+        visible={boundaryModal.visible}
         animationType="fade"
-        onRequestClose={() => setBatchModal({ visible: false, data: null })}
+        onRequestClose={handleIDontWant}
       >
         <View
           style={{
@@ -1157,7 +1030,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
             }}
           >
             <TouchableOpacity
-              onPress={() => setBatchModal({ visible: false, data: null })}
+              onPress={handleIDontWant}
               activeOpacity={0.8}
               style={{
                 position: "absolute",
@@ -1176,318 +1049,70 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
 
             <Text
               style={{
-                color: "#000000",
+                color: "#000",
                 fontWeight: "800",
                 fontSize: 18,
-                marginBottom: 16,
-                letterSpacing: 0.2,
-              }}
-            >
-              {isReview ? "Order Breakdown" : "Please Confirm Action!"}
-            </Text>
-
-            <Text
-              style={{
-                color: "#484848",
-                fontSize: 13.5,
-                lineHeight: 21,
                 marginBottom: 20,
               }}
             >
-              {"Only "}
-              <Text style={{ color: "#000000", fontWeight: "700" }}>
-                {currentBatchQty} {sub.label}
-              </Text>
-              {" available at "}
-              <Text style={{ color: "#000000", fontWeight: "700" }}>
-                Rs.{" "}
-                {currentBatchPrice.toLocaleString("en-LK", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </Text>
-              {" from the current batch.\n\nThe next batch is priced at "}
-              <Text style={{ color: "#000000", fontWeight: "700" }}>
-                Rs.{" "}
-                {nextBatchPrice.toLocaleString("en-LK", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </Text>
-              {" each, so you can purchase the remaining "}
-              <Text style={{ color: "#000000", fontWeight: "700" }}>
-                {extraQty} {sub.label}
-              </Text>
-              {" at this price if needed."}
+              Please Confirm Action!
             </Text>
 
             <View
               style={{
-                height: 1,
-                backgroundColor: "#2A2840",
-                marginBottom: 18,
-              }}
-            />
-
-            <Text
-              style={{
-                color: "#777",
-                fontSize: 11.5,
-                fontWeight: "700",
-                letterSpacing: 1,
-                marginBottom: 16,
+                borderWidth: 1.5,
+                borderColor: "#8F95BD",
+                borderRadius: 12,
+                padding: 16,
+                marginBottom: 24,
               }}
             >
-              {isReview ? "YOUR ORDER :" : "OPTIONS :"}
-            </Text>
-
-            {isReview ? (
-              <View
-                style={{
-                  backgroundColor: "white",
-                  borderRadius: 12,
-                  padding: 14,
-                  borderWidth: 1,
-                  borderColor: "#8F95BD",
-                  marginBottom: 28,
-                }}
+              <Text
+                style={{ color: "#484848", fontSize: 13.5, lineHeight: 22 }}
               >
-                <Text
-                  style={{ color: "#000000", fontSize: 13, marginBottom: 1 }}
-                >
-                  {currentBatchQty} {sub.label}
-                </Text>
-                <Text
-                  style={{
-                    color: "#FF8000",
-                    fontWeight: "700",
-                    fontSize: 13.5,
-                    marginBottom: 10,
-                  }}
-                >
+                {"Last batch priced at "}
+                <Text style={{ color: "#000", fontWeight: "700" }}>
                   Rs.{" "}
                   {currentBatchPrice.toLocaleString("en-LK", {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })}
-                  {" /"}
-                  {sub.label}
                 </Text>
-                <Text
-                  style={{
-                    color: "#555",
-                    fontSize: 12,
-                    marginBottom: 8,
-                    fontWeight: "700",
-                  }}
-                >
-                  +
-                </Text>
-                <Text
-                  style={{ color: "#CCCCCC", fontSize: 13, marginBottom: 1 }}
-                >
-                  {extraQty} {sub.label}
-                </Text>
-                <Text
-                  style={{
-                    color: "#FF8000",
-                    fontWeight: "700",
-                    fontSize: 13.5,
-                  }}
-                >
+                {" has been sold.\n\nThe next batch will be available at "}
+                <Text style={{ color: "#FF8000", fontWeight: "700" }}>
                   Rs.{" "}
                   {nextBatchPrice.toLocaleString("en-LK", {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })}
-                  {" /"}
-                  {sub.label}
+                  .
                 </Text>
-              </View>
-            ) : (
-              <>
-                <TouchableOpacity
-                  onPress={() => setChoice("current")}
-                  activeOpacity={0.8}
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "flex-start",
-                    marginBottom: 20,
-                  }}
-                >
-                  <View
-                    style={{
-                      width: 22,
-                      height: 22,
-                      borderRadius: 11,
-                      borderWidth: 2,
-                      borderColor: choice === "current" ? "#000000" : "#444",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginTop: 1,
-                      marginRight: 14,
-                    }}
-                  >
-                    {choice === "current" && (
-                      <View
-                        style={{
-                          width: 11,
-                          height: 11,
-                          borderRadius: 5.5,
-                          backgroundColor: "#000000",
-                        }}
-                      />
-                    )}
-                  </View>
-                  <View>
-                    <Text
-                      style={{
-                        color: "#000000",
-                        fontWeight: "700",
-                        fontSize: 15,
-                        marginBottom: 3,
-                      }}
-                    >
-                      Buy {currentBatchQty}
-                    </Text>
-                    <Text
-                      style={{
-                        color: "#FF8000",
-                        fontSize: 13.5,
-                        fontWeight: "600",
-                      }}
-                    >
-                      Rs.{" "}
-                      {currentBatchPrice.toLocaleString("en-LK", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
-                      {" /"}
-                      {sub.label}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => setChoice("split")}
-                  activeOpacity={0.8}
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "flex-start",
-                    marginBottom: 28,
-                  }}
-                >
-                  <View
-                    style={{
-                      width: 22,
-                      height: 22,
-                      borderRadius: 11,
-                      borderWidth: 2,
-                      borderColor: choice === "split" ? "#000000" : "#444",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginTop: 1,
-                      marginRight: 14,
-                    }}
-                  >
-                    {choice === "split" && (
-                      <View
-                        style={{
-                          width: 11,
-                          height: 11,
-                          borderRadius: 5.5,
-                          backgroundColor: "#000000",
-                        }}
-                      />
-                    )}
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Text
-                      style={{
-                        color: "#000000",
-                        fontWeight: "700",
-                        fontSize: 15,
-                        marginBottom: 10,
-                      }}
-                    >
-                      Buy {requestedQty}
-                    </Text>
-                    <View
-                      style={{
-                        backgroundColor: "white",
-                        borderRadius: 12,
-                        padding: 14,
-                        borderWidth: 1,
-                        borderColor: "#333050",
-                      }}
-                    >
-                      <Text
-                        style={{
-                          color: "#000000",
-                          fontSize: 13,
-                          marginBottom: 1,
-                        }}
-                      >
-                        {currentBatchQty} {sub.label}
-                      </Text>
-                      <Text
-                        style={{
-                          color: "#FF8000",
-                          fontWeight: "700",
-                          fontSize: 13.5,
-                          marginBottom: 10,
-                        }}
-                      >
-                        Rs.{" "}
-                        {currentBatchPrice.toLocaleString("en-LK", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}
-                        {" /"}
-                        {sub.label}
-                      </Text>
-                      <Text
-                        style={{
-                          color: "#000000",
-                          fontSize: 12,
-                          marginBottom: 8,
-                          fontWeight: "700",
-                        }}
-                      >
-                        +
-                      </Text>
-                      <Text
-                        style={{
-                          color: "#000000",
-                          fontSize: 13,
-                          marginBottom: 1,
-                        }}
-                      >
-                        {extraQty} {sub.label}
-                      </Text>
-                      <Text
-                        style={{
-                          color: "#FF8000",
-                          fontWeight: "700",
-                          fontSize: 13.5,
-                        }}
-                      >
-                        Rs.{" "}
-                        {nextBatchPrice.toLocaleString("en-LK", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}
-                        {" /"}
-                        {sub.label}
-                      </Text>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              </>
-            )}
+                {"\nDo you wish to continue?"}
+              </Text>
+            </View>
 
             <TouchableOpacity
-              onPress={handleAction}
+              onPress={handleIDontWant}
+              activeOpacity={0.85}
+              style={{
+                backgroundColor: "#CCCCCC",
+                borderRadius: 50,
+                paddingVertical: 15,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 10,
+                marginBottom: 12,
+              }}
+            >
+              <Ionicons name="arrow-back" size={18} color="#555" />
+              <Text style={{ color: "#555", fontWeight: "700", fontSize: 15 }}>
+                I don't want
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={handleAddToCart}
               activeOpacity={0.88}
               style={{
                 backgroundColor: "#2A2840",
@@ -1495,8 +1120,8 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                 paddingVertical: 15,
                 flexDirection: "row",
                 alignItems: "center",
-                justifyContent: "space-between",
-                paddingHorizontal: 24,
+                justifyContent: "center",
+                gap: 10,
                 borderWidth: 1.5,
                 borderColor: "#3A3858",
               }}
@@ -1504,24 +1129,9 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
               <Text
                 style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}
               >
-                {isReview ? "View Cart" : "Add to Cart"}
+                Add to Cart
               </Text>
-              <View
-                style={{
-                  backgroundColor: "#FFFFFF",
-                  width: 34,
-                  height: 34,
-                  borderRadius: 17,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Ionicons
-                  name={isReview ? "cart-outline" : "arrow-forward"}
-                  size={16}
-                  color="#1C1B2E"
-                />
-              </View>
+              <Ionicons name="arrow-forward" size={18} color="white" />
             </TouchableOpacity>
           </View>
         </View>
@@ -1546,9 +1156,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
             .find((s) => s.id === activeSubId)
         : subs.find((s) => s.id === activeSubId);
 
-    const combinedCartQty = activeSub
-      ? getCombinedCartQty(item.id, activeSub.id)
-      : 0;
+    const cartQty = activeSub ? getCartQty(item.id, activeSub.id) : 0;
 
     const looseSubtitle =
       isLoose && item.minQtyRaw
@@ -1793,7 +1401,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                         }}
                       >
                         {activeSub.label}
-                        {combinedCartQty > 0 ? ` X ${combinedCartQty}` : ""}
+                        {cartQty > 0 ? ` X ${cartQty}` : ""}
                       </Text>
                     </View>
                   </View>
@@ -1801,29 +1409,10 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
 
                 {activeSub &&
                   (() => {
-                    const available =
-                      activeSub.availableQty ?? item.availableQty;
-                    const nextQty = getCartQty(item.id, `${activeSub.id}_next`);
                     const totalCap = getTotalCap(activeSub);
-
-                    let isPlusDisabled = false;
-                    if (
-                      activeSub.isMRP === 1 &&
-                      activeSub.nextBatchPrice != null
-                    ) {
-                      isPlusDisabled =
-                        totalCap !== undefined
-                          ? combinedCartQty >= totalCap
-                          : false;
-                    } else {
-                      isPlusDisabled =
-                        available !== undefined && combinedCartQty >= available;
-                    }
-
-                    const isInTwoBatchMode = nextQty > 0;
-                    const showCartIcon =
-                      combinedCartQty > 0 &&
-                      (isInTwoBatchMode || !showViewCart);
+                    const isPlusDisabled =
+                      totalCap !== undefined && cartQty >= totalCap;
+                    const showCartIcon = cartQty > 0 && !showViewCart;
 
                     return (
                       <View
@@ -1866,7 +1455,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                               })}
                             </Text>
                           </View>
-                          {(activeSub.discountPrice || item.discountPrice) && (
+                          {activeSub.discountPrice != null && (
                             <Text
                               style={{
                                 color: "#AAAAAA",
@@ -1875,15 +1464,14 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                               }}
                             >
                               Rs.{" "}
-                              {(
-                                activeSub.price || item.normalPrice
-                              ).toLocaleString("en-LK", {
+                              {activeSub.price.toLocaleString("en-LK", {
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2,
                               })}
                             </Text>
                           )}
-                          {item.availableQty !== undefined && (
+
+                          {totalCap !== undefined && (
                             <View
                               style={{
                                 flexDirection: "row",
@@ -1897,7 +1485,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                                 color="#AAAAAA"
                               />
                               <Text style={{ color: "#AAAAAA", fontSize: 11 }}>
-                                {item.availableQty} Left
+                                {totalCap} Left
                               </Text>
                             </View>
                           )}
@@ -1922,9 +1510,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                             }}
                           >
                             <TouchableOpacity
-                              onPress={() =>
-                                handleRemoveCombined(item, activeSub)
-                              }
+                              onPress={() => handleRemove(item, activeSub)}
                               style={{
                                 backgroundColor: "#FF8000",
                                 width: 34,
@@ -1934,7 +1520,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                                 borderRadius: 17,
                               }}
                             >
-                              {combinedCartQty === 1 ? (
+                              {cartQty === 1 ? (
                                 <Ionicons
                                   name="trash-outline"
                                   size={16}
@@ -1959,7 +1545,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                                 textAlign: "center",
                               }}
                             >
-                              {combinedCartQty}
+                              {cartQty}
                             </Text>
 
                             <TouchableOpacity
@@ -2046,8 +1632,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
             ) : (
               <>
                 {renderChips(item, subs, activeSubId, displayMode)}
-                {activeSub &&
-                  renderPriceActionRow(item, activeSub, combinedCartQty)}
+                {activeSub && renderPriceActionRow(item, activeSub, cartQty)}
               </>
             )}
           </View>
@@ -2310,7 +1895,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
         </View>
       )}
 
-      <BatchSplitModal />
+      <BoundaryConfirmModal />
     </View>
   );
 };
