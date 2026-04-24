@@ -336,6 +336,7 @@ export type RootStackParamList = {
     ongoingCropId: string;
   };
   GoviPensionInformation: undefined;
+    CartScreen:undefined;
   GoviPensionForm: undefined;
   GoviPensionStatus: undefined;
   MyPensionAccount: undefined;
@@ -390,6 +391,7 @@ export type RootStackParamList = {
     LoadingPage: {
       messageStyle: string;
     };
+  
   };
 };
 
