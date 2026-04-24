@@ -276,6 +276,12 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       action: handlePensionNavigation,
       bgColor: "#FFFFFF",
     },
+      {
+      image: require("../../assets/images/dashboard/soil-data.webp"),
+      label: t("Dashboard.Soil Data"),
+      action: () => navigation.navigate("SoilGridsScreen" as any),
+      bgColor: "#FFFFFF",
+    },
   ];
 
   const chunkArray = (arr: any[], size: number) => {

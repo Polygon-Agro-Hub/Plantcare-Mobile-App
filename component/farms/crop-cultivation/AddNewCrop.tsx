@@ -30,7 +30,7 @@ import { useFocusEffect, useRoute } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomHeader from "../../common/CustomHeader";
-import districtData from "../../../assets/jsons/district.json";
+import districtData from "@/assets/jsons/common/district.json";
 
 type AddNewCropNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -702,7 +702,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
                   }}
                 >
                   <LottieView
-                    source={require("../../../assets/jsons/NoComplaints.json")}
+                    source={require("@/assets/jsons/common/no-data.json")}
                     autoPlay
                     loop
                     style={{ width: 150, height: 150 }}
@@ -763,7 +763,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
                       }}
                     >
                       <LottieView
-                        source={require("../../../assets/jsons/NoComplaints.json")}
+                        source={require("@/assets/jsons/common/no-data.json")}
                         autoPlay
                         loop
                         style={{ width: 150, height: 150 }}

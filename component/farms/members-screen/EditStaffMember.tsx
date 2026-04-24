@@ -22,13 +22,13 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { environment } from "@/environment/environment";
-import LottieView from "lottie-react-native";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import i18n from "i18next";
-import countryData from "../../../assets/jsons/countryflag.json";
+import countryData from "@/assets/jsons/common/country-flag.json";
 import CustomHeader from "../../common/CustomHeader";
 import GlobalSearchModal from "../../common/GlobalSearchModal";
+import LoadingPage from "@/component/common/LoadingPage";
 
 type RouteParams = {
   farmId: number;
@@ -508,16 +508,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
   };
 
   if (loading) {
-    return (
-      <View className="flex-1 bg-white justify-center items-center">
-        <LottieView
-          source={require("../../../assets/jsons/loader.json")}
-          autoPlay
-          loop
-          style={{ width: 300, height: 300 }}
-        />
-      </View>
-    );
+    return <LoadingPage fullScreen />;
   }
 
   return (
@@ -720,10 +711,10 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
         </View>
 
         {/* Save Button */}
-        <View className="pt-10 pb-6 px-[15%] ">
+        <View className="pt-10 pb-6 items-center">
           <TouchableOpacity
             onPress={handleSave}
-            className={`${isSubmitting || checkingNumber || checkingNIC ? "bg-gray-400" : "bg-black"} rounded-full py-3 items-center justify-center`}
+            className={`${isSubmitting || checkingNumber || checkingNIC ? "bg-gray-400" : "bg-black"} rounded-full w-2/3 h-[50px] items-center justify-center`}
             activeOpacity={0.8}
             disabled={isSubmitting || checkingNumber || checkingNIC}
             style={{
@@ -750,10 +741,10 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
         </View>
 
         {/* Delete Button */}
-        <View className="pb-32 px-[15%]">
+        <View className="pb-32 items-center">
           <TouchableOpacity
             onPress={() => setShowDeleteModal(true)}
-            className="rounded-full py-3 items-center justify-center bg-[#FF3030]"
+            className="rounded-full w-2/3 h-[50px] items-center justify-center bg-[#FF3030]"
             activeOpacity={0.8}
             disabled={isSubmitting}
             style={{
@@ -798,20 +789,20 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
               <View className="px-4">
                 <TouchableOpacity
                   onPress={handleDeleteStaff}
-                  className="px-6 py-2 bg-black rounded-full"
+                  className="px-6 h-[50px] justify-center bg-black rounded-3xl"
                 >
                   <View className="justify-center items-center">
-                    <Text className="text-white">{t("Farms.Yes, Delete")}</Text>
+                    <Text className="text-white text-lg">{t("Farms.Yes, Delete")}</Text>
                   </View>
                 </TouchableOpacity>
               </View>
               <View className="px-4 mt-4">
                 <TouchableOpacity
                   onPress={() => setShowDeleteModal(false)}
-                  className="px-6 py-2 bg-[#D9D9D9] rounded-full"
+                  className="px-6 h-[50px] justify-center bg-[#D9D9D9] rounded-3xl"
                 >
                   <View className="justify-center items-center">
-                    <Text className="text-gray-700">
+                    <Text className="text-gray-700 text-lg">
                       {t("Farms.No, Go Back")}
                     </Text>
                   </View>

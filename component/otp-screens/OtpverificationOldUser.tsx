@@ -15,7 +15,6 @@ import {
   Dimensions,
   StatusBar as RNStatusBar,
 } from "react-native";
-import { StatusBar } from "expo-status-bar";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,

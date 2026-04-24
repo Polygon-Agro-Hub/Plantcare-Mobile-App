@@ -11,11 +11,11 @@ import {
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/services/reducxStore";
-import LottieView from "lottie-react-native";
 import CustomHeader from "../../common/CustomHeader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
+import LoadingPage from "@/component/common/LoadingPage";
 
 type FarmFixDashBoardNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -182,14 +182,7 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
 
   if (loading) {
     return (
-      <View className="flex-1 justify-center items-center">
-        <LottieView
-          source={require("../../../assets/jsons/loader.json")}
-          autoPlay
-          loop
-          style={{ width: 300, height: 300 }}
-        />
-      </View>
+     <LoadingPage fullScreen  />
     );
   }
 

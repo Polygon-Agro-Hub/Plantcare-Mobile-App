@@ -22,11 +22,11 @@ import { selectFarmBasicDetails } from "../../../store/farmSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
-import LottieView from "lottie-react-native";
 import { useTranslation } from "react-i18next";
-import ImageData from "@/assets/jsons/farmImage.json";
+import ImageData from "@/assets/jsons/farm/farm-image.json";
 import CustomHeader from "@/component/common/CustomHeader";
 import { MaterialIcons } from "@expo/vector-icons";
+import LoadingPage from "@/component/common/LoadingPage";
 
 type EditManagersScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -244,23 +244,13 @@ const EditManagersScreen = () => {
   );
 
   if (loading) {
-    return (
-      <View className="flex-1 bg-gray-50 justify-center items-center">
-        <LottieView
-          source={require("../../../assets/jsons/loader.json")}
-          autoPlay
-          loop
-          style={{ width: 300, height: 300 }}
-        />
-      </View>
-    );
+    return <LoadingPage fullScreen />;
   }
 
   return (
     <View className="flex-1 bg-white">
       <StatusBar
         barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"}
-        backgroundColor="#f9fafb"
       />
       <CustomHeader
         title={""}

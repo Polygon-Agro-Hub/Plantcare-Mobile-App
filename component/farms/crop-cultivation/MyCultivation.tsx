@@ -23,6 +23,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Entypo } from "@expo/vector-icons";
+import LoadingPage from "@/component/common/LoadingPage";
 
 interface FarmItem {
   id: number;
@@ -334,8 +335,9 @@ const MyCultivation = () => {
         <View className="flex-row items-start">
           <Image
             source={getImageSource(farm.imageId)}
-            className="w-14 h-14 mr-4 mt-4 rounded-full"
+            className="justify-center rounded-full mr-4"
             resizeMode="cover"
+            style={{ width: wp(20), height: wp(20) }}
           />
           <View className="flex-1">
             <View className="flex-row justify-between items-start mt-2">
@@ -386,19 +388,12 @@ const MyCultivation = () => {
         </View>
 
         {loading ? (
-          <View className="flex-1 justify-center items-center">
-            <LottieView
-              source={require("../../../assets/jsons/loader.json")}
-              autoPlay
-              loop
-              style={{ width: 300, height: 300 }}
-            />
-          </View>
+          <LoadingPage fullScreen />
         ) : farms.length === 0 ? (
           <View className="flex-1 justify-center items-center">
             <View className="-mt-[30%]">
               <LottieView
-                source={require("../../../assets/jsons/NoComplaints.json")}
+                source={require("@/assets/jsons/common/no-data.json")}
                 style={{ width: wp(50), height: hp(50) }}
                 autoPlay
                 loop

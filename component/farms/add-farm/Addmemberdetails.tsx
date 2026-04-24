@@ -28,7 +28,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import countryData from "../../../assets/jsons/countryflag.json";
+import countryData from "@/assets/jsons/common/country-flag.json";
 
 import {
   selectFarmSecondDetails,

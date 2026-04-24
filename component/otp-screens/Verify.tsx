@@ -78,7 +78,7 @@ const Verify: React.FC = ({ navigation }: any) => {
 
       <View className="mt-20">
         <TouchableOpacity
-          className="bg-[#353535] flex items-center justify-center mx-auto rounded-full"
+          className="bg-[#353535] flex items-center w-2/3 justify-center mx-auto rounded-3xl h-[50px]"
           style={{
             width: wp(72),
             height: hp(7),

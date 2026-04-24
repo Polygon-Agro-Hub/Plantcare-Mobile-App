@@ -182,9 +182,7 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
   );
 
   const handleWeatherNavigation = () => {
-    if (language === "en") navigation.navigate("WeatherForecastEng");
-    else if (language === "si") navigation.navigate("WeatherForecastSinhala");
-    else if (language === "ta") navigation.navigate("WeatherForecastTamil");
+    navigation.navigate("WeatherForecast" as any);
   };
 
   const actionItems = [

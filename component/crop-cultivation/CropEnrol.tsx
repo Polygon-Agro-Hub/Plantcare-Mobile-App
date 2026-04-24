@@ -23,10 +23,10 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import moment from "moment";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
-import LottieView from "lottie-react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
+import LoadingPage from "../common/LoadingPage";
 
 type CropEnrolRouteProp = RouteProp<RootStackParamList, "CropEnrol">;
 
@@ -395,18 +395,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
   ) => items.find((i) => i.value === value)?.label ?? "";
 
   if (loading) {
-    return (
-      <View className="flex-1 bg-white">
-        <View className="flex-1 justify-center items-center">
-          <LottieView
-            source={require("../../assets/jsons/loader.json")}
-            autoPlay
-            loop
-            style={{ width: 300, height: 300 }}
-          />
-        </View>
-      </View>
-    );
+    return <LoadingPage fullScreen />;
   }
 
   return (

@@ -3,13 +3,11 @@ import React, { useEffect, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
 import { RouteProp } from "@react-navigation/native";
-import {
-  widthPercentageToDP as wp,
-} from "react-native-responsive-screen";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { useTranslation } from "react-i18next";
-import LottieView from "lottie-react-native";
 import i18n from "@/i18n/i18n";
 import CustomHeader from "@/component/common/CustomHeader";
+import LoadingPage from "@/component/common/LoadingPage";
 
 type FarmSelectCropRouteProp = RouteProp<RootStackParamList, "FarmSelectCrop">;
 type FarmSelectCropNavigationCrop = StackNavigationProp<
@@ -77,16 +75,7 @@ const FarmSelectCrop: React.FC<FarmSelectCropProps> = ({
   };
 
   if (loading) {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <LottieView
-          source={require("../../../assets/jsons/loader.json")}
-          autoPlay
-          loop
-          style={{ width: 300, height: 300 }}
-        />
-      </View>
-    );
+    return <LoadingPage fullScreen />;
   }
 
   return (

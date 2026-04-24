@@ -154,7 +154,8 @@
     "weather": "Weather",
     "failedToFetch": "Unable to fetch profile data. Please try again.",
     "Survey": "Survey",
-    "GoviShop": "GoviShop"
+    "GoviShop": "GoviShop",
+    "Soil Data": "Soil Data"
   },
   "navbar": {
     "home": "Home",
@@ -922,7 +923,7 @@
     "leasedAmountAnnuallyLKR": "Enter Annual Leased Amount(LKR)",
     "enterLeasedAmountAnnuallyLKR": "Annual Lease Amount (LKR) is required",
     "issuedDate": "Issued Date",
-    "selectIssuedDate": "Date issued is required",
+    "selectIssuedDate": "Issued Date is required",
     "permitAnnuallyLKR": "Annual Permit Fee (LKR)",
     "enterPermitAnnuallyLKR": "Annual permit fee (LKR) is required",
     "paymentAnnuallyLKR": "Annual Payment Fee (LKR)",

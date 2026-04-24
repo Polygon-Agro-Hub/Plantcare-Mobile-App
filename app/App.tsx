@@ -113,9 +113,9 @@ import ManagerFarmDetails from "@/component/manager-screens/ManagerFarmDetails";
 import ManageMembersManager from "@/component/manager-screens/ManageMembersManager";
 import ManagerAddStaff from "@/component/manager-screens/ManagerAddStaff";
 import ManageMembersSupervisor from "@/component/manager-screens/ManageMembersSupervisor";
-import SupervisorAddStaff from "@/component/manager-screens/SupervisorAddStaff";
+import SupervisorAddStaff from "@/component/supervisor-screens/SupervisorAddStaff";
 import ManageEditscreen from "@/component/manager-screens/ManageEditscreen";
-import SupervisorEditScreen from "@/component/manager-screens/SupervisorEditScreen";
+import SupervisorEditScreen from "@/component/supervisor-screens/SupervisorEditScreen";
 import InvestmentAndLoan from "@/component/govi-capital/InvestmentAndLoan";
 import InvestmentRequestForm from "@/component/govi-capital/InvestmentRequestForm";
 import RequestLetter from "@/component/govi-capital/RequestLetter";
@@ -157,6 +157,7 @@ import GoviShopCartScreen from "@/component/govi-shop/GoviShopCartScreen";
 import GoviShopProfileScreen from "@/component/govi-shop/GoviShopProfileScreen";
 import LocationAccess from "@/component/permission/LocationAccess";
 import ViewProduct from "@/component/govi-shop/ViewProduct";
+import SoilGridsScreen from "@/component/soil-grids/SoilGridsScreen";
 
 LogBox.ignoreAllLogs(true);
 NativeWindStyleSheet.setOutput({
@@ -669,16 +670,15 @@ function AppContent() {
             />
             <Stack.Screen
               name="GoviShopProfileScreen"
-              component={GoviShopProfileScreen}
+              component={GoviShopProfileScreen as any}
             />
+
             <Stack.Screen
               name="LocationAccess"
               component={LocationAccess as any}
             />
-            <Stack.Screen
-              name="ViewProduct"
-              component={ViewProduct as any}
-            />
+            <Stack.Screen name="ViewProduct" component={ViewProduct as any} />
+            <Stack.Screen name="SoilGridsScreen" component={SoilGridsScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaView>

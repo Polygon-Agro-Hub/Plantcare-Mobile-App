@@ -18,7 +18,7 @@ import { RootStackParamList } from "../types/types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import bankNames from "../../assets/jsons/banks.json";
+import bankNames from "@/assets/jsons/bank-details/banks.json";
 import { useTranslation } from "react-i18next";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
@@ -72,7 +72,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       const selectedBank = bankNames.find((bank) => bank.name === bankName);
       if (selectedBank) {
         try {
-          const data = require("../../assets/jsons/branches.json");
+          const data = require("@/assets/jsons/bank-details/branches.json");
           const branches = data[selectedBank.ID] || [];
           const sortedBranches = branches.sort(
             (a: { name: string }, b: { name: any }) =>
