@@ -10,6 +10,7 @@ import {
   Platform,
   ActivityIndicator,
   Modal,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -102,6 +103,22 @@ const resolveColor = (raw: string): string => {
   return t.startsWith("#") ? t : `#${t}`;
 };
 
+function resolveVariantIds(baseUom: string, sub: SubProduct) {
+  const mode = getDisplayMode(baseUom);
+  if (mode === "EQUIPMENT") {
+    return {
+      subProdId: null,
+      subProdColorId: null,
+      equipColorId: Number(sub.id),
+    };
+  }
+  return {
+    subProdId: Number(sub.id),
+    subProdColorId: null,
+    equipColorId: null,
+  };
+}
+
 const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
   const {
     productId,
@@ -121,6 +138,11 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
   const [quantity, setQuantity] = useState(1);
   const [showViewCart, setShowViewCart] = useState(false);
   const [description, setDescription] = useState<string>(routeDescription);
+
+  const [savedToDb, setSavedToDb] = useState(false);
+
+  const [cartIconLoading, setCartIconLoading] = useState(false);
+  const [dbUpdateLoading, setDbUpdateLoading] = useState(false);
 
   const [boundaryModal, setBoundaryModal] = useState<{
     visible: boolean;
@@ -223,16 +245,72 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
   const subtotal = activePrice * quantity;
   const isPlusDisabled = availableQty !== undefined && quantity >= availableQty;
 
+  const callUpsertAPI = async (
+    sub: SubProduct,
+    qty: number,
+  ): Promise<boolean> => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      const { subProdId, subProdColorId, equipColorId } = resolveVariantIds(
+        baseUom,
+        sub,
+      );
+      await axios.post(
+        `${environment.API_BASE_URL}api/govi-shop/cart/item`,
+        {
+          branchId: Number(branchId),
+          productId: Number(productId),
+          subProdId,
+          subProdColorId,
+          equipColorId,
+          qty,
+        },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      return true;
+    } catch (error: any) {
+      Alert.alert(
+        "Cart Error",
+        error?.response?.data?.message ??
+          "Failed to update cart. Please try again.",
+      );
+      return false;
+    }
+  };
+
+  const callDeleteAPI = async (sub: SubProduct): Promise<boolean> => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      const { subProdId, subProdColorId, equipColorId } = resolveVariantIds(
+        baseUom,
+        sub,
+      );
+      await axios.delete(`${environment.API_BASE_URL}api/govi-shop/cart/item`, {
+        headers: { Authorization: `Bearer ${token}` },
+        data: {
+          productId: Number(productId),
+          subProdId,
+          subProdColorId,
+          equipColorId,
+        },
+      });
+      return true;
+    } catch (error: any) {
+      Alert.alert(
+        "Cart Error",
+        error?.response?.data?.message ??
+          "Failed to remove item. Please try again.",
+      );
+      return false;
+    }
+  };
+
   const handleSelectSub = (id: string) => {
     setSelectedSubId(id);
     setQuantity(1);
-    setShowViewCart(false);
-  };
 
-  const handleCartPress = () => {
-    if (!activeSub) return;
-    if (checkBatchBoundary(activeSub, quantity)) return;
-    setShowViewCart(true);
+    setSavedToDb(false);
+    setShowViewCart(false);
   };
 
   const checkBatchBoundary = (sub: SubProduct, qty: number): boolean => {
@@ -258,12 +336,73 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
     return false;
   };
 
+  const handleCartPress = async () => {
+    if (!activeSub) return;
+    if (checkBatchBoundary(activeSub, quantity)) return;
+
+    setCartIconLoading(true);
+    const ok = await callUpsertAPI(activeSub, quantity);
+    setCartIconLoading(false);
+
+    if (ok) {
+      setSavedToDb(true);
+      setShowViewCart(true);
+    }
+  };
+
   const handleIncrement = () => {
     if (isPlusDisabled || !activeSub) return;
     const nextQty = quantity + 1;
 
-    if (showViewCart && checkBatchBoundary(activeSub, quantity)) return;
-    setQuantity(nextQty);
+    if (savedToDb) {
+      if (checkBatchBoundary(activeSub, quantity)) return;
+      setQuantity(nextQty);
+      setDbUpdateLoading(true);
+      callUpsertAPI(activeSub, nextQty).then((ok) => {
+        if (!ok) setQuantity(quantity);
+        setDbUpdateLoading(false);
+      });
+    } else {
+      if (checkBatchBoundary(activeSub, quantity)) return;
+      setQuantity(nextQty);
+    }
+  };
+
+  const handleDecrement = () => {
+    if (!activeSub) return;
+
+    if (savedToDb) {
+      if (quantity <= 1) {
+        const prevQty = quantity;
+        setQuantity(1);
+        setShowViewCart(false);
+        setSavedToDb(false);
+        setDbUpdateLoading(true);
+        callDeleteAPI(activeSub).then((ok) => {
+          if (!ok) {
+            setQuantity(prevQty);
+            setSavedToDb(true);
+            setShowViewCart(true);
+          }
+          setDbUpdateLoading(false);
+        });
+      } else {
+        const newQty = quantity - 1;
+        setQuantity(newQty);
+        setDbUpdateLoading(true);
+        callUpsertAPI(activeSub, newQty).then((ok) => {
+          if (!ok) setQuantity(quantity);
+          setDbUpdateLoading(false);
+        });
+      }
+    } else {
+      if (quantity <= 1) {
+        setQuantity(1);
+        setShowViewCart(false);
+      } else {
+        setQuantity((q) => q - 1);
+      }
+    }
   };
 
   const renderChips = () => {
@@ -503,6 +642,23 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
   const BoundaryModal = () => {
     if (!boundaryModal?.visible || !boundaryModal.sub) return null;
     const { sub, currentBatchPrice, nextBatchPrice } = boundaryModal;
+
+    const handleConfirm = () => {
+      setBoundaryModal(null);
+      const nextQty = quantity + 1;
+
+      if (savedToDb) {
+        setQuantity(nextQty);
+        setDbUpdateLoading(true);
+        callUpsertAPI(sub, nextQty).then((ok) => {
+          if (!ok) setQuantity(quantity);
+          setDbUpdateLoading(false);
+        });
+      } else {
+        setQuantity(nextQty);
+      }
+    };
+
     return (
       <Modal
         transparent
@@ -605,11 +761,7 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => {
-                setBoundaryModal(null);
-                setQuantity((q) => q + 1);
-                setShowViewCart(true);
-              }}
+              onPress={handleConfirm}
               style={{
                 backgroundColor: "#2A2840",
                 borderRadius: 50,
@@ -699,7 +851,6 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
           paddingBottom: 16,
         }}
       >
-        {/* Name */}
         <Text
           style={{
             fontSize: 20,
@@ -711,7 +862,6 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
           {productName}
         </Text>
 
-        {/* Variant chips */}
         {loading ? (
           <ActivityIndicator
             size="small"
@@ -722,7 +872,6 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
           renderChips()
         )}
 
-        {/* Price */}
         {activeSub && (
           <View
             style={{
@@ -762,7 +911,6 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
           </View>
         )}
 
-        {/* Availability badge */}
         {availableQty !== undefined && (
           <View
             style={{
@@ -780,7 +928,6 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
           </View>
         )}
 
-        {/* Description */}
         {!!description && (
           <Text
             style={{
@@ -887,17 +1034,12 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
             overflow: "hidden",
           }}
         >
+          {/* MINUS / TRASH */}
           <TouchableOpacity
-            onPress={() => {
-              if (quantity <= 1) {
-                setQuantity(1);
-                setShowViewCart(false);
-              } else {
-                setQuantity((q) => q - 1);
-              }
-            }}
+            onPress={handleDecrement}
+            disabled={dbUpdateLoading}
             style={{
-              backgroundColor: "#FF8000",
+              backgroundColor: dbUpdateLoading ? "#CCCCCC" : "#FF8000",
               width: 38,
               height: 38,
               alignItems: "center",
@@ -905,7 +1047,9 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
               borderRadius: 19,
             }}
           >
-            {quantity <= 1 ? (
+            {dbUpdateLoading ? (
+              <ActivityIndicator size={16} color="white" />
+            ) : quantity <= 1 ? (
               <Ionicons name="trash-outline" size={16} color="white" />
             ) : (
               <Ionicons name="remove" size={18} color="white" />
@@ -925,11 +1069,13 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
             {quantity}
           </Text>
 
+          {/* PLUS */}
           <TouchableOpacity
             onPress={handleIncrement}
-            disabled={isPlusDisabled}
+            disabled={isPlusDisabled || dbUpdateLoading}
             style={{
-              backgroundColor: isPlusDisabled ? "#CCCCCC" : "#FF8000",
+              backgroundColor:
+                isPlusDisabled || dbUpdateLoading ? "#CCCCCC" : "#FF8000",
               width: 38,
               height: 38,
               alignItems: "center",
@@ -937,25 +1083,34 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
               borderRadius: 19,
             }}
           >
-            <Ionicons name="add" size={18} color="white" />
+            {dbUpdateLoading ? (
+              <ActivityIndicator size={18} color="white" />
+            ) : (
+              <Ionicons name="add" size={18} color="white" />
+            )}
           </TouchableOpacity>
         </View>
 
-        {!showViewCart && (
+        {!savedToDb && (
           <TouchableOpacity
             activeOpacity={0.85}
             onPress={handleCartPress}
+            disabled={cartIconLoading}
             style={{
               width: 46,
               height: 46,
               borderRadius: 23,
-              backgroundColor: "#3F3C57",
+              backgroundColor: cartIconLoading ? "#AAAAAA" : "#3F3C57",
               alignItems: "center",
               justifyContent: "center",
               elevation: 6,
             }}
           >
-            <Ionicons name="cart-outline" size={22} color="white" />
+            {cartIconLoading ? (
+              <ActivityIndicator size={22} color="white" />
+            ) : (
+              <Ionicons name="cart-outline" size={22} color="white" />
+            )}
           </TouchableOpacity>
         )}
       </View>

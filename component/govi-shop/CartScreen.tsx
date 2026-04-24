@@ -5,11 +5,7 @@ import {
   TouchableOpacity,
   Image,
   FlatList,
-  ScrollView,
-  Dimensions,
   Alert,
-  SafeAreaView,
-  StatusBar,
 } from "react-native";
 import {
   Ionicons,
@@ -17,10 +13,20 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import CustomHeader from "../common/CustomHeader";
+import { RootStackParamList } from "../types/types";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RouteProp } from "@react-navigation/core";
 
-const { width: screenWidth } = Dimensions.get("window");
+type CartScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "CartScreen"
+>;
+type CartScreenRouteProp = RouteProp<RootStackParamList, "CartScreen">;
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+interface CartScreenProps {
+  navigation: CartScreenNavigationProp;
+  route: CartScreenRouteProp;
+}
 
 type ProductType =
   | "BOTTLE"
@@ -36,28 +42,26 @@ interface CartItem {
   productId: string;
   productName: string;
   subProductId: string;
-  variantLabel: string; // e.g. "500 ml", "10 m x 0.5 m", "200 g"
+  variantLabel: string;
   pricePerUnit: number;
-  originalPrice?: number; // if discounted
+  originalPrice?: number;
   quantity: number;
   image: string;
   type: ProductType;
-  colorCode?: string; // for EQUIPMENT / PIECES
-  availableQty?: number; // stock cap; undefined = unlimited
+  colorCode?: string;
+  availableQty?: number;
   isOutOfStock?: boolean;
 }
-
-// ─── Mock Data (7 product types) ─────────────────────────────────────────────
 
 const INITIAL_CART: CartItem[] = [
   {
     id: "c1",
     productId: "p1",
-    productName: "Chlorine Solution",
+    productName: "Chlorine",
     subProductId: "s1",
-    variantLabel: "500 ml · Bottle",
-    pricePerUnit: 350.0,
-    quantity: 3,
+    variantLabel: "20 ml",
+    pricePerUnit: 100.0,
+    quantity: 8,
     image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200",
     type: "BOTTLE",
     availableQty: 10,
@@ -65,129 +69,118 @@ const INITIAL_CART: CartItem[] = [
   {
     id: "c2",
     productId: "p2",
-    productName: "Agricultural Shade Net",
+    productName: "Chlorine",
     subProductId: "s2",
-    variantLabel: "10 m × 0.5 m · Roll",
-    pricePerUnit: 1200.0,
-    originalPrice: 1500.0,
+    variantLabel: "20 ml",
+    pricePerUnit: 105.0,
+    originalPrice: 130.0,
     quantity: 2,
-    image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=200",
-    type: "ROLL",
+    image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200",
+    type: "BOTTLE",
+    availableQty: 1,
   },
   {
     id: "c3",
     productId: "p3",
     productName: "Sunflower Seed Packet",
     subProductId: "s3",
-    variantLabel: "200 g · Pack",
-    pricePerUnit: 180.0,
-    quantity: 5,
+    variantLabel: "200 g",
+    pricePerUnit: 100.0,
+    quantity: 1,
     image: "https://images.unsplash.com/photo-1490750967868-88df5691166b?w=200",
     type: "PACK",
-    availableQty: 5,
+    availableQty: 1,
   },
   {
     id: "c4",
     productId: "p4",
-    productName: "Organic Compost",
+    productName: "Pesticide - Spray",
     subProductId: "s4",
-    variantLabel: "1 kg · Loose Weight",
-    pricePerUnit: 95.0,
-    quantity: 4,
-    image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=200",
-    type: "LOOSE_WEIGHT",
+    variantLabel: "500 ml",
+    pricePerUnit: 100.0,
+    quantity: 5,
+    image: "https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?w=200",
+    type: "LOOSE_VOLUME",
+    availableQty: 10,
   },
   {
     id: "c5",
     productId: "p5",
-    productName: "Liquid Fertiliser",
+    productName: "Compost",
     subProductId: "s5",
-    variantLabel: "1 L · Loose Volume",
-    pricePerUnit: 220.0,
-    originalPrice: 260.0,
-    quantity: 2,
-    image: "https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?w=200",
-    type: "LOOSE_VOLUME",
+    variantLabel: "500 g",
+    pricePerUnit: 100.0,
+    quantity: 5,
+    image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=200",
+    type: "LOOSE_WEIGHT",
+    availableQty: 10,
   },
   {
     id: "c6",
     productId: "p6",
-    productName: "Ceramic Plant Pot",
+    productName: "Compost",
     subProductId: "s6",
-    variantLabel: "6 pcs · Pieces",
-    pricePerUnit: 450.0,
-    quantity: 1,
-    image: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=200",
-    type: "PIECES",
-    colorCode: "FF6B35",
-    availableQty: 8,
+    variantLabel: "500 g",
+    pricePerUnit: 100.0,
+    quantity: 5,
+    image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=200",
+    type: "LOOSE_WEIGHT",
+    availableQty: 10,
   },
   {
     id: "c7",
     productId: "p7",
-    productName: "Tractor 4WD",
+    productName: "Chicken Mesh",
     subProductId: "s7",
+    variantLabel: "10 m x 0.5 m",
+    pricePerUnit: 100.0,
+    quantity: 1,
+    image: "https://images.unsplash.com/photo-1605338803394-d5a3ccbaf2b6?w=200",
+    type: "ROLL",
+    availableQty: 10,
+  },
+  {
+    id: "c8",
+    productId: "p8",
+    productName: "Tractor 4WD",
+    subProductId: "s8",
     variantLabel: "Red · Equipment",
     pricePerUnit: 1000000.0,
     quantity: 1,
     image: "https://images.unsplash.com/photo-1605338803394-d5a3ccbaf2b6?w=200",
     type: "EQUIPMENT",
     colorCode: "E53935",
+    availableQty: 10,
+  },
+  {
+    id: "c9",
+    productId: "p9",
+    productName: "Tractor 4WD",
+    subProductId: "s9",
+    variantLabel: "Color",
+    pricePerUnit: 1000000.0,
+    quantity: 1,
+    image: "https://images.unsplash.com/photo-1605338803394-d5a3ccbaf2b6?w=200",
+    type: "EQUIPMENT",
+    colorCode: "E53935",
+    availableQty: 10,
+  },
+  {
+    id: "c10",
+    productId: "p10",
+    productName: "Plastic Plant Pot",
+    subProductId: "s10",
+    variantLabel: "5 pcs",
+    pricePerUnit: 1000000.0,
+    quantity: 1,
+    image: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=200",
+    type: "PIECES",
+    colorCode: "E53935",
     isOutOfStock: true,
   },
 ];
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
 const SERVICE_CHARGE_RATE = 0.05;
-
-const TYPE_META: Record<
-  ProductType,
-  {
-    icon: string;
-    iconSet: "ionicons" | "fa5" | "mci";
-    accent: string;
-    bg: string;
-  }
-> = {
-  BOTTLE: {
-    icon: "water",
-    iconSet: "ionicons",
-    accent: "#2196F3",
-    bg: "#E3F2FD",
-  },
-  ROLL: { icon: "scroll", iconSet: "fa5", accent: "#9C27B0", bg: "#F3E5F5" },
-  PACK: {
-    icon: "cube-outline",
-    iconSet: "ionicons",
-    accent: "#FF8000",
-    bg: "#FFF3E0",
-  },
-  LOOSE_WEIGHT: {
-    icon: "weight",
-    iconSet: "fa5",
-    accent: "#795548",
-    bg: "#EFEBE9",
-  },
-  LOOSE_VOLUME: {
-    icon: "flask",
-    iconSet: "ionicons",
-    accent: "#00BCD4",
-    bg: "#E0F7FA",
-  },
-  PIECES: {
-    icon: "apps-outline",
-    iconSet: "ionicons",
-    accent: "#E91E63",
-    bg: "#FCE4EC",
-  },
-  EQUIPMENT: {
-    icon: "construct-outline",
-    iconSet: "ionicons",
-    accent: "#607D8B",
-    bg: "#ECEFF1",
-  },
-};
 
 const formatPrice = (n: number) =>
   n.toLocaleString("en-LK", {
@@ -198,77 +191,23 @@ const formatPrice = (n: number) =>
 const resolveColor = (raw?: string): string =>
   raw ? (raw.startsWith("#") ? raw : `#${raw}`) : "#CCCCCC";
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-const TypeBadge: React.FC<{ type: ProductType }> = ({ type }) => {
-  const meta = TYPE_META[type];
-  const label = type.replace("_", " ");
-
-  const IconEl = () => {
-    if (meta.iconSet === "fa5")
-      return <FontAwesome5 name={meta.icon} size={10} color={meta.accent} />;
-    if (meta.iconSet === "mci")
-      return (
-        <MaterialCommunityIcons
-          name={meta.icon as any}
-          size={10}
-          color={meta.accent}
-        />
-      );
-    return <Ionicons name={meta.icon as any} size={10} color={meta.accent} />;
-  };
-
-  return (
-    <View
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 4,
-        backgroundColor: meta.bg,
-        borderRadius: 20,
-        paddingHorizontal: 8,
-        paddingVertical: 3,
-        alignSelf: "flex-start",
-        marginBottom: 6,
-      }}
-    >
-      <IconEl />
-      <Text
-        style={{
-          fontSize: 10,
-          fontWeight: "700",
-          color: meta.accent,
-          letterSpacing: 0.4,
-        }}
-      >
-        {label}
-      </Text>
-    </View>
-  );
-};
-
-const ColorDot: React.FC<{ colorCode: string; size?: number }> = ({
-  colorCode,
-  size = 14,
-}) => {
+const ColorDot: React.FC<{ colorCode: string }> = ({ colorCode }) => {
   const hex = resolveColor(colorCode);
   const isWhite = hex.toLowerCase() === "#ffffff";
   return (
     <View
       style={{
-        width: size,
-        height: size,
-        borderRadius: size / 2,
+        width: 10,
+        height: 10,
+        borderRadius: 5,
         backgroundColor: hex,
         borderWidth: 1,
-        borderColor: isWhite ? "#CCCCCC" : "transparent",
-        marginRight: 5,
+        borderColor: isWhite ? "#CCC" : "transparent",
+        marginRight: 4,
       }}
     />
   );
 };
-
-// ─── Cart Item Card ───────────────────────────────────────────────────────────
 
 interface CartCardProps {
   item: CartItem;
@@ -283,31 +222,25 @@ const CartCard: React.FC<CartCardProps> = ({
   onDecrease,
   onRemove,
 }) => {
-  const meta = TYPE_META[item.type];
-  const lineTotal = item.pricePerUnit * item.quantity;
   const atCap =
     item.availableQty !== undefined && item.quantity >= item.availableQty;
-
   const showColor =
     (item.type === "EQUIPMENT" || item.type === "PIECES") && item.colorCode;
 
   return (
     <View
+      className={`bg-white mb-2 mx-4 rounded-2xl overflow-hidden ${
+        item.isOutOfStock ? "border-2 border-red-500" : "border border-gray-100"
+      }`}
       style={{
-        backgroundColor: "#FFFFFF",
-        borderRadius: 18,
-        marginBottom: 12,
-        overflow: "hidden",
-        borderWidth: item.isOutOfStock ? 1.5 : 1,
-        borderColor: item.isOutOfStock ? "#FF3B30" : "#F0F0F0",
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.07,
-        shadowRadius: 8,
-        elevation: 4,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.06,
+        shadowRadius: 6,
+        elevation: 3,
       }}
     >
-      {/* Accent bar on left */}
+      {/* Left accent bar */}
       <View
         style={{
           position: "absolute",
@@ -315,215 +248,102 @@ const CartCard: React.FC<CartCardProps> = ({
           top: 0,
           bottom: 0,
           width: 4,
-          backgroundColor: item.isOutOfStock ? "#FF3B30" : meta.accent,
-          borderTopLeftRadius: 18,
-          borderBottomLeftRadius: 18,
+
+          borderTopLeftRadius: 16,
+          borderBottomLeftRadius: 16,
         }}
       />
 
-      <View style={{ padding: 14, paddingLeft: 18 }}>
-        {/* Out of Stock Banner */}
+      <View className="flex-row items-center px-3 py-3 pl-4">
+        {/* Product Image */}
+        <View className="w-16 h-16 rounded-xl overflow-hidden bg-gray-100 mr-3">
+          <Image
+            source={{ uri: item.image }}
+            className="w-full h-full"
+            resizeMode="cover"
+          />
+          {item.isOutOfStock && (
+            <View className="absolute inset-0 bg-black/50 items-center justify-center">
+              <Text className="text-white font-black text-[8px] text-center leading-3">
+                OUT OF{"\n"}STOCK
+              </Text>
+            </View>
+          )}
+        </View>
 
-        <View style={{ flexDirection: "row", gap: 12 }}>
-          {/* Product Image */}
-          <View
-            style={{
-              width: 80,
-              height: 80,
-              borderRadius: 14,
-              overflow: "hidden",
-              backgroundColor: meta.bg,
-              borderWidth: 1,
-              borderColor: "#F0F0F0",
-            }}
+        {/* Details */}
+        <View className="flex-1">
+          {/* Name row */}
+          <Text
+            className="text-gray-900 font-bold text-sm leading-5"
+            numberOfLines={1}
           >
-            <Image
-              source={{ uri: item.image }}
-              style={{ width: "100%", height: "100%" }}
-              resizeMode="cover"
-            />
-            {item.isOutOfStock && (
-              <View
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  backgroundColor: "rgba(0,0,0,0.45)",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Text
-                  style={{ color: "white", fontWeight: "800", fontSize: 10 }}
-                >
-                  OUT OF{"\n"}STOCK
-                </Text>
-              </View>
-            )}
-          </View>
+            {item.productName}
+          </Text>
 
-          {/* Details */}
-          <View style={{ flex: 1 }}>
-            <TypeBadge type={item.type} />
-
-            <Text
-              style={{
-                fontSize: 14,
-                fontWeight: "700",
-                color: "#111827",
-                lineHeight: 19,
-                marginBottom: 3,
-              }}
-              numberOfLines={2}
-            >
-              {item.productName}
+          {/* Variant + color */}
+          <View className="flex-row items-center mt-0.5">
+            {showColor && <ColorDot colorCode={item.colorCode!} />}
+            <Text className="text-gray-400 text-xs font-medium">
+              {item.variantLabel}
             </Text>
-
-            {/* Variant label row */}
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginBottom: 6,
-              }}
-            >
-              {showColor && <ColorDot colorCode={item.colorCode!} />}
-              <Text
-                style={{ fontSize: 12, color: "#8A94A6", fontWeight: "500" }}
-              >
-                {item.variantLabel}
-              </Text>
-            </View>
-
-            {/* Stock cap warning */}
-            {item.availableQty !== undefined && !item.isOutOfStock && (
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 3,
-                  marginBottom: 4,
-                }}
-              >
-                <Ionicons
-                  name="information-circle-outline"
-                  size={12}
-                  color="#FF8000"
-                />
-                <Text
-                  style={{ fontSize: 11, color: "#FF8000", fontWeight: "600" }}
-                >
-                  Only {item.availableQty} left
-                </Text>
-              </View>
-            )}
-
-            {/* Price row */}
-            <View
-              style={{ flexDirection: "row", alignItems: "center", gap: 6 }}
-            >
-              <FontAwesome5 name="coins" size={11} color="#3F3C57" />
-              <Text
-                style={{ fontSize: 15, fontWeight: "800", color: "#FF8000" }}
-              >
-                Rs. {formatPrice(item.pricePerUnit)}
-              </Text>
-              {item.originalPrice && (
-                <Text
-                  style={{
-                    fontSize: 11,
-                    color: "#BBBBBB",
-                    textDecorationLine: "line-through",
-                    fontWeight: "500",
-                  }}
-                >
-                  Rs. {formatPrice(item.originalPrice)}
-                </Text>
-              )}
-            </View>
           </View>
 
-          {/* Delete button */}
+          {/* Out of stock text badge */}
+          {item.isOutOfStock && (
+            <Text className="text-red-500 text-[11px] font-bold mt-0.5">
+              Out of Stock
+            </Text>
+          )}
+
+          {/* Price */}
+          <View className="flex-row items-center gap-1 mt-1">
+            <Text className="text-[#FF8000] font-extrabold text-sm">
+              Rs. {formatPrice(item.pricePerUnit)}
+            </Text>
+          </View>
+
+          {/* Stock cap warning */}
+          {item.availableQty !== undefined && !item.isOutOfStock && (
+            <View className="flex-row items-center gap-1 mt-0.5">
+              <Text className="text-[#74839F] text-[10px] font-semibold">
+                {item.availableQty}{" "}
+                {item.availableQty === 1 ? "packet" : "items"} left
+              </Text>
+            </View>
+          )}
+        </View>
+
+        {/* Right side: delete + stepper */}
+        <View className="items-end gap-2 ml-2">
+          {/* Delete */}
           <TouchableOpacity
             onPress={() => onRemove(item.id)}
             activeOpacity={0.7}
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: 16,
-              backgroundColor: "#FFF0EF",
-              alignItems: "center",
-              justifyContent: "center",
-              alignSelf: "flex-start",
-            }}
+            className="w-7 h-7 rounded-full bg-red-50 items-center justify-center"
           >
-            <Ionicons name="trash-outline" size={15} color="#FF3B30" />
+            <Ionicons name="trash-outline" size={13} color="#EF4444" />
           </TouchableOpacity>
-        </View>
 
-        {/* Divider */}
-        <View
-          style={{ height: 1, backgroundColor: "#F4F4F4", marginVertical: 12 }}
-        />
-
-        {/* Bottom row: line total + qty controls */}
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <View>
-            <Text style={{ fontSize: 11, color: "#AAAAAA", fontWeight: "500" }}>
-              Item Total
-            </Text>
-            <Text style={{ fontSize: 16, fontWeight: "800", color: "#3F3C57" }}>
-              Rs. {formatPrice(lineTotal)}
-            </Text>
-          </View>
-
-          {/* Qty stepper */}
-          {!item.isOutOfStock && (
+          {/* Qty Stepper */}
+          {!item.isOutOfStock ? (
             <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                backgroundColor: "#FF80001A",
-                borderRadius: 24,
-                borderWidth: 1,
-                borderColor: "#FFD9B0",
-                overflow: "hidden",
-              }}
+              className="flex-row items-center rounded-full overflow-hidden border border-orange-200"
+              style={{ backgroundColor: "#FFF3E0" }}
             >
               <TouchableOpacity
                 onPress={() => onDecrease(item.id)}
-                style={{
-                  backgroundColor: "#FF8000",
-                  width: 36,
-                  height: 36,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  borderRadius: 18,
-                }}
+                className="w-8 h-8 bg-[#FF8000] items-center justify-center rounded-full"
                 activeOpacity={0.8}
               >
                 {item.quantity === 1 ? (
-                  <Ionicons name="trash-outline" size={15} color="white" />
+                  <Ionicons name="trash-outline" size={12} color="white" />
                 ) : (
-                  <Ionicons name="remove" size={18} color="white" />
+                  <Ionicons name="remove" size={16} color="white" />
                 )}
               </TouchableOpacity>
 
-              <Text
-                style={{
-                  paddingHorizontal: 14,
-                  fontWeight: "800",
-                  fontSize: 16,
-                  color: "#3F3C57",
-                  minWidth: 32,
-                  textAlign: "center",
-                }}
-              >
+              <Text className="text-gray-800 font-extrabold text-sm min-w-[28px] text-center px-1">
                 {item.quantity}
               </Text>
 
@@ -531,18 +351,13 @@ const CartCard: React.FC<CartCardProps> = ({
                 onPress={() => onIncrease(item.id)}
                 disabled={atCap}
                 activeOpacity={atCap ? 1 : 0.8}
-                style={{
-                  backgroundColor: atCap ? "#D0D0D0" : "#FF8000",
-                  width: 36,
-                  height: 36,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  borderRadius: 18,
-                }}
+                className={`w-8 h-8 items-center justify-center rounded-full ${atCap ? "bg-gray-300" : "bg-[#FF8000]"}`}
               >
-                <Ionicons name="add" size={18} color="white" />
+                <Ionicons name="add" size={16} color="white" />
               </TouchableOpacity>
             </View>
+          ) : (
+            <View className="w-8 h-8" />
           )}
         </View>
       </View>
@@ -550,46 +365,27 @@ const CartCard: React.FC<CartCardProps> = ({
   );
 };
 
-// ─── Summary Card ─────────────────────────────────────────────────────────────
-
 const SummaryRow: React.FC<{
   label: string;
   value: string;
   highlight?: boolean;
-  small?: boolean;
-}> = ({ label, value, highlight, small }) => (
-  <View
-    style={{
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginBottom: small ? 8 : 10,
-    }}
-  >
+}> = ({ label, value, highlight }) => (
+  <View className="flex-row justify-between items-center mb-2">
     <Text
-      style={{
-        fontSize: small ? 13 : 14,
-        color: highlight ? "#111827" : "#6B7280",
-        fontWeight: highlight ? "800" : "500",
-      }}
+      className={`text-sm text-[#415479] font-bold text-base`}
     >
       {label}
     </Text>
     <Text
-      style={{
-        fontSize: small ? 13 : 15,
-        color: highlight ? "#FF8000" : "#374151",
-        fontWeight: highlight ? "800" : "600",
-      }}
+      className={`text-sm ${highlight ? "text-[#FF8000] font-bold text-base" : "text-[#2E2E2E] font-bold"}`}
     >
       {value}
     </Text>
   </View>
 );
 
-// ─── Main Screen ──────────────────────────────────────────────────────────────
-
-const CartScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
+const CartScreen: React.FC<CartScreenProps> = ({ route, navigation }) => {
+  const shopname = route?.params?.shopname ?? "Cart";
   const [cart, setCart] = useState<CartItem[]>(INITIAL_CART);
 
   const validItems = cart.filter((c) => !c.isOutOfStock);
@@ -601,8 +397,8 @@ const CartScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
   );
   const serviceCharge = subtotal * SERVICE_CHARGE_RATE;
   const total = subtotal + serviceCharge;
-
   const cartCount = validItems.reduce((s, c) => s + c.quantity, 0);
+  const totalItemCount = cart.length;
 
   const handleIncrease = (id: string) => {
     setCart((prev) =>
@@ -672,173 +468,80 @@ const CartScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: "white" }}>
+    <View className="flex-1 bg-white">
       <CustomHeader
-        title="A Tech Lanka"
+        title={shopname}
         showBackButton={true}
         navigation={navigation}
-        transparent={true}
-        
+        transparent={false}
       />
 
-      {/* ── Product List + Summary ── */}
+      {/* ── Count header ── */}
+      <View className="px-4 pt-3 pb-2">
+        <Text className="text-[#000000] font-semibold text-sm">
+          All ({totalItemCount})
+        </Text>
+      </View>
+
+      {/* ── List ── */}
       <FlatList
         data={cart}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={{ padding: 16, paddingBottom: 160 }}
+        contentContainerStyle={{ paddingTop: 4, paddingBottom: 180 }}
         showsVerticalScrollIndicator={false}
+        ItemSeparatorComponent={() => <View className="h-1" />}
         ListFooterComponent={
-          <>
-            {/* Divider */}
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginBottom: 16,
-              }}
-            >
-              <View
-                style={{ flex: 1, height: 1, backgroundColor: "#E5E7EB" }}
-              />
-              <Text
-                style={{
-                  marginHorizontal: 12,
-                  color: "#9CA3AF",
-                  fontSize: 12,
-                  fontWeight: "600",
-                }}
-              >
-                ORDER SUMMARY
-              </Text>
-              <View
-                style={{ flex: 1, height: 1, backgroundColor: "#E5E7EB" }}
-              />
-            </View>
+          <View className="mx-4 mt-5">
+           
+           
 
             {/* Summary card */}
             <View
-              style={{
-                backgroundColor: "#FFFFFF",
-                borderRadius: 18,
-                padding: 20,
-                borderWidth: 1,
-                borderColor: "#F0F0F0",
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.07,
-                shadowRadius: 8,
-                elevation: 4,
-                marginBottom: 8,
-              }}
+              className="bg-white rounded-2xl p-4 "
+           
             >
-              <View
-                style={{
-                  height: 1,
-                  backgroundColor: "#F0F0F0",
-                  marginVertical: 10,
-                }}
-              />
-
+                  <View className="h-px bg-gray-200 mb-3" />
               <SummaryRow
                 label="Subtotal"
                 value={`Rs. ${formatPrice(subtotal)}`}
               />
               <SummaryRow
-                label={`Service Charge (${(SERVICE_CHARGE_RATE * 100).toFixed(0)}%)`}
+                label={`Service Charge(${(SERVICE_CHARGE_RATE * 100).toFixed(0)}%)`}
                 value={`+ Rs. ${formatPrice(serviceCharge)}`}
               />
-
-              <View
-                style={{
-                  height: 1,
-                  backgroundColor: "#E5E7EB",
-                  marginVertical: 10,
-                }}
-              />
-
+              <View className="h-px bg-gray-200 my-3" />
               <SummaryRow
                 label="Total"
                 value={`Rs. ${formatPrice(total)}`}
                 highlight
               />
             </View>
-          </>
+          </View>
         }
       />
 
       {/* ── Checkout Bar ── */}
-      <View
-        style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          backgroundColor: "#FFFFFF",
-          paddingHorizontal: 16,
-          paddingTop: 12,
-          paddingBottom: 28,
-          borderTopWidth: 1,
-          borderTopColor: "#F0F0F0",
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: -4 },
-          shadowOpacity: 0.08,
-          shadowRadius: 12,
-          elevation: 12,
-        }}
-      >
+      <View className=" px-4 pt-3 pb-7 ">
         <TouchableOpacity
           onPress={handleCheckout}
           activeOpacity={0.88}
+          className={`rounded-full flex-row items-center justify-center py-4 px-6 bg-[#353535]`}
           style={{
-            backgroundColor: outOfStockItems.length > 0 ? "#9CA3AF" : "#3F3C57",
-            borderRadius: 50,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            paddingVertical: 16,
-            paddingHorizontal: 24,
             shadowColor: "#3F3C57",
-            shadowOffset: { width: 0, height: 6 },
-            shadowOpacity: 0.35,
-            shadowRadius: 14,
+            shadowOffset: { width: 0, height: 5 },
+            shadowOpacity: 0.3,
+            shadowRadius: 12,
             elevation: 10,
           }}
         >
           <View>
-            <Text
-              style={{
-                color: "white",
-                fontWeight: "800",
-                fontSize: 16,
-                letterSpacing: 0.3,
-              }}
-            >
+            <Text className="text-white font-extrabold text-base tracking-wide">
               Go to Checkout
             </Text>
-            <Text
-              style={{
-                color: "rgba(255,255,255,0.7)",
-                fontSize: 12,
-                marginTop: 1,
-              }}
-            >
-              {cartCount} {cartCount === 1 ? "item" : "items"} · Rs.{" "}
-              {formatPrice(total)}
-            </Text>
           </View>
-          <View
-            style={{
-              width: 44,
-              height: 44,
-              backgroundColor: "#FF8000",
-              borderRadius: 22,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Ionicons name="arrow-forward" size={22} color="white" />
-          </View>
+
+          <Ionicons name="arrow-forward" size={20} color="white" />
         </TouchableOpacity>
       </View>
     </View>

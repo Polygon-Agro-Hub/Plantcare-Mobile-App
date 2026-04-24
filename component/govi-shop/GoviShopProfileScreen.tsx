@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   RefreshControl,
   Modal,
+  Alert,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
@@ -44,7 +45,6 @@ interface ProductCategory {
   image: string;
   productCount: number;
 }
-
 interface Product {
   id: string;
   name: string;
@@ -60,13 +60,11 @@ interface Product {
   availableQty?: number;
   description?: string;
 }
-
 interface Batch {
   qty: number;
   salePrice: number;
   originalPrice: number | null;
 }
-
 interface SubProduct {
   id: string;
   label: string;
@@ -78,12 +76,10 @@ interface SubProduct {
   isMRP?: number;
   batches?: Batch[];
 }
-
 interface FilterButton {
   id: string;
   name: string;
 }
-
 interface CartItem {
   productId: string;
   productName: string;
@@ -92,12 +88,6 @@ interface CartItem {
   price: number;
   quantity: number;
   image: string;
-}
-
-interface BatchModalData {
-  product: Product;
-  sub: SubProduct;
-  cartQty: number;
 }
 
 type UomDisplayMode = "DEFAULT" | "LOOSE" | "ROLL" | "COLOR" | "EQUIPMENT";
@@ -131,6 +121,25 @@ const MAX_CHIPS_VISIBLE = CHIP_COLUMNS * MAX_CHIP_ROWS;
 const COLOR_DOT_SIZE = 34;
 const COLOR_DOT_GAP = 8;
 
+function resolveVariantIds(baseUom: string, sub: SubProduct) {
+  const mode = getDisplayMode(baseUom);
+  if (mode === "EQUIPMENT") {
+    return {
+      subProdId: null,
+      subProdColorId: null,
+      equipColorId: Number(sub.id),
+    };
+  }
+  return {
+    subProdId: Number(sub.id),
+    subProdColorId: null,
+    equipColorId: null,
+  };
+}
+
+const cartItemKey = (productId: string, subProductId: string) =>
+  `${productId}_${subProductId}`;
+
 const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
   navigation,
   route,
@@ -141,17 +150,13 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("All");
   const [refreshing, setRefreshing] = useState(false);
-
   const [categories, setCategories] = useState<ProductCategory[]>([]);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
-
   const [products, setProducts] = useState<Product[]>([]);
   const [productsLoading, setProductsLoading] = useState(false);
-
   const [filterButtons, setFilterButtons] = useState<FilterButton[]>([
     { id: "all", name: "All" },
   ]);
-
   const [expandedProductId, setExpandedProductId] = useState<string | null>(
     null,
   );
@@ -168,9 +173,17 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
     Record<string, string>
   >({});
   const [showAllChips, setShowAllChips] = useState<Record<string, boolean>>({});
-
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showViewCart, setShowViewCart] = useState(false);
+
+  const [savedToDb, setSavedToDb] = useState<Set<string>>(new Set());
+
+  const [cartIconLoading, setCartIconLoading] = useState<
+    Record<string, boolean>
+  >({});
+  const [dbUpdateLoading, setDbUpdateLoading] = useState<
+    Record<string, boolean>
+  >({});
 
   const [boundaryModal, setBoundaryModal] = useState<{
     visible: boolean;
@@ -180,10 +193,228 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
     nextBatchPrice: number;
   } | null>(null);
 
+  const cartRef = useRef(cart);
+  useEffect(() => {
+    cartRef.current = cart;
+  }, [cart]);
+
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  const getTotalCap = (sub: SubProduct): number | undefined => {
-    return sub.availableQty;
+  const getAuthHeaders = async () => {
+    const token = await AsyncStorage.getItem("userToken");
+    return { Authorization: `Bearer ${token}` };
+  };
+
+  const getTotalCap = (sub: SubProduct): number | undefined => sub.availableQty;
+
+  const getCartQty = (productId: string, subProductId: string): number =>
+    cart.find(
+      (c) => c.productId === productId && c.subProductId === subProductId,
+    )?.quantity ?? 0;
+
+  const addLocalCart = (product: Product, sub: SubProduct) => {
+    setCart((prev) => {
+      const exists = prev.find(
+        (c) => c.productId === product.id && c.subProductId === sub.id,
+      );
+      if (exists) {
+        return prev.map((c) =>
+          c.productId === product.id && c.subProductId === sub.id
+            ? { ...c, quantity: c.quantity + 1 }
+            : c,
+        );
+      }
+      return [
+        ...prev,
+        {
+          productId: product.id,
+          productName: product.name,
+          subProductId: sub.id,
+          subProductLabel: sub.label,
+          price: sub.discountPrice ?? sub.price,
+          quantity: 1,
+          image: product.image,
+        },
+      ];
+    });
+  };
+
+  const removeLocalCart = (product: Product, sub: SubProduct) => {
+    setCart((prev) => {
+      const updated = prev
+        .map((c) =>
+          c.productId === product.id && c.subProductId === sub.id
+            ? { ...c, quantity: c.quantity - 1 }
+            : c,
+        )
+        .filter((c) => c.quantity > 0);
+      if (updated.length === 0) setShowViewCart(false);
+      return updated;
+    });
+  };
+
+  const callUpsertAPI = async (
+    product: Product,
+    sub: SubProduct,
+    qty: number,
+  ): Promise<boolean> => {
+    try {
+      const headers = await getAuthHeaders();
+      const { subProdId, subProdColorId, equipColorId } = resolveVariantIds(
+        product.baseUom,
+        sub,
+      );
+      await axios.post(
+        `${environment.API_BASE_URL}api/govi-shop/cart/item`,
+        {
+          branchId: Number(branchId),
+          productId: Number(product.id),
+          subProdId,
+          subProdColorId,
+          equipColorId,
+          qty,
+        },
+        { headers },
+      );
+      return true;
+    } catch (error: any) {
+      Alert.alert(
+        "Cart Error",
+        error?.response?.data?.message ??
+          "Failed to update cart. Please try again.",
+      );
+      return false;
+    }
+  };
+
+  const callDeleteAPI = async (
+    product: Product,
+    sub: SubProduct,
+  ): Promise<boolean> => {
+    try {
+      const headers = await getAuthHeaders();
+      const { subProdId, subProdColorId, equipColorId } = resolveVariantIds(
+        product.baseUom,
+        sub,
+      );
+      await axios.delete(`${environment.API_BASE_URL}api/govi-shop/cart/item`, {
+        headers,
+        data: {
+          productId: Number(product.id),
+          subProdId,
+          subProdColorId,
+          equipColorId,
+        },
+      });
+      return true;
+    } catch (error: any) {
+      Alert.alert(
+        "Cart Error",
+        error?.response?.data?.message ??
+          "Failed to remove item. Please try again.",
+      );
+      return false;
+    }
+  };
+
+  const handleCartIconPress = async (product: Product, sub: SubProduct) => {
+    const key = cartItemKey(product.id, sub.id);
+    const qty = getCartQty(product.id, sub.id);
+    if (qty === 0) return;
+
+    setCartIconLoading((prev) => ({ ...prev, [key]: true }));
+    const ok = await callUpsertAPI(product, sub, qty);
+    setCartIconLoading((prev) => ({ ...prev, [key]: false }));
+
+    if (ok) {
+      setSavedToDb((prev) => new Set(prev).add(key));
+      setShowViewCart(true);
+    }
+  };
+
+  const tryAddToCart = (product: Product, sub: SubProduct) => {
+    const currentQty = getCartQty(product.id, sub.id);
+    const totalCap = getTotalCap(sub);
+    if (totalCap !== undefined && currentQty >= totalCap) return;
+
+    if (sub.isMRP === 1 && sub.batches && sub.batches.length > 1) {
+      let cumulative = 0;
+      for (let i = 0; i < sub.batches.length - 1; i++) {
+        cumulative += sub.batches[i].qty;
+        if (currentQty === cumulative) {
+          const currentBatchPrice = sub.batches[i].salePrice;
+          const nextBatchPrice = sub.batches[i + 1].salePrice;
+          if (nextBatchPrice !== currentBatchPrice) {
+            setBoundaryModal({
+              visible: true,
+              product,
+              sub,
+              currentBatchPrice,
+              nextBatchPrice,
+            });
+            return;
+          }
+          break;
+        }
+      }
+    }
+
+    const key = cartItemKey(product.id, sub.id);
+    const newQty = currentQty + 1;
+
+    if (savedToDb.has(key)) {
+      addLocalCart(product, sub);
+      setDbUpdateLoading((prev) => ({ ...prev, [key]: true }));
+      callUpsertAPI(product, sub, newQty).then((ok) => {
+        if (!ok) removeLocalCart(product, sub);
+        setDbUpdateLoading((prev) => ({ ...prev, [key]: false }));
+      });
+    } else {
+      addLocalCart(product, sub);
+    }
+  };
+
+  const handleRemove = (product: Product, sub: SubProduct) => {
+    const qty = getCartQty(product.id, sub.id);
+    const key = cartItemKey(product.id, sub.id);
+
+    if (qty === 1) {
+      setLooseStateMap((prev) => ({ ...prev, [product.id]: "preview" }));
+    }
+
+    if (savedToDb.has(key)) {
+      const newQty = qty - 1;
+
+      if (newQty === 0) {
+        setCart((prev) => {
+          const updated = prev.filter(
+            (c) => !(c.productId === product.id && c.subProductId === sub.id),
+          );
+          if (updated.length === 0) setShowViewCart(false);
+          return updated;
+        });
+        setSavedToDb((prev) => {
+          const next = new Set(prev);
+          next.delete(key);
+          return next;
+        });
+        const snapshot = [...cartRef.current];
+        setDbUpdateLoading((prev) => ({ ...prev, [key]: true }));
+        callDeleteAPI(product, sub).then((ok) => {
+          if (!ok) setCart(snapshot);
+          setDbUpdateLoading((prev) => ({ ...prev, [key]: false }));
+        });
+      } else {
+        removeLocalCart(product, sub);
+        setDbUpdateLoading((prev) => ({ ...prev, [key]: true }));
+        callUpsertAPI(product, sub, newQty).then((ok) => {
+          if (!ok) addLocalCart(product, sub);
+          setDbUpdateLoading((prev) => ({ ...prev, [key]: false }));
+        });
+      }
+    } else {
+      removeLocalCart(product, sub);
+    }
   };
 
   const fetchCategories = async () => {
@@ -312,7 +543,6 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
             : undefined,
         };
       });
-
       if (mapped.length > 0) {
         const firstSub = mapped[0];
         setProducts((prev) =>
@@ -353,98 +583,10 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
     }
   };
 
-  const getCartQty = (productId: string, subProductId: string): number =>
-    cart.find(
-      (c) => c.productId === productId && c.subProductId === subProductId,
-    )?.quantity ?? 0;
-
-  const addToCart = (product: Product, sub: SubProduct) => {
-    setCart((prev) => {
-      const exists = prev.find(
-        (c) => c.productId === product.id && c.subProductId === sub.id,
-      );
-      if (exists) {
-        return prev.map((c) =>
-          c.productId === product.id && c.subProductId === sub.id
-            ? { ...c, quantity: c.quantity + 1 }
-            : c,
-        );
-      }
-      return [
-        ...prev,
-        {
-          productId: product.id,
-          productName: product.name,
-          subProductId: sub.id,
-          subProductLabel: sub.label,
-          price: sub.discountPrice ?? sub.price,
-          quantity: 1,
-          image: product.image,
-        },
-      ];
-    });
-  };
-
-  const tryAddToCart = (product: Product, sub: SubProduct) => {
-    const currentQty = getCartQty(product.id, sub.id);
-    const totalCap = getTotalCap(sub);
-
-    if (totalCap !== undefined && currentQty >= totalCap) return;
-
-    if (sub.isMRP === 1 && sub.batches && sub.batches.length > 1) {
-      let cumulative = 0;
-      for (let i = 0; i < sub.batches.length - 1; i++) {
-        cumulative += sub.batches[i].qty;
-
-        if (currentQty === cumulative) {
-          const currentBatchPrice = sub.batches[i].salePrice;
-          const nextBatchPrice = sub.batches[i + 1].salePrice;
-          if (nextBatchPrice !== currentBatchPrice) {
-            setBoundaryModal({
-              visible: true,
-              product,
-              sub,
-              currentBatchPrice,
-              nextBatchPrice,
-            });
-            return;
-          }
-          break;
-        }
-      }
-    }
-
-    addToCart(product, sub);
-  };
-
-  const handleRemove = (product: Product, sub: SubProduct) => {
-    const qty = getCartQty(product.id, sub.id);
-    if (qty === 1) {
-      setLooseStateMap((prev) => ({ ...prev, [product.id]: "preview" }));
-    }
-    setCart((prev) => {
-      const updated = prev
-        .map((c) =>
-          c.productId === product.id && c.subProductId === sub.id
-            ? { ...c, quantity: c.quantity - 1 }
-            : c,
-        )
-        .filter((c) => c.quantity > 0);
-      if (updated.length === 0) setShowViewCart(false);
-      return updated;
-    });
-  };
-
-  // REPLACE the entire handleCartIconPress function with:
-  const handleCartIconPress = (_product: Product, _sub: SubProduct) => {
-    setShowViewCart(true);
-  };
-
   const handleLoosePlusPress = async (productId: string) => {
     const product = products.find((p) => p.id === productId);
     if (!product) return;
     const currentState = looseStateMap[productId] ?? "collapsed";
-
     setExpandedProductId(null);
     setLooseStateMap((prev) => {
       const next: Record<string, LooseState> = {};
@@ -453,17 +595,13 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
       });
       return next;
     });
-
     if (currentState === "collapsed") {
       setLooseStateMap((prev) => ({ ...prev, [productId]: "preview" }));
-      if (!subProducts[productId]) {
-        fetchSubProducts(productId, product.baseUom);
-      }
+      if (!subProducts[productId]) fetchSubProducts(productId, product.baseUom);
     } else if (currentState === "preview") {
       let subs = subProducts[productId];
-      if (!subs || subs.length === 0) {
+      if (!subs || subs.length === 0)
         subs = await fetchSubProducts(productId, product.baseUom);
-      }
       if (subs.length > 0) {
         const firstSub = subs[0];
         setSelectedSubProductId((prev) => ({
@@ -491,9 +629,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
       setExpandedProductId(null);
     } else {
       setExpandedProductId(productId);
-      if (!subProducts[productId]) {
-        fetchSubProducts(productId, product.baseUom);
-      }
+      if (!subProducts[productId]) fetchSubProducts(productId, product.baseUom);
     }
   };
 
@@ -501,13 +637,11 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
     fetchCategories();
     fetchProducts("All", "");
   }, [branchId]);
-
   useEffect(() => {
     setExpandedProductId(null);
     setLooseStateMap({});
     fetchProducts(selectedFilter, searchQuery);
   }, [selectedFilter]);
-
   useEffect(() => {
     const delay = setTimeout(() => {
       fetchProducts(selectedFilter, searchQuery);
@@ -677,7 +811,6 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
             >
               {dotColors.map((rawColor, index) => {
                 const hex = resolveColor(rawColor);
-                const isWhite = hex.toLowerCase() === "#ffffff";
                 return (
                   <View
                     key={index}
@@ -687,7 +820,10 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                       borderRadius: COLOR_DOT_SIZE / 2,
                       backgroundColor: hex,
                       borderWidth: 1.5,
-                      borderColor: isWhite ? "#E0E0E0" : "transparent",
+                      borderColor:
+                        hex.toLowerCase() === "#ffffff"
+                          ? "#E0E0E0"
+                          : "transparent",
                     }}
                   />
                 );
@@ -832,10 +968,13 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
   ) => {
     const displayPrice = activeSub.discountPrice ?? activeSub.price;
     const totalCap = getTotalCap(activeSub);
-
     const isPlusDisabled = totalCap !== undefined && cartQty >= totalCap;
+    const key = cartItemKey(item.id, activeSub.id);
+    const isSaved = savedToDb.has(key);
+    const isCartIconSpinning = cartIconLoading[key] ?? false;
+    const isDbUpdating = dbUpdateLoading[key] ?? false;
 
-    const showCartIcon = cartQty > 0 && !showViewCart;
+    const showCartIcon = cartQty > 0 && !isSaved;
 
     return (
       <View
@@ -846,6 +985,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
           marginTop: 4,
         }}
       >
+        {/* Price */}
         <View style={{ gap: 2 }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
             <FontAwesome5 name="coins" size={14} color="black" />
@@ -864,7 +1004,6 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
               })}
             </Text>
           </View>
-
           {totalCap !== undefined && (
             <View
               style={{ flexDirection: "row", alignItems: "center", gap: 3 }}
@@ -881,27 +1020,28 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
           )}
         </View>
 
+        {/* Buttons */}
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
           {cartQty === 0 ? (
             <TouchableOpacity
               onPress={() => tryAddToCart(item, activeSub)}
-              activeOpacity={isPlusDisabled ? 1 : 0.85}
-              disabled={isPlusDisabled}
+              activeOpacity={0.85}
               style={{
-                backgroundColor: isPlusDisabled ? "#BBBBBB" : "#3F3C57",
+                backgroundColor: "#3F3C57",
                 borderRadius: 20,
                 padding: 8,
-                shadowColor: isPlusDisabled ? "transparent" : "#3F3C57",
+                shadowColor: "#3F3C57",
                 shadowOffset: { width: 0, height: 3 },
-                shadowOpacity: isPlusDisabled ? 0 : 0.3,
+                shadowOpacity: 0.3,
                 shadowRadius: 4,
-                elevation: isPlusDisabled ? 0 : 5,
+                elevation: 5,
               }}
             >
               <Ionicons name="add" size={20} color="white" />
             </TouchableOpacity>
           ) : (
             <>
+              {/* Stepper */}
               <View
                 style={{
                   flexDirection: "row",
@@ -915,8 +1055,9 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
               >
                 <TouchableOpacity
                   onPress={() => handleRemove(item, activeSub)}
+                  disabled={isDbUpdating}
                   style={{
-                    backgroundColor: "#FF8000",
+                    backgroundColor: isDbUpdating ? "#CCCCCC" : "#FF8000",
                     width: 34,
                     height: 34,
                     alignItems: "center",
@@ -924,13 +1065,14 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                     borderRadius: 17,
                   }}
                 >
-                  {cartQty === 1 ? (
+                  {isDbUpdating ? (
+                    <ActivityIndicator size={16} color="white" />
+                  ) : cartQty === 1 ? (
                     <Ionicons name="trash-outline" size={16} color="white" />
                   ) : (
                     <Ionicons name="remove" size={18} color="white" />
                   )}
                 </TouchableOpacity>
-
                 <Text
                   style={{
                     paddingHorizontal: 12,
@@ -943,13 +1085,13 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                 >
                   {cartQty}
                 </Text>
-
                 <TouchableOpacity
                   onPress={() => tryAddToCart(item, activeSub)}
-                  activeOpacity={isPlusDisabled ? 1 : 0.85}
-                  disabled={isPlusDisabled}
+                  activeOpacity={isPlusDisabled || isDbUpdating ? 1 : 0.85}
+                  disabled={isPlusDisabled || isDbUpdating}
                   style={{
-                    backgroundColor: isPlusDisabled ? "#CCCCCC" : "#FF8000",
+                    backgroundColor:
+                      isPlusDisabled || isDbUpdating ? "#CCCCCC" : "#FF8000",
                     width: 34,
                     height: 34,
                     alignItems: "center",
@@ -957,10 +1099,15 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                     borderRadius: 17,
                   }}
                 >
-                  <Ionicons name="add" size={18} color="white" />
+                  {isDbUpdating ? (
+                    <ActivityIndicator size={18} color="white" />
+                  ) : (
+                    <Ionicons name="add" size={18} color="white" />
+                  )}
                 </TouchableOpacity>
               </View>
 
+              {/* Cart icon */}
               {showCartIcon && (
                 <TouchableOpacity
                   style={{
@@ -972,9 +1119,14 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                     justifyContent: "center",
                   }}
                   onPress={() => handleCartIconPress(item, activeSub)}
+                  disabled={isCartIconSpinning}
                   activeOpacity={0.85}
                 >
-                  <Ionicons name="cart-outline" size={18} color="white" />
+                  {isCartIconSpinning ? (
+                    <ActivityIndicator size={18} color="white" />
+                  ) : (
+                    <Ionicons name="cart-outline" size={18} color="white" />
+                  )}
                 </TouchableOpacity>
               )}
             </>
@@ -989,19 +1141,27 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
     const { product, sub, currentBatchPrice, nextBatchPrice } = boundaryModal;
     if (!product || !sub) return null;
 
-    const handleIDontWant = () => {
-      setBoundaryModal(null);
-    };
-
+    const handleIDontWant = () => setBoundaryModal(null);
     const handleAddToCart = () => {
       setBoundaryModal(null);
-      addToCart(product, sub);
+      const key = cartItemKey(product.id, sub.id);
+      const newQty = getCartQty(product.id, sub.id) + 1;
+      if (savedToDb.has(key)) {
+        addLocalCart(product, sub);
+        setDbUpdateLoading((prev) => ({ ...prev, [key]: true }));
+        callUpsertAPI(product, sub, newQty).then((ok) => {
+          if (!ok) removeLocalCart(product, sub);
+          setDbUpdateLoading((prev) => ({ ...prev, [key]: false }));
+        });
+      } else {
+        addLocalCart(product, sub);
+      }
     };
 
     return (
       <Modal
         transparent
-        visible={boundaryModal.visible}
+        visible
         animationType="fade"
         onRequestClose={handleIDontWant}
       >
@@ -1046,7 +1206,6 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
             >
               <Ionicons name="close" size={16} color="#AAAAAA" />
             </TouchableOpacity>
-
             <Text
               style={{
                 color: "#000",
@@ -1057,7 +1216,6 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
             >
               Please Confirm Action!
             </Text>
-
             <View
               style={{
                 borderWidth: 1.5,
@@ -1090,7 +1248,6 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                 {"\nDo you wish to continue?"}
               </Text>
             </View>
-
             <TouchableOpacity
               onPress={handleIDontWant}
               activeOpacity={0.85}
@@ -1110,7 +1267,6 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                 I don't want
               </Text>
             </TouchableOpacity>
-
             <TouchableOpacity
               onPress={handleAddToCart}
               activeOpacity={0.88}
@@ -1144,18 +1300,15 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
     const isLoose = displayMode === "LOOSE";
     const looseState = looseStateMap[item.id] ?? "collapsed";
     const isExpanded = expandedProductId === item.id;
-
     const subs = subProducts[item.id] ?? [];
     const isLoadingSubs = subProductsLoading[item.id] ?? false;
     const activeSubId = selectedSubProductId[item.id];
-
     const activeSub =
       displayMode === "EQUIPMENT"
         ? subs
             .filter((s) => s.colorCode && s.colorCode.trim())
             .find((s) => s.id === activeSubId)
         : subs.find((s) => s.id === activeSubId);
-
     const cartQty = activeSub ? getCartQty(item.id, activeSub.id) : 0;
 
     const looseSubtitle =
@@ -1167,11 +1320,17 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
 
     const previewPrice = item.discountPrice ?? item.normalPrice;
     const previewOriginalPrice = item.discountPrice ? item.normalPrice : null;
-
     const showImageInHeader = isLoose
       ? looseState === "collapsed"
       : !isExpanded;
     const showTopRightPlus = isLoose ? looseState === "collapsed" : !isExpanded;
+
+    const looseKey = activeSub ? cartItemKey(item.id, activeSub.id) : "";
+    const isLooseSaved = activeSub ? savedToDb.has(looseKey) : false;
+    const isLooseCartIconSpinning = cartIconLoading[looseKey] ?? false;
+    const isLooseDbUpdating = dbUpdateLoading[looseKey] ?? false;
+
+    const looseShowCartIcon = cartQty > 0 && !isLooseSaved && activeSub != null;
 
     return (
       <View
@@ -1271,6 +1430,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
           </View>
         </TouchableOpacity>
 
+        {/* LOOSE: PREVIEW */}
         {isLoose && looseState === "preview" && (
           <View
             style={{
@@ -1359,6 +1519,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
           </View>
         )}
 
+        {/* LOOSE: ACTIVE */}
         {isLoose && looseState === "active" && (
           <View
             style={{
@@ -1406,14 +1567,11 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                     </View>
                   </View>
                 )}
-
                 {activeSub &&
                   (() => {
                     const totalCap = getTotalCap(activeSub);
                     const isPlusDisabled =
                       totalCap !== undefined && cartQty >= totalCap;
-                    const showCartIcon = cartQty > 0 && !showViewCart;
-
                     return (
                       <View
                         style={{
@@ -1470,7 +1628,6 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                               })}
                             </Text>
                           )}
-
                           {totalCap !== undefined && (
                             <View
                               style={{
@@ -1490,7 +1647,6 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                             </View>
                           )}
                         </View>
-
                         <View
                           style={{
                             flexDirection: "row",
@@ -1511,8 +1667,11 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                           >
                             <TouchableOpacity
                               onPress={() => handleRemove(item, activeSub)}
+                              disabled={isLooseDbUpdating}
                               style={{
-                                backgroundColor: "#FF8000",
+                                backgroundColor: isLooseDbUpdating
+                                  ? "#CCCCCC"
+                                  : "#FF8000",
                                 width: 34,
                                 height: 34,
                                 alignItems: "center",
@@ -1520,7 +1679,9 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                                 borderRadius: 17,
                               }}
                             >
-                              {cartQty === 1 ? (
+                              {isLooseDbUpdating ? (
+                                <ActivityIndicator size={16} color="white" />
+                              ) : cartQty === 1 ? (
                                 <Ionicons
                                   name="trash-outline"
                                   size={16}
@@ -1534,7 +1695,6 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                                 />
                               )}
                             </TouchableOpacity>
-
                             <Text
                               style={{
                                 paddingHorizontal: 12,
@@ -1547,15 +1707,17 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                             >
                               {cartQty}
                             </Text>
-
                             <TouchableOpacity
                               onPress={() => tryAddToCart(item, activeSub)}
-                              activeOpacity={isPlusDisabled ? 1 : 0.85}
-                              disabled={isPlusDisabled}
+                              activeOpacity={
+                                isPlusDisabled || isLooseDbUpdating ? 1 : 0.85
+                              }
+                              disabled={isPlusDisabled || isLooseDbUpdating}
                               style={{
-                                backgroundColor: isPlusDisabled
-                                  ? "#CCCCCC"
-                                  : "#FF8000",
+                                backgroundColor:
+                                  isPlusDisabled || isLooseDbUpdating
+                                    ? "#CCCCCC"
+                                    : "#FF8000",
                                 width: 34,
                                 height: 34,
                                 alignItems: "center",
@@ -1563,11 +1725,15 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                                 borderRadius: 17,
                               }}
                             >
-                              <Ionicons name="add" size={18} color="white" />
+                              {isLooseDbUpdating ? (
+                                <ActivityIndicator size={18} color="white" />
+                              ) : (
+                                <Ionicons name="add" size={18} color="white" />
+                              )}
                             </TouchableOpacity>
                           </View>
-
-                          {showCartIcon && (
+                          {/* Cart icon */}
+                          {looseShowCartIcon && (
                             <TouchableOpacity
                               style={{
                                 backgroundColor: "#3F3C57",
@@ -1580,13 +1746,18 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                               onPress={() =>
                                 handleCartIconPress(item, activeSub)
                               }
+                              disabled={isLooseCartIconSpinning}
                               activeOpacity={0.85}
                             >
-                              <Ionicons
-                                name="cart-outline"
-                                size={18}
-                                color="white"
-                              />
+                              {isLooseCartIconSpinning ? (
+                                <ActivityIndicator size={18} color="white" />
+                              ) : (
+                                <Ionicons
+                                  name="cart-outline"
+                                  size={18}
+                                  color="white"
+                                />
+                              )}
                             </TouchableOpacity>
                           )}
                         </View>
@@ -1598,6 +1769,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
           </View>
         )}
 
+        {/* NON-LOOSE: EXPANDED */}
         {!isLoose && isExpanded && (
           <View
             style={{
@@ -1847,7 +2019,9 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
           }}
         >
           <TouchableOpacity
-            onPress={() => navigation.navigate("CartScreen" as any)}
+            onPress={() =>
+              navigation.navigate("CartScreen" as any, { shopname })
+            }
             activeOpacity={0.9}
             style={{
               backgroundColor: "#FF8000CC",

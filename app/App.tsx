@@ -157,6 +157,7 @@ import GoviShopCartScreen from "@/component/govi-shop/GoviShopCartScreen";
 import GoviShopProfileScreen from "@/component/govi-shop/GoviShopProfileScreen";
 import LocationAccess from "@/component/permission/LocationAccess";
 import ViewProduct from "@/component/govi-shop/ViewProduct";
+import SoilGridsScreen from "@/component/soil-grids/SoilGridsScreen";
 import CartScreen from "@/component/govi-shop/CartScreen";
 
 LogBox.ignoreAllLogs(true);
@@ -669,12 +670,12 @@ function AppContent() {
               component={GoviShopCartScreen as any}
             />
             <Stack.Screen
-              name="GoviShopProfileScreen"
-              component={GoviShopProfileScreen as any}
+              name="CartScreen"
+              component={CartScreen as any}
             />
             <Stack.Screen
-              name="CartScreen"
-              component={CartScreen}
+              name="GoviShopProfileScreen"
+              component={GoviShopProfileScreen as any}
             />
 
             <Stack.Screen
