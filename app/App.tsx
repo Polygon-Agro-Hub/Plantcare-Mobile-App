@@ -676,14 +676,13 @@ function AppContent() {
               name="CartScreen"
               component={CartScreen}
             />
+
             <Stack.Screen
               name="LocationAccess"
               component={LocationAccess as any}
             />
-            <Stack.Screen
-              name="ViewProduct"
-              component={ViewProduct as any}
-            />
+            <Stack.Screen name="ViewProduct" component={ViewProduct as any} />
+            <Stack.Screen name="SoilGridsScreen" component={SoilGridsScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaView>

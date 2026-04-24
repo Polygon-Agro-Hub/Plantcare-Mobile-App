@@ -154,7 +154,8 @@
     "weather": "Weather",
     "failedToFetch": "Unable to fetch profile data. Please try again.",
     "Survey": "Survey",
-    "GoviShop": "GoviShop"
+    "GoviShop": "GoviShop",
+    "Soil Data": "Soil Data"
   },
   "navbar": {
     "home": "Home",
