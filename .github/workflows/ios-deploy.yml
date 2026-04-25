@@ -1,0 +1,209 @@
+# .github/workflows/ios-deploy.yml
+#
+# iOS CI/CD Pipeline — GoVi-Transport
+#
+# TRIGGERS:
+#   Push to dev-main → Upload to TestFlight (QA testing)
+#   Push to main     → Upload to App Store Connect (production)
+#
+# PREREQUISITES (all must be set up — see SETUP_GUIDE.md):
+#   GitHub Secrets: ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_CONTENT,
+#                   MATCH_GIT_URL, MATCH_GIT_BASIC_AUTHORIZATION,
+#                   MATCH_PASSWORD, DEV_API_URL, PROD_API_URL
+
+name: iOS Deploy
+
+on:
+  push:
+    branches:
+      - dev-main   # → TestFlight build for QA team
+      - main       # → App Store submission
+
+# Prevent multiple builds running simultaneously for the same branch.
+# If a new push comes in while a build is running, cancel the old one.
+concurrency:
+  group: ios-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: "iOS Build & Deploy"
+
+    # MUST be macos — only Apple hardware can build iOS apps
+    # macos-latest = macOS 14 (Sonoma) with Xcode pre-installed
+    runs-on: macos-latest
+
+    # Timeout after 90 minutes to avoid runaway builds eating up minutes
+    timeout-minutes: 120
+
+    steps:
+      # ─────────────────────────────────────────────────────────────────
+      # STEP 1: Checkout the code
+      # ─────────────────────────────────────────────────────────────────
+      - name: "📥 Checkout repository"
+        uses: actions/checkout@v4
+
+      # ─────────────────────────────────────────────────────────────────
+      # STEP 2: Set up Ruby
+      # ruby/setup-ruby automatically reads the ruby-version from Gemfile
+      # bundler-cache: true speeds up builds by caching installed gems
+      # ─────────────────────────────────────────────────────────────────
+      - name: "💎 Set up Ruby"
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2.2"
+          bundler-cache: true   # Caches gems between runs — saves 2-3 min
+
+      # ─────────────────────────────────────────────────────────────────
+      # STEP 3: Set up Node.js
+      # ─────────────────────────────────────────────────────────────────
+      - name: "⬢ Set up Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"   # Caches node_modules between runs — saves 1-2 min
+
+      # ─────────────────────────────────────────────────────────────────
+      # STEP 4: Install JavaScript dependencies
+      # npm ci is stricter than npm install — better for CI:
+      # - Uses package-lock.json exactly
+      # - Fails if package-lock.json is out of sync
+      # ─────────────────────────────────────────────────────────────────
+      - name: "📦 Install Node.js dependencies"
+        run: npm ci
+
+      # ─────────────────────────────────────────────────────────────────
+      # STEP 5a: Write DEV environment (dev-main branch only)
+      # Overwrites environment/environment.ts with DEV API URL before building.
+      # This does NOT change the committed file — only the build-time file.
+      # ─────────────────────────────────────────────────────────────────
+      - name: "🔧 Write DEV environment (dev-main → TestFlight)"
+        if: github.ref == 'refs/heads/dev-main'
+        env:
+          DEV_API_URL: ${{ secrets.DEV_API_URL }}
+        run: |
+          cat > environment/environment.ts << ENVEOF
+          export const environment = {
+            production: false,
+            API_BASE_URL: "${DEV_API_URL}"
+          };
+          ENVEOF
+          echo "✅ DEV environment.ts written with API: ${DEV_API_URL}"
+
+      # ─────────────────────────────────────────────────────────────────
+      # STEP 5b: Write PROD environment (main branch only)
+      # ─────────────────────────────────────────────────────────────────
+      - name: "🔧 Write PROD environment (main → App Store)"
+        if: github.ref == 'refs/heads/main'
+        env:
+          PROD_API_URL: ${{ secrets.PROD_API_URL }}
+        run: |
+          cat > environment/environment.ts << ENVEOF
+          export const environment = {
+            production: true,
+            API_BASE_URL: "${PROD_API_URL}"
+          };
+          ENVEOF
+          echo "✅ PROD environment.ts written with API: ${PROD_API_URL}"
+
+      # ─────────────────────────────────────────────────────────────────
+      # STEP 6: Run Expo Prebuild
+      # This generates the native ios/ folder from your JavaScript/TS code.
+      # --clean: removes any existing ios/ folder first (fresh generation)
+      # --non-interactive: no prompts (required for CI)
+      # --platform ios: only generate iOS (skip Android)
+      # ─────────────────────────────────────────────────────────────────
+      - name: "⚙️ Generate native iOS project (expo prebuild)"
+        run: npx expo prebuild --platform ios --non-interactive --clean
+
+      # ─────────────────────────────────────────────────────────────────
+      # STEP 7: Cache CocoaPods
+      # Caches the downloaded iOS native packages to speed up future builds.
+      # The cache is invalidated when Podfile.lock changes.
+      # ─────────────────────────────────────────────────────────────────
+      - name: "💾 Cache CocoaPods"
+        uses: actions/cache@v4
+        id: pods-cache
+        with:
+          # path: |
+          #   ios/Pods
+          #   ~/.cocoapods
+          # key: pods-${{ hashFiles('ios/Podfile.lock') }}
+          # restore-keys: |
+          #   pods-
+          path: |
+            ios/Pods
+            ~/Library/Caches/CocoaPods
+            ~/.cocoapods
+          key: pods-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: |
+            pods-${{ runner.os }}-
+
+      # ─────────────────────────────────────────────────────────────────
+      # STEP 8: Install CocoaPods dependencies
+      # Installs native iOS packages defined in the Podfile
+      # (generated by expo prebuild)
+      # ─────────────────────────────────────────────────────────────────
+      - name: "🍫 Install CocoaPods dependencies"
+        run: |
+          cd ios
+          pod install
+          cd ..
+
+      # ─────────────────────────────────────────────────────────────────
+      # STEP 9a: Deploy to TestFlight (dev-main branch)
+      # Runs: fastlane beta
+      # Which: syncs certs, sets build number, builds .ipa, uploads
+      # ─────────────────────────────────────────────────────────────────
+      - name: "🚀 Deploy to TestFlight [dev-main]"
+        if: github.ref == 'refs/heads/dev-main'
+        run: bundle exec fastlane beta
+        env:
+          # App Store Connect API Key — authenticates with Apple servers
+          ASC_KEY_ID:      ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID:   ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
+          # Match — downloads certificates from your private certs repo
+          MATCH_GIT_URL:                  ${{ secrets.MATCH_GIT_URL }}
+          MATCH_GIT_BASIC_AUTHORIZATION:  ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          MATCH_PASSWORD:                 ${{ secrets.MATCH_PASSWORD }}
+          # Used as the iOS build number — auto-increments with each CI run
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
+          #Apple Team ID
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+
+      # ─────────────────────────────────────────────────────────────────
+      # STEP 9b: Deploy to App Store (main branch)
+      # Runs: fastlane release
+      # Which: syncs certs, sets build number, builds .ipa, uploads to ASC
+      # ─────────────────────────────────────────────────────────────────
+      - name: "🏪 Deploy to App Store [main]"
+        if: github.ref == 'refs/heads/main'
+        run: bundle exec fastlane release
+        env:
+          # App Store Connect API Key
+          ASC_KEY_ID:      ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID:   ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
+          # Match
+          MATCH_GIT_URL:                  ${{ secrets.MATCH_GIT_URL }}
+          MATCH_GIT_BASIC_AUTHORIZATION:  ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          MATCH_PASSWORD:                 ${{ secrets.MATCH_PASSWORD }}
+          # Build number
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
+          #Apple Team ID
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      # ─────────────────────────────────────────────────────────────────
+      # STEP 10: Upload build artifacts (for debugging if build fails)
+      # Saves the .ipa file as a GitHub Actions artifact for 7 days.
+      # You can download it from the GitHub Actions run page.
+      # ─────────────────────────────────────────────────────────────────
+      - name: "📤 Upload .ipa artifact (for debugging)"
+        if: always()   # Run even if previous steps fail
+        uses: actions/upload-artifact@v4
+        with:
+          name: "GoVi-Transport-${{ github.ref_name }}-${{ github.run_number }}.ipa"
+          path: build/GoVi-Transport.ipa
+          retention-days: 7
+          if-no-files-found: warn   # Don't fail if build never produced an .ipa
+

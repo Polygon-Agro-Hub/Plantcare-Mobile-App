@@ -13,7 +13,8 @@
       "backgroundColor": "#26D041"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.polygonagro.GoviCare"
     },
     "android": {
       "adaptiveIcon": {
