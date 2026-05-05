@@ -918,6 +918,7 @@
     "duration": "කාල සීමාව",
     "enterDuration": "කාල සීමාව ඇතුලත් කරන්න",
     "enterstartDate": "ආරම්භක දිනය අවශ්‍යයි",
+    "Lease Start Date is required": "බදු ආරම්භක දිනය අවශ්‍යයි",
     "leasedAmountAnnuallyLKR": "වාර්ෂික කුලී මුදල (LKR)",
     "enterLeasedAmountAnnuallyLKR": "වාර්ෂික කුලී මුදල (LKR) ඇතුලත් කරන්න",
     "issuedDate": "නිකුත් කළ දිනය",

@@ -381,7 +381,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
           "FixedAssets.enterEstimatedBuildingValueLKR",
         );
       if (ownership === "Leased Building") {
-        if (!startDate) newErrors.startDate = t("FixedAssets.enterDuration");
+        if (!startDate) newErrors.startDate = t("FixedAssets.Lease Start Date is required");
         if (!durationYears) newErrors.duration = t("FixedAssets.enterDuration");
         if (!leastAmountAnnually)
           newErrors.leastAmountAnnually = t(

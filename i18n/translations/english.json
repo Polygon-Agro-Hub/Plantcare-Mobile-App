@@ -919,6 +919,7 @@
     "estimatedValueLKR": "Estimated value (LKR)",
     "duration": "Duration",
     "enterDuration": "Duration is required",
+    "Lease Start Date is required": "Lease Start Date is required",
     "enterstartDate": "Start Date is required",
     "leasedAmountAnnuallyLKR": "Enter Annual Leased Amount(LKR)",
     "enterLeasedAmountAnnuallyLKR": "Annual Lease Amount (LKR) is required",
