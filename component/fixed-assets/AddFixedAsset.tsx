@@ -491,13 +491,19 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       perennialCrop,
       asset,
       assetType,
-      mentionOther,
+      mentionOther:
+        category === "Tools" && assetname === "Other"
+          ? othertool
+          : mentionOther,
       brand: customBrand || brand,
       numberOfUnits: cleanedNumberOfUnits.toString(),
       unitPrice: cleanNumber(unitPrice),
       totalPrice,
       warranty,
-      issuedDate: issuedDate ?? null,
+      issuedDate:
+        category === "Building and Infrastructures"
+          ? (lbissuedDate ?? null)
+          : (issuedDate ?? null),
       purchaseDate: updatedPurchaseDate,
       expireDate: updatedExpireDate,
       startDate,
@@ -1040,6 +1046,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                                   );
                                 } else {
                                   setPurchasedDate(selectedDate);
+                                  clearError("purchasedDate");
                                 }
                               }
                               setShowPurchasedDatePicker(false);
@@ -1062,6 +1069,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                                 );
                               } else {
                                 setPurchasedDate(selectedDate);
+                                clearError("purchasedDate");
                               }
                             }
                             setShowPurchasedDatePicker(false);
@@ -1115,6 +1123,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                                 } else {
                                   setExpireDate(selectedDate);
                                   setErrorMessage("");
+                                  clearError("expireDate");
                                 }
                               }
                             }}
@@ -1142,6 +1151,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                               } else {
                                 setExpireDate(selectedDate);
                                 setErrorMessage("");
+                                clearError("expireDate");
                               }
                             }
                           }}
@@ -1696,6 +1706,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                                   );
                                 } else {
                                   setPurchasedDate(selectedDate);
+                                  clearError("purchasedDate");
                                 }
                               }
                               setShowPurchasedDatePicker(false);
@@ -1718,6 +1729,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                                 );
                               } else {
                                 setPurchasedDate(selectedDate);
+                                clearError("purchasedDate");
                               }
                             }
                             setShowPurchasedDatePicker(false);
@@ -1771,6 +1783,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                                 } else {
                                   setExpireDate(selectedDate);
                                   setErrorMessage("");
+                                  clearError("expireDate");
                                 }
                               }
                             }}
@@ -1798,6 +1811,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                               } else {
                                 setExpireDate(selectedDate);
                                 setErrorMessage("");
+                                clearError("expireDate");
                               }
                             }
                           }}
