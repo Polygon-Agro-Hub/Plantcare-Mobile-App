@@ -44,3 +44,5 @@ yarn-error.*
 .expo/*
 !.expo/types/
 !.expo/types/router.d.ts
+
+.env

@@ -1,0 +1,15 @@
+# fastlane/Appfile
+# This file tells Fastlane about your app's identity.
+# Update YOUR_TEAM_ID_HERE and YOUR_ITC_TEAM_ID_HERE with the values
+# from your Apple Developer account (see SETUP_GUIDE.md — STEP 2.2).
+
+app_identifier("com.polygonagro.GoviCare")  # Your iOS bundle identifier — must match app.json exactly
+apple_id("polygonagro@icloud.com")                       # Your Apple ID — the company Apple Developer account
+
+# Apple Developer Portal Team ID (found at developer.apple.com → Account → Membership)
+# Looks like: "ABC123DEF4"
+team_id("GPV96475S2")
+
+# App Store Connect Team ID (usually same as team_id for single-team accounts)
+# Found at: App Store Connect → Users and Access → look for "Team ID"
+itc_team_id("6763667228")
