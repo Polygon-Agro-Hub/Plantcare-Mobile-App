@@ -152,7 +152,7 @@ const SupervisorDashbord: React.FC<SupervisorDashbordProps> = ({
 
       if (!data.user || !data.user.firstName) {
         Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          { text: t("Farms.okButton") },
+          { text: t("Main.OK") },
         ]);
         navigation.navigate("Signin");
         return;
@@ -164,7 +164,7 @@ const SupervisorDashbord: React.FC<SupervisorDashbordProps> = ({
       setTimeout(() => setLoading(false), 300);
     } catch (error) {
       Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       navigation.navigate("Signin");
     }
@@ -286,7 +286,7 @@ const SupervisorDashbord: React.FC<SupervisorDashbordProps> = ({
                 {user.firstName} ✋🏻
               </Text>
             ) : (
-              t("Dashboard.loading")
+              t("Main.Loading...")
             )}
           </Text>
         </View>

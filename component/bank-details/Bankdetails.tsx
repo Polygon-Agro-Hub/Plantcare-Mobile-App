@@ -112,7 +112,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
   const handleRegister = async () => {
     if (loading) {
-      Alert.alert(t("BankDetails.Loading"), t("BankDetails.LoadingText"), [
+      Alert.alert(t("Main.Loading..."), t("BankDetails.LoadingText"), [
         { text: t("Main.OK") },
       ]);
       return;
@@ -131,7 +131,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       !trimmedBankName ||
       !trimmedBranchName
     ) {
-      Alert.alert(t("BankDetails.sorry"), t("BankDetails.PlzFillAllFields"), [
+      Alert.alert(t("BankDetails.sorry"), t("Main.PleaseFillAllFields"), [
         { text: t("Main.OK") },
       ]);
       return;
@@ -180,7 +180,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
       if (response.status === 200) {
         Alert.alert(
-          t("BankDetails.success"),
+          t("Main.Success"),
           t("BankDetails.SuccessfullyRegistered"),
           [{ text: t("Main.OK") }],
         );
@@ -241,7 +241,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       setAccountHolderName(trimmedText);
       setHoldernameNameError("");
     } else {
-      setHoldernameNameError(t("Signup.Startwithletter"));
+      setHoldernameNameError(t("SignUp.Startwithletter"));
     }
   };
 
@@ -314,7 +314,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             setBranchName("");
           }
         }}
-        searchPlaceholder={t("Signup.TypeSomething")}
+        searchPlaceholder={t("Main.Search...")}
         multiSelect={false}
       />
 
@@ -327,7 +327,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         onSelect={(items) => {
           setBranchName(items[0] ?? "");
         }}
-        searchPlaceholder={t("Signup.TypeSomething")}
+        searchPlaceholder={t("Main.Search...")}
         multiSelect={false}
         isLoading={loading && !!bankName}
       />
@@ -364,10 +364,10 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           </Text>
           <TextInput
             placeholder={t("BankDetails.EnterAccountHolderName")}
-           className="rounded-3xl h-[50px]"
+            className="rounded-3xl h-[50px]"
             placeholderTextColor="#5e5d5d"
             value={accountHolderName}
-            onChangeText={handleFirstNameChange}     
+            onChangeText={handleFirstNameChange}
             style={{
               backgroundColor: "#F4F4F4",
               borderRadius: 25,
@@ -431,7 +431,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             onChangeText={handleConfirmAccountNumberChange}
           />
           {accountNumberError &&
-          !validateAccountNumber(confirmAccountNumber) ? (
+            !validateAccountNumber(confirmAccountNumber) ? (
             <Text
               className="text-red-500"
               style={{ fontSize: wp(3), marginTop: wp(-4) }}
@@ -457,7 +457,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           </Text>
           <TouchableOpacity
             onPress={() => setBankModalVisible(true)}
-             className="rounded-3xl h-[50px]"
+            className="rounded-3xl h-[50px]"
             style={{
               backgroundColor: "#F4F4F4",
               borderRadius: 25,
@@ -493,7 +493,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
                 Alert.alert(
                   t("BankDetails.sorry"),
                   t("BankDetails.SelectBankFirst") ||
-                    "Please select a bank first.",
+                  "Please select a bank first.",
                   [{ text: t("Main.OK") }],
                 );
               }
@@ -508,7 +508,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
               alignItems: "center",
               opacity: bankName ? 1 : 0.5,
             }}
-             className="rounded-3xl h-[50px]"
+            className="rounded-3xl h-[50px]"
           >
             <Text
               style={{
@@ -526,11 +526,10 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           <TouchableOpacity
             onPress={handleRegister}
             disabled={disableSubmit || !isFormValid()}
-            className={`${
-              disableSubmit || !isFormValid()
-                ? "bg-gray-400 rounded-full p-4 mt-2 w-60 "
-                : "bg-[#353535] rounded-full p-4 mt-2 w-60"
-            }`}
+            className={`${disableSubmit || !isFormValid()
+              ? "bg-gray-400 rounded-full p-4 mt-2 w-60 "
+              : "bg-[#353535] rounded-full p-4 mt-2 w-60"
+              }`}
             style={{
               shadowColor: "#000000",
               shadowOffset: { width: 0, height: 4 },

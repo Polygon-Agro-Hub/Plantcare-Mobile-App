@@ -138,7 +138,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
         ),
         [
           {
-            text: t("CurrentAssets.Cancel"),
+            text: t("Main.Cancel"),
             style: "cancel",
           },
           {
@@ -185,11 +185,11 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
 
       if (response.data.status === "success") {
         Alert.alert(
-          t("CurrentAssets.Success"),
+          t("Main.Success"),
           updateQuantity === 0
             ? t("CurrentAssets.Asset record cleared successfully")
             : t("CurrentAssets.Asset updated successfully"),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
         setModalVisible(false);
         fetchCurrentAssets(farmId);
@@ -249,9 +249,9 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
             response.data.currentAssetsByCategory,
           )
             ? response.data.currentAssetsByCategory.map((asset: Asset) => ({
-                ...asset,
-                items: Array.isArray(asset.items) ? asset.items : [],
-              }))
+              ...asset,
+              items: Array.isArray(asset.items) ? asset.items : [],
+            }))
             : [];
 
           if (farmIdToUse === farmId) {
@@ -345,12 +345,12 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
   const pieData =
     assetData && assetData.length > 0
       ? assetData.map((asset) => ({
-          name: getTranslatedCategory(asset.category),
-          population: Number(asset.totalSum) || 0,
-          color: getColorByAssetType(asset.category),
-          legendFontColor: "#7F7F7F",
-          legendFontSize: 11,
-        }))
+        name: getTranslatedCategory(asset.category),
+        population: Number(asset.totalSum) || 0,
+        color: getColorByAssetType(asset.category),
+        legendFontColor: "#7F7F7F",
+        legendFontSize: 11,
+      }))
       : [];
 
   if (loading) {
@@ -370,9 +370,9 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
         onBackPress={() =>
           user && user.role === "Owner"
             ? navigation.navigate("Main", {
-                screen: "FarmDetailsScreen",
-                params: { farmId: farmId, farmName: selectedFarmName },
-              })
+              screen: "FarmDetailsScreen",
+              params: { farmId: farmId, farmName: selectedFarmName },
+            })
             : navigation.goBack()
         }
       />
@@ -547,14 +547,14 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
                           <Text>
                             {getTranslatedCategory(asset.category).length > 20
                               ? getTranslatedCategory(asset.category)
-                                  .split(" ")
-                                  .slice(0, 2)
-                                  .join(" ") +
-                                "\n" +
-                                getTranslatedCategory(asset.category)
-                                  .split(" ")
-                                  .slice(2)
-                                  .join(" ")
+                                .split(" ")
+                                .slice(0, 2)
+                                .join(" ") +
+                              "\n" +
+                              getTranslatedCategory(asset.category)
+                                .split(" ")
+                                .slice(2)
+                                .join(" ")
                               : getTranslatedCategory(asset.category)}
                           </Text>
                         </View>
@@ -612,8 +612,8 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
                                 <View className="w-[80px] items-center">
                                   <Text className="text-xs font-semibold text-gray-800">
                                     {!isNaN(item.quantity) &&
-                                    item.quantity !== null &&
-                                    item.quantity !== undefined
+                                      item.quantity !== null &&
+                                      item.quantity !== undefined
                                       ? Math.floor(Number(item.quantity))
                                       : 0}
                                   </Text>
@@ -805,7 +805,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
                 disabled={isUpdating}
               >
                 <Text className="text-[#8E8E8E] font-semibold text-lg">
-                  {t("CurrentAssets.Cancel")}
+                  {t("Main.Cancel")}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -817,7 +817,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
                   <ActivityIndicator color="#fff" />
                 ) : (
                   <Text className="text-center font-semibold text-white text-lg">
-                    {t("CurrentAssets.Update")}
+                    {t("Main.Update")}
                   </Text>
                 )}
               </TouchableOpacity>

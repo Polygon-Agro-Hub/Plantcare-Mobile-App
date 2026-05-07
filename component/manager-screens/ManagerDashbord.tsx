@@ -151,7 +151,7 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
 
       if (!data.user || !data.user.firstName) {
         Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          { text: t("Farms.okButton") },
+          { text: t("Main.OK") },
         ]);
         navigation.navigate("Signin");
         return;
@@ -163,7 +163,7 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
       setTimeout(() => setLoading(false), 300);
     } catch (error) {
       Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       navigation.navigate("Signin");
     }
@@ -285,7 +285,7 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
                 {user.firstName} ✋🏻
               </Text>
             ) : (
-              t("Dashboard.loading")
+              t("Main.Loading...")
             )}
           </Text>
         </View>

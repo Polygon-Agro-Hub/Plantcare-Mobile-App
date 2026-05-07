@@ -313,7 +313,7 @@ const FarmCertificateTask: React.FC = () => {
             Alert.alert(
               t("Farms.Cannot Remove"),
               t("Farms.Completion cannot be removed after 1 hour."),
-              [{ text: t("Farms.OK") }],
+              [{ text: t("Main.OK") }],
             );
             return;
           }
@@ -325,9 +325,9 @@ const FarmCertificateTask: React.FC = () => {
             "Farms.This will remove the completion for this task. Are you sure you want to continue?",
           ),
           [
-            { text: t("Farms.Cancel"), style: "cancel" },
+            { text: t("Main.Cancel"), style: "cancel" },
             {
-              text: t("Farms.OK"),
+              text: t("Main.OK"),
               onPress: async () => {
                 await handleRemoveCompletion(item);
               },
@@ -364,10 +364,10 @@ const FarmCertificateTask: React.FC = () => {
             (prevItem) =>
               prevItem.id === item.id
                 ? {
-                    ...prevItem,
-                    tickResult: 1,
-                    doneDate: new Date().toISOString(),
-                  }
+                  ...prevItem,
+                  tickResult: 1,
+                  doneDate: new Date().toISOString(),
+                }
                 : prevItem,
           );
 
@@ -389,7 +389,7 @@ const FarmCertificateTask: React.FC = () => {
           });
         }
 
-        Alert.alert(t("Farms.Success"), t("Farms.Task complete successfully!"));
+        Alert.alert(t("Main.Success"), t("Farms.Task complete successfully!"));
 
         setUploadingImageForItem(null);
       }
@@ -427,11 +427,11 @@ const FarmCertificateTask: React.FC = () => {
             (prevItem) =>
               prevItem.id === item.id
                 ? {
-                    ...prevItem,
-                    uploadImage: null,
-                    tickResult: null,
-                    doneDate: null,
-                  }
+                  ...prevItem,
+                  uploadImage: null,
+                  tickResult: null,
+                  doneDate: null,
+                }
                 : prevItem,
           );
 
@@ -454,7 +454,7 @@ const FarmCertificateTask: React.FC = () => {
         }
 
         Alert.alert(
-          t("Farms.Success"),
+          t("Main.Success"),
           t("Farms.Completion removed successfully"),
         );
       } else {
@@ -540,10 +540,10 @@ const FarmCertificateTask: React.FC = () => {
             (prevItem) =>
               prevItem.id === selectedQuestion.id
                 ? {
-                    ...prevItem,
-                    uploadImage: response.data.imageUrl,
-                    doneDate: new Date().toISOString(),
-                  }
+                  ...prevItem,
+                  uploadImage: response.data.imageUrl,
+                  doneDate: new Date().toISOString(),
+                }
                 : prevItem,
           );
 
@@ -565,7 +565,7 @@ const FarmCertificateTask: React.FC = () => {
           });
         }
 
-        Alert.alert(t("Farms.Success"), t("Farms.Task complete successfully!"));
+        Alert.alert(t("Main.Success"), t("Farms.Task complete successfully!"));
 
         setShowCameraModal(false);
         setCapturedImage(null);
@@ -741,18 +741,16 @@ const FarmCertificateTask: React.FC = () => {
                     let validityText = t("Farms.Valid for next") + " ";
 
                     if (time.months > 0) {
-                      validityText += `${time.months} ${
-                        time.months === 1 ? t("Farms.month") : t("Farms.months")
-                      }`;
+                      validityText += `${time.months} ${time.months === 1 ? t("Farms.month") : t("Farms.months")
+                        }`;
                     }
 
                     if (time.days > 0) {
                       if (time.months > 0) {
                         validityText += " ";
                       }
-                      validityText += `${time.days} ${
-                        time.days === 1 ? t("Farms.day") : t("Farms.days")
-                      }`;
+                      validityText += `${time.days} ${time.days === 1 ? t("Farms.day") : t("Farms.days")
+                        }`;
                     }
 
                     return (
@@ -765,11 +763,10 @@ const FarmCertificateTask: React.FC = () => {
               </View>
             </View>
             <Text
-              className={`mt-[-4] font-medium ml-[22%] ${
-                certificateStatus.isAllCompleted
-                  ? "text-green-700"
-                  : "text-[#FF0000]"
-              }`}
+              className={`mt-[-4] font-medium ml-[22%] ${certificateStatus.isAllCompleted
+                ? "text-green-700"
+                : "text-[#FF0000]"
+                }`}
             >
               {certificateStatus.isAllCompleted
                 ? t("Farms.All Completed")
@@ -797,11 +794,10 @@ const FarmCertificateTask: React.FC = () => {
           return (
             <View
               key={item.id}
-              className={`rounded-2xl p-4 mb-3 border shadow-sm ${
-                isPhotoProof && isCompleted && item.uploadImage
-                  ? "bg-[#4B5563CC] border-[#4B5563CC]"
-                  : "bg-white border-[#EFEFEF]"
-              }`}
+              className={`rounded-2xl p-4 mb-3 border shadow-sm ${isPhotoProof && isCompleted && item.uploadImage
+                ? "bg-[#4B5563CC] border-[#4B5563CC]"
+                : "bg-white border-[#EFEFEF]"
+                }`}
               style={{
                 shadowColor: "#000000",
                 shadowOffset: { width: 0, height: 4 },
@@ -813,11 +809,10 @@ const FarmCertificateTask: React.FC = () => {
               <View className="flex-row justify-between items-start mb-3">
                 <View className="flex-1 mr-3">
                   <Text
-                    className={`font-medium text-sm mb-1 ${
-                      isPhotoProof && isCompleted && item.uploadImage
-                        ? "text-gray-900"
-                        : "text-gray-900"
-                    }`}
+                    className={`font-medium text-sm mb-1 ${isPhotoProof && isCompleted && item.uploadImage
+                      ? "text-gray-900"
+                      : "text-gray-900"
+                      }`}
                   >
                     {language === "si"
                       ? item.qSinhala
@@ -832,11 +827,10 @@ const FarmCertificateTask: React.FC = () => {
                   <TouchableOpacity
                     onPress={() => handleQuestionnaireCheck(item)}
                     disabled={uploadingImageForItem === item.id}
-                    className={`w-8 h-8 rounded-full items-center justify-center ${
-                      isCompleted
-                        ? "bg-[#00A896] border-2 border-[#00A896]"
-                        : "bg-white border-2 border-[#00A896]"
-                    }`}
+                    className={`w-8 h-8 rounded-full items-center justify-center ${isCompleted
+                      ? "bg-[#00A896] border-2 border-[#00A896]"
+                      : "bg-white border-2 border-[#00A896]"
+                      }`}
                   >
                     {uploadingImageForItem === item.id ? (
                       <ActivityIndicator
@@ -1014,7 +1008,7 @@ const FarmCertificateTask: React.FC = () => {
                 className="mt-4"
               >
                 <Text className="text-gray-400 text-sm">
-                  {t("Farms.Cancel")}
+                  {t("Main.Cancel")}
                 </Text>
               </TouchableOpacity>
             </View>

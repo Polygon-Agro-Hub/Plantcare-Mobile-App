@@ -148,7 +148,7 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
 
       if (!data.user || !data.user.firstName) {
         Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          { text: t("Farms.okButton") },
+          { text: t("Main.OK") },
         ]);
         navigation.navigate("Signin");
         return;
@@ -160,7 +160,7 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
       setTimeout(() => setLoading(false), 300);
     } catch (error) {
       Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       navigation.navigate("Signin");
     }
@@ -256,7 +256,7 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
                 {user.firstName} ✋🏻
               </Text>
             ) : (
-              t("Dashboard.loading")
+              t("Main.Loading...")
             )}
           </Text>
         </View>

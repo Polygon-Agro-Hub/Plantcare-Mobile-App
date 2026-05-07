@@ -457,7 +457,7 @@ const CropEarnCertificate: React.FC = () => {
                         : { fontSize: 16 },
                   ]}
                 >
-                  {t("EarnCertificate.Go Back")}
+                  {t("Main.Go Back")}
                 </Text>
               </TouchableOpacity>
 
@@ -476,7 +476,7 @@ const CropEarnCertificate: React.FC = () => {
                         : { fontSize: 16 },
                   ]}
                 >
-                  {t("EarnCertificate.Continue")}
+                  {t("Main.Continue")}
                 </Text>
               </TouchableOpacity>
             </View>

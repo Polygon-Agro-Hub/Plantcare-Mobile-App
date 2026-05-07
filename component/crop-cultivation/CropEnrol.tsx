@@ -112,7 +112,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
     React.useCallback(() => {
       setStartDate(new Date());
       setShowDatePicker(false);
-      return () => {};
+      return () => { };
     }, []),
   );
 
@@ -214,7 +214,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       );
 
       if (res.status === 200) {
-        Alert.alert(t("Cropenroll.success"), t("Cropenroll.EnrollSucess"), [
+        Alert.alert(t("Main.Success"), t("Cropenroll.EnrollSucess"), [
           { text: t("Main.OK") },
         ]);
         setIsLoading(false);
@@ -328,7 +328,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
           setExtentp(ongoingCultivation.extentp.toString());
           setStartDate(new Date(formattedCrops[0].sstartedAt));
         }
-      } catch (err) {}
+      } catch (err) { }
     };
     fetchOngoingCultivations();
   }, [formStatus, onCulscropID]);
@@ -360,11 +360,11 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
       if (response.status === 200) {
         Alert.alert(
-          t("Cropenroll.success"),
+          t("Main.Success"),
           t("Cropenroll.OngoinCultivationUpdate"),
           [
             {
-              text: t("CropCalender.OK"),
+              text: t("Main.OK"),
               onPress: () => navigation.goBack(),
             },
           ],
@@ -440,9 +440,9 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
               >
                 {natureOfCultivation
                   ? getLabelByValue(
-                      NatureOfCultivationCategories,
-                      natureOfCultivation,
-                    )
+                    NatureOfCultivationCategories,
+                    natureOfCultivation,
+                  )
                   : t("Cropenroll.selectNaofCultivation")}
               </Text>
               <Icon name="arrow-drop-down" size={24} color="gray" />
@@ -464,9 +464,9 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
               >
                 {cultivationMethod
                   ? getLabelByValue(
-                      CultivationMethodCategories,
-                      cultivationMethod,
-                    )
+                    CultivationMethodCategories,
+                    cultivationMethod,
+                  )
                   : t("Cropenroll.selectCultivationMethod")}
               </Text>
               <Icon name="arrow-drop-down" size={24} color="gray" />
@@ -474,9 +474,8 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
             <TouchableOpacity
               onPress={handleSearch}
-              className={`p-3 mx-5 items-center rounded-full ${
-                isLoading ? "bg-gray-400" : "bg-gray-800"
-              }`}
+              className={`p-3 mx-5 items-center rounded-full ${isLoading ? "bg-gray-400" : "bg-gray-800"
+                }`}
               disabled={isLoading}
             >
               <Text className="text-white text-base font-bold">
@@ -564,9 +563,8 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
                 <TouchableOpacity
                   onPress={HandleEnrollBtn}
-                  className={`rounded-lg mb-4 p-3 mt-8 items-center ${
-                    isLoading ? "bg-gray-500" : "bg-gray-900"
-                  }`}
+                  className={`rounded-lg mb-4 p-3 mt-8 items-center ${isLoading ? "bg-gray-500" : "bg-gray-900"
+                    }`}
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -653,16 +651,15 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
             <TouchableOpacity
               onPress={updateOngoingCultivation}
-              className={`rounded-lg mb-4 p-3 mt-8 items-center ${
-                isLoading ? "bg-gray-500" : "bg-gray-900"
-              }`}
+              className={`rounded-lg mb-4 p-3 mt-8 items-center ${isLoading ? "bg-gray-500" : "bg-gray-900"
+                }`}
               disabled={isLoading}
             >
               {isLoading ? (
                 <ActivityIndicator size="small" color="#fff" />
               ) : (
                 <Text className="text-white text-base font-bold">
-                  {t("Cropenroll.Update")}
+                  {t("Main.Update")}
                 </Text>
               )}
             </TouchableOpacity>

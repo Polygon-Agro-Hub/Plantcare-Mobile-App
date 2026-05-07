@@ -151,7 +151,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
         t(
           "NewCrop.The certificate you purchased does not include this crop variety",
         ),
-        [{ text: t("NewCrop.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -622,11 +622,10 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
                     setSelectedVariety([]);
                     setSelectedCropId(null);
                   }}
-                  className={`${
-                    selectedCategory === category.name
+                  className={`${selectedCategory === category.name
                       ? "bg-green-300 border-2 border-green-500"
                       : "bg-gray-200"
-                  } rounded-full items-center justify-center`}
+                    } rounded-full items-center justify-center`}
                   style={{
                     width: wp("20%"),
                     height: wp("20%"),

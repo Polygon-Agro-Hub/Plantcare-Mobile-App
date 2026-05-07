@@ -253,7 +253,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       }, 300);
     } catch (error) {
       Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       setTimeout(() => {
         setLoading(false);
@@ -312,7 +312,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       setTimestamps(new Array(response.data.length).fill(""));
     } catch (error) {
       Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
     }
   };
@@ -421,7 +421,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         )}`;
 
         Alert.alert(t("CropCalender.sorry"), updateMessage, [
-          { text: t("Farms.okButton") },
+          { text: t("Main.OK") },
         ]);
         return;
       }
@@ -510,18 +510,18 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         Alert.alert(
           t("CropCalender.sorry"),
           t("CropCalender.cannotChangeStatus"),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
       } else if (
         error.response &&
         error.response.data.message.includes("You need to wait 6 hours")
       ) {
         Alert.alert(t("CropCalender.sorry"), updateMessage, [
-          { text: t("Farms.okButton") },
+          { text: t("Main.OK") },
         ]);
       } else {
         Alert.alert(t("CropCalender.sorry"), updateMessage, [
-          { text: t("Farms.okButton") },
+          { text: t("Main.OK") },
         ]);
       }
     }
@@ -641,13 +641,13 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
   async function askForPermissions() {
     if (!Notifications) return false;
-const { status } = await Notifications.requestPermissionsAsync();
+    const { status } = await Notifications.requestPermissionsAsync();
     return status === "granted";
   }
 
   async function cancelScheduledNotification() {
     if (!Notifications) return;
-const storedNotificationId = await AsyncStorage.getItem(
+    const storedNotificationId = await AsyncStorage.getItem(
       "currentNotificationId",
     );
     if (storedNotificationId) {
@@ -662,7 +662,7 @@ const storedNotificationId = await AsyncStorage.getItem(
 
   async function scheduleDailyNotification() {
     if (!Notifications) return;
-try {
+    try {
       const hasPermission = await askForPermissions();
       if (!hasPermission) {
         console.error("Notification permission not granted");
@@ -731,7 +731,7 @@ try {
 
   async function registerForPushNotificationsAsync() {
     if (!Notifications) return undefined;
-let token;
+    let token;
 
     if (Platform.OS === "android") {
       await Notifications.setNotificationChannelAsync("default", {
@@ -825,7 +825,7 @@ let token;
         Alert.alert(
           t("Main.Error"),
           t("Farms.Unable to fetch location after multiple attempts"),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
         setLoading(false);
         return;
@@ -891,7 +891,7 @@ let token;
       if (!crop) {
         console.warn("Crop data not found for index:", cropIndex);
         Alert.alert(t("Main.Error"), t("Farms.Task data not found"), [
-          { text: t("Farms.okButton") },
+          { text: t("Main.OK") },
         ]);
         return;
       }
@@ -904,7 +904,7 @@ let token;
         Alert.alert(
           t("Main.Error"),
           t("Farms.No authentication token found"),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
         setLoading(false);
         return;
@@ -944,7 +944,7 @@ let token;
           t("CropCalender.No Images Message", { taskIndex: crop.taskIndex }),
           [
             {
-              text: t("CropCalender.OK"),
+              text: t("Main.OK"),
               style: "default",
             },
           ],
@@ -977,7 +977,7 @@ let token;
 
       Alert.alert(errorTitle, errorMessage, [
         {
-          text: t("CropCalender.OK"),
+          text: t("Main.OK"),
           style: "default",
         },
       ]);
@@ -1074,15 +1074,14 @@ let token;
           {currentTasks.map((crop, index) => (
             <View
               key={index}
-              className={`flex-1 m-6 mb-[-5] shadow border-gray-200 border-[1px] rounded-[15px] ${
-                checked[startIndex + index] &&
+              className={`flex-1 m-6 mb-[-5] shadow border-gray-200 border-[1px] rounded-[15px] ${checked[startIndex + index] &&
                 (user?.role === "Owner" ||
                   user?.role === "Manager" ||
                   user?.role === "Supervisor" ||
                   user?.role === "Laborer")
-                  ? "bg-gray-600/80"
-                  : "bg-white"
-              }`}
+                ? "bg-gray-600/80"
+                : "bg-white"
+                }`}
             >
               <View className="flex-row">
                 <View>
@@ -1104,8 +1103,8 @@ let token;
                       style={{
                         borderWidth:
                           checked[startIndex + index] ||
-                          (lastCompletedIndex !== null &&
-                            startIndex + index === lastCompletedIndex + 1)
+                            (lastCompletedIndex !== null &&
+                              startIndex + index === lastCompletedIndex + 1)
                             ? 0
                             : 2,
                         borderColor: "#00A896",
@@ -1117,7 +1116,7 @@ let token;
                         backgroundColor: checked[startIndex + index]
                           ? "#00A896"
                           : lastCompletedIndex !== null &&
-                              startIndex + index === lastCompletedIndex + 1
+                            startIndex + index === lastCompletedIndex + 1
                             ? "black"
                             : "transparent",
                       }}
@@ -1129,7 +1128,7 @@ let token;
                           checked[startIndex + index]
                             ? "white"
                             : lastCompletedIndex !== null &&
-                                startIndex + index === lastCompletedIndex + 1
+                              startIndex + index === lastCompletedIndex + 1
                               ? "white"
                               : "black"
                         }

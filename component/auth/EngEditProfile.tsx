@@ -274,11 +274,11 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
         Toast.show({
           type: "success",
           position: "bottom",
-          text1: t("EditProfile.success"),
+          text1: t("Main.Success"),
           text2: t("EditProfile.profileUpdatedSuccess"),
         });
         Alert.alert(
-          t("EditProfile.success"),
+          t("Main.Success"),
           t("EditProfile.profileUpdatedSuccess"),
           [
             {
@@ -487,7 +487,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                       >
                         {district
                           ? (districtItems.find((d) => d.value === district)
-                              ?.label ?? district)
+                            ?.label ?? district)
                           : t("FixedAssets.selectDistrict")}
                       </Text>
                       <AntDesign name="down" size={13} color="#555" />
@@ -498,9 +498,8 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                 <View className="flex-1 items-center justify-center mt-10 mb-12">
                   <TouchableOpacity
                     onPress={handleSave}
-                    className={`bg-gray-800 rounded-3xl justify-center w-2/3 h-[50px] ${
-                      isLoading ? "opacity-50" : ""
-                    }`}
+                    className={`bg-gray-800 rounded-3xl justify-center w-2/3 h-[50px] ${isLoading ? "opacity-50" : ""
+                      }`}
                     disabled={isLoading}
                     style={{
                       shadowColor: "#000000",
@@ -514,7 +513,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                       <ActivityIndicator size="small" color="#fff" />
                     ) : (
                       <Text className="text-center text-white text-lg">
-                        {t("EditProfile.Save")}
+                        {t("Main.Save")}
                       </Text>
                     )}
                   </TouchableOpacity>
@@ -545,7 +544,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
         data={districtItems}
         selectedItems={district ? [district] : []}
         onSelect={handleDistrictSelect}
-        searchPlaceholder={t("Signup.TypeSomething")}
+        searchPlaceholder={t("Main.Search...")}
         searchKeys={["label", "districtName"]}
         multiSelect={false}
       />

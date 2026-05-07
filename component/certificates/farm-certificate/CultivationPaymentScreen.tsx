@@ -335,7 +335,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
 
         <View
           className="flex-row mb-6 justify-between items-center px-8"
-         
+
         >
           <Text className="text-lg">{t("Farms.Total")}</Text>
           <Text className="text-lg font-bold">{formattedCertificatePrice}</Text>
@@ -462,7 +462,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
             </View>
 
             <Text className="text-2xl font-bold text-gray-800 mb-2">
-              {t("Farms.Success")}
+              {t("Main.Success")}
             </Text>
             <Text className="text-center text-gray-600 mb-2">
               {t("Farms.Payment Success Message")}
@@ -473,7 +473,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
               onPress={handleModalClose}
             >
               <Text className="text-white text-base font-semibold">
-                {t("Farms.Continue")}
+                {t("Main.Continue")}
               </Text>
             </TouchableOpacity>
           </View>

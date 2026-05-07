@@ -189,7 +189,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
 
       setError(errorMessage);
       Alert.alert(t("Main.Error"), errorMessage, [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
     } finally {
       setLoading(false);
@@ -229,13 +229,13 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
   const validateForm = useCallback((): boolean => {
     if (!farmName?.trim()) {
       Alert.alert(t("Main.Sorry"), t("Farms.Please enter a farm name"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!district) {
       Alert.alert(t("Main.Sorry"), t("Farms.Please select a district"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return false;
     }
@@ -248,7 +248,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
       Alert.alert(
         t("Main.Sorry"),
         t("Farms.Please enter at least one extent value"),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return false;
     }
@@ -256,7 +256,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
       Alert.alert(
         t("Main.Sorry"),
         t("Farms.Please enter the number of staff"),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return false;
     }
@@ -266,7 +266,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
       Alert.alert(
         t("Main.Sorry"),
         t("Farms.Please enter a valid number of staff"),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return false;
     }
@@ -278,7 +278,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
         t("Farms.Staff count cannot be less than app user count", {
           appUserCount,
         }),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return false;
     }
@@ -329,9 +329,9 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
         },
       );
 
-      Alert.alert(t("Farms.Success"), t("Farms.Farm updated successfully"), [
+      Alert.alert(t("Main.Success"), t("Farms.Farm updated successfully"), [
         {
-          text: t("Farms.okButton"),
+          text: t("Main.OK"),
           onPress: () =>
             navigation.navigate("Main", {
               screen: "FarmDetailsScreen",
@@ -364,7 +364,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
       }
 
       Alert.alert(t("Main.Error"), errorMessage, [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
     } finally {
       setLoading(false);
@@ -660,7 +660,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
                       : { fontSize: 18 },
                 ]}
               >
-                {loading ? t("Farms.Updating...") : t("Farms.Update")}
+                {loading ? t("Farms.Updating...") : t("Main.Update")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -689,11 +689,10 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
                     accessibilityLabel={`Farm image ${index + 1}`}
                   >
                     <View
-                      className={`rounded-full border-2 ${
-                        tempSelectedImage === index
-                          ? "border-[#2AAD7A]"
-                          : "border-transparent"
-                      }`}
+                      className={`rounded-full border-2 ${tempSelectedImage === index
+                        ? "border-[#2AAD7A]"
+                        : "border-transparent"
+                        }`}
                       style={{
                         width: 70,
                         height: 70,
@@ -718,7 +717,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
                 onPress={handleImageModalCancel}
               >
                 <Text className="text-center text-gray-800 font-semibold">
-                  {t("Farms.Cancel")}
+                  {t("Main.Cancel")}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -726,7 +725,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
                 onPress={handleImageUpdate}
               >
                 <Text className="text-center text-white font-semibold">
-                  {t("Farms.Update")}
+                  {t("Main.Update")}
                 </Text>
               </TouchableOpacity>
             </View>

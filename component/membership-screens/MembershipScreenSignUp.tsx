@@ -279,7 +279,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
             }}
           >
             <Text className="text-white font-bold text-center text-base">
-              {t("Membership.Continue")}
+              {t("Main.Continue")}
             </Text>
           </TouchableOpacity>
         </View>

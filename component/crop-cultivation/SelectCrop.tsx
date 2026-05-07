@@ -95,7 +95,7 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
         <View className=" items-center">
           <Text className="text-2xl font-bold pb-10">{getCropName()}</Text>
           {selectedVariety?.image &&
-          typeof selectedVariety.image === "string" ? (
+            typeof selectedVariety.image === "string" ? (
             <Image
               source={{ uri: selectedVariety.image || "" }}
               className="rounded-[30px] h-14 w-14 mb-4"
@@ -134,7 +134,7 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
             elevation: 4,
           }}
         >
-          <Text className="text-white text-xl">{t("SelectCrop.Continue")}</Text>
+          <Text className="text-white text-xl">{t("Main.Continue")}</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>

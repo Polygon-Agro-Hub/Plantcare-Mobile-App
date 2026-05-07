@@ -260,19 +260,19 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
   const validateForm = (): boolean => {
     if (!firstName.trim()) {
       Alert.alert(t("Main.Sorry"), t("Farms.Please enter first name"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!lastName.trim()) {
       Alert.alert(t("Main.Sorry"), t("Farms.Please enter last name"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!phoneNumber.trim()) {
       Alert.alert(t("Main.Sorry"), t("Farms.Please enter phone number"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return false;
     }
@@ -283,36 +283,36 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
           : phoneNumber[0] !== "7"
             ? t("Farms.Phone number must start with 7")
             : t("Farms.Please enter a valid phone number");
-      Alert.alert(t("Main.Sorry"), msg, [{ text: t("Farms.okButton") }]);
+      Alert.alert(t("Main.Sorry"), msg, [{ text: t("Main.OK") }]);
       return false;
     }
     if (!selectedRole) {
       Alert.alert(t("Main.Sorry"), t("Farms.Please select a role"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!nic.trim()) {
       Alert.alert(t("Main.Sorry"), t("Farms.Please enter NIC"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!validateSriLankanNic(nic)) {
       Alert.alert(t("Main.Sorry"), t("Farms.Please enter a valid NIC"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (phoneError) {
       Alert.alert(t("Main.Sorry"), phoneError, [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (validationError) {
       Alert.alert(t("Main.Sorry"), validationError, [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return false;
     }
@@ -320,7 +320,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
       Alert.alert(
         t("Main.Sorry"),
         t("Farms.This NIC is already used by another staff member"),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return false;
     }
@@ -330,7 +330,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
   const fetchStaffMember = async () => {
     if (!staffMemberId) {
       Alert.alert(t("Main.Sorry"), t("Farms.Staff member ID is missing"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       setLoading(false);
       return;
@@ -347,7 +347,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
         Alert.alert(
           t("Main.Sorry"),
           t("Farms.No authentication token found"),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -368,7 +368,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
       Alert.alert(
         t("Main.Sorry"),
         t("Farms.Failed to fetch staff member data"),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
     } finally {
       setLoading(false);
@@ -431,11 +431,11 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
         },
       );
       Alert.alert(
-        t("Farms.Success"),
+        t("Main.Success"),
         t("Farms.Staff member has been updated successfully"),
         [
           {
-            text: t("Farms.OK"),
+            text: t("Main.OK"),
             onPress: () =>
               navigation.navigate("EditManagersScreen", {
                 staffMemberId,
@@ -457,7 +457,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
         errorMessage = t("Farms.Network error. Please check your connection.");
       }
       Alert.alert(t("Main.Sorry"), errorMessage, [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
     } finally {
       setIsSubmitting(false);
@@ -482,7 +482,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
         { headers: { Authorization: `Bearer ${token}` } },
       );
       Alert.alert(
-        t("Farms.Success"),
+        t("Main.Success"),
         t("Farms.Farm member deleted successfully"),
         [
           {
@@ -500,7 +500,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
       );
     } catch {
       Alert.alert(t("Main.Sorry"), t("Farms.Failed to delete staff member"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
     } finally {
       setLoading(false);
@@ -734,7 +734,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
               </View>
             ) : (
               <Text className="text-white text-lg font-semibold">
-                {t("Farms.Save")}
+                {t("Main.Save")}
               </Text>
             )}
           </TouchableOpacity>
@@ -803,7 +803,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
                 >
                   <View className="justify-center items-center">
                     <Text className="text-gray-700 text-lg">
-                      {t("Farms.No, Go Back")}
+                      {t("Main.Go Back")}
                     </Text>
                   </View>
                 </TouchableOpacity>

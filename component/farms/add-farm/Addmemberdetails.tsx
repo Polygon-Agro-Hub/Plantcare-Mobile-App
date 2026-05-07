@@ -411,7 +411,7 @@ const AddMemberDetails: React.FC = () => {
   useEffect(() => {
     if (submitSuccess && lastCreatedFarmId && !alertShownRef.current) {
       alertShownRef.current = true;
-      Alert.alert(t("Farms.Success"), t("Farms.Farm saved successfully!"), [
+      Alert.alert(t("Main.Success"), t("Farms.Farm saved successfully!"), [
         {
           text: t("Main.OK"),
           onPress: () => {
@@ -659,7 +659,7 @@ const AddMemberDetails: React.FC = () => {
           className="mt-4 bg-black py-2 px-6 rounded-full"
           onPress={() => navigation.goBack()}
         >
-          <Text className="text-white">{t("Farms.Go Back")}</Text>
+          <Text className="text-white">{t("Main.Go Back")}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -833,7 +833,7 @@ const AddMemberDetails: React.FC = () => {
                       onChangeText={(text) => handlePhoneChange(text, index)}
                       keyboardType="phone-pad"
                       maxLength={9}
-                      style={{  fontSize: 14, borderWidth: 0 }}
+                      style={{ fontSize: 14, borderWidth: 0 }}
                       underlineColorAndroid="transparent"
                       cursorColor="#141415ff"
                       editable={!isSubmitting}
@@ -906,19 +906,18 @@ const AddMemberDetails: React.FC = () => {
               disabled={isSubmitting}
             >
               <Text className="text-[#84868B] text-center font-semibold text-lg">
-                {t("Farms.Go Back")}
+                {t("Main.Go Back")}
               </Text>
             </TouchableOpacity>
           </View>
           <View className="mt-2 mb-[40%]">
             <TouchableOpacity
-              className={`py-3 mx-6 rounded-full ${
-                isSubmitting ||
+              className={`py-3 mx-6 rounded-full ${isSubmitting ||
                 Object.values(checkingNumber).includes(true) ||
                 Object.values(checkingNIC).includes(true)
-                  ? "bg-gray-400"
-                  : "bg-black"
-              }`}
+                ? "bg-gray-400"
+                : "bg-black"
+                }`}
               onPress={handleSaveFarm}
               disabled={
                 isSubmitting ||

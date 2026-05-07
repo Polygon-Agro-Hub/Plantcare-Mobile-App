@@ -471,7 +471,7 @@ const CropPaymentScreen: React.FC<CropPaymentScreenProps> = ({
             </View>
 
             <Text className="text-2xl font-bold text-gray-800 mb-2">
-              {t("Farms.Success")}
+              {t("Main.Success")}
             </Text>
             <Text className="text-center text-gray-600 mb-2">
               {t("Farms.Payment Success Message")}
@@ -482,7 +482,7 @@ const CropPaymentScreen: React.FC<CropPaymentScreenProps> = ({
               onPress={handleModalClose}
             >
               <Text className="text-white text-base font-semibold">
-                {t("Farms.Continue")}
+                {t("Main.Continue")}
               </Text>
             </TouchableOpacity>
           </View>

@@ -86,10 +86,10 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
     Alert.alert(
       t("PublicForum.removeImage") || "Remove Image",
       t("PublicForum.removeImageConfirm") ||
-        "Are you sure you want to remove this image?",
+      "Are you sure you want to remove this image?",
       [
         {
-          text: t("PublicForum.cancel") || "Cancel",
+          text: t("Main.Cancel") || "Cancel",
           style: "cancel",
         },
         {
@@ -108,7 +108,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
         if (token) {
           setAuthToken(token);
         }
-      } catch (error) {}
+      } catch (error) { }
     };
 
     fetchToken();
@@ -140,7 +140,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       Alert.alert(
         t("PublicForum.sorry"),
         t("PublicForum.fillAllRequiredFields") ||
-          "Please fill in both Title and Description fields",
+        "Please fill in both Title and Description fields",
         [{ text: t("Main.OK") }],
       );
       return;
@@ -185,7 +185,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
         },
       );
 
-      Alert.alert(t("PublicForum.success"), t("PublicForum.postSuccess"), [
+      Alert.alert(t("Main.Success"), t("PublicForum.postSuccess"), [
         {
           text: t("Main.OK"),
           onPress: () => {
@@ -218,7 +218,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       <Modal transparent={true} visible={loading} animationType="fade">
         <View className="flex-1 justify-center items-center bg-black/50">
           <ActivityIndicator size="large" color="#ffffff" />
-          <Text className="text-white mt-4">{t("CropCalender.Loading")}</Text>
+          <Text className="text-white mt-4">{t("Main.Loading...")}</Text>
         </View>
       </Modal>
     );

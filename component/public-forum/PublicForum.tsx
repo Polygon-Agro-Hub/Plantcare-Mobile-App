@@ -195,7 +195,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
         },
       );
       if (response.status === 200) {
-        Alert.alert(t("PublicForum.success"), t("PublicForum.postDeleted"), [
+        Alert.alert(t("Main.Success"), t("PublicForum.postDeleted"), [
           {
             text: t("Main.OK"),
           },
@@ -299,7 +299,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
       t("PublicForum.confirmDelete"),
       [
         {
-          text: t("PublicForum.cancel"),
+          text: t("Main.Cancel"),
           style: "cancel",
           onPress: () => setActiveMenuId(null),
         },
@@ -430,13 +430,13 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
             </Text>
             {((item.staffId !== null && item.staffId === userId) ||
               (item.staffId === null && item.userId === userId)) && (
-              <TouchableOpacity
-                onPress={() => toggleMenu(item.id)}
-                hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-              >
-                <Entypo name="dots-three-vertical" size={15} color="black" />
-              </TouchableOpacity>
-            )}
+                <TouchableOpacity
+                  onPress={() => toggleMenu(item.id)}
+                  hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+                >
+                  <Entypo name="dots-three-vertical" size={15} color="black" />
+                </TouchableOpacity>
+              )}
           </View>
         </View>
         <View className="border-t border-gray-200 " />
@@ -500,7 +500,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
                     postId: item.id,
                     own:
                       (item.staffId !== null && item.staffId === userId) ||
-                      (item.staffId === null && item.userId === userId)
+                        (item.staffId === null && item.userId === userId)
                         ? "1"
                         : "0",
                     userId: userId,
@@ -679,7 +679,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
           <Text className="text-gray-500 text-center mt-4 px-6">
             {searchText.trim() !== ""
               ? t("PublicForum.noSearchResults") ||
-                "No results found for your search"
+              "No results found for your search"
               : t("PublicForum.noDiscussions") || "No discussions available"}
           </Text>
         </View>

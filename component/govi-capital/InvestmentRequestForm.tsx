@@ -662,7 +662,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             }}
           >
             <Text className="text-gray-500 text-center font-medium text-lg">
-              {t("Govicapital.Cancel")}
+              {t("Main.Cancel")}
             </Text>
           </TouchableOpacity>
 
@@ -679,7 +679,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             }}
           >
             <Text className="text-white text-center font-medium text-lg">
-              {t("Govicapital.Continue")}
+              {t("Main.Continue")}
             </Text>
           </TouchableOpacity>
         </View>

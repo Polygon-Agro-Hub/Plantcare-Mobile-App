@@ -408,7 +408,7 @@ const EarnCertificate: React.FC = () => {
                         : { fontSize: 18 }
                   }
                 >
-                  {t("EarnCertificate.Go Back")}
+                  {t("Main.Go Back")}
                 </Text>
               </TouchableOpacity>
 
@@ -428,7 +428,7 @@ const EarnCertificate: React.FC = () => {
                         : { fontSize: 18 }
                   }
                 >
-                  {t("EarnCertificate.Continue")}
+                  {t("Main.Continue")}
                 </Text>
               </TouchableOpacity>
             </View>

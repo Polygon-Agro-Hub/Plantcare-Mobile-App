@@ -163,7 +163,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
         Alert.alert(
           t("Main.Error"),
           t("Farms.No authentication token found"),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -182,7 +182,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
         Alert.alert(
           t("Farms.No Assets Found"),
           t("Farms.There are no assets available for the selected category."),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
         setAssets([]);
       } else {
@@ -193,13 +193,13 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
         Alert.alert(
           t("Main.Error"),
           t("Farms.Farm assets not found. Please check the farm ID."),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
       } else {
         Alert.alert(
           t("Main.Error"),
           t("Farms.Failed to fetch assets. Please try again."),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
       }
       setAssets([]);
@@ -303,13 +303,13 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
 
     if (!numberOfUnits || !assetId || !category) {
       Alert.alert(t("PublicForum.sorry"), t("PublicForum.fillAllFields"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return;
     }
     if (isNaN(numUnits) || numUnits <= 0) {
       Alert.alert(t("Main.Error"), "Please enter a valid number of units", [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return;
     }
@@ -317,7 +317,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
       Alert.alert(
         t("CurrentAssets.sorry"),
         t("CurrentAssets.YouCannotRemove"),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -359,11 +359,11 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
 
       if (response.status === 200 || response.status === 204) {
         Alert.alert(
-          t("CurrentAssets.Success"),
+          t("Main.Success"),
           t("CurrentAssets.RemoveSuccess"),
           [
             {
-              text: t("CropCalender.OK"),
+              text: t("Main.OK"),
               onPress: () =>
                 navigation.navigate("Main", {
                   screen: "FarmCurrectAssets",

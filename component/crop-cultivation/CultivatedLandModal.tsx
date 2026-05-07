@@ -373,7 +373,7 @@ export default function CultivatedLandModal({
             }
 
             Alert.alert(
-              t("CropCalender.Success"),
+              t("Main.Success"),
               t("CropCalender.TaskSuccessMessage"),
               [{ text: t("Main.OK") }],
             );
@@ -478,7 +478,7 @@ export default function CultivatedLandModal({
       <Modal transparent={true} visible={visible} animationType="fade">
         <View className="flex-1 justify-center items-center bg-black/50">
           <ActivityIndicator size="large" color="#ffffff" />
-          <Text className="text-white mt-4">{t("CropCalender.Loading")}</Text>
+          <Text className="text-white mt-4">{t("Main.Loading...")}</Text>
         </View>
       </Modal>
     );
@@ -519,14 +519,12 @@ export default function CultivatedLandModal({
                 {Array.from({ length: requiredImages || 0 }).map((_, index) => (
                   <View key={index} className="flex-row items-center">
                     <View
-                      className={`w-8 h-8 rounded-full ${
-                        index < currentStep ? "bg-black" : "bg-gray-200"
-                      } justify-center items-center`}
+                      className={`w-8 h-8 rounded-full ${index < currentStep ? "bg-black" : "bg-gray-200"
+                        } justify-center items-center`}
                     >
                       <Text
-                        className={`font-semibold ${
-                          index < currentStep ? "text-white" : "text-black"
-                        }`}
+                        className={`font-semibold ${index < currentStep ? "text-white" : "text-black"
+                          }`}
                       >
                         {index + 1}
                       </Text>
@@ -596,9 +594,8 @@ export default function CultivatedLandModal({
                 )}
 
                 <TouchableOpacity
-                  className={`py-2 px-6 rounded-full ${
-                    isButtonEnabled ? "bg-black" : "bg-gray-400"
-                  }`}
+                  className={`py-2 px-6 rounded-full ${isButtonEnabled ? "bg-black" : "bg-gray-400"
+                    }`}
                   onPress={() => isButtonEnabled && uploadImage(capturedImage)}
                   disabled={!isButtonEnabled}
                 >

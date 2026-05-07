@@ -131,7 +131,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       Alert.alert(
         t("Main.Error"),
         t("OtpVerification.otpExpired") ||
-          "OTP has expired. Please resend a new OTP.",
+        "OTP has expired. Please resend a new OTP.",
         [{ text: t("Main.OK") }],
       );
       setDisabledVerify(false);
@@ -253,7 +253,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         setReferenceId(response.data.referenceId);
         setIsOtpExpired(false);
         Alert.alert(
-          t("OtpVerification.success"),
+          t("Main.Success"),
           t("OtpVerification.otpResent"),
           [{ text: t("Main.OK") }],
         );
@@ -360,9 +360,8 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
           <View className="mt-4">
             <TouchableOpacity
-              className={`mt-2 w-2/3 rounded-3xl mb-2 h-[50px] items-center justify-center ${
-                !isOtpValid || disabledVerify ? "bg-gray-500" : "bg-[#353535]"
-              }`}
+              className={`mt-2 w-2/3 rounded-3xl mb-2 h-[50px] items-center justify-center ${!isOtpValid || disabledVerify ? "bg-gray-500" : "bg-[#353535]"
+                }`}
               onPress={handleVerify}
               disabled={!isOtpValid || disabledVerify}
               style={{

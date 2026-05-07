@@ -131,7 +131,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
       Alert.alert(
         t("Main.Error"),
         t("OtpVerification.otpExpired") ||
-          "OTP has expired. Please resend a new OTP.",
+        "OTP has expired. Please resend a new OTP.",
         [{ text: t("Main.OK") }],
       );
       setDisabledVerify(false);
@@ -252,7 +252,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         setReferenceId(response.data.referenceId);
         setIsOtpExpired(false);
         Alert.alert(
-          t("OtpVerification.success"),
+          t("Main.Success"),
           t("OtpVerification.otpResent"),
           [{ text: t("Main.OK") }],
         );

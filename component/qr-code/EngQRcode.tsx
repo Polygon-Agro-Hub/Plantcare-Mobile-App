@@ -138,7 +138,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       const asset = await MediaLibrary.createAssetAsync(response.uri);
       await MediaLibrary.createAlbumAsync("Download", asset, false);
 
-      Alert.alert(t("QRcode.successTitle"), t("QRcode.savedToGallery"), [
+      Alert.alert(t("Main.Success"), t("QRcode.savedToGallery"), [
         { text: t("Main.OK") },
       ]);
     } catch (error) {

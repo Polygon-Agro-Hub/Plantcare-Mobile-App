@@ -131,7 +131,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
     if (!selectedCategory || !complain) {
       Alert.alert(
         t("ReportComplaint.sorry"),
-        t("ReportComplaint.fillAllFields"),
+        t("Main.PleaseFillAllFields"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -168,7 +168,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
       );
       if (response.data.status === "success") {
         Alert.alert(
-          t("ReportComplaint.success"),
+          t("Main.Success"),
           t("ReportComplaint.complaintSuccess"),
           [{ text: t("Main.OK") }],
         );
@@ -313,7 +313,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
             onSelect={(items) => {
               if (items.length > 0) setSelectedCategory(items[0]);
             }}
-            searchPlaceholder={t("Signup.TypeSomething")}
+            searchPlaceholder={t("Main.Search...")}
             multiSelect={false}
           />
         </>

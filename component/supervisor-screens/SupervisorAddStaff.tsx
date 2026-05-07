@@ -260,25 +260,25 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
   const validateForm = () => {
     if (!firstName.trim()) {
       Alert.alert(t("Main.Sorry"), t("Farms.Please enter first name"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!lastName.trim()) {
       Alert.alert(t("Main.Sorry"), t("Farms.Please enter last name"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!phoneNumber.trim()) {
       Alert.alert(t("Main.Sorry"), t("Farms.Please enter phone number"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!nic.trim()) {
       Alert.alert(t("Main.Sorry"), t("Farms.Please enter NIC"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return false;
     }
@@ -289,18 +289,18 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
           : phoneNumber[0] !== "7"
             ? t("Farms.Phone number must start with 7")
             : t("Farms.Please enter a valid phone number");
-      Alert.alert(t("Main.Sorry"), msg, [{ text: t("Farms.okButton") }]);
+      Alert.alert(t("Main.Sorry"), msg, [{ text: t("Main.OK") }]);
       return false;
     }
     if (phoneError) {
       Alert.alert(t("Main.Sorry"), phoneError, [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (validationError) {
       Alert.alert(t("Main.Sorry"), validationError, [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return false;
     }
@@ -308,13 +308,13 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
       Alert.alert(
         t("Main.Sorry"),
         t("Farms.Please enter a valid Sri Lankan NIC"),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return false;
     }
     if (nicDuplicateErrors) {
       Alert.alert(t("Main.Sorry"), nicDuplicateErrors, [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return false;
     }
@@ -346,9 +346,9 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
         },
       );
       Alert.alert(
-        t("Farms.Success"),
+        t("Main.Success"),
         t("Farms.Staff members has been added successfully!"),
-        [{ text: t("Farms.OK"), onPress: () => navigation.goBack() }],
+        [{ text: t("Main.OK"), onPress: () => navigation.goBack() }],
       );
     } catch (error: any) {
       let errorMessage = t(
@@ -367,7 +367,7 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
       } else if (error.request) {
         errorMessage = t("Farms.Network error. Please check your connection.");
       }
-      Alert.alert("Error", errorMessage, [{ text: t("Farms.okButton") }]);
+      Alert.alert("Error", errorMessage, [{ text: t("Main.OK") }]);
     } finally {
       setIsSubmitting(false);
     }
@@ -550,11 +550,10 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
         <View className="pt-10 pb-32 px-[15%]">
           <TouchableOpacity
             onPress={handleSave}
-            className={`${
-              isSubmitting || checkingNumber || checkingNIC
-                ? "bg-gray-400"
-                : "bg-black"
-            } rounded-full py-3 items-center justify-center`}
+            className={`${isSubmitting || checkingNumber || checkingNIC
+              ? "bg-gray-400"
+              : "bg-black"
+              } rounded-full py-3 items-center justify-center`}
             activeOpacity={0.8}
             disabled={isSubmitting || checkingNumber || checkingNIC}
           >
@@ -567,7 +566,7 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
               </View>
             ) : (
               <Text className="text-white text-lg font-semibold">
-                {t("Farms.Save")}
+                {t("Main.Save")}
               </Text>
             )}
           </TouchableOpacity>

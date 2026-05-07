@@ -350,7 +350,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
       Alert.alert(
         t("CurrentAssets.sorry"),
         t("CurrentAssets.This exact asset already exists."),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -405,7 +405,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          { text: t("Farms.okButton") },
+          { text: t("Main.OK") },
         ]);
         return;
       }
@@ -444,9 +444,9 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
       );
 
       Alert.alert(
-        t("CurrentAssets.success"),
+        t("Main.Success"),
         t("CurrentAssets.addAssetSuccess"),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       navigation.navigate("Main", {
         screen: "FarmCurrectAssets",
@@ -457,13 +457,13 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
         Alert.alert(
           t("CurrentAssets.sorry"),
           t("CurrentAssets.This exact asset already exists."),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
 
       Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
     }
   };
@@ -603,7 +603,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                 handleCategoryChange(val);
                 clearError("selectedCategory");
               }}
-              searchPlaceholder={t("Signup.TypeSomething")}
+              searchPlaceholder={t("Main.Search...")}
               showSearch={true}
               multiSelect={false}
             />
@@ -666,7 +666,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                   handleAssetChange(val);
                   clearError("selectedAsset");
                 }}
-                searchPlaceholder={t("Signup.TypeSomething")}
+                searchPlaceholder={t("Main.Search...")}
                 showSearch={true}
                 multiSelect={false}
               />
@@ -734,7 +734,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                     setBrand(items[0] ?? "");
                     clearError("brand");
                   }}
-                  searchPlaceholder={t("Signup.TypeSomething")}
+                  searchPlaceholder={t("Main.Search...")}
                   showSearch={true}
                   multiSelect={false}
                 />
@@ -815,9 +815,9 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             value={
               totalPrice
                 ? parseFloat(totalPrice).toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })
                 : ""
             }
             editable={false}
@@ -938,11 +938,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
           <View className="bg-[#F4F4F4] rounded-3xl h-[50px] p-3 items-center justify-center">
             {status ? (
               <Text
-                className={`font-bold text-lg ${
-                  status === t("CurrentAssets.expired")
-                    ? "text-red-500"
-                    : "text-green-500"
-                }`}
+                className={`font-bold text-lg ${status === t("CurrentAssets.expired")
+                  ? "text-red-500"
+                  : "text-green-500"
+                  }`}
               >
                 {status === t("CurrentAssets.expired")
                   ? t("CurrentAssets.expired")

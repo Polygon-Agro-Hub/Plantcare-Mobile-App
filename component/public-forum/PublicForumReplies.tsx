@@ -198,7 +198,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
       t("PublicForum.Are you sure you want to delete this comment?"),
       [
         {
-          text: t("PublicForum.cancel"),
+          text: t("Main.Cancel"),
           style: "cancel",
         },
         {
@@ -279,20 +279,18 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
 
             return (
               <View
-                className={`bg-white mb-4 rounded-lg shadow-sm border border-gray-300 ${
-                  isOwnComment ? "self-end ml-12" : "self-start mr-12"
-                }`}
+                className={`bg-white mb-4 rounded-lg shadow-sm border border-gray-300 ${isOwnComment ? "self-end ml-12" : "self-start mr-12"
+                  }`}
                 style={{ width: "90%" }}
               >
                 <View className="flex-row justify-between p-4">
                   <View className="flex-1 max-w-4/5">
                     <View>
                       <Text
-                        className={`text-base overflow-hidden  ${
-                          isOwnComment || isPostOwner
-                            ? "font-bold"
-                            : "font-bold text-gray-600"
-                        }`}
+                        className={`text-base overflow-hidden  ${isOwnComment || isPostOwner
+                          ? "font-bold"
+                          : "font-bold text-gray-600"
+                          }`}
                         numberOfLines={1}
                       >
                         {item.userName || "GoviCare"}{" "}
@@ -417,13 +415,12 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
 
             <TouchableOpacity
               onPress={handleAddComment}
-              className={`px-4 py-2 rounded-lg ${
-                newComment.trim() === "" || submitting
-                  ? "bg-gray-400"
-                  : editingCommentId
-                    ? "bg-green-500"
-                    : "bg-[#0075FF]"
-              }`}
+              className={`px-4 py-2 rounded-lg ${newComment.trim() === "" || submitting
+                ? "bg-gray-400"
+                : editingCommentId
+                  ? "bg-green-500"
+                  : "bg-[#0075FF]"
+                }`}
               disabled={newComment.trim() === "" || submitting}
               style={{
                 height: 40,
@@ -437,7 +434,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
               ) : (
                 <Text className="text-white">
                   {editingCommentId
-                    ? t("PublicForum.Update")
+                    ? t("Main.Update")
                     : t("PublicForum.send")}
                 </Text>
               )}

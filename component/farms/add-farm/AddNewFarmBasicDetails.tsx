@@ -163,37 +163,37 @@ const AddNewFarmBasicDetails: React.FC = () => {
   const handleContinue = () => {
     if (!farmName.trim()) {
       Alert.alert(t("Main.Error"), t("Farms.enterFarmName"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return;
     }
     if (!extentha.trim() && !extentac.trim() && !extentp.trim()) {
       Alert.alert(t("Main.Error"), t("Farms.enterFarmExtent"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return;
     }
     if (!district.trim()) {
       Alert.alert(t("Main.Error"), t("Farms.selectDistrict"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return;
     }
     if (!plotNo.trim()) {
       Alert.alert(t("Main.Error"), t("Farms.enterPlotNumber"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return;
     }
     if (!streetName.trim()) {
       Alert.alert(t("Main.Error"), t("Farms.enterStreetName"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return;
     }
     if (!city.trim()) {
       Alert.alert(t("Main.Error"), t("Farms.enterCityName"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return;
     }
@@ -450,7 +450,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
               }}
             >
               <Text className="text-white text-center font-semibold text-lg">
-                {t("Farms.Continue")}
+                {t("Main.Continue")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -505,7 +505,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                     className="text-center text-gray-800 font-semibold"
                     style={[{ fontSize: 16 }, getTextStyle(i18n.language)]}
                   >
-                    {t("Farms.Cancel")}
+                    {t("Main.Cancel")}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -516,7 +516,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                     className="text-center text-white font-semibold"
                     style={[{ fontSize: 14 }, getTextStyle(i18n.language)]}
                   >
-                    {t("Farms.Update")}
+                    {t("Main.Update")}
                   </Text>
                 </TouchableOpacity>
               </View>

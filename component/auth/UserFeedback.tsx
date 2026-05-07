@@ -164,7 +164,7 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
       if (response.ok) {
         await AsyncStorage.removeItem("userToken");
         await AsyncStorage.clear();
-        Alert.alert(t("BankDetails.success"), t("Feedback.successMessage"), [
+        Alert.alert(t("Main.Success"), t("Feedback.successMessage"), [
           {
             text: t("Main.OK"),
             onPress: () => {
@@ -255,11 +255,10 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
 
             <View className=" bottom-0 left-0 right-0  px-6 py-4 mb-8 ">
               <TouchableOpacity
-                className={`${
-                  selectedCount === 0
+                className={`${selectedCount === 0
                     ? "bg-gray-400 rounded-full py-3 w-full"
                     : "bg-black rounded-full py-3 w-full"
-                }`}
+                  }`}
                 disabled={selectedCount === 0}
                 onPress={handleDelete}
                 style={{

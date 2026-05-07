@@ -431,7 +431,7 @@ const FramcropCalenderwithcertificate: React.FC<
         Alert.alert(
           t("Main.Error"),
           t("Farms.No authentication token found"),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -463,7 +463,7 @@ const FramcropCalenderwithcertificate: React.FC<
             Alert.alert(
               t("Farms.Cannot Remove"),
               t("Farms.Completion cannot be removed after 1 hour."),
-              [{ text: t("Farms.OK") }],
+              [{ text: t("Main.OK") }],
             );
             return;
           }
@@ -473,9 +473,9 @@ const FramcropCalenderwithcertificate: React.FC<
           t("CropCalender.Confirm Remove"),
           t("CropCalender.Remove Completion Message"),
           [
-            { text: t("Farms.Cancel"), style: "cancel" },
+            { text: t("Main.Cancel"), style: "cancel" },
             {
-              text: t("Farms.okButton"),
+              text: t("Main.OK"),
               onPress: async () => {
                 await handleRemoveCompletion(item);
               },
@@ -517,11 +517,11 @@ const FramcropCalenderwithcertificate: React.FC<
         const updatedItems = questionnaireItems.map((prevItem) =>
           prevItem.id === item.id
             ? {
-                ...prevItem,
-                tickResult: newTickResult === "1" ? 1 : 0,
-                doneDate:
-                  newTickResult === "1" ? new Date().toISOString() : null,
-              }
+              ...prevItem,
+              tickResult: newTickResult === "1" ? 1 : 0,
+              doneDate:
+                newTickResult === "1" ? new Date().toISOString() : null,
+            }
             : prevItem,
         );
 
@@ -538,16 +538,16 @@ const FramcropCalenderwithcertificate: React.FC<
 
         if (newTickResult === "1") {
           Alert.alert(
-            t("Farms.Success"),
+            t("Main.Success"),
             t("CropCalender.Certificate task completed successfully"),
-            [{ text: t("Farms.okButton") }],
+            [{ text: t("Main.OK") }],
           );
         }
       }
     } catch (error) {
       console.error("Error updating questionnaire item:", error);
       Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
     }
   };
@@ -577,11 +577,11 @@ const FramcropCalenderwithcertificate: React.FC<
         const updatedItems = questionnaireItems.map((prevItem) =>
           prevItem.id === item.id
             ? {
-                ...prevItem,
-                uploadImage: null,
-                tickResult: null,
-                doneDate: null,
-              }
+              ...prevItem,
+              uploadImage: null,
+              tickResult: null,
+              doneDate: null,
+            }
             : prevItem,
         );
 
@@ -600,7 +600,7 @@ const FramcropCalenderwithcertificate: React.FC<
         setIsCalendarExpanded(false);
 
         Alert.alert(
-          t("Farms.Success"),
+          t("Main.Success"),
           t("Farms.Completion removed successfully"),
         );
       } else {
@@ -684,10 +684,10 @@ const FramcropCalenderwithcertificate: React.FC<
         const updatedItems = questionnaireItems.map((prevItem) =>
           prevItem.id === selectedQuestion.id
             ? {
-                ...prevItem,
-                uploadImage: response.data.imageUrl,
-                doneDate: new Date().toISOString(),
-              }
+              ...prevItem,
+              uploadImage: response.data.imageUrl,
+              doneDate: new Date().toISOString(),
+            }
             : prevItem,
         );
 
@@ -703,9 +703,9 @@ const FramcropCalenderwithcertificate: React.FC<
         });
 
         Alert.alert(
-          t("Farms.Success"),
+          t("Main.Success"),
           t("CropCalender.Certificate task completed successfully"),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
 
         setShowCameraModal(false);
@@ -725,7 +725,7 @@ const FramcropCalenderwithcertificate: React.FC<
       }
 
       Alert.alert(t("Main.Error"), errorMessage, [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
     } finally {
       setUploadingImageForItem(null);
@@ -883,7 +883,7 @@ const FramcropCalenderwithcertificate: React.FC<
       }, 300);
     } catch (error) {
       Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       setTimeout(() => {
         setLoading(false);
@@ -942,7 +942,7 @@ const FramcropCalenderwithcertificate: React.FC<
       setTimestamps(new Array(response.data.length).fill(""));
     } catch (error) {
       Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
     }
   };
@@ -1067,7 +1067,7 @@ const FramcropCalenderwithcertificate: React.FC<
         )}`;
 
         Alert.alert(t("CropCalender.sorry"), updateMessage, [
-          { text: t("Farms.okButton") },
+          { text: t("Main.OK") },
         ]);
         return;
       }
@@ -1156,18 +1156,18 @@ const FramcropCalenderwithcertificate: React.FC<
         Alert.alert(
           t("CropCalender.sorry"),
           t("CropCalender.cannotChangeStatus"),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
       } else if (
         error.response &&
         error.response.data.message.includes("You need to wait 6 hours")
       ) {
         Alert.alert(t("CropCalender.sorry"), updateMessage, [
-          { text: t("Farms.okButton") },
+          { text: t("Main.OK") },
         ]);
       } else {
         Alert.alert(t("CropCalender.sorry"), updateMessage, [
-          { text: t("Farms.okButton") },
+          { text: t("Main.OK") },
         ]);
       }
     }
@@ -1278,13 +1278,13 @@ const FramcropCalenderwithcertificate: React.FC<
 
   async function askForPermissions() {
     if (!Notifications) return false;
-const { status } = await Notifications.requestPermissionsAsync();
+    const { status } = await Notifications.requestPermissionsAsync();
     return status === "granted";
   }
 
   async function cancelScheduledNotification() {
     if (!Notifications) return;
-const storedNotificationId = await AsyncStorage.getItem(
+    const storedNotificationId = await AsyncStorage.getItem(
       "currentNotificationId",
     );
     if (storedNotificationId) {
@@ -1297,7 +1297,7 @@ const storedNotificationId = await AsyncStorage.getItem(
 
   async function scheduleDailyNotification() {
     if (!Notifications) return;
-try {
+    try {
       const hasPermission = await askForPermissions();
       if (!hasPermission) {
         return;
@@ -1360,7 +1360,7 @@ try {
 
   async function registerForPushNotificationsAsync() {
     if (!Notifications) return undefined;
-let token;
+    let token;
 
     if (Platform.OS === "android") {
       await Notifications.setNotificationChannelAsync("default", {
@@ -1452,7 +1452,7 @@ let token;
         Alert.alert(
           t("Main.Error"),
           t("Farms.Unable to fetch location after multiple attempts"),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
         setLoading(false);
         return;
@@ -1517,7 +1517,7 @@ let token;
 
       if (!crop) {
         Alert.alert(t("Main.Error"), t("Farms.Task data not found"), [
-          { text: t("Farms.okButton") },
+          { text: t("Main.OK") },
         ]);
         return;
       }
@@ -1530,7 +1530,7 @@ let token;
         Alert.alert(
           t("Main.Error"),
           t("Farms.No authentication token found"),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
         setLoading(false);
         return;
@@ -1569,7 +1569,7 @@ let token;
           t("CropCalender.No Images Message", { taskIndex: crop.taskIndex }),
           [
             {
-              text: t("CropCalender.OK"),
+              text: t("Main.OK"),
               style: "default",
             },
           ],
@@ -1600,7 +1600,7 @@ let token;
 
       Alert.alert(errorTitle, errorMessage, [
         {
-          text: t("CropCalender.OK"),
+          text: t("Main.OK"),
           style: "default",
         },
       ]);
@@ -1698,7 +1698,7 @@ let token;
               className="bg-gray-900 rounded-xl py-3"
             >
               <Text className="text-white text-center font-medium text-base">
-                {t("CropCalender.OK")}
+                {t("Main.OK")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -1729,25 +1729,25 @@ let token;
                 ? t("CropCalender.CheckingValidity")
                 : certificateData
                   ? (() => {
-                      const remainingTime = calculateRemainingMonths(
-                        certificateData.expireDate,
-                      );
+                    const remainingTime = calculateRemainingMonths(
+                      certificateData.expireDate,
+                    );
 
-                      if (
-                        remainingTime.months === 0 &&
-                        remainingTime.days === 0
-                      ) {
-                        return t("CropCalender.CertificateExpired");
-                      } else if (remainingTime.months === 0) {
-                        return `${t("Farms.Valid for next")} ${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.day") : t("Farms.days")}`;
-                      } else if (remainingTime.days === 0) {
-                        return `${t("Farms.Valid for next")} ${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.month") : t("Farms.months")}`;
-                      } else {
-                        const monthText = `${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.month") : t("Farms.months")}`;
-                        const dayText = `${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.day") : t("Farms.days")}`;
-                        return `${t("Farms.Valid for next")} ${monthText} ${dayText}`;
-                      }
-                    })()
+                    if (
+                      remainingTime.months === 0 &&
+                      remainingTime.days === 0
+                    ) {
+                      return t("CropCalender.CertificateExpired");
+                    } else if (remainingTime.months === 0) {
+                      return `${t("Farms.Valid for next")} ${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.day") : t("Farms.days")}`;
+                    } else if (remainingTime.days === 0) {
+                      return `${t("Farms.Valid for next")} ${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.month") : t("Farms.months")}`;
+                    } else {
+                      const monthText = `${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.month") : t("Farms.months")}`;
+                      const dayText = `${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.day") : t("Farms.days")}`;
+                      return `${t("Farms.Valid for next")} ${monthText} ${dayText}`;
+                    }
+                  })()
                   : t("CropCalender.NoActiveCertificate")}
             </Text>
           </View>
@@ -1793,11 +1793,10 @@ let token;
               </View>
               <View className="ml-5 mb-4">
                 <Text
-                  className={`ml-2 font-medium text-sm ${
-                    areCertificationTasksComplete
-                      ? "text-green-700"
-                      : "text-red-700"
-                  }`}
+                  className={`ml-2 font-medium text-sm ${areCertificationTasksComplete
+                    ? "text-green-700"
+                    : "text-red-700"
+                    }`}
                 >
                   {areCertificationTasksComplete
                     ? t("CropCalender.All Completed")
@@ -1824,11 +1823,10 @@ let token;
                     return (
                       <View
                         key={item.id}
-                        className={`mb-3 rounded-2xl shadow-sm border ${
-                          isPhotoProofCompleted
-                            ? "bg-[#4B5563CC] border-gray-200"
-                            : "bg-white border-gray-200"
-                        }`}
+                        className={`mb-3 rounded-2xl shadow-sm border ${isPhotoProofCompleted
+                          ? "bg-[#4B5563CC] border-gray-200"
+                          : "bg-white border-gray-200"
+                          }`}
                         style={isCompleted && hasImage ? { opacity: 0.7 } : {}}
                       >
                         {isCompleted && hasImage && (
@@ -1885,11 +1883,10 @@ let token;
                           <View className="flex-row items-start justify-between mb-3">
                             <View className="flex-1">
                               <Text
-                                className={`font-semibold text-base ${
-                                  isCompleted
-                                    ? "text-gray-600"
-                                    : "text-gray-900"
-                                }`}
+                                className={`font-semibold text-base ${isCompleted
+                                  ? "text-gray-600"
+                                  : "text-gray-900"
+                                  }`}
                               >
                                 {language === "si"
                                   ? item.qSinhala
@@ -2034,11 +2031,10 @@ let token;
                   return (
                     <View
                       key={index}
-                      className={`mb-3 rounded-2xl shadow-sm border ${
-                        isCompleted
-                          ? "bg-[#4B5563] border-gray-200"
-                          : "bg-white border-gray-100"
-                      }`}
+                      className={`mb-3 rounded-2xl shadow-sm border ${isCompleted
+                        ? "bg-[#4B5563] border-gray-200"
+                        : "bg-white border-gray-100"
+                        }`}
                     >
                       {isCompleted && hasImages && (
                         <View
@@ -2079,9 +2075,8 @@ let token;
                               {crop.startingDate}
                             </Text>
                             <Text
-                              className={`font-semibold text-base ${
-                                isCompleted ? "text-white" : "text-gray-900"
-                              }`}
+                              className={`font-semibold text-base ${isCompleted ? "text-white" : "text-gray-900"
+                                }`}
                             >
                               {language === "si"
                                 ? crop.taskSinhala
@@ -2156,9 +2151,8 @@ let token;
                         </View>
 
                         <Text
-                          className={`text-sm leading-5 mb-3 ${
-                            isCompleted ? "text-gray-300" : "text-gray-600"
-                          }`}
+                          className={`text-sm leading-5 mb-3 ${isCompleted ? "text-gray-300" : "text-gray-600"
+                            }`}
                         >
                           {language === "si"
                             ? crop.taskDescriptionSinhala
@@ -2174,9 +2168,8 @@ let token;
                                 crop.imageLink &&
                                 Linking.openURL(crop.imageLink)
                               }
-                              className={`rounded-xl p-3 ${
-                                isCompleted ? "bg-gray-700" : "bg-gray-900"
-                              }`}
+                              className={`rounded-xl p-3 ${isCompleted ? "bg-gray-700" : "bg-gray-900"
+                                }`}
                             >
                               <Text className="text-white text-center font-medium text-sm">
                                 {t("CropCalender.viewImage")}
@@ -2206,9 +2199,8 @@ let token;
                                     Linking.openURL(crop.videoLinkTamil);
                                   }
                                 }}
-                                className={`rounded-xl p-3 ${
-                                  isCompleted ? "bg-gray-700" : "bg-gray-900"
-                                }`}
+                                className={`rounded-xl p-3 ${isCompleted ? "bg-gray-700" : "bg-gray-900"
+                                  }`}
                                 style={{ marginTop: crop.imageLink ? 8 : 0 }}
                               >
                                 <Text className="text-white text-center font-medium text-sm">
@@ -2292,7 +2284,7 @@ let token;
               }}
               className="mt-4"
             >
-              <Text className="text-gray-400 text-sm">{t("Farms.Cancel")}</Text>
+              <Text className="text-gray-400 text-sm">{t("Main.Cancel")}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -2378,7 +2370,7 @@ let token;
                 className="mt-4"
               >
                 <Text className="text-gray-400 text-sm">
-                  {t("Farms.Cancel")}
+                  {t("Main.Cancel")}
                 </Text>
               </TouchableOpacity>
             </View>

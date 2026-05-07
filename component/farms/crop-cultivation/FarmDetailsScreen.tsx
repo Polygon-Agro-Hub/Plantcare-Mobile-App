@@ -95,9 +95,8 @@ const CropCard: React.FC<CropCardProps> = ({
       }}
     >
       <View
-        className={`bg-white rounded-lg p-4 border-2 ${
-          isBlocked ? "border-[#EFEFEF]" : "border-[#EFEFEF]"
-        } flex-row items-center justify-between relative`}
+        className={`bg-white rounded-lg p-4 border-2 ${isBlocked ? "border-[#EFEFEF]" : "border-[#EFEFEF]"
+          } flex-row items-center justify-between relative`}
         style={{
           shadowColor: "#000",
           shadowOffset: { width: 0, height: 2 },
@@ -749,12 +748,12 @@ const FarmDetailsScreen = () => {
       dispatch(resetFarm());
       setPageLoading(false);
       navigation.navigate("Main", { screen: "Dashboard" });
-      Alert.alert(t("Farms.Success"), t("Farms.Farm deleted successfully"), [
+      Alert.alert(t("Main.Success"), t("Farms.Farm deleted successfully"), [
         { text: t("Main.OK") },
       ]);
     } catch {
       Alert.alert(t("Main.Sorry"), t("Farms.Failed to delete farm"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       setPageLoading(false);
     }
@@ -1055,18 +1054,16 @@ const FarmDetailsScreen = () => {
                           }
                           let validityText = t("Farms.Valid for next") + " ";
                           if (remainingTime.months > 0)
-                            validityText += `${remainingTime.months} ${
-                              remainingTime.months === 1
-                                ? t("Farms.month")
-                                : t("Farms.months")
-                            }`;
+                            validityText += `${remainingTime.months} ${remainingTime.months === 1
+                              ? t("Farms.month")
+                              : t("Farms.months")
+                              }`;
                           if (remainingTime.days > 0) {
                             if (remainingTime.months > 0) validityText += " ";
-                            validityText += `${remainingTime.days} ${
-                              remainingTime.days === 1
-                                ? t("Farms.day")
-                                : t("Farms.days")
-                            }`;
+                            validityText += `${remainingTime.days} ${remainingTime.days === 1
+                              ? t("Farms.day")
+                              : t("Farms.days")
+                              }`;
                           }
                           return (
                             <Text className="text-gray-600 text-sm mt-1">
@@ -1075,11 +1072,10 @@ const FarmDetailsScreen = () => {
                           );
                         })()}
                         <Text
-                          className={`text-sm font-medium mt-1 ${
-                            certificate.isAllCompleted
-                              ? "text-[#00A896]"
-                              : "text-red-500"
-                          }`}
+                          className={`text-sm font-medium mt-1 ${certificate.isAllCompleted
+                            ? "text-[#00A896]"
+                            : "text-red-500"
+                            }`}
                         >
                           {certificate.isAllCompleted
                             ? t("Farms.All Completed")
@@ -1159,7 +1155,7 @@ const FarmDetailsScreen = () => {
               Alert.alert(
                 t("Main.Sorry"),
                 t("Farms.You only have 3 free crop enrollments for now"),
-                [{ text: t("Farms.okButton") }],
+                [{ text: t("Main.OK") }],
               );
               return;
             }
@@ -1207,7 +1203,7 @@ const FarmDetailsScreen = () => {
               className="bg-gray-900 rounded-xl py-3"
             >
               <Text className="text-white text-center font-medium text-base">
-                {t("CropCalender.OK")}
+                {t("Main.OK")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -1284,7 +1280,7 @@ const FarmDetailsScreen = () => {
               >
                 <View className="justify-center items-center">
                   <Text className="text-gray-700">
-                    {t("Farms.No, Go Back")}
+                    {t("Main.Go Back")}
                   </Text>
                 </View>
               </TouchableOpacity>

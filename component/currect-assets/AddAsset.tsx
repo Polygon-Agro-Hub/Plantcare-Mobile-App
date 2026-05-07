@@ -417,7 +417,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       Alert.alert(
         t("CurrentAssets.sorry"),
         t("CurrentAssets.This exact asset already exists."),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -542,7 +542,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       );
 
       Alert.alert(
-        t("CurrentAssets.success"),
+        t("Main.Success"),
         t("CurrentAssets.addAssetSuccess"),
         [{ text: t("Main.OK") }],
       );
@@ -555,7 +555,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           t(
             "CurrentAssets.This exact asset already exists. You cannot add the same asset with the same brand, batch number, volume, and unit.",
           ),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
         scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
         return;
@@ -894,9 +894,9 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             value={
               totalPrice
                 ? parseFloat(totalPrice).toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })
                 : ""
             }
             editable={false}
@@ -1027,11 +1027,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           <View className="bg-[#F4F4F4] rounded-3xl h-[50px] p-3 items-center justify-center">
             {status ? (
               <Text
-                className={`font-bold ${
-                  status === t("CurrentAssets.expired")
-                    ? "text-red-500"
-                    : "text-green-500"
-                }`}
+                className={`font-bold ${status === t("CurrentAssets.expired")
+                  ? "text-red-500"
+                  : "text-green-500"
+                  }`}
               >
                 {status === t("CurrentAssets.expired")
                   ? t("CurrentAssets.expired")
@@ -1072,7 +1071,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           setSelectedFarm(items[0] ?? "");
           clearError("selectedFarm");
         }}
-        searchPlaceholder={t("Signup.TypeSomething")}
+        searchPlaceholder={t("Main.Search...")}
       />
 
       <GlobalSearchModal
@@ -1086,7 +1085,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           handleCategoryChange(val);
           clearError("selectedCategory");
         }}
-        searchPlaceholder={t("Signup.TypeSomething")}
+        searchPlaceholder={t("Main.Search...")}
       />
 
       <GlobalSearchModal
@@ -1100,7 +1099,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           handleAssetChange(val);
           clearError("selectedAsset");
         }}
-        searchPlaceholder={t("Signup.TypeSomething")}
+        searchPlaceholder={t("Main.Search...")}
       />
 
       <GlobalSearchModal
@@ -1113,7 +1112,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           setBrand(items[0] ?? "");
           clearError("brand");
         }}
-        searchPlaceholder={t("Signup.TypeSomething")}
+        searchPlaceholder={t("Main.Search...")}
       />
 
       <GlobalSearchModal

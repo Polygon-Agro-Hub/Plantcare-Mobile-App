@@ -164,7 +164,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
         Alert.alert(
           t("Farms.No Assets Found"),
           t("Farms.There are no assets available for the selected category."),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
       } else {
         setAssets(fetchedAssets);
@@ -334,7 +334,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
 
       if (response.status === 200 || response.status === 204) {
         Alert.alert(
-          t("CurrentAssets.Success"),
+          t("Main.Success"),
           t("CurrentAssets.RemoveSuccess"),
           [
             {

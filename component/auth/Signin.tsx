@@ -65,7 +65,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
     const regex = /^[1-9][0-9]{8}$/;
 
     if (!regex.test(localNumber)) {
-      setError(t("Signup.EnterValidMobile"));
+      setError(t("SignUp.EnterValidMobile"));
       setIsButtonDisabled(true);
       setIsValid(false);
     } else {
@@ -180,7 +180,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
             setIsButtonDisabled(false);
             setIsLoading(false);
           } catch (error) {
-            Alert.alert(t("Main.Error"), t("Signup.otpSendFailed"), [
+            Alert.alert(t("Main.Error"), t("SignUp.otpSendFailed"), [
               {
                 text: t("Main.OK"),
                 onPress: () => navigation.navigate("Signin"),
@@ -321,7 +321,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                   >
                     <TextInput
                       className="flex-1 px-4"
-                      placeholder={t("Signup.PhoneNumber")}
+                      placeholder={t("SignUp.PhoneNumber")}
                       value={phonenumber}
                       onChangeText={handlePhoneNumberChange}
                       keyboardType="phone-pad"

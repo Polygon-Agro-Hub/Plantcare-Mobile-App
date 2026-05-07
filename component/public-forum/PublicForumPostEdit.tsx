@@ -155,7 +155,7 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
 
       if (response.status === 200) {
         Alert.alert(
-          t("PublicForum.success"),
+          t("Main.Success"),
           t("PublicForum.Post updated successfully"),
           [
             {
@@ -191,7 +191,7 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
       <Modal transparent={true} visible={loading} animationType="fade">
         <View className="flex-1 justify-center items-center bg-black/50">
           <ActivityIndicator size="large" color="#ffffff" />
-          <Text className="text-white mt-4">{t("CropCalender.Loading")}</Text>
+          <Text className="text-white mt-4">{t("Main.Loading...")}</Text>
         </View>
       </Modal>
     );
@@ -282,7 +282,7 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
               }}
             >
               <Text className="text-white text-lg">
-                {t("PublicForum.update")}
+                {t("Main.Update")}
               </Text>
             </TouchableOpacity>
           </View>

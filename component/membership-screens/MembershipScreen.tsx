@@ -296,7 +296,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
 
           <View className="justify-center items-center">
             <TouchableOpacity
-                className={`rounded-3xl  w-2/3 h-[50px] mt-6 mb-3 bg-[#353535] shadow-lg justify-center items-center`}
+              className={`rounded-3xl  w-2/3 h-[50px] mt-6 mb-3 bg-[#353535] shadow-lg justify-center items-center`}
               onPress={async () => {
                 navigation.navigate("BankDetailsScreen" as any);
               }}
@@ -309,7 +309,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
               }}
             >
               <Text className="text-white font-bold text-center">
-                {t("Membership.Continue")}
+                {t("Main.Continue")}
               </Text>
             </TouchableOpacity>
           </View>

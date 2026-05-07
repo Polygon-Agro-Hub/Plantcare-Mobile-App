@@ -95,7 +95,7 @@ const DeleteFarmer: React.FC<DeleteFarmerProps> = ({ navigation }) => {
               }}
             >
               <Text className="text-center text-gray-700 text-base font-semibold">
-                {t("DeleteFarmer.cancelButton")}
+                {t("Main.Cancel")}
               </Text>
             </TouchableOpacity>
           </View>

@@ -166,7 +166,7 @@ const AddNewFarmSecondDetails = () => {
 
   React.useEffect(() => {
     if (submitSuccess) {
-      Alert.alert(t("Farms.Success"), t("Farms.Farm saved successfully!"), [
+      Alert.alert(t("Main.Success"), t("Farms.Farm saved successfully!"), [
         {
           text: t("Main.OK"),
           onPress: () => {
@@ -183,7 +183,7 @@ const AddNewFarmSecondDetails = () => {
     if (submitError) {
       Alert.alert("Error", submitError, [
         {
-          text: t("Farms.okButton"),
+          text: t("Main.OK"),
           onPress: () => dispatch(clearSubmitState()),
         },
       ]);
@@ -197,7 +197,7 @@ const AddNewFarmSecondDetails = () => {
       Alert.alert(
         t("Main.Sorry"),
         t("Farms.Missing farm details. Please go back and complete all steps."),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -221,7 +221,7 @@ const AddNewFarmSecondDetails = () => {
       Alert.alert(
         t("Main.Sorry"),
         t("Farms.Please enter the number of staff"),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -229,7 +229,7 @@ const AddNewFarmSecondDetails = () => {
       Alert.alert(
         t("Main.Sorry"),
         t("Farms.Please enter the number of login credentials needed"),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -241,7 +241,7 @@ const AddNewFarmSecondDetails = () => {
       Alert.alert(
         t("Main.Sorry"),
         t("Farms.Login credentials cannot exceed the total number of staff"),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -250,7 +250,7 @@ const AddNewFarmSecondDetails = () => {
       Alert.alert(
         t("Main.Sorry"),
         t("Farms.Staff numbers cannot be negative"),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -270,7 +270,7 @@ const AddNewFarmSecondDetails = () => {
         ),
         [
           {
-            text: t("Farms.Cancel"),
+            text: t("Main.Cancel"),
             style: "cancel",
           },
           {
@@ -290,7 +290,7 @@ const AddNewFarmSecondDetails = () => {
         ),
         [
           {
-            text: t("Farms.Cancel"),
+            text: t("Main.Cancel"),
             style: "cancel",
           },
           {
@@ -527,7 +527,7 @@ const AddNewFarmSecondDetails = () => {
                       : { fontSize: 16 },
                 ]}
               >
-                {t("Farms.Go Back")}
+                {t("Main.Go Back")}
               </Text>
             </TouchableOpacity>
           </View>

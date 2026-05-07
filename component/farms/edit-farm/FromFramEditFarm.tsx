@@ -178,7 +178,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
 
       setError(errorMessage);
       Alert.alert(t("Main.Error"), errorMessage, [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
     } finally {
       setLoading(false);
@@ -234,14 +234,14 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
   const validateForm = useCallback((): boolean => {
     if (!farmName?.trim()) {
       Alert.alert(t("Main.Sorry"), t("Farms.Please enter a farm name"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return false;
     }
 
     if (!district) {
       Alert.alert(t("Main.Sorry"), t("Farms.Please select a district"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return false;
     }
@@ -255,7 +255,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
       Alert.alert(
         t("Main.Sorry"),
         t("Farms.Please enter at least one extent value"),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return false;
     }
@@ -264,7 +264,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
       Alert.alert(
         t("Main.Sorry"),
         t("Farms.Please enter the number of staff"),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return false;
     }
@@ -274,7 +274,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
       Alert.alert(
         t("Main.Sorry"),
         t("Farms.Please enter a valid number of staff"),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return false;
     }
@@ -286,7 +286,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
         t("Farms.Staff count cannot be less than app user count", {
           appUserCount,
         }),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return false;
     }
@@ -419,8 +419,8 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
         },
       );
 
-      Alert.alert(t("Farms.Success"), t("Farms.Farm updated successfully"), [
-        { text: t("Farms.okButton"), onPress: () => navigation.goBack() },
+      Alert.alert(t("Main.Success"), t("Farms.Farm updated successfully"), [
+        { text: t("Main.OK"), onPress: () => navigation.goBack() },
       ]);
     } catch (err: any) {
       console.error("Error updating farm:", err);
@@ -463,7 +463,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
       }
 
       Alert.alert(t("Main.Error"), errorMessage, [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
     } finally {
       setLoading(false);
@@ -488,7 +488,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
 
   if (loading) {
     return (
-      <LoadingPage fullScreen  />
+      <LoadingPage fullScreen />
     );
   }
 
@@ -736,7 +736,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
                       : { fontSize: 17 },
                 ]}
               >
-                {loading ? t("Farms.Updating...") : t("Farms.Update")}
+                {loading ? t("Farms.Updating...") : t("Main.Update")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -781,11 +781,10 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
                     accessibilityLabel={`Farm image ${index + 1}`}
                   >
                     <View
-                      className={`rounded-full border-2 ${
-                        tempSelectedImage === index
-                          ? "border-[#2AAD7A]"
-                          : "border-transparent"
-                      }`}
+                      className={`rounded-full border-2 ${tempSelectedImage === index
+                        ? "border-[#2AAD7A]"
+                        : "border-transparent"
+                        }`}
                       style={{
                         width: 70,
                         height: 70,
@@ -810,7 +809,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
                 onPress={handleModalCancel}
               >
                 <Text className="text-center text-gray-800 font-semibold">
-                  {t("Farms.Cancel")}
+                  {t("Main.Cancel")}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -818,7 +817,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
                 onPress={handleImageUpdate}
               >
                 <Text className="text-center text-white font-semibold">
-                  {t("Farms.Update")}
+                  {t("Main.Update")}
                 </Text>
               </TouchableOpacity>
             </View>

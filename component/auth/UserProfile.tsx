@@ -134,7 +134,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
       await AsyncStorage.removeItem("nic");
       dispatch(setUserPersonalData({}));
       navigation.navigate("Signin");
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const handleEditClick = () => {
@@ -163,20 +163,20 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
         HanldeAsynStorage("si");
         setIsLoading(false);
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const LanguageSelect = async (language: string) => {
     try {
       await AsyncStorage.setItem("@user_language", language);
       changeLanguage(language);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   if (isLoading) {
     return (
       <View className="flex-1 bg-white justify-center items-center">
-        <Text className="text-lg">{t("CropCalender.Loading")}</Text>
+        <Text className="text-lg">{t("Main.Loading...")}</Text>
       </View>
     );
   }
@@ -211,7 +211,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
                 </Text>
               ) : (
                 <Text className="text-lg mb-1">
-                  {t("CropCalender.Loading")}
+                  {t("Main.Loading...")}
                 </Text>
               )}
               {profile && (
@@ -253,16 +253,14 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
                   <TouchableOpacity
                     key={language}
                     onPress={() => handleLanguageSelect(language)}
-                    className={`flex-row items-center py-2 px-4 rounded-lg my-1 ${
-                      selectedLanguage === language ? "bg-[#E6FFFB]" : ""
-                    }`}
+                    className={`flex-row items-center py-2 px-4 rounded-lg my-1 ${selectedLanguage === language ? "bg-[#E6FFFB]" : ""
+                      }`}
                   >
                     <Text
-                      className={`text-base ${
-                        selectedLanguage === language
-                          ? "text-black"
-                          : "text-[#434343]"
-                      }`}
+                      className={`text-base ${selectedLanguage === language
+                        ? "text-black"
+                        : "text-[#434343]"
+                        }`}
                     >
                       {displayLanguage}
                     </Text>
@@ -324,16 +322,14 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
                 <TouchableOpacity
                   key={complaint}
                   onPress={() => handleComplaintSelect(complaint)}
-                  className={`flex-row items-center py-2 px-4 rounded-lg my-1 ${
-                    selectedComplaint === complaint ? "bg-green-200" : ""
-                  }`}
+                  className={`flex-row items-center py-2 px-4 rounded-lg my-1 ${selectedComplaint === complaint ? "bg-green-200" : ""
+                    }`}
                 >
                   <Text
-                    className={`text-base ${
-                      selectedComplaint === complaint
-                        ? "text-black"
-                        : "text-[#434343]"
-                    }`}
+                    className={`text-base ${selectedComplaint === complaint
+                      ? "text-black"
+                      : "text-[#434343]"
+                      }`}
                   >
                     {complaint}
                   </Text>
@@ -413,7 +409,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
                     onPress={() => setModalVisible(false)}
                     className="bg-gray-300 p-3 rounded-full flex-1 mx-1 px-2"
                   >
-                    <Text className="text-center">{t("Profile.Cancel")}</Text>
+                    <Text className="text-center">{t("Main.Cancel")}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={handleCall}

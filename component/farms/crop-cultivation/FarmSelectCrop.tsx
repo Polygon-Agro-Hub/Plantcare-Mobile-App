@@ -104,7 +104,7 @@ const FarmSelectCrop: React.FC<FarmSelectCropProps> = ({
             {getCropName()}
           </Text>
           {selectedVariety?.image &&
-          typeof selectedVariety.image === "string" ? (
+            typeof selectedVariety.image === "string" ? (
             <Image
               source={{ uri: selectedVariety.image || "" }}
               className="rounded-[30px] h-14 w-14 mb-4"
@@ -155,7 +155,7 @@ const FarmSelectCrop: React.FC<FarmSelectCropProps> = ({
               i18n.language === "si" ? { fontSize: 16 } : { fontSize: 20 },
             ]}
           >
-            {t("SelectCrop.Continue")}
+            {t("Main.Continue")}
           </Text>
         </TouchableOpacity>
       </ScrollView>

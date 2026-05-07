@@ -246,7 +246,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       action: () => navigation.navigate("TransactionHistory" as any),
       bgColor: "#FFFFFF",
     },
-      {
+    {
       image: require("../../assets/images/dashboard/govi-shop.webp"),
       label: t("Dashboard.GoviShop"),
       action: () => navigation.navigate("GoviShopLoadingScreen" as any),
@@ -276,7 +276,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       action: handlePensionNavigation,
       bgColor: "#FFFFFF",
     },
-      {
+    {
       image: require("../../assets/images/dashboard/soil-data.webp"),
       label: t("Dashboard.Soil Data"),
       action: () => navigation.navigate("SoilGridsScreen" as any),
@@ -340,7 +340,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
                 {user.firstName} ✋🏻
               </Text>
             ) : (
-              t("Dashboard.loading")
+              t("Main.Loading...")
             )}
           </Text>
         </View>
