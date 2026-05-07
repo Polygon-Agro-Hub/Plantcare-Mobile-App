@@ -1,6 +1,6 @@
 # .github/workflows/ios-deploy.yml
 #
-# iOS CI/CD Pipeline — GoVi-Transport
+# iOS CI/CD Pipeline — Sales Dash
 #
 # TRIGGERS:
 #   Push to dev-main → Upload to TestFlight (QA testing)
@@ -81,12 +81,15 @@ jobs:
         if: github.ref == 'refs/heads/dev-main'
         env:
           DEV_API_URL: ${{ secrets.DEV_API_URL }}
+          SHOUTOUT_API_KEY: ${{ secrets.DEV_SHOUTOUT_API_KEY }}
         run: |
           cat > environment/environment.ts << ENVEOF
-          export const environment = {
+          const environment = {
             production: false,
-            API_BASE_URL: "${DEV_API_URL}"
+            API_BASE_URL: "${DEV_API_URL}",
+            SHOUTOUT_API_KEY: "${SHOUTOUT_API_KEY}"
           };
+          export default environment;
           ENVEOF
           echo "✅ DEV environment.ts written with API: ${DEV_API_URL}"
 
@@ -97,12 +100,15 @@ jobs:
         if: github.ref == 'refs/heads/main'
         env:
           PROD_API_URL: ${{ secrets.PROD_API_URL }}
+          SHOUTOUT_API_KEY: ${{ secrets.PROD_SHOUTOUT_API_KEY }}
         run: |
           cat > environment/environment.ts << ENVEOF
-          export const environment = {
+          const environment = {
             production: true,
-            API_BASE_URL: "${PROD_API_URL}"
+            API_BASE_URL: "${PROD_API_URL}",
+            SHOUTOUT_API_KEY: "${SHOUTOUT_API_KEY}"
           };
+          export default environment;
           ENVEOF
           echo "✅ PROD environment.ts written with API: ${PROD_API_URL}"
 
@@ -206,4 +212,5 @@ jobs:
           path: build/GoVi-Transport.ipa
           retention-days: 7
           if-no-files-found: warn   # Don't fail if build never produced an .ipa
+
 
