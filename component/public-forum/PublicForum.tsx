@@ -24,11 +24,11 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import ContentLoader, { Rect } from "react-content-loader/native";
 import LottieView from "lottie-react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import Entypo from "react-native-vector-icons/Entypo";
+import Entypo from "@expo/vector-icons/Entypo";
 import NetInfo from "@react-native-community/netinfo";
 
 type PublicForumNavigationProp = StackNavigationProp<

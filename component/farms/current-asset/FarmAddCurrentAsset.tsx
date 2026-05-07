@@ -18,7 +18,7 @@ import { AntDesign } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { environment } from "@/environment/environment";
-import Icon from "react-native-vector-icons/Ionicons";
+import Icon from "@expo/vector-icons/Ionicons";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";

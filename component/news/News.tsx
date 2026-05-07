@@ -1,6 +1,6 @@
 import { View, Text, Image, Dimensions, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { RouteProp } from "@react-navigation/native";
 import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";

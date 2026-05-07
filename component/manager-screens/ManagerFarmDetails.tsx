@@ -15,8 +15,8 @@ import {
 } from "react-native-responsive-screen";
 import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { RootStackParamList } from "../types/types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";

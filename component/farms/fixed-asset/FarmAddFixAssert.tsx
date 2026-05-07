@@ -28,7 +28,7 @@ type FarmAddFixAssertNavigationProp = StackNavigationProp<
   RootStackParamList,
   "FarmAddFixAssert"
 >;
-import Icon from "react-native-vector-icons/Ionicons";
+import Icon from "@expo/vector-icons/Ionicons";
 import CustomHeader from "../../common/CustomHeader";
 
 interface FarmAddFixAssertProps {

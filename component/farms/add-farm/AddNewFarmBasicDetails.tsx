@@ -37,7 +37,7 @@ import { useTranslation } from "react-i18next";
 import i18n from "@/i18n/i18n";
 import { useCallback } from "react";
 import GlobalSearchModal from "../../common/GlobalSearchModal";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 interface RouteParams {
   membership?: string;

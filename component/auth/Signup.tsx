@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { Platform } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";

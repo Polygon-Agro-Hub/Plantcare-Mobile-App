@@ -20,7 +20,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import LottieView from "lottie-react-native";
 import { useSelector } from "react-redux";
 import { selectUserPersonal } from "@/store/userSlice";

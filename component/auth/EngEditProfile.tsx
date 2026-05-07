@@ -21,7 +21,7 @@ import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import * as ImagePicker from "expo-image-picker";
 import { ScrollView } from "react-native-gesture-handler";
-import Entypo from "react-native-vector-icons/Entypo";
+import Entypo from "@expo/vector-icons/Entypo";
 import { useFocusEffect } from "@react-navigation/native";
 import * as ImageManipulator from "expo-image-manipulator";
 import districtData from "@/assets/jsons/common/district.json";

@@ -18,7 +18,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
 import { useTranslation } from "react-i18next";
 import { environment } from "@/environment/environment";
-import Icon from "react-native-vector-icons/MaterialIcons";
+import Icon from "@expo/vector-icons/MaterialIcons";
 import { AntDesign } from "@expo/vector-icons";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";

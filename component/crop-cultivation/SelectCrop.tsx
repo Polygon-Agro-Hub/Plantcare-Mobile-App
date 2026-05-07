@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { router } from "expo-router";
+
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import { RouteProp } from "@react-navigation/native";
@@ -90,7 +90,7 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
         <CustomHeader
           title=""
           navigation={navigation}
-          onBackPress={() => router.back()}
+          onBackPress={() => navigation.goBack()}
         />
         <View className=" items-center">
           <Text className="text-2xl font-bold pb-10">{getCropName()}</Text>

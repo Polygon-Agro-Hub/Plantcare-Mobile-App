@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -22,7 +22,7 @@ import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomHeader from "../common/CustomHeader";
 import GlobalSearchModal from "../common/GlobalSearchModal";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 interface ServiceItem {
   label: string;

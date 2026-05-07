@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import NewsSlideShow from "@/Items/NewsSlideShow";
 import MarketPriceSlideShow from "@/Items/MarketPriceSlideShow";
 import { RootStackParamList } from "../types/types";
@@ -348,7 +348,8 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
           onPress={() => {
             navigation.navigate("PublicForum" as any);
           }}
-          className="ml-auto mr-4 mt-4 justify-center items-center bg-[#F6F7F7] rounded-full w-12 h-12 shadow-sm"
+          className="ml-auto mr-4 mt-4 justify-center items-center bg-[#F6F7F7] rounded-full w-12 h-12"
+          style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 }}
         >
           <MaterialCommunityIcons
             name="message-processing"

@@ -8,8 +8,8 @@ import {
   BackHandler,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import Modal from "react-native-modal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";

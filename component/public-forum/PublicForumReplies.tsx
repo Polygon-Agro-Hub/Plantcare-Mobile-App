@@ -20,7 +20,7 @@ import { RootStackParamList } from "../types/types";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { RefreshControl } from "react-native";
-import Entypo from "react-native-vector-icons/Entypo";
+import Entypo from "@expo/vector-icons/Entypo";
 import CustomHeader from "../common/CustomHeader";
 
 type PublicForumRepliesNavigationProp = StackNavigationProp<

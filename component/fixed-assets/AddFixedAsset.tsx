@@ -18,12 +18,12 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { useTranslation } from "react-i18next";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
-import Icon from "react-native-vector-icons/Ionicons";
+import Icon from "@expo/vector-icons/Ionicons";
 import CustomHeader from "../common/CustomHeader";
 import assetData from "@/assets/jsons/fixed-asset/fixed-assets.json";
 

@@ -23,7 +23,7 @@ import { useTranslation } from "react-i18next";
 import i18n from "@/i18n/i18n";
 import CustomHeader from "../../common/CustomHeader";
 import GlobalSearchModal from "../../common/GlobalSearchModal";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import LoadingPage from "@/component/common/LoadingPage";
 
 type FromFramEditFarmNavigationProp = StackNavigationProp<

@@ -12,8 +12,8 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import axios from "axios";
-import EvilIcons from "react-native-vector-icons/EvilIcons";
-import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
+import EvilIcons from "@expo/vector-icons/EvilIcons";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Modal from "react-native-modal";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";

@@ -11,7 +11,7 @@ import {
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import NewsSlideShow from "@/Items/NewsSlideShow";
 import MarketPriceSlideShow from "@/Items/MarketPriceSlideShow";
 import { RootStackParamList } from "../types/types";

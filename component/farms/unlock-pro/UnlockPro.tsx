@@ -7,7 +7,7 @@ import {
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
 import { LinearGradient } from "expo-linear-gradient";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { setPackageType, setPackagePrice } from "../../../store/packageSlice";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";

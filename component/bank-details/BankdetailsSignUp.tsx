@@ -20,7 +20,7 @@ import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import bankNames from "@/assets/jsons/bank-details/banks.json";
 import { useTranslation } from "react-i18next";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";

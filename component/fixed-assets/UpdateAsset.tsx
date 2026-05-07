@@ -17,12 +17,12 @@ import { environment } from "@/environment/environment";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import Icon from "react-native-vector-icons/Ionicons";
+import Icon from "@expo/vector-icons/Ionicons";
 import { useFocusEffect } from "@react-navigation/native";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
 import assetData from "@/assets/jsons/fixed-asset/fixed-assets.json";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import LoadingPage from "../common/LoadingPage";
 
 type RootStackParamList = {

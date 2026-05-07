@@ -23,7 +23,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { RootStackParamList } from "../types/types";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { EvilIcons } from "@expo/vector-icons";
 
 type AddAssetNavigationProp = StackNavigationProp<

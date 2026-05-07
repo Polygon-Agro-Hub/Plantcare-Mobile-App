@@ -12,9 +12,9 @@ import {
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { StatusBar, Platform } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import axios from "axios";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
 import { RouteProp } from "@react-navigation/native";
@@ -31,7 +31,6 @@ import {
 import * as Location from "expo-location";
 import { useFocusEffect } from "@react-navigation/native";
 import ContentLoader, { Rect } from "react-content-loader/native";
-import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
 import * as ScreenCapture from "expo-screen-capture";
@@ -40,13 +39,21 @@ import type { RootState } from "../../../services/reducxStore";
 import ImageViewerModal from "../../common/ImageViewerModal";
 import CustomHeader from "@/component/common/CustomHeader";
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-  }),
-});
+let Notifications: any = null;
+try {
+  if (Constants.appOwnership !== 'expo') {
+    Notifications = require("expo-notifications");
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: false,
+        shouldSetBadge: false,
+      }),
+    });
+  }
+} catch (e) {
+  console.log("Push notifications not supported in Expo Go");
+}
 
 interface CropItem {
   id: string;
@@ -681,12 +688,14 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
   }, [crops]);
 
   async function askForPermissions() {
-    const { status } = await Notifications.requestPermissionsAsync();
+    if (!Notifications) return false;
+const { status } = await Notifications.requestPermissionsAsync();
     return status === "granted";
   }
 
   async function cancelScheduledNotification() {
-    const storedNotificationId = await AsyncStorage.getItem(
+    if (!Notifications) return;
+const storedNotificationId = await AsyncStorage.getItem(
       "currentNotificationId",
     );
     if (storedNotificationId) {
@@ -701,7 +710,8 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
   }
 
   async function scheduleDailyNotification() {
-    try {
+    if (!Notifications) return;
+try {
       const hasPermission = await askForPermissions();
       if (!hasPermission) {
         console.error("Notification permission not granted");
@@ -769,7 +779,8 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
   }
 
   async function registerForPushNotificationsAsync() {
-    let token;
+    if (!Notifications) return undefined;
+let token;
 
     if (Platform.OS === "android") {
       await Notifications.setNotificationChannelAsync("default", {

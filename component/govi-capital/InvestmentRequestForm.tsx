@@ -10,7 +10,7 @@ import {
   Alert,
   Platform,
 } from "react-native";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import * as ImagePicker from "expo-image-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { AntDesign, FontAwesome6, Ionicons } from "@expo/vector-icons";
