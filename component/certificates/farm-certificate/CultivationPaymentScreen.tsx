@@ -191,8 +191,8 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
   const saveCertificatePayment = async (numericPrice: string) => {
     try {
       if (!certificateId) {
-        Alert.alert(t("Main.error"), "Certificate ID is missing", [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), "Certificate ID is missing", [
+          { text: t("Main.OK") },
         ]);
         return false;
       }
@@ -201,9 +201,9 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
 
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
+          t("Main.Error"),
           t("Farms.No authentication token found"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         return false;
       }
@@ -238,13 +238,13 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
       if (error.response) {
         console.error("Error response:", error.response.data);
         Alert.alert(
-          t("Main.error"),
-          error.response.data.message || t("Main.somethingWentWrong"),
-          [{ text: t("PublicForum.OK") }],
+          t("Main.Error"),
+          error.response.data.message || t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
         );
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
 
@@ -255,18 +255,18 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
   const handlePayNow = async () => {
     if (!cardNumber || !cardHolderName || !cardExpiryDate || !cvv) {
       Alert.alert(
-        t("Main.error"),
+        t("Main.Error"),
         t("EarnCertificate.Please fill all payment details"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
 
     if (!isCardExpiryValid()) {
       Alert.alert(
-        t("Main.error"),
+        t("Main.Error"),
         t("EarnCertificate.Please enter a valid card expiry date (MM/YY)"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }

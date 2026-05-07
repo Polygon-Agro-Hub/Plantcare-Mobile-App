@@ -57,7 +57,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
           { text: t("Farms.okButton") },
         ]);
         return;
@@ -79,13 +79,13 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
 
         setQR(registrationDetails.farmerQr || "");
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
           { text: t("Farms.okButton") },
         ]);
       }
     } catch (error) {
       console.error("Fetch error:", error);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
         { text: t("Farms.okButton") },
       ]);
     } finally {
@@ -100,7 +100,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   const downloadQRCode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"), [
+        Alert.alert(t("Main.Error"), t("QRcode.noQRCodeAvailable"), [
           { text: t("Farms.okButton") },
         ]);
         return;
@@ -127,7 +127,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       ]);
     } catch (error) {
       console.error("Download error:", error);
-      Alert.alert(t("Main.error"), t("QRcode.failedSaveQRCode"), [
+      Alert.alert(t("Main.Error"), t("QRcode.failedSaveQRCode"), [
         { text: t("Farms.okButton") },
       ]);
     }
@@ -136,7 +136,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   const shareQRCode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"), [
+        Alert.alert(t("Main.Error"), t("QRcode.noQRCodeAvailable"), [
           { text: t("Farms.okButton") },
         ]);
         return;
@@ -159,7 +159,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       }
     } catch (error) {
       console.error("Share error:", error);
-      Alert.alert(t("Main.error"), t("QRcode.failedShareQRCode"), [
+      Alert.alert(t("Main.Error"), t("QRcode.failedShareQRCode"), [
         { text: t("Farms.okButton") },
       ]);
     }

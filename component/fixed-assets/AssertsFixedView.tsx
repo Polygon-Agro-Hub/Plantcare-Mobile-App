@@ -277,7 +277,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       Alert.alert(
         t("FixedAssets.noToolsSelectedTitle"),
         t("FixedAssets.noToolsSelectedDeleteMessage"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -312,7 +312,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               Alert.alert(
                 t("FixedAssets.successTitle"),
                 t("CurrentAssets.RemoveSuccess"),
-                [{ text: t("PublicForum.OK") }],
+                [{ text: t("Main.OK") }],
               );
               handleCancelSelection();
             } catch (error) {
@@ -320,7 +320,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               Alert.alert(
                 t("FixedAssets.errorTitle"),
                 t("FixedAssets.errorDeleteMessage"),
-                [{ text: t("PublicForum.OK") }],
+                [{ text: t("Main.OK") }],
               );
             }
           },

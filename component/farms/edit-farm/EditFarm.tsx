@@ -188,7 +188,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
       }
 
       setError(errorMessage);
-      Alert.alert(t("Farms.Error"), errorMessage, [
+      Alert.alert(t("Main.Error"), errorMessage, [
         { text: t("Farms.okButton") },
       ]);
     } finally {
@@ -228,13 +228,13 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
 
   const validateForm = useCallback((): boolean => {
     if (!farmName?.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a farm name"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.Please enter a farm name"), [
         { text: t("Farms.okButton") },
       ]);
       return false;
     }
     if (!district) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please select a district"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.Please select a district"), [
         { text: t("Farms.okButton") },
       ]);
       return false;
@@ -246,7 +246,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
       (extentp && extentp !== "0");
     if (!hasExtent) {
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t("Farms.Please enter at least one extent value"),
         [{ text: t("Farms.okButton") }],
       );
@@ -254,7 +254,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
     }
     if (!numberOfStaff?.trim()) {
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t("Farms.Please enter the number of staff"),
         [{ text: t("Farms.okButton") }],
       );
@@ -264,7 +264,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
     const staffCount = parseInt(numberOfStaff);
     if (isNaN(staffCount) || staffCount < 0) {
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t("Farms.Please enter a valid number of staff"),
         [{ text: t("Farms.okButton") }],
       );
@@ -274,7 +274,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
     const appUserCount = farmData?.appUserCount ?? 0;
     if (staffCount < appUserCount) {
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t("Farms.Staff count cannot be less than app user count", {
           appUserCount,
         }),
@@ -363,7 +363,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
         errorMessage = t("Farms.Invalid data format. Please check all fields.");
       }
 
-      Alert.alert(t("Farms.Error"), errorMessage, [
+      Alert.alert(t("Main.Error"), errorMessage, [
         { text: t("Farms.okButton") },
       ]);
     } finally {

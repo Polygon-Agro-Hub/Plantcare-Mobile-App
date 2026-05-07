@@ -93,7 +93,7 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
 
   const fetchOngoingCultivations = async () => {
     try {
-      setLanguage(t("MyCrop.LNG"));
+      setLanguage(t("Main.LNG"));
       const token = await AsyncStorage.getItem("userToken");
 
       const res = await axios.get<complainItem[]>(
@@ -148,7 +148,7 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
       setModalVisible(true);
     } else {
       Alert.alert(t("ReportHistory.sorry"), t("ReportHistory.NoReply"), [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
     }
   };

@@ -127,13 +127,13 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
               : require("../../assets/images/auth/profile.webp"),
           );
         } else {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-            { text: t("PublicForum.OK") },
+          Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+            { text: t("Main.OK") },
           ]);
         }
       } catch (error) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       } finally {
         setIsDataLoading(false);
@@ -146,8 +146,8 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
         return;
       }
@@ -175,13 +175,13 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
       );
       const data = await response.json();
       if (data.status !== "success") {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
     }
   };
@@ -192,7 +192,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
       Alert.alert(
         t("EditProfile.permissionDenied"),
         t("EditProfile.permissionDeniedMessage"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -225,17 +225,17 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
 
     if (!trimmedFirstName && !trimmedLastName) {
       Alert.alert(t("signinForm.sorry"), t("EditProfile.nameError"), [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
       return;
     } else if (!trimmedFirstName) {
       Alert.alert(t("signinForm.sorry"), t("EditProfile.firstNameRequired"), [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
       return;
     } else if (!trimmedLastName) {
       Alert.alert(t("signinForm.sorry"), t("EditProfile.lastNameRequired"), [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
       return;
     }
@@ -244,8 +244,8 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
         return;
       }
@@ -282,19 +282,19 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
           t("EditProfile.profileUpdatedSuccess"),
           [
             {
-              text: t("PublicForum.OK"),
+              text: t("Main.OK"),
               onPress: () => navigation.navigate("EngProfile"),
             },
           ],
         );
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
     } catch (error) {
-      Alert.alert(t("Main.error"), t("EditProfile.updateProfileError"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("EditProfile.updateProfileError"), [
+        { text: t("Main.OK") },
       ]);
     } finally {
       setIsLoading(false);

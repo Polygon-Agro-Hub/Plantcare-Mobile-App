@@ -272,7 +272,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       Alert.alert(
         t("FixedAssets.sorry"),
         t("FixedAssets.issuedDateCannotBeFuture"),
-        [{ text: t("Main.ok") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -295,7 +295,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       Alert.alert(
         t("FixedAssets.sorry"),
         t("FixedAssets.issuedDateCannotBeFuture"),
-        [{ text: t("Main.ok") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -532,7 +532,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         t("FixedAssets.assetAddSuccessfuly"),
         [
           {
-            text: t("Main.ok"),
+            text: t("Main.OK"),
             onPress: () => navigation.navigate("fixedDashboard"),
           },
         ],
@@ -542,7 +542,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       console.error("Error submitting data:", error);
       setLoading(false);
       Alert.alert("Duplicate Name", error.response.data.message, [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
     }
   };
@@ -1042,7 +1042,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                                   Alert.alert(
                                     t("FixedAssets.sorry"),
                                     t("FixedAssets.purchaseDateCannotBeFuture"),
-                                    [{ text: t("Main.ok") }],
+                                    [{ text: t("Main.OK") }],
                                   );
                                 } else {
                                   setPurchasedDate(selectedDate);
@@ -1065,7 +1065,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                                 Alert.alert(
                                   t("FixedAssets.sorry"),
                                   t("FixedAssets.purchaseDateCannotBeFuture"),
-                                  [{ text: t("Main.ok") }],
+                                  [{ text: t("Main.OK") }],
                                 );
                               } else {
                                 setPurchasedDate(selectedDate);
@@ -1118,7 +1118,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                                   Alert.alert(
                                     t("FixedAssets.sorry"),
                                     t("FixedAssets.errorInvalidExpireDate"),
-                                    [{ text: t("Main.ok") }],
+                                    [{ text: t("Main.OK") }],
                                   );
                                 } else {
                                   setExpireDate(selectedDate);
@@ -1146,7 +1146,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                                 Alert.alert(
                                   t("FixedAssets.sorry"),
                                   t("FixedAssets.errorInvalidExpireDate"),
-                                  [{ text: t("Main.ok") }],
+                                  [{ text: t("Main.OK") }],
                                 );
                               } else {
                                 setExpireDate(selectedDate);
@@ -1702,7 +1702,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                                   Alert.alert(
                                     t("FixedAssets.sorry"),
                                     t("FixedAssets.purchaseDateCannotBeFuture"),
-                                    [{ text: t("Main.ok") }],
+                                    [{ text: t("Main.OK") }],
                                   );
                                 } else {
                                   setPurchasedDate(selectedDate);
@@ -1725,7 +1725,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                                 Alert.alert(
                                   t("FixedAssets.sorry"),
                                   t("FixedAssets.purchaseDateCannotBeFuture"),
-                                  [{ text: t("Main.ok") }],
+                                  [{ text: t("Main.OK") }],
                                 );
                               } else {
                                 setPurchasedDate(selectedDate);
@@ -1778,7 +1778,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                                   Alert.alert(
                                     t("FixedAssets.sorry"),
                                     t("FixedAssets.errorInvalidExpireDate"),
-                                    [{ text: t("Main.ok") }],
+                                    [{ text: t("Main.OK") }],
                                   );
                                 } else {
                                   setExpireDate(selectedDate);
@@ -1806,7 +1806,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                                 Alert.alert(
                                   t("FixedAssets.sorry"),
                                   t("FixedAssets.errorInvalidExpireDate"),
-                                  [{ text: t("Main.ok") }],
+                                  [{ text: t("Main.OK") }],
                                 );
                               } else {
                                 setExpireDate(selectedDate);

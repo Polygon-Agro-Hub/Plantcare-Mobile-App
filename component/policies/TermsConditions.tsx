@@ -22,7 +22,7 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
     language !== "en" ? size * 0.9 : size;
 
   useEffect(() => {
-    const selectedLanguage = t("Terms&Condisions.LNG");
+    const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
   }, [t]);
 

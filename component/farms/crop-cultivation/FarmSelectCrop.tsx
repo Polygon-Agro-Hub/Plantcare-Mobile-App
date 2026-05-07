@@ -42,7 +42,7 @@ const FarmSelectCrop: React.FC<FarmSelectCropProps> = ({
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const selectedLanguage = t("NewCrop.LNG");
+    const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
     if (selectedVariety) {
       setCrop(selectedVariety);

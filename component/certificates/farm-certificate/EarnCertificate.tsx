@@ -105,9 +105,9 @@ const EarnCertificate: React.FC = () => {
 
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
+          t("Main.Error"),
           t("Farms.No authentication token found"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -130,13 +130,13 @@ const EarnCertificate: React.FC = () => {
 
       if (err.response?.status === 404) {
         Alert.alert(
-          t("Main.error"),
+          t("Main.Error"),
           "No certificates available for farms at the moment",
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
     } finally {

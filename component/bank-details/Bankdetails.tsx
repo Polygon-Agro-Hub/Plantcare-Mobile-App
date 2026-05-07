@@ -63,7 +63,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
     language !== "en" ? size * 0.9 : size;
 
   useEffect(() => {
-    const selectedLanguage = t("BankDetails.LNG");
+    const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
   }, [t]);
 
@@ -96,8 +96,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           setFilteredBranches(sortedBranches);
         } catch (error) {
           console.error("Error loading branches", error);
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-            { text: t("PublicForum.OK") },
+          Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+            { text: t("Main.OK") },
           ]);
         } finally {
           setLoading(false);
@@ -113,7 +113,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
   const handleRegister = async () => {
     if (loading) {
       Alert.alert(t("BankDetails.Loading"), t("BankDetails.LoadingText"), [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
       return;
     }
@@ -132,7 +132,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       !trimmedBranchName
     ) {
       Alert.alert(t("BankDetails.sorry"), t("BankDetails.PlzFillAllFields"), [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
       return;
     }
@@ -141,7 +141,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       Alert.alert(
         t("BankDetails.sorry"),
         t("BankDetails.AccountNumberMismatch"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       setAccountNumbermisMatchError(t("BankDetails.AccountNumberMismatch"));
       return;
@@ -160,8 +160,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
         setDisableSubmit(false);
         setIsLoading(false);
@@ -182,7 +182,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         Alert.alert(
           t("BankDetails.success"),
           t("BankDetails.SuccessfullyRegistered"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         navigation.navigate("Main", { screen: "EngQRcode" });
         setDisableSubmit(false);
@@ -191,7 +191,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         Alert.alert(
           t("BankDetails.failed"),
           t("BankDetails.failedToRegister"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
       }
     } catch (error) {
@@ -200,17 +200,17 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           Alert.alert(
             t("BankDetails.failed"),
             t("BankDetails.ExistingBankDetails"),
-            [{ text: t("PublicForum.OK") }],
+            [{ text: t("Main.OK") }],
           );
           navigation.navigate("EngProfile");
         } else {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-            { text: t("PublicForum.OK") },
+          Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+            { text: t("Main.OK") },
           ]);
         }
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
     } finally {
@@ -494,7 +494,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
                   t("BankDetails.sorry"),
                   t("BankDetails.SelectBankFirst") ||
                     "Please select a bank first.",
-                  [{ text: t("PublicForum.OK") }],
+                  [{ text: t("Main.OK") }],
                 );
               }
             }}

@@ -259,25 +259,25 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
 
   const validateForm = () => {
     if (!firstName.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter first name"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.Please enter first name"), [
         { text: t("Farms.okButton") },
       ]);
       return false;
     }
     if (!lastName.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter last name"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.Please enter last name"), [
         { text: t("Farms.okButton") },
       ]);
       return false;
     }
     if (!phoneNumber.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter phone number"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.Please enter phone number"), [
         { text: t("Farms.okButton") },
       ]);
       return false;
     }
     if (!nic.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter NIC"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.Please enter NIC"), [
         { text: t("Farms.okButton") },
       ]);
       return false;
@@ -289,31 +289,31 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
           : phoneNumber[0] !== "7"
             ? t("Farms.Phone number must start with 7")
             : t("Farms.Please enter a valid phone number");
-      Alert.alert(t("Farms.Sorry"), msg, [{ text: t("Farms.okButton") }]);
+      Alert.alert(t("Main.Sorry"), msg, [{ text: t("Farms.okButton") }]);
       return false;
     }
     if (phoneError) {
-      Alert.alert(t("Farms.Sorry"), phoneError, [
+      Alert.alert(t("Main.Sorry"), phoneError, [
         { text: t("Farms.okButton") },
       ]);
       return false;
     }
     if (validationError) {
-      Alert.alert(t("Farms.Sorry"), validationError, [
+      Alert.alert(t("Main.Sorry"), validationError, [
         { text: t("Farms.okButton") },
       ]);
       return false;
     }
     if (nicErrors || !validateSriLankanNic(nic)) {
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t("Farms.Please enter a valid Sri Lankan NIC"),
         [{ text: t("Farms.okButton") }],
       );
       return false;
     }
     if (nicDuplicateErrors) {
-      Alert.alert(t("Farms.Sorry"), nicDuplicateErrors, [
+      Alert.alert(t("Main.Sorry"), nicDuplicateErrors, [
         { text: t("Farms.okButton") },
       ]);
       return false;

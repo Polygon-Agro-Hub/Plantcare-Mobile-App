@@ -76,7 +76,7 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
       Alert.alert(
         t("PublicForum.sorry"),
         t("PublicForum.permissionDeniedMessage"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -159,7 +159,7 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
           t("PublicForum.Post updated successfully"),
           [
             {
-              text: t("PublicForum.OK"),
+              text: t("Main.OK"),
             },
           ],
         );
@@ -167,7 +167,7 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
       } else {
         Alert.alert(t("PublicForum.error"), t("PublicForum.updateFailed"), [
           {
-            text: t("PublicForum.OK"),
+            text: t("Main.OK"),
             style: "default",
           },
         ]);
@@ -175,8 +175,8 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
     } catch (error) {
       console.error("Error updating post:", error);
 
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
     } finally {
       setLoading(false);

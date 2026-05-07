@@ -131,7 +131,7 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
   );
 
   const fetchProfileData = async () => {
-    const selectedLanguage = t("Dashboard.LNG");
+    const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
     try {
       const response = await fetch(
@@ -147,7 +147,7 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
       const data = await response.json();
 
       if (!data.user || !data.user.firstName) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
           { text: t("Farms.okButton") },
         ]);
         navigation.navigate("Signin");
@@ -159,7 +159,7 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
       dispatch(setUserPersonalData(data.user));
       setTimeout(() => setLoading(false), 300);
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
         { text: t("Farms.okButton") },
       ]);
       navigation.navigate("Signin");

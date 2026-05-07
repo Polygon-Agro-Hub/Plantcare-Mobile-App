@@ -44,7 +44,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
     language !== "en" ? size * 0.9 : size;
 
   useEffect(() => {
-    const selectedLanguage = t("Membership.LNG");
+    const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
   }, [t]);
 
@@ -69,8 +69,8 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
         return;
       }
@@ -95,14 +95,14 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         setQR(registrationDetails.farmerQr || "");
         await AsyncStorage.setItem("district", registrationDetails.district);
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
     } catch (error) {
       console.error("Fetch error:", error);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
     } finally {
       setLoading(false);
@@ -116,8 +116,8 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   const downloadQRCode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("QRcode.noQRCodeAvailable"), [
+          { text: t("Main.OK") },
         ]);
         return;
       }
@@ -127,7 +127,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         Alert.alert(
           t("QRcode.permissionDeniedTitle"),
           t("QRcode.permissionDeniedMessage"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -139,12 +139,12 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       await MediaLibrary.createAlbumAsync("Download", asset, false);
 
       Alert.alert(t("QRcode.successTitle"), t("QRcode.savedToGallery"), [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
     } catch (error) {
       console.error("Download error:", error);
-      Alert.alert(t("Main.error"), t("QRcode.failedSaveQRCode"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("QRcode.failedSaveQRCode"), [
+        { text: t("Main.OK") },
       ]);
     }
   };
@@ -152,8 +152,8 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   const shareQRCode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("QRcode.noQRCodeAvailable"), [
+          { text: t("Main.OK") },
         ]);
         return;
       }
@@ -170,13 +170,13 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         Alert.alert(
           t("QRcode.sharingUnavailableTitle"),
           t("QRcode.sharingUnavailableMessage"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
       }
     } catch (error) {
       console.error("Share error:", error);
-      Alert.alert(t("Main.error"), t("QRcode.failedShareQRCode"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("QRcode.failedShareQRCode"), [
+        { text: t("Main.OK") },
       ]);
     }
   };

@@ -186,9 +186,9 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
     } catch (error) {
       console.error("Error in fetchDetails:", error);
       Alert.alert(
-        t("TransactionList.Sorry"),
+        t("Main.Sorry"),
         t("TransactionList.Failed to load details"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       setCrops([]);
     } finally {
@@ -238,7 +238,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
       Alert.alert(
         t("Error.error"),
         t("Error.Details are missing for generating PDF"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return "";
     }
@@ -383,9 +383,9 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
     } catch (error) {
       console.error("Error generating PDF:", error);
       Alert.alert(
-        t("TransactionList.Sorry"),
+        t("Main.Sorry"),
         t("TransactionList.PDF was not generated."),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return "";
     }
@@ -396,9 +396,9 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
       const uri = await generatePDF();
       if (!uri) {
         Alert.alert(
-          t("TransactionList.Sorry"),
+          t("Main.Sorry"),
           t("TransactionList.PDF was not generated."),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -418,9 +418,9 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
           });
         } else {
           Alert.alert(
-            t("TransactionList.Sorry"),
+            t("Main.Sorry"),
             t("TransactionList.Sharing is not available on this device"),
-            [{ text: t("PublicForum.OK") }],
+            [{ text: t("Main.OK") }],
           );
         }
       } else if (Platform.OS === "ios") {
@@ -435,22 +435,22 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
             t(
               'TransactionList.Use the "Save to Files" option to save to Downloads',
             ),
-            [{ text: t("PublicForum.OK") }],
+            [{ text: t("Main.OK") }],
           );
         } else {
           Alert.alert(
-            t("TransactionList.Sorry"),
+            t("Main.Sorry"),
             t("TransactionList.Sharing is not available on this device"),
-            [{ text: t("PublicForum.OK") }],
+            [{ text: t("Main.OK") }],
           );
         }
       }
     } catch (error) {
       console.error("Download error:", error);
       Alert.alert(
-        t("TransactionList.Sorry"),
+        t("Main.Sorry"),
         t("TransactionList.Failed to save PDF to Downloads folder."),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
     }
   };
@@ -460,18 +460,18 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
       const uri = await generatePDF();
       if (!uri) {
         Alert.alert(
-          t("TransactionList.Sorry"),
+          t("Main.Sorry"),
           t("TransactionList.PDF was not generated."),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
 
       if (!(await Sharing.isAvailableAsync())) {
         Alert.alert(
-          t("TransactionList.Sorry"),
+          t("Main.Sorry"),
           t("TransactionList.Sharing is not available on this device"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -482,9 +482,9 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
       const fileInfo = await FileSystem.getInfoAsync(uri);
       if (!fileInfo.exists) {
         Alert.alert(
-          t("TransactionList.Sorry"),
+          t("Main.Sorry"),
           t("TransactionList.Generated PDF file not found"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -509,9 +509,9 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
       } catch (fallbackError) {
         console.error("Fallback sharing also failed:", fallbackError);
         Alert.alert(
-          t("TransactionList.Sorry"),
+          t("Main.Sorry"),
           t("TransactionList.Failed to share PDF file"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
       }
     }

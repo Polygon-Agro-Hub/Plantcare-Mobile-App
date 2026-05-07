@@ -103,7 +103,7 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
       } catch (error) {
         console.error("Error fetching crop groups:", error);
         Alert.alert(
-          t("CropPlanningCalculators.Error"),
+          t("Main.Error"),
           t("CropPlanningCalculators.FetchError"),
         );
       } finally {

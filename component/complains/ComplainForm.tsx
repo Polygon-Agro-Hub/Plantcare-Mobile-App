@@ -74,7 +74,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
   );
 
   useEffect(() => {
-    const selectedLanguage = t("ReportComplaint.LNG");
+    const selectedLanguage = t("Main.LNG");
 
     const fetchComplainCategory = async () => {
       try {
@@ -132,7 +132,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
       Alert.alert(
         t("ReportComplaint.sorry"),
         t("ReportComplaint.fillAllFields"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -170,7 +170,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
         Alert.alert(
           t("ReportComplaint.success"),
           t("ReportComplaint.complaintSuccess"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         setIsLoading(false);
         navigation.navigate("Main", { screen: "ComplainHistory" });
@@ -178,13 +178,13 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
         Alert.alert(
           t("ReportComplaint.sorry"),
           t("ReportComplaint.complaintFailed"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         setIsLoading(false);
       }
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
       setIsLoading(false);
     }

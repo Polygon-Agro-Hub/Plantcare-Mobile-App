@@ -54,7 +54,7 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
   const screenWidth = Dimensions.get("window").width;
 
   useEffect(() => {
-    const selectedLanguage = t("News.LNG");
+    const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
     const fetchNews = async () => {
       try {

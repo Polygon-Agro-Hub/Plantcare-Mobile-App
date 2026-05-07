@@ -112,7 +112,7 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({
     const phoneNumber = "+94770111999";
     const url = `tel:${phoneNumber}`;
     Linking.openURL(url).catch((err) =>
-      Alert.alert(t("Main.error"), t("Profile.UnabletoOpen"), [
+      Alert.alert(t("Main.Error"), t("Profile.UnabletoOpen"), [
         { text: t("Farms.okButton") },
       ]),
     );

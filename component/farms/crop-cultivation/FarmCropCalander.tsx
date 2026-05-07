@@ -156,12 +156,12 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
     setTimestamps([]);
 
     try {
-      setLanguage(t("CropCalender.LNG"));
+      setLanguage(t("Main.LNG"));
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
         console.error("No token found");
-        Alert.alert(t("Main.error"), "Authentication required");
+        Alert.alert(t("Main.Error"), "Authentication required");
         setLoading(false);
         return;
       }
@@ -220,14 +220,14 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
       console.error("Error response:", error.response?.data);
       console.error("Error status:", error.response?.status);
 
-      let errorMessage = t("Main.somethingWentWrong");
+      let errorMessage = t("Main.SomethingWentWrongPleaseTryAgainlater");
       if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error.message) {
         errorMessage = error.message;
       }
 
-      Alert.alert(t("Main.error"), errorMessage, [
+      Alert.alert(t("Main.Error"), errorMessage, [
         { text: t("Farms.okButton") },
       ]);
     } finally {
@@ -328,7 +328,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
 
   const fetchCropswithoutload = async () => {
     try {
-      setLanguage(t("CropCalender.LNG"));
+      setLanguage(t("Main.LNG"));
       const token = await AsyncStorage.getItem("userToken");
 
       const response = await axios.get(
@@ -376,7 +376,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
 
       setTimestamps(new Array(response.data.length).fill(""));
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
         { text: t("Farms.okButton") },
       ]);
     }
@@ -861,7 +861,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
 
       if (!location) {
         Alert.alert(
-          t("Farms.Error"),
+          t("Main.Error"),
           t("Farms.Unable to fetch location after multiple attempts"),
           [{ text: t("Farms.okButton") }],
         );
@@ -945,7 +945,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
 
       if (!crop) {
         console.warn("Crop data not found for index:", cropIndex);
-        Alert.alert(t("Farms.Error"), t("Farms.Task data not found"), [
+        Alert.alert(t("Main.Error"), t("Farms.Task data not found"), [
           { text: t("Farms.okButton") },
         ]);
         return;
@@ -957,7 +957,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
 
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
+          t("Main.Error"),
           t("Farms.No authentication token found"),
           [{ text: t("Farms.okButton") }],
         );

@@ -102,7 +102,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
   const getAuthToken = async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error(t("Main.somethingWentWrong"));
+      if (!token) throw new Error(t("Main.SomethingWentWrongPleaseTryAgainlater"));
       return token;
     } catch (error) {
       return null;
@@ -164,7 +164,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
       setIsUpdating(true);
       const token = await getAuthToken();
       if (!token) {
-        Alert.alert("Error", t("Main.somethingWentWrong"));
+        Alert.alert("Error", t("Main.SomethingWentWrongPleaseTryAgainlater"));
         return;
       }
 

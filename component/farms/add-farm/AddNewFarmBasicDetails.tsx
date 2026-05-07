@@ -162,37 +162,37 @@ const AddNewFarmBasicDetails: React.FC = () => {
 
   const handleContinue = () => {
     if (!farmName.trim()) {
-      Alert.alert(t("PublicForum.Error"), t("Farms.enterFarmName"), [
+      Alert.alert(t("Main.Error"), t("Farms.enterFarmName"), [
         { text: t("Farms.okButton") },
       ]);
       return;
     }
     if (!extentha.trim() && !extentac.trim() && !extentp.trim()) {
-      Alert.alert(t("PublicForum.Error"), t("Farms.enterFarmExtent"), [
+      Alert.alert(t("Main.Error"), t("Farms.enterFarmExtent"), [
         { text: t("Farms.okButton") },
       ]);
       return;
     }
     if (!district.trim()) {
-      Alert.alert(t("PublicForum.Error"), t("Farms.selectDistrict"), [
+      Alert.alert(t("Main.Error"), t("Farms.selectDistrict"), [
         { text: t("Farms.okButton") },
       ]);
       return;
     }
     if (!plotNo.trim()) {
-      Alert.alert(t("PublicForum.Error"), t("Farms.enterPlotNumber"), [
+      Alert.alert(t("Main.Error"), t("Farms.enterPlotNumber"), [
         { text: t("Farms.okButton") },
       ]);
       return;
     }
     if (!streetName.trim()) {
-      Alert.alert(t("PublicForum.Error"), t("Farms.enterStreetName"), [
+      Alert.alert(t("Main.Error"), t("Farms.enterStreetName"), [
         { text: t("Farms.okButton") },
       ]);
       return;
     }
     if (!city.trim()) {
-      Alert.alert(t("PublicForum.Error"), t("Farms.enterCityName"), [
+      Alert.alert(t("Main.Error"), t("Farms.enterCityName"), [
         { text: t("Farms.okButton") },
       ]);
       return;

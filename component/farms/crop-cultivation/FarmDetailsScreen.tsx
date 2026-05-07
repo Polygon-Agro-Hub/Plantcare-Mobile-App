@@ -525,14 +525,14 @@ const FarmDetailsScreen = () => {
         const token = await AsyncStorage.getItem("userToken");
         if (!token) {
           Alert.alert(
-            t("Farms.Error"),
+            t("Main.Error"),
             t("Farms.No authentication token found"),
-            [{ text: t("PublicForum.OK") }],
+            [{ text: t("Main.OK") }],
           );
           return;
         }
 
-        setLanguage(t("MyCrop.LNG"));
+        setLanguage(t("Main.LNG"));
 
         const [
           farmDetails,
@@ -736,9 +736,9 @@ const FarmDetailsScreen = () => {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
+          t("Main.Error"),
           t("Farms.No authentication token found"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -750,10 +750,10 @@ const FarmDetailsScreen = () => {
       setPageLoading(false);
       navigation.navigate("Main", { screen: "Dashboard" });
       Alert.alert(t("Farms.Success"), t("Farms.Farm deleted successfully"), [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
     } catch {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Failed to delete farm"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.Failed to delete farm"), [
         { text: t("Farms.okButton") },
       ]);
       setPageLoading(false);
@@ -1157,7 +1157,7 @@ const FarmDetailsScreen = () => {
           onPress={() => {
             if (membership.toLowerCase() === "basic" && cropCount >= 3) {
               Alert.alert(
-                t("Farms.Sorry"),
+                t("Main.Sorry"),
                 t("Farms.You only have 3 free crop enrollments for now"),
                 [{ text: t("Farms.okButton") }],
               );

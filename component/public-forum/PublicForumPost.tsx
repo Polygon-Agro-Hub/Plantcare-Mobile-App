@@ -66,7 +66,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       Alert.alert(
         t("PublicForum.sorry"),
         t("PublicForum.permissionDeniedMessage"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -122,7 +122,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       Alert.alert(
         t("PublicForum.sorry"),
         t("PublicForum.titleRequired") || "Title is required",
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -131,7 +131,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       Alert.alert(
         t("PublicForum.sorry"),
         t("PublicForum.descriptionRequired") || "Description is required",
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -141,7 +141,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
         t("PublicForum.sorry"),
         t("PublicForum.fillAllRequiredFields") ||
           "Please fill in both Title and Description fields",
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -149,7 +149,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       Alert.alert(
         t("PublicForum.sorry"),
         t("PublicForum.Maximum 250 characters allowed."),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -187,7 +187,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
 
       Alert.alert(t("PublicForum.success"), t("PublicForum.postSuccess"), [
         {
-          text: t("PublicForum.OK"),
+          text: t("Main.OK"),
           onPress: () => {
             setHeading("");
             setMessage("");
@@ -206,7 +206,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       console.error("Error creating post:", error);
       setLoading(false);
       Alert.alert(t("PublicForum.sorry"), t("PublicForum.postFailed"), [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
     } finally {
       setLoading(false);

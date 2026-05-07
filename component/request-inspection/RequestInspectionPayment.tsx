@@ -172,7 +172,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
   const handlePayNow = async () => {
     if (!cardNumber || !cardHolderName || !cardExpiryDate || !cvv) {
       Alert.alert(
-        t("RequestInspectionForm.Error"),
+        t("Main.Error"),
         t("RequestInspectionForm.Please fill all payment details"),
         [{ text: t("RequestInspectionForm.OK") }],
       );
@@ -181,7 +181,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
 
     if (!isCardExpiryValid()) {
       Alert.alert(
-        t("RequestInspectionForm.Error"),
+        t("Main.Error"),
         t(
           "RequestInspectionForm.Please enter a valid card expiry date (MM/YY)",
         ),
@@ -226,7 +226,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
             );
           } else {
             Alert.alert(
-              t("RequestInspectionForm.Error"),
+              t("Main.Error"),
               t(
                 "RequestInspectionForm.Request Inspection Submitting error, Please try again later",
               ),
@@ -236,7 +236,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
         } catch (error: any) {
           setIsProcessing(false);
           Alert.alert(
-            t("RequestInspectionForm.Error"),
+            t("Main.Error"),
             error.message ||
               t(
                 "RequestInspectionForm.Request Inspection Submitting error, Please try again later",
@@ -248,7 +248,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
     } catch (error) {
       setIsProcessing(false);
       Alert.alert(
-        t("RequestInspectionForm.Error"),
+        t("Main.Error"),
         t("RequestInspectionForm.Payment processing failed. Please try again."),
         [{ text: t("RequestInspectionForm.OK") }],
       );

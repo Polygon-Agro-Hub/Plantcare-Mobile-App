@@ -83,7 +83,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
   }));
 
   useEffect(() => {
-    const selectedLanguage = t("Signup.LNG");
+    const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
   }, [t]);
 
@@ -131,7 +131,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
 
   const validateMobileNumber = (number: string) => {
     const regex = /^[1-9][0-9]{8}$/;
-    setError(regex.test(number) ? "" : t("Signup.Enteravalidmobile"));
+    setError(regex.test(number) ? "" : t("Signup.EnterValidMobile"));
   };
 
   const handleMobileNumberChange = (text: string) => {
@@ -282,7 +282,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
       !district
     ) {
       Alert.alert(t("Main.Sorry"), t("Signup.fillAllFields"), [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
       return;
     }
@@ -307,7 +307,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
       if (msg === "This Phone Number already exists.") {
         Alert.alert(t("Main.Sorry"), t("Signup.phoneExists"), [
           {
-            text: t("PublicForum.OK"),
+            text: t("Main.OK"),
             onPress: () => navigation.navigate("Signup"),
           },
         ]);
@@ -318,7 +318,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
       if (msg === "This NIC already exists.") {
         Alert.alert(t("Main.Sorry"), t("Signup.nicExists"), [
           {
-            text: t("PublicForum.OK"),
+            text: t("Main.OK"),
             onPress: () => navigation.navigate("Signup"),
           },
         ]);
@@ -329,7 +329,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
       if (msg === "This Phone Number and NIC already exist.") {
         Alert.alert(t("Main.Sorry"), t("Signup.phoneNicExist"), [
           {
-            text: t("PublicForum.OK"),
+            text: t("Main.OK"),
             onPress: () => navigation.navigate("Signup"),
           },
         ]);
@@ -381,9 +381,9 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
       setIsLoading(false);
     } catch (err) {
       console.error("Registration error:", err);
-      Alert.alert(t("Main.Sorry"), t("Main.somethingWentWrong"), [
+      Alert.alert(t("Main.Sorry"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
         {
-          text: t("PublicForum.OK"),
+          text: t("Main.OK"),
           onPress: () => navigation.navigate("Signup"),
         },
       ]);
@@ -729,11 +729,11 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
 
               <View className="flex-row items-center justify-center mt-4">
                 <Text className="font-bold text-black">
-                  {t("Signup.AlreadyAccount")}{" "}
+                  {t("Signup.AlreadyHaveAnAccount")}{" "}
                 </Text>
                 <TouchableOpacity onPress={() => navigation.navigate("Signin")}>
                   <Text className="text-[#fff] font-semibold underline">
-                    {t("Signup.SignIn")}
+                    {t("Signup.SignInHere")}
                   </Text>
                 </TouchableOpacity>
               </View>

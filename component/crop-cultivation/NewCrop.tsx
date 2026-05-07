@@ -87,7 +87,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
 
   const fetchCrop = async () => {
     try {
-      const selectedLanguage = t("NewCrop.LNG");
+      const selectedLanguage = t("Main.LNG");
       setLanguage(selectedLanguage);
 
       const res = await axios.get<CropData[]>(
@@ -258,7 +258,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
       if (!selectedCropId) return;
 
       try {
-        const selectedLanguage = t("NewCrop.LNG");
+        const selectedLanguage = t("Main.LNG");
         setLanguage(selectedLanguage);
 
         const varietyResponse = await axios.get<VarietyData[]>(

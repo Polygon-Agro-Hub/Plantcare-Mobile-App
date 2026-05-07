@@ -138,11 +138,11 @@ export default function CultivatedLandModal({
       if (!cropId || cropId === "" || cropId === "undefined") {
         console.error("CultivatedLandModal: Invalid cropId:", cropId);
         Alert.alert(
-          t("Main.error"),
+          t("Main.Error"),
           t("CropCalender.Invalid crop data. Please try again."),
           [
             {
-              text: t("PublicForum.OK"),
+              text: t("Main.OK"),
               onPress: () => {
                 setLoading(false);
                 onClose();
@@ -156,11 +156,11 @@ export default function CultivatedLandModal({
       if (!farmId || farmId === 0) {
         console.error(" CultivatedLandModal: Invalid farmId:", farmId);
         Alert.alert(
-          t("Main.error"),
+          t("Main.Error"),
           t("CropCalender.Invalid farm data. Please try again."),
           [
             {
-              text: t("PublicForum.OK"),
+              text: t("Main.OK"),
               onPress: () => {
                 setLoading(false);
                 onClose();
@@ -177,11 +177,11 @@ export default function CultivatedLandModal({
           onCulscropID,
         );
         Alert.alert(
-          t("Main.error"),
+          t("Main.Error"),
           t("CropCalender.Invalid cultivation data. Please try again."),
           [
             {
-              text: t("PublicForum.OK"),
+              text: t("Main.OK"),
               onPress: () => {
                 setLoading(false);
                 onClose();
@@ -253,7 +253,7 @@ export default function CultivatedLandModal({
     } catch (error: any) {
       console.error(" Error fetching required images:", error);
 
-      let errorMessage = t("Main.somethingWentWrong");
+      let errorMessage = t("Main.SomethingWentWrongPleaseTryAgainlater");
 
       if (error.response?.status === 404) {
         errorMessage = t("CropCalender.Task not found. Please try again.");
@@ -263,9 +263,9 @@ export default function CultivatedLandModal({
         errorMessage = t("CropCalender.Please log in again.");
       }
 
-      Alert.alert(t("Main.error"), errorMessage, [
+      Alert.alert(t("Main.Error"), errorMessage, [
         {
-          text: t("PublicForum.OK"),
+          text: t("Main.OK"),
           onPress: () => onClose(),
         },
       ]);
@@ -375,7 +375,7 @@ export default function CultivatedLandModal({
             Alert.alert(
               t("CropCalender.Success"),
               t("CropCalender.TaskSuccessMessage"),
-              [{ text: t("PublicForum.OK") }],
+              [{ text: t("Main.OK") }],
             );
 
             onClose(true);
@@ -394,8 +394,8 @@ export default function CultivatedLandModal({
         console.error(`Upload attempt ${attempt} failed:`, error);
 
         if (attempt >= maxRetries) {
-          Alert.alert(t("Main.error"), t("CropCalender.UploadRetryFailed"), [
-            { text: t("PublicForum.OK") },
+          Alert.alert(t("Main.Error"), t("CropCalender.UploadRetryFailed"), [
+            { text: t("Main.OK") },
           ]);
           setLoading(false);
           await markTaskAsIncomplete();

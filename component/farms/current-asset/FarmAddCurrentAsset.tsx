@@ -140,8 +140,8 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
       const data = require("@/assets/jsons/current-asset/current-asset.json");
       setCategories(Object.keys(data));
     } catch {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
     } finally {
       setLoading(false);
@@ -238,7 +238,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
         Alert.alert(
           t("CurrentAssets.sorry"),
           t("CurrentAssets.futureDateError"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -248,7 +248,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
         Alert.alert(
           t("CurrentAssets.sorry"),
           t("CurrentAssets.expireBeforePurchase"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         setExpireDate("");
         setWarranty("");
@@ -266,7 +266,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
         Alert.alert(
           t("CurrentAssets.sorry"),
           t("CurrentAssets.expireBeforePurchase"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -336,7 +336,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
       Alert.alert(
         t("CurrentAssets.sorry"),
         t("CurrentAssets.cannotAddExpiredAsset"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -404,7 +404,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
           { text: t("Farms.okButton") },
         ]);
         return;
@@ -462,7 +462,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
         return;
       }
 
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
         { text: t("Farms.okButton") },
       ]);
     }

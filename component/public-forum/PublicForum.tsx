@@ -169,7 +169,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
           Alert.alert(
             t("PublicForum.sorry"),
             t("PublicForum.failedToRefresh"),
-            [{ text: t("PublicForum.OK") }],
+            [{ text: t("Main.OK") }],
           );
         } finally {
           setRefreshing(false);
@@ -197,19 +197,19 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
       if (response.status === 200) {
         Alert.alert(t("PublicForum.success"), t("PublicForum.postDeleted"), [
           {
-            text: t("PublicForum.OK"),
+            text: t("Main.OK"),
           },
         ]);
       } else {
         Alert.alert(t("PublicForum.error"), t("PublicForum.failedToDelete"), [
-          { text: t("PublicForum.OK") },
+          { text: t("Main.OK") },
         ]);
       }
       setPosts(posts.filter((post) => post.id !== id));
     } catch (error) {
       console.error("Error deleting post:", error);
       Alert.alert(t("PublicForum.error"), t("PublicForum.failedToDelete"), [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
     }
   };
@@ -237,7 +237,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
       }
     } catch (error) {
       Alert.alert(t("PublicForum.sorry"), t("PublicForum.failedToRefresh"), [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
     } finally {
       setRefreshing(false);
@@ -256,7 +256,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
       const replyMessage = comment[postId] || "";
       if (replyMessage.trim() === "") {
         Alert.alert(t("PublicForum.sorry"), t("PublicForum.commentEmpty"), [
-          { text: t("PublicForum.OK") },
+          { text: t("Main.OK") },
         ]);
         return;
       }
@@ -288,7 +288,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
       );
     } catch (error) {
       Alert.alert(t("PublicForum.sorry"), t("PublicForum.commentFailed"), [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
     }
   };

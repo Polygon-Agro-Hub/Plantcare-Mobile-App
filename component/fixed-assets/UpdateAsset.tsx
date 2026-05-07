@@ -517,7 +517,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       Alert.alert(
         t("FixedAssets.sorry"),
         t("FixedAssets.pleaseFillRequiredFields"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -634,7 +634,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       Alert.alert(
         t("FixedAssets.successTitle"),
         t("FixedAssets.assetsUpdatedSuccessfully"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       setIsLoading(false);
       navigation.goBack();
@@ -643,13 +643,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
       if (error.response?.status === 409) {
         Alert.alert("Duplicate Name", error.response.data.message, [
-          { text: t("PublicForum.OK") },
+          { text: t("Main.OK") },
         ]);
       } else {
         Alert.alert(
           t("FixedAssets.sorry"),
           t("FixedAssets.failToUpdateAssets"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
       }
     }

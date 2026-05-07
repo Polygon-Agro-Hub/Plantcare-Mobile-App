@@ -289,7 +289,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
       }
     } catch (error) {
       console.error('Error getting current location:', error);
-      Alert.alert(t('WeatherForecast.Error'), t('WeatherForecast.UnableToFetchLocation'));
+      Alert.alert(t('Main.Error'), t('WeatherForecast.UnableToFetchLocation'));
     }
   };
 
@@ -410,7 +410,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
       }
     } catch (error) {
       console.error('Error refreshing with current location:', error);
-      Alert.alert(t('WeatherForecast.Error'), t('WeatherForecast.UnableToFetchLocation'));
+      Alert.alert(t('Main.Error'), t('WeatherForecast.UnableToFetchLocation'));
     } finally {
       setRefreshing(false);
     }

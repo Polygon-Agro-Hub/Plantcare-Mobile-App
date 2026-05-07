@@ -132,14 +132,14 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   }, [navigation]);
 
   const fetchProfileData = async () => {
-    const selectedLanguage = t("Dashboard.LNG");
+    const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
     const netState = await NetInfo.fetch();
     if (!netState.isConnected) {
       Alert.alert(
-        t("Main.No Internet Connection"),
-        t("Main.Please turn on mobile data or Wi-Fi to continue."),
-        [{ text: t("PublicForum.OK") }],
+        t("Main.NoInternetConnection"),
+        t("Main.PleaseTurnOnMobileDataOrWiFiToContinue"),
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -157,8 +157,8 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       const data = await response.json();
 
       if (!data.user || !data.user.firstName) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
         navigation.navigate("Signin");
         return;
@@ -171,8 +171,8 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         setLoading(false);
       }, 100);
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
       navigation.navigate("Signin");
     }

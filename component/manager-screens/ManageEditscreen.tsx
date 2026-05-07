@@ -311,19 +311,19 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
 
   const validateForm = () => {
     if (!firstName.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter first name"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.Please enter first name"), [
         { text: t("Farms.okButton") },
       ]);
       return false;
     }
     if (!lastName.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter last name"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.Please enter last name"), [
         { text: t("Farms.okButton") },
       ]);
       return false;
     }
     if (!phoneNumber.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter phone number"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.Please enter phone number"), [
         { text: t("Farms.okButton") },
       ]);
       return false;
@@ -332,19 +332,19 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
     if (!validateSriLankanPhoneNumber(phoneNumber)) {
       if (phoneNumber.length !== 9) {
         Alert.alert(
-          t("Farms.Sorry"),
+          t("Main.Sorry"),
           t("Farms.Phone number must be exactly 9 digits"),
           [{ text: t("Farms.okButton") }],
         );
       } else if (phoneNumber[0] !== "7") {
         Alert.alert(
-          t("Farms.Sorry"),
+          t("Main.Sorry"),
           t("Farms.Phone number must start with 7"),
           [{ text: t("Farms.okButton") }],
         );
       } else {
         Alert.alert(
-          t("Farms.Sorry"),
+          t("Main.Sorry"),
           t("Farms.Please enter a valid phone number"),
           [{ text: t("Farms.okButton") }],
         );
@@ -353,41 +353,41 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
     }
 
     if (!selectedRole) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please select a role"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.Please select a role"), [
         { text: t("Farms.okButton") },
       ]);
       return false;
     }
 
     if (!nic.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter NIC"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.Please enter NIC"), [
         { text: t("Farms.okButton") },
       ]);
       return false;
     }
 
     if (!validateSriLankanNic(nic)) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a valid NIC"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.Please enter a valid NIC"), [
         { text: t("Farms.okButton") },
       ]);
       return false;
     }
 
     if (phoneError) {
-      Alert.alert(t("Farms.Sorry"), phoneError, [
+      Alert.alert(t("Main.Sorry"), phoneError, [
         { text: t("Farms.okButton") },
       ]);
       return false;
     }
     if (validationError) {
-      Alert.alert(t("Farms.Sorry"), validationError, [
+      Alert.alert(t("Main.Sorry"), validationError, [
         { text: t("Farms.okButton") },
       ]);
       return false;
     }
     if (nicduplicateErrors) {
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t("Farms.This NIC is already used by another staff member"),
         [{ text: t("Farms.okButton") }],
       );
@@ -399,7 +399,7 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
 
   const fetchStaffMember = async () => {
     if (!staffMemberId) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Staff member ID is missing"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.Staff member ID is missing"), [
         { text: t("Farms.okButton") },
       ]);
       setLoading(false);
@@ -417,7 +417,7 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
 
       if (!token) {
         Alert.alert(
-          t("Farms.Sorry"),
+          t("Main.Sorry"),
           t("Farms.No authentication token found"),
           [{ text: t("Farms.okButton") }],
         );
@@ -448,7 +448,7 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
     } catch (err) {
       console.error("Error fetching staff member:", err);
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t("Farms.Failed to fetch staff member data"),
         [{ text: t("Farms.okButton") }],
       );
@@ -523,7 +523,7 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
         errorMessage = t("Farms.Network error. Please check your connection.");
       }
 
-      Alert.alert(t("Farms.Sorry"), errorMessage, [
+      Alert.alert(t("Main.Sorry"), errorMessage, [
         { text: t("Farms.okButton") },
       ]);
     } finally {
@@ -617,9 +617,9 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
 
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
+          t("Main.Error"),
           t("Farms.No authentication token found"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -639,7 +639,7 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
         t("Farms.Farm member deleted successfully"),
         [
           {
-            text: t("PublicForum.OK"),
+            text: t("Main.OK"),
             onPress: () => {
               navigation.navigate("ManageMembersManager", {
                 staffMemberId,
@@ -654,7 +654,7 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
       );
     } catch (err) {
       console.error("Error deleting staff member:", err);
-      Alert.alert(t("Farms.Sorry"), t("Farms.Failed to delete staff member"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.Failed to delete staff member"), [
         { text: t("Farms.okButton") },
       ]);
       setLoading(false);

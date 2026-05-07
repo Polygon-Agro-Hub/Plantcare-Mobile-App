@@ -206,11 +206,11 @@ const FarmCertificateTask: React.FC = () => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+        Alert.alert(t("Main.Error"), t("Farms.No authentication token found"));
         return;
       }
 
-      const currentLanguage = t("MyCrop.LNG");
+      const currentLanguage = t("Main.LNG");
       setLanguage(currentLanguage);
 
       const response = await axios.get(
@@ -232,7 +232,7 @@ const FarmCertificateTask: React.FC = () => {
             "Certificate not found with slaveQuestionnaireId:",
             slaveQuestionnaireId,
           );
-          Alert.alert(t("Farms.Error"), t("Farms.Certificate not found"));
+          Alert.alert(t("Main.Error"), t("Farms.Certificate not found"));
           setCertificateStatus(null);
           return;
         }
@@ -268,7 +268,7 @@ const FarmCertificateTask: React.FC = () => {
     } catch (err) {
       console.error("Error fetching certificate status:", err);
       Alert.alert(
-        t("Farms.Error"),
+        t("Main.Error"),
         t("Farms.Failed to fetch certificate tasks"),
       );
     } finally {
@@ -282,7 +282,7 @@ const FarmCertificateTask: React.FC = () => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+        Alert.alert(t("Main.Error"), t("Farms.No authentication token found"));
         return;
       }
 
@@ -395,7 +395,7 @@ const FarmCertificateTask: React.FC = () => {
       }
     } catch (error) {
       console.error("Error updating questionnaire item:", error);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"));
       setUploadingImageForItem(null);
     }
   };
@@ -407,7 +407,7 @@ const FarmCertificateTask: React.FC = () => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+        Alert.alert(t("Main.Error"), t("Farms.No authentication token found"));
         setUploadingImageForItem(null);
         return;
       }
@@ -464,7 +464,7 @@ const FarmCertificateTask: React.FC = () => {
       console.error("Error removing completion:", error);
       console.error("Error response:", error.response?.data);
 
-      let errorMessage = t("Main.somethingWentWrong");
+      let errorMessage = t("Main.SomethingWentWrongPleaseTryAgainlater");
       if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error.response?.status === 403) {
@@ -473,7 +473,7 @@ const FarmCertificateTask: React.FC = () => {
         errorMessage = t("Farms.Item not found");
       }
 
-      Alert.alert(t("Main.error"), errorMessage);
+      Alert.alert(t("Main.Error"), errorMessage);
     } finally {
       setUploadingImageForItem(null);
     }
@@ -487,7 +487,7 @@ const FarmCertificateTask: React.FC = () => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+        Alert.alert(t("Main.Error"), t("Farms.No authentication token found"));
         setUploadingImageForItem(null);
         return;
       }
@@ -574,7 +574,7 @@ const FarmCertificateTask: React.FC = () => {
     } catch (error: any) {
       console.error("Error uploading questionnaire image:", error);
 
-      let errorMessage = t("Main.somethingWentWrong");
+      let errorMessage = t("Main.SomethingWentWrongPleaseTryAgainlater");
       if (error.response?.status === 413) {
         errorMessage = t(
           "Farms.Image file is too large. Please try with a smaller image.",
@@ -585,7 +585,7 @@ const FarmCertificateTask: React.FC = () => {
         errorMessage = t("Farms.Upload timeout. Please try again.");
       }
 
-      Alert.alert(t("Main.error"), errorMessage);
+      Alert.alert(t("Main.Error"), errorMessage);
     } finally {
       setUploadingImageForItem(null);
     }
@@ -640,7 +640,7 @@ const FarmCertificateTask: React.FC = () => {
   useFocusEffect(
     useCallback(() => {
       fetchCertificateStatus();
-      const currentLanguage = t("MyCrop.LNG");
+      const currentLanguage = t("Main.LNG");
       setLanguage(currentLanguage);
     }, [farmId, slaveQuestionnaireId]),
   );

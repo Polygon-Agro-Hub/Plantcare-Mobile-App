@@ -109,7 +109,7 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
   const fetchCultivationsAndProgress = async () => {
     setLoading(true);
     try {
-      setLanguage(t("MyCrop.LNG"));
+      setLanguage(t("Main.LNG"));
 
       const token = await AsyncStorage.getItem("userToken");
 

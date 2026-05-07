@@ -168,7 +168,7 @@ const AddNewFarmSecondDetails = () => {
     if (submitSuccess) {
       Alert.alert(t("Farms.Success"), t("Farms.Farm saved successfully!"), [
         {
-          text: t("PublicForum.OK"),
+          text: t("Main.OK"),
           onPress: () => {
             dispatch(clearSubmitState());
             navigation.navigate("EarnCertificate", {
@@ -195,7 +195,7 @@ const AddNewFarmSecondDetails = () => {
 
     if (!farmBasicDetails) {
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t("Farms.Missing farm details. Please go back and complete all steps."),
         [{ text: t("Farms.okButton") }],
       );
@@ -219,7 +219,7 @@ const AddNewFarmSecondDetails = () => {
   const handleAddStaff = () => {
     if (!numberOfStaff) {
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t("Farms.Please enter the number of staff"),
         [{ text: t("Farms.okButton") }],
       );
@@ -227,7 +227,7 @@ const AddNewFarmSecondDetails = () => {
     }
     if (!loginCredentialsNeeded) {
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t("Farms.Please enter the number of login credentials needed"),
         [{ text: t("Farms.okButton") }],
       );
@@ -239,7 +239,7 @@ const AddNewFarmSecondDetails = () => {
 
     if (credentialsCount > staffCount) {
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t("Farms.Login credentials cannot exceed the total number of staff"),
         [{ text: t("Farms.okButton") }],
       );
@@ -248,7 +248,7 @@ const AddNewFarmSecondDetails = () => {
 
     if (staffCount < 0 || credentialsCount < 0) {
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t("Farms.Staff numbers cannot be negative"),
         [{ text: t("Farms.okButton") }],
       );

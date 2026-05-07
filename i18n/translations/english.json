@@ -1,36 +1,23 @@
 {
   "Main": {
-    "error": "Sorry",
-    "somethingWentWrong": "Something went wrong. Please try again later.",
-    "ok": "OK",
+    "OK": "OK",
+    "LNG": "en",
+    "Error": "Error",
     "Sorry": "Sorry",
-    "userBlocked": "Too many requests from this device, please try again in 30 minutes.",
-    "No Internet Connection": "No Internet Connection",
-    "Please turn on mobile data or Wi-Fi to continue.": "Please turn on Mobile Data or Wi-Fi to continue."
-  },
-  "signupForm": {
-    "signuphere": "Sign Up Here",
-    "registerwithphno": "Register using your Phone Number",
-    "or": "or",
-    "signupwithgoogle": "Sign Up with Google",
-    "signupwithappleid": "Sign Up with Apple ID",
-    "signupwithhuaweiid": "Sign Up with Huawei ID",
-    "alreadyhaveaccount": "Already have an account?",
-    "signin": "Sign In",
-    "startwithletter": "Username must start with a letter and contain no spaces",
-    "enteravalidenic": "Please enter a valid National Identity Card (NIC) number"
+    "NoInternetConnection": "No Internet Connection.",
+    "SomethingWentWrongPleaseTryAgainlater": "Something Went Wrong. Please Try Again Later.",
+    "PleaseTurnOnMobileDataOrWiFiToContinue": "Please Turn On Mobile Data or Wi-Fi to Continue.",
+    "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "Too many requests from this device, please try again in 30 minutes."
   },
   "Signup": {
-    "LNG": "en",
-    "FillAccountDetails": "Complete Your Account Details",
     "FirstName": "First Name",
     "LastName": "Last Name",
     "NICNumber": "NIC Number",
     "PhoneNumber": "Phone Number",
     "SignUp": "Sign Up",
-    "AlreadyAccount": "Already have an account?",
-    "SignIn": "Sign In Here",
-    "Enteravalidmobile": "Please enter a valid 9-digit mobile number (exclude the leading zero).",
+    "AlreadyHaveAnAccount": "Already have an account?",
+    "SignInHere": "Sign In Here",
+    "EnterValidMobile": "Please enter a valid 9-digit mobile number (exclude the leading zero).",
     "Startwithletter": "Username must start with a letter and contain no spaces",
     "Enteravalidenic": "Please enter a valid National Identity Card (NIC) number",
     "fillAllFields": "All fields are required. Please complete them.",
@@ -38,7 +25,6 @@
     "nicExists": "The NIC number you entered is already registered, please check your details or log in.",
     "phoneNicExist": "Both the phone number and NIC number entered are already registered. Please log in instead.",
     "otpSendFailed": "Failed to send OTP. Please check your number and try again.",
-    "Please Select Your District": "Please Select Your District",
     "District": "District",
     "Enter First Name Here": "Enter First Name Here",
     "Enter Last Name Here": "Enter Last Name Here",
@@ -60,17 +46,14 @@
     "signuphere": "Sign up here",
     "enterYourPhNo": "Enter your phone number",
     "PhoneNumber": "Phone Number",
-    "Enteravalidmobile": "Please enter a valid mobile number.",
     "validationError": "Validation Error",
     "phoneNumberRequired": "Phone number is required.",
     "loginFailed": "Login failed",
     "notRegistered": "This user is not registered. Please sign up first",
-    "sorry": "Sorry",
     "Select Country Code": "Select Country Code",
     "Search country or dial code...": "Search country or dial code..."
   },
   "OtpVerification": {
-    "LNG": "en",
     "OTPVerification": "OTP Verification",
     "OTPCode": "Please enter the OTP Code sent to",
     "didntreceived": "I didn't receive the code!",
@@ -81,7 +64,6 @@
     "invalidOTP": "The OTP you entered is invalid. Please try again",
     "completeOTP": "Please enter the full OTP code",
     "verificationFailed": "OTP verification failed. Please check the code and try again.",
-    "errorOccurred": "Sorry",
     "otpResent": "OTP has been resent successfully!",
     "otpResendFailed": "Failed to resend OTP. Please try again.",
     "timeout": "Session timeout",
@@ -95,7 +77,6 @@
     "Continue": "Continue"
   },
   "Membership": {
-    "LNG": "en",
     "ActiveMembership": "Activate Membership!",
     "ActiveYourMemvbershipText": "Activate your membership as an Polygon Agro registered Farmer.",
     "Benifits": "Benefits",
@@ -117,7 +98,6 @@
     "Skip": "Skip"
   },
   "BankDetails": {
-    "LNG": "en",
     "FillBankDetails": "Fill Bank Details",
     "AccountHolderName": "Account Holder's Name",
     "EnterAccountHolderName": "Enter Account Holder's Name",
@@ -136,7 +116,6 @@
     "failed": "Failed",
     "failedToRegister": "Failed to register bank details. Please try again.",
     "ExistingBankDetails": "Existing Bank Details",
-    "sorry": "Sorry",
     "SearchHere": "Search Here",
     "OnlyNumbers": "Account Number must be a number",
     "Enter Account Number": "Enter Account Number",
@@ -145,7 +124,6 @@
     "Select Branch Name": "Select Branch Name"
   },
   "Dashboard": {
-    "LNG": "en",
     "hi": "Hello",
     "loading": "Please wait, loading...",
     "news": "News",
@@ -157,13 +135,7 @@
     "GoviShop": "GoviShop",
     "Soil Data": "Soil Data"
   },
-  "navbar": {
-    "home": "Home",
-    "newcrop": "New Crop",
-    "mycultivation": "My Cultivation"
-  },
   "Profile": {
-    "LNG": "en",
     "LanguageSettings": "Language Settings",
     "ViewQR": "View My QR",
     "View QR Code": "View QR Code",
@@ -181,7 +153,6 @@
     "UnabletoOpen": "Unable to open the dialer. Please try again."
   },
   "QRcode": {
-    "LNG": "en",
     "QRcode": "My QR Code",
     "QR": "QR Code",
     "Download": "Download",
@@ -201,7 +172,6 @@
     "NO Owner Qr": "Your Farm owner has not registered for a QR Code yet."
   },
   "EditProfile": {
-    "LNG": "en",
     "FirstName": "First Name",
     "LastName": "Last Name",
     "PhoneNumber": "Phone Number",
@@ -219,36 +189,7 @@
     "lastNameRequired": "Last Name is Required",
     "firstNameRequired": "First Name is Required"
   },
-  "District": {
-    "LNG": "en",
-    "Ampara": "Ampara",
-    "Anuradhapura": "Anuradhapura",
-    "Badulla": "Badulla",
-    "Batticaloa": "Batticaloa",
-    "Colombo": "Colombo",
-    "Galle": "Galle",
-    "Gampaha": "Gampaha",
-    "Hambantota": "Hambantota",
-    "Jaffna": "Jaffna",
-    "Kalutara": "Kalutara",
-    "Kandy": "Kandy",
-    "Kegalle": "Kegalle",
-    "Kilinochchi": "Kilinochchi",
-    "Kurunegala": "Kurunegala",
-    "Mannar": "Mannar",
-    "Matale": "Matale",
-    "Matara": "Matara",
-    "Monaragala": "Monaragala",
-    "Mullaitivu": "Mullaitivu",
-    "NuwaraEliya": "Nuwara Eliya",
-    "Polonnaruwa": "Polonnaruwa",
-    "Puttalam": "Puttalam",
-    "Rathnapura": "Rathnapura",
-    "Trincomalee": "Trincomalee",
-    "Vavuniya": "Vavuniya"
-  },
   "NewCrop": {
-    "LNG": "en",
     "NewCrop": "Select a new crop",
     "Search": "Search Crop",
     "District": "By District",
@@ -259,7 +200,6 @@
     "OK": "OK"
   },
   "Cropenroll": {
-    "LNG": "en",
     "StartCultivaiton": "Start your Cultivation",
     "UpdateCultivation": "Update your Cultivation",
     "selectNaofCultivation": "Select Nature of Cultivation",
@@ -292,7 +232,6 @@
     "enrollmentLimit": "Maximum enrollment limit reached",
     "enrollmentLimitReached": "You've reached the limit of 3 crop enrollments.",
     "alreadyEnrolled": "This crop is already enrolled!",
-    "sorry": "Sorry",
     "selectCategory": "Select Category",
     "EnterAtLeastOneExtent": "Please enter at least one extent.",
     "Cultivation extent exceeds farm total extent": "Cultivation extent exceeds farm total extent!",
@@ -305,22 +244,17 @@
     "AvailableExtent": "Available extent"
   },
   "SelectCrop": {
-    "LNG": "en",
     "description": "Description",
     "success": "Success",
     "Continue": "Continue",
     "noImage": "No image available"
   },
   "MyCrop": {
-    "LNG": "en",
-    "Cultivation": "My Cultivation",
-    "Sorry": "Sorry",
     "NoAlreasdyEnrolled": "You have not enrolled any crops yet.",
     "NoDataFound": "No farm cultivations yet",
     "No Ongoing Cultivations yet": "No Ongoing Cultivations yet"
   },
   "CropCalender": {
-    "LNG": "en",
     "Confirm Remove": "Confirm Remove",
     "Task completed successfully": "Task completed successfully",
     "Task completion removed successfully": "Task completion removed successfully",
@@ -340,7 +274,6 @@
     "YouHave": "You have",
     "daysRemaining": "{{date}} days remaining until the next update.",
     "overDue": "Update is overdue!",
-    "sorry": "Sorry",
     "viewVideo": "Watch Video",
     "viewImage": "See Photos",
     "loadingCameraPermission": "Loading camera permissions...",
@@ -383,7 +316,6 @@
     "NoActiveCertificate": "No active certificate"
   },
   "ReportComplaint": {
-    "LNG": "en",
     "fillAllFields": "Please fill in all fields.",
     "success": "Success",
     "complaintSuccess": "Complaint added successfully!",
@@ -392,7 +324,6 @@
     "Problem": "Problem",
     "selectCategory": "Select Complaint Category",
     "finace": "Finance",
-    "sorry": "Sorry",
     "Finance": "Finance",
     "Agriculture": "Agriculture",
     "Call Center": "Call Center",
@@ -403,8 +334,6 @@
     "Other": "Other"
   },
   "ReportHistory": {
-    "LNG": "en",
-    "sorry": "Sorry",
     "noData": "No complaints found.",
     "Complaints": "Complaint History",
     "Opened": "Opened",
@@ -415,17 +344,12 @@
     "RefNo": "Ref No",
     "Sent": "Sent"
   },
-  "NewsSlideShow": {
-    "LNG": "en"
-  },
   "MarketPriceSlideShow": {
-    "LNG": "en",
     "Note": "Note",
     "Text": "Actual market prices may differ from the displayed price.",
     "PleaseEnroll": "Please Enroll to Crops to see How the Market Prices are."
   },
   "PublicForum": {
-    "LNG": "en",
     "startanewdiscussion": "Start a new discussion",
     "loadingComments": "Loading comments...",
     "replies": "replies",
@@ -445,7 +369,6 @@
     "permissionDenied": "Permission denied",
     "permissionDeniedMessage": "We need access to your camera to continue. Please enable permissions!",
     "validationError": "Validation Error",
-    "Error": "Error",
     "fillAllFields": "Please complete all required fields before proceeding.",
     "tokenFetchFailed": "Something went wrong, Please try again…...",
     "loadingMore": "Getting new posts...",
@@ -455,7 +378,6 @@
     "commentFailed": "Failed to add comment",
     "failedToRefresh": "Failed to refresh posts.",
     "fetchError": "Something went wrong while loading comments",
-    "sorry": "Sorry",
     "success": "Success",
     "descriptionRequired": "Description is required",
     "noSearchResults": "No results found for your search",
@@ -477,9 +399,7 @@
     "removeImageConfirm": "Are you sure you want to remove this image?",
     "remove": "REMOVE",
     "titleRequired": "Title is required",
-    "OK": "OK",
     "Post updated successfully": "Post updated successfully!",
-    "error": "Error",
     "updateFailed": "Failed to update post.",
     "Delete": "Delete",
     "noComments": "Not have any comment yet",
@@ -487,17 +407,7 @@
     "seeLess": "See Less",
     "Maximum 250 characters allowed.": "Maximum 250 characters allowed."
   },
-  "weather": {
-    "searchlocation": "Search Location",
-    "nodata": "No weather data available! Try Again",
-    "wind": "Wind",
-    "humidity": "Humidity",
-    "rain": "Rain",
-    "today": "Today",
-    "fivedays": "5 Days "
-  },
   "WeatherForecast": {
-    "LNG": "en",
     "Wind": "Wind",
     "Humidity": "Humidity",
     "Rain": "Rain",
@@ -513,23 +423,13 @@
     "ErrorFetching": "An error occurred while fetching weather data.",
     "PermissionDenied": "Permission Denied",
     "LocationAccessRequired": "Location access is required to fetch weather data for your current location. You can search for a location manually.",
-    "Error": "Error",
     "UnableToFetchLocation": "Unable to fetch current location."
   },
   "FiveDayForcast": {
-    "LNG": "en",
     "Title": "5 Days Forecast",
-    "Wind": "Wind",
-    "Humidity": "Humidity",
-    "Rain": "Rain",
     "Tomorrow": "Tomorrow"
   },
-  "News": {
-    "LNG": "en",
-    "news": "News"
-  },
   "CurrentAssets": {
-    "LNG": "en",
     "myAssets": "My Assets",
     "No assets found": "No assets found",
     "currentAssets": "Current Assets",
@@ -587,7 +487,6 @@
     "expireBeforePurchase": "Expiration date must be after purchase date.",
     "noTokenError": "Session expired. Please log in again",
     "success": "Success",
-    "sorry": "Sorry",
     "YouCannotRemove": "You cannot remove more units than available.",
     "missingFieldsTitle": "Please complete all required fields",
     "This exact asset already exists.": "This exact asset already exists.",
@@ -830,7 +729,6 @@
     "Urea": "Urea",
     "Vegetable fertilizer": "Vegetable fertilizer",
     "Select Farm": "Select Farm",
-    "error": "Error",
     "totalPriceExceed": "The total price cannot exceed {{maxValue}}",
     "Asset": "Asset",
     "B.No": "B. No",
@@ -857,13 +755,11 @@
     "batchNumberError": "Batch number cannot be negative"
   },
   "FixedAssets": {
-    "LNG": "en",
     "myAssets": "My Assets",
     "currentAssets": "Current Assets",
     "notSelected": "Not Selected",
     "fixedAssets": "Fixed Assets",
     "addAsset": "Add Asset",
-    "sorry": "Sorry",
     "success": "Success",
     "issuedDateCannotBeFuture": "The issued date cannot be in the future.",
     "purchaseDateCannotBeFuture": "The purchase date cannot be in the future.",
@@ -1239,23 +1135,14 @@
     "warrantyDatesexpireDate": "Warranty Expire Date is required"
   },
   "AddressDetails": {
-    "LNG": "en",
-    "LocationDetails": "Location Details",
-    "EnterBuildingHouse": "Enter House / Building No",
-    "EnterStreetName": "Enter Street Name",
-    "EnterCityName": "Enter City Name",
-    "pleaseAdd": "Please add your cultivation land’s address details to collaborate with us.",
     "Building": "Building / House No.",
+    "EnterBuildingHouse": "Enter House / Building No",
     "Streetname": "Street Name",
+    "EnterStreetName": "Enter Street Name",
     "City": "City",
-    "Continue": "Continue",
-    "success": "Success",
-    "addressAddedSuccessfully": "Address details added successfully!",
-    "sorry": "Sorry",
-    "Updating": "Updating..."
+    "EnterCityName": "Enter City Name"
   },
   "PrivacyPlicy": {
-    "LNG": "en",
     "PrivacyPolicy": "Privacy Policy",
     "By": "By",
     "explain": "GoViCare is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our mobile application designed to provide farming guidance, asset management, weather reports, monitoring support, and a public forum for farmers. By using our App, you agree to the terms of this Privacy Policy. If you do not agree, please discontinue use of our App.",
@@ -1295,7 +1182,6 @@
     "UpdatestothisPrivacyPolicyTxt": "We may update this Privacy Policy periodically. The latest version will always be available in the App. Your continued use of our App after changes are made will constitute acceptance of the updated policy."
   },
   "Terms&Condisions": {
-    "LNG": "en",
     "Terms&Conditions": "Terms & Conditions",
     "By": "By",
     "explain": "Welcome to GoViCare. By downloading or using our mobile application (\"App\"), you agree to abide by these Terms and Conditions (\"Terms\"). Please read them carefully. If you do not agree to these Terms, please do not use the App.",
@@ -1350,7 +1236,6 @@
     "cancelButton": "Cancel & Go Back"
   },
   "Feedback": {
-    "LNG": "en",
     "title": "Feedback",
     "whyLeave": "Why did you decide to leave this app?",
     "optionalFeedback": "Give an optional feedback to help us improve",
@@ -1390,7 +1275,6 @@
     "This Goods Receipt Note": "This Goods Receipt Note (GRN) serves as a provisional acknowledgment based on initial measurements taken by front-line staff. Final verification will be conducted at the Collection Centre. The measurement recorded at the Collection Centre shall be deemed conclusive and binding in all cases of discrepancy. The organization reserves the right to rectify any revenue impacts arising from measurement variances and shall not be liable for losses due to initial miscalculations.",
     "Download": "Download",
     "Share": "Share",
-    "Sorry": "Sorry",
     "PDF was not generated.": "PDF was not generated.",
     "Failed to load details": "Failed to load details",
     "Success": "Success",
@@ -1489,7 +1373,6 @@
     "Checking NIC...": "Checking NIC...",
     "Please enter a valid phone number": "Please enter a valid phone number",
     "One or more phone numbers are already registered. Please use different phone numbers.": "One or more phone numbers are already registered. Please use different phone numbers.",
-    "Sorry": "Sorry",
     "Please fix NIC validation errors before saving.": "Please fix NIC validation errors before saving.",
     "One or more NIC numbers are already registered. Please use different NIC numbers.": "One or more NIC numbers are already registered. Please use different NIC numbers.",
     "Please enter first name": "Please enter First Name",
@@ -1570,7 +1453,6 @@
     "Credit Debit Card": "Credit / Debit Card",
     "Processing": "Processing...",
     "Pay Now": "Pay Now",
-    "Error": "Error",
     "Farm ID Missing": "Farm ID or Farm Name is missing or invalid.",
     "OK": "OK",
     "Please enter farm extent": "Please enter farm extent (at least one field: ha, ac, or p)",
@@ -1707,7 +1589,6 @@
     "Validation Error": "Validation Error",
     "Please fill in Service, Price, and Farm fields": "Please fill in Service, Price, and Farm fields",
     "Please select at least one crop for inspection": "Please select at least one crop for inspection",
-    "Error": "Error",
     "Please add at least one inspection request": "Please add at least one inspection request",
     "Please select a date for all inspection requests": "Please select a date for all inspection requests",
     "Please wait": "Please wait",
@@ -1848,30 +1729,6 @@
     "Land’s Street Name": "Land's Street Name",
     "Land’s City": "Land's City"
   },
-  "GoviPension": {
-    "howThisWorks": "How this works?",
-    "otherBeneficiaries": "Who gets benefits other than me?",
-    "applyForPension": "Apply for Pension",
-    "section1": {
-      "para1": "This pension scheme is created to support farmers and their families in the future. When a farmer joins the scheme, they will receive a monthly pension after retirement.",
-      "para2": "The pension amount depends on how many years the farmer contributes to the scheme.",
-      "para3": "For each year of contribution, the farmer earns Rs. 2,000 as monthly pension.",
-      "para4": "The longer you stay in the scheme, the higher your monthly pension will be."
-    },
-    "section2": {
-      "para1": "If a farmer joins at 20 years old and works until 65 years,",
-      "para2": "Total years = 45",
-      "para3": "Monthly pension = Rs. 2,000 × 45",
-      "para4": "= Rs. 90,000 per month"
-    },
-    "section3": {
-      "para1": "If a farmer joins at 20 years old and passes away at 50 years,",
-      "para2": "Total years = 30",
-      "para3": "Monthly pension = Rs. 2,000 × 30",
-      "para4": "= Rs. 60,000 per month",
-      "para5": "The spouse will receive Rs. 60,000 per month for the rest of their life."
-    }
-  },
   "GoviPensionForm": {
     "GoViPension": "GoViPension",
     "Section 1 of 2: Applicant Details": "Section 1 of 2: Applicant Details",
@@ -1962,7 +1819,6 @@
     "Answer": "Answer :"
   },
   "CropPlanningCalculators": {
-    "LNG": "en",
     "Title": "Crop Planning & Yield Calculators",
     "SeedRate": "Seed Rate",
     "PlantPopulation": "Plant Population",
@@ -1994,11 +1850,9 @@
     "SearchUnits": "Search units...",
     "NoUnitsFound": "No units found",
     "AreaError": "Area must be greater than 0.",
-    "FetchError": "Failed to load crops. Please try again.",
-    "Error": "Error"
+    "FetchError": "Failed to load crops. Please try again."
   },
   "IrrigationWaterCalculators": {
-    "LNG": "en",
     "Title": "Irrigation & Water Calculators",
     "IrrigationWaterRequirement": "Irrigation Water Requirement",
     "DripIrrigation": "Drip Irrigation",
@@ -2022,7 +1876,6 @@
     "SpacingGreaterThanZero": "Sprinkler spacing must be greater than 0."
   },
   "SoilFertilizerCalculators": {
-    "LNG": "en",
     "Title": "Soil & Fertilizer Calculators",
     "Fertilizer": "Fertilizer",
     "NPKRatio": "NPK Ratio",
@@ -2050,13 +1903,11 @@
     "kgPerHa": "kg/ha"
   },
   "PesticidePestCalculators": {
-    "LNG": "en",
     "Title": "Pesticide & Pest Calculators",
     "PesticideMixing": "Pesticide Mixing",
     "IPMThreshold": "IPM Threshold"
   },
   "EconomicCostCalendars": {
-    "LNG": "en",
     "Title": "Economic & Cost Calendars",
     "FarmBudgetProfit": "Farm Budget & Profit",
     "BreakEvenPrice": "Break-even Price",
@@ -2093,14 +1944,12 @@
     "RevenueError": "Expected revenue must be greater than 0."
   },
   "WeatherClimateCalculators": {
-    "LNG": "en",
     "Title": "Weather & Climate Calculators",
     "RainwaterHarvest": "Rainwater Harvest",
     "GDD": "GDD",
     "FrostRisk": "Frost Risk"
   },
   "PostHarvestStorageCalculators": {
-    "LNG": "en",
     "Title": "Post-Harvest Storage Calculators",
     "GrainDrying": "Grain Drying",
     "ColdStorage": "Cold Storage",

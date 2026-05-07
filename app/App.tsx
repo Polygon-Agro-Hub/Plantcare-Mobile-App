@@ -288,8 +288,8 @@ function AppContent() {
       if (!state.isConnected && !isOfflineAlertShown) {
         setIsOfflineAlertShown(true);
         Alert.alert(
-          t("Main.No Internet Connection"),
-          t("Main.Please turn on mobile data or Wi-Fi to continue."),
+          t("Main.NoInternetConnection"),
+          t("Main.PleaseTurnOnMobileDataOrWiFiToContinue"),
           [
             {
               text: "OK",

@@ -56,7 +56,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   const getAuthToken = async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error(t("Main.somethingWentWrong"));
+      if (!token) throw new Error(t("Main.SomethingWentWrongPleaseTryAgainlater"));
       return token;
     } catch (error) {
       return null;

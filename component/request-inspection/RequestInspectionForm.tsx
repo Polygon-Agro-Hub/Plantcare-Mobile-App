@@ -170,7 +170,7 @@ const RequestInspectionForm = () => {
       }
     } catch {
       Alert.alert(
-        t("RequestInspectionForm.Error"),
+        t("Main.Error"),
         t("RequestInspectionForm.Failed to fetch services. Please try again."),
         [{ text: t("RequestInspectionForm.OK") }],
       );
@@ -213,7 +213,7 @@ const RequestInspectionForm = () => {
       }
     } catch {
       Alert.alert(
-        t("RequestInspectionForm.Error"),
+        t("Main.Error"),
         t("RequestInspectionForm.Failed to fetch farms. Please try again."),
         [{ text: t("RequestInspectionForm.OK") }],
       );
@@ -293,7 +293,7 @@ const RequestInspectionForm = () => {
       }
     } catch {
       Alert.alert(
-        t("RequestInspectionForm.Error"),
+        t("Main.Error"),
         t(
           "RequestInspectionForm.Failed to fetch farm crops. Please try again.",
         ),
@@ -589,7 +589,7 @@ const RequestInspectionForm = () => {
   const proceedToPaymentWithItems = (itemsToUse: AddedItem[]) => {
     if (itemsToUse.length === 0) {
       Alert.alert(
-        t("RequestInspectionForm.Error"),
+        t("Main.Error"),
         t("RequestInspectionForm.Please add at least one inspection request"),
         [{ text: t("RequestInspectionForm.OK") }],
       );
@@ -597,7 +597,7 @@ const RequestInspectionForm = () => {
     }
     if (itemsToUse.some((item) => !item.date)) {
       Alert.alert(
-        t("RequestInspectionForm.Error"),
+        t("Main.Error"),
         t(
           "RequestInspectionForm.Please select a date for all inspection requests",
         ),
@@ -740,7 +740,7 @@ const RequestInspectionForm = () => {
       Alert.alert(
         hasPartialData
           ? t("RequestInspectionForm.Incomplete Data")
-          : t("RequestInspectionForm.Error"),
+          : t("Main.Error"),
         hasPartialData
           ? t(
               "RequestInspectionForm.Please complete all required fields or click 'Add More' to save your current data",

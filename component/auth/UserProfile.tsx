@@ -118,8 +118,8 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
     const phoneNumber = "+94770111999";
     const url = `tel:${phoneNumber}`;
     Linking.openURL(url).catch((err) =>
-      Alert.alert(t("Main.error"), t("Profile.UnabletoOpen"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Profile.UnabletoOpen"), [
+        { text: t("Main.OK") },
       ]),
     );
   };

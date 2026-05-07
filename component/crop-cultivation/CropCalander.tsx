@@ -193,7 +193,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     setTimestamps([]);
 
     try {
-      setLanguage(t("CropCalender.LNG"));
+      setLanguage(t("Main.LNG"));
       const token = await AsyncStorage.getItem("userToken");
 
       const response = await axios.get(
@@ -245,7 +245,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         setLoading(false);
       }, 300);
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
         { text: t("Farms.okButton") },
       ]);
       setTimeout(() => {
@@ -256,7 +256,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
   const fetchCropswithoutload = async () => {
     try {
-      setLanguage(t("CropCalender.LNG"));
+      setLanguage(t("Main.LNG"));
       const token = await AsyncStorage.getItem("userToken");
 
       const response = await axios.get(
@@ -304,7 +304,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
       setTimestamps(new Array(response.data.length).fill(""));
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
         { text: t("Farms.okButton") },
       ]);
     }
@@ -812,7 +812,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
       if (!location) {
         Alert.alert(
-          t("Farms.Error"),
+          t("Main.Error"),
           t("Farms.Unable to fetch location after multiple attempts"),
           [{ text: t("Farms.okButton") }],
         );
@@ -879,7 +879,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
       if (!crop) {
         console.warn("Crop data not found for index:", cropIndex);
-        Alert.alert(t("Farms.Error"), t("Farms.Task data not found"), [
+        Alert.alert(t("Main.Error"), t("Farms.Task data not found"), [
           { text: t("Farms.okButton") },
         ]);
         return;
@@ -891,7 +891,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
+          t("Main.Error"),
           t("Farms.No authentication token found"),
           [{ text: t("Farms.okButton") }],
         );

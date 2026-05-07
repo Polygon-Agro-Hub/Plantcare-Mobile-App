@@ -260,7 +260,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
       Alert.alert(
         t("FixedAssets.sorry"),
         t("FixedAssets.issuedDateCannotBeFuture"),
-        [{ text: t("Main.ok") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -295,7 +295,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
       Alert.alert(
         t("FixedAssets.sorry"),
         t("FixedAssets.issuedDateCannotBeFuture"),
-        [{ text: t("Main.ok") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -571,7 +571,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
         t("FixedAssets.assetAddSuccessfuly"),
         [
           {
-            text: t("Main.ok"),
+            text: t("Main.OK"),
             onPress: () =>
               navigation.navigate("Main", {
                 screen: "FarmFixDashBoard",
@@ -585,7 +585,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
       console.error("Error submitting data:", error);
       setLoading(false);
       Alert.alert("Duplicate Name", error.response.data.message, [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
     }
   };
@@ -684,7 +684,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                         Alert.alert(
                           t("FixedAssets.sorry"),
                           t("FixedAssets.purchaseDateCannotBeFuture"),
-                          [{ text: t("Main.ok") }],
+                          [{ text: t("Main.OK") }],
                         );
                       } else {
                         setPurchasedDate(selectedDate);
@@ -707,7 +707,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       Alert.alert(
                         t("FixedAssets.sorry"),
                         t("FixedAssets.purchaseDateCannotBeFuture"),
-                        [{ text: t("Main.ok") }],
+                        [{ text: t("Main.OK") }],
                       );
                     } else {
                       setPurchasedDate(selectedDate);

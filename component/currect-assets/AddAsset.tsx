@@ -179,8 +179,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       const data = require("@/assets/jsons/current-asset/current-asset.json");
       setCategories(Object.keys(data));
     } catch {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
     } finally {
       setLoading(false);
@@ -317,7 +317,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         Alert.alert(
           t("CurrentAssets.sorry"),
           t("CurrentAssets.futureDateError"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -328,7 +328,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         Alert.alert(
           t("CurrentAssets.sorry"),
           t("CurrentAssets.expireBeforePurchase"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         setExpireDate("");
         setWarranty("");
@@ -346,7 +346,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         Alert.alert(
           t("CurrentAssets.sorry"),
           t("CurrentAssets.expireBeforePurchase"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -488,7 +488,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       Alert.alert(
         t("CurrentAssets.sorry"),
         t("CurrentAssets.cannotAddExpiredAsset"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
       return;
@@ -503,8 +503,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
         return;
       }
@@ -544,7 +544,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       Alert.alert(
         t("CurrentAssets.success"),
         t("CurrentAssets.addAssetSuccess"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
       navigation.navigate("CurrentAssert");
@@ -562,8 +562,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       }
 
       console.error("Error adding asset:", error);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
       scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
     }

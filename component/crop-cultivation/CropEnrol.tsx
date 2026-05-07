@@ -99,7 +99,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
     const currentDate = selectedDate || startDate;
     if (currentDate > new Date()) {
       Alert.alert("Invalid Date", "The start date cannot be in the future.", [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
       setShowDatePicker(false);
       return;
@@ -122,7 +122,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       Alert.alert(
         t("Cropenroll.sorry"),
         t("Cropenroll.plzselectNatureOfCultivation"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -130,7 +130,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       Alert.alert(
         t("Cropenroll.sorry"),
         t("Cropenroll.plzselectCultivationMethod"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -146,12 +146,12 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
         setSearch(true);
       } else {
         Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"), [
-          { text: t("PublicForum.OK") },
+          { text: t("Main.OK") },
         ]);
       }
     } catch (err) {
       Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"), [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
     } finally {
       setLoading(false);
@@ -163,7 +163,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       Alert.alert(
         t("Cropenroll.sorry"),
         t("Cropenroll.EnterAtLeastOneExtent"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
         { cancelable: false },
       );
       return;
@@ -177,7 +177,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       Alert.alert(
         t("Cropenroll.sorry"),
         t("Cropenroll.EnterStartDate"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
         { cancelable: false },
       );
       return;
@@ -190,8 +190,8 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.unauthorized"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.unauthorized"), [
+          { text: t("Main.OK") },
         ]);
         return;
       }
@@ -215,13 +215,13 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
       if (res.status === 200) {
         Alert.alert(t("Cropenroll.success"), t("Cropenroll.EnrollSucess"), [
-          { text: t("PublicForum.OK") },
+          { text: t("Main.OK") },
         ]);
         setIsLoading(false);
         navigation.navigate("Main", { screen: "MyCrop" });
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
     } catch (err) {
@@ -233,45 +233,45 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
           if (status === 400) {
             if (message === "You have already enrolled in 3 crops") {
               Alert.alert(
-                t("Main.error"),
+                t("Main.Error"),
                 t("Cropenroll.enrollmentLimitReached"),
-                [{ text: t("PublicForum.OK") }],
+                [{ text: t("Main.OK") }],
               );
               setIsLoading(false);
             } else {
               Alert.alert(
                 t("Cropenroll.sorry"),
                 t("Cropenroll.alreadyEnrolled"),
-                [{ text: t("PublicForum.OK") }],
+                [{ text: t("Main.OK") }],
                 { cancelable: false },
               );
             }
             setIsLoading(false);
           } else if (status === 401) {
-            Alert.alert(t("Main.error"), t("Main.unauthorized"), [
-              { text: t("PublicForum.OK") },
+            Alert.alert(t("Main.Error"), t("Main.unauthorized"), [
+              { text: t("Main.OK") },
             ]);
             setIsLoading(false);
           } else {
-            Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-              { text: t("PublicForum.OK") },
+            Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+              { text: t("Main.OK") },
             ]);
             setIsLoading(false);
           }
         } else if (err.request) {
-          Alert.alert(t("Main.error"), t("Main.noResponseFromServer"), [
-            { text: t("PublicForum.OK") },
+          Alert.alert(t("Main.Error"), t("Main.noResponseFromServer"), [
+            { text: t("Main.OK") },
           ]);
           setIsLoading(false);
         } else {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-            { text: t("PublicForum.OK") },
+          Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+            { text: t("Main.OK") },
           ]);
           setIsLoading(false);
         }
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
         setIsLoading(false);
       }
@@ -375,7 +375,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
         Alert.alert(
           t("Cropenroll.Failed"),
           t("Cropenroll.FialedOngoinCultivationUpdate"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         setIsLoading(false);
       }
@@ -383,7 +383,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       Alert.alert(
         t("Cropenroll.Failed"),
         t("Cropenroll.FialedOngoinCultivationUpdate"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       setIsLoading(false);
     }

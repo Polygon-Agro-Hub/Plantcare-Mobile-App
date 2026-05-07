@@ -65,7 +65,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
     const regex = /^[1-9][0-9]{8}$/;
 
     if (!regex.test(localNumber)) {
-      setError(t("Signup.Enteravalidmobile"));
+      setError(t("Signup.EnterValidMobile"));
       setIsButtonDisabled(true);
       setIsValid(false);
     } else {
@@ -112,7 +112,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
     if (!phonenumber) {
       Alert.alert(t("signinForm.sorry"), t("signinForm.phoneNumberRequired"), [
         {
-          text: t("PublicForum.OK"),
+          text: t("Main.OK"),
           onPress: () => navigation.navigate("Signin"),
         },
       ]);
@@ -180,9 +180,9 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
             setIsButtonDisabled(false);
             setIsLoading(false);
           } catch (error) {
-            Alert.alert(t("Main.error"), t("Signup.otpSendFailed"), [
+            Alert.alert(t("Main.Error"), t("Signup.otpSendFailed"), [
               {
-                text: t("PublicForum.OK"),
+                text: t("Main.OK"),
                 onPress: () => navigation.navigate("Signin"),
               },
             ]);
@@ -191,9 +191,9 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
           setIsLoading(false);
           setIsButtonDisabled(false);
           if (data.message === "User is blocked") {
-            Alert.alert(t("Main.error"), t("Main.userBlocked"), [
+            Alert.alert(t("Main.Error"), t("Main.TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes"), [
               {
-                text: t("PublicForum.OK"),
+                text: t("Main.OK"),
                 onPress: () => navigation.navigate("Signin"),
               },
             ]);
@@ -204,7 +204,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
             t("signinForm.notRegistered"),
             [
               {
-                text: t("PublicForum.OK"),
+                text: t("Main.OK"),
                 onPress: () => navigation.navigate("Signin"),
               },
             ],
@@ -213,9 +213,9 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
       } else {
         setIsLoading(false);
         setIsButtonDisabled(false);
-        Alert.alert(t("Main.Sorry"), t("Main.somethingWentWrong"), [
+        Alert.alert(t("Main.Sorry"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
           {
-            text: t("PublicForum.OK"),
+            text: t("Main.OK"),
             onPress: () => navigation.navigate("Signin"),
           },
         ]);
@@ -223,9 +223,9 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
     } catch (error) {
       setIsButtonDisabled(false);
       setIsLoading(false);
-      Alert.alert(t("signinForm.loginFailed"), t("Main.somethingWentWrong"), [
+      Alert.alert(t("signinForm.loginFailed"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
         {
-          text: t("PublicForum.OK"),
+          text: t("Main.OK"),
           onPress: () => navigation.navigate("Signin"),
         },
       ]);

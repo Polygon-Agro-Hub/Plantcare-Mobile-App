@@ -172,7 +172,7 @@ const AddMemberDetails: React.FC = () => {
   const getAuthToken = async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("Main.somethingWentWrong");
+      if (!token) throw new Error("Main.SomethingWentWrongPleaseTryAgainlater");
       return token;
     } catch {
       return null;
@@ -413,7 +413,7 @@ const AddMemberDetails: React.FC = () => {
       alertShownRef.current = true;
       Alert.alert(t("Farms.Success"), t("Farms.Farm saved successfully!"), [
         {
-          text: t("PublicForum.OK"),
+          text: t("Main.OK"),
           onPress: () => {
             dispatch(clearSubmitState());
             alertShownRef.current = false;
@@ -430,7 +430,7 @@ const AddMemberDetails: React.FC = () => {
     if (submitError) {
       Alert.alert("Error", submitError, [
         {
-          text: t("PublicForum.OK"),
+          text: t("Main.OK"),
           onPress: () => dispatch(clearSubmitState()),
         },
       ]);
@@ -450,37 +450,37 @@ const AddMemberDetails: React.FC = () => {
 
     if (Object.values(phoneErrors).some(Boolean)) {
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t(
           "Farms.One or more phone numbers are already registered. Please use different phone numbers.",
         ),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
     if (Object.values(phoneValidationErrors).some(Boolean)) {
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t("Farms.Please fix phone number validation errors before saving."),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
     if (Object.values(nicErrors).some(Boolean)) {
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t("Farms.Please fix NIC validation errors before saving."),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
     if (Object.values(nicduplicateErrors).some(Boolean)) {
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t(
           "Farms.One or more NIC numbers are already registered. Please use different NIC numbers.",
         ),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -527,22 +527,22 @@ const AddMemberDetails: React.FC = () => {
         ...duplicatePhoneErrors,
       }));
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t(
           "Farms.Duplicate phone numbers found. Please use unique phone numbers for each staff member.",
         ),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
     if (hasDuplicateNics) {
       setNicErrors((prev) => ({ ...prev, ...duplicateNicErrors }));
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t(
           "Farms.Duplicate NIC numbers found. Please use unique NIC numbers for each staff member.",
         ),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -591,18 +591,18 @@ const AddMemberDetails: React.FC = () => {
       setPhoneValidationErrors(newPhoneErrors);
       setNicErrors(newNicErrors);
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t("Farms.Please fill all required fields correctly."),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
 
     if (!farmBasicDetails || !farmSecondDetails) {
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t("Farms.Missing farm details. Please go back and complete all steps."),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -964,7 +964,7 @@ const AddMemberDetails: React.FC = () => {
         onSelect={handleRoleSelect}
         showSearch={false}
         multiSelect={false}
-        doneButtonText={t("PublicForum.OK")}
+        doneButtonText={t("Main.OK")}
       />
 
       {/* ── Country Code Modal ── */}
@@ -983,7 +983,7 @@ const AddMemberDetails: React.FC = () => {
         searchPlaceholder={t("Farms.Search country...")}
         searchKeys={["label", "dialCode"]}
         multiSelect={false}
-        doneButtonText={t("PublicForum.OK")}
+        doneButtonText={t("Main.OK")}
       />
     </KeyboardAvoidingView>
   );

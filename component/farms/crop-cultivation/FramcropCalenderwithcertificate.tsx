@@ -422,7 +422,7 @@ const FramcropCalenderwithcertificate: React.FC<
 
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
+          t("Main.Error"),
           t("Farms.No authentication token found"),
           [{ text: t("Farms.okButton") }],
         );
@@ -539,7 +539,7 @@ const FramcropCalenderwithcertificate: React.FC<
       }
     } catch (error) {
       console.error("Error updating questionnaire item:", error);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
         { text: t("Farms.okButton") },
       ]);
     }
@@ -552,7 +552,7 @@ const FramcropCalenderwithcertificate: React.FC<
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+        Alert.alert(t("Main.Error"), t("Farms.No authentication token found"));
         setUploadingImageForItem(null);
         return;
       }
@@ -603,7 +603,7 @@ const FramcropCalenderwithcertificate: React.FC<
       console.error("Error removing completion:", error);
       console.error("Error response:", error.response?.data);
 
-      let errorMessage = t("Main.somethingWentWrong");
+      let errorMessage = t("Main.SomethingWentWrongPleaseTryAgainlater");
       if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error.response?.status === 403) {
@@ -612,7 +612,7 @@ const FramcropCalenderwithcertificate: React.FC<
         errorMessage = t("CropCalender.Item not found");
       }
 
-      Alert.alert(t("Main.error"), errorMessage);
+      Alert.alert(t("Main.Error"), errorMessage);
     } finally {
       setUploadingImageForItem(null);
     }
@@ -626,7 +626,7 @@ const FramcropCalenderwithcertificate: React.FC<
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+        Alert.alert(t("Main.Error"), t("Farms.No authentication token found"));
         setUploadingImageForItem(null);
         return;
       }
@@ -708,7 +708,7 @@ const FramcropCalenderwithcertificate: React.FC<
     } catch (error: any) {
       console.error("Error uploading questionnaire image:", error);
 
-      let errorMessage = t("Main.somethingWentWrong");
+      let errorMessage = t("Main.SomethingWentWrongPleaseTryAgainlater");
       if (error.response?.status === 413) {
         errorMessage = t("CropCalender.Image file is too large");
       } else if (error.response?.data?.message) {
@@ -717,7 +717,7 @@ const FramcropCalenderwithcertificate: React.FC<
         errorMessage = t("CropCalender.Upload timeout. Please try again");
       }
 
-      Alert.alert(t("Main.error"), errorMessage, [
+      Alert.alert(t("Main.Error"), errorMessage, [
         { text: t("Farms.okButton") },
       ]);
     } finally {
@@ -823,7 +823,7 @@ const FramcropCalenderwithcertificate: React.FC<
     setTimestamps([]);
 
     try {
-      setLanguage(t("CropCalender.LNG"));
+      setLanguage(t("Main.LNG"));
       const token = await AsyncStorage.getItem("userToken");
 
       const response = await axios.get(
@@ -875,7 +875,7 @@ const FramcropCalenderwithcertificate: React.FC<
         setLoading(false);
       }, 300);
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
         { text: t("Farms.okButton") },
       ]);
       setTimeout(() => {
@@ -886,7 +886,7 @@ const FramcropCalenderwithcertificate: React.FC<
 
   const fetchCropswithoutload = async () => {
     try {
-      setLanguage(t("CropCalender.LNG"));
+      setLanguage(t("Main.LNG"));
       const token = await AsyncStorage.getItem("userToken");
 
       const response = await axios.get(
@@ -934,7 +934,7 @@ const FramcropCalenderwithcertificate: React.FC<
 
       setTimestamps(new Array(response.data.length).fill(""));
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
         { text: t("Farms.okButton") },
       ]);
     }
@@ -1439,7 +1439,7 @@ const FramcropCalenderwithcertificate: React.FC<
 
       if (!location) {
         Alert.alert(
-          t("Farms.Error"),
+          t("Main.Error"),
           t("Farms.Unable to fetch location after multiple attempts"),
           [{ text: t("Farms.okButton") }],
         );
@@ -1505,7 +1505,7 @@ const FramcropCalenderwithcertificate: React.FC<
       const crop: CropItem = crops[cropIndex];
 
       if (!crop) {
-        Alert.alert(t("Farms.Error"), t("Farms.Task data not found"), [
+        Alert.alert(t("Main.Error"), t("Farms.Task data not found"), [
           { text: t("Farms.okButton") },
         ]);
         return;
@@ -1517,7 +1517,7 @@ const FramcropCalenderwithcertificate: React.FC<
 
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
+          t("Main.Error"),
           t("Farms.No authentication token found"),
           [{ text: t("Farms.okButton") }],
         );
