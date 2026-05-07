@@ -20,7 +20,7 @@ import { RootStackParamList } from "../types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../common/CustomHeader";
 
@@ -76,7 +76,7 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
       Alert.alert(
         t("PublicForum.sorry"),
         t("PublicForum.permissionDeniedMessage"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -155,11 +155,11 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
 
       if (response.status === 200) {
         Alert.alert(
-          t("PublicForum.success"),
+          t("Main.Success"),
           t("PublicForum.Post updated successfully"),
           [
             {
-              text: t("PublicForum.OK"),
+              text: t("Main.OK"),
             },
           ],
         );
@@ -167,7 +167,7 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
       } else {
         Alert.alert(t("PublicForum.error"), t("PublicForum.updateFailed"), [
           {
-            text: t("PublicForum.OK"),
+            text: t("Main.OK"),
             style: "default",
           },
         ]);
@@ -175,8 +175,8 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
     } catch (error) {
       console.error("Error updating post:", error);
 
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
     } finally {
       setLoading(false);
@@ -191,7 +191,7 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
       <Modal transparent={true} visible={loading} animationType="fade">
         <View className="flex-1 justify-center items-center bg-black/50">
           <ActivityIndicator size="large" color="#ffffff" />
-          <Text className="text-white mt-4">{t("CropCalender.Loading")}</Text>
+          <Text className="text-white mt-4">{t("Main.Loading...")}</Text>
         </View>
       </Modal>
     );
@@ -282,7 +282,7 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
               }}
             >
               <Text className="text-white text-lg">
-                {t("PublicForum.update")}
+                {t("Main.Update")}
               </Text>
             </TouchableOpacity>
           </View>

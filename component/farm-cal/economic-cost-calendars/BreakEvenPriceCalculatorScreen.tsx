@@ -64,8 +64,8 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
     if (!totalCost || !totalYield) {
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("EconomicCostCalendars.FillAllFields") ||
-          "Please fill all required fields.",
+        t("Main.PleaseFillAllRequiredFields") ||
+        "Please fill all required fields.",
       );
       return;
     }
@@ -77,7 +77,7 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
         t("EconomicCostCalendars.TotalCostError") ||
-          "Total cost must be greater than 0.",
+        "Total cost must be greater than 0.",
       );
       return;
     }
@@ -85,7 +85,7 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
         t("EconomicCostCalendars.TotalYieldError") ||
-          "Total yield must be greater than 0.",
+        "Total yield must be greater than 0.",
       );
       return;
     }
@@ -119,7 +119,7 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            {t("EconomicCostCalendars.FillRequiredFields") ||
+            {t("Main.PleaseFillAllRequiredFields") ||
               "Please fill all required fields!"}
           </Text>
         )}

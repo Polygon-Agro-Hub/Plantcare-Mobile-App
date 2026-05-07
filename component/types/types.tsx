@@ -63,7 +63,7 @@ export type RootStackParamList = {
   MyCrop: undefined;
   SinhalaMyCrop: undefined;
   TamilMyCrop: undefined;
-
+  SoilGridsScreen: undefined;
   PublicForum: { postId: string; userId: number };
   PublicForumReplies: { postId: string; own: string; userId: number };
   PublicForumPost: undefined;
@@ -336,6 +336,7 @@ export type RootStackParamList = {
     ongoingCropId: string;
   };
   GoviPensionInformation: undefined;
+    CartScreen:{shopname:string};
   GoviPensionForm: undefined;
   GoviPensionStatus: undefined;
   MyPensionAccount: undefined;
@@ -367,11 +368,11 @@ export type RootStackParamList = {
   ExploreShopsScreen: undefined;
   GoviShopCartScreen: undefined;
   GoviShopProfileScreen: {
-    shopId:number; 
-    branchId:number;
-    shopname:string,
-          logo:string,
-          adress:string
+    shopId: number;
+    branchId: number;
+    shopname: string;
+    logo: string;
+    adress: string;
   };
   LocationAccess: undefined;
   ViewProduct: {
@@ -390,6 +391,7 @@ export type RootStackParamList = {
     LoadingPage: {
       messageStyle: string;
     };
+  
   };
 };
 

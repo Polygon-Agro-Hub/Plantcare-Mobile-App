@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import NewsSlideShow from "@/Items/NewsSlideShow";
 import MarketPriceSlideShow from "@/Items/MarketPriceSlideShow";
 import { RootStackParamList } from "../types/types";
@@ -132,14 +132,14 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   }, [navigation]);
 
   const fetchProfileData = async () => {
-    const selectedLanguage = t("Dashboard.LNG");
+    const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
     const netState = await NetInfo.fetch();
     if (!netState.isConnected) {
       Alert.alert(
-        t("Main.No Internet Connection"),
-        t("Main.Please turn on mobile data or Wi-Fi to continue."),
-        [{ text: t("PublicForum.OK") }],
+        t("Main.NoInternetConnection"),
+        t("Main.PleaseTurnOnMobileDataOrWiFiToContinue"),
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -157,8 +157,8 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       const data = await response.json();
 
       if (!data.user || !data.user.firstName) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
         navigation.navigate("Signin");
         return;
@@ -171,8 +171,8 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         setLoading(false);
       }, 100);
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
       navigation.navigate("Signin");
     }
@@ -246,7 +246,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       action: () => navigation.navigate("TransactionHistory" as any),
       bgColor: "#FFFFFF",
     },
-      {
+    {
       image: require("../../assets/images/dashboard/govi-shop.webp"),
       label: t("Dashboard.GoviShop"),
       action: () => navigation.navigate("GoviShopLoadingScreen" as any),
@@ -274,6 +274,12 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       image: require("../../assets/images/govi-pension/govi-pension.webp"),
       label: t("TransactionList.GoViPension"),
       action: handlePensionNavigation,
+      bgColor: "#FFFFFF",
+    },
+    {
+      image: require("../../assets/images/dashboard/soil-data.webp"),
+      label: t("Dashboard.Soil Data"),
+      action: () => navigation.navigate("SoilGridsScreen" as any),
       bgColor: "#FFFFFF",
     },
   ];
@@ -334,7 +340,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
                 {user.firstName} ✋🏻
               </Text>
             ) : (
-              t("Dashboard.loading")
+              t("Main.Loading...")
             )}
           </Text>
         </View>
@@ -342,7 +348,8 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
           onPress={() => {
             navigation.navigate("PublicForum" as any);
           }}
-          className="ml-auto mr-4 mt-4 justify-center items-center bg-[#F6F7F7] rounded-full w-12 h-12 shadow-sm"
+          className="ml-auto mr-4 mt-4 justify-center items-center bg-[#F6F7F7] rounded-full w-12 h-12"
+          style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 }}
         >
           <MaterialCommunityIcons
             name="message-processing"

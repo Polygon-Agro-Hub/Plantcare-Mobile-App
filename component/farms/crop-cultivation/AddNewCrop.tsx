@@ -12,8 +12,8 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import axios from "axios";
-import EvilIcons from "react-native-vector-icons/EvilIcons";
-import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
+import EvilIcons from "@expo/vector-icons/EvilIcons";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Modal from "react-native-modal";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
@@ -151,7 +151,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
         t(
           "NewCrop.The certificate you purchased does not include this crop variety",
         ),
-        [{ text: t("NewCrop.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -170,7 +170,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
 
   const fetchCrop = async () => {
     try {
-      const selectedLanguage = t("NewCrop.LNG");
+      const selectedLanguage = t("Main.LNG");
       setLanguage(selectedLanguage);
 
       const res = await axios.get<CropData[]>(
@@ -359,7 +359,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
       setLoadingVarieties(true);
 
       try {
-        const selectedLanguage = t("NewCrop.LNG");
+        const selectedLanguage = t("Main.LNG");
         setLanguage(selectedLanguage);
 
         const varietyResponse = await axios.get<VarietyData[]>(
@@ -622,11 +622,10 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
                     setSelectedVariety([]);
                     setSelectedCropId(null);
                   }}
-                  className={`${
-                    selectedCategory === category.name
+                  className={`${selectedCategory === category.name
                       ? "bg-green-300 border-2 border-green-500"
                       : "bg-gray-200"
-                  } rounded-full items-center justify-center`}
+                    } rounded-full items-center justify-center`}
                   style={{
                     width: wp("20%"),
                     height: wp("20%"),

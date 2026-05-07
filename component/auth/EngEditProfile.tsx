@@ -21,7 +21,7 @@ import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import * as ImagePicker from "expo-image-picker";
 import { ScrollView } from "react-native-gesture-handler";
-import Entypo from "react-native-vector-icons/Entypo";
+import Entypo from "@expo/vector-icons/Entypo";
 import { useFocusEffect } from "@react-navigation/native";
 import * as ImageManipulator from "expo-image-manipulator";
 import districtData from "@/assets/jsons/common/district.json";
@@ -127,13 +127,13 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
               : require("../../assets/images/auth/profile.webp"),
           );
         } else {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-            { text: t("PublicForum.OK") },
+          Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+            { text: t("Main.OK") },
           ]);
         }
       } catch (error) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       } finally {
         setIsDataLoading(false);
@@ -146,8 +146,8 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
         return;
       }
@@ -175,13 +175,13 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
       );
       const data = await response.json();
       if (data.status !== "success") {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
     }
   };
@@ -192,7 +192,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
       Alert.alert(
         t("EditProfile.permissionDenied"),
         t("EditProfile.permissionDeniedMessage"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -225,17 +225,17 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
 
     if (!trimmedFirstName && !trimmedLastName) {
       Alert.alert(t("signinForm.sorry"), t("EditProfile.nameError"), [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
       return;
     } else if (!trimmedFirstName) {
       Alert.alert(t("signinForm.sorry"), t("EditProfile.firstNameRequired"), [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
       return;
     } else if (!trimmedLastName) {
       Alert.alert(t("signinForm.sorry"), t("EditProfile.lastNameRequired"), [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
       return;
     }
@@ -244,8 +244,8 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
         return;
       }
@@ -274,27 +274,27 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
         Toast.show({
           type: "success",
           position: "bottom",
-          text1: t("EditProfile.success"),
+          text1: t("Main.Success"),
           text2: t("EditProfile.profileUpdatedSuccess"),
         });
         Alert.alert(
-          t("EditProfile.success"),
+          t("Main.Success"),
           t("EditProfile.profileUpdatedSuccess"),
           [
             {
-              text: t("PublicForum.OK"),
+              text: t("Main.OK"),
               onPress: () => navigation.navigate("EngProfile"),
             },
           ],
         );
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
     } catch (error) {
-      Alert.alert(t("Main.error"), t("EditProfile.updateProfileError"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("EditProfile.updateProfileError"), [
+        { text: t("Main.OK") },
       ]);
     } finally {
       setIsLoading(false);
@@ -359,7 +359,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
               </View>
 
               <View className="p-4">
-                <View className="space-y-8">
+                <View className="gap-8">
                   <View>
                     <Text className="text-sm text-gray-700 mb-1">
                       {t("EditProfile.FirstName")}
@@ -487,7 +487,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                       >
                         {district
                           ? (districtItems.find((d) => d.value === district)
-                              ?.label ?? district)
+                            ?.label ?? district)
                           : t("FixedAssets.selectDistrict")}
                       </Text>
                       <AntDesign name="down" size={13} color="#555" />
@@ -498,9 +498,8 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                 <View className="flex-1 items-center justify-center mt-10 mb-12">
                   <TouchableOpacity
                     onPress={handleSave}
-                    className={`bg-gray-800 rounded-3xl justify-center w-2/3 h-[50px] ${
-                      isLoading ? "opacity-50" : ""
-                    }`}
+                    className={`bg-gray-800 rounded-3xl justify-center w-2/3 h-[50px] ${isLoading ? "opacity-50" : ""
+                      }`}
                     disabled={isLoading}
                     style={{
                       shadowColor: "#000000",
@@ -514,7 +513,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                       <ActivityIndicator size="small" color="#fff" />
                     ) : (
                       <Text className="text-center text-white text-lg">
-                        {t("EditProfile.Save")}
+                        {t("Main.Save")}
                       </Text>
                     )}
                   </TouchableOpacity>
@@ -545,7 +544,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
         data={districtItems}
         selectedItems={district ? [district] : []}
         onSelect={handleDistrictSelect}
-        searchPlaceholder={t("Signup.TypeSomething")}
+        searchPlaceholder={t("Main.Search...")}
         searchKeys={["label", "districtName"]}
         multiSelect={false}
       />

@@ -47,7 +47,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   const [isOtpExpired, setIsOtpExpired] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
-    const selectedLanguage = t("OtpVerification.LNG");
+    const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
     const fetchReferenceId = async () => {
       try {
@@ -119,8 +119,8 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
     const code = otpCode;
 
     if (code.length !== 5) {
-      Alert.alert(t("Main.error"), t("OtpVerification.completeOTP"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("OtpVerification.completeOTP"), [
+        { text: t("Main.OK") },
       ]);
       setDisabledVerify(false);
       setIsLoading(false);
@@ -129,10 +129,10 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
     if (isOtpExpired) {
       Alert.alert(
-        t("Main.error"),
+        t("Main.Error"),
         t("OtpVerification.otpExpired") ||
-          "OTP has expired. Please resend a new OTP.",
-        [{ text: t("PublicForum.OK") }],
+        "OTP has expired. Please resend a new OTP.",
+        [{ text: t("Main.OK") }],
       );
       setDisabledVerify(false);
       setIsLoading(false);
@@ -198,22 +198,22 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         setIsLoading(false);
         setDisabledVerify(false);
       } else if (statusCode === "1001") {
-        Alert.alert(t("Main.error"), t("OtpVerification.verificationFailed"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("OtpVerification.verificationFailed"), [
+          { text: t("Main.OK") },
         ]);
         setDisabledVerify(false);
         setIsLoading(false);
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
         setDisabledVerify(false);
         setIsLoading(false);
       }
     } catch (error) {
       console.error("Error during OTP verification or registration:", error);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
       setDisabledVerify(false);
       setIsLoading(false);
@@ -253,20 +253,20 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         setReferenceId(response.data.referenceId);
         setIsOtpExpired(false);
         Alert.alert(
-          t("OtpVerification.success"),
+          t("Main.Success"),
           t("OtpVerification.otpResent"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         setTimer(240);
         setDisabledResend(true);
       } else {
-        Alert.alert(t("Main.error"), t("OtpVerification.otpResendFailed"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("OtpVerification.otpResendFailed"), [
+          { text: t("Main.OK") },
         ]);
       }
     } catch (error) {
-      Alert.alert(t("Main.error"), t("OtpVerification.otpResendFailed"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("OtpVerification.otpResendFailed"), [
+        { text: t("Main.OK") },
       ]);
     }
   };
@@ -360,9 +360,8 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
           <View className="mt-4">
             <TouchableOpacity
-              className={`mt-2 w-2/3 rounded-3xl mb-2 h-[50px] items-center justify-center ${
-                !isOtpValid || disabledVerify ? "bg-gray-500" : "bg-[#353535]"
-              }`}
+              className={`mt-2 w-2/3 rounded-3xl mb-2 h-[50px] items-center justify-center ${!isOtpValid || disabledVerify ? "bg-gray-500" : "bg-[#353535]"
+                }`}
               onPress={handleVerify}
               disabled={!isOtpValid || disabledVerify}
               style={{
@@ -373,6 +372,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
                 shadowOpacity: 0.25,
                 shadowRadius: 4,
                 elevation: 4,
+                overflow: "hidden"
               }}
             >
               {isLoading ? (

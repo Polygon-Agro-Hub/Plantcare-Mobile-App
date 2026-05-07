@@ -153,7 +153,8 @@
     "myassets": "எனது சொத்துகள்",
     "weather": "வானிலை",
     "failedToFetch": "சுயவிவரத் தரவைப் பெறுவதில் தோல்வி.மீண்டும் முயற்சிக்கவும்",
-    "Survey": "கணக்கெடுப்பு"
+    "Survey": "கணக்கெடுப்பு",
+    "Soil Data": "மண் தரவு"
   },
   "navbar": {
     "home": "முகப்பு",
@@ -917,6 +918,7 @@
     "duration": "கால அளவு",
     "enterDuration": "கால அளவை உள்ளிடவும்",
     "enterstartDate": "தொடக்கத் தேதி தேவைப்படுகிறது",
+    "Lease Start Date is required": "குத்தகை தொடக்கத் தேதி தேவைப்படுகிறது",
     "leasedAmountAnnuallyLKR": "ஆண்டு குத்தகை தொகை (ரூ.)",
     "enterLeasedAmountAnnuallyLKR": "குத்தகைத் தொகையை ஆண்டுதோறும் உள்ளிடவும் (LKR)",
     "issuedDate": "வெளியீட்டு திகதி",

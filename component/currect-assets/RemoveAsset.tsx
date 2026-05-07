@@ -143,9 +143,9 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
+          t("Main.Error"),
           t("Farms.No authentication token found"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -164,7 +164,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
         Alert.alert(
           t("Farms.No Assets Found"),
           t("Farms.There are no assets available for the selected category."),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
       } else {
         setAssets(fetchedAssets);
@@ -271,13 +271,13 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
 
     if (!numberOfUnits || !assetId || !category) {
       Alert.alert(t("PublicForum.sorry"), t("PublicForum.fillAllFields"), [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
       return;
     }
     if (isNaN(numUnits) || numUnits <= 0) {
       Alert.alert(
-        t("Farms.Error"),
+        t("Main.Error"),
         t("Farms.Please enter a valid number of units"),
       );
       return;
@@ -286,7 +286,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
       Alert.alert(
         t("CurrentAssets.sorry"),
         t("CurrentAssets.YouCannotRemove"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -298,7 +298,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
           t("CurrentAssets.totalPriceExceed", {
             maxValue: maxTotalValue.toFixed(2),
           }),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -309,9 +309,9 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
+          t("Main.Error"),
           t("Farms.No authentication token found"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         setIsLoading(false);
         return;
@@ -334,23 +334,23 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
 
       if (response.status === 200 || response.status === 204) {
         Alert.alert(
-          t("CurrentAssets.Success"),
+          t("Main.Success"),
           t("CurrentAssets.RemoveSuccess"),
           [
             {
-              text: t("PublicForum.OK"),
+              text: t("Main.OK"),
               onPress: () => navigation.navigate("CurrentAssert"),
             },
           ],
         );
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
     } catch {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
     } finally {
       setIsLoading(false);
@@ -374,7 +374,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
           onBackPress={() => navigation.navigate("CurrentAssert")}
         />
 
-        <View className="space-y-4 p-8">
+        <View className="gap-4 p-8">
           {/* Category */}
           <View>
             <Text className="text-gray-600 mb-2">
@@ -533,7 +533,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                   Alert.alert(
                     t("CurrentAssets.sorry"),
                     t("CurrentAssets.YouCannotRemove"),
-                    [{ text: t("PublicForum.OK") }],
+                    [{ text: t("Main.OK") }],
                   );
                 } else {
                   setNumberOfUnits(cleaned);

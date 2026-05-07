@@ -1,6 +1,6 @@
 import { View, Text, Image, Dimensions, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { RouteProp } from "@react-navigation/native";
 import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -54,7 +54,7 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
   const screenWidth = Dimensions.get("window").width;
 
   useEffect(() => {
-    const selectedLanguage = t("News.LNG");
+    const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
     const fetchNews = async () => {
       try {

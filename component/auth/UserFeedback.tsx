@@ -65,7 +65,7 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
     const fetchFeedback = async () => {
       setIsLoading(true);
       try {
-        const selectedLanguage = t("Feedback.LNG");
+        const selectedLanguage = t("Main.LNG");
         setLanguage(selectedLanguage);
         const token = await AsyncStorage.getItem("userToken");
 
@@ -137,9 +137,9 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
 
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
           {
-            text: t("PublicForum.OK"),
+            text: t("Main.OK"),
             onPress: () => {
               navigation.navigate("UserFeedback");
             },
@@ -164,9 +164,9 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
       if (response.ok) {
         await AsyncStorage.removeItem("userToken");
         await AsyncStorage.clear();
-        Alert.alert(t("BankDetails.success"), t("Feedback.successMessage"), [
+        Alert.alert(t("Main.Success"), t("Feedback.successMessage"), [
           {
-            text: t("PublicForum.OK"),
+            text: t("Main.OK"),
             onPress: () => {
               navigation.navigate("Lanuage");
             },
@@ -174,13 +174,13 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
         ]);
         navigation.navigate("Lanuage");
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
     }
   };
@@ -255,11 +255,10 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
 
             <View className=" bottom-0 left-0 right-0  px-6 py-4 mb-8 ">
               <TouchableOpacity
-                className={`${
-                  selectedCount === 0
+                className={`${selectedCount === 0
                     ? "bg-gray-400 rounded-full py-3 w-full"
                     : "bg-black rounded-full py-3 w-full"
-                }`}
+                  }`}
                 disabled={selectedCount === 0}
                 onPress={handleDelete}
                 style={{

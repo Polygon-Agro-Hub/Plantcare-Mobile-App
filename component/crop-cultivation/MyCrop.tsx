@@ -14,8 +14,8 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
-import AntDesign from "react-native-vector-icons/AntDesign";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import * as Progress from "react-native-progress";
 import { encode } from "base64-arraybuffer";
 import moment from "moment";
@@ -174,7 +174,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
   const fetchCultivationsAndProgress = async () => {
     setLoading(true);
     try {
-      setLanguage(t("MyCrop.LNG"));
+      setLanguage(t("Main.LNG"));
 
       const token = await AsyncStorage.getItem("userToken");
 

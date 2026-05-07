@@ -20,7 +20,7 @@ import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import bankNames from "@/assets/jsons/bank-details/banks.json";
 import { useTranslation } from "react-i18next";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
@@ -63,7 +63,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
     language !== "en" ? size * 0.9 : size;
 
   useEffect(() => {
-    const selectedLanguage = t("BankDetails.LNG");
+    const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
   }, [t]);
 
@@ -81,8 +81,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           setFilteredBranches(sortedBranches);
         } catch (error) {
           console.error("Error loading branches", error);
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-            { text: t("PublicForum.OK") },
+          Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+            { text: t("Main.OK") },
           ]);
         } finally {
           setLoading(false);
@@ -99,8 +99,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
   const handleRegister = async () => {
     if (loading) {
-      Alert.alert(t("BankDetails.Loading"), t("BankDetails.LoadingText"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Loading..."), t("BankDetails.LoadingText"), [
+        { text: t("Main.OK") },
       ]);
       return;
     }
@@ -118,8 +118,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       !trimmedBankName ||
       !trimmedBranchName
     ) {
-      Alert.alert(t("BankDetails.sorry"), t("BankDetails.PlzFillAllFields"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("BankDetails.sorry"), t("Main.PleaseFillAllRequiredFields"), [
+        { text: t("Main.OK") },
       ]);
       return;
     }
@@ -128,7 +128,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       Alert.alert(
         t("BankDetails.sorry"),
         t("BankDetails.AccountNumberMismatch"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       setAccountNumbermisMatchError(t("BankDetails.AccountNumberMismatch"));
       return;
@@ -147,8 +147,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
         setDisableSubmit(false);
         setIsLoading(false);
@@ -167,11 +167,11 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
       if (response.status === 200) {
         Alert.alert(
-          t("BankDetails.success"),
+          t("Main.Success"),
           t("BankDetails.SuccessfullyRegistered"),
           [
             {
-              text: t("PublicForum.OK"),
+              text: t("Main.OK"),
               onPress: () => {
                 navigation.navigate("Main", { screen: "Dashboard" });
               },
@@ -184,7 +184,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         Alert.alert(
           t("BankDetails.failed"),
           t("BankDetails.failedToRegister"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
       }
     } catch (error) {
@@ -193,17 +193,17 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           Alert.alert(
             t("BankDetails.failed"),
             t("BankDetails.ExistingBankDetails"),
-            [{ text: t("PublicForum.OK") }],
+            [{ text: t("Main.OK") }],
           );
           navigation.navigate("Main", { screen: "Dashboard" });
         } else {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-            { text: t("PublicForum.OK") },
+          Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+            { text: t("Main.OK") },
           ]);
         }
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
     } finally {
@@ -233,7 +233,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       setAccountHolderName(trimmedText);
       setHoldernameNameError("");
     } else {
-      setHoldernameNameError(t("Signup.Startwithletter"));
+      setHoldernameNameError(t("SignUp.Startwithletter"));
     }
   };
 
@@ -327,7 +327,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           {t("BankDetails.FillBankDetails")}
         </Text>
 
-        <View className="space-y-4 p-4 ">
+        <View className="gap-4 p-4 ">
           <Text
             className="text-[#070707] -mb-2"
             style={{ fontSize: adjustFontSize(14) }}
@@ -418,7 +418,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             cursorColor="#000000"
           />
           {accountNumberError &&
-          !validateAccountNumber(confirmAccountNumber) ? (
+            !validateAccountNumber(confirmAccountNumber) ? (
             <Text
               className="text-red-500"
               style={{ fontSize: wp(3), marginTop: wp(-4) }}
@@ -477,8 +477,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
                 Alert.alert(
                   t("BankDetails.sorry"),
                   t("BankDetails.SelectBankFirst") ||
-                    "Please select a bank first.",
-                  [{ text: t("PublicForum.OK") }],
+                  "Please select a bank first.",
+                  [{ text: t("Main.OK") }],
                 );
                 return;
               }
@@ -526,11 +526,10 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           <TouchableOpacity
             onPress={handleRegister}
             disabled={disableSubmit || !isFormValid()}
-            className={`${
-              disableSubmit || !isFormValid()
-                ? "bg-gray-400 rounded-3xl p-4 mt-2 w-60 h-[50px]"
-                : "bg-[#353535] rounded-3xl p-4 mt-2 w-60 h-[50px]"
-            }`}
+            className={`${disableSubmit || !isFormValid()
+              ? "bg-gray-400 rounded-3xl p-4 mt-2 w-2/3 h-[50px]"
+              : "bg-[#353535] rounded-3xl p-4 mt-2 w-2/3 h-[50px]"
+              }`}
             style={{
               shadowColor: "#000000",
               shadowOffset: { width: 0, height: 4 },
@@ -559,7 +558,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         onSelect={(items) => {
           if (items.length > 0) setBankName(items[0]);
         }}
-        searchPlaceholder={t("Signup.TypeSomething")}
+        searchPlaceholder={t("Main.Search...")}
         multiSelect={false}
       />
 
@@ -572,7 +571,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         onSelect={(items) => {
           if (items.length > 0) setBranchName(items[0]);
         }}
-        searchPlaceholder={t("Signup.TypeSomething")}
+        searchPlaceholder={t("Main.Search...")}
         multiSelect={false}
       />
     </KeyboardAvoidingView>

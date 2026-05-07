@@ -8,7 +8,7 @@ import {
   ScrollView,
   BackHandler,
 } from "react-native";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as FileSystem from "expo-file-system/legacy";
 import * as MediaLibrary from "expo-media-library";
 import * as Sharing from "expo-sharing";
@@ -57,8 +57,8 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("Farms.okButton") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
         return;
       }
@@ -79,14 +79,14 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
 
         setQR(registrationDetails.farmerQr || "");
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("Farms.okButton") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
     } catch (error) {
       console.error("Fetch error:", error);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
     } finally {
       setLoading(false);
@@ -100,8 +100,8 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   const downloadQRCode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"), [
-          { text: t("Farms.okButton") },
+        Alert.alert(t("Main.Error"), t("QRcode.noQRCodeAvailable"), [
+          { text: t("Main.OK") },
         ]);
         return;
       }
@@ -111,7 +111,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         Alert.alert(
           t("QRcode.permissionDeniedTitle"),
           t("QRcode.permissionDeniedMessage"),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -122,13 +122,13 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       const asset = await MediaLibrary.createAssetAsync(response.uri);
       await MediaLibrary.createAlbumAsync("Download", asset, false);
 
-      Alert.alert(t("QRcode.successTitle"), t("QRcode.savedToGallery"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Success"), t("QRcode.savedToGallery"), [
+        { text: t("Main.OK") },
       ]);
     } catch (error) {
       console.error("Download error:", error);
-      Alert.alert(t("Main.error"), t("QRcode.failedSaveQRCode"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Error"), t("QRcode.failedSaveQRCode"), [
+        { text: t("Main.OK") },
       ]);
     }
   };
@@ -136,8 +136,8 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   const shareQRCode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.error"), t("QRcode.noQRCodeAvailable"), [
-          { text: t("Farms.okButton") },
+        Alert.alert(t("Main.Error"), t("QRcode.noQRCodeAvailable"), [
+          { text: t("Main.OK") },
         ]);
         return;
       }
@@ -154,13 +154,13 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         Alert.alert(
           t("QRcode.sharingUnavailableTitle"),
           t("QRcode.sharingUnavailableMessage"),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
       }
     } catch (error) {
       console.error("Share error:", error);
-      Alert.alert(t("Main.error"), t("QRcode.failedShareQRCode"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Error"), t("QRcode.failedShareQRCode"), [
+        { text: t("Main.OK") },
       ]);
     }
   };

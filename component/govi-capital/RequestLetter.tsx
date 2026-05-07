@@ -211,7 +211,7 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
 
       if (response.status === 201) {
         Alert.alert(
-          t("Govicapital.Success"),
+          t("Main.Success"),
           t("Govicapital.Your investment request has been sent for approval!"),
           [
             {
@@ -310,21 +310,21 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
     }
   };
 
-   useFocusEffect(
-      useCallback(() => {
-        const handleBackPress = () => {
-          navigation.goBack();
-          return true;
-        };
-  
-        const subscription = BackHandler.addEventListener(
-          "hardwareBackPress",
-          handleBackPress,
-        );
-  
-        return () => subscription.remove();
-      }, [navigation]),
-    );
+  useFocusEffect(
+    useCallback(() => {
+      const handleBackPress = () => {
+        navigation.goBack();
+        return true;
+      };
+
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        handleBackPress,
+      );
+
+      return () => subscription.remove();
+    }, [navigation]),
+  );
 
   const farmerName = farmerDetails
     ? `${farmerDetails.firstName} ${farmerDetails.lastName}`
@@ -503,7 +503,7 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
             }}
           >
             <Text className="text-gray-700 text-center font-medium text-lg">
-              {t("Govicapital.Go Back")}
+              {t("Main.Go Back")}
             </Text>
           </TouchableOpacity>
 

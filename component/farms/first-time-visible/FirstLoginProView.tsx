@@ -30,7 +30,7 @@ const FirstLoginView: React.FC = () => {
           />
 
           <View className="text-center justify-center items-center  p-2">
-            <View className="flex-row items-center justify-center space-x-2">
+            <View className="flex-row items-center justify-center gap-2">
               <Text className="text-xl font-bold text-black">
                 {t("Farms.UPGRADE")}
               </Text>

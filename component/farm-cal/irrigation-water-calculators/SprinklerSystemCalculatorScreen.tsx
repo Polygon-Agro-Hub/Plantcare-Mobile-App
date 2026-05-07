@@ -122,7 +122,7 @@ const SprinklerSystemCalculatorScreen: React.FC<SprinklerSystemProps> = ({
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            {t("IrrigationWaterCalculators.RequiredFields")}
+            {t("Main.PleaseFillAllRequiredFields")}
           </Text>
         )}
 

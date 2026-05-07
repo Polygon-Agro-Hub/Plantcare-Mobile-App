@@ -18,7 +18,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
 import { useTranslation } from "react-i18next";
 import { environment } from "@/environment/environment";
-import Icon from "react-native-vector-icons/MaterialIcons";
+import Icon from "@expo/vector-icons/MaterialIcons";
 import { AntDesign } from "@expo/vector-icons";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -166,7 +166,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
     const current = selectedDate || startDate;
     if (current > new Date()) {
       Alert.alert("Invalid Date", "The start date cannot be in the future.", [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
       setShowDatePicker(false);
       return;
@@ -179,7 +179,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
     React.useCallback(() => {
       setStartDate(new Date());
       setShowDatePicker(false);
-      return () => {};
+      return () => { };
     }, []),
   );
 
@@ -189,7 +189,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
       Alert.alert(
         t("Cropenroll.sorry"),
         t("Cropenroll.plzselectNatureOfCultivation"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -197,7 +197,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
       Alert.alert(
         t("Cropenroll.sorry"),
         t("Cropenroll.plzselectCultivationMethod"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -212,12 +212,12 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         setSearch(true);
       } else {
         Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"), [
-          { text: t("PublicForum.OK") },
+          { text: t("Main.OK") },
         ]);
       }
     } catch {
       Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"), [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
     } finally {
       setLoading(false);
@@ -250,9 +250,9 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
   const validateExtent = (): boolean => {
     if (!farmExtent) {
       Alert.alert(
-        t("Main.error"),
+        t("Main.Error"),
         "Unable to verify farm extent. Please try again.",
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return false;
     }
@@ -271,9 +271,9 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
       Alert.alert(
         t("Cropenroll.sorry"),
         `${t("Cropenroll.cultivationExtentExceedsAvailable")}\n\n` +
-          `${t("Cropenroll.availableExtent")}: ${aHa} ${t("FixedAssets.ha")}, ${aAc} ${t("FixedAssets.ac")}, ${aP} ${t("FixedAssets.p")}\n` +
-          `${t("Cropenroll.alreadyCultivated")}: ${cHa} ${t("FixedAssets.ha")}, ${cAc} ${t("FixedAssets.ac")}, ${cP} ${t("FixedAssets.p")}`,
-        [{ text: t("PublicForum.OK") }],
+        `${t("Cropenroll.availableExtent")}: ${aHa} ${t("FixedAssets.ha")}, ${aAc} ${t("FixedAssets.ac")}, ${aP} ${t("FixedAssets.p")}\n` +
+        `${t("Cropenroll.alreadyCultivated")}: ${cHa} ${t("FixedAssets.ha")}, ${cAc} ${t("FixedAssets.ac")}, ${cP} ${t("FixedAssets.p")}`,
+        [{ text: t("Main.OK") }],
       );
       return false;
     }
@@ -322,24 +322,24 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
       if (certificateData?.status === "haveFarmCertificate") {
         createFarmQuestionnaire();
         Alert.alert(
-          t("Cropenroll.success"),
+          t("Main.Success"),
           t("Cropenroll.EnrollSucess"),
-          [{ text: t("PublicForum.OK"), onPress: goToDashboard }],
+          [{ text: t("Main.OK"), onPress: goToDashboard }],
           { cancelable: false },
         );
       } else if (certificateData?.status === "noFarmCertificate") {
         if (!farmId || farmId === 0) {
-          Alert.alert(t("Main.error"), "Farm information is missing.", [
-            { text: t("PublicForum.OK"), onPress: goToDashboard },
+          Alert.alert(t("Main.Error"), "Farm information is missing.", [
+            { text: t("Main.OK"), onPress: goToDashboard },
           ]);
           return;
         }
         Alert.alert(
-          t("Cropenroll.success"),
+          t("Main.Success"),
           t("Cropenroll.EnrollSucess"),
           [
             {
-              text: t("PublicForum.OK"),
+              text: t("Main.OK"),
               onPress: () =>
                 navigation.navigate("CropEarnCertificate", {
                   cropId: String(ongoingCropId),
@@ -352,19 +352,19 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         );
       } else {
         Alert.alert(
-          t("Cropenroll.success"),
+          t("Main.Success"),
           t("Cropenroll.EnrollSucess"),
-          [{ text: t("PublicForum.OK"), onPress: goToDashboard }],
+          [{ text: t("Main.OK"), onPress: goToDashboard }],
           { cancelable: false },
         );
       }
     } catch {
       Alert.alert(
-        t("Cropenroll.success"),
+        t("Main.Success"),
         t("Cropenroll.EnrollSucess"),
         [
           {
-            text: t("PublicForum.OK"),
+            text: t("Main.OK"),
             onPress: () =>
               navigation.navigate("Main", {
                 screen: "FarmDetailsScreen",
@@ -384,7 +384,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
       Alert.alert(
         t("Cropenroll.sorry"),
         t("Cropenroll.EnterAtLeastOneExtent"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
         { cancelable: false },
       );
       return;
@@ -397,8 +397,8 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Farms.No authentication token found"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Farms.No authentication token found"), [
+          { text: t("Main.OK") },
         ]);
         setIsLoading(false);
         return;
@@ -424,8 +424,8 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
       if (res.status === 200) {
         await checkCertificateAndNavigate(res.data.ongoingCultivationCropId);
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
         setIsLoading(false);
       }
@@ -435,25 +435,25 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         const { status, data } = err.response;
         if (status === 400) {
           Alert.alert(
-            t("Main.error"),
+            t("Main.Error"),
             data.message === "You have already enrolled in 3 crops"
               ? t("Cropenroll.enrollmentLimitReached")
               : t("Cropenroll.alreadyEnrolled"),
-            [{ text: t("PublicForum.OK") }],
+            [{ text: t("Main.OK") }],
             { cancelable: false },
           );
         } else if (status === 401) {
-          Alert.alert(t("Main.error"), t("Main.unauthorized"), [
-            { text: t("PublicForum.OK") },
+          Alert.alert(t("Main.Error"), t("Main.unauthorized"), [
+            { text: t("Main.OK") },
           ]);
         } else {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-            { text: t("PublicForum.OK") },
+          Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+            { text: t("Main.OK") },
           ]);
         }
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
     }
@@ -498,7 +498,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         Alert.alert(
           t("Cropenroll.Failed"),
           t("Cropenroll.FialedOngoinCultivationUpdate"),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
         setIsLoading(false);
       }
@@ -506,7 +506,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
       Alert.alert(
         t("Cropenroll.Failed"),
         t("Cropenroll.FialedOngoinCultivationUpdate"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       setIsLoading(false);
     }
@@ -514,7 +514,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
 
   if (loading) {
     return (
-     <LoadingPage fullScreen />
+      <LoadingPage fullScreen />
     );
   }
 
@@ -525,7 +525,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         { label: t("FixedAssets.ac"), value: extentac, setter: setExtentac },
         { label: t("FixedAssets.p"), value: extentp, setter: setExtentp },
       ].map(({ label, value, setter }) => (
-        <View key={label} className="flex-row items-center space-x-1">
+        <View key={label} className="flex-row items-center gap-1">
           <Text className="text-right">{label}</Text>
           <TextInput
             className="border border-gray-300 p-2 px-4 w-20 rounded-3xl h-[50px] bg-gray-100 text-left"
@@ -615,9 +615,8 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
             <View className="justify-center items-center">
               <TouchableOpacity
                 onPress={handleSearch}
-                className={`p-3  mt-8 items-center rounded-3xl h-[50px] w-2/3  ${
-                  isLoading ? "bg-gray-400" : "bg-gray-800"
-                }`}
+                className={`p-3  mt-8 items-center rounded-3xl h-[50px] w-2/3  ${isLoading ? "bg-gray-400" : "bg-gray-800"
+                  }`}
                 disabled={isLoading}
                 style={{
                   shadowColor: "#000000",
@@ -650,28 +649,27 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
 
                 <View className="justify-center items-center">
 
-                <TouchableOpacity
-                  onPress={HandleEnrollBtn}
-                  className={`rounded-3xl h-[50px] mb-4  w-2/3 mt-8 justify-center items-center ${
-                    isLoading ? "bg-gray-500" : "bg-gray-900"
-                  }`}
-                  disabled={isLoading}
-                  style={{
-                    shadowColor: "#000000",
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 4,
-                    elevation: 4,
-                  }}
-                >
-                  {isLoading ? (
-                    <ActivityIndicator size="small" color="#fff" />
-                  ) : (
-                    <Text className="text-white text-lg font-bold">
-                      {t("Cropenroll.enroll")}
-                    </Text>
-                  )}
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={HandleEnrollBtn}
+                    className={`rounded-3xl h-[50px] mb-4  w-2/3 mt-8 justify-center items-center ${isLoading ? "bg-gray-500" : "bg-gray-900"
+                      }`}
+                    disabled={isLoading}
+                    style={{
+                      shadowColor: "#000000",
+                      shadowOffset: { width: 0, height: 4 },
+                      shadowOpacity: 0.25,
+                      shadowRadius: 4,
+                      elevation: 4,
+                    }}
+                  >
+                    {isLoading ? (
+                      <ActivityIndicator size="small" color="#fff" />
+                    ) : (
+                      <Text className="text-white text-lg font-bold">
+                        {t("Cropenroll.enroll")}
+                      </Text>
+                    )}
+                  </TouchableOpacity>
                 </View>
               </>
             )}
@@ -684,9 +682,8 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
 
             <TouchableOpacity
               onPress={updateOngoingCultivation}
-              className={`rounded-lg mb-4 p-3 mt-8 items-center ${
-                isLoading ? "bg-gray-500" : "bg-gray-900"
-              }`}
+              className={`rounded-lg mb-4 p-3 mt-8 items-center ${isLoading ? "bg-gray-500" : "bg-gray-900"
+                }`}
               disabled={isLoading}
               style={{
                 shadowColor: "#000000",
@@ -700,7 +697,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
                 <ActivityIndicator size="small" color="#fff" />
               ) : (
                 <Text className="text-white text-base font-bold">
-                  {t("Cropenroll.Update")}
+                  {t("Main.Update")}
                 </Text>
               )}
             </TouchableOpacity>

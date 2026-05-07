@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -22,7 +22,7 @@ import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomHeader from "../common/CustomHeader";
 import GlobalSearchModal from "../common/GlobalSearchModal";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 interface ServiceItem {
   label: string;
@@ -170,9 +170,9 @@ const RequestInspectionForm = () => {
       }
     } catch {
       Alert.alert(
-        t("RequestInspectionForm.Error"),
+        t("Main.Error"),
         t("RequestInspectionForm.Failed to fetch services. Please try again."),
-        [{ text: t("RequestInspectionForm.OK") }],
+        [{ text: t("Main.OK") }],
       );
     } finally {
       setLoadingServices(false);
@@ -213,9 +213,9 @@ const RequestInspectionForm = () => {
       }
     } catch {
       Alert.alert(
-        t("RequestInspectionForm.Error"),
+        t("Main.Error"),
         t("RequestInspectionForm.Failed to fetch farms. Please try again."),
-        [{ text: t("RequestInspectionForm.OK") }],
+        [{ text: t("Main.OK") }],
       );
     } finally {
       setLoadingFarms(false);
@@ -293,11 +293,11 @@ const RequestInspectionForm = () => {
       }
     } catch {
       Alert.alert(
-        t("RequestInspectionForm.Error"),
+        t("Main.Error"),
         t(
           "RequestInspectionForm.Failed to fetch farm crops. Please try again.",
         ),
-        [{ text: t("RequestInspectionForm.OK") }],
+        [{ text: t("Main.OK") }],
       );
       setFarmCrops([
         {
@@ -347,7 +347,7 @@ const RequestInspectionForm = () => {
         t(
           "RequestInspectionForm.This farm has no enrolled crops. Please enroll crops first or contact support.",
         ),
-        [{ text: t("RequestInspectionForm.OK") }],
+        [{ text: t("Main.OK") }],
       );
       if (selectedRequests.includes(request)) {
         setSelectedRequests(selectedRequests.filter((r) => r !== request));
@@ -447,7 +447,7 @@ const RequestInspectionForm = () => {
         t(
           "RequestInspectionForm.Please fill in Service, Price, and Farm fields",
         ),
-        [{ text: t("RequestInspectionForm.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -455,7 +455,7 @@ const RequestInspectionForm = () => {
       Alert.alert(
         t("RequestInspectionForm.Validation Error"),
         t("RequestInspectionForm.Please enter Plot Number"),
-        [{ text: t("RequestInspectionForm.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -463,7 +463,7 @@ const RequestInspectionForm = () => {
       Alert.alert(
         t("RequestInspectionForm.Validation Error"),
         t("RequestInspectionForm.Please enter Street Name"),
-        [{ text: t("RequestInspectionForm.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -471,7 +471,7 @@ const RequestInspectionForm = () => {
       Alert.alert(
         t("RequestInspectionForm.Validation Error"),
         t("RequestInspectionForm.Please enter City"),
-        [{ text: t("RequestInspectionForm.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -479,7 +479,7 @@ const RequestInspectionForm = () => {
       Alert.alert(
         t("RequestInspectionForm.Validation Error"),
         t("RequestInspectionForm.Please select a schedule date"),
-        [{ text: t("RequestInspectionForm.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -489,7 +489,7 @@ const RequestInspectionForm = () => {
         t(
           "RequestInspectionForm.Please select at least one crop for inspection",
         ),
-        [{ text: t("RequestInspectionForm.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -589,19 +589,19 @@ const RequestInspectionForm = () => {
   const proceedToPaymentWithItems = (itemsToUse: AddedItem[]) => {
     if (itemsToUse.length === 0) {
       Alert.alert(
-        t("RequestInspectionForm.Error"),
+        t("Main.Error"),
         t("RequestInspectionForm.Please add at least one inspection request"),
-        [{ text: t("RequestInspectionForm.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
     if (itemsToUse.some((item) => !item.date)) {
       Alert.alert(
-        t("RequestInspectionForm.Error"),
+        t("Main.Error"),
         t(
           "RequestInspectionForm.Please select a date for all inspection requests",
         ),
-        [{ text: t("RequestInspectionForm.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -671,7 +671,7 @@ const RequestInspectionForm = () => {
           "RequestInspectionForm.You have unsaved inspection data. Do you want to add this request before proceeding?",
         ),
         [
-          { text: t("RequestInspectionForm.Cancel"), style: "cancel" },
+          { text: t("Main.Cancel"), style: "cancel" },
           {
             text: t("RequestInspectionForm.Proceed Without Adding"),
             onPress: () =>
@@ -681,7 +681,7 @@ const RequestInspectionForm = () => {
                   "RequestInspectionForm.Are you sure you want to discard the current form data?",
                 ),
                 [
-                  { text: t("RequestInspectionForm.Cancel"), style: "cancel" },
+                  { text: t("Main.Cancel"), style: "cancel" },
                   {
                     text: t("RequestInspectionForm.Discard and Proceed"),
                     style: "destructive",
@@ -714,7 +714,7 @@ const RequestInspectionForm = () => {
           "RequestInspectionForm.You have unsaved inspection data. Do you want to add this request before proceeding?",
         ),
         [
-          { text: t("RequestInspectionForm.Cancel"), style: "cancel" },
+          { text: t("Main.Cancel"), style: "cancel" },
           {
             text: t("RequestInspectionForm.Proceed Without Adding"),
             onPress: () => proceedToPayment(),
@@ -740,15 +740,15 @@ const RequestInspectionForm = () => {
       Alert.alert(
         hasPartialData
           ? t("RequestInspectionForm.Incomplete Data")
-          : t("RequestInspectionForm.Error"),
+          : t("Main.Error"),
         hasPartialData
           ? t(
-              "RequestInspectionForm.Please complete all required fields or click 'Add More' to save your current data",
-            )
+            "RequestInspectionForm.Please complete all required fields or click 'Add More' to save your current data",
+          )
           : t(
-              "RequestInspectionForm.Please add at least one inspection request",
-            ),
-        [{ text: t("RequestInspectionForm.OK") }],
+            "RequestInspectionForm.Please add at least one inspection request",
+          ),
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -759,7 +759,7 @@ const RequestInspectionForm = () => {
         t(
           "RequestInspectionForm.You have not completed the form. Please continue editing.",
         ),
-        [{ text: t("RequestInspectionForm.Cancel"), style: "cancel" }],
+        [{ text: t("Main.Cancel"), style: "cancel" }],
       );
       return;
     }
@@ -1021,7 +1021,7 @@ const RequestInspectionForm = () => {
               {loadingServices
                 ? t("RequestInspectionForm.Loading services")
                 : getSelectedLabel(serviceItems, selectedService) ||
-                  t("RequestInspectionForm.Select Service")}
+                t("RequestInspectionForm.Select Service")}
             </Text>
             {loadingServices ? (
               <ActivityIndicator size="small" color="#9CA3AF" />
@@ -1061,7 +1061,7 @@ const RequestInspectionForm = () => {
               {loadingFarms
                 ? t("RequestInspectionForm.Loading farms")
                 : getSelectedLabel(farmItems, selectedFarm) ||
-                  t("RequestInspectionForm.Select Farm")}
+                t("RequestInspectionForm.Select Farm")}
             </Text>
             {loadingFarms ? (
               <ActivityIndicator size="small" color="#9CA3AF" />
@@ -1126,7 +1126,7 @@ const RequestInspectionForm = () => {
                 </Text>
               </View>
             ) : (
-              <View className="space-y-3 pl-5">
+              <View className="gap-3 pl-5">
                 <TouchableOpacity
                   onPress={() => toggleRequest("All in this Farm")}
                   className="flex-row items-center mb-3"

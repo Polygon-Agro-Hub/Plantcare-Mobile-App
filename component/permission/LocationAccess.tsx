@@ -31,13 +31,13 @@ type LocationAccessNavigationProp = StackNavigationProp<
 interface LocationAccessProps {
   navigation: LocationAccessNavigationProp;
   onPermissionGranted?: () => void;
-  returnScreen?: keyof RootStackParamList; 
+  returnScreen?: keyof RootStackParamList;
 }
 
 const locationImage = require("../../assets/images/permission/location.webp");
 
-const LocationAccess: React.FC<LocationAccessProps> = ({ 
-  navigation, 
+const LocationAccess: React.FC<LocationAccessProps> = ({
+  navigation,
   onPermissionGranted,
   returnScreen = "Main"
 }) => {
@@ -79,9 +79,9 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
         Alert.alert(
           t("LocationAccess.permissionDenied") || "Permission Denied",
           t("LocationAccess.enableLocationManually") ||
-            "Location access is required. Please enable it in settings.",
+          "Location access is required. Please enable it in settings.",
           [
-            { text: t("PublicForum.Cancel") || "Cancel", style: "cancel" },
+            { text: t("Main.Cancel"), style: "cancel" },
             {
               text: t("LocationAccess.openSettings") || "Open Settings",
               onPress: () => Linking.openSettings(),
@@ -92,10 +92,10 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
     } catch (error) {
       console.error("Error requesting location permission:", error);
       Alert.alert(
-        t("Main.error") || "Error",
+        t("Main.Error") || "Error",
         t("LocationAccess.permissionError") ||
-          "Unable to request location permission. Please try again.",
-        [{ text: t("PublicForum.OK") || "OK" }],
+        "Unable to request location permission. Please try again.",
+        [{ text: t("Main.OK") }],
       );
     } finally {
       setIsLoading(false);

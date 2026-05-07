@@ -96,7 +96,7 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
           content: t(
             "GoviPensionStatus.We're taking a closer look at your pension application and will update you soon. This process might take a while.",
           ),
-          buttonText: t("GoviPensionStatus.Go Back"),
+          buttonText: t("Main.Go Back"),
           onPress: () => navigation.navigate("Main", { screen: "Dashboard" }),
           buttonStyle: "bg-[#ECECEC]",
           buttonTextColor: "text-[#8E8E8E]",
@@ -137,7 +137,7 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
           content: t(
             "GoviPensionStatus.We're sorry to inform you that your pension request has been rejected. Please feel free to try again in the future.",
           ),
-          buttonText: t("GoviPensionStatus.Go Back"),
+          buttonText: t("Main.Go Back"),
           onPress: () => navigation.navigate("Main", { screen: "Dashboard" }),
           buttonStyle: "bg-[#ECECEC]",
           buttonTextColor: "text-[#8E8E8E]",
@@ -149,7 +149,7 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
           content: t(
             "GoviPensionStatus.We're taking a closer look at your pension application and will update you soon. This process might take a while.",
           ),
-          buttonText: t("GoviPensionStatus.Go Back"),
+          buttonText: t("Main.Go Back"),
           onPress: () => navigation.navigate("Main", { screen: "Dashboard" }),
           buttonStyle: "bg-[#ECECEC]",
           buttonTextColor: "text-[#8E8E8E]",

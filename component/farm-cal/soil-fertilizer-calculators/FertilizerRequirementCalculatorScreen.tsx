@@ -202,7 +202,7 @@ const FertilizerRequirementCalculatorScreen: React.FC<
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            {t("Calculator.RequiredFields")}
+            {t("Main.PleaseFillAllRequiredFields")}
           </Text>
         )}
 
@@ -223,9 +223,8 @@ const FertilizerRequirementCalculatorScreen: React.FC<
           ) : (
             <>
               <Text
-                className={`text-sm ${
-                  selectedCropValue ? "text-gray-900" : "text-gray-400"
-                }`}
+                className={`text-sm ${selectedCropValue ? "text-gray-900" : "text-gray-400"
+                  }`}
               >
                 {getSelectedCropLabel()}
               </Text>

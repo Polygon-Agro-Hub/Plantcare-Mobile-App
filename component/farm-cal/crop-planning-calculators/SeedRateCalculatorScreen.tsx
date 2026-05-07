@@ -92,7 +92,7 @@ const SeedRateCalculatorScreen: React.FC<SeedRateProps> = ({ navigation }) => {
       } catch (error) {
         console.error("Error fetching crop groups:", error);
         Alert.alert(
-          t("CropPlanningCalculators.Error"),
+          t("Main.Error"),
           t("CropPlanningCalculators.FetchError"),
         );
       } finally {
@@ -195,7 +195,7 @@ const SeedRateCalculatorScreen: React.FC<SeedRateProps> = ({ navigation }) => {
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            {t("CropPlanningCalculators.FillAllFields")}
+            {t("Main.PleaseFillAllRequiredFields")}
           </Text>
         )}
 
@@ -216,9 +216,8 @@ const SeedRateCalculatorScreen: React.FC<SeedRateProps> = ({ navigation }) => {
           ) : (
             <>
               <Text
-                className={`text-sm ${
-                  selectedCropValue ? "text-gray-900" : "text-gray-400"
-                }`}
+                className={`text-sm ${selectedCropValue ? "text-gray-900" : "text-gray-400"
+                  }`}
               >
                 {getSelectedCropLabel()}
               </Text>
@@ -261,9 +260,8 @@ const SeedRateCalculatorScreen: React.FC<SeedRateProps> = ({ navigation }) => {
         </Text>
         <View className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] justify-center">
           <Text
-            className={`text-sm ${
-              seedRateDisplay ? "text-[#287097]" : "text-gray-400"
-            }`}
+            className={`text-sm ${seedRateDisplay ? "text-[#287097]" : "text-gray-400"
+              }`}
           >
             {seedRateDisplay || t("CropPlanningCalculators.AutoFill")}
           </Text>

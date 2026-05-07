@@ -23,7 +23,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { RootStackParamList } from "../types/types";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { EvilIcons } from "@expo/vector-icons";
 
 type AddAssetNavigationProp = StackNavigationProp<
@@ -179,8 +179,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       const data = require("@/assets/jsons/current-asset/current-asset.json");
       setCategories(Object.keys(data));
     } catch {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
     } finally {
       setLoading(false);
@@ -317,7 +317,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         Alert.alert(
           t("CurrentAssets.sorry"),
           t("CurrentAssets.futureDateError"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -328,7 +328,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         Alert.alert(
           t("CurrentAssets.sorry"),
           t("CurrentAssets.expireBeforePurchase"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         setExpireDate("");
         setWarranty("");
@@ -346,7 +346,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         Alert.alert(
           t("CurrentAssets.sorry"),
           t("CurrentAssets.expireBeforePurchase"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -417,7 +417,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       Alert.alert(
         t("CurrentAssets.sorry"),
         t("CurrentAssets.This exact asset already exists."),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -488,7 +488,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       Alert.alert(
         t("CurrentAssets.sorry"),
         t("CurrentAssets.cannotAddExpiredAsset"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
       return;
@@ -503,8 +503,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
         return;
       }
@@ -542,9 +542,9 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       );
 
       Alert.alert(
-        t("CurrentAssets.success"),
+        t("Main.Success"),
         t("CurrentAssets.addAssetSuccess"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
       navigation.navigate("CurrentAssert");
@@ -555,15 +555,15 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           t(
             "CurrentAssets.This exact asset already exists. You cannot add the same asset with the same brand, batch number, volume, and unit.",
           ),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
         scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
         return;
       }
 
       console.error("Error adding asset:", error);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
       scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
     }
@@ -680,7 +680,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           </View>
         </View>
 
-        <View className="space-y-4 p-4">
+        <View className="gap-4 p-4">
           {/* Farm */}
           <Text className="mt-4 text-sm">
             {t("CurrentAssets.Select Farm")} *
@@ -894,9 +894,9 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             value={
               totalPrice
                 ? parseFloat(totalPrice).toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })
                 : ""
             }
             editable={false}
@@ -1027,11 +1027,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           <View className="bg-[#F4F4F4] rounded-3xl h-[50px] p-3 items-center justify-center">
             {status ? (
               <Text
-                className={`font-bold ${
-                  status === t("CurrentAssets.expired")
-                    ? "text-red-500"
-                    : "text-green-500"
-                }`}
+                className={`font-bold ${status === t("CurrentAssets.expired")
+                  ? "text-red-500"
+                  : "text-green-500"
+                  }`}
               >
                 {status === t("CurrentAssets.expired")
                   ? t("CurrentAssets.expired")
@@ -1072,7 +1071,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           setSelectedFarm(items[0] ?? "");
           clearError("selectedFarm");
         }}
-        searchPlaceholder={t("Signup.TypeSomething")}
+        searchPlaceholder={t("Main.Search...")}
       />
 
       <GlobalSearchModal
@@ -1086,7 +1085,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           handleCategoryChange(val);
           clearError("selectedCategory");
         }}
-        searchPlaceholder={t("Signup.TypeSomething")}
+        searchPlaceholder={t("Main.Search...")}
       />
 
       <GlobalSearchModal
@@ -1100,7 +1099,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           handleAssetChange(val);
           clearError("selectedAsset");
         }}
-        searchPlaceholder={t("Signup.TypeSomething")}
+        searchPlaceholder={t("Main.Search...")}
       />
 
       <GlobalSearchModal
@@ -1113,7 +1112,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           setBrand(items[0] ?? "");
           clearError("brand");
         }}
-        searchPlaceholder={t("Signup.TypeSomething")}
+        searchPlaceholder={t("Main.Search...")}
       />
 
       <GlobalSearchModal

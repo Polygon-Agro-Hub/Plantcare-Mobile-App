@@ -47,10 +47,50 @@ function CameraScreen({
 
   if (permission === null) {
     return (
-      <View className="flex-1 justify-center items-center bg-black">
-        <Text className="text-white text-lg mb-4">
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "black",
+        }}
+      >
+        <Text style={{ color: "white", fontSize: 18, marginBottom: 16 }}>
           {t("CropCalender.loadingCameraPermission")}
         </Text>
+      </View>
+    );
+  }
+
+  if (!permission.granted) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "black",
+        }}
+      >
+        <Text
+          style={{
+            color: "white",
+            fontSize: 16,
+            marginBottom: 16,
+            textAlign: "center",
+            paddingHorizontal: 24,
+          }}
+        >
+          Camera permission is required.
+        </Text>
+        <TouchableOpacity
+          onPress={requestPermission}
+          style={{ backgroundColor: "#26D041", padding: 14, borderRadius: 50 }}
+        >
+          <Text style={{ color: "black", fontWeight: "600" }}>
+            Grant Permission
+          </Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -67,12 +107,14 @@ function CameraScreen({
   };
 
   return (
-    <CameraView
-      className="flex-1"
-      facing={facing}
-      ref={(ref) => setCamera(ref)}
-      onCameraReady={() => setIsCameraReady(true)}
-    >
+    <View style={{ flex: 1, backgroundColor: "black" }}>
+      <CameraView
+        style={{ flex: 1 }}
+        facing={facing}
+        ref={(ref) => setCamera(ref)}
+        onCameraReady={() => setIsCameraReady(true)}
+      />
+
       <View
         style={{
           position: "absolute",
@@ -92,7 +134,6 @@ function CameraScreen({
             backgroundColor: "#26D041",
             padding: 16,
             borderRadius: 50,
-            marginBottom: 12,
           }}
         >
           <Text style={{ color: "black" }}>{t("CropCalender.FlipCamera")}</Text>
@@ -104,7 +145,6 @@ function CameraScreen({
             backgroundColor: "#26D041",
             padding: 16,
             borderRadius: 50,
-            marginBottom: 12,
           }}
         >
           <Text style={{ color: "black", fontWeight: "600" }}>
@@ -112,7 +152,7 @@ function CameraScreen({
           </Text>
         </TouchableOpacity>
       </View>
-    </CameraView>
+    </View>
   );
 }
 
@@ -138,11 +178,11 @@ export default function CultivatedLandModal({
       if (!cropId || cropId === "" || cropId === "undefined") {
         console.error("CultivatedLandModal: Invalid cropId:", cropId);
         Alert.alert(
-          t("Main.error"),
+          t("Main.Error"),
           t("CropCalender.Invalid crop data. Please try again."),
           [
             {
-              text: t("PublicForum.OK"),
+              text: t("Main.OK"),
               onPress: () => {
                 setLoading(false);
                 onClose();
@@ -156,11 +196,11 @@ export default function CultivatedLandModal({
       if (!farmId || farmId === 0) {
         console.error(" CultivatedLandModal: Invalid farmId:", farmId);
         Alert.alert(
-          t("Main.error"),
+          t("Main.Error"),
           t("CropCalender.Invalid farm data. Please try again."),
           [
             {
-              text: t("PublicForum.OK"),
+              text: t("Main.OK"),
               onPress: () => {
                 setLoading(false);
                 onClose();
@@ -177,11 +217,11 @@ export default function CultivatedLandModal({
           onCulscropID,
         );
         Alert.alert(
-          t("Main.error"),
+          t("Main.Error"),
           t("CropCalender.Invalid cultivation data. Please try again."),
           [
             {
-              text: t("PublicForum.OK"),
+              text: t("Main.OK"),
               onPress: () => {
                 setLoading(false);
                 onClose();
@@ -253,7 +293,7 @@ export default function CultivatedLandModal({
     } catch (error: any) {
       console.error(" Error fetching required images:", error);
 
-      let errorMessage = t("Main.somethingWentWrong");
+      let errorMessage = t("Main.SomethingWentWrongPleaseTryAgainlater");
 
       if (error.response?.status === 404) {
         errorMessage = t("CropCalender.Task not found. Please try again.");
@@ -263,9 +303,9 @@ export default function CultivatedLandModal({
         errorMessage = t("CropCalender.Please log in again.");
       }
 
-      Alert.alert(t("Main.error"), errorMessage, [
+      Alert.alert(t("Main.Error"), errorMessage, [
         {
-          text: t("PublicForum.OK"),
+          text: t("Main.OK"),
           onPress: () => onClose(),
         },
       ]);
@@ -373,9 +413,9 @@ export default function CultivatedLandModal({
             }
 
             Alert.alert(
-              t("CropCalender.Success"),
+              t("Main.Success"),
               t("CropCalender.TaskSuccessMessage"),
-              [{ text: t("PublicForum.OK") }],
+              [{ text: t("Main.OK") }],
             );
 
             onClose(true);
@@ -394,8 +434,8 @@ export default function CultivatedLandModal({
         console.error(`Upload attempt ${attempt} failed:`, error);
 
         if (attempt >= maxRetries) {
-          Alert.alert(t("Main.error"), t("CropCalender.UploadRetryFailed"), [
-            { text: t("PublicForum.OK") },
+          Alert.alert(t("Main.Error"), t("CropCalender.UploadRetryFailed"), [
+            { text: t("Main.OK") },
           ]);
           setLoading(false);
           await markTaskAsIncomplete();
@@ -478,7 +518,7 @@ export default function CultivatedLandModal({
       <Modal transparent={true} visible={visible} animationType="fade">
         <View className="flex-1 justify-center items-center bg-black/50">
           <ActivityIndicator size="large" color="#ffffff" />
-          <Text className="text-white mt-4">{t("CropCalender.Loading")}</Text>
+          <Text className="text-white mt-4">{t("Main.Loading...")}</Text>
         </View>
       </Modal>
     );
@@ -584,7 +624,7 @@ export default function CultivatedLandModal({
                 style={{ width: 250, height: 250, marginBottom: 20 }}
               />
 
-              <View className="space-y-4">
+              <View className="gap-4">
                 {isButtonEnabled ? (
                   <Text className="text-center font-semibold">
                     {t("CropCalender.ReadyToSubmit")}

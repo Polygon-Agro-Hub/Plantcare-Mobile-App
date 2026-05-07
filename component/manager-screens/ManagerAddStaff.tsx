@@ -224,26 +224,26 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
 
   const validateForm = () => {
     if (!firstName.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter first name"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.Please enter first name"), [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!lastName.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter last name"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.Please enter last name"), [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!phoneNumber.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter phone number"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.Please enter phone number"), [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!nic.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter NIC"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.Please enter NIC"), [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
@@ -251,64 +251,64 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
     if (!validateSriLankanPhoneNumber(phoneNumber)) {
       if (phoneNumber.length !== 9) {
         Alert.alert(
-          t("Farms.Sorry"),
+          t("Main.Sorry"),
           t("Farms.Phone number must be exactly 9 digits"),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
       } else if (phoneNumber[0] !== "7") {
         Alert.alert(
-          t("Farms.Sorry"),
+          t("Main.Sorry"),
           t("Farms.Phone number must start with 7"),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
       } else if (phoneNumber.length > 9) {
         Alert.alert(
-          t("Farms.Sorry"),
+          t("Main.Sorry"),
           t("Farms.Phone number cannot exceed 9 digits"),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
       } else {
         Alert.alert(
-          t("Farms.Sorry"),
+          t("Main.Sorry"),
           t("Farms.Please enter a valid phone number"),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
       }
       return false;
     }
 
     if (!selectedRole) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please select a role"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.Please select a role"), [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (phoneError) {
-      Alert.alert(t("Farms.Sorry"), phoneError, [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), phoneError, [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (validationError) {
-      Alert.alert(t("Farms.Sorry"), validationError, [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), validationError, [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
 
     if (nicErrors) {
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t("Farms.Please enter a valid Sri Lankan NIC"),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return false;
     }
     if (nicDuplicateErrors) {
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t("Farms.This NIC is already used by another staff member"),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return false;
     }
@@ -349,11 +349,11 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
       );
 
       Alert.alert(
-        t("Farms.Success"),
+        t("Main.Success"),
         `${t("Farms.Staff members has been added successfully!")}`,
         [
           {
-            text: t("Farms.OK"),
+            text: t("Main.OK"),
             onPress: () => {
               navigation.goBack();
             },
@@ -372,7 +372,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
         errorMessage = t("Farms.Network error. Please check your connection.");
       }
 
-      Alert.alert("Error", errorMessage, [{ text: t("Farms.okButton") }]);
+      Alert.alert("Error", errorMessage, [{ text: t("Main.OK") }]);
     } finally {
       setIsSubmitting(false);
     }
@@ -566,7 +566,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
             <Text className="text-gray-900 text-base">
               {t("Farms.Phone Number")}
             </Text>
-            <View className="flex-row items-center space-x-2">
+            <View className="flex-row items-center gap-2">
               <TouchableOpacity
                 onPress={() => setCountryCodeModalVisible(true)}
                 className="bg-[#F4F4F4] rounded-3xl h-[50px] w-1/3 px-3 justify-center items-center"
@@ -665,7 +665,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
               </View>
             ) : (
               <Text className="text-white text-lg font-semibold">
-                {t("Farms.Save")}
+                {t("Main.Save")}
               </Text>
             )}
           </TouchableOpacity>

@@ -100,7 +100,7 @@ const GerminationRateCalculatorScreen: React.FC<GerminationRateProps> = ({
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            {t("CropPlanningCalculators.FillAllFields")}
+            {t("Main.PleaseFillAllRequiredFields")}
           </Text>
         )}
 

@@ -11,7 +11,7 @@ import {
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import NewsSlideShow from "@/Items/NewsSlideShow";
 import MarketPriceSlideShow from "@/Items/MarketPriceSlideShow";
 import { RootStackParamList } from "../types/types";
@@ -134,7 +134,7 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
   }, [navigation]);
 
   const fetchProfileData = async () => {
-    const selectedLanguage = t("Dashboard.LNG");
+    const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
     try {
       const response = await fetch(
@@ -150,8 +150,8 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
       const data = await response.json();
 
       if (!data.user || !data.user.firstName) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("Farms.okButton") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
         navigation.navigate("Signin");
         return;
@@ -162,8 +162,8 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
       dispatch(setUserPersonalData(data.user));
       setTimeout(() => setLoading(false), 300);
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
       navigation.navigate("Signin");
     }
@@ -285,7 +285,7 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
                 {user.firstName} ✋🏻
               </Text>
             ) : (
-              t("Dashboard.loading")
+              t("Main.Loading...")
             )}
           </Text>
         </View>

@@ -153,7 +153,8 @@
     "myassets": "මගේ වත්කම්",
     "weather": "කාලගුණය",
     "failedToFetch": "ගිණුමේ දත්ත පිරික්සීම අසාර්ථක විය. කරුණාකර නැවත උත්සාහ කරන්න.",
-    "Survey": "සමීක්ෂණය"
+    "Survey": "සමීක්ෂණය",
+    "Soil Data": "පාංශු දත්ත"
   },
   "navbar": {
     "home": "මෙනුව",
@@ -917,6 +918,7 @@
     "duration": "කාල සීමාව",
     "enterDuration": "කාල සීමාව ඇතුලත් කරන්න",
     "enterstartDate": "ආරම්භක දිනය අවශ්‍යයි",
+    "Lease Start Date is required": "බදු ආරම්භක දිනය අවශ්‍යයි",
     "leasedAmountAnnuallyLKR": "වාර්ෂික කුලී මුදල (LKR)",
     "enterLeasedAmountAnnuallyLKR": "වාර්ෂික කුලී මුදල (LKR) ඇතුලත් කරන්න",
     "issuedDate": "නිකුත් කළ දිනය",
