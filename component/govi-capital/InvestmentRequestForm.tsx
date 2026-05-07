@@ -411,7 +411,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             {t("Govicapital.Cultivation Extent")} *
           </Text>
           <View className="flex-row items-center justify-between">
-            <View className="flex-row items-center space-x-2">
+            <View className="flex-row items-center gap-2">
               <TextInput
                 className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
                 value={extentha}
@@ -426,7 +426,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
               <Text className="text-sm">{t("Govicapital.ha")}</Text>
             </View>
 
-            <View className="flex-row items-center space-x-2">
+            <View className="flex-row items-center gap-2">
               <TextInput
                 className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
                 value={extentac}
@@ -441,7 +441,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
               <Text className="text-sm">{t("Govicapital.ac")}</Text>
             </View>
 
-            <View className="flex-row items-center space-x-2">
+            <View className="flex-row items-center gap-2">
               <TextInput
                 className="bg-[#F4F4F4] p-2 w-20 px-4 rounded-3xl h-[50px] text-center"
                 value={extentp}

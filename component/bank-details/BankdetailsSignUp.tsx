@@ -327,7 +327,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           {t("BankDetails.FillBankDetails")}
         </Text>
 
-        <View className="space-y-4 p-4 ">
+        <View className="gap-4 p-4 ">
           <Text
             className="text-[#070707] -mb-2"
             style={{ fontSize: adjustFontSize(14) }}
@@ -527,8 +527,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             onPress={handleRegister}
             disabled={disableSubmit || !isFormValid()}
             className={`${disableSubmit || !isFormValid()
-              ? "bg-gray-400 rounded-3xl p-4 mt-2 w-60 h-[50px]"
-              : "bg-[#353535] rounded-3xl p-4 mt-2 w-60 h-[50px]"
+              ? "bg-gray-400 rounded-3xl p-4 mt-2 w-2/3 h-[50px]"
+              : "bg-[#353535] rounded-3xl p-4 mt-2 w-2/3 h-[50px]"
               }`}
             style={{
               shadowColor: "#000000",

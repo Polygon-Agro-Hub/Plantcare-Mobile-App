@@ -566,7 +566,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
             <Text className="text-gray-900 text-base">
               {t("Farms.Phone Number")}
             </Text>
-            <View className="flex-row items-center space-x-2">
+            <View className="flex-row items-center gap-2">
               <TouchableOpacity
                 onPress={() => setCountryCodeModalVisible(true)}
                 className="bg-[#F4F4F4] rounded-3xl h-[50px] w-1/3 px-3 justify-center items-center"

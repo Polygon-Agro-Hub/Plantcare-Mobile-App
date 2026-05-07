@@ -1116,7 +1116,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
                   {t("CropCalender.Buy a Certification for")} {cropName}?
                 </Text>
 
-                <View className="flex-row justify-center space-x-4">
+                <View className="flex-row justify-center gap-4">
                   <TouchableOpacity
                     className="rounded-lg px-8 py-3"
                     style={{ backgroundColor: "#FF0000" }}

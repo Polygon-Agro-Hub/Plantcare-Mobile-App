@@ -372,6 +372,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
                 shadowOpacity: 0.25,
                 shadowRadius: 4,
                 elevation: 4,
+                overflow: "hidden"
               }}
             >
               {isLoading ? (

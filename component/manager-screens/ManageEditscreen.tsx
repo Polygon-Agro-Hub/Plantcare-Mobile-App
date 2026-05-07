@@ -747,7 +747,7 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
             <Text className="text-gray-900 text-base">
               {t("Farms.Phone Number")}
             </Text>
-            <View className="flex-row items-center space-x-2">
+            <View className="flex-row items-center gap-2">
               {/* Country Code Selection */}
               <TouchableOpacity
                 onPress={() => setCountryCodeModalVisible(true)}

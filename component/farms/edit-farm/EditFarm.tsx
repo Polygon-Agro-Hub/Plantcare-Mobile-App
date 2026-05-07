@@ -478,7 +478,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
             </TouchableOpacity>
           </View>
 
-          <View className="space-y-6">
+          <View className="gap-6">
             {/* Farm Name */}
             <View>
               <Text className="text-[#070707] font-medium mb-2">
@@ -514,7 +514,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
                   },
                   { label: t("Farms.p"), value: extentp, setter: setExtentp },
                 ].map(({ label, value, setter }) => (
-                  <View key={label} className="flex-row items-center space-x-2">
+                  <View key={label} className="flex-row items-center gap-2">
                     <Text className="font-semibold">{label}</Text>
                     <TextInput
                       className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl text-center h-[50px]"
@@ -711,7 +711,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
                 ))}
               </View>
             </ScrollView>
-            <View className="flex-row space-x-3 mt-4">
+            <View className="flex-row gap-3 mt-4">
               <TouchableOpacity
                 className="flex-1 bg-gray-300 py-3 rounded-full"
                 onPress={handleImageModalCancel}

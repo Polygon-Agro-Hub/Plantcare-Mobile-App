@@ -32,10 +32,7 @@ import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
 import { LinearGradient } from "expo-linear-gradient";
 
-type SignupNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  "Signup"
->;
+type SignupNavigationProp = StackNavigationProp<RootStackParamList, "Signup">;
 
 interface SignupProps {
   navigation: SignupNavigationProp;
@@ -224,9 +221,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
 
   const validateNic = (value: string) => {
     const nicRegex = /^(\d{12}|\d{9}[VvXx])$/;
-    setEre(
-      value && !nicRegex.test(value) ? t("SignUp.Enteravalidenic") : "",
-    );
+    setEre(value && !nicRegex.test(value) ? t("SignUp.Enteravalidenic") : "");
   };
 
   const handleNicChange = (text: string) => {
@@ -381,12 +376,16 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
       setIsLoading(false);
     } catch (err) {
       console.error("Registration error:", err);
-      Alert.alert(t("Main.Sorry"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        {
-          text: t("Main.OK"),
-          onPress: () => navigation.navigate("Signup"),
-        },
-      ]);
+      Alert.alert(
+        t("Main.Sorry"),
+        t("Main.SomethingWentWrongPleaseTryAgainlater"),
+        [
+          {
+            text: t("Main.OK"),
+            onPress: () => navigation.navigate("Signup"),
+          },
+        ],
+      );
       setIsButtonDisabled(false);
       setIsLoading(false);
     }
@@ -569,7 +568,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
                   >
                     {district
                       ? (districtItems.find((d) => d.value === district)
-                        ?.label ?? district)
+                          ?.label ?? district)
                       : t("SignUp.Select Your District")}
                   </Text>
                   <AntDesign name="caret-down" size={14} color="#555" />
@@ -578,7 +577,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
 
               <View className="flex items-center justify-center mt-6">
                 {language === "en" ||
-                  (language !== "si" && language !== "ta") ? (
+                (language !== "si" && language !== "ta") ? (
                   <View className="flex-row justify-center flex-wrap">
                     <Text className="text-sm text-black font-thin">See </Text>
                     <TouchableOpacity
@@ -715,6 +714,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                     className="w-full rounded-3xl h-[50px] justify-center items-center"
+                    style={{ overflow: "hidden" }}
                   >
                     {isLoading ? (
                       <ActivityIndicator size="small" color="#fff" />

@@ -1036,7 +1036,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   ].map(({ label, value, setter }) => (
                     <View
                       key={label}
-                      className="flex-row items-center space-x-2"
+                      className="flex-row items-center gap-2"
                     >
                       <Text className="text-right">{label}</Text>
                       <TextInput

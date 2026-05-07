@@ -306,7 +306,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
             </View>
           </View>
 
-          <View className="space-y-6">
+          <View className="gap-6">
             <View>
               <Text className="text-[#070707] font-medium mb-2">
                 {t("Farms.Farm Name")}
@@ -325,7 +325,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                 {t("Farms.Extent")}
               </Text>
               <View className="flex-row items-center justify-between">
-                <View className="flex-row items-center space-x-2">
+                <View className="flex-row items-center gap-2">
                   <Text className="font-semibold">{t("Farms.ha")}</Text>
                   <TextInput
                     className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
@@ -338,7 +338,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                     placeholderTextColor="#9CA3AF"
                   />
                 </View>
-                <View className="flex-row items-center space-x-2">
+                <View className="flex-row items-center gap-2">
                   <Text className="font-semibold">{t("Farms.ac")}</Text>
                   <TextInput
                     className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
@@ -351,7 +351,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                     placeholderTextColor="#9CA3AF"
                   />
                 </View>
-                <View className="flex-row items-center space-x-2">
+                <View className="flex-row items-center gap-2">
                   <Text className="font-semibold">{t("Farms.p")}</Text>
                   <TextInput
                     className="bg-[#F4F4F4] p-2 w-20 px-4 rounded-3xl h-[50px] text-center"
@@ -496,7 +496,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                   ))}
                 </View>
               </ScrollView>
-              <View className="flex-row space-x-3 mt-4">
+              <View className="flex-row gap-3 mt-4">
                 <TouchableOpacity
                   className="flex-1 bg-gray-300 justify-center rounded-3xl h-[50px]"
                   onPress={() => setModalVisible(false)}

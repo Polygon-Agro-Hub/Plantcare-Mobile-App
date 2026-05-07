@@ -731,7 +731,7 @@ const AddMemberDetails: React.FC = () => {
 
           {/* Staff forms */}
           {staff.map((member, index) => (
-            <View key={index} className="ml-3 mr-3 space-y-4 mt-6">
+            <View key={index} className="ml-3 mr-3 gap-4 mt-6">
               <Text className="font-semibold text-[#5A5A5A]">
                 {`${t("Farms.Staff Member")} ${index + 1}`}
               </Text>
@@ -810,7 +810,7 @@ const AddMemberDetails: React.FC = () => {
                 <Text className="text-[#070707] font-medium mb-2">
                   {t("Farms.Phone Number")}
                 </Text>
-                <View className="flex-row items-center space-x-2">
+                <View className="flex-row items-center gap-2">
                   {/* Country Code Button */}
                   <TouchableOpacity
                     onPress={() => openModal(index, "countryCode")}

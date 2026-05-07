@@ -487,7 +487,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
               <>
                 <Text className="mt-8">{t("Cropenroll.selectExtent")}</Text>
                 <View className="flex-row items-center justify-between w-full mt-4 max-w-xl">
-                  <View className="flex-row items-center space-x-1">
+                  <View className="flex-row items-center gap-1">
                     <Text className="text-right">{t("FixedAssets.ha")}</Text>
                     <TextInput
                       className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
@@ -500,7 +500,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                     />
                   </View>
 
-                  <View className="flex-row items-center space-x-1 z-10">
+                  <View className="flex-row items-center gap-1 z-10">
                     <Text className="pl-1">{t("FixedAssets.ac")}</Text>
                     <TextInput
                       className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
@@ -513,7 +513,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                     />
                   </View>
 
-                  <View className="flex-row items-center space-x-1">
+                  <View className="flex-row items-center gap-1">
                     <Text className="text-right pl-1">
                       {t("FixedAssets.p")}
                     </Text>
@@ -582,7 +582,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
           <View className="p-4">
             <Text className="mt-8">{t("Cropenroll.selectExtent")}</Text>
             <View className="flex-row items-center justify-between w-full mt-4">
-              <View className="flex-row items-center space-x-1">
+              <View className="flex-row items-center gap-1">
                 <Text className="text-right">{t("FixedAssets.ha")}</Text>
                 <TextInput
                   className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
@@ -596,7 +596,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                 />
               </View>
 
-              <View className="flex-row items-center space-x-1">
+              <View className="flex-row items-center gap-1">
                 <Text className="text-right pl-1">{t("FixedAssets.ac")}</Text>
                 <TextInput
                   className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
@@ -610,7 +610,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                 />
               </View>
 
-              <View className="flex-row items-center space-x-1">
+              <View className="flex-row items-center gap-1">
                 <Text className="text-right pl-1">{t("FixedAssets.p")}</Text>
                 <TextInput
                   className="border border-gray-300 p-2 w-20 px-4 rounded-2xl bg-gray-100 text-left"

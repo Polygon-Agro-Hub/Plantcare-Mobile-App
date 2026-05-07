@@ -680,7 +680,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           </View>
         </View>
 
-        <View className="space-y-4 p-4">
+        <View className="gap-4 p-4">
           {/* Farm */}
           <Text className="mt-4 text-sm">
             {t("CurrentAssets.Select Farm")} *

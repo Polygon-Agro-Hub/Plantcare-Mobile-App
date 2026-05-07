@@ -98,7 +98,7 @@ const UnloackPro: React.FC<UnloackProProps> = ({ navigation }) => {
           />
 
           <View className="text-center justify-center items-center mt-6">
-            <View className="flex-row items-center justify-center space-x-2">
+            <View className="flex-row items-center justify-center gap-2">
               <Text className="text-xl font-bold text-[#E5B323]">
                 {t("Farms.UPGRADE TO PRO")}
               </Text>

@@ -374,7 +374,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
           onBackPress={() => navigation.navigate("CurrentAssert")}
         />
 
-        <View className="space-y-4 p-8">
+        <View className="gap-4 p-8">
           {/* Category */}
           <View>
             <Text className="text-gray-600 mb-2">
