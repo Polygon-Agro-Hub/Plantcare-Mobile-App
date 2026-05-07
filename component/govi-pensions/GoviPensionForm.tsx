@@ -1168,7 +1168,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
 
       <View className="px-5 pb-6 pt-4 bg-white">
         {currentSection === 1 ? (
-          <View className="flex-row space-x-3">
+          <View className="flex-row gap-3">
             <TouchableOpacity
               onPress={handleCancel}
               className="flex-1 bg-[#ECECEC] rounded-3xl h-[50px] justify-center"
@@ -1203,7 +1203,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         ) : (
-          <View className="flex-row space-x-3">
+          <View className="flex-row gap-3">
             <TouchableOpacity
               onPress={handlePrevious}
               className="flex-1 bg-[#ECECEC] rounded-3xl h-[50px] justify-center"

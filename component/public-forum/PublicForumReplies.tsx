@@ -298,7 +298,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                       </Text>
                     </View>
                   </View>
-                  <View className="flex-row items-center space-x-3">
+                  <View className="flex-row items-center gap-3">
                     <Text className="text-gray-500">
                       {formatDate(item.createdAt)}
                     </Text>

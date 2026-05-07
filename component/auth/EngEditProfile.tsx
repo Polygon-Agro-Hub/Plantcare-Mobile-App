@@ -359,7 +359,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
               </View>
 
               <View className="p-4">
-                <View className="space-y-8">
+                <View className="gap-8">
                   <View>
                     <Text className="text-sm text-gray-700 mb-1">
                       {t("EditProfile.FirstName")}

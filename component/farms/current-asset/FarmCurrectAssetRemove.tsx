@@ -409,7 +409,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
           }
         />
 
-        <View className="space-y-4 p-8 -mt-8">
+        <View className="gap-4 p-8 -mt-8">
           {/* Category */}
           <View>
             <Text className="text-gray-600 mb-2">

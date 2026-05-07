@@ -549,7 +549,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
           }
         />
 
-        <View className="space-y-4 p-4">
+        <View className="gap-4 p-4">
           {user?.role !== "Supervisor" && (
             <View className="flex-row mt-[-8%] justify-center">
               <View className="w-1/2">

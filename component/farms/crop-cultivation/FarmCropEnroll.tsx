@@ -525,7 +525,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         { label: t("FixedAssets.ac"), value: extentac, setter: setExtentac },
         { label: t("FixedAssets.p"), value: extentp, setter: setExtentp },
       ].map(({ label, value, setter }) => (
-        <View key={label} className="flex-row items-center space-x-1">
+        <View key={label} className="flex-row items-center gap-1">
           <Text className="text-right">{label}</Text>
           <TextInput
             className="border border-gray-300 p-2 px-4 w-20 rounded-3xl h-[50px] bg-gray-100 text-left"

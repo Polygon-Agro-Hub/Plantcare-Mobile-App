@@ -412,6 +412,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                     className="w-full rounded-3xl h-[50px] justify-center items-center"
+                    style={{ overflow: "hidden" }}
                   >
                     {isLoading ? (
                       <ActivityIndicator size="small" color="#fff" />

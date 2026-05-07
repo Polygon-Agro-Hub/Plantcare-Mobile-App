@@ -1126,7 +1126,7 @@ const RequestInspectionForm = () => {
                 </Text>
               </View>
             ) : (
-              <View className="space-y-3 pl-5">
+              <View className="gap-3 pl-5">
                 <TouchableOpacity
                   onPress={() => toggleRequest("All in this Farm")}
                   className="flex-row items-center mb-3"

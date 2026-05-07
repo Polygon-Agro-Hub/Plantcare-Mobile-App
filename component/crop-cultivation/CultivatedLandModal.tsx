@@ -47,10 +47,50 @@ function CameraScreen({
 
   if (permission === null) {
     return (
-      <View className="flex-1 justify-center items-center bg-black">
-        <Text className="text-white text-lg mb-4">
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "black",
+        }}
+      >
+        <Text style={{ color: "white", fontSize: 18, marginBottom: 16 }}>
           {t("CropCalender.loadingCameraPermission")}
         </Text>
+      </View>
+    );
+  }
+
+  if (!permission.granted) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "black",
+        }}
+      >
+        <Text
+          style={{
+            color: "white",
+            fontSize: 16,
+            marginBottom: 16,
+            textAlign: "center",
+            paddingHorizontal: 24,
+          }}
+        >
+          Camera permission is required.
+        </Text>
+        <TouchableOpacity
+          onPress={requestPermission}
+          style={{ backgroundColor: "#26D041", padding: 14, borderRadius: 50 }}
+        >
+          <Text style={{ color: "black", fontWeight: "600" }}>
+            Grant Permission
+          </Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -67,12 +107,14 @@ function CameraScreen({
   };
 
   return (
-    <CameraView
-      className="flex-1"
-      facing={facing}
-      ref={(ref) => setCamera(ref)}
-      onCameraReady={() => setIsCameraReady(true)}
-    >
+    <View style={{ flex: 1, backgroundColor: "black" }}>
+      <CameraView
+        style={{ flex: 1 }}
+        facing={facing}
+        ref={(ref) => setCamera(ref)}
+        onCameraReady={() => setIsCameraReady(true)}
+      />
+
       <View
         style={{
           position: "absolute",
@@ -92,7 +134,6 @@ function CameraScreen({
             backgroundColor: "#26D041",
             padding: 16,
             borderRadius: 50,
-            marginBottom: 12,
           }}
         >
           <Text style={{ color: "black" }}>{t("CropCalender.FlipCamera")}</Text>
@@ -104,7 +145,6 @@ function CameraScreen({
             backgroundColor: "#26D041",
             padding: 16,
             borderRadius: 50,
-            marginBottom: 12,
           }}
         >
           <Text style={{ color: "black", fontWeight: "600" }}>
@@ -112,7 +152,7 @@ function CameraScreen({
           </Text>
         </TouchableOpacity>
       </View>
-    </CameraView>
+    </View>
   );
 }
 
@@ -519,12 +559,14 @@ export default function CultivatedLandModal({
                 {Array.from({ length: requiredImages || 0 }).map((_, index) => (
                   <View key={index} className="flex-row items-center">
                     <View
-                      className={`w-8 h-8 rounded-full ${index < currentStep ? "bg-black" : "bg-gray-200"
-                        } justify-center items-center`}
+                      className={`w-8 h-8 rounded-full ${
+                        index < currentStep ? "bg-black" : "bg-gray-200"
+                      } justify-center items-center`}
                     >
                       <Text
-                        className={`font-semibold ${index < currentStep ? "text-white" : "text-black"
-                          }`}
+                        className={`font-semibold ${
+                          index < currentStep ? "text-white" : "text-black"
+                        }`}
                       >
                         {index + 1}
                       </Text>
@@ -582,7 +624,7 @@ export default function CultivatedLandModal({
                 style={{ width: 250, height: 250, marginBottom: 20 }}
               />
 
-              <View className="space-y-4">
+              <View className="gap-4">
                 {isButtonEnabled ? (
                   <Text className="text-center font-semibold">
                     {t("CropCalender.ReadyToSubmit")}
@@ -594,8 +636,9 @@ export default function CultivatedLandModal({
                 )}
 
                 <TouchableOpacity
-                  className={`py-2 px-6 rounded-full ${isButtonEnabled ? "bg-black" : "bg-gray-400"
-                    }`}
+                  className={`py-2 px-6 rounded-full ${
+                    isButtonEnabled ? "bg-black" : "bg-gray-400"
+                  }`}
                   onPress={() => isButtonEnabled && uploadImage(capturedImage)}
                   disabled={!isButtonEnabled}
                 >

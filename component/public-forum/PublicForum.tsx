@@ -424,7 +424,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
                 " (You)"}
             </Text>
           </View>
-          <View className="flex-row items-center space-x-3">
+          <View className="flex-row items-center gap-3">
             <Text className="text-gray-500">
               {formatDate(new Date(item.createdAt))}
             </Text>

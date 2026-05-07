@@ -926,7 +926,7 @@ const FarmDetailsScreen = () => {
           <Text className="text-[#6B6B6B] font-medium text-[15px] mt-1">
             {t("District." + (farmData?.district ?? ""))}
           </Text>
-          <View className="flex-row items-center mt-1 space-x-6">
+          <View className="flex-row items-center mt-1 gap-6">
             <Text className="text-[#6B6B6B] text-sm">
               • {farmData?.appUserCount || 0} {t("Farms.Staff")}
             </Text>
@@ -936,7 +936,7 @@ const FarmDetailsScreen = () => {
           </View>
         </View>
 
-        <View className="flex-row justify-center mt-5 space-x-5 px-4">
+        <View className="flex-row justify-center mt-5 gap-5 px-4">
           <TouchableOpacity
             className="bg-white p-4 rounded-xl justify-center items-center w-36 h-40 border border-[#445F4A33]"
             style={{
