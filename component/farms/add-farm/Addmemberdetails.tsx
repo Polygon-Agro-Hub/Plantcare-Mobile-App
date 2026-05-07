@@ -592,7 +592,7 @@ const AddMemberDetails: React.FC = () => {
       setNicErrors(newNicErrors);
       Alert.alert(
         t("Main.Sorry"),
-        t("Farms.Please fill all required fields correctly."),
+        t("Main.PleaseFillAllRequiredFields"),
         [{ text: t("Main.OK") }],
       );
       return;

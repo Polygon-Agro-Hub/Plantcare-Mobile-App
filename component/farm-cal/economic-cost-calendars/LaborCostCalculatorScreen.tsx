@@ -59,8 +59,8 @@ const LaborCostCalculatorScreen: React.FC<LaborCostProps> = ({
     if (!numberOfWorkers || !dailyWage || !workdays) {
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("EconomicCostCalendars.FillAllFields") ||
-          "Please fill all required fields.",
+        t("Main.PleaseFillAllRequiredFields") ||
+        "Please fill all required fields.",
       );
       return;
     }
@@ -73,7 +73,7 @@ const LaborCostCalculatorScreen: React.FC<LaborCostProps> = ({
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
         t("EconomicCostCalendars.WorkersError") ||
-          "Number of workers must be greater than 0.",
+        "Number of workers must be greater than 0.",
       );
       return;
     }
@@ -81,7 +81,7 @@ const LaborCostCalculatorScreen: React.FC<LaborCostProps> = ({
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
         t("EconomicCostCalendars.WageError") ||
-          "Daily wage must be greater than 0.",
+        "Daily wage must be greater than 0.",
       );
       return;
     }
@@ -89,7 +89,7 @@ const LaborCostCalculatorScreen: React.FC<LaborCostProps> = ({
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
         t("EconomicCostCalendars.WorkdaysError") ||
-          "Number of workdays must be greater than 0.",
+        "Number of workdays must be greater than 0.",
       );
       return;
     }
@@ -128,7 +128,7 @@ const LaborCostCalculatorScreen: React.FC<LaborCostProps> = ({
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            {t("EconomicCostCalendars.FillRequiredFields") ||
+            {t("Main.PleaseFillAllRequiredFields") ||
               "Please fill all required fields!"}
           </Text>
         )}

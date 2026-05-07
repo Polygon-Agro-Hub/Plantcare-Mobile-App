@@ -131,7 +131,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
     if (!selectedCategory || !complain) {
       Alert.alert(
         t("ReportComplaint.sorry"),
-        t("Main.PleaseFillAllFields"),
+        t("Main.PleaseFillAllRequiredFields"),
         [{ text: t("Main.OK") }],
       );
       return;

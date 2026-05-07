@@ -77,8 +77,8 @@ const LoanRepaymentCalculatorScreen: React.FC<LoanRepaymentProps> = ({
     if (!loanAmount || !interestRate || !loanYears) {
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("EconomicCostCalendars.FillAllFields") ||
-          "Please fill all required fields.",
+        t("Main.PleaseFillAllRequiredFields") ||
+        "Please fill all required fields.",
       );
       return;
     }
@@ -91,7 +91,7 @@ const LoanRepaymentCalculatorScreen: React.FC<LoanRepaymentProps> = ({
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
         t("EconomicCostCalendars.LoanAmountError") ||
-          "Loan amount must be greater than 0.",
+        "Loan amount must be greater than 0.",
       );
       return;
     }
@@ -99,7 +99,7 @@ const LoanRepaymentCalculatorScreen: React.FC<LoanRepaymentProps> = ({
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
         t("EconomicCostCalendars.InterestRateError") ||
-          "Interest rate must be greater than 0.",
+        "Interest rate must be greater than 0.",
       );
       return;
     }
@@ -107,7 +107,7 @@ const LoanRepaymentCalculatorScreen: React.FC<LoanRepaymentProps> = ({
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
         t("EconomicCostCalendars.YearsError") ||
-          "Number of years must be greater than 0.",
+        "Number of years must be greater than 0.",
       );
       return;
     }
@@ -152,7 +152,7 @@ const LoanRepaymentCalculatorScreen: React.FC<LoanRepaymentProps> = ({
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            {t("EconomicCostCalendars.FillRequiredFields") ||
+            {t("Main.PleaseFillAllRequiredFields") ||
               "Please fill all required fields!"}
           </Text>
         )}

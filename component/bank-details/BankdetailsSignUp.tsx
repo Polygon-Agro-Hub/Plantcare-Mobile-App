@@ -118,7 +118,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       !trimmedBankName ||
       !trimmedBranchName
     ) {
-      Alert.alert(t("BankDetails.sorry"), t("Main.PleaseFillAllFields"), [
+      Alert.alert(t("BankDetails.sorry"), t("Main.PleaseFillAllRequiredFields"), [
         { text: t("Main.OK") },
       ]);
       return;

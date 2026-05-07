@@ -201,7 +201,7 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            {t("CropPlanningCalculators.FillAllFields")}
+            {t("Main.PleaseFillAllRequiredFields")}
           </Text>
         )}
 
@@ -222,9 +222,8 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
           ) : (
             <>
               <Text
-                className={`text-sm ${
-                  selectedCropValue ? "text-gray-900" : "text-gray-400"
-                }`}
+                className={`text-sm ${selectedCropValue ? "text-gray-900" : "text-gray-400"
+                  }`}
               >
                 {getSelectedCropLabel()}
               </Text>
@@ -267,9 +266,8 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
         </Text>
         <View className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
           <Text
-            className={`text-sm ${
-              selectedCrop ? "text-[#287097]" : "text-gray-400"
-            }`}
+            className={`text-sm ${selectedCrop ? "text-[#287097]" : "text-gray-400"
+              }`}
           >
             {selectedCrop
               ? `${selectedCrop.rowSpace} cm`
@@ -283,9 +281,8 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
         </Text>
         <View className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
           <Text
-            className={`text-sm ${
-              selectedCrop ? "text-[#287097]" : "text-gray-400"
-            }`}
+            className={`text-sm ${selectedCrop ? "text-[#287097]" : "text-gray-400"
+              }`}
           >
             {selectedCrop
               ? `${selectedCrop.plantSpace} cm`
@@ -299,9 +296,8 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
         </Text>
         <View className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
           <Text
-            className={`text-sm ${
-              selectedCrop ? "text-[#287097]" : "text-gray-400"
-            }`}
+            className={`text-sm ${selectedCrop ? "text-[#287097]" : "text-gray-400"
+              }`}
           >
             {selectedCrop
               ? `${selectedCrop.avgYield} kg`
