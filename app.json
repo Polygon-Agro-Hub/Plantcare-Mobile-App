@@ -106,17 +106,23 @@
       "expo-web-browser",
       "@react-native-community/datetimepicker",
       "expo-asset",
-      "expo-sharing"
+      "expo-sharing",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "recordAudioAndroid": true
+        }
+      ],
+      "expo-media-library",
+      "expo-image-picker",
+      "expo-location"
     ],
     "extra": {
       "eas": {
         "projectId": "0e03cacc-a139-45fd-9407-3936e86b20ea"
       }
-    },
-    "expo-camera": {
-      "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
-      "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
-      "recordAudioAndroid": true
     }
   }
 }
