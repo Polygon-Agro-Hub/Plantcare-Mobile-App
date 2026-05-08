@@ -9,8 +9,6 @@ import {
 } from "react-native";
 import {
   Ionicons,
-  FontAwesome5,
-  MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import CustomHeader from "../common/CustomHeader";
 import { RootStackParamList } from "../types/types";

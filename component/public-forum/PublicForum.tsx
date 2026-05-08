@@ -24,11 +24,11 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import ContentLoader, { Rect } from "react-content-loader/native";
 import LottieView from "lottie-react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import Entypo from "react-native-vector-icons/Entypo";
+import Entypo from "@expo/vector-icons/Entypo";
 import NetInfo from "@react-native-community/netinfo";
 
 type PublicForumNavigationProp = StackNavigationProp<
@@ -169,7 +169,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
           Alert.alert(
             t("PublicForum.sorry"),
             t("PublicForum.failedToRefresh"),
-            [{ text: t("PublicForum.OK") }],
+            [{ text: t("Main.OK") }],
           );
         } finally {
           setRefreshing(false);
@@ -195,21 +195,21 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
         },
       );
       if (response.status === 200) {
-        Alert.alert(t("PublicForum.success"), t("PublicForum.postDeleted"), [
+        Alert.alert(t("Main.Success"), t("PublicForum.postDeleted"), [
           {
-            text: t("PublicForum.OK"),
+            text: t("Main.OK"),
           },
         ]);
       } else {
         Alert.alert(t("PublicForum.error"), t("PublicForum.failedToDelete"), [
-          { text: t("PublicForum.OK") },
+          { text: t("Main.OK") },
         ]);
       }
       setPosts(posts.filter((post) => post.id !== id));
     } catch (error) {
       console.error("Error deleting post:", error);
       Alert.alert(t("PublicForum.error"), t("PublicForum.failedToDelete"), [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
     }
   };
@@ -237,7 +237,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
       }
     } catch (error) {
       Alert.alert(t("PublicForum.sorry"), t("PublicForum.failedToRefresh"), [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
     } finally {
       setRefreshing(false);
@@ -256,7 +256,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
       const replyMessage = comment[postId] || "";
       if (replyMessage.trim() === "") {
         Alert.alert(t("PublicForum.sorry"), t("PublicForum.commentEmpty"), [
-          { text: t("PublicForum.OK") },
+          { text: t("Main.OK") },
         ]);
         return;
       }
@@ -288,7 +288,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
       );
     } catch (error) {
       Alert.alert(t("PublicForum.sorry"), t("PublicForum.commentFailed"), [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
     }
   };
@@ -299,7 +299,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
       t("PublicForum.confirmDelete"),
       [
         {
-          text: t("PublicForum.cancel"),
+          text: t("Main.Cancel"),
           style: "cancel",
           onPress: () => setActiveMenuId(null),
         },
@@ -424,19 +424,19 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
                 " (You)"}
             </Text>
           </View>
-          <View className="flex-row items-center space-x-3">
+          <View className="flex-row items-center gap-3">
             <Text className="text-gray-500">
               {formatDate(new Date(item.createdAt))}
             </Text>
             {((item.staffId !== null && item.staffId === userId) ||
               (item.staffId === null && item.userId === userId)) && (
-              <TouchableOpacity
-                onPress={() => toggleMenu(item.id)}
-                hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-              >
-                <Entypo name="dots-three-vertical" size={15} color="black" />
-              </TouchableOpacity>
-            )}
+                <TouchableOpacity
+                  onPress={() => toggleMenu(item.id)}
+                  hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+                >
+                  <Entypo name="dots-three-vertical" size={15} color="black" />
+                </TouchableOpacity>
+              )}
           </View>
         </View>
         <View className="border-t border-gray-200 " />
@@ -500,7 +500,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
                     postId: item.id,
                     own:
                       (item.staffId !== null && item.staffId === userId) ||
-                      (item.staffId === null && item.userId === userId)
+                        (item.staffId === null && item.userId === userId)
                         ? "1"
                         : "0",
                     userId: userId,
@@ -679,7 +679,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
           <Text className="text-gray-500 text-center mt-4 px-6">
             {searchText.trim() !== ""
               ? t("PublicForum.noSearchResults") ||
-                "No results found for your search"
+              "No results found for your search"
               : t("PublicForum.noDiscussions") || "No discussions available"}
           </Text>
         </View>

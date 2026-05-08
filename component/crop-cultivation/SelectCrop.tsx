@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { router } from "expo-router";
+
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import { RouteProp } from "@react-navigation/native";
@@ -44,7 +44,7 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const selectedLanguage = t("NewCrop.LNG");
+    const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
     if (selectedVariety) {
       setCrop(selectedVariety);
@@ -90,12 +90,12 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
         <CustomHeader
           title=""
           navigation={navigation}
-          onBackPress={() => router.back()}
+          onBackPress={() => navigation.goBack()}
         />
         <View className=" items-center">
           <Text className="text-2xl font-bold pb-10">{getCropName()}</Text>
           {selectedVariety?.image &&
-          typeof selectedVariety.image === "string" ? (
+            typeof selectedVariety.image === "string" ? (
             <Image
               source={{ uri: selectedVariety.image || "" }}
               className="rounded-[30px] h-14 w-14 mb-4"
@@ -134,7 +134,7 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
             elevation: 4,
           }}
         >
-          <Text className="text-white text-xl">{t("SelectCrop.Continue")}</Text>
+          <Text className="text-white text-xl">{t("Main.Continue")}</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>

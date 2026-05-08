@@ -161,9 +161,9 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
+          t("Main.Error"),
           t("Farms.No authentication token found"),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -182,7 +182,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
         Alert.alert(
           t("Farms.No Assets Found"),
           t("Farms.There are no assets available for the selected category."),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
         setAssets([]);
       } else {
@@ -191,15 +191,15 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
         Alert.alert(
-          t("Farms.Error"),
+          t("Main.Error"),
           t("Farms.Farm assets not found. Please check the farm ID."),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
       } else {
         Alert.alert(
-          t("Farms.Error"),
+          t("Main.Error"),
           t("Farms.Failed to fetch assets. Please try again."),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
       }
       setAssets([]);
@@ -303,13 +303,13 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
 
     if (!numberOfUnits || !assetId || !category) {
       Alert.alert(t("PublicForum.sorry"), t("PublicForum.fillAllFields"), [
-        { text: t("Farms.okButton") },
+        { text: t("Main.OK") },
       ]);
       return;
     }
     if (isNaN(numUnits) || numUnits <= 0) {
-      Alert.alert(t("Farms.Error"), "Please enter a valid number of units", [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Error"), "Please enter a valid number of units", [
+        { text: t("Main.OK") },
       ]);
       return;
     }
@@ -317,7 +317,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
       Alert.alert(
         t("CurrentAssets.sorry"),
         t("CurrentAssets.YouCannotRemove"),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -336,8 +336,8 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Farms.No authentication token found"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Farms.No authentication token found"), [
+          { text: t("Main.OK") },
         ]);
         setIsLoading(false);
         return;
@@ -359,11 +359,11 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
 
       if (response.status === 200 || response.status === 204) {
         Alert.alert(
-          t("CurrentAssets.Success"),
+          t("Main.Success"),
           t("CurrentAssets.RemoveSuccess"),
           [
             {
-              text: t("CropCalender.OK"),
+              text: t("Main.OK"),
               onPress: () =>
                 navigation.navigate("Main", {
                   screen: "FarmCurrectAssets",
@@ -373,16 +373,16 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
           ],
         );
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
     } catch (error) {
       let errorMessage = "An unexpected error occurred. Please try again.";
       if (axios.isAxiosError(error))
         errorMessage = error.response?.data?.message || errorMessage;
-      Alert.alert(t("Main.error"), errorMessage, [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), errorMessage, [
+        { text: t("Main.OK") },
       ]);
     } finally {
       setIsLoading(false);
@@ -409,7 +409,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
           }
         />
 
-        <View className="space-y-4 p-8 -mt-8">
+        <View className="gap-4 p-8 -mt-8">
           {/* Category */}
           <View>
             <Text className="text-gray-600 mb-2">
@@ -568,7 +568,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
                   Alert.alert(
                     t("CurrentAssets.sorry"),
                     t("CurrentAssets.YouCannotRemove"),
-                    [{ text: t("PublicForum.OK") }],
+                    [{ text: t("Main.OK") }],
                   );
                 } else {
                   setNumberOfUnits(cleaned);

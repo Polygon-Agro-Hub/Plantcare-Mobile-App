@@ -8,8 +8,8 @@ import {
   BackHandler,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import Modal from "react-native-modal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -325,7 +325,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       Alert.alert(
         t("FixedAssets.noToolsSelectedTitle"),
         t("FixedAssets.noToolsSelectedDeleteMessage"),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -334,11 +334,11 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       t("FixedAssets.confirmDeleteTitle"),
       selectedTools.length > 1
         ? t("FixedAssets.confirmDeleteMessageMultiple", {
-            count: selectedTools.length,
-          })
+          count: selectedTools.length,
+        })
         : t("FixedAssets.confirmDeleteMessageSingle"),
       [
-        { text: t("Farms.Cancel"), style: "cancel" },
+        { text: t("Main.Cancel"), style: "cancel" },
         {
           text: t("Farms.Delete"),
           style: "destructive",
@@ -360,7 +360,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               Alert.alert(
                 t("FixedAssets.successTitle"),
                 t("CurrentAssets.RemoveSuccess"),
-                [{ text: t("Farms.okButton") }],
+                [{ text: t("Main.OK") }],
               );
               handleCancelSelection();
             } catch (error) {
@@ -368,7 +368,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               Alert.alert(
                 t("FixedAssets.errorTitle"),
                 t("FixedAssets.errorDeleteMessage"),
-                [{ text: t("Farms.okButton") }],
+                [{ text: t("Main.OK") }],
               );
             }
           },
@@ -422,9 +422,8 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
       {/* Category title + menu */}
       <View
-        className={`flex-row mt-5 justify-between items-center px-4 ${
-          showDropdown ? "mb-8" : ""
-        }`}
+        className={`flex-row mt-5 justify-between items-center px-4 ${showDropdown ? "mb-8" : ""
+          }`}
       >
         <Text className="text-lg font-semibold">
           {translateCategory(category)}
@@ -459,9 +458,8 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         <View className="mt-2 px-4">
           <View className="flex-row justify-end mb-2">
             <TouchableOpacity
-              className={`bg-red-500 p-3 w-[48%] rounded-full justify-end ${
-                selectedTools.length === 0 ? "opacity-50" : ""
-              }`}
+              className={`bg-red-500 p-3 w-[48%] rounded-full justify-end ${selectedTools.length === 0 ? "opacity-50" : ""
+                }`}
               disabled={selectedTools.length === 0}
               onPress={handleDeleteSelected}
             >
@@ -493,11 +491,10 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                 {/* Checkbox */}
                 <View className="mr-3">
                   <View
-                    className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${
-                      selectedTools.includes(tool.id)
-                        ? "bg-black border-black"
-                        : "border-gray-400 bg-white"
-                    }`}
+                    className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${selectedTools.includes(tool.id)
+                      ? "bg-black border-black"
+                      : "border-gray-400 bg-white"
+                      }`}
                   >
                     {selectedTools.includes(tool.id) && (
                       <AntDesign name="check" size={14} color="white" />
@@ -512,11 +509,10 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               {/* Edit button */}
               <TouchableOpacity
                 onPress={() => handleEditTool(tool.id)}
-                className={`flex items-center justify-center w-12  ${
-                  selectedTools.includes(tool.id)
-                    ? "bg-[#E8F5F3]"
-                    : "bg-[#E8E8E8]"
-                }`}
+                className={`flex items-center justify-center w-12  ${selectedTools.includes(tool.id)
+                  ? "bg-[#E8F5F3]"
+                  : "bg-[#E8E8E8]"
+                  }`}
                 style={{ height: "100%", minHeight: 80 }}
               >
                 <MaterialCommunityIcons

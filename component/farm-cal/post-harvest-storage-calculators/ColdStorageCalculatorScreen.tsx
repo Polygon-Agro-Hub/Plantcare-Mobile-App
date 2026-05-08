@@ -50,7 +50,7 @@ const ColdStorageCalculatorScreen: React.FC<ColdStorageProps> = ({
     if (!storageVolume || !coolingPowerPerUnit) {
       Alert.alert(
         t("PostHarvestStorageCalculators.InvalidInput"),
-        t("PostHarvestStorageCalculators.FillAllFields"),
+        t("Main.PleaseFillAllRequiredFields"),
       );
       return;
     }
@@ -118,7 +118,7 @@ const ColdStorageCalculatorScreen: React.FC<ColdStorageProps> = ({
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            {t("PostHarvestStorageCalculators.FillRequiredFields")}
+            {t("Main.PleaseFillAllRequiredFields")}
           </Text>
         )}
 

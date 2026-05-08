@@ -169,11 +169,10 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
         {/* Step 1 - Request Placed */}
         <View className="items-center z-10">
           <View
-            className={`w-12 h-12 rounded-full items-center justify-center ${
-              currentStep >= 1
+            className={`w-12 h-12 rounded-full items-center justify-center ${currentStep >= 1
                 ? "bg-[#0FC7B2]"
                 : "bg-white border-2 border-gray-300"
-            }`}
+              }`}
           >
             <AntDesign
               name="folder-open"
@@ -186,11 +185,10 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
         {/* Step 2 - Request Reviewed */}
         <View className="items-center z-10">
           <View
-            className={`w-12 h-12 rounded-full items-center justify-center ${
-              currentStep >= 2
+            className={`w-12 h-12 rounded-full items-center justify-center ${currentStep >= 2
                 ? "bg-[#0FC7B2]"
                 : "bg-white border-2 border-[#0FC7B2]"
-            }`}
+              }`}
           >
             <AntDesign
               name="check"
@@ -203,11 +201,10 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
         {/* Step 3 - Finished */}
         <View className="items-center z-10">
           <View
-            className={`w-12 h-12 rounded-full items-center justify-center ${
-              currentStep >= 3
+            className={`w-12 h-12 rounded-full items-center justify-center ${currentStep >= 3
                 ? "bg-[#0FC7B2]"
                 : "bg-white border-2 border-[#0FC7B2]"
-            }`}
+              }`}
           >
             <FontAwesome5
               name="user"
@@ -356,7 +353,7 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
           className="bg-[#00C1AB] px-8 py-4 rounded-lg"
         >
           <Text className="text-white font-bold text-lg">
-            {t("RequestSummary.goBack")}
+            {t("Main.Go Back")}
           </Text>
         </TouchableOpacity>
       </View>

@@ -24,7 +24,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
     language !== "en" ? size * 0.9 : size;
 
   useEffect(() => {
-    const selectedLanguage = t("Membership.LNG");
+    const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
   }, [t]);
 
@@ -279,7 +279,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
             }}
           >
             <Text className="text-white font-bold text-center text-base">
-              {t("Membership.Continue")}
+              {t("Main.Continue")}
             </Text>
           </TouchableOpacity>
         </View>

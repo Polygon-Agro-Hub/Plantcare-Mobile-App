@@ -39,7 +39,6 @@ import AddFixedAsset from "@/component/fixed-assets/AddFixedAsset";
 import FixedDashboard from "@/component/fixed-assets/fixedDashboard";
 import CropCalander from "@/component/crop-cultivation/CropCalander";
 import MyCrop from "@/component/crop-cultivation/MyCrop";
-import { NativeWindStyleSheet } from "nativewind";
 import PublicForum from "@/component/public-forum/PublicForum";
 import PublicForumReplies from "@/component/public-forum/PublicForumReplies";
 import PublicForumPost from "@/component/public-forum/PublicForumPost";
@@ -160,10 +159,8 @@ import ViewProduct from "@/component/govi-shop/ViewProduct";
 import SoilGridsScreen from "@/component/soil-grids/SoilGridsScreen";
 import CartScreen from "@/component/govi-shop/CartScreen";
 
+import "../global.css";
 LogBox.ignoreAllLogs(true);
-NativeWindStyleSheet.setOutput({
-  default: "native",
-});
 
 (Text as any).defaultProps = {
   ...(Text as any).defaultProps,
@@ -288,8 +285,8 @@ function AppContent() {
       if (!state.isConnected && !isOfflineAlertShown) {
         setIsOfflineAlertShown(true);
         Alert.alert(
-          t("Main.No Internet Connection"),
-          t("Main.Please turn on mobile data or Wi-Fi to continue."),
+          t("Main.NoInternetConnection"),
+          t("Main.PleaseTurnOnMobileDataOrWiFiToContinue"),
           [
             {
               text: "OK",
@@ -342,7 +339,6 @@ function AppContent() {
         }}
         edges={["top", "right", "left"]}
       >
-        <StatusBar style="dark" backgroundColor="#fff" />
         <NavigationContainer ref={navigationRef}>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Splash" component={Splash} />

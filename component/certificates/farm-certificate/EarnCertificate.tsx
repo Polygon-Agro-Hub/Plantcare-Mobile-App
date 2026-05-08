@@ -22,7 +22,7 @@ import {
 } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTranslation } from "react-i18next";
 import {
   widthPercentageToDP as wp,
@@ -105,9 +105,9 @@ const EarnCertificate: React.FC = () => {
 
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
+          t("Main.Error"),
           t("Farms.No authentication token found"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -130,13 +130,13 @@ const EarnCertificate: React.FC = () => {
 
       if (err.response?.status === 404) {
         Alert.alert(
-          t("Main.error"),
+          t("Main.Error"),
           "No certificates available for farms at the moment",
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
     } finally {
@@ -408,7 +408,7 @@ const EarnCertificate: React.FC = () => {
                         : { fontSize: 18 }
                   }
                 >
-                  {t("EarnCertificate.Go Back")}
+                  {t("Main.Go Back")}
                 </Text>
               </TouchableOpacity>
 
@@ -428,7 +428,7 @@ const EarnCertificate: React.FC = () => {
                         : { fontSize: 18 }
                   }
                 >
-                  {t("EarnCertificate.Continue")}
+                  {t("Main.Continue")}
                 </Text>
               </TouchableOpacity>
             </View>

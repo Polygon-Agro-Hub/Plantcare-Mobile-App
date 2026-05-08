@@ -47,7 +47,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
   const screenWidth = Dimensions.get("window").width;
 
   useEffect(() => {
-    const selectedLanguage = t("OtpVerification.LNG");
+    const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
     const fetchReferenceId = async () => {
       try {
@@ -120,7 +120,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
       Alert.alert(
         t("OtpVerification.invalidOTP"),
         t("OtpVerification.completeOTP"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       setDisabledVerify(false);
       setIsLoading(false);
@@ -129,10 +129,10 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
 
     if (isOtpExpired) {
       Alert.alert(
-        t("Main.error"),
+        t("Main.Error"),
         t("OtpVerification.otpExpired") ||
-          "OTP has expired. Please resend a new OTP.",
-        [{ text: t("PublicForum.OK") }],
+        "OTP has expired. Please resend a new OTP.",
+        [{ text: t("Main.OK") }],
       );
       setDisabledVerify(false);
       setIsLoading(false);
@@ -190,29 +190,29 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
             setDisabledVerify(false);
             setIsLoading(false);
           } else {
-            Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-              { text: t("PublicForum.OK") },
+            Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+              { text: t("Main.OK") },
             ]);
             setDisabledVerify(false);
             setIsLoading(false);
           }
         } else {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-            { text: t("PublicForum.OK") },
+          Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+            { text: t("Main.OK") },
           ]);
           setDisabledVerify(false);
           setIsLoading(false);
         }
       } else {
-        Alert.alert(t("Main.error"), t("OtpVerification.invalidOTP"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("OtpVerification.invalidOTP"), [
+          { text: t("Main.OK") },
         ]);
         setDisabledVerify(false);
         setIsLoading(false);
       }
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
       setDisabledVerify(false);
       setIsLoading(false);
@@ -252,20 +252,20 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         setReferenceId(response.data.referenceId);
         setIsOtpExpired(false);
         Alert.alert(
-          t("OtpVerification.success"),
+          t("Main.Success"),
           t("OtpVerification.otpResent"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         setTimer(240);
         setDisabledResend(true);
       } else {
-        Alert.alert(t("Main.error"), t("OtpVerification.otpResendFailed"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("OtpVerification.otpResendFailed"), [
+          { text: t("Main.OK") },
         ]);
       }
     } catch (error) {
-      Alert.alert(t("Main.error"), t("OtpVerification.otpResendFailed"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("OtpVerification.otpResendFailed"), [
+        { text: t("Main.OK") },
       ]);
     }
   };
@@ -412,6 +412,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                     className="w-full rounded-3xl h-[50px] justify-center items-center"
+                    style={{ overflow: "hidden" }}
                   >
                     {isLoading ? (
                       <ActivityIndicator size="small" color="#fff" />

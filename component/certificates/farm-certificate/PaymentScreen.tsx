@@ -157,8 +157,8 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
   const saveCertificatePayment = async (numericPrice: string) => {
     try {
       if (!certificateId) {
-        Alert.alert(t("Main.error"), "Certificate ID is missing", [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), "Certificate ID is missing", [
+          { text: t("Main.OK") },
         ]);
         return false;
       }
@@ -167,9 +167,9 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
 
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
+          t("Main.Error"),
           t("Farms.No authentication token found"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         return false;
       }
@@ -204,13 +204,13 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
       if (error.response) {
         console.error("Error response:", error.response.data);
         Alert.alert(
-          t("Main.error"),
-          error.response.data.message || t("Main.somethingWentWrong"),
-          [{ text: t("PublicForum.OK") }],
+          t("Main.Error"),
+          error.response.data.message || t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
         );
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
 
@@ -221,18 +221,18 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
   const handlePayNow = async () => {
     if (!cardNumber || !cardHolderName || !cardExpiryDate || !cvv) {
       Alert.alert(
-        t("Main.error"),
+        t("Main.Error"),
         t("EarnCertificate.Please fill all payment details"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
 
     if (!isCardExpiryValid()) {
       Alert.alert(
-        t("Main.error"),
+        t("Main.Error"),
         t("EarnCertificate.Please enter a valid card expiry date (MM/YY)"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -430,7 +430,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
 
             {/* Success Text */}
             <Text className="text-2xl font-bold text-gray-800 mb-2">
-              {t("Farms.Success")}
+              {t("Main.Success")}
             </Text>
             <Text className="text-center text-gray-600 mb-2">
               {t("Farms.Payment Success Message")}
@@ -442,7 +442,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
               onPress={handleModalClose}
             >
               <Text className="text-white text-base font-semibold">
-                {t("Farms.Continue")}
+                {t("Main.Continue")}
               </Text>
             </TouchableOpacity>
           </View>

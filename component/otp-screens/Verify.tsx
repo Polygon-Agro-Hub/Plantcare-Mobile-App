@@ -100,7 +100,7 @@ const Verify: React.FC = ({ navigation }: any) => {
             ]}
             className="text-white font-bold tracking-wide"
           >
-            {t("Verify.Continue")}
+            {t("Main.Continue")}
           </Text>
         </TouchableOpacity>
       </View>

@@ -37,7 +37,7 @@ import { useTranslation } from "react-i18next";
 import i18n from "@/i18n/i18n";
 import { useCallback } from "react";
 import GlobalSearchModal from "../../common/GlobalSearchModal";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 interface RouteParams {
   membership?: string;
@@ -162,38 +162,38 @@ const AddNewFarmBasicDetails: React.FC = () => {
 
   const handleContinue = () => {
     if (!farmName.trim()) {
-      Alert.alert(t("PublicForum.Error"), t("Farms.enterFarmName"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Error"), t("Farms.enterFarmName"), [
+        { text: t("Main.OK") },
       ]);
       return;
     }
     if (!extentha.trim() && !extentac.trim() && !extentp.trim()) {
-      Alert.alert(t("PublicForum.Error"), t("Farms.enterFarmExtent"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Error"), t("Farms.enterFarmExtent"), [
+        { text: t("Main.OK") },
       ]);
       return;
     }
     if (!district.trim()) {
-      Alert.alert(t("PublicForum.Error"), t("Farms.selectDistrict"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Error"), t("Farms.selectDistrict"), [
+        { text: t("Main.OK") },
       ]);
       return;
     }
     if (!plotNo.trim()) {
-      Alert.alert(t("PublicForum.Error"), t("Farms.enterPlotNumber"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Error"), t("Farms.enterPlotNumber"), [
+        { text: t("Main.OK") },
       ]);
       return;
     }
     if (!streetName.trim()) {
-      Alert.alert(t("PublicForum.Error"), t("Farms.enterStreetName"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Error"), t("Farms.enterStreetName"), [
+        { text: t("Main.OK") },
       ]);
       return;
     }
     if (!city.trim()) {
-      Alert.alert(t("PublicForum.Error"), t("Farms.enterCityName"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Error"), t("Farms.enterCityName"), [
+        { text: t("Main.OK") },
       ]);
       return;
     }
@@ -306,7 +306,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
             </View>
           </View>
 
-          <View className="space-y-6">
+          <View className="gap-6">
             <View>
               <Text className="text-[#070707] font-medium mb-2">
                 {t("Farms.Farm Name")}
@@ -325,7 +325,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                 {t("Farms.Extent")}
               </Text>
               <View className="flex-row items-center justify-between">
-                <View className="flex-row items-center space-x-2">
+                <View className="flex-row items-center gap-2">
                   <Text className="font-semibold">{t("Farms.ha")}</Text>
                   <TextInput
                     className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
@@ -338,7 +338,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                     placeholderTextColor="#9CA3AF"
                   />
                 </View>
-                <View className="flex-row items-center space-x-2">
+                <View className="flex-row items-center gap-2">
                   <Text className="font-semibold">{t("Farms.ac")}</Text>
                   <TextInput
                     className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
@@ -351,7 +351,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                     placeholderTextColor="#9CA3AF"
                   />
                 </View>
-                <View className="flex-row items-center space-x-2">
+                <View className="flex-row items-center gap-2">
                   <Text className="font-semibold">{t("Farms.p")}</Text>
                   <TextInput
                     className="bg-[#F4F4F4] p-2 w-20 px-4 rounded-3xl h-[50px] text-center"
@@ -450,7 +450,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
               }}
             >
               <Text className="text-white text-center font-semibold text-lg">
-                {t("Farms.Continue")}
+                {t("Main.Continue")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -496,7 +496,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                   ))}
                 </View>
               </ScrollView>
-              <View className="flex-row space-x-3 mt-4">
+              <View className="flex-row gap-3 mt-4">
                 <TouchableOpacity
                   className="flex-1 bg-gray-300 justify-center rounded-3xl h-[50px]"
                   onPress={() => setModalVisible(false)}
@@ -505,7 +505,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                     className="text-center text-gray-800 font-semibold"
                     style={[{ fontSize: 16 }, getTextStyle(i18n.language)]}
                   >
-                    {t("Farms.Cancel")}
+                    {t("Main.Cancel")}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -516,7 +516,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                     className="text-center text-white font-semibold"
                     style={[{ fontSize: 14 }, getTextStyle(i18n.language)]}
                   >
-                    {t("Farms.Update")}
+                    {t("Main.Update")}
                   </Text>
                 </TouchableOpacity>
               </View>

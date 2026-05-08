@@ -18,7 +18,7 @@ import { AntDesign } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { environment } from "@/environment/environment";
-import Icon from "react-native-vector-icons/Ionicons";
+import Icon from "@expo/vector-icons/Ionicons";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
@@ -140,8 +140,8 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
       const data = require("@/assets/jsons/current-asset/current-asset.json");
       setCategories(Object.keys(data));
     } catch {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
     } finally {
       setLoading(false);
@@ -238,7 +238,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
         Alert.alert(
           t("CurrentAssets.sorry"),
           t("CurrentAssets.futureDateError"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -248,7 +248,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
         Alert.alert(
           t("CurrentAssets.sorry"),
           t("CurrentAssets.expireBeforePurchase"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         setExpireDate("");
         setWarranty("");
@@ -266,7 +266,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
         Alert.alert(
           t("CurrentAssets.sorry"),
           t("CurrentAssets.expireBeforePurchase"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -336,7 +336,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
       Alert.alert(
         t("CurrentAssets.sorry"),
         t("CurrentAssets.cannotAddExpiredAsset"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -350,7 +350,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
       Alert.alert(
         t("CurrentAssets.sorry"),
         t("CurrentAssets.This exact asset already exists."),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -404,8 +404,8 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("Farms.okButton") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
         return;
       }
@@ -444,9 +444,9 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
       );
 
       Alert.alert(
-        t("CurrentAssets.success"),
+        t("Main.Success"),
         t("CurrentAssets.addAssetSuccess"),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       navigation.navigate("Main", {
         screen: "FarmCurrectAssets",
@@ -457,13 +457,13 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
         Alert.alert(
           t("CurrentAssets.sorry"),
           t("CurrentAssets.This exact asset already exists."),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
 
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
     }
   };
@@ -549,7 +549,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
           }
         />
 
-        <View className="space-y-4 p-4">
+        <View className="gap-4 p-4">
           {user?.role !== "Supervisor" && (
             <View className="flex-row mt-[-8%] justify-center">
               <View className="w-1/2">
@@ -603,7 +603,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                 handleCategoryChange(val);
                 clearError("selectedCategory");
               }}
-              searchPlaceholder={t("Signup.TypeSomething")}
+              searchPlaceholder={t("Main.Search...")}
               showSearch={true}
               multiSelect={false}
             />
@@ -666,7 +666,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                   handleAssetChange(val);
                   clearError("selectedAsset");
                 }}
-                searchPlaceholder={t("Signup.TypeSomething")}
+                searchPlaceholder={t("Main.Search...")}
                 showSearch={true}
                 multiSelect={false}
               />
@@ -734,7 +734,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                     setBrand(items[0] ?? "");
                     clearError("brand");
                   }}
-                  searchPlaceholder={t("Signup.TypeSomething")}
+                  searchPlaceholder={t("Main.Search...")}
                   showSearch={true}
                   multiSelect={false}
                 />
@@ -815,9 +815,9 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             value={
               totalPrice
                 ? parseFloat(totalPrice).toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })
                 : ""
             }
             editable={false}
@@ -938,11 +938,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
           <View className="bg-[#F4F4F4] rounded-3xl h-[50px] p-3 items-center justify-center">
             {status ? (
               <Text
-                className={`font-bold text-lg ${
-                  status === t("CurrentAssets.expired")
-                    ? "text-red-500"
-                    : "text-green-500"
-                }`}
+                className={`font-bold text-lg ${status === t("CurrentAssets.expired")
+                  ? "text-red-500"
+                  : "text-green-500"
+                  }`}
               >
                 {status === t("CurrentAssets.expired")
                   ? t("CurrentAssets.expired")

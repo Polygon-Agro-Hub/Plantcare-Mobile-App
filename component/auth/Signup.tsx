@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { Platform } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
@@ -32,10 +32,7 @@ import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
 import { LinearGradient } from "expo-linear-gradient";
 
-type SignupNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  "Signup"
->;
+type SignupNavigationProp = StackNavigationProp<RootStackParamList, "Signup">;
 
 interface SignupProps {
   navigation: SignupNavigationProp;
@@ -83,7 +80,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
   }));
 
   useEffect(() => {
-    const selectedLanguage = t("Signup.LNG");
+    const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
   }, [t]);
 
@@ -131,7 +128,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
 
   const validateMobileNumber = (number: string) => {
     const regex = /^[1-9][0-9]{8}$/;
-    setError(regex.test(number) ? "" : t("Signup.Enteravalidmobile"));
+    setError(regex.test(number) ? "" : t("SignUp.EnterValidMobile"));
   };
 
   const handleMobileNumberChange = (text: string) => {
@@ -147,16 +144,16 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
     setErr: React.Dispatch<React.SetStateAction<string>>,
   ) => {
     if (name.startsWith(" ")) {
-      setErr(t("Signup.CannotStartWithSpace"));
+      setErr(t("SignUp.CannotStartWithSpace"));
       return false;
     }
     if (name.includes(" ")) {
-      setErr(t("Signup.NoSpacesAllowed"));
+      setErr(t("SignUp.NoSpacesAllowed"));
       return false;
     }
     const regex = /^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]+$/u;
     if (name && !regex.test(name)) {
-      setErr(t("Signup.OnlyLettersAllowed"));
+      setErr(t("SignUp.OnlyLettersAllowed"));
       return false;
     }
     if (name) {
@@ -174,10 +171,10 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
 
     if (blocked) {
       const msg = text.startsWith(" ")
-        ? t("Signup.CannotStartWithSpace")
+        ? t("SignUp.CannotStartWithSpace")
         : text.includes(" ")
-          ? t("Signup.NoSpacesAllowed")
-          : t("Signup.OnlyLettersAllowed");
+          ? t("SignUp.NoSpacesAllowed")
+          : t("SignUp.OnlyLettersAllowed");
       setFirstNameError(msg);
       setSpaceAttempted(true);
       setTimeout(() => {
@@ -202,10 +199,10 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
 
     if (blocked) {
       const msg = text.startsWith(" ")
-        ? t("Signup.CannotStartWithSpace")
+        ? t("SignUp.CannotStartWithSpace")
         : text.includes(" ")
-          ? t("Signup.NoSpacesAllowed")
-          : t("Signup.OnlyLettersAllowed");
+          ? t("SignUp.NoSpacesAllowed")
+          : t("SignUp.OnlyLettersAllowed");
       setLastNameError(msg);
       setLastNameSpaceAttempted(true);
       setTimeout(() => {
@@ -224,9 +221,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
 
   const validateNic = (value: string) => {
     const nicRegex = /^(\d{12}|\d{9}[VvXx])$/;
-    setEre(
-      value && !nicRegex.test(value) ? t("Signup.Enteravalidenic") : "",
-    );
+    setEre(value && !nicRegex.test(value) ? t("SignUp.Enteravalidenic") : "");
   };
 
   const handleNicChange = (text: string) => {
@@ -281,8 +276,8 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
       !selectedCountryCode ||
       !district
     ) {
-      Alert.alert(t("Main.Sorry"), t("Signup.fillAllFields"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Sorry"), t("SignUp.fillAllFields"), [
+        { text: t("Main.OK") },
       ]);
       return;
     }
@@ -305,9 +300,9 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
 
       const msg = checkResponse.data.message;
       if (msg === "This Phone Number already exists.") {
-        Alert.alert(t("Main.Sorry"), t("Signup.phoneExists"), [
+        Alert.alert(t("Main.Sorry"), t("SignUp.phoneExists"), [
           {
-            text: t("PublicForum.OK"),
+            text: t("Main.OK"),
             onPress: () => navigation.navigate("Signup"),
           },
         ]);
@@ -316,9 +311,9 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
         return;
       }
       if (msg === "This NIC already exists.") {
-        Alert.alert(t("Main.Sorry"), t("Signup.nicExists"), [
+        Alert.alert(t("Main.Sorry"), t("SignUp.nicExists"), [
           {
-            text: t("PublicForum.OK"),
+            text: t("Main.OK"),
             onPress: () => navigation.navigate("Signup"),
           },
         ]);
@@ -327,9 +322,9 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
         return;
       }
       if (msg === "This Phone Number and NIC already exist.") {
-        Alert.alert(t("Main.Sorry"), t("Signup.phoneNicExist"), [
+        Alert.alert(t("Main.Sorry"), t("SignUp.phoneNicExist"), [
           {
-            text: t("PublicForum.OK"),
+            text: t("Main.OK"),
             onPress: () => navigation.navigate("Signup"),
           },
         ]);
@@ -381,12 +376,16 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
       setIsLoading(false);
     } catch (err) {
       console.error("Registration error:", err);
-      Alert.alert(t("Main.Sorry"), t("Main.somethingWentWrong"), [
-        {
-          text: t("PublicForum.OK"),
-          onPress: () => navigation.navigate("Signup"),
-        },
-      ]);
+      Alert.alert(
+        t("Main.Sorry"),
+        t("Main.SomethingWentWrongPleaseTryAgainlater"),
+        [
+          {
+            text: t("Main.OK"),
+            onPress: () => navigation.navigate("Signup"),
+          },
+        ],
+      );
       setIsButtonDisabled(false);
       setIsLoading(false);
     }
@@ -427,13 +426,13 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
 
           <View className="flex-1 items-center">
             <Text className="font-bold" style={{ fontSize: wp(6) }}>
-              {t("Signup.Create Account")}
+              {t("SignUp.Create Account")}
             </Text>
 
             <View className="flex-1 w-full px-4">
               <View className="pt-6">
                 <Text className="text-[#070707] text-sm mb-2">
-                  {t("Signup.Mobile Number")}
+                  {t("SignUp.Mobile Number")}
                 </Text>
                 <View className="mt-2 flex-row items-center gap-2">
                   <TouchableOpacity
@@ -475,10 +474,10 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
 
               <View>
                 <Text className="text-[#070707] text-sm mt-2">
-                  {t("Signup.FirstName")}
+                  {t("SignUp.FirstName")}
                 </Text>
                 <TextInput
-                  placeholder={t("Signup.Enter First Name Here")}
+                  placeholder={t("SignUp.Enter First Name Here")}
                   placeholderTextColor="#585858"
                   underlineColorAndroid="transparent"
                   cursorColor="#141415ff"
@@ -503,10 +502,10 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
                 ) : null}
 
                 <Text className="text-[#070707] text-sm mt-2">
-                  {t("Signup.LastName")}
+                  {t("SignUp.LastName")}
                 </Text>
                 <TextInput
-                  placeholder={t("Signup.Enter Last Name Here")}
+                  placeholder={t("SignUp.Enter Last Name Here")}
                   value={lastName}
                   placeholderTextColor="#585858"
                   underlineColorAndroid="transparent"
@@ -531,11 +530,11 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
                 ) : null}
 
                 <Text className="text-[#070707] text-sm mt-2">
-                  {t("Signup.NICNumber")}
+                  {t("SignUp.NICNumber")}
                 </Text>
                 <TextInput
                   ref={nicInputRef}
-                  placeholder={t("Signup.Enter NIC Here")}
+                  placeholder={t("SignUp.Enter NIC Here")}
                   value={nic}
                   underlineColorAndroid="transparent"
                   cursorColor="#141415ff"
@@ -554,7 +553,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
                 ) : null}
 
                 <Text className="text-[#070707] text-sm mt-2">
-                  {t("Signup.District")}
+                  {t("SignUp.District")}
                 </Text>
                 <TouchableOpacity
                   onPress={() => {
@@ -570,7 +569,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
                     {district
                       ? (districtItems.find((d) => d.value === district)
                           ?.label ?? district)
-                      : t("Signup.Select Your District")}
+                      : t("SignUp.Select Your District")}
                   </Text>
                   <AntDesign name="caret-down" size={14} color="#555" />
                 </TouchableOpacity>
@@ -715,12 +714,13 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                     className="w-full rounded-3xl h-[50px] justify-center items-center"
+                    style={{ overflow: "hidden" }}
                   >
                     {isLoading ? (
                       <ActivityIndicator size="small" color="#fff" />
                     ) : (
                       <Text className="text-white text-center font-semibold text-lg">
-                        {t("Signup.SignUp")}
+                        {t("SignUp.SignUp")}
                       </Text>
                     )}
                   </LinearGradient>
@@ -729,11 +729,11 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
 
               <View className="flex-row items-center justify-center mt-4">
                 <Text className="font-bold text-black">
-                  {t("Signup.AlreadyAccount")}{" "}
+                  {t("SignUp.AlreadyHaveAnAccount")}{" "}
                 </Text>
                 <TouchableOpacity onPress={() => navigation.navigate("Signin")}>
                   <Text className="text-[#fff] font-semibold underline">
-                    {t("Signup.SignIn")}
+                    {t("SignUp.SignInHere")}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -767,11 +767,11 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
       <GlobalSearchModal
         visible={districtModalVisible}
         onClose={() => setDistrictModalVisible(false)}
-        title={t("Signup.Select Your District")}
+        title={t("SignUp.Select Your District")}
         data={districtItems}
         selectedItems={district ? [district] : []}
         onSelect={handleDistrictSelect}
-        searchPlaceholder={t("Signup.TypeSomething")}
+        searchPlaceholder={t("Main.Search...")}
         searchKeys={["label", "districtName"]}
         multiSelect={false}
       />

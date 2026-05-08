@@ -112,8 +112,8 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({
     const phoneNumber = "+94770111999";
     const url = `tel:${phoneNumber}`;
     Linking.openURL(url).catch((err) =>
-      Alert.alert(t("Main.error"), t("Profile.UnabletoOpen"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Error"), t("Profile.UnabletoOpen"), [
+        { text: t("Main.OK") },
       ]),
     );
   };
@@ -127,7 +127,7 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({
       await AsyncStorage.removeItem("phoneNumber");
       await AsyncStorage.removeItem("nic");
       navigation.navigate("Signin");
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const HanldeAsynStorage = async (lng: string) => {
@@ -152,7 +152,7 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({
         HanldeAsynStorage("si");
         setIsLoading(false);
       }
-    } catch (error) {}
+    } catch (error) { }
     console.error("Error");
   };
 
@@ -160,7 +160,7 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({
     try {
       await AsyncStorage.setItem("@user_language", language);
       changeLanguage(language);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   if (isLoading) {
@@ -239,16 +239,14 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({
                   <TouchableOpacity
                     key={language}
                     onPress={() => handleLanguageSelect(language)}
-                    className={`flex-row items-center py-2 px-4 rounded-lg my-1 ${
-                      selectedLanguage === language ? "bg-[#E6FFFB]" : ""
-                    }`}
+                    className={`flex-row items-center py-2 px-4 rounded-lg my-1 ${selectedLanguage === language ? "bg-[#E6FFFB]" : ""
+                      }`}
                   >
                     <Text
-                      className={`text-base ${
-                        selectedLanguage === language
-                          ? "text-black"
-                          : "text-gray-700"
-                      }`}
+                      className={`text-base ${selectedLanguage === language
+                        ? "text-black"
+                        : "text-gray-700"
+                        }`}
                     >
                       {displayLanguage}
                     </Text>
@@ -353,7 +351,7 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({
                     onPress={() => setModalVisible(false)}
                     className="bg-gray-300 p-3 rounded-full flex-1 mx-1 px-2"
                   >
-                    <Text className="text-center">{t("Profile.Cancel")}</Text>
+                    <Text className="text-center">{t("Main.Cancel")}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={handleCall}

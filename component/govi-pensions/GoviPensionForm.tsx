@@ -118,7 +118,7 @@ const CustomDatePicker = ({
           <View className="px-5 py-4 border-b border-gray-200">
             <TouchableOpacity onPress={onClose}>
               <Text className="text-gray-500 text-base font-medium">
-                {t("GoviPensionForm.Cancel") || "Cancel"}
+                {t("Main.Cancel")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -218,7 +218,7 @@ const CustomDatePicker = ({
                 className="bg-[#00A896] rounded-3xl h-[50px] px-6 justify-center"
               >
                 <Text className="text-white text-center font-semibold text-lg">
-                  {t("GoviPensionForm.Save") || "Save"}
+                  {t("Main.Save")}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -330,7 +330,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     const nicRegex = /^(\d{12}|\d{9}[VvXx])$/;
     setNicError(
       final && !nicRegex.test(final)
-        ? t("Signup.Enteravalidenic") || "Enter a valid NIC number"
+        ? t("SignUp.Enteravalidenic") || "Enter a valid NIC number"
         : "",
     );
 
@@ -346,7 +346,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     const nicRegex = /^(\d{12}|\d{9}[VvXx])$/;
     setSuccessorNicError(
       final && !nicRegex.test(final)
-        ? t("Signup.Enteravalidenic") || "Enter a valid NIC number"
+        ? t("SignUp.Enteravalidenic") || "Enter a valid NIC number"
         : "",
     );
 
@@ -1168,7 +1168,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
 
       <View className="px-5 pb-6 pt-4 bg-white">
         {currentSection === 1 ? (
-          <View className="flex-row space-x-3">
+          <View className="flex-row gap-3">
             <TouchableOpacity
               onPress={handleCancel}
               className="flex-1 bg-[#ECECEC] rounded-3xl h-[50px] justify-center"
@@ -1182,7 +1182,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
               }}
             >
               <Text className="text-[#8E8E8E] text-center font-medium text-lg">
-                {t("GoviPensionForm.Cancel")}
+                {t("Main.Cancel")}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -1203,7 +1203,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         ) : (
-          <View className="flex-row space-x-3">
+          <View className="flex-row gap-3">
             <TouchableOpacity
               onPress={handlePrevious}
               className="flex-1 bg-[#ECECEC] rounded-3xl h-[50px] justify-center"

@@ -103,7 +103,7 @@ const CompostMixingCalculatorScreen: React.FC<CompostMixingProps> = ({
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            {t("Calculator.RequiredFields")}
+            {t("Main.PleaseFillAllRequiredFields")}
           </Text>
         )}
 

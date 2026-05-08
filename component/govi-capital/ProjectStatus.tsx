@@ -9,8 +9,8 @@ import {
   ActivityIndicator,
   BackHandler,
 } from "react-native";
-import { Video, ResizeMode } from "expo-av";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { useVideoPlayer, VideoView } from "expo-video";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
 import Svg, { Circle } from "react-native-svg";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -65,6 +65,13 @@ interface InvestmentDetail {
 const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
   const { id, jobid } = route.params;
   const { t } = useTranslation();
+
+  const videoSource = require("../../assets/images/govi-pension/pension-background.mov");
+  const player = useVideoPlayer(videoSource, player => {
+    player.loop = true;
+    player.muted = true;
+    player.play();
+  });
 
   const [loading, setLoading] = useState(true);
   const [investmentDetail, setInvestmentDetail] =
@@ -198,13 +205,10 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
       <StatusBar barStyle="dark-content" backgroundColor="#FFC107" />
 
       <View className="pt-5 pb-6 overflow-hidden" style={{ height: 180 }}>
-        <Video
-          source={require("../../assets/images/govi-pension/pension-background.mov")}
+        <VideoView
+          player={player}
           className="absolute top-0 left-0 bottom-0 right-0 w-full h-[200%]"
-          shouldPlay
-          isLooping
-          isMuted
-          resizeMode={ResizeMode.COVER}
+          contentFit="cover"
         />
 
         <View className="mb-2 z-10 px-4">

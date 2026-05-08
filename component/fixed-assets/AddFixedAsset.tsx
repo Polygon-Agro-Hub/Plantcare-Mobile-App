@@ -18,12 +18,12 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { useTranslation } from "react-i18next";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
-import Icon from "react-native-vector-icons/Ionicons";
+import Icon from "@expo/vector-icons/Ionicons";
 import CustomHeader from "../common/CustomHeader";
 import assetData from "@/assets/jsons/fixed-asset/fixed-assets.json";
 
@@ -272,7 +272,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       Alert.alert(
         t("FixedAssets.sorry"),
         t("FixedAssets.issuedDateCannotBeFuture"),
-        [{ text: t("Main.ok") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -295,7 +295,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       Alert.alert(
         t("FixedAssets.sorry"),
         t("FixedAssets.issuedDateCannotBeFuture"),
-        [{ text: t("Main.ok") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -528,11 +528,11 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
         { headers: { Authorization: `Bearer ${token}` } },
       );
       Alert.alert(
-        t("FixedAssets.success"),
+        t("Main.Success"),
         t("FixedAssets.assetAddSuccessfuly"),
         [
           {
-            text: t("Main.ok"),
+            text: t("Main.OK"),
             onPress: () => navigation.navigate("fixedDashboard"),
           },
         ],
@@ -542,7 +542,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       console.error("Error submitting data:", error);
       setLoading(false);
       Alert.alert("Duplicate Name", error.response.data.message, [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
     }
   };
@@ -580,7 +580,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             setBrand("");
             clearError("selectedFarm");
           }}
-          searchPlaceholder={t("Signup.TypeSomething")}
+          searchPlaceholder={t("Main.Search...")}
         />
 
         {/* Category */}
@@ -611,7 +611,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             setPerennialCrop("");
             clearError("category");
           }}
-          searchPlaceholder={t("Signup.TypeSomething")}
+          searchPlaceholder={t("Main.Search...")}
         />
 
         {/* Machine asset */}
@@ -627,7 +627,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
             setBrand("");
             clearError("asset");
           }}
-          searchPlaceholder={t("Signup.TypeSomething")}
+          searchPlaceholder={t("Main.Search...")}
         />
 
         {/* Asset type (Machine) */}
@@ -644,7 +644,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 setAssetType(items[0] ?? "");
                 clearError("assetType");
               }}
-              searchPlaceholder={t("Signup.TypeSomething")}
+              searchPlaceholder={t("Main.Search...")}
             />
           )}
 
@@ -662,7 +662,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 setBrand(items[0] ?? "");
                 clearError("brand");
               }}
-              searchPlaceholder={t("Signup.TypeSomething")}
+              searchPlaceholder={t("Main.Search...")}
             />
           )}
 
@@ -678,7 +678,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               setLandOwnership(items[0] ?? "");
               clearError("landownership");
             }}
-            searchPlaceholder={t("Signup.TypeSomething")}
+            searchPlaceholder={t("Main.Search...")}
           />
         )}
 
@@ -695,7 +695,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               setOthertool("");
               clearError("assetname");
             }}
-            searchPlaceholder={t("Signup.TypeSomething")}
+            searchPlaceholder={t("Main.Search...")}
           />
         )}
 
@@ -711,7 +711,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               setToolbrand(items[0] ?? "");
               clearError("toolbrand");
             }}
-            searchPlaceholder={t("Signup.TypeSomething")}
+            searchPlaceholder={t("Main.Search...")}
           />
         )}
 
@@ -727,7 +727,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               setType(items[0] ?? "");
               clearError("type");
             }}
-            searchPlaceholder={t("Signup.TypeSomething")}
+            searchPlaceholder={t("Main.Search...")}
           />
         )}
 
@@ -743,7 +743,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               setOwnership(items[0] ?? "");
               clearError("ownership");
             }}
-            searchPlaceholder={t("Signup.TypeSomething")}
+            searchPlaceholder={t("Main.Search...")}
           />
         )}
 
@@ -759,7 +759,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
               setGeneralCondition(items[0] ?? "");
               clearError("generalCondition");
             }}
-            searchPlaceholder={t("Signup.TypeSomething")}
+            searchPlaceholder={t("Main.Search...")}
             showSearch={false}
           />
         )}
@@ -967,13 +967,13 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   <Text>
                     {totalPrice
                       ? (() => {
-                          const parts = totalPrice.toFixed(2).split(".");
-                          return (
-                            parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-                            "." +
-                            parts[1]
-                          );
-                        })()
+                        const parts = totalPrice.toFixed(2).split(".");
+                        return (
+                          parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+                          "." +
+                          parts[1]
+                        );
+                      })()
                       : "0.00"}
                   </Text>
                 </View>
@@ -988,9 +988,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       className="flex-row items-center"
                     >
                       <View
-                        className={`w-5 h-5 rounded-full ${
-                          warranty === w ? "bg-green-500" : "bg-gray-400"
-                        }`}
+                        className={`w-5 h-5 rounded-full ${warranty === w ? "bg-green-500" : "bg-gray-400"
+                          }`}
                       />
                       <Text className="ml-2">
                         {w === "yes"
@@ -1042,7 +1041,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                                   Alert.alert(
                                     t("FixedAssets.sorry"),
                                     t("FixedAssets.purchaseDateCannotBeFuture"),
-                                    [{ text: t("Main.ok") }],
+                                    [{ text: t("Main.OK") }],
                                   );
                                 } else {
                                   setPurchasedDate(selectedDate);
@@ -1065,7 +1064,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                                 Alert.alert(
                                   t("FixedAssets.sorry"),
                                   t("FixedAssets.purchaseDateCannotBeFuture"),
-                                  [{ text: t("Main.ok") }],
+                                  [{ text: t("Main.OK") }],
                                 );
                               } else {
                                 setPurchasedDate(selectedDate);
@@ -1118,7 +1117,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                                   Alert.alert(
                                     t("FixedAssets.sorry"),
                                     t("FixedAssets.errorInvalidExpireDate"),
-                                    [{ text: t("Main.ok") }],
+                                    [{ text: t("Main.OK") }],
                                   );
                                 } else {
                                   setExpireDate(selectedDate);
@@ -1146,7 +1145,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                                 Alert.alert(
                                   t("FixedAssets.sorry"),
                                   t("FixedAssets.errorInvalidExpireDate"),
-                                  [{ text: t("Main.ok") }],
+                                  [{ text: t("Main.OK") }],
                                 );
                               } else {
                                 setExpireDate(selectedDate);
@@ -1222,7 +1221,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   ].map(({ label, val, setter }) => (
                     <View
                       key={label}
-                      className="flex-row items-center space-x-2"
+                      className="flex-row items-center gap-2"
                     >
                       <Text className="text-right">{label}</Text>
                       <TextInput
@@ -1482,9 +1481,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         className="flex-row items-center"
                       >
                         <View
-                          className={`w-5 h-5 rounded-full ${
-                            landFenced === v ? "bg-green-500" : "bg-gray-400"
-                          }`}
+                          className={`w-5 h-5 rounded-full ${landFenced === v ? "bg-green-500" : "bg-gray-400"
+                            }`}
                         />
                         <Text className="ml-2">
                           {v === "yes"
@@ -1508,9 +1506,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                         className="flex-row items-center"
                       >
                         <View
-                          className={`w-5 h-5 rounded-full ${
-                            perennialCrop === v ? "bg-green-500" : "bg-gray-400"
-                          }`}
+                          className={`w-5 h-5 rounded-full ${perennialCrop === v ? "bg-green-500" : "bg-gray-400"
+                            }`}
                         />
                         <Text className="ml-2">
                           {v === "yes"
@@ -1627,13 +1624,13 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   <Text>
                     {totalPrice
                       ? (() => {
-                          const parts = totalPrice.toFixed(2).split(".");
-                          return (
-                            parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-                            "." +
-                            parts[1]
-                          );
-                        })()
+                        const parts = totalPrice.toFixed(2).split(".");
+                        return (
+                          parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+                          "." +
+                          parts[1]
+                        );
+                      })()
                       : "0.00"}
                   </Text>
                 </View>
@@ -1648,9 +1645,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                       className="flex-row items-center"
                     >
                       <View
-                        className={`w-5 h-5 rounded-full ${
-                          warranty === w ? "bg-green-500" : "bg-gray-400"
-                        }`}
+                        className={`w-5 h-5 rounded-full ${warranty === w ? "bg-green-500" : "bg-gray-400"
+                          }`}
                       />
                       <Text className="ml-2">
                         {w === "yes"
@@ -1702,7 +1698,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                                   Alert.alert(
                                     t("FixedAssets.sorry"),
                                     t("FixedAssets.purchaseDateCannotBeFuture"),
-                                    [{ text: t("Main.ok") }],
+                                    [{ text: t("Main.OK") }],
                                   );
                                 } else {
                                   setPurchasedDate(selectedDate);
@@ -1725,7 +1721,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                                 Alert.alert(
                                   t("FixedAssets.sorry"),
                                   t("FixedAssets.purchaseDateCannotBeFuture"),
-                                  [{ text: t("Main.ok") }],
+                                  [{ text: t("Main.OK") }],
                                 );
                               } else {
                                 setPurchasedDate(selectedDate);
@@ -1778,7 +1774,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                                   Alert.alert(
                                     t("FixedAssets.sorry"),
                                     t("FixedAssets.errorInvalidExpireDate"),
-                                    [{ text: t("Main.ok") }],
+                                    [{ text: t("Main.OK") }],
                                   );
                                 } else {
                                   setExpireDate(selectedDate);
@@ -1806,7 +1802,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                                 Alert.alert(
                                   t("FixedAssets.sorry"),
                                   t("FixedAssets.errorInvalidExpireDate"),
-                                  [{ text: t("Main.ok") }],
+                                  [{ text: t("Main.OK") }],
                                 );
                               } else {
                                 setExpireDate(selectedDate);
@@ -2177,7 +2173,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                   <ActivityIndicator size="small" color="#fff" />
                 ) : (
                   <Text className="text-white text-base text-center">
-                    {t("FixedAssets.save")}
+                    {t("FixedAssets.AddAsset")}
                   </Text>
                 )}
               </TouchableOpacity>

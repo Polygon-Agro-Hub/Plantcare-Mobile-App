@@ -7,7 +7,7 @@ import {
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
 import { LinearGradient } from "expo-linear-gradient";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { setPackageType, setPackagePrice } from "../../../store/packageSlice";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -98,7 +98,7 @@ const UnLockProRenew: React.FC<UnLockProRenewProps> = ({ navigation }) => {
           />
 
           <View className="text-center justify-center items-center mt-6">
-            <View className="flex-row items-center justify-center space-x-2">
+            <View className="flex-row items-center justify-center gap-2">
               <Text className="text-xl font-bold text-[#E5B323]">
                 {t("Farms.UPGRADE TO PRO")}
               </Text>

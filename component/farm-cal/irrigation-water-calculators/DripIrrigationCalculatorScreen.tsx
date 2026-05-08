@@ -119,7 +119,7 @@ const DripIrrigationCalculatorScreen: React.FC<DripIrrigationProps> = ({
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            {t("IrrigationWaterCalculators.RequiredFields")}
+            {t("Main.PleaseFillAllRequiredFields")}
           </Text>
         )}
 

@@ -28,7 +28,7 @@ type FarmAddFixAssertNavigationProp = StackNavigationProp<
   RootStackParamList,
   "FarmAddFixAssert"
 >;
-import Icon from "react-native-vector-icons/Ionicons";
+import Icon from "@expo/vector-icons/Ionicons";
 import CustomHeader from "../../common/CustomHeader";
 
 interface FarmAddFixAssertProps {
@@ -260,7 +260,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
       Alert.alert(
         t("FixedAssets.sorry"),
         t("FixedAssets.issuedDateCannotBeFuture"),
-        [{ text: t("Main.ok") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -295,7 +295,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
       Alert.alert(
         t("FixedAssets.sorry"),
         t("FixedAssets.issuedDateCannotBeFuture"),
-        [{ text: t("Main.ok") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -359,7 +359,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
         Alert.alert(
           t("FixedAssets.sorry"),
           t("FixedAssets.cannotAddExpiredAsset"),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -567,11 +567,11 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
         { headers: { Authorization: `Bearer ${token}` } },
       );
       Alert.alert(
-        t("FixedAssets.success"),
+        t("Main.Success"),
         t("FixedAssets.assetAddSuccessfuly"),
         [
           {
-            text: t("Main.ok"),
+            text: t("Main.OK"),
             onPress: () =>
               navigation.navigate("Main", {
                 screen: "FarmFixDashBoard",
@@ -585,7 +585,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
       console.error("Error submitting data:", error);
       setLoading(false);
       Alert.alert("Duplicate Name", error.response.data.message, [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
     }
   };
@@ -684,7 +684,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                         Alert.alert(
                           t("FixedAssets.sorry"),
                           t("FixedAssets.purchaseDateCannotBeFuture"),
-                          [{ text: t("Main.ok") }],
+                          [{ text: t("Main.OK") }],
                         );
                       } else {
                         setPurchasedDate(selectedDate);
@@ -707,7 +707,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       Alert.alert(
                         t("FixedAssets.sorry"),
                         t("FixedAssets.purchaseDateCannotBeFuture"),
-                        [{ text: t("Main.ok") }],
+                        [{ text: t("Main.OK") }],
                       );
                     } else {
                       setPurchasedDate(selectedDate);
@@ -1036,7 +1036,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   ].map(({ label, value, setter }) => (
                     <View
                       key={label}
-                      className="flex-row items-center space-x-2"
+                      className="flex-row items-center gap-2"
                     >
                       <Text className="text-right">{label}</Text>
                       <TextInput
@@ -1686,16 +1686,15 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             {/* ── Submit Button ── */}
             <View className="flex-1 items-center pt-8 mb-16 ">
               <TouchableOpacity
-                className={`${
-                  category !== "Machine and Vehicles" &&
+                className={`${category !== "Machine and Vehicles" &&
                   category !== "Tools" &&
                   warranty === "yes" &&
                   purchasedDate &&
                   expireDate &&
                   expireDate < new Date()
-                    ? "bg-gray-400"
-                    : "bg-gray-900"
-                } p-3 rounded-3xl mb-6 h-[50px] w-2/3`}
+                  ? "bg-gray-400"
+                  : "bg-gray-900"
+                  } p-3 rounded-3xl mb-6 h-[50px] w-2/3`}
                 onPress={submitData}
                 disabled={
                   loading ||
@@ -1721,13 +1720,13 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 ) : (
                   <Text className="text-white text-base text-center">
                     {category !== "Machine and Vehicles" &&
-                    category !== "Tools" &&
-                    warranty === "yes" &&
-                    purchasedDate &&
-                    expireDate &&
-                    expireDate < new Date()
+                      category !== "Tools" &&
+                      warranty === "yes" &&
+                      purchasedDate &&
+                      expireDate &&
+                      expireDate < new Date()
                       ? t("FixedAssets.expired")
-                      : t("FixedAssets.save")}
+                      : t("FixedAssets.AddAsset")}
                   </Text>
                 )}
               </TouchableOpacity>
@@ -1761,7 +1760,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             setPerennialCrop("");
             setErrors({});
           }}
-          searchPlaceholder={t("Signup.TypeSomething")}
+          searchPlaceholder={t("Main.Search...")}
         />
 
         {/* Machine Asset */}
@@ -1777,7 +1776,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             setBrand("");
             clearError("asset");
           }}
-          searchPlaceholder={t("Signup.TypeSomething")}
+          searchPlaceholder={t("Main.Search...")}
         />
 
         {/* Asset Type (Machine) */}
@@ -1795,7 +1794,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             setAssetType(items[0] || "");
             clearError("assetType");
           }}
-          searchPlaceholder={t("Signup.TypeSomething")}
+          searchPlaceholder={t("Main.Search...")}
         />
 
         {/* Brand (Machine) */}
@@ -1813,7 +1812,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             setBrand(items[0] || "");
             clearError("brand");
           }}
-          searchPlaceholder={t("Signup.TypeSomething")}
+          searchPlaceholder={t("Main.Search...")}
         />
 
         {/* Land Ownership */}
@@ -1842,7 +1841,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             setOthertool("");
             clearError("assetname");
           }}
-          searchPlaceholder={t("Signup.TypeSomething")}
+          searchPlaceholder={t("Main.Search...")}
         />
 
         {/* Tool Brand */}
@@ -1856,7 +1855,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             setToolbrand(items[0] || "");
             clearError("toolbrand");
           }}
-          searchPlaceholder={t("Signup.TypeSomething")}
+          searchPlaceholder={t("Main.Search...")}
         />
 
         {/* Building Type */}

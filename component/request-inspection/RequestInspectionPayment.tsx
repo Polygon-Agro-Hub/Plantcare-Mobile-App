@@ -172,20 +172,20 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
   const handlePayNow = async () => {
     if (!cardNumber || !cardHolderName || !cardExpiryDate || !cvv) {
       Alert.alert(
-        t("RequestInspectionForm.Error"),
+        t("Main.Error"),
         t("RequestInspectionForm.Please fill all payment details"),
-        [{ text: t("RequestInspectionForm.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
 
     if (!isCardExpiryValid()) {
       Alert.alert(
-        t("RequestInspectionForm.Error"),
+        t("Main.Error"),
         t(
           "RequestInspectionForm.Please enter a valid card expiry date (MM/YY)",
         ),
-        [{ text: t("RequestInspectionForm.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -196,7 +196,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
       Alert.alert(
         t("RequestInspectionForm.Please wait"),
         t("RequestInspectionForm.Submitting your request"),
-        [{ text: t("RequestInspectionForm.OK") }],
+        [{ text: t("Main.OK") }],
       );
 
       setTimeout(async () => {
@@ -211,13 +211,13 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
             setShowSuccessModal(true);
 
             Alert.alert(
-              t("RequestInspectionForm.Success"),
+              t("Main.Success"),
               t(
                 "RequestInspectionForm.Your inspection request has been submitted successfully",
               ),
               [
                 {
-                  text: t("RequestInspectionForm.OK"),
+                  text: t("Main.OK"),
                   onPress: () => {
                     setShowSuccessModal(true);
                   },
@@ -226,31 +226,31 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
             );
           } else {
             Alert.alert(
-              t("RequestInspectionForm.Error"),
+              t("Main.Error"),
               t(
                 "RequestInspectionForm.Request Inspection Submitting error, Please try again later",
               ),
-              [{ text: t("RequestInspectionForm.OK") }],
+              [{ text: t("Main.OK") }],
             );
           }
         } catch (error: any) {
           setIsProcessing(false);
           Alert.alert(
-            t("RequestInspectionForm.Error"),
+            t("Main.Error"),
             error.message ||
-              t(
-                "RequestInspectionForm.Request Inspection Submitting error, Please try again later",
-              ),
-            [{ text: t("RequestInspectionForm.OK") }],
+            t(
+              "RequestInspectionForm.Request Inspection Submitting error, Please try again later",
+            ),
+            [{ text: t("Main.OK") }],
           );
         }
       }, 2000);
     } catch (error) {
       setIsProcessing(false);
       Alert.alert(
-        t("RequestInspectionForm.Error"),
+        t("Main.Error"),
         t("RequestInspectionForm.Payment processing failed. Please try again."),
-        [{ text: t("RequestInspectionForm.OK") }],
+        [{ text: t("Main.OK") }],
       );
     }
   };

@@ -10,7 +10,7 @@ import {
   Alert,
   Platform,
 } from "react-native";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import * as ImagePicker from "expo-image-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { AntDesign, FontAwesome6, Ionicons } from "@expo/vector-icons";
@@ -411,7 +411,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             {t("Govicapital.Cultivation Extent")} *
           </Text>
           <View className="flex-row items-center justify-between">
-            <View className="flex-row items-center space-x-2">
+            <View className="flex-row items-center gap-2">
               <TextInput
                 className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
                 value={extentha}
@@ -426,7 +426,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
               <Text className="text-sm">{t("Govicapital.ha")}</Text>
             </View>
 
-            <View className="flex-row items-center space-x-2">
+            <View className="flex-row items-center gap-2">
               <TextInput
                 className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
                 value={extentac}
@@ -441,7 +441,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
               <Text className="text-sm">{t("Govicapital.ac")}</Text>
             </View>
 
-            <View className="flex-row items-center space-x-2">
+            <View className="flex-row items-center gap-2">
               <TextInput
                 className="bg-[#F4F4F4] p-2 w-20 px-4 rounded-3xl h-[50px] text-center"
                 value={extentp}
@@ -662,7 +662,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             }}
           >
             <Text className="text-gray-500 text-center font-medium text-lg">
-              {t("Govicapital.Cancel")}
+              {t("Main.Cancel")}
             </Text>
           </TouchableOpacity>
 
@@ -679,7 +679,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             }}
           >
             <Text className="text-white text-center font-medium text-lg">
-              {t("Govicapital.Continue")}
+              {t("Main.Continue")}
             </Text>
           </TouchableOpacity>
         </View>

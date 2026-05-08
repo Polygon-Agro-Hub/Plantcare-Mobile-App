@@ -64,8 +64,8 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
     if (!totalExpenses || !expectedRevenue) {
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("EconomicCostCalendars.FillAllFields") ||
-          "Please fill all required fields.",
+        t("Main.PleaseFillAllRequiredFields") ||
+        "Please fill all required fields.",
       );
       return;
     }
@@ -77,7 +77,7 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
         t("EconomicCostCalendars.ExpensesError") ||
-          "Total farm expenses must be greater than 0.",
+        "Total farm expenses must be greater than 0.",
       );
       return;
     }
@@ -85,7 +85,7 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
         t("EconomicCostCalendars.RevenueError") ||
-          "Expected revenue must be greater than 0.",
+        "Expected revenue must be greater than 0.",
       );
       return;
     }
@@ -119,7 +119,7 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            {t("EconomicCostCalendars.FillRequiredFields") ||
+            {t("Main.PleaseFillAllRequiredFields") ||
               "Please fill all required fields!"}
           </Text>
         )}

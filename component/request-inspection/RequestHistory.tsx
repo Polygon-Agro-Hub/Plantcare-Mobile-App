@@ -270,7 +270,7 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
           </Text>
         </View>
 
-        <View className="space-y-2">
+        <View className="gap-2">
           <View className="flex-row justify-between items-center">
             <Text className="text-gray-600 text-sm">
               {t("RequestHistory.Scheduled")} {request.scheduledDate}

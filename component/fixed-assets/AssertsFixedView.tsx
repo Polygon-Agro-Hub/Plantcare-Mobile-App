@@ -8,8 +8,8 @@ import {
   BackHandler,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import Modal from "react-native-modal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -277,7 +277,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       Alert.alert(
         t("FixedAssets.noToolsSelectedTitle"),
         t("FixedAssets.noToolsSelectedDeleteMessage"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -287,10 +287,10 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       selectedTools.length === 1
         ? t("FixedAssets.confirmDeleteMessageSingle")
         : t("FixedAssets.confirmDeleteMessageMultiple", {
-            count: selectedTools.length,
-          }),
+          count: selectedTools.length,
+        }),
       [
-        { text: t("FixedAssets.cancelButton"), style: "cancel" },
+        { text: t("Main.Cancel"), style: "cancel" },
         {
           text: t("FixedAssets.deleteButton"),
           style: "destructive",
@@ -312,7 +312,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               Alert.alert(
                 t("FixedAssets.successTitle"),
                 t("CurrentAssets.RemoveSuccess"),
-                [{ text: t("PublicForum.OK") }],
+                [{ text: t("Main.OK") }],
               );
               handleCancelSelection();
             } catch (error) {
@@ -320,7 +320,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               Alert.alert(
                 t("FixedAssets.errorTitle"),
                 t("FixedAssets.errorDeleteMessage"),
-                [{ text: t("PublicForum.OK") }],
+                [{ text: t("Main.OK") }],
               );
             }
           },
@@ -420,9 +420,8 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         <View className="mt-2 px-4">
           <View className="flex-row justify-end mb-2">
             <TouchableOpacity
-              className={`bg-red-500 p-3 w-[48%] rounded-full justify-end ${
-                selectedTools.length === 0 ? "opacity-50" : ""
-              }`}
+              className={`bg-red-500 p-3 w-[48%] rounded-full justify-end ${selectedTools.length === 0 ? "opacity-50" : ""
+                }`}
               disabled={selectedTools.length === 0}
               onPress={handleDeleteSelected}
             >
@@ -452,11 +451,10 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                 {/* Checkbox */}
                 <View className="mr-3">
                   <View
-                    className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${
-                      selectedTools.includes(tool.id)
+                    className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${selectedTools.includes(tool.id)
                         ? "bg-black border-black"
                         : "border-gray-400 bg-white"
-                    }`}
+                      }`}
                   >
                     {selectedTools.includes(tool.id) && (
                       <AntDesign name="check" size={14} color="white" />
@@ -471,11 +469,10 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               {/* Edit button */}
               <TouchableOpacity
                 onPress={() => handleEditTool(tool.id)}
-                className={`flex items-center justify-center w-12  ${
-                  selectedTools.includes(tool.id)
+                className={`flex items-center justify-center w-12  ${selectedTools.includes(tool.id)
                     ? "bg-[#E8F5F3]"
                     : "bg-[#E8E8E8]"
-                }`}
+                  }`}
                 style={{ height: "100%", minHeight: 80 }}
               >
                 <MaterialCommunityIcons

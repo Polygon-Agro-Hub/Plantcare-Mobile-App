@@ -12,7 +12,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { StackNavigationProp } from "@react-navigation/stack";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { RootStackParamList } from "../types/types";
 import Svg, { Ellipse, Defs, LinearGradient, Stop } from "react-native-svg";
 import { useTranslation } from "react-i18next";
