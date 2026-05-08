@@ -122,29 +122,6 @@ jobs:
       - name: "⚙️ Generate native iOS project (expo prebuild)"
         run: npx expo prebuild --platform ios --non-interactive --clean
 
-        # ─────────────────────────────────────────────────────────────────
-      # ─────────────────────────────────────────────────────────────────
-      # STEP 6b: Patch Podfile — enforce iOS 13.0 minimum deployment target
-      # Xcode 26.2 rejects pods with IPHONEOS_DEPLOYMENT_TARGET < 12.0.
-      # expo prebuild --clean regenerates the Podfile each run, so we patch
-      # it here rather than editing it locally.
-      # ─────────────────────────────────────────────────────────────────
-      - name: "🩹 Patch Podfile — fix iOS deployment targets"
-        run: |
-          cat >> ios/Podfile << 'PODEOF'
-
-          post_install do |installer|
-            installer.pods_project.targets.each do |target|
-              target.build_configurations.each do |config|
-                current = config.build_settings['IPHONEOS_DEPLOYMENT_TARGET']
-                if current.to_f < 13.0
-                  config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
-                end
-              end
-            end
-          end
-          PODEOF
-          echo "✅ Podfile patched with post_install deployment target fix"
       # ─────────────────────────────────────────────────────────────────
       # STEP 7: Cache CocoaPods
       # Caches the downloaded iOS native packages to speed up future builds.
