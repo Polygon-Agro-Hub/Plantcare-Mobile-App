@@ -16,6 +16,7 @@ import store, { RootState } from "@/services/reducxStore";
 import NetInfo from "@react-native-community/netinfo";
 import { useTranslation } from "react-i18next";
 import { navigationRef } from "../navigationRef";
+import * as SplashScreen from "expo-splash-screen";
 import Splash from "../component/auth/Splash";
 import Lanuage from "../component/common/Lanuage";
 import Signin from "@/component/auth/Signin";
@@ -159,7 +160,6 @@ import ViewProduct from "@/component/govi-shop/ViewProduct";
 import SoilGridsScreen from "@/component/soil-grids/SoilGridsScreen";
 import CartScreen from "@/component/govi-shop/CartScreen";
 
-import "../global.css";
 LogBox.ignoreAllLogs(true);
 
 (Text as any).defaultProps = {
@@ -279,6 +279,13 @@ function AppContent() {
   const { t } = useTranslation();
 
   const [isOfflineAlertShown, setIsOfflineAlertShown] = useState(false);
+
+  useEffect(() => {
+    // Hide splash screen when app is ready
+    SplashScreen.hideAsync().catch((err) => {
+      console.warn("Failed to hide splash screen:", err);
+    });
+  }, []);
 
   useEffect(() => {
     const unsubscribeNetInfo = NetInfo.addEventListener((state) => {
