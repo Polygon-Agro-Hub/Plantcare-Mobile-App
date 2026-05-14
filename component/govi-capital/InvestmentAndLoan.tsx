@@ -116,10 +116,10 @@ const InvestmentAndLoan: React.FC<InvestmentAndLoanProps> = ({
       <View className="px-6 mt-[25%]" >
         <View className="items-center mb-8">
           <Text className="text-2xl font-semibold text-[#000000] mb-3">
-            {t("Govicapital.How can we help you?")}
+            {t("Govicapital.HowCanWeHelpYou")}
           </Text>
           <Text className="text-sm text-[#4B6B87] text-center leading-5">
-            {t("Govicapital.description")}
+            {t("Govicapital.GoviCapitalProvidesYouWithCultivationInvestmentsAndLoans")}
           </Text>
         </View>
 
@@ -140,7 +140,7 @@ const InvestmentAndLoan: React.FC<InvestmentAndLoanProps> = ({
             activeOpacity={0.7}
           >
             <Text className="text-center text-gray-800 font-medium text-base leading-6 mb-4">
-              {t("Govicapital.investmentCard")}
+              {t("Govicapital.INeedAAnInvestment")}
             </Text>
             <View
               className="w-12 h-12 rounded-full items-center justify-center"
@@ -170,7 +170,7 @@ const InvestmentAndLoan: React.FC<InvestmentAndLoanProps> = ({
             activeOpacity={0.7}
           >
             <Text className="text-center text-gray-800 font-medium text-base leading-6 mb-4">
-              {t("Govicapital.loanCard")}
+              {t("Govicapital.INeedALoan")}
             </Text>
             <View
               className="w-12 h-12 rounded-full items-center justify-center"

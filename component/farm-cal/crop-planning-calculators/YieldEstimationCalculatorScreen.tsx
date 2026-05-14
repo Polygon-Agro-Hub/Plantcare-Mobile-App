@@ -104,7 +104,7 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
         console.error("Error fetching crop groups:", error);
         Alert.alert(
           t("Main.Error"),
-          t("CropPlanningCalculators.FetchError"),
+          t("CropPlanningCalculators.FailedToLoadCropsPleaseTryAgain"),
         );
       } finally {
         setCropsLoading(false);
@@ -136,7 +136,7 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
     if (isNaN(areaNum) || areaNum <= 0) {
       Alert.alert(
         t("CropPlanningCalculators.InvalidInput"),
-        t("CropPlanningCalculators.AreaError"),
+        t("CropPlanningCalculators.AreaMustBeGreaterThan0"),
       );
       return;
     }
@@ -240,7 +240,7 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
           <TextInput
             value={area}
             onChangeText={handleAreaChange}
-            placeholder={t("CropPlanningCalculators.TypeHere")}
+            placeholder={t("Main.TypeHere")}
             placeholderTextColor="#9CA3AF"
             keyboardType="decimal-pad"
             className="flex-1 bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900"
@@ -262,7 +262,7 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
 
         {/* Row Spacing Auto Fill */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          {t("CropPlanningCalculators.RowSpacing")}
+          {t("CropPlanningCalculators.RowSpacingCm")}
         </Text>
         <View className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
           <Text
@@ -277,7 +277,7 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
 
         {/* Plant Spacing Auto Fill */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          {t("CropPlanningCalculators.PlantSpacing")}
+          {t("CropPlanningCalculators.PlantSpacingCm")}
         </Text>
         <View className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
           <Text
@@ -292,7 +292,7 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
 
         {/* Average Yield Per Plant Auto Fill */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          {t("CropPlanningCalculators.AverageYieldPerPlant")}
+          {t("CropPlanningCalculators.AverageYieldPerPlantKg")}
         </Text>
         <View className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
           <Text
@@ -325,7 +325,7 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
         data={crops}
         selectedItems={selectedCropValue ? [selectedCropValue] : []}
         onSelect={handleCropSelect}
-        searchPlaceholder={t("CropPlanningCalculators.SearchCrops")}
+        searchPlaceholder={t("CropPlanningCalculators.SearchCrops...")}
         noResultsText={t("CropPlanningCalculators.NoCropsFound")}
         multiSelect={false}
         searchKeys={["label"]}
@@ -339,7 +339,7 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
         data={AREA_UNITS}
         selectedItems={[areaUnit]}
         onSelect={handleUnitSelect}
-        searchPlaceholder={t("CropPlanningCalculators.SearchUnits")}
+        searchPlaceholder={t("CropPlanningCalculators.SearchUnits...")}
         noResultsText={t("CropPlanningCalculators.NoUnitsFound")}
         multiSelect={false}
         searchKeys={["label"]}

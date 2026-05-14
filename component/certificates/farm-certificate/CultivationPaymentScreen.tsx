@@ -202,7 +202,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
       if (!token) {
         Alert.alert(
           t("Main.Error"),
-          t("Farms.No authentication token found"),
+          t("Farms.NoAuthenticationTokenFound"),
           [{ text: t("Main.OK") }],
         );
         return false;
@@ -256,7 +256,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
     if (!cardNumber || !cardHolderName || !cardExpiryDate || !cvv) {
       Alert.alert(
         t("Main.Error"),
-        t("EarnCertificate.Please fill all payment details"),
+        t("EarnCertificate.PleaseFillAllPaymentDetails"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -265,7 +265,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
     if (!isCardExpiryValid()) {
       Alert.alert(
         t("Main.Error"),
-        t("EarnCertificate.Please enter a valid card expiry date (MM/YY)"),
+        t("EarnCertificate.PleaseEnterAValidCardExpiryDate"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -328,7 +328,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
         className="bg-white"
       >
         <CustomHeader
-          title={t("Farms.Credit Debit Card")}
+          title={t("Farms.CreditDebitCard")}
           navigation={navigation}
           onBackPress={() => navigation.goBack()}
         />
@@ -386,7 +386,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
 
           <TextInput
             className="h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl p-3 mb-8 text-base"
-            placeholder={t("Payment.Enter Card Number") ?? "Enter Card Number"}
+            placeholder={t("Payment.EnterCardNumber") ?? "Enter Card Number"}
             keyboardType="numeric"
             maxLength={19}
             value={cardNumber}
@@ -395,7 +395,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
 
           <TextInput
             className="h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl p-3 mb-8 text-base"
-            placeholder={t("Payment.Enter Name on Card")}
+            placeholder={t("Payment.EnterNameOnCard")}
             value={cardHolderName}
             onChangeText={handleCardHolderNameChange}
           />
@@ -403,7 +403,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
           <View className="flex-row items-center h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl px-3 mb-8">
             <TextInput
               className="flex-1 h-full text-base"
-              placeholder={t("Payment.Enter Expiration Date (MM/YY)")}
+              placeholder={t("Payment.EnterExpirationDate")}
               keyboardType="numeric"
               maxLength={5}
               value={cardExpiryDate}
@@ -414,7 +414,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
 
           <TextInput
             className="h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl p-3 mb-5 text-base"
-            placeholder={t("Payment.Enter CVV")}
+            placeholder={t("Payment.EnterCVV")}
             keyboardType="numeric"
             maxLength={3}
             value={cvv}
@@ -435,7 +435,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
             }}
           >
             <Text className="text-white text-lg font-semibold text-center">
-              {isProcessing ? t("Farms.Processing") : t("Farms.Pay Now")}
+              {isProcessing ? t("Farms.Processing...") : t("Farms.PayNow")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -465,7 +465,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
               {t("Main.Success")}
             </Text>
             <Text className="text-center text-gray-600 mb-2">
-              {t("Farms.Payment Success Message")}
+              {t("Farms.YouHaveSuccessfullyAppliedForYourCertificate")}
             </Text>
 
             <TouchableOpacity

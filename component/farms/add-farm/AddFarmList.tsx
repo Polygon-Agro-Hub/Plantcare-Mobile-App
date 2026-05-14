@@ -126,7 +126,7 @@ const AddFarmList = () => {
       if (!token) {
         Alert.alert(
           t("Main.Error"),
-          t("Farms.No authentication token found"),
+          t("Farms.NoAuthenticationTokenFound"),
           [{ text: t("Main.OK") }],
         );
         return;
@@ -168,7 +168,7 @@ const AddFarmList = () => {
       if (!token) {
         Alert.alert(
           t("Main.Error"),
-          t("Farms.No authentication token found"),
+          t("Farms.NoAuthenticationTokenFound"),
           [{ text: t("Main.OK") }],
         );
         return;
@@ -274,14 +274,14 @@ const AddFarmList = () => {
   const handleFarmPress = (farm: FarmItem) => {
     if (farm.isBlock === 1 && membership.toLowerCase() === "pro") {
       Alert.alert(
-        t("Farms.Farm Blocked"),
+        t("Farms.FarmBlocked"),
         t(
-          "Farms.This farm is blocked due to expired Pro membership. Please renew to access farm details.",
+          "Farms.ThisFarmIsBlockedDueToExpiredProMembershipPleaseRenewToAccessFarmDetails",
         ),
         [
           { text: t("Main.Cancel"), style: "cancel" },
           {
-            text: t("Farms.Renew Now"),
+            text: t("Farms.RenewNow"),
             onPress: () => {
               navigation.navigate("RenewalScreen" as any);
             },
@@ -370,10 +370,10 @@ const AddFarmList = () => {
       >
         <View style={{ paddingVertical: 20 }}>
           <Text className="text-center font-semibold text-lg text-black">
-            {t("Farms.My Farms")}
+            {t("Farms.MyFarms")}
           </Text>
           <Text className="text-center text-[#5B5B5B] text-sm mt-2">
-            {t("Farms.Click on a farm to edit farm details")}
+            {t("Farms.ClickOnAFarmToEditFarmDetails")}
           </Text>
         </View>
 
@@ -388,7 +388,7 @@ const AddFarmList = () => {
               loop
             />
             <Text className="text-center text-gray-600 mt-4">
-              {t("ReportHistory.noData")}
+              {t("ReportHistory.NoComplaintsFound")}
             </Text>
           </View>
         ) : (
@@ -405,7 +405,7 @@ const AddFarmList = () => {
           membership.toLowerCase() === "pro" && (
             <View className="">
               <Text className="text-center text-orange-600 text-sm font-medium mb-2">
-                {t("Farms.Your Pro membership expires in", {
+                {t("Farms.YourProMembershipExpiresInDate", {
                   date: renewalData.daysRemaining,
                 })}
               </Text>

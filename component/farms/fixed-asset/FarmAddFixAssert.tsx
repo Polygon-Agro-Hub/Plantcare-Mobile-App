@@ -259,7 +259,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
     if (selectedDate > today) {
       Alert.alert(
         t("FixedAssets.sorry"),
-        t("FixedAssets.issuedDateCannotBeFuture"),
+        t("FixedAssets.TheIssuedDateCannotBeInTheFuture"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -294,7 +294,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
     if (selectedDate > today) {
       Alert.alert(
         t("FixedAssets.sorry"),
-        t("FixedAssets.issuedDateCannotBeFuture"),
+        t("FixedAssets.TheIssuedDateCannotBeInTheFuture"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -365,57 +365,57 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
       }
     }
 
-    if (!category) newErrors.category = t("FixedAssets.selectCategory");
+    if (!category) newErrors.category = t("FixedAssets.SelectCategoryIsRequired");
 
     if (category === "Building and Infrastructures") {
-      if (!type) newErrors.type = t("FixedAssets.selectAssetType");
+      if (!type) newErrors.type = t("FixedAssets.SelectAssetTypeIsRequired");
       if (!buildingName)
-        newErrors.buildingName = t("FixedAssets.enterBuildingName");
-      if (!floorArea) newErrors.floorArea = t("FixedAssets.enterFloorArea");
+        newErrors.buildingName = t("FixedAssets.BuildingNameIsRequired");
+      if (!floorArea) newErrors.floorArea = t("FixedAssets.FloorAreaIsRequired");
       if (!ownership)
-        newErrors.ownership = t("FixedAssets.selectOwnershipCategory");
+        newErrors.ownership = t("FixedAssets.SelectOwnershipCategoryIsRequired");
       if (!generalCondition)
-        newErrors.generalCondition = t("FixedAssets.selectGeneralCondition");
+        newErrors.generalCondition = t("FixedAssets.SelectGeneralConditionIsRequired");
       if (ownership === "Own Building (with title ownership)" && !estimateValue)
         newErrors.estimateValue = t(
-          "FixedAssets.enterEstimatedBuildingValueLKR",
+          "FixedAssets.EstimatedBuildingValueIsRequired",
         );
       if (ownership === "Leased Building") {
         if (!startDate)
-          newErrors.startDate = t("FixedAssets.Lease Start Date is required");
-        if (!durationYears) newErrors.duration = t("FixedAssets.enterDuration");
+          newErrors.startDate = t("FixedAssets.LeaseStartDateIsRequired");
+        if (!durationYears) newErrors.duration = t("FixedAssets.DurationIsRequired");
         if (!leastAmountAnnually)
           newErrors.leastAmountAnnually = t(
-            "FixedAssets.enterLeasedAmountAnnuallyLKR",
+            "FixedAssets.AnnualLeaseAmountIsRequired",
           );
       }
       if (ownership === "Permitted Building") {
         if (!lbissuedDate)
-          newErrors.lbissuedDate = t("FixedAssets.selectIssuedDate");
+          newErrors.lbissuedDate = t("FixedAssets.IssuedDateIsRequired");
         if (!permitFeeAnnually)
-          newErrors.permitFeeAnnually = t("FixedAssets.enterPermitAnnuallyLKR");
+          newErrors.permitFeeAnnually = t("FixedAssets.AnnualPermitFeeIsRequired");
       }
       if (ownership === "Shared / No Ownership" && !paymentAnnually)
-        newErrors.paymentAnnually = t("FixedAssets.enterPaymentAnnuallyLKR");
+        newErrors.paymentAnnually = t("FixedAssets.AnnualPaymentFeeIsRequired");
     }
 
     if (category === "Land") {
       if (!landownership)
-        newErrors.landownership = t("FixedAssets.selectOwnershipCategory");
+        newErrors.landownership = t("FixedAssets.SelectOwnershipCategoryIsRequired");
       const nonZeroFields = [
         extentp || "0",
         extentac || "0",
         extentha || "0",
       ].filter((f) => f && f !== "0");
-      if (!landName) newErrors.landName = t("FixedAssets.enterLandName");
+      if (!landName) newErrors.landName = t("FixedAssets.LandNameIsRequired");
       if (nonZeroFields.length === 0)
-        newErrors.extent = t("FixedAssets.extentRequired");
-      if (!landFenced) newErrors.landFenced = t("FixedAssets.isLandFenced");
+        newErrors.extent = t("FixedAssets.AtLeastOneExtentTypeIsRequired");
+      if (!landFenced) newErrors.landFenced = t("FixedAssets.IsTheLandFenced");
       if (!perennialCrop)
-        newErrors.perennialCrop = t("FixedAssets.areThereAnyPerennialCrops");
+        newErrors.perennialCrop = t("FixedAssets.DoesTheLandHavePerennialCrops");
       if (landownership === "Own" && !estimateValue)
         newErrors.estimateValue = t(
-          "FixedAssets.enterEstimatedBuildingValueLKR",
+          "FixedAssets.EstimatedBuildingValueIsRequired",
         );
       if (landownership === "Lease") {
         const nonZeroDuration = [
@@ -423,26 +423,26 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
           durationYears || "0",
         ].filter((f) => f && f !== "0");
         if (nonZeroDuration.length === 0)
-          newErrors.duration = t("FixedAssets.enterDuration");
+          newErrors.duration = t("FixedAssets.DurationIsRequired");
         if (!leastAmountAnnually)
           newErrors.leastAmountAnnually = t(
-            "FixedAssets.enterLeasedAmountAnnuallyLKR",
+            "FixedAssets.AnnualLeaseAmountIsRequired",
           );
       }
       if (landownership === "Permitted") {
         if (!issuedDate)
-          newErrors.issuedDate = t("FixedAssets.selectIssuedDate");
+          newErrors.issuedDate = t("FixedAssets.IssuedDateIsRequired");
         if (!permitFeeAnnually)
           newErrors.permitFeeAnnually = t(
             "FixedAssets.enterPermitFeeAnnuallyLKR",
           );
       }
       if (landownership === "Shared" && !paymentAnnually)
-        newErrors.paymentAnnually = t("FixedAssets.enterPaymentAnnuallyLKR");
+        newErrors.paymentAnnually = t("FixedAssets.AnnualPaymentFeeIsRequired");
     }
 
     if (category === "Machine and Vehicles") {
-      if (!asset) newErrors.asset = t("FixedAssets.selectAsset");
+      if (!asset) newErrors.asset = t("FixedAssets.SelectAssetIsRequired");
       const brandOnlyAssets = [
         "Rotavator",
         "Tillage Equipment",
@@ -461,46 +461,46 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
         "Harvesting Equipment",
       ];
       if (asset && brandOnlyAssets.includes(asset) && !brand)
-        newErrors.brand = t("FixedAssets.selectBrand");
+        newErrors.brand = t("FixedAssets.SelectBrand");
       if (asset && typeAndBrandAssets.includes(asset)) {
-        if (!assetType) newErrors.assetType = t("FixedAssets.selectAssetType");
-        if (!brand) newErrors.brand = t("FixedAssets.selectBrand");
+        if (!assetType) newErrors.assetType = t("FixedAssets.SelectAssetTypeIsRequired");
+        if (!brand) newErrors.brand = t("FixedAssets.SelectBrand");
       }
       if (assetType === "Other" && !mentionOther)
-        newErrors.mentionOther = t("FixedAssets.mentionOther");
+        newErrors.mentionOther = t("FixedAssets.MentionOtherDetails");
       if (brand === "Other" && !customBrand)
-        newErrors.customBrand = t("FixedAssets.mentionOtherBrand");
+        newErrors.customBrand = t("FixedAssets.MentionOtherBrandName");
       if (!numberOfUnits)
-        newErrors.numberOfUnits = t("FixedAssets.enterNumberofUnits");
-      if (!unitPrice) newErrors.unitPrice = t("FixedAssets.enterUnitPrice");
-      if (!warranty) newErrors.warranty = t("FixedAssets.selectWarranty");
+        newErrors.numberOfUnits = t("FixedAssets.NumberOfUnitsIsRequired");
+      if (!unitPrice) newErrors.unitPrice = t("FixedAssets.UnitPriceIsRequired");
+      if (!warranty) newErrors.warranty = t("FixedAssets.SelectWarrantyIsRequired");
       if (warranty === "yes" && !purchasedDate)
         newErrors.warrantypurchasedDate = t(
-          "FixedAssets.warrantypurchasedDate",
+          "FixedAssets.WarrantyPurchasedDateIsRequired",
         );
       if (warranty === "yes" && !expireDate)
         newErrors.warrantyDatesexpireDate = t(
-          "FixedAssets.warrantyDatesexpireDate",
+          "FixedAssets.WarrantyExpireDateIsRequired",
         );
     }
 
     if (category === "Tools") {
-      if (!assetname) newErrors.assetname = t("FixedAssets.selectAsset");
+      if (!assetname) newErrors.assetname = t("FixedAssets.SelectAssetIsRequired");
       if (assetname === "Other" && !othertool)
-        newErrors.othertool = t("FixedAssets.mentionOther");
-      if (!toolbrand) newErrors.toolbrand = t("FixedAssets.selectBrand");
+        newErrors.othertool = t("FixedAssets.MentionOtherDetails");
+      if (!toolbrand) newErrors.toolbrand = t("FixedAssets.SelectBrand");
       if (toolbrand === "Other" && !customBrand)
-        newErrors.customBrand = t("FixedAssets.mentionOtherBrand");
+        newErrors.customBrand = t("FixedAssets.MentionOtherBrandName");
       if (!numberOfUnits)
-        newErrors.numberOfUnits = t("FixedAssets.enterNumberofUnits");
-      if (!unitPrice) newErrors.unitPrice = t("FixedAssets.enterUnitPrice");
+        newErrors.numberOfUnits = t("FixedAssets.NumberOfUnitsIsRequired");
+      if (!unitPrice) newErrors.unitPrice = t("FixedAssets.UnitPriceIsRequired");
       if (warranty === "yes" && !purchasedDate)
         newErrors.warrantypurchasedDate = t(
-          "FixedAssets.warrantypurchasedDate",
+          "FixedAssets.WarrantyPurchasedDateIsRequired",
         );
       if (warranty === "yes" && !expireDate)
         newErrors.warrantyDatesexpireDate = t(
-          "FixedAssets.warrantyDatesexpireDate",
+          "FixedAssets.WarrantyExpireDateIsRequired",
         );
     }
 
@@ -568,7 +568,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
       );
       Alert.alert(
         t("Main.Success"),
-        t("FixedAssets.assetAddSuccessfuly"),
+        t("FixedAssets.AssetAddSuccessfuly"),
         [
           {
             text: t("Main.OK"),
@@ -623,7 +623,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
 
   const renderWarrantySection = () => (
     <>
-      <Text className="pt-5 pb-3">{t("FixedAssets.warranty")} *</Text>
+      <Text className="pt-5 pb-3">{t("FixedAssets.Warranty")} *</Text>
       <View className="flex-row justify-around">
         <TouchableOpacity
           onPress={() => {
@@ -636,7 +636,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
           <View
             className={`w-5 h-5 rounded-full ${warranty === "yes" ? "bg-green-500" : "bg-gray-400"}`}
           />
-          <Text className="ml-2">{t("FixedAssets.yes")}</Text>
+          <Text className="ml-2">{t("FixedAssets.Yes")}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
@@ -649,7 +649,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
           <View
             className={`w-5 h-5 rounded-full ${warranty === "no" ? "bg-green-500" : "bg-gray-400"}`}
           />
-          <Text className="ml-2">{t("FixedAssets.no")}</Text>
+          <Text className="ml-2">{t("FixedAssets.No")}</Text>
         </TouchableOpacity>
       </View>
       <FieldError field="warranty" />
@@ -657,7 +657,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
       {warranty === "yes" && (
         <>
           {/* Purchased Date */}
-          <Text className="pt-5 pb-3">{t("FixedAssets.purchasedDate")} *</Text>
+          <Text className="pt-5 pb-3">{t("FixedAssets.PurchasedDate")} *</Text>
           <TouchableOpacity
             onPress={() => setShowPurchasedDatePicker((p) => !p)}
           >
@@ -665,7 +665,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
               <Text>
                 {purchasedDate
                   ? formatDate(purchasedDate)
-                  : t("CurrentAssets.purchasedate")}
+                  : t("CurrentAssets.PurchaseDate")}
               </Text>
               <Icon name="calendar-outline" size={20} color="#6B7280" />
             </View>
@@ -683,7 +683,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       if (selectedDate > new Date()) {
                         Alert.alert(
                           t("FixedAssets.sorry"),
-                          t("FixedAssets.purchaseDateCannotBeFuture"),
+                          t("FixedAssets.ThePurchaseDateCannotBeInTheFuture"),
                           [{ text: t("Main.OK") }],
                         );
                       } else {
@@ -706,7 +706,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                     if (selectedDate > new Date()) {
                       Alert.alert(
                         t("FixedAssets.sorry"),
-                        t("FixedAssets.purchaseDateCannotBeFuture"),
+                        t("FixedAssets.ThePurchaseDateCannotBeInTheFuture"),
                         [{ text: t("Main.OK") }],
                       );
                     } else {
@@ -727,14 +727,14 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
 
           {/* Expire Date */}
           <Text className="pt-5 pb-3">
-            {t("FixedAssets.warrantyExpireDate")} *
+            {t("FixedAssets.WarrantyExpireDate")} *
           </Text>
           <TouchableOpacity onPress={() => setShowExpireDatePicker((p) => !p)}>
             <View className="border border-[#F4F4F4] p-4 rounded-full flex-row bg-gray-100 justify-between">
               <Text>
                 {expireDate
                   ? formatDate(expireDate)
-                  : t("CurrentAssets.expiredate")}
+                  : t("CurrentAssets.ExpireDate")}
               </Text>
               <Icon name="calendar-outline" size={20} color="#6B7280" />
             </View>
@@ -770,7 +770,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
 
           {/* Warranty Status */}
           <Text className="mt-4 text-sm">
-            {t("FixedAssets.warrantyStatus")}
+            {t("FixedAssets.WarrantyCoverageStatus")}
           </Text>
           <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
             <Text
@@ -787,9 +787,9 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             >
               {purchasedDate && expireDate
                 ? expireDate.getTime() > new Date().getTime()
-                  ? t("FixedAssets.valid")
-                  : t("FixedAssets.expired")
-                : t("CurrentAssets.status")}
+                  ? t("FixedAssets.UnderWarranty")
+                  : t("FixedAssets.Expired")
+                : t("CurrentAssets.Status")}
             </Text>
           </View>
         </>
@@ -800,11 +800,11 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
   const renderUnitsAndPrice = () => (
     <>
       <Text className="mt-4 text-sm pb-2">
-        {t("FixedAssets.numberofUnits")} *
+        {t("FixedAssets.NumberOfUnits")} *
       </Text>
       <TextInput
         className="border border-[#F4F4F4] p-3 pl-4 h-[50px] rounded-3xl bg-gray-100"
-        placeholder={t("FixedAssets.enterNumberofUnits")}
+        placeholder={t("FixedAssets.NumberOfUnitsIsRequired")}
         value={numberOfUnits}
         onChangeText={(text) => {
           setNumberOfUnits(formatDecimalInput(text));
@@ -814,10 +814,10 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
       />
       <FieldError field="numberOfUnits" />
 
-      <Text className="mt-4 text-sm pb-2">{t("FixedAssets.unitPrice")} *</Text>
+      <Text className="mt-4 text-sm pb-2">{t("FixedAssets.UnitPrice")} *</Text>
       <TextInput
         className="border border-[#F4F4F4] p-3 pl-4 rounded-3xl h-[50px] bg-gray-100"
-        placeholder={t("FixedAssets.enterUnitPrice")}
+        placeholder={t("FixedAssets.UnitPriceIsRequired")}
         value={formatWithCommas(unitPrice)}
         onChangeText={(text) => {
           handleNumericInput(text, setUnitPrice);
@@ -827,7 +827,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
       />
       <FieldError field="unitPrice" />
 
-      <Text className="mt-4 text-sm pb-2">{t("FixedAssets.totalPrice")} *</Text>
+      <Text className="mt-4 text-sm pb-2">{t("FixedAssets.TotalPrice")} *</Text>
       <View className="border border-[#F4F4F4] p-4 pl-4 rounded-full bg-gray-100">
         <Text>
           {totalPrice.toLocaleString("en-US", {
@@ -876,7 +876,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 }
               >
                 <Text className="text-black font-semibold text-center text-lg">
-                  {t("FixedAssets.currentAssets")}
+                  {t("FixedAssets.CurrentAssets")}
                 </Text>
                 <View className="border-t-[2px] border-[#D9D9D9]" />
               </TouchableOpacity>
@@ -884,7 +884,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             <View className="w-1/2">
               <TouchableOpacity>
                 <Text className="text-black text-center font-semibold text-lg">
-                  {t("FixedAssets.fixedAssets")}
+                  {t("FixedAssets.FixedAssets")}
                 </Text>
                 <View className="border-t-[2px] border-black" />
               </TouchableOpacity>
@@ -894,11 +894,11 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
           <View className="p-4">
             {/* ── Category ── */}
             <Text className="mt-4 text-sm pb-2">
-              {t("CurrentAssets.category")} *
+              {t("CurrentAssets.Category")} *
             </Text>
             <DropdownButton
               value={getLabelFromOptions(categoryOptions, category)}
-              placeholder={t("CurrentAssets.selectcategory")}
+              placeholder={t("CurrentAssets.Selectcategory")}
               onPress={() => openModal("category")}
               hasError={!!errors.category}
             />
@@ -908,11 +908,11 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
               <View className="flex-1">
                 {/* Asset */}
                 <Text className="mt-4 text-sm pb-2">
-                  {t("FixedAssets.asset")} *
+                  {t("FixedAssets.Asset")} *
                 </Text>
                 <DropdownButton
                   value={getLabelFromOptions(machineAssetOptions, asset)}
-                  placeholder={t("FixedAssets.selectAsset")}
+                  placeholder={t("FixedAssets.SelectAssetIsRequired")}
                   onPress={() => openModal("machineAsset")}
                   hasError={!!errors.asset}
                 />
@@ -922,14 +922,14 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 {asset && assetTypesForAssets[asset]?.length > 0 && (
                   <>
                     <Text className="mt-4 text-sm pb-2">
-                      {t("FixedAssets.selectAssetType")} *
+                      {t("FixedAssets.SelectAssetTypeIsRequired")} *
                     </Text>
                     <DropdownButton
                       value={getLabelFromOptions(
                         assetTypesForAssets[asset] || [],
                         assetType,
                       )}
-                      placeholder={t("FixedAssets.selectAssetType")}
+                      placeholder={t("FixedAssets.SelectAssetTypeIsRequired")}
                       onPress={() => openModal("assetType")}
                       hasError={!!errors.assetType}
                     />
@@ -939,10 +939,10 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
 
                 {assetType === "Other" && (
                   <View className="mt-4">
-                    <Text>{t("FixedAssets.Mention")}</Text>
+                    <Text>{t("FixedAssets.MentionOther")}</Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-2 rounded-3xl h-[50px] mt-2 bg-gray-100"
-                      placeholder={t("FixedAssets.Mention")}
+                      placeholder={t("FixedAssets.MentionOther")}
                       value={mentionOther}
                       onChangeText={(v) => {
                         setMentionOther(v);
@@ -957,14 +957,14 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 {asset && brandTypesForAssets[asset]?.length > 0 && (
                   <>
                     <Text className="mt-4 text-sm pb-2">
-                      {t("FixedAssets.selectBrand")} *
+                      {t("FixedAssets.SelectBrand")} *
                     </Text>
                     <DropdownButton
                       value={getLabelFromOptions(
                         brandTypesForAssets[asset] || [],
                         brand,
                       )}
-                      placeholder={t("FixedAssets.selectBrand")}
+                      placeholder={t("FixedAssets.SelectBrand")}
                       onPress={() => openModal("machineBrand")}
                       hasError={!!errors.brand}
                     />
@@ -975,11 +975,11 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 {brand === "Other" && (
                   <View>
                     <Text className="mt-4 text-sm pb-2">
-                      {t("FixedAssets.mentionOtherBrand")} *
+                      {t("FixedAssets.MentionOtherBrandName")} *
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-4 rounded-3xl h-[50px] bg-gray-100 pl-4"
-                      placeholder={t("FixedAssets.enterCustomBrand")}
+                      placeholder={t("FixedAssets.EnterBrandName")}
                       value={customBrand}
                       onChangeText={(v) => {
                         setCustomBrand(v);
@@ -996,11 +996,11 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             ) : category === "Land" ? (
               <View>
                 <Text className="mt-4 text-sm pb-2">
-                  {t("FixedAssets.Land Name")} *
+                  {t("FixedAssets.LandName")} *
                 </Text>
                 <TextInput
                   className="border border-[#F4F4F4] p-3 pl-4 rounded-3xl h-[50px] bg-gray-100"
-                  placeholder={t("FixedAssets.Enter Land Name")}
+                  placeholder={t("FixedAssets.EnterLandName")}
                   value={landName}
                   autoCapitalize="sentences"
                   onChangeText={(text) => {
@@ -1014,7 +1014,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 <FieldError field="landName" />
                 {/* Extent */}
                 <Text className="mt-4 text-sm pb-2">
-                  {t("FixedAssets.extent")} *
+                  {t("FixedAssets.Extent")} *
                 </Text>
                 <View className="flex-row items-center justify-between w-full">
                   {[
@@ -1055,14 +1055,14 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
 
                 {/* Land Category */}
                 <Text className="mt-4 text-sm pb-2">
-                  {t("FixedAssets.ownership")} *
+                  {t("FixedAssets.Ownership")} *
                 </Text>
                 <DropdownButton
                   value={getLabelFromOptions(
                     landOwnershipOptions,
                     landownership,
                   )}
-                  placeholder={t("FixedAssets.selectOwnershipCategory")}
+                  placeholder={t("FixedAssets.SelectOwnershipCategoryIsRequired")}
                   onPress={() => openModal("landOwnership")}
                   hasError={!!errors.landownership}
                 />
@@ -1072,11 +1072,11 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 {landownership === "Own" && (
                   <View>
                     <Text className="mt-4 text-sm pb-2">
-                      {t("FixedAssets.estimateValue")} *
+                      {t("FixedAssets.EstimatedValue")} *
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
-                      placeholder={t("FixedAssets.estimatedBuildingValueLKR")}
+                      placeholder={t("FixedAssets.EstimatedBuildingValue")}
                       value={formatWithCommas(estimateValue)}
                       onChangeText={(text) => {
                         handleNumericInput(text, setEstimatedValue);
@@ -1092,7 +1092,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 {landownership === "Lease" && (
                   <View>
                     <Text className="mt-4 pb-2">
-                      {t("FixedAssets.startDate")} *
+                      {t("FixedAssets.LeaseStartDate")} *
                     </Text>
                     <TouchableOpacity
                       onPress={() => setShowStartDatePicker((p) => !p)}
@@ -1101,7 +1101,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                         <Text>
                           {startDate
                             ? formatDate(startDate)
-                            : t("Cropenroll.selectStartDate")}
+                            : t("Main.SelectStartDate")}
                         </Text>
                         <Icon
                           name="calendar-outline"
@@ -1143,11 +1143,11 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       ))}
 
                     <Text className="mt-4 text-sm pb-2">
-                      {t("FixedAssets.duration")} *
+                      {t("FixedAssets.Duration")} *
                     </Text>
                     <View className="items-center flex-row justify-center">
                       <Text className="w-[20%] text-right pr-2">
-                        {t("FixedAssets.years")}
+                        {t("FixedAssets.Years")}
                       </Text>
                       <TextInput
                         className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-3xl h-[50px] bg-gray-100"
@@ -1163,7 +1163,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                         keyboardType="numeric"
                       />
                       <Text className="w-[20%] text-right pr-2">
-                        {t("FixedAssets.months")}
+                        {t("FixedAssets.Months")}
                       </Text>
                       <TextInput
                         className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-3xl h-[50px] bg-[#F4F4F4]"
@@ -1183,11 +1183,11 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                     <FieldError field="duration" />
 
                     <Text className="pb-2 mt-4 text-sm">
-                      {t("FixedAssets.leasedAmountAnnually")} *
+                      {t("FixedAssets.AnnualLeaseAmount")} *
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
-                      placeholder={t("FixedAssets.leasedAmountAnnuallyLKR")}
+                      placeholder={t("FixedAssets.EnterAnnualLeasedAmount")}
                       value={formatWithCommas(leastAmountAnnually)}
                       onChangeText={(text) => {
                         handleNumericInput(text, setLeastAmountAnnually);
@@ -1203,7 +1203,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 {landownership === "Permitted" && (
                   <View className="mt-4">
                     <Text className="pb-2">
-                      {t("FixedAssets.issuedDate")} *
+                      {t("FixedAssets.IssuedDate")} *
                     </Text>
                     <TouchableOpacity
                       onPress={() => setShowIssuedDatePicker((p) => !p)}
@@ -1212,7 +1212,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                         <Text>
                           {issuedDate
                             ? formatDate(issuedDate)
-                            : t("Cropenroll.selectStartDate")}
+                            : t("Main.SelectStartDate")}
                         </Text>
                         <Icon
                           name="calendar-outline"
@@ -1248,7 +1248,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
-                      placeholder={t("FixedAssets.EnterpermitAnnually")}
+                      placeholder={t("FixedAssets.EnterAnnualPermitFee")}
                       value={formatWithCommas(permitFeeAnnually)}
                       onChangeText={(text) => {
                         handleNumericInput(text, setPermitFeeAnnually);
@@ -1264,7 +1264,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 {landownership === "Shared" && (
                   <View className="mt-4">
                     <Text className="pb-2">
-                      {t("FixedAssets.paymentAnnuallyLKR")} *
+                      {t("FixedAssets.AnnualPaymentFee")} *
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
@@ -1274,7 +1274,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                         clearError("paymentAnnually");
                       }}
                       keyboardType="numeric"
-                      placeholder={t("FixedAssets.paymentAnnuallyEnter")}
+                      placeholder={t("FixedAssets.EnterAnnualPaymentFee")}
                     />
                     <FieldError field="paymentAnnually" />
                   </View>
@@ -1283,7 +1283,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 {/* Land Fenced */}
                 <View className="justify-center">
                   <Text className="pt-5 pb-3 font-bold">
-                    {t("FixedAssets.isLandFenced")} *
+                    {t("FixedAssets.IsTheLandFenced")} *
                   </Text>
                   <View className="flex-row justify-around mb-1">
                     {["yes", "no"].map((opt) => (
@@ -1305,7 +1305,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                   <FieldError field="landFenced" />
 
                   <Text className="pt-5 pb-3 font-bold">
-                    {t("FixedAssets.areThereAnyPerennialCrops")} *
+                    {t("FixedAssets.DoesTheLandHavePerennialCrops")} *
                   </Text>
                   <View className="flex-row justify-around mb-1">
                     {["yes", "no"].map((opt) => (
@@ -1329,11 +1329,11 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
               </View>
             ) : category === "Tools" ? (
               <View className="flex-1">
-                <Text className="mt-4 text-sm">{t("FixedAssets.asset")} *</Text>
+                <Text className="mt-4 text-sm">{t("FixedAssets.Asset")} *</Text>
                 <View className="mt-2">
                   <DropdownButton
                     value={getLabelFromOptions(toolAssetOptions, assetname)}
-                    placeholder={t("FixedAssets.selectAsset")}
+                    placeholder={t("FixedAssets.SelectAssetIsRequired")}
                     onPress={() => openModal("toolAsset")}
                     hasError={!!errors.assetname}
                   />
@@ -1343,7 +1343,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 {assetname === "Other" && (
                   <View>
                     <Text className="mt-4 text-sm pb-2">
-                      {t("FixedAssets.mentionOther")} *
+                      {t("FixedAssets.MentionOtherDetails")} *
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-4 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
@@ -1352,18 +1352,18 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                         setOthertool(v);
                         clearError("othertool");
                       }}
-                      placeholder={t("FixedAssets.mentionOther")}
+                      placeholder={t("FixedAssets.MentionOtherDetails")}
                     />
                     <FieldError field="othertool" />
                   </View>
                 )}
 
                 <Text className="mt-4 text-sm pb-2">
-                  {t("FixedAssets.brand")} *
+                  {t("FixedAssets.Brand")} *
                 </Text>
                 <DropdownButton
                   value={getLabelFromOptions(toolBrandOptions, toolbrand)}
-                  placeholder={t("FixedAssets.selectBrand")}
+                  placeholder={t("FixedAssets.SelectBrand")}
                   onPress={() => openModal("toolBrand")}
                   hasError={!!errors.toolbrand}
                 />
@@ -1372,11 +1372,11 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 {toolbrand === "Other" && (
                   <View>
                     <Text className="mt-4 text-sm pb-2">
-                      {t("FixedAssets.mentionOtherBrand")} *
+                      {t("FixedAssets.MentionOtherBrandName")} *
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-4 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
-                      placeholder={t("FixedAssets.enterCustomBrand")}
+                      placeholder={t("FixedAssets.EnterBrandName")}
                       value={customBrand}
                       onChangeText={(v) => {
                         setCustomBrand(v);
@@ -1393,22 +1393,22 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
             ) : (
               <View>
                 <Text className="mt-4 text-sm pb-2">
-                  {t("FixedAssets.type")} *
+                  {t("FixedAssets.Type")} *
                 </Text>
                 <DropdownButton
                   value={getLabelFromOptions(buildingTypeOptions, type)}
-                  placeholder={t("FixedAssets.selectAssetType")}
+                  placeholder={t("FixedAssets.SelectAssetTypeIsRequired")}
                   onPress={() => openModal("buildingType")}
                   hasError={!!errors.type}
                 />
                 <FieldError field="type" />
 
                 <Text className="mt-4 text-sm pb-2">
-                  {t("FixedAssets.Building Name")} *
+                  {t("FixedAssets.BuildingName")} *
                 </Text>
                 <TextInput
                   className="border border-[#F4F4F4] p-3 pl-4 rounded-3xl h-[50px] bg-[#F4F4F4]"
-                  placeholder={t("FixedAssets.Enter Building Name")}
+                  placeholder={t("FixedAssets.EnterBuildingName")}
                   value={buildingName}
                   onChangeText={(text) => {
                     const trimmed = text.replace(/^\s+/, "");
@@ -1421,11 +1421,11 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 <FieldError field="buildingName" />
 
                 <Text className="mt-4 text-sm pb-2">
-                  {t("FixedAssets.floorAreaSqrFt")} *
+                  {t("FixedAssets.FloorArea")} *
                 </Text>
                 <TextInput
                   className="border border-[#F4F4F4] p-3 pl-4 rounded-3xl h-[50px] bg-[#F4F4F4]"
-                  placeholder={t("FixedAssets.Enter Floor Area")}
+                  placeholder={t("FixedAssets.EnterFloorArea")}
                   value={floorArea}
                   onChangeText={(text) => {
                     setFloorArea(formatDecimalInput(text));
@@ -1436,11 +1436,11 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 <FieldError field="floorArea" />
 
                 <Text className="mt-4 text-sm pb-2">
-                  {t("FixedAssets.ownership")} *
+                  {t("FixedAssets.Ownership")} *
                 </Text>
                 <DropdownButton
                   value={getLabelFromOptions(ownershipOptions, ownership)}
-                  placeholder={t("FixedAssets.selectOwnershipCategory")}
+                  placeholder={t("FixedAssets.SelectOwnershipCategoryIsRequired")}
                   onPress={() => openModal("buildingOwnership")}
                   hasError={!!errors.ownership}
                 />
@@ -1450,11 +1450,11 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 {ownership === "Own Building (with title ownership)" && (
                   <View>
                     <Text className="mt-4 text-sm pb-2">
-                      {t("FixedAssets.estimatedBuildingValueLKR")} *
+                      {t("FixedAssets.EstimatedBuildingValue")} *
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
-                      placeholder={t("FixedAssets.estimatedValueEnter")}
+                      placeholder={t("FixedAssets.EnterEstimatedValue")}
                       value={formatWithCommas(estimateValue)}
                       onChangeText={(text) => {
                         handleNumericInput(text, setEstimatedValue);
@@ -1469,7 +1469,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 {/* Leased Building */}
                 {ownership === "Leased Building" && (
                   <View className="mt-4">
-                    <Text className="pb-2">{t("FixedAssets.startDate")} *</Text>
+                    <Text className="pb-2">{t("FixedAssets.LeaseStartDate")} *</Text>
                     <TouchableOpacity
                       onPress={() => setShowStartDatePicker((p) => !p)}
                     >
@@ -1477,7 +1477,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                         <Text>
                           {startDate
                             ? formatDate(startDate)
-                            : t("Cropenroll.selectStartDate")}
+                            : t("Main.SelectStartDate")}
                         </Text>
                         <Icon
                           name="calendar-outline"
@@ -1520,12 +1520,12 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       ))}
 
                     <Text className="mt-4 text-sm pb-2">
-                      {t("FixedAssets.duration")} *
+                      {t("FixedAssets.Duration")} *
                     </Text>
                     <View className="flex-row items-center justify-between">
                       <View className="flex-row items-center">
                         <Text className="w-[20%] text-right pr-2">
-                          {t("FixedAssets.years")}
+                          {t("FixedAssets.Years")}
                         </Text>
                         <TextInput
                           className="border border-[#F4F4F4] p-2 text-left px-4 rounded-3xl h-[50px] bg-[#F4F4F4] w-[30%]"
@@ -1537,7 +1537,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                           keyboardType="numeric"
                         />
                         <Text className="w-[20%] text-right pr-2">
-                          {t("FixedAssets.months")}
+                          {t("FixedAssets.Months")}
                         </Text>
                         <TextInput
                           className="border border-[#F4F4F4] p-2 w-[30%] px-4 rounded-3xl h-[50px] bg-[#F4F4F4]"
@@ -1558,11 +1558,11 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                     <FieldError field="duration" />
 
                     <Text className="pt-[5%] pb-2">
-                      {t("FixedAssets.leasedAmountAnnually")} *
+                      {t("FixedAssets.AnnualLeaseAmount")} *
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
-                      placeholder={t("FixedAssets.leasedAmountAnnuallyLKR")}
+                      placeholder={t("FixedAssets.EnterAnnualLeasedAmount")}
                       value={formatWithCommas(leastAmountAnnually)}
                       onChangeText={(text) => {
                         handleNumericInput(text, setLeastAmountAnnually);
@@ -1578,7 +1578,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 {ownership === "Permitted Building" && (
                   <View className="mt-4">
                     <Text className="pb-2">
-                      {t("FixedAssets.issuedDate")} *
+                      {t("FixedAssets.IssuedDate")} *
                     </Text>
                     <TouchableOpacity
                       onPress={() => setShowLbIssuedDatePicker((p) => !p)}
@@ -1630,11 +1630,11 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       ))}
 
                     <Text className="mt-4 pb-2">
-                      {t("FixedAssets.permitAnnuallyLKR")} *
+                      {t("FixedAssets.AnnualPermitFee")} *
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
-                      placeholder={t("FixedAssets.EnterpermitAnnually")}
+                      placeholder={t("FixedAssets.EnterAnnualPermitFee")}
                       value={formatWithCommas(permitFeeAnnually)}
                       onChangeText={(text) => {
                         handleNumericInput(text, setPermitFeeAnnually);
@@ -1650,7 +1650,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                 {ownership === "Shared / No Ownership" && (
                   <View className="mt-4">
                     <Text className="pb-2">
-                      {t("FixedAssets.paymentAnnuallyLKR")} *
+                      {t("FixedAssets.AnnualPaymentFee")} *
                     </Text>
                     <TextInput
                       className="border border-[#F4F4F4] p-3 rounded-3xl h-[50px] bg-[#F4F4F4] pl-4"
@@ -1660,7 +1660,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                         clearError("paymentAnnually");
                       }}
                       keyboardType="numeric"
-                      placeholder={t("FixedAssets.paymentAnnuallyEnter")}
+                      placeholder={t("FixedAssets.EnterAnnualPaymentFee")}
                     />
                     <FieldError field="paymentAnnually" />
                   </View>
@@ -1668,14 +1668,14 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
 
                 {/* General Condition */}
                 <Text className="mt-4 text-sm pb-2">
-                  {t("FixedAssets.generalCondition")} *
+                  {t("FixedAssets.GeneralCondition")} *
                 </Text>
                 <DropdownButton
                   value={getLabelFromOptions(
                     generalConditionOptions,
                     generalCondition,
                   )}
-                  placeholder={t("FixedAssets.selectGeneralCondition")}
+                  placeholder={t("FixedAssets.SelectGeneralConditionIsRequired")}
                   onPress={() => openModal("generalCondition")}
                   hasError={!!errors.generalCondition}
                 />
@@ -1725,7 +1725,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
                       purchasedDate &&
                       expireDate &&
                       expireDate < new Date()
-                      ? t("FixedAssets.expired")
+                      ? t("FixedAssets.Expired")
                       : t("FixedAssets.AddAsset")}
                   </Text>
                 )}
@@ -1738,7 +1738,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
         <GlobalSearchModal
           visible={activeModal === "category"}
           onClose={closeModal}
-          title={t("CurrentAssets.category")}
+          title={t("CurrentAssets.Category")}
           data={categoryOptions}
           selectedItems={category ? [category] : []}
           onSelect={(items) => {
@@ -1767,7 +1767,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
         <GlobalSearchModal
           visible={activeModal === "machineAsset"}
           onClose={closeModal}
-          title={t("FixedAssets.asset")}
+          title={t("FixedAssets.Asset")}
           data={machineAssetOptions}
           selectedItems={asset ? [asset] : []}
           onSelect={(items) => {
@@ -1783,7 +1783,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
         <GlobalSearchModal
           visible={activeModal === "assetType"}
           onClose={closeModal}
-          title={t("FixedAssets.selectAssetType")}
+          title={t("FixedAssets.SelectAssetTypeIsRequired")}
           data={
             asset && assetTypesForAssets[asset]
               ? assetTypesForAssets[asset]
@@ -1801,7 +1801,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
         <GlobalSearchModal
           visible={activeModal === "machineBrand"}
           onClose={closeModal}
-          title={t("FixedAssets.selectBrand")}
+          title={t("FixedAssets.SelectBrand")}
           data={
             asset && brandTypesForAssets[asset]
               ? brandTypesForAssets[asset]
@@ -1819,7 +1819,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
         <GlobalSearchModal
           visible={activeModal === "landOwnership"}
           onClose={closeModal}
-          title={t("FixedAssets.ownership")}
+          title={t("FixedAssets.Ownership")}
           data={landOwnershipOptions}
           selectedItems={landownership ? [landownership] : []}
           onSelect={(items) => {
@@ -1833,7 +1833,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
         <GlobalSearchModal
           visible={activeModal === "toolAsset"}
           onClose={closeModal}
-          title={t("FixedAssets.asset")}
+          title={t("FixedAssets.Asset")}
           data={toolAssetOptions}
           selectedItems={assetname ? [assetname] : []}
           onSelect={(items) => {
@@ -1848,7 +1848,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
         <GlobalSearchModal
           visible={activeModal === "toolBrand"}
           onClose={closeModal}
-          title={t("FixedAssets.brand")}
+          title={t("FixedAssets.Brand")}
           data={toolBrandOptions}
           selectedItems={toolbrand ? [toolbrand] : []}
           onSelect={(items) => {
@@ -1862,7 +1862,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
         <GlobalSearchModal
           visible={activeModal === "buildingType"}
           onClose={closeModal}
-          title={t("FixedAssets.type")}
+          title={t("FixedAssets.Type")}
           data={buildingTypeOptions}
           selectedItems={type ? [type] : []}
           onSelect={(items) => {
@@ -1876,7 +1876,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
         <GlobalSearchModal
           visible={activeModal === "buildingOwnership"}
           onClose={closeModal}
-          title={t("FixedAssets.ownership")}
+          title={t("FixedAssets.Ownership")}
           data={ownershipOptions}
           selectedItems={ownership ? [ownership] : []}
           onSelect={(items) => {
@@ -1890,7 +1890,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
         <GlobalSearchModal
           visible={activeModal === "generalCondition"}
           onClose={closeModal}
-          title={t("FixedAssets.generalCondition")}
+          title={t("FixedAssets.GeneralCondition")}
           data={generalConditionOptions}
           selectedItems={generalCondition ? [generalCondition] : []}
           onSelect={(items) => {

@@ -469,7 +469,7 @@ const FramcropCalenderwithcertificate: React.FC<
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(t("Main.Error"), t("Farms.No authentication token found"), [
+        Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"), [
           { text: t("Main.OK") },
         ]);
         return;
@@ -500,8 +500,8 @@ const FramcropCalenderwithcertificate: React.FC<
 
           if (timeDifference > oneHourInMs) {
             Alert.alert(
-              t("Farms.Cannot Remove"),
-              t("Farms.Completion cannot be removed after 1 hour."),
+              t("Farms.CannotRemove"),
+              t("Farms.CompletionCannotBeRemovedAfter1Hour"),
               [{ text: t("Main.OK") }],
             );
             return;
@@ -509,8 +509,8 @@ const FramcropCalenderwithcertificate: React.FC<
         }
 
         Alert.alert(
-          t("CropCalender.Confirm Remove"),
-          t("CropCalender.Remove Completion Message"),
+          t("CropCalender.ConfirmRemove"),
+          t("CropCalender.AreYouSureYouWantToRemoveThisTask"),
           [
             { text: t("Main.Cancel"), style: "cancel" },
             {
@@ -578,7 +578,7 @@ const FramcropCalenderwithcertificate: React.FC<
         if (newTickResult === "1") {
           Alert.alert(
             t("Main.Success"),
-            t("CropCalender.Certificate task completed successfully"),
+            t("CropCalender.CertificateTaskCompletedSuccessfully"),
             [{ text: t("Main.OK") }],
           );
         }
@@ -600,7 +600,7 @@ const FramcropCalenderwithcertificate: React.FC<
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(t("Main.Error"), t("Farms.No authentication token found"));
+        Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"));
         setUploadingImageForItem(null);
         return;
       }
@@ -655,7 +655,7 @@ const FramcropCalenderwithcertificate: React.FC<
       if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error.response?.status === 403) {
-        errorMessage = t("Farms.Completion cannot be removed after 1 hour.");
+        errorMessage = t("Farms.CompletionCannotBeRemovedAfter1Hour");
       } else if (error.response?.status === 404) {
         errorMessage = t("CropCalender.Item not found");
       }
@@ -674,7 +674,7 @@ const FramcropCalenderwithcertificate: React.FC<
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(t("Main.Error"), t("Farms.No authentication token found"));
+        Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"));
         setUploadingImageForItem(null);
         return;
       }
@@ -745,7 +745,7 @@ const FramcropCalenderwithcertificate: React.FC<
 
         Alert.alert(
           t("Main.Success"),
-          t("CropCalender.Certificate task completed successfully"),
+          t("CropCalender.CertificateTaskCompletedSuccessfully"),
           [{ text: t("Main.OK") }],
         );
 
@@ -1103,7 +1103,7 @@ const FramcropCalenderwithcertificate: React.FC<
 
       if (remainingDays > 0) {
         updateMessage = `${t("CropCalender.YouHave")} ${t(
-          "CropCalender.daysRemaining",
+          "CropCalender.DaysRemainingUntilTheNextUpdate",
           {
             date: remainingDays,
           },
@@ -1117,7 +1117,7 @@ const FramcropCalenderwithcertificate: React.FC<
 
       if (!updateMessage) {
         updateMessage = `${t("CropCalender.YouHave")} ${t(
-          "CropCalender.daysRemaining",
+          "CropCalender.DaysRemainingUntilTheNextUpdate",
           {
             date: remainingDays,
           },
@@ -1198,7 +1198,7 @@ const FramcropCalenderwithcertificate: React.FC<
       ) {
         Alert.alert(
           t("CropCalender.sorry"),
-          t("CropCalender.cannotChangeStatus"),
+          t("CropCalender.YouCantChangeTheStatusBackToPendingOnce1HourHasPassedAfterMarkingItAsCompleted"),
           [{ text: t("Main.OK") }],
         );
       } else if (
@@ -1377,8 +1377,8 @@ const FramcropCalenderwithcertificate: React.FC<
 
         const result = await Notifications.scheduleNotificationAsync({
           content: {
-            title: `${t("Notification.Reminder")}`,
-            body: `${t("Notification.CompleteMsg", {
+            title: `${t("Notification.CropTaskUpdate")}`,
+            body: `${t("Notification.YouAreAbleToCompleteTheTaskTomorrow", {
               task: taskId,
             })}`,
             sound: true,
@@ -1494,7 +1494,7 @@ const FramcropCalenderwithcertificate: React.FC<
       if (!location) {
         Alert.alert(
           t("Main.Error"),
-          t("Farms.Unable to fetch location after multiple attempts"),
+          t("Farms.UnableToFetchLocationAAfterMultipleAttemptsPleaseTryAgainLater"),
           [{ text: t("Main.OK") }],
         );
         setLoading(false);
@@ -1559,7 +1559,7 @@ const FramcropCalenderwithcertificate: React.FC<
       const crop: CropItem = crops[cropIndex];
 
       if (!crop) {
-        Alert.alert(t("Main.Error"), t("Farms.Task data not found"), [
+        Alert.alert(t("Main.Error"), t("Farms.TaskDataNotFound"), [
           { text: t("Main.OK") },
         ]);
         return;
@@ -1570,7 +1570,7 @@ const FramcropCalenderwithcertificate: React.FC<
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(t("Main.Error"), t("Farms.No authentication token found"), [
+        Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"), [
           { text: t("Main.OK") },
         ]);
         setLoading(false);
@@ -1607,7 +1607,7 @@ const FramcropCalenderwithcertificate: React.FC<
       } else {
         Alert.alert(
           t("CropCalender.No Images Yet"),
-          t("CropCalender.No Images Message", { taskIndex: crop.taskIndex }),
+          t("CropCalender.YouHaventUploadedAnyImagesForTaskYetCompleteThisTaskByTakingPhotosToTrackYourProgress", { taskIndex: crop.taskIndex }),
           [
             {
               text: t("Main.OK"),
@@ -1727,7 +1727,7 @@ const FramcropCalenderwithcertificate: React.FC<
 
             <Text className="text-gray-600 text-center text-sm leading-5 mb-6">
               {t(
-                "CropCalender.Please complete the certification tasks to unlock the calendar tasks",
+                "CropCalender.PleaseCompleteTheCertificationTasksToUnlockTheCalendarTasks",
               )}
             </Text>
 
@@ -1759,10 +1759,10 @@ const FramcropCalenderwithcertificate: React.FC<
           <View className="ml-3 flex-1">
             <Text className="text-gray-900 font-semibold text-base">
               {certificateLoading
-                ? t("CropCalender.Loading Certificate...")
+                ? t("CropCalender.LoadingCertificate")
                 : certificateData
                   ? certificateData.srtName || "GAP Certification"
-                  : t("CropCalender.GAP Certification")}
+                  : t("CropCalender.GAPCertification")}
             </Text>
 
             <Text className="text-gray-500 text-sm mt-1">
@@ -1780,13 +1780,13 @@ const FramcropCalenderwithcertificate: React.FC<
                       ) {
                         return t("CropCalender.CertificateExpired");
                       } else if (remainingTime.months === 0) {
-                        return `${t("Farms.Valid for next")} ${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.day") : t("Farms.days")}`;
+                        return `${t("Farms.ValidFor next")} ${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.Day") : t("Farms.Days")}`;
                       } else if (remainingTime.days === 0) {
-                        return `${t("Farms.Valid for next")} ${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.month") : t("Farms.months")}`;
+                        return `${t("Farms.ValidFor next")} ${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.Month") : t("Farms.Months")}`;
                       } else {
-                        const monthText = `${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.month") : t("Farms.months")}`;
-                        const dayText = `${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.day") : t("Farms.days")}`;
-                        return `${t("Farms.Valid for next")} ${monthText} ${dayText}`;
+                        const monthText = `${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.Month") : t("Farms.Months")}`;
+                        const dayText = `${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.Day") : t("Farms.Days")}`;
+                        return `${t("Farms.ValidFor next")} ${monthText} ${dayText}`;
                       }
                     })()
                   : t("CropCalender.NoActiveCertificate")}
@@ -1841,7 +1841,7 @@ const FramcropCalenderwithcertificate: React.FC<
                   }`}
                 >
                   {areCertificationTasksComplete
-                    ? t("CropCalender.All Completed")
+                    ? t("CropCalender.AllCompleted")
                     : t("CropCalender.Pending")}
                 </Text>
               </View>
@@ -1992,7 +1992,7 @@ const FramcropCalenderwithcertificate: React.FC<
                       />
                       <Text className="text-gray-500 text-center mt-3">
                         {t(
-                          "CropCalender.No questionnaire items available for this certificate",
+                          "CropCalender.NoQuestionnaireItemsAvailableForThisCertificate",
                         )}
                       </Text>
                     </View>
@@ -2020,7 +2020,7 @@ const FramcropCalenderwithcertificate: React.FC<
                     <Ionicons name="lock-closed" size={20} color="#9CA3AF" />
                   )}
                   <Text className={`ml-3 font-medium text-base`}>
-                    {t("CropCalender.Calendar Tasks")}
+                    {t("CropCalender.CalendarTasks")}
                   </Text>
                 </View>
                 <View className="flex-row items-center">
@@ -2044,7 +2044,7 @@ const FramcropCalenderwithcertificate: React.FC<
                   >
                     <Ionicons name="chevron-up" size={16} color="#6B7280" />
                     <Text className="text-gray-600 font-medium ml-2">
-                      {t("CropCalender.viewPrevious")}
+                      {t("CropCalender.ViewPrevious")}
                     </Text>
                   </TouchableOpacity>
                 )}
@@ -2216,7 +2216,7 @@ const FramcropCalenderwithcertificate: React.FC<
                               }`}
                             >
                               <Text className="text-white text-center font-medium text-sm">
-                                {t("CropCalender.viewImage")}
+                                {t("CropCalender.SeePhotos")}
                               </Text>
                             </TouchableOpacity>
                           )}
@@ -2249,7 +2249,7 @@ const FramcropCalenderwithcertificate: React.FC<
                                 style={{ marginTop: crop.imageLink ? 8 : 0 }}
                               >
                                 <Text className="text-white text-center font-medium text-sm">
-                                  {t("CropCalender.viewVideo")}
+                                  {t("CropCalender.WatchVideo")}
                                 </Text>
                               </TouchableOpacity>
                             )}
@@ -2265,7 +2265,7 @@ const FramcropCalenderwithcertificate: React.FC<
                     onPress={viewNextTasks}
                   >
                     <Text className="text-gray-600 font-medium mr-2">
-                      {t("CropCalender.viewMore")}
+                      {t("CropCalender.ViewMore")}
                     </Text>
                     <Ionicons name="chevron-down" size={16} color="#6B7280" />
                   </TouchableOpacity>
@@ -2304,12 +2304,12 @@ const FramcropCalenderwithcertificate: React.FC<
             </View>
 
             <Text className="text-lg font-semibold mt-2 text-center">
-              {t("Farms.Click a Photo")}
+              {t("Farms.ClickAPhoto")}
             </Text>
 
             <Text className="text-gray-500 text-center mt-2 mb-6">
               {t(
-                "Farms.Please take a photo of the completed work in the field.",
+                "Farms.PleaseTakeAPhotoOfTheCompletedWorkInTheField",
               )}
             </Text>
 
@@ -2358,7 +2358,7 @@ const FramcropCalenderwithcertificate: React.FC<
           <View className="flex-1 bg-black/50 justify-center items-center px-6">
             <View className="bg-white rounded-2xl p-8 items-center w-full">
               <Text className="text-lg font-semibold mt-2 text-center">
-                {t("Farms.Click a Photo")}
+                {t("Farms.ClickAPhoto")}
               </Text>
 
               <Image
@@ -2371,7 +2371,7 @@ const FramcropCalenderwithcertificate: React.FC<
               <View className="flex justify-center w-full -mt-2">
                 {isButtonEnabled ? (
                   <Text className="text-center font-semibold mb-2">
-                    {t("Farms.Ready To Submit")}
+                    {t("Farms.ReadyToSubmit")}
                   </Text>
                 ) : (
                   <Text className="text-gray-600 text-center mb-2">
@@ -2384,7 +2384,7 @@ const FramcropCalenderwithcertificate: React.FC<
                   className="border border-black rounded-3xl py-3 items-center"
                 >
                   <Text className="text-black font-semibold text-base">
-                    {t("Farms.Retake Previous Photo")}
+                    {t("Farms.RetakePreviousPhoto")}
                   </Text>
                 </TouchableOpacity>
 

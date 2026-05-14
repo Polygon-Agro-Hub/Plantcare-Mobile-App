@@ -121,7 +121,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
     if (!natureOfCultivation) {
       Alert.alert(
         t("Cropenroll.sorry"),
-        t("Cropenroll.plzselectNatureOfCultivation"),
+        t("Cropenroll.PleaseSelectNatureOfCultivation"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -129,7 +129,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
     if (!cultivationMethod) {
       Alert.alert(
         t("Cropenroll.sorry"),
-        t("Cropenroll.plzselectCultivationMethod"),
+        t("Cropenroll.PleaseSelectCultivationMethod"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -145,12 +145,12 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
         setCropCalender(res.data[0]);
         setSearch(true);
       } else {
-        Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"), [
+        Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.NoCropsFoundForTheSelectedMethodPleaseTryAgain"), [
           { text: t("Main.OK") },
         ]);
       }
     } catch (err) {
-      Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"), [
+      Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.NoCropsFoundForTheSelectedMethodPleaseTryAgain"), [
         { text: t("Main.OK") },
       ]);
     } finally {
@@ -162,7 +162,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
     if (!extentha && !extentac && !extentp) {
       Alert.alert(
         t("Cropenroll.sorry"),
-        t("Cropenroll.EnterAtLeastOneExtent"),
+        t("Cropenroll.PleaseEnterAtLeastOneExtent"),
         [{ text: t("Main.OK") }],
         { cancelable: false },
       );
@@ -176,7 +176,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
     if (!startDate) {
       Alert.alert(
         t("Cropenroll.sorry"),
-        t("Cropenroll.EnterStartDate"),
+        t("Cropenroll.EnterTheStartDateOfCultivation"),
         [{ text: t("Main.OK") }],
         { cancelable: false },
       );
@@ -214,7 +214,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       );
 
       if (res.status === 200) {
-        Alert.alert(t("Main.Success"), t("Cropenroll.EnrollSucess"), [
+        Alert.alert(t("Main.Success"), t("Cropenroll.SuccessfullyEnrolledTheCrop"), [
           { text: t("Main.OK") },
         ]);
         setIsLoading(false);
@@ -234,14 +234,14 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
             if (message === "You have already enrolled in 3 crops") {
               Alert.alert(
                 t("Main.Error"),
-                t("Cropenroll.enrollmentLimitReached"),
+                t("Cropenroll.YouHaveReachedTheLimitOf3CropEnrollments"),
                 [{ text: t("Main.OK") }],
               );
               setIsLoading(false);
             } else {
               Alert.alert(
                 t("Cropenroll.sorry"),
-                t("Cropenroll.alreadyEnrolled"),
+                t("Cropenroll.ThisCropIsAlreadyEnrolled"),
                 [{ text: t("Main.OK") }],
                 { cancelable: false },
               );
@@ -361,7 +361,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       if (response.status === 200) {
         Alert.alert(
           t("Main.Success"),
-          t("Cropenroll.OngoinCultivationUpdate"),
+          t("Cropenroll.CultivationDetailsUpdatedSuccessfully"),
           [
             {
               text: t("Main.OK"),
@@ -374,7 +374,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       } else {
         Alert.alert(
           t("Cropenroll.Failed"),
-          t("Cropenroll.FialedOngoinCultivationUpdate"),
+          t("Cropenroll.UnableToUpdateCultivationDetailsPleaseTryAgain"),
           [{ text: t("Main.OK") }],
         );
         setIsLoading(false);
@@ -382,7 +382,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
     } catch (error) {
       Alert.alert(
         t("Cropenroll.Failed"),
-        t("Cropenroll.FialedOngoinCultivationUpdate"),
+        t("Cropenroll.UnableToUpdateCultivationDetailsPleaseTryAgain"),
         [{ text: t("Main.OK") }],
       );
       setIsLoading(false);
@@ -411,8 +411,8 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
         <CustomHeader
           title={
             formStatus === "newAdd"
-              ? t("Cropenroll.StartCultivaiton")
-              : t("Cropenroll.UpdateCultivation")
+              ? t("Cropenroll.StartYourCultivaiton")
+              : t("Cropenroll.UpdateYourCultivation")
           }
           navigation={navigation}
           onBackPress={() => navigation.goBack()}
@@ -443,7 +443,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                     NatureOfCultivationCategories,
                     natureOfCultivation,
                   )
-                  : t("Cropenroll.selectNaofCultivation")}
+                  : t("Cropenroll.SelectNaOfCultivation")}
               </Text>
               <Icon name="arrow-drop-down" size={24} color="gray" />
             </TouchableOpacity>
@@ -467,7 +467,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                     CultivationMethodCategories,
                     cultivationMethod,
                   )
-                  : t("Cropenroll.selectCultivationMethod")}
+                  : t("Cropenroll.SelectCultivationMethod")}
               </Text>
               <Icon name="arrow-drop-down" size={24} color="gray" />
             </TouchableOpacity>
@@ -479,13 +479,13 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
               disabled={isLoading}
             >
               <Text className="text-white text-base font-bold">
-                {t("Cropenroll.search")}
+                {t("Main.Search...")}
               </Text>
             </TouchableOpacity>
 
             {search && (
               <>
-                <Text className="mt-8">{t("Cropenroll.selectExtent")}</Text>
+                <Text className="mt-8">{t("Main.Extent")}</Text>
                 <View className="flex-row items-center justify-between w-full mt-4 max-w-xl">
                   <View className="flex-row items-center gap-1">
                     <Text className="text-right">{t("FixedAssets.ha")}</Text>
@@ -529,7 +529,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                   </View>
                 </View>
 
-                <Text className="mt-4">{t("Cropenroll.selectStartDate")}</Text>
+                <Text className="mt-4">{t("Main.SelectStartDate")}</Text>
                 <TouchableOpacity
                   onPress={() => setShowDatePicker((prev) => !prev)}
                   className="border-b border-gray-400 my-3 flex-row justify-between items-center p-3"
@@ -571,7 +571,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                     <ActivityIndicator size="small" color="#fff" />
                   ) : (
                     <Text className="text-white text-base font-bold">
-                      {t("Cropenroll.enroll")}
+                      {t("Main.Enroll")}
                     </Text>
                   )}
                 </TouchableOpacity>
@@ -580,7 +580,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
           </View>
         ) : (
           <View className="p-4">
-            <Text className="mt-8">{t("Cropenroll.selectExtent")}</Text>
+            <Text className="mt-8">{t("Main.Extent")}</Text>
             <View className="flex-row items-center justify-between w-full mt-4">
               <View className="flex-row items-center gap-1">
                 <Text className="text-right">{t("FixedAssets.ha")}</Text>
@@ -671,7 +671,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       <GlobalSearchModal
         visible={showNatureModal}
         onClose={() => setShowNatureModal(false)}
-        title={t("Cropenroll.selectNaofCultivation")}
+        title={t("Cropenroll.SelectNaOfCultivation")}
         data={NatureOfCultivationCategories}
         selectedItems={natureOfCultivation ? [natureOfCultivation] : []}
         onSelect={(items) => {
@@ -685,7 +685,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       <GlobalSearchModal
         visible={showMethodModal}
         onClose={() => setShowMethodModal(false)}
-        title={t("Cropenroll.selectCultivationMethod")}
+        title={t("Cropenroll.SelectCultivationMethod")}
         data={CultivationMethodCategories}
         selectedItems={cultivationMethod ? [cultivationMethod] : []}
         onSelect={(items) => {

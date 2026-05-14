@@ -75,7 +75,7 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
     if (status !== "granted") {
       Alert.alert(
         t("PublicForum.sorry"),
-        t("PublicForum.permissionDeniedMessage"),
+        t("PublicForum.WeNeedAccessToYourCameraToContinuePleaseEnablePermissions"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -156,7 +156,7 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
       if (response.status === 200) {
         Alert.alert(
           t("Main.Success"),
-          t("PublicForum.Post updated successfully"),
+          t("PublicForum.PostUpdatedSuccessfully!"),
           [
             {
               text: t("Main.OK"),
@@ -165,7 +165,7 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
         );
         navigation.goBack();
       } else {
-        Alert.alert(t("PublicForum.error"), t("PublicForum.updateFailed"), [
+        Alert.alert(t("PublicForum.error"), t("PublicForum.FailedToUpdatePost"), [
           {
             text: t("Main.OK"),
             style: "default",
@@ -214,29 +214,29 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
         <ScrollView className="px-4 py-6 p-7 ">
           <View className="mb-4">
             <Text className="text-base font-semibold">
-              {t("PublicForum.title")}
+              {t("PublicForum.Title")}
             </Text>
             <TextInput
               className=" border-gray-300  bg-[#F4F7FF] rounded-3xl px-4 h-[50px] mt-2"
-              placeholder={t("PublicForum.addyourtitlehere")}
+              placeholder={t("PublicForum.AddYourTitleHere")}
               value={heading}
               onChangeText={setHeading}
               maxLength={250}
             />
             {heading.length >= 250 && (
               <Text className="text-red-500 mt-1 text-sm">
-                {t("PublicForum.Maximum 250 characters allowed.")}
+                {t("PublicForum.Maximum250charactersAllowed")}
               </Text>
             )}
           </View>
 
           <View className="mb-4 mt-6">
             <Text className="text-base font-semibold ml-4">
-              {t("PublicForum.discussion")}
+              {t("PublicForum.Discussion")}
             </Text>
             <TextInput
               className=" bg-[#F4F7FF] border-gray-300 rounded-3xl px-4 py-2 mt-2 h-44  p-4 "
-              placeholder={t("PublicForum.addyourdiscussionhere")}
+              placeholder={t("PublicForum.AddYourDiscussionHere")}
               value={message}
               onChangeText={setMessage}
               multiline
@@ -258,7 +258,7 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
               onPress={handleImagePick}
             >
               <Text className="text-[#667BA5]">
-                {t("PublicForum.uploadImage")}
+                {t("PublicForum.UploadImage")}
               </Text>
             </TouchableOpacity>
             {postImageUri && (

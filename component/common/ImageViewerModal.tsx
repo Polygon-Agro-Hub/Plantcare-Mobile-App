@@ -85,7 +85,7 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
                     className="text-[#000000] text-xl"
                     style={styles.uploadedBy}
                   >
-                    {t("ImageViewerModal.Uploaded By")}{" "}
+                    {t("ImageViewerModal.UploadedBy")}{" "}
                     {images[currentIndex].uploadedBy === "You"
                       ? t("ImageViewerModal.You")
                       : images[currentIndex].uploadedBy}
@@ -106,7 +106,7 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
                       className="text-[#000000] text-xl"
                       style={styles.uploadedBy}
                     >
-                      {t("ImageViewerModal.Uploaded By")}{" "}
+                      {t("ImageViewerModal.UploadedBy")}{" "}
                       {images[currentIndex].uploadedBy === "You"
                         ? t("ImageViewerModal.You")
                         : images[currentIndex].uploadedBy}
@@ -142,7 +142,7 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
             <View style={styles.counterContainer}>
               <Text style={styles.currentIndex}>{currentIndex + 1}</Text>
               <Text style={styles.separator}>
-                {t("ImageViewerModal.out of")}
+                {t("ImageViewerModal.OutOf")}
               </Text>
               <Text style={styles.totalCount}>{images.length}</Text>
             </View>

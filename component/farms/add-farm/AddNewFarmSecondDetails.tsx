@@ -113,7 +113,7 @@ const AddNewFarmSecondDetails = () => {
 
     if (credentialsCount > staffCount) {
       return t(
-        "Farms.Login credentials cannot exceed the total number of staff",
+        "Farms.LoginCredentialsCannotExceedTheTotalNumberOfStaff",
       );
     }
 
@@ -166,7 +166,7 @@ const AddNewFarmSecondDetails = () => {
 
   React.useEffect(() => {
     if (submitSuccess) {
-      Alert.alert(t("Main.Success"), t("Farms.Farm saved successfully!"), [
+      Alert.alert(t("Main.Success"), t("Farms.FarmSavedSuccessfully"), [
         {
           text: t("Main.OK"),
           onPress: () => {
@@ -220,7 +220,7 @@ const AddNewFarmSecondDetails = () => {
     if (!numberOfStaff) {
       Alert.alert(
         t("Main.Sorry"),
-        t("Farms.Please enter the number of staff"),
+        t("Farms.PleaseEnterTheNNumberOfStaff"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -240,7 +240,7 @@ const AddNewFarmSecondDetails = () => {
     if (credentialsCount > staffCount) {
       Alert.alert(
         t("Main.Sorry"),
-        t("Farms.Login credentials cannot exceed the total number of staff"),
+        t("Farms.LoginCredentialsCannotExceedTheTotalNumberOfStaff"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -264,7 +264,7 @@ const AddNewFarmSecondDetails = () => {
 
     if (staffCount === 0 && credentialsCount === 0) {
       Alert.alert(
-        t("Farms.No Staff Login Required"),
+        t("Farms.NoOfStaffLoginRequired"),
         t(
           "Farms.You have indicated that no staff members need login credentials. The farm will be saved directly.",
         ),
@@ -274,7 +274,7 @@ const AddNewFarmSecondDetails = () => {
             style: "cancel",
           },
           {
-            text: t("Farms.Save Farm"),
+            text: t("Farms.SaveFarm"),
             onPress: saveFarmDirectly,
           },
         ],
@@ -284,7 +284,7 @@ const AddNewFarmSecondDetails = () => {
 
     if (credentialsCount === 0) {
       Alert.alert(
-        t("Farms.No Login Credentials Required"),
+        t("Farms.NoLoginCredentialsRequired"),
         t(
           "Farms.You have indicated that no staff members need login credentials. The farm will be saved directly.",
         ),
@@ -294,7 +294,7 @@ const AddNewFarmSecondDetails = () => {
             style: "cancel",
           },
           {
-            text: t("Farms.Save Farm"),
+            text: t("Farms.SaveFarm"),
             onPress: saveFarmDirectly,
           },
         ],
@@ -405,7 +405,7 @@ const AddNewFarmSecondDetails = () => {
                       : { fontSize: 18 },
                 ]}
               >
-                {t("Farms.Add New Farm")}
+                {t("Farms.AddNewFarm")}
               </Text>
               <View
                 className={`absolute right-[-5%] ${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}
@@ -449,13 +449,13 @@ const AddNewFarmSecondDetails = () => {
               <View className="mt-5 w-full">
                 <View className="flex-1 items-center justify-center mt-2">
                   <Text className="font-semibold text-base">
-                    {t("Farms.Number of Staff")}
+                    {t("Farms.NumberOfStaff")}
                   </Text>
                 </View>
                 <TextInput
                   value={numberOfStaff}
                   onChangeText={handleNumberOfStaffChange}
-                  placeholder={t("Farms.Total number of staff working")}
+                  placeholder={t("Farms.TotalNumberOfStaffWorking")}
                   placeholderTextColor="#585858"
                   className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800 mt-2"
                   keyboardType="number-pad"
@@ -473,7 +473,7 @@ const AddNewFarmSecondDetails = () => {
 
                 <View className="flex-1 items-center justify-center mt-2">
                   <Text className="font-semibold text-base mt-2">
-                    {t("Farms.How many staff will be")}
+                    {t("Farms.HowManyStaffWillBe")}
                   </Text>
                   <View className="flex-1 items-center justify-center">
                     <Text className="font-semibold text-base">
@@ -484,7 +484,7 @@ const AddNewFarmSecondDetails = () => {
                 <TextInput
                   value={loginCredentialsNeeded}
                   onChangeText={handleLoginCredentialsChange}
-                  placeholder={t("Farms.Number of login credentials needed")}
+                  placeholder={t("Farms.NumberOfLoginCredentialsNeeded")}
                   placeholderTextColor="#585858"
                   className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800 mt-2"
                   keyboardType="number-pad"
@@ -527,7 +527,7 @@ const AddNewFarmSecondDetails = () => {
                       : { fontSize: 16 },
                 ]}
               >
-                {t("Main.Go Back")}
+                {t("Main.GoBack")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -562,7 +562,7 @@ const AddNewFarmSecondDetails = () => {
                         : { fontSize: 16 },
                   ]}
                 >
-                  {isSubmitting ? t("Farms.Saving...") : t("Farms.Add Staff")}
+                  {isSubmitting ? t("Farms.Saving...") : t("Farms.AddStaff")}
                 </Text>
               </View>
             </TouchableOpacity>

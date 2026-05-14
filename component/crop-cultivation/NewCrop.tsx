@@ -422,7 +422,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
       <StatusBar style="dark" />
 
       <CustomHeader
-        title={t("NewCrop.NewCrop")}
+        title={t("NewCrop.SelectANewCrop")}
         navigation={navigation}
         onBackPress={() => navigation.navigate("Main", { screen: "Dashboard" })}
       />
@@ -437,7 +437,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
             <TextInput
               ref={inputRef}
               className="ml-2 mr-6 text-base flex-1"
-              placeholder={t("NewCrop.Search")}
+              placeholder={t("NewCrop.SearchCrop")}
               placeholderTextColor="gray"
               style={{ textAlignVertical: "center" }}
               value={searchQuery}
@@ -473,11 +473,11 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
             className="bg-slate-100"
             onPress={() => setShowDistricts(true)}
           >
-            <Text className="text-base mb-2">{t("NewCrop.District")}</Text>
+            <Text className="text-base mb-2">{t("NewCrop.ByDistrict")}</Text>
           </TouchableOpacity>
           <View className="border-t border-gray-400" />
           <TouchableOpacity className="bg-slate-100">
-            <Text className="text-base">{t("NewCrop.Price")}</Text>
+            <Text className="text-base">{t("NewCrop.ByPrice")}</Text>
           </TouchableOpacity>
 
           {showDistricts && (
@@ -590,7 +590,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
                     }}
                   >
                     {searchQuery
-                      ? t("NewCrop.No results found")
+                      ? t("NewCrop.NoResultsFound")
                       : "No crops available"}
                   </Text>
                   {searchQuery && (
@@ -656,7 +656,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
                           marginTop: 20,
                         }}
                       >
-                        {t("NewCrop.No results found")}
+                        {t("NewCrop.NoResultsFound")}
                       </Text>
                       <Text
                         style={{

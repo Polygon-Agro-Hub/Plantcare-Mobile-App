@@ -64,7 +64,7 @@ const PostHarvestStorageCalculatorsMenuScreen: React.FC<
   return (
     <View className="flex-1 bg-white">
       <CustomHeader
-        title={t("PostHarvestStorageCalculators.Title")}
+        title={t("PostHarvestStorageCalculators.PostHarvestStorageCalculators")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}

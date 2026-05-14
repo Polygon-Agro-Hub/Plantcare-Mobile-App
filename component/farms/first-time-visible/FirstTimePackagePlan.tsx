@@ -88,9 +88,9 @@ const FirstTimePackagePlan: React.FC<FirstTimePackagePlanProps> = ({
           <View className="text-center justify-center items-center mt-6">
             <View className="flex-row items-center justify-center gap-2">
               <Text className="text-xl font-bold text-[#E5B323]">
-                {t("Farms.UPGRADE TO PRO")}
+                {t("Farms.Upgrade TO PRO")}
               </Text>
-              <Text> {t("Farms.PRO")}</Text>
+              <Text> {t("Farms.Pro")}</Text>
             </View>
             <View className="mt-6 items-center">
               <View className="items-center justify-center p-2">
@@ -118,7 +118,7 @@ const FirstTimePackagePlan: React.FC<FirstTimePackagePlanProps> = ({
                           6
                         </Text>
                         <Text className="text-base text-gray-600 mb-1">
-                          {t("Farms.months")}
+                          {t("Farms.Months")}
                         </Text>
                         <Text className="text-lg text-black font-extrabold">
                           {t("Farms.Rs")} 4,500
@@ -147,7 +147,7 @@ const FirstTimePackagePlan: React.FC<FirstTimePackagePlanProps> = ({
                           12
                         </Text>
                         <Text className="text-base text-yellow-700 mb-1">
-                          {t("Farms.months")}
+                          {t("Farms.Months")}
                         </Text>
                         <Text className="text-lg text-black font-extrabold">
                           {t("Farms.Rs")} 8,500
@@ -171,7 +171,7 @@ const FirstTimePackagePlan: React.FC<FirstTimePackagePlanProps> = ({
                           4
                         </Text>
                         <Text className="text-base text-gray-600 mb-1">
-                          {t("Farms.months")}
+                          {t("Farms.Months")}
                         </Text>
                         <Text className="text-lg text-black font-extrabold">
                           {t("Farms.Rs")} 3,200
@@ -214,23 +214,23 @@ const FirstTimePackagePlan: React.FC<FirstTimePackagePlanProps> = ({
                 }
               >
                 <Text className="text-[#727272] text-lg font-semibold">
-                  {t("Farms.Try 1 Farm for Free")}
+                  {t("Farms.Try1FarmForFree")}
                 </Text>
               </TouchableOpacity>
             </LinearGradient>
 
             <Text className="text-lg font-semibold text-black text-center mt-6">
-              {t("Farms.When should I be billed?")}
+              {t("Farms.WhenShouldIBeBilled")}
             </Text>
             <View className="w-[98%] p-2 rounded-lg mt-2 mb-4">
               <Text className="text-sm text-black text-center">
                 {t(
-                  "Farms.Your billing cycle begins on the date you upgrade your plan.",
+                  "Farms.YourBillingCycleBeginsOnTheDateYouUpgradeYourPlan",
                 )}
               </Text>
               <Text className="text-sm text-black text-center">
                 {t(
-                  "Farms.We’ll send you a payment reminder 14 days before your next billing date to ensure you have time to prepare.",
+                  "Farms.WellSendYouAPaymentReminder14DaysBeforeYourNextBillingDateToEnsureYouHaveTimeToPrepare",
                 )}
               </Text>
             </View>

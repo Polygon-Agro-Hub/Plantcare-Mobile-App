@@ -85,8 +85,8 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
   const [unitModalVisible, setUnitModalVisible] = useState(false);
 
   const statusMapping: Record<string, string> = {
-    [t("CurrentAssets.expired")]: "Expired",
-    [t("CurrentAssets.stillvalide")]: "Still valid",
+    [t("CurrentAssets.Expired")]: "Expired",
+    [t("CurrentAssets.Valid")]: "Still valid",
   };
 
   const unitItems = [
@@ -237,7 +237,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
       if (new Date(dateString) > new Date()) {
         Alert.alert(
           t("CurrentAssets.sorry"),
-          t("CurrentAssets.futureDateError"),
+          t("CurrentAssets.PurchaseDateMustNotBeInTheFuture"),
           [{ text: t("Main.OK") }],
         );
         return;
@@ -247,7 +247,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
       if (expireDate && new Date(dateString) > new Date(expireDate)) {
         Alert.alert(
           t("CurrentAssets.sorry"),
-          t("CurrentAssets.expireBeforePurchase"),
+          t("CurrentAssets.ExpirationDateMustBeAfterPurchaseDate"),
           [{ text: t("Main.OK") }],
         );
         setExpireDate("");
@@ -257,15 +257,15 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
         calculateWarranty(dateString, expireDate);
         setStatus(
           new Date(expireDate) < new Date()
-            ? t("CurrentAssets.expired")
-            : t("CurrentAssets.stillvalide"),
+            ? t("CurrentAssets.Expired")
+            : t("CurrentAssets.Valid"),
         );
       }
     } else {
       if (purchaseDate && new Date(dateString) < new Date(purchaseDate)) {
         Alert.alert(
           t("CurrentAssets.sorry"),
-          t("CurrentAssets.expireBeforePurchase"),
+          t("CurrentAssets.ExpirationDateMustBeAfterPurchaseDate"),
           [{ text: t("Main.OK") }],
         );
         return;
@@ -275,8 +275,8 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
       if (purchaseDate) {
         setStatus(
           new Date(dateString) < new Date()
-            ? t("CurrentAssets.expired")
-            : t("CurrentAssets.stillvalide"),
+            ? t("CurrentAssets.Expired")
+            : t("CurrentAssets.Valid"),
         );
         calculateWarranty(purchaseDate, dateString);
       }
@@ -332,10 +332,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
       selectedAsset === "Other" ? customAsset : selectedAsset;
     const brandToCheck = selectedCategory === "Livestock for sale" ? "" : brand;
 
-    if (status === t("CurrentAssets.expired")) {
+    if (status === t("CurrentAssets.Expired")) {
       Alert.alert(
         t("CurrentAssets.sorry"),
-        t("CurrentAssets.cannotAddExpiredAsset"),
+        t("CurrentAssets.CannotAddAnAssetThatHasAlreadyExpired"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -349,7 +349,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
     ) {
       Alert.alert(
         t("CurrentAssets.sorry"),
-        t("CurrentAssets.This exact asset already exists."),
+        t("CurrentAssets.ThisExactAssetAlreadyExists"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -358,41 +358,41 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
     const newErrors: { [key: string]: string } = {};
 
     if (!selectedCategory)
-      newErrors.selectedCategory = `${t("CurrentAssets.selectcategory")} is required`;
+      newErrors.selectedCategory = `${t("CurrentAssets.Selectcategory")} is required`;
     if (!selectedAsset)
-      newErrors.selectedAsset = `${t("CurrentAssets.selectasset")} is required`;
+      newErrors.selectedAsset = `${t("CurrentAssets.SelectAsset")} is required`;
     if (selectedAsset === "Other" && !customAsset)
-      newErrors.customAsset = `${t("CurrentAssets.mentionother")} is required`;
+      newErrors.customAsset = `${t("CurrentAssets.MentionOther")} is required`;
     if (
       shouldShowBrandField &&
       selectedCategory !== "Other consumables" &&
       selectedAsset !== "Other" &&
       !brand
     )
-      newErrors.brand = `${t("CurrentAssets.brand")} is required`;
+      newErrors.brand = `${t("CurrentAssets.Brand")} is required`;
     if (!batchNum)
-      newErrors.batchNum = `${t("CurrentAssets.batchnumber")} is required`;
+      newErrors.batchNum = `${t("CurrentAssets.BatchNumber")} is required`;
     else if (parseFloat(batchNum) < 0)
-      newErrors.batchNum = t("CurrentAssets.batchNumberError");
+      newErrors.batchNum = t("CurrentAssets.BatchNumberCannotBeNegative");
     if (!volume)
-      newErrors.volume = `${t("CurrentAssets.unitvolume_weight")} is required`;
+      newErrors.volume = `${t("CurrentAssets.UnitVolumeWeight")} is required`;
     else if (parseFloat(volume) <= 0)
-      newErrors.volume = t("CurrentAssets.volumeZeroError");
+      newErrors.volume = t("CurrentAssets.VolumeWeightCannotBe0OrNegative");
     if (!numberOfUnits)
-      newErrors.numberOfUnits = `${t("CurrentAssets.numberofunits")} is required`;
+      newErrors.numberOfUnits = `${t("CurrentAssets.NumberOfUnits")} is required`;
     else if (parseFloat(numberOfUnits) <= 0)
-      newErrors.numberOfUnits = t("CurrentAssets.unitsZeroError");
+      newErrors.numberOfUnits = t("CurrentAssets.NumberOfUnitsCannotBe0OrNegative");
     if (!unitPrice)
-      newErrors.unitPrice = `${t("CurrentAssets.unitprice")} is required`;
+      newErrors.unitPrice = `${t("CurrentAssets.UnitPrice")} is required`;
     else if (parseFloat(unitPrice.replace(/,/g, "")) <= 0)
-      newErrors.unitPrice = t("CurrentAssets.unitPriceZeroError");
+      newErrors.unitPrice = t("CurrentAssets.UnitPriceCannotBe0OrNegative");
     if (!purchaseDate)
-      newErrors.purchaseDate = `${t("CurrentAssets.purchasedate")} is required`;
+      newErrors.purchaseDate = `${t("CurrentAssets.PurchaseDate")} is required`;
     if (!expireDate)
-      newErrors.expireDate = `${t("CurrentAssets.expiredate")} is required`;
+      newErrors.expireDate = `${t("CurrentAssets.ExpireDate")} is required`;
     if (!warranty)
-      newErrors.warranty = `${t("CurrentAssets.warrentyinmonths")} is required`;
-    if (!status) newErrors.status = `${t("CurrentAssets.status")} is required`;
+      newErrors.warranty = `${t("CurrentAssets.WarrentyInMonths")} is required`;
+    if (!status) newErrors.status = `${t("CurrentAssets.Status")} is required`;
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -445,7 +445,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
 
       Alert.alert(
         t("Main.Success"),
-        t("CurrentAssets.addAssetSuccess"),
+        t("CurrentAssets.AssetAddedSuccessfully"),
         [{ text: t("Main.OK") }],
       );
       navigation.navigate("Main", {
@@ -456,7 +456,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
       if (error?.response?.status === 409) {
         Alert.alert(
           t("CurrentAssets.sorry"),
-          t("CurrentAssets.This exact asset already exists."),
+          t("CurrentAssets.ThisExactAssetAlreadyExists"),
           [{ text: t("Main.OK") }],
         );
         return;
@@ -512,7 +512,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
       label: t(`CurrentAssets.${cat}`),
       value: cat,
     })),
-    { label: t("CurrentAssets.Other consumables"), value: "Other consumables" },
+    { label: t("CurrentAssets.OtherConsumables"), value: "Other consumables" },
   ];
 
   const assetItems = [
@@ -555,7 +555,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
               <View className="w-1/2">
                 <TouchableOpacity>
                   <Text className="text-black text-center font-semibold text-lg">
-                    {t("CurrentAssets.currentAssets")}
+                    {t("CurrentAssets.CurrentAssets")}
                   </Text>
                   <View className="border-t-[2px] border-black" />
                 </TouchableOpacity>
@@ -570,7 +570,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                   }
                 >
                   <Text className="text-black text-center font-semibold text-lg">
-                    {t("CurrentAssets.fixedAssets")}
+                    {t("CurrentAssets.FixedAssets")}
                   </Text>
                   <View className="border-t-[2px] border-[#D9D9D9]" />
                 </TouchableOpacity>
@@ -580,13 +580,13 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
 
           <View className={user?.role === "Supervisor" ? "-mt-8" : ""}>
             <Text className="text-gray-600 mb-2">
-              {t("CurrentAssets.selectcategory")} *
+              {t("CurrentAssets.Selectcategory")} *
             </Text>
             <PickerTrigger
               value={
                 selectedCategory ? t(`CurrentAssets.${selectedCategory}`) : ""
               }
-              placeholder={t("CurrentAssets.selectcategory")}
+              placeholder={t("CurrentAssets.Selectcategory")}
               onPress={() => setCategoryModalVisible(true)}
             />
             <ErrorText field="selectedCategory" />
@@ -595,7 +595,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             <GlobalSearchModal
               visible={categoryModalVisible}
               onClose={() => setCategoryModalVisible(false)}
-              title={t("CurrentAssets.selectcategory")}
+              title={t("CurrentAssets.Selectcategory")}
               data={categoryItems}
               selectedItems={selectedCategory ? [selectedCategory] : []}
               onSelect={(items) => {
@@ -612,10 +612,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
           {selectedCategory === "Other consumables" ? (
             <>
               <Text className="text-gray-600 mt-4 mb-2">
-                {t("CurrentAssets.asset")}
+                {t("CurrentAssets.Asset")}
               </Text>
               <TextInput
-                placeholder={t("CurrentAssets.enterasset")}
+                placeholder={t("CurrentAssets.EnterAsset")}
                 value={selectedAsset}
                 onChangeText={(text) => {
                   clearError("selectedAsset");
@@ -628,10 +628,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
               {shouldShowBrandField && (
                 <>
                   <Text className="text-gray-600 mt-4 mb-2">
-                    {t("CurrentAssets.brand")}
+                    {t("CurrentAssets.Brand")}
                   </Text>
                   <TextInput
-                    placeholder={t("CurrentAssets.enterbrand")}
+                    placeholder={t("CurrentAssets.EnterBrand")}
                     value={brand}
                     onChangeText={(text) => {
                       clearError("brand");
@@ -645,11 +645,11 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
           ) : (
             <>
               <Text className="text-gray-600 mt-4 mb-2">
-                {t("CurrentAssets.asset")} *
+                {t("CurrentAssets.Asset")} *
               </Text>
               <PickerTrigger
                 value={selectedAsset ? t(`${selectedAsset}`) : ""}
-                placeholder={t("CurrentAssets.selectasset")}
+                placeholder={t("CurrentAssets.SelectAsset")}
                 onPress={() => setAssetModalVisible(true)}
                 disabled={!selectedCategory}
               />
@@ -658,7 +658,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
               <GlobalSearchModal
                 visible={assetModalVisible}
                 onClose={() => setAssetModalVisible(false)}
-                title={t("CurrentAssets.asset")}
+                title={t("CurrentAssets.Asset")}
                 data={assetItems}
                 selectedItems={selectedAsset ? [selectedAsset] : []}
                 onSelect={(items) => {
@@ -674,7 +674,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
               {selectedAsset === "Other" && (
                 <>
                   <Text className="text-gray-600 mt-4 mb-2">
-                    {t("CurrentAssets.mentionother")}
+                    {t("CurrentAssets.MentionOther")}
                   </Text>
                   <TextInput
                     placeholder={t("CurrentAssets.Other")}
@@ -690,10 +690,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                   {shouldShowBrandField && (
                     <>
                       <Text className="text-gray-600 mt-4 mb-2">
-                        {t("CurrentAssets.brand")}
+                        {t("CurrentAssets.Brand")}
                       </Text>
                       <TextInput
-                        placeholder={t("CurrentAssets.selectbrand")}
+                        placeholder={t("CurrentAssets.SelectBrand")}
                         value={brand}
                         onChangeText={(text) => {
                           clearError("brand");
@@ -714,11 +714,11 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             shouldShowBrandField && (
               <>
                 <Text className="text-gray-600 mt-4 mb-2">
-                  {t("CurrentAssets.brand")} *
+                  {t("CurrentAssets.Brand")} *
                 </Text>
                 <PickerTrigger
                   value={brand}
-                  placeholder={t("CurrentAssets.selectbrand")}
+                  placeholder={t("CurrentAssets.SelectBrand")}
                   onPress={() => setBrandModalVisible(true)}
                   disabled={!selectedAsset}
                 />
@@ -727,7 +727,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                 <GlobalSearchModal
                   visible={brandModalVisible}
                   onClose={() => setBrandModalVisible(false)}
-                  title={t("CurrentAssets.brand")}
+                  title={t("CurrentAssets.Brand")}
                   data={brandItems}
                   selectedItems={brand ? [brand] : []}
                   onSelect={(items) => {
@@ -742,10 +742,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             )}
 
           <Text className="text-gray-600">
-            {t("CurrentAssets.batchnumber")} *
+            {t("CurrentAssets.BatchNumber")} *
           </Text>
           <TextInput
-            placeholder={t("CurrentAssets.batchnumber")}
+            placeholder={t("CurrentAssets.BatchNumber")}
             value={batchNum}
             onChangeText={handleBatchNumChange}
             className="bg-[#F4F4F4] p-2 pl-4 rounded-3xl h-[50px]"
@@ -754,11 +754,11 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
           <ErrorText field="batchNum" />
 
           <Text className="text-gray-600">
-            {t("CurrentAssets.unitvolume_weight")} *
+            {t("CurrentAssets.UnitVolumeWeight")} *
           </Text>
           <View className="flex-row items-center justify-between">
             <TextInput
-              placeholder={t("CurrentAssets.unitvolume_weight")}
+              placeholder={t("CurrentAssets.UnitVolumeWeight")}
               value={volume}
               onChangeText={handleVolumeChange}
               keyboardType="decimal-pad"
@@ -773,7 +773,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
               <GlobalSearchModal
                 visible={unitModalVisible}
                 onClose={() => setUnitModalVisible(false)}
-                title={t("CurrentAssets.unitvolume_weight")}
+                title={t("CurrentAssets.UnitVolumeWeight")}
                 data={unitItems}
                 selectedItems={[unit]}
                 onSelect={(items) => setUnit(items[0] ?? "ml")}
@@ -786,10 +786,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
           <ErrorText field="volume" />
 
           <Text className="text-gray-600">
-            {t("CurrentAssets.numberofunits")} *
+            {t("CurrentAssets.NumberOfUnits")} *
           </Text>
           <TextInput
-            placeholder={t("CurrentAssets.numberofunits")}
+            placeholder={t("CurrentAssets.NumberOfUnits")}
             keyboardType="numeric"
             value={numberOfUnits}
             onChangeText={handleNumberOfUnitsChange}
@@ -798,10 +798,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
           <ErrorText field="numberOfUnits" />
 
           <Text className="text-gray-600">
-            {t("CurrentAssets.unitprice")} *
+            {t("CurrentAssets.UnitPrice")} *
           </Text>
           <TextInput
-            placeholder={t("CurrentAssets.unitprice")}
+            placeholder={t("CurrentAssets.UnitPrice")}
             keyboardType="decimal-pad"
             value={unitPrice}
             onChangeText={handleUnitPriceChange}
@@ -809,9 +809,9 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
           />
           <ErrorText field="unitPrice" />
 
-          <Text className="text-gray-600">{t("CurrentAssets.totalprice")}</Text>
+          <Text className="text-gray-600">{t("CurrentAssets.TotalPrice")}</Text>
           <TextInput
-            placeholder={t("CurrentAssets.totalprice")}
+            placeholder={t("CurrentAssets.TotalPrice")}
             value={
               totalPrice
                 ? parseFloat(totalPrice).toLocaleString("en-US", {
@@ -825,7 +825,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
           />
 
           <Text className="text-gray-600">
-            {t("CurrentAssets.purchasedate")} *
+            {t("CurrentAssets.PurchaseDate")} *
           </Text>
           <TouchableOpacity
             onPress={() => {
@@ -835,7 +835,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
           >
             <Text className={`flex-1 ${!purchaseDate ? "text-gray-600" : ""}`}>
-              {purchaseDate || t("CurrentAssets.purchasedate")}
+              {purchaseDate || t("CurrentAssets.PurchaseDate")}
             </Text>
             <Icon name="calendar-outline" size={20} color="#6B7280" />
           </TouchableOpacity>
@@ -869,7 +869,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             ))}
 
           <Text className="text-gray-600">
-            {t("CurrentAssets.expiredate")} *
+            {t("CurrentAssets.ExpireDate")} *
           </Text>
           <TouchableOpacity
             onPress={() => {
@@ -879,7 +879,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             className="bg-[#F4F4F4] p-2 pl-4 pr-4 rounded-[30px] h-[50px] justify-center flex-row items-center"
           >
             <Text className={`flex-1 ${!expireDate ? "text-gray-600" : ""}`}>
-              {expireDate || t("CurrentAssets.expiredate")}
+              {expireDate || t("CurrentAssets.ExpireDate")}
             </Text>
             <Icon name="calendar-outline" size={20} color="#6B7280" />
           </TouchableOpacity>
@@ -923,10 +923,10 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             ))}
 
           <Text className="text-gray-600">
-            {t("CurrentAssets.warrentyinmonths")}
+            {t("CurrentAssets.WarrentyInMonths")}
           </Text>
           <TextInput
-            placeholder={t("CurrentAssets.warrentyinmonths")}
+            placeholder={t("CurrentAssets.WarrentyInMonths")}
             value={warranty}
             onChangeText={setWarranty}
             keyboardType="numeric"
@@ -934,22 +934,22 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             editable={false}
           />
 
-          <Text className="text-gray-600">{t("CurrentAssets.status")}</Text>
+          <Text className="text-gray-600">{t("CurrentAssets.Status")}</Text>
           <View className="bg-[#F4F4F4] rounded-3xl h-[50px] p-3 items-center justify-center">
             {status ? (
               <Text
-                className={`font-bold text-lg ${status === t("CurrentAssets.expired")
+                className={`font-bold text-lg ${status === t("CurrentAssets.Expired")
                   ? "text-red-500"
                   : "text-green-500"
                   }`}
               >
-                {status === t("CurrentAssets.expired")
-                  ? t("CurrentAssets.expired")
-                  : t("CurrentAssets.stillvalide")}
+                {status === t("CurrentAssets.Expired")
+                  ? t("CurrentAssets.Expired")
+                  : t("CurrentAssets.Valid")}
               </Text>
             ) : (
               <Text className="text-gray-400 text-lg">
-                {t("CurrentAssets.status")}
+                {t("CurrentAssets.Status")}
               </Text>
             )}
           </View>

@@ -120,7 +120,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
           setAuthToken(token);
         }
       } catch (error) {
-        console.error(t("PublicForum.tokenFetchFailed"), error);
+        console.error(t("PublicForum.SomethingWentWrongPleaseTryAgainlater"), error);
       }
     };
 
@@ -169,7 +169,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
       if (response.data.status === "success") {
         Alert.alert(
           t("Main.Success"),
-          t("ReportComplaint.complaintSuccess"),
+          t("ReportComplaint.ComplaintAddedSuccessfully"),
           [{ text: t("Main.OK") }],
         );
         setIsLoading(false);
@@ -177,7 +177,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
       } else {
         Alert.alert(
           t("ReportComplaint.sorry"),
-          t("ReportComplaint.complaintFailed"),
+          t("ReportComplaint.FailedToAddAComplaintPleaseTryAgain"),
           [{ text: t("Main.OK") }],
         );
         setIsLoading(false);
@@ -232,7 +232,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
               >
                 <View className="flex-row">
                   <Text className="text-2xl font-semibold text-center mb-4 color-[#424242]">
-                    {t("ReportComplaint.Tellus")}
+                    {t("ReportComplaint.TellUsThe")}
                   </Text>
                   <Text className="text-2xl font-semibold text-center mb-4 pl-2 color-[#D72C62]">
                     {t("ReportComplaint.Problem")}
@@ -265,19 +265,19 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
                     >
                       {selectedCategoryLabel
                         ? t(selectedCategoryLabel)
-                        : t("ReportComplaint.selectCategory")}
+                        : t("ReportComplaint.SelectComplaintCategory")}
                     </Text>
                     <AntDesign name="caret-down" size={14} color="#555" />
                   </TouchableOpacity>
                 </View>
 
                 <Text className="text-sm text-gray-600 text-center mb-4">
-                  {t("ReportComplaint.WewilRespond")}
+                  {t("ReportComplaint.WeWillRespondToYouWithinTwoDaysAfterReceivingYourMessage")}
                 </Text>
 
                 <TextInput
                   className="w-full h-52 border border-[#F4F4F4] rounded-lg p-3 bg-[#F4F4F4] mb-8 text-gray-800"
-                  placeholder={t("ReportComplaint.Kindlysubmit")}
+                  placeholder={t("ReportComplaint.KindlySubmitYourComplaintHere")}
                   multiline
                   value={complain}
                   onChangeText={(text) => setComplain(text)}
@@ -304,7 +304,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
           <GlobalSearchModal
             visible={categoryModalVisible}
             onClose={() => setCategoryModalVisible(false)}
-            title={t("ReportComplaint.selectCategory")}
+            title={t("ReportComplaint.SelectComplaintCategory")}
             data={Category.map((item) => ({
               label: t(item.label),
               value: item.value,

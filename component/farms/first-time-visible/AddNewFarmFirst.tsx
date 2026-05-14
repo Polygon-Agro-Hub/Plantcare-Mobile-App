@@ -30,11 +30,11 @@ const AddNewFarmFirst: React.FC = () => {
       >
         <View className="text-center justify-center items-center p-8 mt-2">
           <Text className="text-xl w-[80%] text-center text-white font-semibold">
-            {t("Farms.Create Your First Farm For Free!")}
+            {t("Farms.CreateYourFirstFarmForFree")}
           </Text>
           <View className="w-[80%]">
             <Text className="text-sm text-center text-white mt-2">
-              {t("Farms.Simplify farm management like never before.")}
+              {t("Farms.SimplifyFarmManagementLikeNeverBefore")}
             </Text>
             <Text className="text-sm text-center text-white mt-2">
               {t(
@@ -63,7 +63,7 @@ const AddNewFarmFirst: React.FC = () => {
                       : 14,
               }}
             >
-              {t("Farms.Get Started")}
+              {t("Farms.GetStarted")}
             </Text>
           </TouchableOpacity>
         </View>

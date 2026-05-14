@@ -173,7 +173,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
     if (!cardNumber || !cardHolderName || !cardExpiryDate || !cvv) {
       Alert.alert(
         t("Main.Error"),
-        t("RequestInspectionForm.Please fill all payment details"),
+        t("RequestInspectionForm.PleaseFillAllPaymentDetails"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -183,7 +183,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
       Alert.alert(
         t("Main.Error"),
         t(
-          "RequestInspectionForm.Please enter a valid card expiry date (MM/YY)",
+          "RequestInspectionForm.PleaseEnterAValidCardExpiryDateMMYY",
         ),
         [{ text: t("Main.OK") }],
       );
@@ -194,8 +194,8 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
 
     try {
       Alert.alert(
-        t("RequestInspectionForm.Please wait"),
-        t("RequestInspectionForm.Submitting your request"),
+        t("RequestInspectionForm.PleaseWait"),
+        t("RequestInspectionForm.SubmittingYourRequest..."),
         [{ text: t("Main.OK") }],
       );
 
@@ -213,7 +213,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
             Alert.alert(
               t("Main.Success"),
               t(
-                "RequestInspectionForm.Your inspection request has been submitted successfully",
+                "RequestInspectionForm.YourInspectionRequestHasBeenSubmittedSuccessfully",
               ),
               [
                 {
@@ -228,7 +228,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
             Alert.alert(
               t("Main.Error"),
               t(
-                "RequestInspectionForm.Request Inspection Submitting error, Please try again later",
+                "RequestInspectionForm.RequestInspection Submitting error, Please try again later",
               ),
               [{ text: t("Main.OK") }],
             );
@@ -239,7 +239,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
             t("Main.Error"),
             error.message ||
             t(
-              "RequestInspectionForm.Request Inspection Submitting error, Please try again later",
+              "RequestInspectionForm.RequestInspection Submitting error, Please try again later",
             ),
             [{ text: t("Main.OK") }],
           );
@@ -282,7 +282,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
         className="bg-white"
       >
         <CustomHeader
-          title={t("Farms.Credit Debit Card")}
+          title={t("Farms.CreditDebitCard")}
           showBackButton={true}
           navigation={navigation as any}
           onBackPress={() => navigation.goBack()}
@@ -396,7 +396,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
             }}
           >
             <Text className="text-white text-lg font-semibold text-center">
-              {isProcessing ? t("Farms.Processing") : t("Farms.Pay Now")}
+              {isProcessing ? t("Farms.Processing...") : t("Farms.PayNow")}
             </Text>
           </TouchableOpacity>
         </View>

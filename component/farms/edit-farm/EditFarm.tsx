@@ -175,10 +175,10 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
         throw new Error("Invalid response format");
       }
     } catch (err: any) {
-      let errorMessage = t("Farms.Failed to fetch farm data");
+      let errorMessage = t("Farms.FailedToFetchFarmData");
 
       if (err?.response?.status === 404) {
-        errorMessage = t("Farms.Farm not found. Please check the farm ID.");
+        errorMessage = t("Farms.FarmNotFoundPleaseCheckTheFarmID");
       } else if (err?.response?.status === 401) {
         errorMessage = "Authentication failed. Please login again.";
       } else if (err?.code === "ECONNABORTED") {
@@ -228,13 +228,13 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
 
   const validateForm = useCallback((): boolean => {
     if (!farmName?.trim()) {
-      Alert.alert(t("Main.Sorry"), t("Farms.Please enter a farm name"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterAFarmName"), [
         { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!district) {
-      Alert.alert(t("Main.Sorry"), t("Farms.Please select a district"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseSelectADistrict"), [
         { text: t("Main.OK") },
       ]);
       return false;
@@ -255,7 +255,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
     if (!numberOfStaff?.trim()) {
       Alert.alert(
         t("Main.Sorry"),
-        t("Farms.Please enter the number of staff"),
+        t("Farms.PleaseEnterTheNNumberOfStaff"),
         [{ text: t("Main.OK") }],
       );
       return false;
@@ -275,7 +275,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
     if (staffCount < appUserCount) {
       Alert.alert(
         t("Main.Sorry"),
-        t("Farms.Staff count cannot be less than app user count", {
+        t("Farms.StaffCountCannotBeLessThanAppUserCountAppUsers", {
           appUserCount,
         }),
         [{ text: t("Main.OK") }],
@@ -329,7 +329,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
         },
       );
 
-      Alert.alert(t("Main.Success"), t("Farms.Farm updated successfully"), [
+      Alert.alert(t("Main.Success"), t("Farms.FarmUpdatedSuccessfully"), [
         {
           text: t("Main.OK"),
           onPress: () =>
@@ -344,15 +344,15 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
 
       if (err.response?.data?.message) {
         const fieldMap: [RegExp, string][] = [
-          [/"plotNo"/g, `"${t("Farms.Plot No")}"`],
-          [/"farmName"/g, `"${t("Farms.Farm Name")}"`],
+          [/"plotNo"/g, `"${t("Farms.PlotNo")}"`],
+          [/"farmName"/g, `"${t("Farms.FarmName")}"`],
           [/"district"/g, `"${t("Farms.District")}"`],
-          [/"street"/g, `"${t("Farms.Street Name")}"`],
+          [/"street"/g, `"${t("Farms.StreetName")}"`],
           [/"city"/g, `"${t("Farms.City")}"`],
           [/"extentha"/g, `"${t("Farms.ha")}"`],
           [/"extentac"/g, `"${t("Farms.ac")}"`],
           [/"extentp"/g, `"${t("Farms.p")}"`],
-          [/"staffCount"/g, `"${t("Farms.Number of Staff")}"`],
+          [/"staffCount"/g, `"${t("Farms.NumberOfStaff")}"`],
           [/"farmImage"/g, `"${t("Farms.Farm Image")}"`],
         ];
         errorMessage = fieldMap.reduce(
@@ -445,7 +445,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
         keyboardShouldPersistTaps="handled"
       >
         <CustomHeader
-          title={t("Farms.Edit Farm")}
+          title={t("Farms.EditFarm")}
           navigation={navigation}
           onBackPress={() =>
             navigation.navigate("Main", {
@@ -482,12 +482,12 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
             {/* Farm Name */}
             <View>
               <Text className="text-[#070707] font-medium mb-2">
-                {t("Farms.Farm Name")}
+                {t("Farms.FarmName")}
               </Text>
               <TextInput
                 value={farmName}
                 onChangeText={setFarmName}
-                placeholder={t("Farms.Enter Farm Name Here")}
+                placeholder={t("Farms.EnterFarmNameHere")}
                 placeholderTextColor="#9CA3AF"
                 className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
                 autoCapitalize="words"
@@ -552,7 +552,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
                 >
                   {district
                     ? districtItems.find((d) => d.value === district)?.label
-                    : t("Farms.Select District")}
+                    : t("Farms.SelectDistrict")}
                 </Text>
                 <AntDesign name="caret-down" size={14} color="#5e5d5d" />
               </TouchableOpacity>
@@ -564,7 +564,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
                 data={districtItems}
                 selectedItems={district ? [district] : []}
                 onSelect={(items) => setDistrict(items[0] ?? "")}
-                searchPlaceholder={t("Farms.Search district..")}
+                searchPlaceholder={t("Farms.SearchDistrict")}
                 searchKeys={["label"]}
                 showSearch={true}
                 multiSelect={false}
@@ -574,12 +574,12 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
             {/* Plot No */}
             <View>
               <Text className="text-[#070707] font-medium mb-2">
-                {t("Farms.Plot No")}
+                {t("Farms.PlotNo")}
               </Text>
               <TextInput
                 value={plotNo}
                 onChangeText={setPlotNo}
-                placeholder={t("Farms.Enter Plot Number Here")}
+                placeholder={t("Farms.EnterPlotNumberHere")}
                 placeholderTextColor="#9CA3AF"
                 className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
                 autoCapitalize="characters"
@@ -589,12 +589,12 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
             {/* Street Name */}
             <View>
               <Text className="text-[#070707] font-medium mb-2">
-                {t("Farms.Street Name")}
+                {t("Farms.StreetName")}
               </Text>
               <TextInput
                 value={streetName}
                 onChangeText={setStreetName}
-                placeholder={t("Farms.Enter Street Name")}
+                placeholder={t("Farms.EnterStreetName")}
                 placeholderTextColor="#9CA3AF"
                 className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
                 autoCapitalize="words"
@@ -609,7 +609,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
               <TextInput
                 value={city}
                 onChangeText={setCity}
-                placeholder={t("Farms.Enter City Name")}
+                placeholder={t("Farms.EnterCityName")}
                 placeholderTextColor="#9CA3AF"
                 className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
                 autoCapitalize="words"
@@ -619,14 +619,14 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
             {/* Number of Staff */}
             <View>
               <Text className="text-[#070707] font-medium mb-2">
-                {t("Farms.Number of Staff")} *
+                {t("Farms.NumberOfStaff")} *
               </Text>
               <TextInput
                 value={numberOfStaff}
                 onChangeText={(text) =>
                   setNumberOfStaff(validateNumericInput(text))
                 }
-                placeholder={t("Farms.Enter Number of Staff")}
+                placeholder={t("Farms.EnterNumberOfStaff")}
                 placeholderTextColor="#9CA3AF"
                 className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
                 keyboardType="numeric"
@@ -677,7 +677,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
         <View className="flex-1 justify-center items-center bg-[#667BA54D]">
           <View className="bg-white p-6 rounded-lg w-4/5 max-h-96">
             <Text className="text-lg font-semibold text-center mb-4">
-              {t("Farms.Select Farm Image")}
+              {t("Farms.SelectFarmImage")}
             </Text>
             <ScrollView showsVerticalScrollIndicator={false}>
               <View className="flex-row flex-wrap justify-center">

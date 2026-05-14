@@ -76,7 +76,7 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
     if (isNaN(costNum) || costNum <= 0) {
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("EconomicCostCalendars.TotalCostError") ||
+        t("EconomicCostCalendars.TotalCostMustBeGreaterThan0") ||
         "Total cost must be greater than 0.",
       );
       return;
@@ -84,7 +84,7 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
     if (isNaN(yieldNum) || yieldNum <= 0) {
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("EconomicCostCalendars.TotalYieldError") ||
+        t("EconomicCostCalendars.TotalYieldMustBeGreaterThan0") ||
         "Total yield must be greater than 0.",
       );
       return;
@@ -126,12 +126,12 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
 
         {/* Total Cost Input */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("EconomicCostCalendars.TotalCost") || "Total Cost (Rs.)"} *
+          {t("EconomicCostCalendars.TotalCostRs") || "Total Cost (Rs.)"} *
         </Text>
         <TextInput
           value={formatWithCommas(totalCost)}
           onChangeText={(text) => handleNumberInput(text, setTotalCost, 2)}
-          placeholder={t("EconomicCostCalendars.TypeHere") || "--Type Here--"}
+          placeholder={t("Main.TypeHere") || "--Type Here--"}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"
@@ -139,12 +139,12 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
 
         {/* Total Yield Input */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("EconomicCostCalendars.TotalYield") || "Total Yield (kg)"} *
+          {t("EconomicCostCalendars.TotalYieldKg") || "Total Yield (kg)"} *
         </Text>
         <TextInput
           value={formatWithCommas(totalYield)}
           onChangeText={(text) => handleNumberInput(text, setTotalYield, 2)}
-          placeholder={t("EconomicCostCalendars.TypeHere") || "--Type Here--"}
+          placeholder={t("Main.TypeHere") || "--Type Here--"}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"
@@ -198,7 +198,7 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
 
               {/* Title */}
               <Text className="text-lg font-semibold text-gray-900 mt-1">
-                {t("EconomicCostCalendars.Answer :")}
+                {t("EconomicCostCalendars.Answer")}
               </Text>
 
               {/* Result */}

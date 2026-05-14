@@ -231,12 +231,12 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
           </View>
           <View className="absolute w-full left-0 right-0 items-center justify-center mt-[13%] mb-[10%] ml-[5%]">
             <Text className="text-black">
-              {t("ProjectStatus.Received Total Investment")}
+              {t("ProjectStatus.ReceivedTotalInvestment")}
             </Text>
           </View>
           <View className="w-full left-0 right-0 items-center justify-center mt-[14%] mb-[5%]">
             <Text className="text-3xl font-semibold text-black">
-              {t("ProjectStatus.Rs.")}{" "}
+              {t("ProjectStatus.Rs")}{" "}
               {projectData.receivedInvestment.toLocaleString("en-IN", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
@@ -252,14 +252,14 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
             <View className="flex-row justify-between items-center">
               <View className="flex-1">
                 <Text className="text-xs text-[#000000]">
-                  {t("ProjectStatus.Total Shares")}
+                  {t("ProjectStatus.TotalShares")}
                 </Text>
                 <Text className="text-base font-semibold text-[#000000] mb-2">
                   {projectData.totalShares}
                 </Text>
 
                 <Text className="text-xs text-[#000000]">
-                  {t("ProjectStatus.Shares Left")}
+                  {t("ProjectStatus.SharesLeft")}
                 </Text>
                 <Text className="text-base font-semibold text-[#000000]">
                   {projectData.sharesLeft}
@@ -304,12 +304,12 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
         <View className="flex-row justify-between mb-4">
           <View className="bg-[#FBFAED] border border-[#FFCD01] rounded-xl p-4 flex-1 mr-2">
             <Text className="text-xs text-[#000000] mb-2 text-center">
-              {t("ProjectStatus.Total Investment")}
+              {t("ProjectStatus.TotalInvestment")}
               {"\n"}
               {t("ProjectStatus.Needed")}
             </Text>
             <Text className="text-base font-semibold text-[#000000] text-center">
-              {t("ProjectStatus.Rs.")}{" "}
+              {t("ProjectStatus.Rs")}{" "}
               {projectData.totalInvestmentNeeded.toLocaleString("en-IN", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
@@ -319,12 +319,12 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
 
           <View className="bg-[#FBFAED] border border-[#FFCD01] rounded-xl p-4 flex-1 ml-2">
             <Text className="text-xs text-[#000000] mb-2 text-center">
-              {t("ProjectStatus.Pending Balance")}
+              {t("ProjectStatus.PendingBalance")}
               {"\n"}
-              {t("ProjectStatus.to Receive")}
+              {t("ProjectStatus.ToReceive")}
             </Text>
             <Text className="text-base font-semibold text-[#000000] text-center">
-              {t("ProjectStatus.Rs.")}{" "}
+              {t("ProjectStatus.Rs")}{" "}
               {projectData.pendingBalance.toLocaleString("en-IN", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
@@ -342,7 +342,7 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
             >
               <View className="flex-row justify-between">
                 <Text className="text-base font-semibold text-[#000000]">
-                  {t("ProjectStatus.Rs.")}{" "}
+                  {t("ProjectStatus.Rs")}{" "}
                   {parseFloat(transaction.totInvt).toLocaleString("en-IN", {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,

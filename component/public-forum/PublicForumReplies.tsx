@@ -135,8 +135,8 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
       Alert.alert(
         t("PublicForum.sorry"),
         editingCommentId
-          ? t("PublicForum.updateFailed")
-          : t("PublicForum.commentFailed"),
+          ? t("PublicForum.FailedToUpdatePost")
+          : t("PublicForum.FailedToAddComment"),
       );
     } finally {
       setSubmitting(false);
@@ -194,15 +194,15 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
     setActiveMenuId(null);
 
     Alert.alert(
-      t("PublicForum.delete"),
-      t("PublicForum.Are you sure you want to delete this comment?"),
+      t("Main.Delete"),
+      t("PublicForum.AreYouSureYouWantToDeleteThisComment"),
       [
         {
           text: t("Main.Cancel"),
           style: "cancel",
         },
         {
-          text: t("PublicForum.delete"),
+          text: t("Main.Delete"),
           style: "destructive",
           onPress: async () => {
             try {
@@ -221,7 +221,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
               console.error("Error deleting comment:", error);
               Alert.alert(
                 t("Main.Error"),
-                t("PublicForum.Failed to delete comment"),
+                t("PublicForum.FailedToDDeletedComment"),
                 [{ text: t("Main.OK") }],
               );
             }
@@ -351,7 +351,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                       className="rounded-lg py-2 px-4"
                     >
                       <Text className="text-[16px] text-red-600">
-                        {t("PublicForum.delete")}
+                        {t("Main.Delete")}
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -364,13 +364,13 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
               <View className="flex-1 justify-center items-center py-8">
                 <ActivityIndicator size="large" color="#000" />
                 <Text className="text-gray-500 text-base mt-4">
-                  {t("PublicForum.loadingComments") || "Loading comments..."}
+                  {t("PublicForum.LoadingComments") || "Loading comments..."}
                 </Text>
               </View>
             ) : (
               <View className="flex-1 justify-center items-center py-8">
                 <Text className="text-gray-500 text-lg">
-                  {t("PublicForum.noComments")}
+                  {t("PublicForum.NotHaveAnyCommentYet")}
                 </Text>
               </View>
             )
@@ -393,8 +393,8 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
               onChangeText={setNewComment}
               placeholder={
                 editingCommentId
-                  ? t("PublicForum.Edit your comment...")
-                  : t("PublicForum.writeacomment")
+                  ? t("PublicForum.EditYourComment...")
+                  : t("PublicForum.WriteAComment")
               }
               multiline={true}
               textAlignVertical="top"
@@ -435,7 +435,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                 <Text className="text-white">
                   {editingCommentId
                     ? t("Main.Update")
-                    : t("PublicForum.send")}
+                    : t("PublicForum.Send")}
                 </Text>
               )}
             </TouchableOpacity>

@@ -236,7 +236,7 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
         className="bg-white"
       >
         <CustomHeader
-          title={t("Farms.Credit Debit Card")}
+          title={t("Farms.CreditDebitCard")}
           navigation={navigation}
           onBackPress={() => navigation.navigate("UnloackPro" as any)}
         />
@@ -341,7 +341,7 @@ const PaymentGatewayView: React.FC<PaymentGatewayViewProps> = ({
             disabled={isProcessing}
           >
             <Text className="text-white text-lg font-semibold text-center">
-              {isProcessing ? t("Farms.Processing") : t("Farms.Pay Now")}
+              {isProcessing ? t("Farms.Processing...") : t("Farms.PayNow")}
             </Text>
           </TouchableOpacity>
         </View>

@@ -241,7 +241,7 @@ const FertilizerRequirementCalculatorScreen: React.FC<
           <TextInput
             value={area}
             onChangeText={handleAreaChange}
-            placeholder={t("Calculator.TypeHere")}
+            placeholder={t("Main.TypeHere")}
             placeholderTextColor="#9CA3AF"
             keyboardType="decimal-pad"
             className="flex-1 bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900"
@@ -273,18 +273,18 @@ const FertilizerRequirementCalculatorScreen: React.FC<
                 className="text-sm text-[#287097]"
               >
                 {t("SoilFertilizerCalculators.N")}: {selectedCrop.nitrogen}
-                {t("SoilFertilizerCalculators.kgPerHa")}
+                {t("SoilFertilizerCalculators.KgHa")}
               </Text>
               <Text
                 style={{ marginBottom: 4 }}
                 className="text-sm text-[#287097]"
               >
                 {t("SoilFertilizerCalculators.P")}: {selectedCrop.phosphorus}
-                {t("SoilFertilizerCalculators.kgPerHa")}
+                {t("SoilFertilizerCalculators.KgHa")}
               </Text>
               <Text className="text-sm text-[#287097]">
                 {t("SoilFertilizerCalculators.K")}: {selectedCrop.potassium}
-                {t("SoilFertilizerCalculators.kgPerHa")}
+                {t("SoilFertilizerCalculators.KgHa")}
               </Text>
             </View>
           ) : (
@@ -314,7 +314,7 @@ const FertilizerRequirementCalculatorScreen: React.FC<
         data={crops}
         selectedItems={selectedCropValue ? [selectedCropValue] : []}
         onSelect={handleCropSelect}
-        searchPlaceholder={t("SoilFertilizerCalculators.SearchCrops")}
+        searchPlaceholder={t("SoilFertilizerCalculators.SearchCrops...")}
         noResultsText={t("SoilFertilizerCalculators.NoCropsFound")}
         multiSelect={false}
         searchKeys={["label"]}
@@ -331,7 +331,7 @@ const FertilizerRequirementCalculatorScreen: React.FC<
         }))}
         selectedItems={[areaUnit]}
         onSelect={handleUnitSelect}
-        searchPlaceholder={t("SoilFertilizerCalculators.SearchUnits")}
+        searchPlaceholder={t("SoilFertilizerCalculators.SearchUnits...")}
         noResultsText={t("SoilFertilizerCalculators.NoUnitsFound")}
         multiSelect={false}
         searchKeys={["label"]}

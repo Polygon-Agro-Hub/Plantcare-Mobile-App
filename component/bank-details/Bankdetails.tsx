@@ -112,7 +112,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
   const handleRegister = async () => {
     if (loading) {
-      Alert.alert(t("Main.Loading..."), t("BankDetails.LoadingText"), [
+      Alert.alert(t("Main.Loading..."), t("BankDetails.PleaseWaitDataIsBeingLoaded"), [
         { text: t("Main.OK") },
       ]);
       return;
@@ -140,10 +140,10 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
     if (trimmedAccountNumber !== trimmedConfirmAccountNumber) {
       Alert.alert(
         t("BankDetails.sorry"),
-        t("BankDetails.AccountNumberMismatch"),
+        t("BankDetails.AccountNumbersDoNotMatch"),
         [{ text: t("Main.OK") }],
       );
-      setAccountNumbermisMatchError(t("BankDetails.AccountNumberMismatch"));
+      setAccountNumbermisMatchError(t("BankDetails.AccountNumbersDoNotMatch"));
       return;
     }
 
@@ -181,7 +181,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       if (response.status === 200) {
         Alert.alert(
           t("Main.Success"),
-          t("BankDetails.SuccessfullyRegistered"),
+          t("BankDetails.BankDetailsRegisteredSuccessfully"),
           [{ text: t("Main.OK") }],
         );
         navigation.navigate("Main", { screen: "EngQRcode" });
@@ -189,8 +189,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         setIsLoading(false);
       } else {
         Alert.alert(
-          t("BankDetails.failed"),
-          t("BankDetails.failedToRegister"),
+          t("BankDetails.Failed"),
+          t("BankDetails.FailedToRegisterBankDetailsPleaseTryAgain"),
           [{ text: t("Main.OK") }],
         );
       }
@@ -198,7 +198,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 400) {
           Alert.alert(
-            t("BankDetails.failed"),
+            t("BankDetails.Failed"),
             t("BankDetails.ExistingBankDetails"),
             [{ text: t("Main.OK") }],
           );
@@ -241,7 +241,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       setAccountHolderName(trimmedText);
       setHoldernameNameError("");
     } else {
-      setHoldernameNameError(t("SignUp.Startwithletter"));
+      setHoldernameNameError(t("SignUp.UserNameMustStartWithALetterAndContainNoSpaces"));
     }
   };
 
@@ -256,12 +256,12 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       setAccountNumberError("");
 
       if (confirmAccountNumber !== "" && confirmAccountNumber !== text) {
-        setAccountNumbermisMatchError(t("BankDetails.AccountNumberMismatch"));
+        setAccountNumbermisMatchError(t("BankDetails.AccountNumbersDoNotMatch"));
       } else if (confirmAccountNumber === text) {
         setAccountNumbermisMatchError("");
       }
     } else {
-      setAccountNumberError(t("BankDetails.OnlyNumbers"));
+      setAccountNumberError(t("BankDetails.AccountNumberMustBeANumber"));
     }
   };
 
@@ -271,12 +271,12 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       setAccountNumberError("");
 
       if (text !== "" && accountNumber !== text) {
-        setAccountNumbermisMatchError(t("BankDetails.AccountNumberMismatch"));
+        setAccountNumbermisMatchError(t("BankDetails.AccountNumbersDoNotMatch"));
       } else {
         setAccountNumbermisMatchError("");
       }
     } else {
-      setAccountNumberError(t("BankDetails.OnlyNumbers"));
+      setAccountNumberError(t("BankDetails.AccountNumberMustBeANumber"));
     }
   };
 
@@ -360,10 +360,10 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             className="text-[#070707] -mb-2"
             style={{ fontSize: adjustFontSize(14) }}
           >
-            {t("BankDetails.AccountHolderName")}
+            {t("BankDetails.AccountHoldersName")}
           </Text>
           <TextInput
-            placeholder={t("BankDetails.EnterAccountHolderName")}
+            placeholder={t("BankDetails.EnterAccountHoldersName")}
             className="rounded-3xl h-[50px]"
             placeholderTextColor="#5e5d5d"
             value={accountHolderName}
@@ -400,7 +400,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             {t("BankDetails.AccountNumber")}
           </Text>
           <TextInput
-            placeholder={t("BankDetails.Enter Account Number")}
+            placeholder={t("BankDetails.EnterAccountNumber")}
             placeholderTextColor="#5e5d5d"
             className="pb-2 bg-[#F4F4F4] rounded-3xl h-[50px] p-4"
             keyboardType="number-pad"
@@ -420,10 +420,10 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             className="text-[#070707] -mb-2"
             style={{ fontSize: adjustFontSize(14) }}
           >
-            {t("BankDetails.ConfirmAccountNumber")}
+            {t("BankDetails.ConfirmYourAccountNumber")}
           </Text>
           <TextInput
-            placeholder={t("BankDetails.Re-enter Account Number")}
+            placeholder={t("BankDetails.ReEnterAccountNumber")}
             placeholderTextColor="#5e5d5d"
             className="pb-2 bg-[#F4F4F4] rounded-3xl h-[50px] p-4"
             keyboardType="number-pad"
@@ -474,7 +474,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
                 fontSize: adjustFontSize(14),
               }}
             >
-              {bankName || t("BankDetails.Select Bank Name")}
+              {bankName || t("BankDetails.SelectBankName")}
             </Text>
             <AntDesign name="caret-down" size={14} color="#555" />
           </TouchableOpacity>
@@ -516,7 +516,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
                 fontSize: adjustFontSize(14),
               }}
             >
-              {branchName || t("BankDetails.Select Branch Name")}
+              {branchName || t("BankDetails.SelectBranchName")}
             </Text>
             <AntDesign name="caret-down" size={14} color="#555" />
           </TouchableOpacity>

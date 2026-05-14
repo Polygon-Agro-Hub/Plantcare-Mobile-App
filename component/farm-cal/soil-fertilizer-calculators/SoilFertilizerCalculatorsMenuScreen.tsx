@@ -70,7 +70,7 @@ const SoilFertilizerCalculatorsMenuScreen: React.FC<
   return (
     <View className="flex-1 bg-white">
       <CustomHeader
-        title={t("SoilFertilizerCalculators.Title")}
+        title={t("SoilFertilizerCalculators.Soil&FertilizerCalculators")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}

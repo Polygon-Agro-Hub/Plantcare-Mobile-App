@@ -168,7 +168,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
         } catch (error) {
           Alert.alert(
             t("PublicForum.sorry"),
-            t("PublicForum.failedToRefresh"),
+            t("PublicForum.FailedToRefreshPosts"),
             [{ text: t("Main.OK") }],
           );
         } finally {
@@ -195,7 +195,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
         },
       );
       if (response.status === 200) {
-        Alert.alert(t("Main.Success"), t("PublicForum.postDeleted"), [
+        Alert.alert(t("Main.Success"), t("PublicForum.PostDeleteSuccessful"), [
           {
             text: t("Main.OK"),
           },
@@ -236,7 +236,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
         setPosts([]);
       }
     } catch (error) {
-      Alert.alert(t("PublicForum.sorry"), t("PublicForum.failedToRefresh"), [
+      Alert.alert(t("PublicForum.sorry"), t("PublicForum.FailedToRefreshPosts"), [
         { text: t("Main.OK") },
       ]);
     } finally {
@@ -255,7 +255,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
     try {
       const replyMessage = comment[postId] || "";
       if (replyMessage.trim() === "") {
-        Alert.alert(t("PublicForum.sorry"), t("PublicForum.commentEmpty"), [
+        Alert.alert(t("PublicForum.sorry"), t("PublicForum.CommentCannotBeEmpty"), [
           { text: t("Main.OK") },
         ]);
         return;
@@ -287,7 +287,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
         ),
       );
     } catch (error) {
-      Alert.alert(t("PublicForum.sorry"), t("PublicForum.commentFailed"), [
+      Alert.alert(t("PublicForum.sorry"), t("PublicForum.FailedToAddComment"), [
         { text: t("Main.OK") },
       ]);
     }
@@ -295,8 +295,8 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
 
   const deletePost = (postId: string, postimage: string) => {
     Alert.alert(
-      t("PublicForum.deletePost"),
-      t("PublicForum.confirmDelete"),
+      t("PublicForum.DeletePost"),
+      t("PublicForum.AreYouSureYouWantToDeleteThisPost"),
       [
         {
           text: t("Main.Cancel"),
@@ -304,7 +304,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
           onPress: () => setActiveMenuId(null),
         },
         {
-          text: t("PublicForum.delete"),
+          text: t("Main.Delete"),
           onPress: () => handleDelete(postId, postimage),
         },
       ],
@@ -467,7 +467,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
                         className="text-blue-600 font-semibold"
                         onPress={() => toggleExpandPost(item.id)}
                       >
-                        {t("PublicForum.seeLess") || "See less"}
+                        {t("PublicForum.SeeLess") || "See less"}
                       </Text>
                     </>
                   )}
@@ -482,7 +482,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
                     className="text-blue-600 font-semibold"
                     onPress={() => toggleExpandPost(item.id)}
                   >
-                    {t("PublicForum.seeMore") || "See more"}
+                    {t("PublicForum.SeeMore") || "See more"}
                   </Text>
                 </>
               )}
@@ -514,14 +514,14 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
                 className="text-[#939393] text-sm underline"
                 style={{ marginLeft: dynamicStyles.textMarginLeft }}
               >
-                {item.replyCount} {t("PublicForum.replies")}
+                {item.replyCount} {t("PublicForum.Replies")}
               </Text>
             </TouchableOpacity>
 
             <View className="flex-row items-center relative">
               <TextInput
                 className="flex-1 text-gray-500 bg-[#F2F2F2] text-sm  h-[50px] px-4 pr-10 rounded-3xl"
-                placeholder={t("PublicForum.writeacomment")}
+                placeholder={t("PublicForum.WriteAComment")}
                 value={comment[item.id] || ""}
                 onChangeText={(text) =>
                   setComment((prev) => ({ ...prev, [item.id]: text }))
@@ -565,7 +565,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
               }
               className=" rounded-lg py-2 px-4"
             >
-              <Text className="text-[16px] ">{t("PublicForum.Delete")}</Text>
+              <Text className="text-[16px] ">{t("Main.Delete")}</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -582,7 +582,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
           <View className="flex-row items-center justify-center">
             <ActivityIndicator size="small" color="gray" />
             <Text className="ml-2 text-gray-500">
-              {t("PublicForum.loadingMore")}
+              {t("PublicForum.GettingNewPosts")}
             </Text>
           </View>
         ) : (
@@ -591,7 +591,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
             onPress={loadMorePosts}
           >
             <Text className="text-black font-bold">
-              {t("PublicForum.viewMore")}
+              {t("PublicForum.ViewMore")}
             </Text>
           </TouchableOpacity>
         )}
@@ -606,7 +606,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
         color="black"
       />
       <Text className="text-lg font-semibold">
-        {t("PublicForum.publicforum")}
+        {t("PublicForum.PublicForum")}
       </Text>
     </View>
   ) as any;
@@ -624,7 +624,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
         <View className="flex-row items-center bg-white border rounded-3xl  shadow-sm">
           <TextInput
             className="flex-1 text-gray-600  px-4 h-[50px] text-lg"
-            placeholder={t("PublicForum.search")}
+            placeholder={t("Main.Search...")}
             value={searchText}
             onChangeText={(text) => {
               if (text.trimStart() === "" && text.length > 0) {
@@ -651,7 +651,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
         }}
       >
         <Text className="text-white font-bold text-base ml-2">
-          {t("PublicForum.startanewdiscussion")}
+          {t("PublicForum.StartANewDiscussion")}
         </Text>
         <View className="mr-2 bg-white rounded-lg ">
           <Feather name="plus" size={24} color="black" />
@@ -678,9 +678,9 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
           />
           <Text className="text-gray-500 text-center mt-4 px-6">
             {searchText.trim() !== ""
-              ? t("PublicForum.noSearchResults") ||
+              ? t("PublicForum.NoResultsFoundForYourSearch") ||
               "No results found for your search"
-              : t("PublicForum.noDiscussions") || "No discussions available"}
+              : t("PublicForum.NoDiscussionsAvailable") || "No discussions available"}
           </Text>
         </View>
       ) : (

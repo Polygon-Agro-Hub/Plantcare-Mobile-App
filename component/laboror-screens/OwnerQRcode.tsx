@@ -100,7 +100,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   const downloadQRCode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.Error"), t("QRcode.noQRCodeAvailable"), [
+        Alert.alert(t("Main.Error"), t("QRCode.noQRCodeAvailable"), [
           { text: t("Main.OK") },
         ]);
         return;
@@ -109,8 +109,8 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       const { status } = await MediaLibrary.requestPermissionsAsync();
       if (status !== "granted") {
         Alert.alert(
-          t("QRcode.permissionDeniedTitle"),
-          t("QRcode.permissionDeniedMessage"),
+          t("QRCode.AccessRequired"),
+          t("QRCode.PleaseEnablePermissionToSaveTheQRToYourGallery"),
           [{ text: t("Main.OK") }],
         );
         return;
@@ -122,12 +122,12 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
       const asset = await MediaLibrary.createAssetAsync(response.uri);
       await MediaLibrary.createAlbumAsync("Download", asset, false);
 
-      Alert.alert(t("Main.Success"), t("QRcode.savedToGallery"), [
+      Alert.alert(t("Main.Success"), t("QRCode.YourQRCodeHasBeenSavedToYourGallery"), [
         { text: t("Main.OK") },
       ]);
     } catch (error) {
       console.error("Download error:", error);
-      Alert.alert(t("Main.Error"), t("QRcode.failedSaveQRCode"), [
+      Alert.alert(t("Main.Error"), t("QRCode.UnableTSaveQRCodePleaseTryAgain"), [
         { text: t("Main.OK") },
       ]);
     }
@@ -136,7 +136,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   const shareQRCode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.Error"), t("QRcode.noQRCodeAvailable"), [
+        Alert.alert(t("Main.Error"), t("QRCode.noQRCodeAvailable"), [
           { text: t("Main.OK") },
         ]);
         return;
@@ -152,14 +152,14 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         });
       } else {
         Alert.alert(
-          t("QRcode.sharingUnavailableTitle"),
-          t("QRcode.sharingUnavailableMessage"),
+          t("QRCode.SharingFeatureUnavailable"),
+          t("QRCode.ThisDeviceDoesNotSupportSharingQRCodes"),
           [{ text: t("Main.OK") }],
         );
       }
     } catch (error) {
       console.error("Share error:", error);
-      Alert.alert(t("Main.Error"), t("QRcode.failedShareQRCode"), [
+      Alert.alert(t("Main.Error"), t("QRCode.UnableToShareQRCodePleaseTryAgainLater"), [
         { text: t("Main.OK") },
       ]);
     }
@@ -177,7 +177,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   return (
     <ScrollView className="flex-1 bg-white">
       <CustomHeader
-        title={t("QRcode.QR")}
+        title={t("QRCode.QRCode")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.navigate("LabororEngProfile" as any)}
@@ -198,7 +198,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         ) : (
           <View className="items-center justify-center">
             <Text className=" text-center mt-4 p-2 gap-y-4 max-w-[80%] leading-7 text-gray-500 ">
-              {t("QRcode.NO Owner Qr")}
+              {t("QRCode.YourFarmOwnerHasNotRegisteredForAQRCodeYet")}
             </Text>
           </View>
         )}
@@ -213,7 +213,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
             >
               <MaterialIcons name="download" size={24} color="white" />
               <Text className="text-white text-xs mt-1">
-                {t("QRcode.Download")}
+                {t("QRCode.Download")}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -222,7 +222,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
             >
               <MaterialIcons name="share" size={24} color="white" />
               <Text className="text-white text-xs mt-1">
-                {t("QRcode.Share")}
+                {t("QRCode.Share")}
               </Text>
             </TouchableOpacity>
           </>

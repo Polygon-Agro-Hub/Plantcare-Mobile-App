@@ -358,7 +358,7 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
                 />
               </View>
               <Text className="text-base font-semibold text-gray-800">
-                {t("Manager.Manage Workers")}
+                {t("Manager.ManageWorkers")}
               </Text>
             </View>
             <MaterialCommunityIcons
@@ -371,7 +371,7 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
 
         <View className="px-5 mt-6">
           <Text className="text-center text-sm text-gray-500 font-medium mb-4">
-            {t("Manager.Ongoing Cultivations")}
+            {t("Manager.OngoingCultivations")}
           </Text>
 
           {loading ? (
@@ -391,7 +391,7 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
                 loop
               />
               <Text className="text-center text-gray-600 ">
-                --{t("Manager.No ongoing cultivations found")}--
+                --{t("Manager.NoOngoingCultivationsFound")}--
               </Text>
             </View>
           ) : (

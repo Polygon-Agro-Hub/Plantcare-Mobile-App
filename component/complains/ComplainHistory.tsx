@@ -147,7 +147,7 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
       setSelectedComplain(complain);
       setModalVisible(true);
     } else {
-      Alert.alert(t("ReportHistory.sorry"), t("ReportHistory.NoReply"), [
+      Alert.alert(t("ReportHistory.sorry"), t("ReportHistory.NoResponseYetForThisComplaint"), [
         { text: t("Main.OK") },
       ]);
     }
@@ -161,7 +161,7 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
     >
       <View className="flex-1 bg-[#F9F9FA]">
         <CustomHeader
-          title={t("ReportHistory.Complaints") || "Complaints"}
+          title={t("ReportHistory.ComplaintHistory") || "Complaints"}
           navigation={navigation}
           onBackPress={() => navigation.navigate("EngProfile")}
         />
@@ -177,7 +177,7 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
               loop
             />
             <Text className="text-center text-gray-600 -mt-[30%]">
-              {t("ReportHistory.noData") || "No complaints found"}
+              {t("ReportHistory.NoComplaintsFound") || "No complaints found"}
             </Text>
           </View>
         ) : (
@@ -209,7 +209,7 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
                       onPress={() => handleViewReply(complain)}
                     >
                       <Text className="text-white text-xs">
-                        {t("ReportHistory.View") || "View"}
+                        {t("ReportHistory.ViewResponse") || "View"}
                       </Text>
                     </TouchableOpacity>
                   )}

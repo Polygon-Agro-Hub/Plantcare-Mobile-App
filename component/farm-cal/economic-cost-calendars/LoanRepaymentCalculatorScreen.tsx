@@ -90,7 +90,7 @@ const LoanRepaymentCalculatorScreen: React.FC<LoanRepaymentProps> = ({
     if (isNaN(loanNum) || loanNum <= 0) {
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("EconomicCostCalendars.LoanAmountError") ||
+        t("EconomicCostCalendars.LoanAmountMustBeGreaterThan0") ||
         "Loan amount must be greater than 0.",
       );
       return;
@@ -98,7 +98,7 @@ const LoanRepaymentCalculatorScreen: React.FC<LoanRepaymentProps> = ({
     if (isNaN(rateNum) || rateNum <= 0) {
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("EconomicCostCalendars.InterestRateError") ||
+        t("EconomicCostCalendars.InterestRateMustBeGreaterThan0") ||
         "Interest rate must be greater than 0.",
       );
       return;
@@ -106,7 +106,7 @@ const LoanRepaymentCalculatorScreen: React.FC<LoanRepaymentProps> = ({
     if (isNaN(yearsNum) || yearsNum <= 0) {
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("EconomicCostCalendars.YearsError") ||
+        t("EconomicCostCalendars.NumberOfYearsMustBeGreaterThan0") ||
         "Number of years must be greater than 0.",
       );
       return;
@@ -158,26 +158,26 @@ const LoanRepaymentCalculatorScreen: React.FC<LoanRepaymentProps> = ({
         )}
 
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("EconomicCostCalendars.LoanAmount") || "Loan Amount (Rs.)"} *
+          {t("EconomicCostCalendars.LoanAmountRs") || "Loan Amount (Rs.)"} *
         </Text>
         <TextInput
           value={formatWithCommas(loanAmount)}
           onChangeText={(text) =>
             handleCommaNumberInput(text, setLoanAmount, 2)
           }
-          placeholder={t("EconomicCostCalendars.TypeHere") || "--Type Here--"}
+          placeholder={t("Main.TypeHere") || "--Type Here--"}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"
         />
 
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("EconomicCostCalendars.InterestRate") || "Interest Rate (%)"} *
+          {t("EconomicCostCalendars.InterestRate%") || "Interest Rate (%)"} *
         </Text>
         <TextInput
           value={interestRate}
           onChangeText={(text) => handleNumberInput(text, setInterestRate, 2)}
-          placeholder={t("EconomicCostCalendars.TypeHere") || "--Type Here--"}
+          placeholder={t("Main.TypeHere") || "--Type Here--"}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"
@@ -189,7 +189,7 @@ const LoanRepaymentCalculatorScreen: React.FC<LoanRepaymentProps> = ({
         <TextInput
           value={loanYears}
           onChangeText={(text) => handleNumberInput(text, setLoanYears, 1)}
-          placeholder={t("EconomicCostCalendars.TypeHere") || "--Type Here--"}
+          placeholder={t("Main.TypeHere") || "--Type Here--"}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"

@@ -73,21 +73,21 @@ const SprinklerSystemCalculatorScreen: React.FC<SprinklerSystemProps> = ({
     if (isNaN(SD) || SD <= 0) {
       Alert.alert(
         t("IrrigationWaterCalculators.InvalidInput"),
-        t("IrrigationWaterCalculators.DischargeGreaterThanZero"),
+        t("IrrigationWaterCalculators.SprinklerDischargeMustBeGreaterThan0"),
       );
       return;
     }
     if (isNaN(SS) || SS <= 0) {
       Alert.alert(
         t("IrrigationWaterCalculators.InvalidInput"),
-        t("IrrigationWaterCalculators.SpacingGreaterThanZero"),
+        t("IrrigationWaterCalculators.SprinklerSpacingMustBeGreaterThan0"),
       );
       return;
     }
     if (isNaN(T) || T <= 0) {
       Alert.alert(
         t("IrrigationWaterCalculators.InvalidInput"),
-        t("IrrigationWaterCalculators.TimeGreaterThanZero"),
+        t("IrrigationWaterCalculators.IrrigationTimeMustBeGreaterThan0"),
       );
       return;
     }
@@ -128,12 +128,12 @@ const SprinklerSystemCalculatorScreen: React.FC<SprinklerSystemProps> = ({
 
         {/* Sprinkler Discharge */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("IrrigationWaterCalculators.SprinklerDischarge")} *
+          {t("IrrigationWaterCalculators.SprinklerDischargeLMin")} *
         </Text>
         <TextInput
           value={discharge}
           onChangeText={handleDischargeChange}
-          placeholder={t("IrrigationWaterCalculators.TypeHere")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900"
@@ -141,12 +141,12 @@ const SprinklerSystemCalculatorScreen: React.FC<SprinklerSystemProps> = ({
 
         {/* Sprinkler Spacing */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          {t("IrrigationWaterCalculators.SprinklerSpacing")} *
+          {t("IrrigationWaterCalculators.SprinklerSpacingM")} *
         </Text>
         <TextInput
           value={spacing}
           onChangeText={handleSpacingChange}
-          placeholder={t("IrrigationWaterCalculators.TypeHere")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900"
@@ -154,12 +154,12 @@ const SprinklerSystemCalculatorScreen: React.FC<SprinklerSystemProps> = ({
 
         {/* Irrigation Time */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          {t("IrrigationWaterCalculators.IrrigationTime")} *
+          {t("IrrigationWaterCalculators.IrrigationTimeHr")} *
         </Text>
         <TextInput
           value={irrigationTime}
           onChangeText={handleIrrigationTimeChange}
-          placeholder={t("IrrigationWaterCalculators.TypeHere")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900"

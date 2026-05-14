@@ -414,7 +414,7 @@ export default function CultivatedLandModal({
 
             Alert.alert(
               t("Main.Success"),
-              t("CropCalender.TaskSuccessMessage"),
+              t("CropCalender.TaskStatusUpdatedSuccessfully"),
               [{ text: t("Main.OK") }],
             );
 
@@ -580,7 +580,7 @@ export default function CultivatedLandModal({
             </ScrollView>
 
             <Text className="text-gray-600 text-center mb-4">
-              {t("CropCalender.photo")} {t("CropCalender.yourcultivated")}
+              {t("CropCalender.UploadAPhoto")} {t("CropCalender.OfYourCultivatedLandToReceiveOurGuidance")}
             </Text>
             <TouchableOpacity
               className="bg-black py-2 px-6 rounded-full"
@@ -643,7 +643,7 @@ export default function CultivatedLandModal({
                   disabled={!isButtonEnabled}
                 >
                   <Text className="text-white text-base text-center">
-                    {t("CropCalender.Send")}
+                    {t("CropCalender.Submit")}
                   </Text>
                 </TouchableOpacity>
 

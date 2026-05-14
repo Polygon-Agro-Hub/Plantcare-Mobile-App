@@ -227,7 +227,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   const actionItems = [
     {
       image: require("../../assets/images/dashboard/assets.webp"),
-      label: t("Dashboard.myassets"),
+      label: t("Dashboard.MyAssets"),
       action: () => {
         navigation.navigate("CurrentAssert");
         dispatch(setAssetData({ farmName: "My Assets", farmId: null }));
@@ -236,7 +236,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
     },
     {
       image: require("../../assets/images/dashboard/weather.webp"),
-      label: t("Dashboard.weather"),
+      label: t("Dashboard.Weather"),
       action: handleWeatherNavigation,
       bgColor: "#FFFFFF",
     },
@@ -254,7 +254,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
     },
     {
       image: require("../../assets/images/farm-cal/menu/farmcal.webp"),
-      label: t("TransactionList.Farm Cal"),
+      label: t("TransactionList.FarmCal"),
       action: () => navigation.navigate("FarmCalMenu" as any),
       bgColor: "#FFFFFF",
     },
@@ -278,7 +278,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
     },
     {
       image: require("../../assets/images/dashboard/soil-data.webp"),
-      label: t("Dashboard.Soil Data"),
+      label: t("Dashboard.SoilData"),
       action: () => navigation.navigate("SoilGridsScreen" as any),
       bgColor: "#FFFFFF",
     },
@@ -334,7 +334,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         </TouchableOpacity>
         <View style={{ marginTop: 15, marginLeft: 15, flex: 1 }}>
           <Text style={{ fontSize: 15, fontWeight: "bold", flexWrap: "wrap" }}>
-            {t("Dashboard.hi")},{" "}
+            {t("Dashboard.Hello")},{" "}
             {user ? (
               <Text numberOfLines={1} ellipsizeMode="tail">
                 {user.firstName} ✋🏻
@@ -374,7 +374,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
               marginBottom: 5,
             }}
           >
-            {t("Dashboard.marketplace")}
+            {t("Dashboard.MarketPrice")}
           </Text>
           <View
             style={{
@@ -405,7 +405,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
               marginBottom: 5,
             }}
           >
-            {t("Dashboard.news")}
+            {t("Dashboard.News")}
           </Text>
           <View
             style={{

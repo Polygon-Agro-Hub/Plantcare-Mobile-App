@@ -41,10 +41,10 @@ const RequestReview: React.FC<RequestReviewProps> = ({ navigation, route }) => {
           bgColor: "#FFF9E6",
           title: t("Govicapital.Congratulations"),
           message: t(
-            "Govicapital.Your project has been successfully published on the GoViCapital platform",
+            "Govicapital.YourProjectHasBeenSuccessfullyPublishedOnTheGoViCapitalPlatform",
           ),
           showSecondButton: true,
-          secondButtonText: t("Govicapital.View Project Status"),
+          secondButtonText: t("Govicapital.ViewProjectStatus"),
           animation: "stars",
         };
       case "rejected":
@@ -52,9 +52,9 @@ const RequestReview: React.FC<RequestReviewProps> = ({ navigation, route }) => {
           icon: "alert-circle",
           iconColor: "#FF6B6B",
           bgColor: "#FFE8E8",
-          title: t("Govicapital.Try Again"),
+          title: t("Govicapital.TryAgain"),
           message: t(
-            "Govicapital.We're sorry to inform you that your project request to GoViCapital has been declined",
+            "Govicapital.WereSorryToInformYouThatYourProjectRequestToGoViCapitalHasBeenDeclinedPleaseFeelFreeToTryAgainInTheFuture",
           ),
           showSecondButton: false,
           animation: "warning",
@@ -64,9 +64,9 @@ const RequestReview: React.FC<RequestReviewProps> = ({ navigation, route }) => {
           icon: "clock-outline",
           iconColor: "#FFA500",
           bgColor: "#FFF4E6",
-          title: t("Govicapital.Stay Tuned"),
+          title: t("Govicapital.StayTuned"),
           message: t(
-            "Govicapital.We're taking a closer look at your request and will update you soon",
+            "Govicapital.WereTakingACloserLookAtYourRequestAndWillUpdateYouSoonThisProcessMightTakeADayOrTwo",
           ),
           showSecondButton: false,
           animation: "hourglass",
@@ -92,7 +92,7 @@ const RequestReview: React.FC<RequestReviewProps> = ({ navigation, route }) => {
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
 
       <CustomHeader
-        title={`#${request?.jobId || t("Govicapital.Request Review")}`}
+        title={`#${request?.jobId || t("Govicapital.RequestReview")}`}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
       />
@@ -158,7 +158,7 @@ const RequestReview: React.FC<RequestReviewProps> = ({ navigation, route }) => {
               className="w-full bg-[#ECECEC] rounded-full py-4 mb-3"
             >
               <Text className="text-center text-[#8E8E8E] font-semibold text-base">
-                {t("Govicapital.View Full Details")}
+                {t("Govicapital.ViewFullDetails")}
               </Text>
             </TouchableOpacity>
 

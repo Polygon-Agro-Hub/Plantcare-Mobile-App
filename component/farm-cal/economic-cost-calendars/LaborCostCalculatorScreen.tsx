@@ -72,7 +72,7 @@ const LaborCostCalculatorScreen: React.FC<LaborCostProps> = ({
     if (isNaN(workersNum) || workersNum <= 0) {
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("EconomicCostCalendars.WorkersError") ||
+        t("EconomicCostCalendars.NumberOfWorkersMustBeGreaterThan0") ||
         "Number of workers must be greater than 0.",
       );
       return;
@@ -80,7 +80,7 @@ const LaborCostCalculatorScreen: React.FC<LaborCostProps> = ({
     if (isNaN(wageNum) || wageNum <= 0) {
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("EconomicCostCalendars.WageError") ||
+        t("EconomicCostCalendars.DailyWageMustBeGreaterThan0") ||
         "Daily wage must be greater than 0.",
       );
       return;
@@ -88,7 +88,7 @@ const LaborCostCalculatorScreen: React.FC<LaborCostProps> = ({
     if (isNaN(workdaysNum) || workdaysNum <= 0) {
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("EconomicCostCalendars.WorkdaysError") ||
+        t("EconomicCostCalendars.NumberOfWorkdaysMustBeGreaterThan0") ||
         "Number of workdays must be greater than 0.",
       );
       return;
@@ -140,7 +140,7 @@ const LaborCostCalculatorScreen: React.FC<LaborCostProps> = ({
         <TextInput
           value={numberOfWorkers}
           onChangeText={(text) => handleIntegerInput(text, setNumberOfWorkers)}
-          placeholder={t("EconomicCostCalendars.TypeHere") || "--Type Here--"}
+          placeholder={t("Main.TypeHere") || "--Type Here--"}
           placeholderTextColor="#9CA3AF"
           keyboardType="number-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"
@@ -148,12 +148,12 @@ const LaborCostCalculatorScreen: React.FC<LaborCostProps> = ({
 
         {/* Daily Wage Input - 2 decimal points */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("EconomicCostCalendars.DailyWage") || "Daily Wage (Rs.)"} *
+          {t("EconomicCostCalendars.DailyWageRs") || "Daily Wage (Rs.)"} *
         </Text>
         <TextInput
           value={dailyWage}
           onChangeText={(text) => handleNumberInput(text, setDailyWage, 2)}
-          placeholder={t("EconomicCostCalendars.TypeHere") || "--Type Here--"}
+          placeholder={t("Main.TypeHere") || "--Type Here--"}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"
@@ -167,7 +167,7 @@ const LaborCostCalculatorScreen: React.FC<LaborCostProps> = ({
         <TextInput
           value={workdays}
           onChangeText={(text) => handleNumberInput(text, setWorkdays, 1)}
-          placeholder={t("EconomicCostCalendars.TypeHere") || "--Type Here--"}
+          placeholder={t("Main.TypeHere") || "--Type Here--"}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"

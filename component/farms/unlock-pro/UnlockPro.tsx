@@ -100,9 +100,9 @@ const UnloackPro: React.FC<UnloackProProps> = ({ navigation }) => {
           <View className="text-center justify-center items-center mt-6">
             <View className="flex-row items-center justify-center gap-2">
               <Text className="text-xl font-bold text-[#E5B323]">
-                {t("Farms.UPGRADE TO PRO")}
+                {t("Farms.Upgrade TO PRO")}
               </Text>
-              <Text>{t("Farms.PRO")}</Text>
+              <Text>{t("Farms.Pro")}</Text>
             </View>
 
             <View className="mt-6 items-center">
@@ -131,7 +131,7 @@ const UnloackPro: React.FC<UnloackProProps> = ({ navigation }) => {
                           6
                         </Text>
                         <Text className="text-base text-gray-600 mb-1">
-                          {t("Farms.months")}
+                          {t("Farms.Months")}
                         </Text>
                         <Text className="text-lg text-black font-extrabold">
                           {t("Farms.Rs")} 4,500
@@ -160,7 +160,7 @@ const UnloackPro: React.FC<UnloackProProps> = ({ navigation }) => {
                           12
                         </Text>
                         <Text className="text-base text-yellow-700 mb-1">
-                          {t("Farms.months")}
+                          {t("Farms.Months")}
                         </Text>
                         <Text className="text-lg text-black font-extrabold">
                           {t("Farms.Rs")} 8,500
@@ -184,7 +184,7 @@ const UnloackPro: React.FC<UnloackProProps> = ({ navigation }) => {
                           4
                         </Text>
                         <Text className="text-base text-gray-600 mb-1">
-                          {t("Farms.months")}
+                          {t("Farms.Months")}
                         </Text>
                         <Text className="text-lg text-black font-extrabold">
                           {t("Farms.Rs")} 3,200
@@ -213,12 +213,12 @@ const UnloackPro: React.FC<UnloackProProps> = ({ navigation }) => {
             </LinearGradient>
 
             <Text className="text-lg font-semibold text-black text-center mt-6">
-              {t("Farms.When should I be billed?")}
+              {t("Farms.WhenShouldIBeBilled")}
             </Text>
             <View className="w-[98%] p-2 rounded-lg mt-2 mb-4">
               <Text className="text-sm text-black text-center">
                 {t(
-                  "Farms.Your billing cycle begins on the date you upgrade your plan.",
+                  "Farms.YourBillingCycleBeginsOnTheDateYouUpgradeYourPlan",
                 )}
               </Text>
               <Text className="text-sm text-black text-center">

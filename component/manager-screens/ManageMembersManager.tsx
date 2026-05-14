@@ -334,7 +334,7 @@ const ManageMembersManager = () => {
             <View className="flex-row justify-center items-center flex-wrap px-4 mt-4">
               <Text className="text-sm text-gray-600 mx-1">•</Text>
               <Text className="text-sm text-gray-600 mx-1">
-                {totalStaffCount} {t("Farms.Other Staff")}
+                {totalStaffCount} {t("Farms.OtherStaff")}
               </Text>
             </View>
           </View>
@@ -359,7 +359,7 @@ const ManageMembersManager = () => {
                   {" "}
                   <Text className="text-gray-500 text-base text-center">
                     {" "}
-                    {t("Farms.No supervisors or laborers found for this farm")}
+                    {t("Farms.NoSupervisorsOrLaborersFoundForThisFarm")}
                   </Text>
                 </View>
               </View>

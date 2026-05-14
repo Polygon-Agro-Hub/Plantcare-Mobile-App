@@ -64,7 +64,7 @@ const WeatherClimateCalculatorsMenuScreen: React.FC<
   return (
     <View className="flex-1 bg-white">
       <CustomHeader
-        title={t("WeatherClimateCalculators.Title")}
+        title={t("WeatherClimateCalculators.Weather&ClimateCalculators")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}

@@ -61,14 +61,14 @@ const ColdStorageCalculatorScreen: React.FC<ColdStorageProps> = ({
     if (isNaN(volumeNum) || volumeNum <= 0) {
       Alert.alert(
         t("PostHarvestStorageCalculators.InvalidInput"),
-        t("PostHarvestStorageCalculators.VolumeError"),
+        t("PostHarvestStorageCalculators.StorageVolumeMustBeGreaterThan0"),
       );
       return;
     }
     if (isNaN(powerPerUnitNum) || powerPerUnitNum <= 0) {
       Alert.alert(
         t("PostHarvestStorageCalculators.InvalidInput"),
-        t("PostHarvestStorageCalculators.PowerError"),
+        t("PostHarvestStorageCalculators.CoolingPowerMustBeGreaterThan0"),
       );
       return;
     }
@@ -124,12 +124,12 @@ const ColdStorageCalculatorScreen: React.FC<ColdStorageProps> = ({
 
         {/* Storage Volume Input */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("PostHarvestStorageCalculators.StorageVolume")} *
+          {t("PostHarvestStorageCalculators.StorageVolumeM3")} *
         </Text>
         <TextInput
           value={storageVolume}
           onChangeText={(text) => handleNumberInput(text, setStorageVolume, 2)}
-          placeholder={t("PostHarvestStorageCalculators.TypeHere")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"
@@ -137,14 +137,14 @@ const ColdStorageCalculatorScreen: React.FC<ColdStorageProps> = ({
 
         {/* Cooling Power per Unit Input */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("PostHarvestStorageCalculators.CoolingPowerNeeded")} *
+          {t("PostHarvestStorageCalculators.CoolingPowerNeededWM3")} *
         </Text>
         <TextInput
           value={coolingPowerPerUnit}
           onChangeText={(text) =>
             handleNumberInput(text, setCoolingPowerPerUnit, 2)
           }
-          placeholder={t("PostHarvestStorageCalculators.TypeHere")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"

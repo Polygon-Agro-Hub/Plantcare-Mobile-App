@@ -93,19 +93,19 @@ const ViewInvestmentRequestLetter: React.FC<
         return (
           requestData.cropNameSinhala ||
           requestData.cropNameEnglish ||
-          t("Govicapital.Unknown Crop")
+          t("Govicapital.UnknownCrop")
         );
       case "ta":
       case "tamil":
         return (
           requestData.cropNameTamil ||
           requestData.cropNameEnglish ||
-          t("Govicapital.Unknown Crop")
+          t("Govicapital.UnknownCrop")
         );
       case "en":
       case "english":
       default:
-        return requestData.cropNameEnglish || t("Govicapital.Unknown Crop");
+        return requestData.cropNameEnglish || t("Govicapital.UnknownCrop");
     }
   }
 
@@ -113,15 +113,15 @@ const ViewInvestmentRequestLetter: React.FC<
     const parts = [];
 
     if (extent?.ha && extent.ha > 0) {
-      parts.push(`${extent.ha} ${t("Govicapital.hectare")}`);
+      parts.push(`${extent.ha} ${t("Govicapital.Hectare")}`);
     }
 
     if (extent?.ac && extent.ac > 0) {
-      parts.push(`${extent.ac} ${t("Govicapital.acres")}`);
+      parts.push(`${extent.ac} ${t("Govicapital.Acres")}`);
     }
 
     if (extent?.p && extent.p > 0) {
-      parts.push(`${extent.p} ${t("Govicapital.perches")}`);
+      parts.push(`${extent.p} ${t("Govicapital.Perches")}`);
     }
 
     if (parts.length === 0) {
@@ -131,9 +131,9 @@ const ViewInvestmentRequestLetter: React.FC<
     if (parts.length === 1) {
       return parts[0];
     } else if (parts.length === 2) {
-      return `${parts[0]} ${t("Govicapital.and")} ${parts[1]}`;
+      return `${parts[0]} ${t("Govicapital.And")} ${parts[1]}`;
     } else {
-      return `${parts[0]}, ${parts[1]} ${t("Govicapital.and")} ${parts[2]}`;
+      return `${parts[0]}, ${parts[1]} ${t("Govicapital.And")} ${parts[2]}`;
     }
   };
 
@@ -237,7 +237,7 @@ const ViewInvestmentRequestLetter: React.FC<
       <View className="flex-1 bg-white justify-center items-center">
         <ActivityIndicator size="large" color="#000" />
         <Text className="mt-3 text-gray-600">
-          {t("Govicapital.Loading farmer details")}
+          {t("Govicapital.LoadingFarmerDetails")}
         </Text>
       </View>
     );
@@ -248,7 +248,7 @@ const ViewInvestmentRequestLetter: React.FC<
       <StatusBar barStyle="dark-content" backgroundColor="white" />
 
       <CustomHeader
-        title={t("Govicapital.Request Letter")}
+        title={t("Govicapital.RequestLetter")}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
       />
@@ -260,19 +260,19 @@ const ViewInvestmentRequestLetter: React.FC<
       >
         <View className="bg-white rounded-2xl  mb-5">
           <Text className="text-[#070707] mb-3 text-sm">
-            {t("Govicapital.Dear Sir/Madam,")}
+            {t("Govicapital.DearSirMadam")}
           </Text>
 
           <Text className="text-[#070707] leading-5 mb-3">
             {t(
-              "Govicapital.I, [Farmer's Name], a farmer from [District], am writing to formally request an agricultural investment for the upcoming cultivation season.",
+              "Govicapital.IFarmersNameAFarmerFromDistrictAmWritingToFormallyRequestAnAgriculturalInvestmentForTheUpcomingCultivationSeason",
             )
               .replace("[Farmer's Name]", farmerName)
               .replace("[District]", district)}
           </Text>
 
           <Text className="text-[#070707] leading-5 mb-3">
-            {t("Govicapital.The project details are as follows")}
+            {t("Govicapital.TheProjectDetailsAreAsFollows")}
           </Text>
 
           <View className="mb-3">
@@ -305,10 +305,10 @@ const ViewInvestmentRequestLetter: React.FC<
               <Text className="text-[#070707]">• </Text>
               <View className="flex-1">
                 <Text className="text-[#070707]">
-                  {t("Govicapital.Expected Investment")}:
+                  {t("Govicapital.ExpectedInvestment")}:
                 </Text>
                 <Text className="text-[#070707] mt-1 font-semibold">
-                  {t("Govicapital.Rs.")} {formatCurrency(investment)}
+                  {t("Govicapital.Rs")} {formatCurrency(investment)}
                 </Text>
               </View>
             </View>
@@ -318,7 +318,7 @@ const ViewInvestmentRequestLetter: React.FC<
               <Text className="text-[#070707]">• </Text>
               <View className="flex-1">
                 <Text className="text-[#070707]">
-                  {t("Govicapital.Expected Yield")}:
+                  {t("Govicapital.ExpectedYield")}:
                 </Text>
                 <Text className="text-[#070707] mt-1 font-semibold">
                   {expectedYield || 0} kg
@@ -331,7 +331,7 @@ const ViewInvestmentRequestLetter: React.FC<
               <Text className="text-[#070707]">• </Text>
               <View className="flex-1">
                 <Text className="text-[#070707]">
-                  {t("Govicapital.Cultivation Start Date")}:
+                  {t("Govicapital.CultivationStartDate")}:
                 </Text>
                 <Text className="text-[#070707] mt-1 font-semibold">
                   {startDate ? formatDate(startDate) : "N/A"}
@@ -342,13 +342,13 @@ const ViewInvestmentRequestLetter: React.FC<
 
           <Text className="text-[#070707] leading-5 mb-3">
             {t(
-              "Govicapital.This investment is essential for covering the costs of high-quality seeds, fertilizers, pesticides, irrigation facilities, and labor expenses for the projected year. The expected harvest is sufficient to generate sufficient revenue for the timely repayment of the loan, along with accrued interest.",
+              "Govicapital.ThisInvestmentIsEssentialForCoveringTheCostsOfHighQualitySeedsFertilizersPesticidesIrrigationFacilitiesAndLaborExpensesForTheProjectedYearTheExpectedHarvestIsSufficientToGenerateSufficientRevenueForTheTimelyRepaymentOfTheLoanAlongWithAccruedInterest",
             )}
           </Text>
 
           <Text className="text-[#070707] leading-5 mb-3">
             {t(
-              "Govicapital.I have attached the necessary documents for your perusal.",
+              "Govicapital.IHaveAAttachedTheNecessaryDocumentsForYourPerusal",
             )}
           </Text>
 
@@ -378,13 +378,13 @@ const ViewInvestmentRequestLetter: React.FC<
 
           <Text className="text-gray-700 leading-5 mb-3">
             {t(
-              "Govicapital.I am confident in the success of this venture and request you to kindly approve my loan application. I look forward to your favorable time and consideration.",
+              "Govicapital.IAmConfidentInTheSuccessOfThisVentureAndRequestYouToKindlyApproveMyLoanApplicationILookForwardToYourFavorableTimeAndConsideration",
             )}
           </Text>
 
           <View className="mt-3">
             <Text className="text-gray-700 font-semibold mb-1">
-              {t("Govicapital.Sincerely,")}
+              {t("Govicapital.Sincerely")}
             </Text>
             <Text className="text-gray-700">{farmerName}</Text>
             <Text className="text-gray-700">{contactNumber}</Text>

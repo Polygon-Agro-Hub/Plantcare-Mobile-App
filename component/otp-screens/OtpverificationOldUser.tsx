@@ -118,8 +118,8 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
 
     if (code.length !== 5) {
       Alert.alert(
-        t("OtpVerification.invalidOTP"),
-        t("OtpVerification.completeOTP"),
+        t("OtpVerification.TheOTPYouEnteredIsInvalidPleaseTryAgain"),
+        t("OtpVerification.PleaseEnterTheFullOTPCode"),
         [{ text: t("Main.OK") }],
       );
       setDisabledVerify(false);
@@ -130,7 +130,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
     if (isOtpExpired) {
       Alert.alert(
         t("Main.Error"),
-        t("OtpVerification.otpExpired") ||
+        t("OtpVerification.OTPHasExpiredPleaseResendANewOTP") ||
         "OTP has expired. Please resend a new OTP.",
         [{ text: t("Main.OK") }],
       );
@@ -204,7 +204,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
           setIsLoading(false);
         }
       } else {
-        Alert.alert(t("Main.Error"), t("OtpVerification.invalidOTP"), [
+        Alert.alert(t("Main.Error"), t("OtpVerification.TheOTPYouEnteredIsInvalidPleaseTryAgain"), [
           { text: t("Main.OK") },
         ]);
         setDisabledVerify(false);
@@ -253,18 +253,18 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
         setIsOtpExpired(false);
         Alert.alert(
           t("Main.Success"),
-          t("OtpVerification.otpResent"),
+          t("OtpVerification.OTPHasBeenResentSuccessfully"),
           [{ text: t("Main.OK") }],
         );
         setTimer(240);
         setDisabledResend(true);
       } else {
-        Alert.alert(t("Main.Error"), t("OtpVerification.otpResendFailed"), [
+        Alert.alert(t("Main.Error"), t("OtpVerification.FailedToResendOTPPleaseTryAgain"), [
           { text: t("Main.OK") },
         ]);
       }
     } catch (error) {
-      Alert.alert(t("Main.Error"), t("OtpVerification.otpResendFailed"), [
+      Alert.alert(t("Main.Error"), t("OtpVerification.FailedToResendOTPPleaseTryAgain"), [
         { text: t("Main.OK") },
       ]);
     }
@@ -318,7 +318,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
             {language === "en" ? (
               <View className="mt-6 items-center">
                 <Text className="text-md text-gray-400 text-center">
-                  {t("OtpVerification.OTPCode")}
+                  {t("OtpVerification.PleaseEnterTheOTPCodeSentTo")}
                 </Text>
                 <Text className="text-md text-[#0085FF] text-center pt-4 font-semibold">
                   {mobileNumber}
@@ -330,7 +330,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
                   {mobileNumber}
                 </Text>
                 <Text className="text-md text-[#818080] pt-4 text-center">
-                  {t("OtpVerification.OTPCode")}
+                  {t("OtpVerification.PleaseEnterTheOTPCodeSentTo")}
                 </Text>
               </View>
             )}
@@ -364,7 +364,7 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
             {/* Timer and Resend */}
             <View className="mt-8 items-center">
               <Text className="text-base text-[#707070] text-center">
-                {t("OtpVerification.didntreceived")}
+                {t("OtpVerification.IDidntReceiveTheCode")}
               </Text>
               <TouchableOpacity
                 onPress={disabledResend ? undefined : handleResendOTP}
@@ -379,8 +379,8 @@ const OtpverificationOldUser: React.FC = ({ navigation, route }: any) => {
                   }}
                 >
                   {timer > 0
-                    ? `${t("OtpVerification.Count")} ${formatTime(timer)}`
-                    : `${t("OtpVerification.Resendagain")}`}
+                    ? `${t("OtpVerification.ResendIt")} ${formatTime(timer)}`
+                    : `${t("OtpVerification.ResendAgain")}`}
                 </Text>
               </TouchableOpacity>
             </View>

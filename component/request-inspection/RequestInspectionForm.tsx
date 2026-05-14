@@ -171,7 +171,7 @@ const RequestInspectionForm = () => {
     } catch {
       Alert.alert(
         t("Main.Error"),
-        t("RequestInspectionForm.Failed to fetch services. Please try again."),
+        t("RequestInspectionForm.FailedToFetchServicesPleaseTryAgain"),
         [{ text: t("Main.OK") }],
       );
     } finally {
@@ -214,7 +214,7 @@ const RequestInspectionForm = () => {
     } catch {
       Alert.alert(
         t("Main.Error"),
-        t("RequestInspectionForm.Failed to fetch farms. Please try again."),
+        t("RequestInspectionForm.FailedToFetchFarmsPleaseTryAgain"),
         [{ text: t("Main.OK") }],
       );
     } finally {
@@ -295,7 +295,7 @@ const RequestInspectionForm = () => {
       Alert.alert(
         t("Main.Error"),
         t(
-          "RequestInspectionForm.Failed to fetch farm crops. Please try again.",
+          "RequestInspectionForm.FailedToFetchFarmCropsPleaseTryAgain",
         ),
         [{ text: t("Main.OK") }],
       );
@@ -443,9 +443,9 @@ const RequestInspectionForm = () => {
   const handleAddMore = () => {
     if (!selectedService || !price || !selectedFarm) {
       Alert.alert(
-        t("RequestInspectionForm.Validation Error"),
+        t("RequestInspectionForm.ValidationError"),
         t(
-          "RequestInspectionForm.Please fill in Service, Price, and Farm fields",
+          "RequestInspectionForm.PleaseFillInServicePriceAndFarmFields",
         ),
         [{ text: t("Main.OK") }],
       );
@@ -453,41 +453,41 @@ const RequestInspectionForm = () => {
     }
     if (!plotNo.trim()) {
       Alert.alert(
-        t("RequestInspectionForm.Validation Error"),
-        t("RequestInspectionForm.Please enter Plot Number"),
+        t("RequestInspectionForm.ValidationError"),
+        t("RequestInspectionForm.PleaseEnterPlotNumber"),
         [{ text: t("Main.OK") }],
       );
       return;
     }
     if (!streetName.trim()) {
       Alert.alert(
-        t("RequestInspectionForm.Validation Error"),
-        t("RequestInspectionForm.Please enter Street Name"),
+        t("RequestInspectionForm.ValidationError"),
+        t("RequestInspectionForm.PleaseEnterStreetName"),
         [{ text: t("Main.OK") }],
       );
       return;
     }
     if (!city.trim()) {
       Alert.alert(
-        t("RequestInspectionForm.Validation Error"),
-        t("RequestInspectionForm.Please enter City"),
+        t("RequestInspectionForm.ValidationError"),
+        t("RequestInspectionForm.PleaseEnterCity"),
         [{ text: t("Main.OK") }],
       );
       return;
     }
     if (!selectedDate) {
       Alert.alert(
-        t("RequestInspectionForm.Validation Error"),
-        t("RequestInspectionForm.Please select a schedule date"),
+        t("RequestInspectionForm.ValidationError"),
+        t("RequestInspectionForm.PleaseSelectAScheduleDate"),
         [{ text: t("Main.OK") }],
       );
       return;
     }
     if (selectedCrops.length === 0) {
       Alert.alert(
-        t("RequestInspectionForm.Validation Error"),
+        t("RequestInspectionForm.ValidationError"),
         t(
-          "RequestInspectionForm.Please select at least one crop for inspection",
+          "RequestInspectionForm.PleaseSelectAtLeastOneCropForInspection",
         ),
         [{ text: t("Main.OK") }],
       );
@@ -590,7 +590,7 @@ const RequestInspectionForm = () => {
     if (itemsToUse.length === 0) {
       Alert.alert(
         t("Main.Error"),
-        t("RequestInspectionForm.Please add at least one inspection request"),
+        t("RequestInspectionForm.PleaseAddAtLeastOneInspectionRequest"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -599,7 +599,7 @@ const RequestInspectionForm = () => {
       Alert.alert(
         t("Main.Error"),
         t(
-          "RequestInspectionForm.Please select a date for all inspection requests",
+          "RequestInspectionForm.PleaseSelectADateForAllInspectionRequests",
         ),
         [{ text: t("Main.OK") }],
       );
@@ -666,19 +666,19 @@ const RequestInspectionForm = () => {
 
     if (hasCompleteUnsavedData && addedItems.length === 0) {
       Alert.alert(
-        t("RequestInspectionForm.Unsaved Data"),
+        t("RequestInspectionForm.UnsavedData"),
         t(
-          "RequestInspectionForm.You have unsaved inspection data. Do you want to add this request before proceeding?",
+          "RequestInspectionForm.YouHaveUnsavedInspectionDataDoYouWantToAddThisRequestBeforeProceeding",
         ),
         [
           { text: t("Main.Cancel"), style: "cancel" },
           {
-            text: t("RequestInspectionForm.Proceed Without Adding"),
+            text: t("RequestInspectionForm.ProceedWithoutAdding"),
             onPress: () =>
               Alert.alert(
                 t("RequestInspectionForm.Confirmation"),
                 t(
-                  "RequestInspectionForm.Are you sure you want to discard the current form data?",
+                  "RequestInspectionForm.AreYouSureYouWantToDiscardTheCurrentFormData",
                 ),
                 [
                   { text: t("Main.Cancel"), style: "cancel" },
@@ -691,7 +691,7 @@ const RequestInspectionForm = () => {
               ),
           },
           {
-            text: t("RequestInspectionForm.Add and Proceed"),
+            text: t("RequestInspectionForm.AddAndProceed"),
             onPress: () => {
               const newItem = createItemFromCurrentForm();
               const updated = [...addedItems, newItem];
@@ -709,18 +709,18 @@ const RequestInspectionForm = () => {
 
     if (hasCompleteUnsavedData && addedItems.length > 0) {
       Alert.alert(
-        t("RequestInspectionForm.Unsaved Data"),
+        t("RequestInspectionForm.UnsavedData"),
         t(
-          "RequestInspectionForm.You have unsaved inspection data. Do you want to add this request before proceeding?",
+          "RequestInspectionForm.YouHaveUnsavedInspectionDataDoYouWantToAddThisRequestBeforeProceeding",
         ),
         [
           { text: t("Main.Cancel"), style: "cancel" },
           {
-            text: t("RequestInspectionForm.Proceed Without Adding"),
+            text: t("RequestInspectionForm.ProceedWithoutAdding"),
             onPress: () => proceedToPayment(),
           },
           {
-            text: t("RequestInspectionForm.Add and Proceed"),
+            text: t("RequestInspectionForm.AddAndProceed"),
             onPress: () => {
               const newItem = createItemFromCurrentForm();
               const updated = [...addedItems, newItem];
@@ -739,14 +739,14 @@ const RequestInspectionForm = () => {
     if (addedItems.length === 0) {
       Alert.alert(
         hasPartialData
-          ? t("RequestInspectionForm.Incomplete Data")
+          ? t("RequestInspectionForm.IncompleteData")
           : t("Main.Error"),
         hasPartialData
           ? t(
             "RequestInspectionForm.Please complete all required fields or click 'Add More' to save your current data",
           )
           : t(
-            "RequestInspectionForm.Please add at least one inspection request",
+            "RequestInspectionForm.PleaseAddAtLeastOneInspectionRequest",
           ),
         [{ text: t("Main.OK") }],
       );
@@ -755,9 +755,9 @@ const RequestInspectionForm = () => {
 
     if (hasPartialData && !hasCompleteUnsavedData) {
       Alert.alert(
-        t("RequestInspectionForm.Incomplete Data"),
+        t("RequestInspectionForm.IncompleteData"),
         t(
-          "RequestInspectionForm.You have not completed the form. Please continue editing.",
+          "RequestInspectionForm.YouHaveNotCompletedTheFormPleaseContinueEditing",
         ),
         [{ text: t("Main.Cancel"), style: "cancel" }],
       );
@@ -918,7 +918,7 @@ const RequestInspectionForm = () => {
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
 
       <CustomHeader
-        title={t("RequestInspectionForm.Request Inspection")}
+        title={t("RequestInspectionForm.RequestInspection")}
         showBackButton={true}
         navigation={navigation as any}
         onBackPress={() => navigation.goBack()}
@@ -1019,9 +1019,9 @@ const RequestInspectionForm = () => {
               className={`text-base ${getSelectedLabel(serviceItems, selectedService) ? "text-gray-900" : "text-gray-400"}`}
             >
               {loadingServices
-                ? t("RequestInspectionForm.Loading services")
+                ? t("RequestInspectionForm.LoadingServices...")
                 : getSelectedLabel(serviceItems, selectedService) ||
-                t("RequestInspectionForm.Select Service")}
+                t("RequestInspectionForm.SelectService...")}
             </Text>
             {loadingServices ? (
               <ActivityIndicator size="small" color="#9CA3AF" />
@@ -1033,7 +1033,7 @@ const RequestInspectionForm = () => {
 
         <View className="mb-4">
           <Text className="text-sm text-gray-600 mb-2">
-            {t("RequestInspectionForm.Price")}
+            {t("RequestInspectionForm.PriceRs")}
           </Text>
           <TextInput
             value={price ? formatCurrency(price) : "0.00"}
@@ -1059,9 +1059,9 @@ const RequestInspectionForm = () => {
               className={`text-base ${getSelectedLabel(farmItems, selectedFarm) ? "text-gray-900" : "text-gray-400"}`}
             >
               {loadingFarms
-                ? t("RequestInspectionForm.Loading farms")
+                ? t("RequestInspectionForm.LoadingFarms...")
                 : getSelectedLabel(farmItems, selectedFarm) ||
-                t("RequestInspectionForm.Select Farm")}
+                t("RequestInspectionForm.SelectFarm...")}
             </Text>
             {loadingFarms ? (
               <ActivityIndicator size="small" color="#9CA3AF" />
@@ -1073,24 +1073,24 @@ const RequestInspectionForm = () => {
 
         <View className="mb-4 ">
           <Text className="text-sm text-gray-600 mb-2">
-            {t("RequestInspectionForm.Plot No")}
+            {t("RequestInspectionForm.PlotNo")}
           </Text>
           <TextInput
             value={plotNo}
             onChangeText={(text) => handleTextInputChange(text, setPlotNo)}
-            placeholder={t("RequestInspectionForm.Enter plot number")}
+            placeholder={t("RequestInspectionForm.EnterPlotNumber")}
             className="bg-[#F4F4F4] rounded-3xl h-[50px] p-3 border border-[#F4F4F4] text-gray-900"
           />
         </View>
 
         <View className="mb-4">
           <Text className="text-sm text-gray-600 mb-2">
-            {t("RequestInspectionForm.Street Name")}
+            {t("RequestInspectionForm.StreetName")}
           </Text>
           <TextInput
             value={streetName}
             onChangeText={(text) => handleTextInputChange(text, setStreetName)}
-            placeholder={t("RequestInspectionForm.Enter street name")}
+            placeholder={t("RequestInspectionForm.EnterStreetName")}
             className="bg-[#F4F4F4] rounded-3xl h-[50px] p-3 border border-[#F4F4F4] text-gray-900"
           />
         </View>
@@ -1102,26 +1102,26 @@ const RequestInspectionForm = () => {
           <TextInput
             value={city}
             onChangeText={(text) => handleTextInputChange(text, setCity)}
-            placeholder={t("RequestInspectionForm.Enter city")}
+            placeholder={t("RequestInspectionForm.EnterCity")}
             className="bg-[#F4F4F4] rounded-3xl h-[50px] p-3 border border-[#F4F4F4] text-gray-900"
           />
         </View>
 
         <View className="mb-4 mt-2">
           <Text className="text-sm text-gray-600 mb-3">
-            {t("RequestInspectionForm.Field Visit Request For")}
+            {t("RequestInspectionForm.FieldVisitRequestFor")}
           </Text>
 
           {loadingCrops && selectedFarm ? (
             <Text className="text-gray-500 text-center py-4">
-              {t("RequestInspectionForm.Loading crops")}
+              {t("RequestInspectionForm.LoadingCrops...")}
             </Text>
           ) : farmCrops.length > 0 ? (
             hasUnknownCrop ? (
               <View className="mb-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <Text className="text-yellow-800 text-sm">
                   {t(
-                    "RequestInspectionForm.This farm has no enrolled crops. Please enroll crops before requesting inspection.",
+                    "RequestInspectionForm.ThisFarmHasNoEnrolledCropsPleaseEnrollCropsBeforeRequestingInspection",
                   )}
                 </Text>
               </View>
@@ -1139,7 +1139,7 @@ const RequestInspectionForm = () => {
                     )}
                   </View>
                   <Text className="text-black font-medium">
-                    {t("RequestInspectionForm.All in this Farm")}
+                    {t("RequestInspectionForm.AllInThisFarm")}
                   </Text>
                 </TouchableOpacity>
 
@@ -1163,18 +1163,18 @@ const RequestInspectionForm = () => {
             )
           ) : selectedFarm ? (
             <Text className="text-gray-500 text-center py-4">
-              {t("RequestInspectionForm.No crops found for this farm")}
+              {t("RequestInspectionForm.NoCropsFoundForThisFarm")}
             </Text>
           ) : (
             <Text className="text-gray-500 text-center py-4">
-              {t("RequestInspectionForm.Please select a farm to view crops")}
+              {t("RequestInspectionForm.PleaseSelectAFarmToViewCrops")}
             </Text>
           )}
         </View>
 
         <View className="mb-4">
           <Text className="text-sm text-gray-600 mb-3">
-            {t("RequestInspectionForm.Schedule Date")}
+            {t("RequestInspectionForm.ScheduleDate")}
           </Text>
           {renderCalendar()}
         </View>
@@ -1185,7 +1185,7 @@ const RequestInspectionForm = () => {
             className="bg-gray-800 rounded-3xl h-[50px] justify-center items-center mb-6"
           >
             <Text className="text-white font-semibold text-lg">
-              {t("RequestInspectionForm.Add More")}
+              {t("RequestInspectionForm.AddMore")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -1218,11 +1218,11 @@ const RequestInspectionForm = () => {
       <GlobalSearchModal
         visible={serviceModalVisible}
         onClose={() => setServiceModalVisible(false)}
-        title={t("RequestInspectionForm.Select Service")}
+        title={t("RequestInspectionForm.SelectService...")}
         data={serviceItems}
         selectedItems={selectedService ? [selectedService] : []}
         onSelect={handleServiceSelect}
-        searchPlaceholder={t("RequestInspectionForm.Search services")}
+        searchPlaceholder={t("RequestInspectionForm.SearchServices...")}
         searchKeys={["label"]}
         multiSelect={false}
         showSearch={true}
@@ -1231,11 +1231,11 @@ const RequestInspectionForm = () => {
       <GlobalSearchModal
         visible={farmModalVisible}
         onClose={() => setFarmModalVisible(false)}
-        title={t("RequestInspectionForm.Select Farm")}
+        title={t("RequestInspectionForm.SelectFarm...")}
         data={farmItems}
         selectedItems={selectedFarm ? [selectedFarm] : []}
         onSelect={handleFarmSelect}
-        searchPlaceholder={t("RequestInspectionForm.Select Farm")}
+        searchPlaceholder={t("RequestInspectionForm.SelectFarm...")}
         searchKeys={["label"]}
         multiSelect={false}
         showSearch={true}

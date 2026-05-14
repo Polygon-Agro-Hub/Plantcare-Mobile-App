@@ -190,8 +190,8 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
       Alert.alert(
-        t("EditProfile.permissionDenied"),
-        t("EditProfile.permissionDeniedMessage"),
+        t("EditProfile.PermissionDenied"),
+        t("EditProfile.PleaseAllowAccessToYourGalleryToProceed"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -224,17 +224,17 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     const trimmedLastName = lastName.trim();
 
     if (!trimmedFirstName && !trimmedLastName) {
-      Alert.alert(t("signinForm.sorry"), t("EditProfile.nameError"), [
+      Alert.alert(t("SignIn.sorry"), t("EditProfile.FirstNameAndLastNameCannotBeEmpty"), [
         { text: t("Main.OK") },
       ]);
       return;
     } else if (!trimmedFirstName) {
-      Alert.alert(t("signinForm.sorry"), t("EditProfile.firstNameRequired"), [
+      Alert.alert(t("SignIn.sorry"), t("Inputs.FirstNameRequired"), [
         { text: t("Main.OK") },
       ]);
       return;
     } else if (!trimmedLastName) {
-      Alert.alert(t("signinForm.sorry"), t("EditProfile.lastNameRequired"), [
+      Alert.alert(t("SignIn.sorry"), t("Inputs.LastNameRequired"), [
         { text: t("Main.OK") },
       ]);
       return;
@@ -275,11 +275,11 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
           type: "success",
           position: "bottom",
           text1: t("Main.Success"),
-          text2: t("EditProfile.profileUpdatedSuccess"),
+          text2: t("EditProfile.YourProfileHasBeenUpdatedSuccessfully"),
         });
         Alert.alert(
           t("Main.Success"),
-          t("EditProfile.profileUpdatedSuccess"),
+          t("EditProfile.YourProfileHasBeenUpdatedSuccessfully"),
           [
             {
               text: t("Main.OK"),
@@ -293,7 +293,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
         ]);
       }
     } catch (error) {
-      Alert.alert(t("Main.Error"), t("EditProfile.updateProfileError"), [
+      Alert.alert(t("Main.Error"), t("EditProfile.FailedToUpdateProfileTryAgainLater"), [
         { text: t("Main.OK") },
       ]);
     } finally {
@@ -326,7 +326,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
         >
           <View className="relative">
             <CustomHeader
-              title={t("EditProfile.editProfile")}
+              title={t("EditProfile.EditProfile")}
               navigation={navigation}
               onBackPress={() => navigation.navigate("EngProfile")}
             />
@@ -362,7 +362,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                 <View className="gap-8">
                   <View>
                     <Text className="text-sm text-gray-700 mb-1">
-                      {t("EditProfile.FirstName")}
+                      {t("Inputs.FirstName")}
                     </Text>
                     <View className={inputStyle}>
                       <TextInput
@@ -375,7 +375,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
 
                   <View>
                     <Text className="text-sm text-gray-700 mb-1">
-                      {t("EditProfile.LastName")}
+                      {t("Inputs.LastName")}
                     </Text>
                     <View className={inputStyle}>
                       <TextInput
@@ -388,7 +388,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
 
                   <View>
                     <Text className="text-sm text-gray-700 mb-1">
-                      {t("EditProfile.PhoneNumber")}
+                      {t("Inputs.PhoneNumber")}
                     </Text>
                     <View className={`${inputStyle} text-[#8492A3]`}>
                       <TextInput
@@ -406,7 +406,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
 
                   <View>
                     <Text className="text-sm text-gray-700 mb-1">
-                      {t("EditProfile.NIC")}
+                      {t("Inputs.NICNumber")}
                     </Text>
                     <View className={`${inputStyle} text-[#8492A3]`}>
                       <TextInput value={NICnumber} editable={false} />
@@ -415,12 +415,12 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
 
                   <View>
                     <Text className="text-sm text-gray-700 mb-1">
-                      {t("AddressDetails.Building")}
+                      {t("AddressDetails.BuildingHouseNo")}
                     </Text>
                     <View className={inputStyle}>
                       <TextInput
                         placeholder={
-                          t("AddressDetails.EnterBuildingHouse") ||
+                          t("AddressDetails.EnterHouseBuildingNo") ||
                           "Enter House / Building No"
                         }
                         value={buidingname}
@@ -462,7 +462,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
 
                   <View>
                     <Text className="text-sm text-gray-700 mb-2">
-                      {t("FixedAssets.district")}
+                      {t("FixedAssets.District")}
                     </Text>
                     <TouchableOpacity
                       className="h-[50px] rounded-3xl"
@@ -488,7 +488,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                         {district
                           ? (districtItems.find((d) => d.value === district)
                             ?.label ?? district)
-                          : t("FixedAssets.selectDistrict")}
+                          : t("FixedAssets.SelectDistrict")}
                       </Text>
                       <AntDesign name="down" size={13} color="#555" />
                     </TouchableOpacity>
@@ -529,7 +529,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
                 className="rounded-lg py-3 px-4"
               >
                 <Text className="text-[16px] text-center">
-                  {t("DeleteFarmer.title")}
+                  {t("DeleteFarmer.DeleteMyAccount")}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -540,7 +540,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
       <GlobalSearchModal
         visible={districtModalVisible}
         onClose={() => setDistrictModalVisible(false)}
-        title={t("FixedAssets.selectDistrict")}
+        title={t("FixedAssets.SelectDistrict")}
         data={districtItems}
         selectedItems={district ? [district] : []}
         onSelect={handleDistrictSelect}

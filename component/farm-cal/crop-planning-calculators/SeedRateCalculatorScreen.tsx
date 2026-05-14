@@ -93,7 +93,7 @@ const SeedRateCalculatorScreen: React.FC<SeedRateProps> = ({ navigation }) => {
         console.error("Error fetching crop groups:", error);
         Alert.alert(
           t("Main.Error"),
-          t("CropPlanningCalculators.FetchError"),
+          t("CropPlanningCalculators.FailedToLoadCropsPleaseTryAgain"),
         );
       } finally {
         setCropsLoading(false);
@@ -132,7 +132,7 @@ const SeedRateCalculatorScreen: React.FC<SeedRateProps> = ({ navigation }) => {
     if (isNaN(areaNum) || areaNum <= 0) {
       Alert.alert(
         t("CropPlanningCalculators.InvalidInput"),
-        t("CropPlanningCalculators.AreaError"),
+        t("CropPlanningCalculators.AreaMustBeGreaterThan0"),
       );
       return;
     }
@@ -234,7 +234,7 @@ const SeedRateCalculatorScreen: React.FC<SeedRateProps> = ({ navigation }) => {
           <TextInput
             value={area}
             onChangeText={handleAreaChange}
-            placeholder={t("CropPlanningCalculators.TypeHere")}
+            placeholder={t("Main.TypeHere")}
             placeholderTextColor="#9CA3AF"
             keyboardType="decimal-pad"
             className="flex-1 bg-[#F4F4F4] rounded-3xl h-[50px] px-4 py-4 text-sm text-gray-900"
@@ -256,7 +256,7 @@ const SeedRateCalculatorScreen: React.FC<SeedRateProps> = ({ navigation }) => {
 
         {/* Seed Rate Auto Fill */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          {t("CropPlanningCalculators.RecommendedSeedRate")}
+          {t("CropPlanningCalculators.RecommendedSeedRatePerUnitKgHa")}
         </Text>
         <View className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] justify-center">
           <Text
@@ -287,7 +287,7 @@ const SeedRateCalculatorScreen: React.FC<SeedRateProps> = ({ navigation }) => {
         data={crops}
         selectedItems={selectedCropValue ? [selectedCropValue] : []}
         onSelect={handleCropSelect}
-        searchPlaceholder={t("CropPlanningCalculators.SearchCrops")}
+        searchPlaceholder={t("CropPlanningCalculators.SearchCrops...")}
         noResultsText={t("CropPlanningCalculators.NoCropsFound")}
         multiSelect={false}
         searchKeys={["label"]}
@@ -301,7 +301,7 @@ const SeedRateCalculatorScreen: React.FC<SeedRateProps> = ({ navigation }) => {
         data={AREA_UNITS}
         selectedItems={[areaUnit]}
         onSelect={handleUnitSelect}
-        searchPlaceholder={t("CropPlanningCalculators.SearchUnits")}
+        searchPlaceholder={t("CropPlanningCalculators.SearchUnits...")}
         noResultsText={t("CropPlanningCalculators.NoUnitsFound")}
         multiSelect={false}
         searchKeys={["label"]}

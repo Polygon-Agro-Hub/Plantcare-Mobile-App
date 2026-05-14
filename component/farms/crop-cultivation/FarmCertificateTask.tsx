@@ -206,7 +206,7 @@ const FarmCertificateTask: React.FC = () => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(t("Main.Error"), t("Farms.No authentication token found"));
+        Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"));
         return;
       }
 
@@ -269,7 +269,7 @@ const FarmCertificateTask: React.FC = () => {
       console.error("Error fetching certificate status:", err);
       Alert.alert(
         t("Main.Error"),
-        t("Farms.Failed to fetch certificate tasks"),
+        t("Farms.FailedToFetchCertificateTasks"),
       );
     } finally {
       setLoading(false);
@@ -282,7 +282,7 @@ const FarmCertificateTask: React.FC = () => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(t("Main.Error"), t("Farms.No authentication token found"));
+        Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"));
         return;
       }
 
@@ -311,8 +311,8 @@ const FarmCertificateTask: React.FC = () => {
 
           if (timeDifference > oneHourInMs) {
             Alert.alert(
-              t("Farms.Cannot Remove"),
-              t("Farms.Completion cannot be removed after 1 hour."),
+              t("Farms.CannotRemove"),
+              t("Farms.CompletionCannotBeRemovedAfter1Hour"),
               [{ text: t("Main.OK") }],
             );
             return;
@@ -320,9 +320,9 @@ const FarmCertificateTask: React.FC = () => {
         }
 
         Alert.alert(
-          t("Farms.Confirm Remove"),
+          t("Farms.ConfirmRemove"),
           t(
-            "Farms.This will remove the completion for this task. Are you sure you want to continue?",
+            "Farms.ThisWillRemoveTheCompletionForThisTaskAreYouSureYouWantToContinue",
           ),
           [
             { text: t("Main.Cancel"), style: "cancel" },
@@ -389,7 +389,7 @@ const FarmCertificateTask: React.FC = () => {
           });
         }
 
-        Alert.alert(t("Main.Success"), t("Farms.Task complete successfully!"));
+        Alert.alert(t("Main.Success"), t("Farms.TaskCompleteSuccessfully"));
 
         setUploadingImageForItem(null);
       }
@@ -407,7 +407,7 @@ const FarmCertificateTask: React.FC = () => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(t("Main.Error"), t("Farms.No authentication token found"));
+        Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"));
         setUploadingImageForItem(null);
         return;
       }
@@ -468,7 +468,7 @@ const FarmCertificateTask: React.FC = () => {
       if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error.response?.status === 403) {
-        errorMessage = t("Farms.Completion cannot be removed after 1 hour.");
+        errorMessage = t("Farms.CompletionCannotBeRemovedAfter1Hour");
       } else if (error.response?.status === 404) {
         errorMessage = t("Farms.Item not found");
       }
@@ -487,7 +487,7 @@ const FarmCertificateTask: React.FC = () => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(t("Main.Error"), t("Farms.No authentication token found"));
+        Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"));
         setUploadingImageForItem(null);
         return;
       }
@@ -565,7 +565,7 @@ const FarmCertificateTask: React.FC = () => {
           });
         }
 
-        Alert.alert(t("Main.Success"), t("Farms.Task complete successfully!"));
+        Alert.alert(t("Main.Success"), t("Farms.TaskCompleteSuccessfully"));
 
         setShowCameraModal(false);
         setCapturedImage(null);
@@ -734,14 +734,14 @@ const FarmCertificateTask: React.FC = () => {
                   if (time.months === 0 && time.days === 0) {
                     return (
                       <Text className="text-red-600 text-sm mt-1 font-medium">
-                        {t("Farms.Certificate has expired")}
+                        {t("Farms.CertificateHasExpired")}
                       </Text>
                     );
                   } else {
-                    let validityText = t("Farms.Valid for next") + " ";
+                    let validityText = t("Farms.ValidFor next") + " ";
 
                     if (time.months > 0) {
-                      validityText += `${time.months} ${time.months === 1 ? t("Farms.month") : t("Farms.months")
+                      validityText += `${time.months} ${time.months === 1 ? t("Farms.Month") : t("Farms.Months")
                         }`;
                     }
 
@@ -749,7 +749,7 @@ const FarmCertificateTask: React.FC = () => {
                       if (time.months > 0) {
                         validityText += " ";
                       }
-                      validityText += `${time.days} ${time.days === 1 ? t("Farms.day") : t("Farms.days")
+                      validityText += `${time.days} ${time.days === 1 ? t("Farms.Day") : t("Farms.Days")
                         }`;
                     }
 
@@ -769,7 +769,7 @@ const FarmCertificateTask: React.FC = () => {
                 }`}
             >
               {certificateStatus.isAllCompleted
-                ? t("Farms.All Completed")
+                ? t("Farms.AllCompleted")
                 : t("Farms.Pending")}
             </Text>
           </View>
@@ -898,12 +898,12 @@ const FarmCertificateTask: React.FC = () => {
             </View>
 
             <Text className="text-lg font-semibold mt-2 text-center">
-              {t("Farms.Click a Photo")}
+              {t("Farms.ClickAPhoto")}
             </Text>
 
             <Text className="text-gray-500 text-center mt-2 mb-6">
               {t(
-                "Farms.Please take a photo of the completed work in the field.",
+                "Farms.PleaseTakeAPhotoOfTheCompletedWorkInTheField",
               )}
             </Text>
 
@@ -951,7 +951,7 @@ const FarmCertificateTask: React.FC = () => {
           <View className="flex-1 bg-black/50 justify-center items-center px-6">
             <View className="bg-white rounded-2xl p-8 items-center w-full">
               <Text className="text-lg font-semibold mt-2 text-center">
-                {t("Farms.Click a Photo")}
+                {t("Farms.ClickAPhoto")}
               </Text>
 
               <Image
@@ -964,7 +964,7 @@ const FarmCertificateTask: React.FC = () => {
               <View className="flex justify-center w-full -mt-2">
                 {isButtonEnabled ? (
                   <Text className="text-center font-semibold mb-2">
-                    {t("Farms.Ready To Submit")}
+                    {t("Farms.ReadyToSubmit")}
                   </Text>
                 ) : (
                   <Text className="text-gray-600 text-center mb-2">
@@ -977,7 +977,7 @@ const FarmCertificateTask: React.FC = () => {
                   className="border border-black rounded-3xl py-3 items-center"
                 >
                   <Text className="text-black font-semibold text-base">
-                    {t("Farms.Retake Previous Photo")}
+                    {t("Farms.RetakePreviousPhoto")}
                   </Text>
                 </TouchableOpacity>
 
@@ -1032,7 +1032,7 @@ const FarmCertificateTask: React.FC = () => {
           </TouchableOpacity>
 
           <Text className="text-black text-center px-4 py-2 rounded-lg">
-            {t("Farms.Uploaded")}
+            {t("Farms.UploadedByYou")}
           </Text>
 
           {selectedImage && (

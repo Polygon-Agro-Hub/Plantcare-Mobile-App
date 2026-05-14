@@ -48,7 +48,7 @@ const Verify: React.FC = ({ navigation }: any) => {
                 : { fontSize: 25 },
           ]}
         >
-          {t("Verify.Successfully")}!
+          {t("Verify.SuccessfullyVerified")}!
         </Text>
         <Text
           className="text-[#AAAAAA] mt-5"
@@ -60,7 +60,7 @@ const Verify: React.FC = ({ navigation }: any) => {
                 : { fontSize: 18 },
           ]}
         >
-          {t("Verify.Identity")}
+          {t("Verify.YourIdentityHasBeen")}
         </Text>
         <Text
           className="text-[#AAAAAA]"
@@ -72,7 +72,7 @@ const Verify: React.FC = ({ navigation }: any) => {
                 : { fontSize: 18 },
           ]}
         >
-          {t("Verify.Verified")}
+          {t("Verify.VerifiedSuccessfully")}
         </Text>
       </View>
 

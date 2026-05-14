@@ -76,7 +76,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
     const months = parseInt(timeline);
     return months === 1
       ? t("EarnCertificate.month")
-      : t("EarnCertificate.months");
+      : t("EarnCertificate.Months");
   };
 
   const formatPrice = (price: string) => {
@@ -101,7 +101,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
       if (!token) {
         Alert.alert(
           t("Main.Error"),
-          t("Farms.No authentication token found"),
+          t("Farms.NoAuthenticationTokenFound"),
           [{ text: t("Main.OK") }],
         );
         return;
@@ -128,7 +128,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
         Alert.alert(
           t("Main.Error"),
           t(
-            "EarnCertificate.No certificates available for crops at the moment",
+            "EarnCertificate.NoCertificatesAvailableForCropsAtTheMoment",
           ),
           [{ text: t("Main.OK") }],
         );
@@ -210,7 +210,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
 
       <CustomHeader
-        title={t("EarnCertificate.Earn a Certificate")}
+        title={t("EarnCertificate.EarnACertificate")}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
       />
@@ -218,7 +218,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
         <View className="bg-[#F6F6F6CC] rounded-3xl h-[50px] flex-row items-center px-4">
           <TextInput
             className="flex-1 text-lg text-gray-700"
-            placeholder={t("EarnCertificate.Search")}
+            placeholder={t("Main.Search...")}
             placeholderTextColor="#9CA3AF"
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -232,7 +232,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
           <ActivityIndicator size="large" color="#A07700" />
           <Text className="text-gray-600 mt-4">
             {" "}
-            {t("EarnCertificate.Loading certificates")}
+            {t("EarnCertificate.LoadingCertificates")}
           </Text>
         </View>
       ) : (
@@ -243,7 +243,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
           {filteredCertificates.length > 0 && (
             <Text className="text-center text-gray-600 text-sm mb-3 mr-3 ml-3">
               {t(
-                "EarnCertificate.Just click on the certificate you want to apply for",
+                "EarnCertificate.JustClickOnTheCertificateYouWantToApplyFor",
               )}
             </Text>
           )}
@@ -280,7 +280,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
                     {t("EarnCertificate.Rs")}.{formatPrice(certificate.price)}
                   </Text>
                   <Text className="text-[#6B6B6B] text-sm">
-                    {t("EarnCertificate.Valid for")} {certificate.timeLine}{" "}
+                    {t("EarnCertificate.ValidFor")} {certificate.timeLine}{" "}
                     {getMonthLabel(certificate.timeLine)}
                   </Text>
                 </View>
@@ -341,7 +341,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
                       : { fontSize: 18 },
                 ]}
               >
-                {t("EarnCertificate.Proceed without a certificate")}
+                {t("EarnCertificate.ProceedWithoutACertificate")}
               </Text>
             </TouchableOpacity>
           )}
@@ -378,7 +378,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
               </Text>
             </Text>
             <Text className="text-center text-gray-800 mb-2">
-              {t("EarnCertificate.costs")}{" "}
+              {t("EarnCertificate.Costs")}{" "}
               <Text className="text-[#A07700] font-semibold">
                 {t("EarnCertificate.Rs")}.
                 {formatPrice(selectedCertificate?.price || "0")}
@@ -393,7 +393,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
                 {selectedCertificate?.timeLine}{" "}
                 {getMonthLabel(selectedCertificate?.timeLine || "0")}
               </Text>
-              . {t("EarnCertificate.Do you want to apply for it")}
+              . {t("EarnCertificate.DoYouWantToApplyForIt")}
             </Text>
 
             <View className="flex-row justify-between gap-3">
@@ -412,7 +412,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
                         : { fontSize: 16 },
                   ]}
                 >
-                  {t("Main.Go Back")}
+                  {t("Main.GoBack")}
                 </Text>
               </TouchableOpacity>
 

@@ -44,7 +44,7 @@ const AddNewFarmUnloackPro: React.FC = () => {
                       : { fontSize: 22 },
                 ]}
               >
-                {t("Farms.UPGRADE")}
+                {t("Farms.Upgrade")}
               </Text>
               <Text
                 className="text-base text-[#E2BE00] font-semibold bg-[#FFF5BD] p-1 px-6 rounded-md"
@@ -56,7 +56,7 @@ const AddNewFarmUnloackPro: React.FC = () => {
                       : { fontSize: 14 },
                 ]}
               >
-                {t("Farms.PRO")}
+                {t("Farms.Pro")}
               </Text>
             </View>
 
@@ -71,7 +71,7 @@ const AddNewFarmUnloackPro: React.FC = () => {
               ]}
             >
               {t(
-                "Farms.Please upgrade to PRO membership to access all the features",
+                "Farms.PleaseUpgradeToProMembershipToAccessAllTheFeatures",
               )}
             </Text>
 
@@ -87,7 +87,7 @@ const AddNewFarmUnloackPro: React.FC = () => {
                         : { fontSize: 16 },
                   ]}
                 >
-                  • {t("Farms.Create Unlimited Farms")}
+                  • {t("Farms.CreateUnlimitedFarms")}
                 </Text>
                 <Text
                   className="text-base text-black mt-1 ml-3"
@@ -99,7 +99,7 @@ const AddNewFarmUnloackPro: React.FC = () => {
                         : { fontSize: 16 },
                   ]}
                 >
-                  {t("Farms.Manage as many farms as you need.")}
+                  {t("Farms.ManageAsManyFarmsAsYouNeed")}
                   <Text
                     style={[
                       i18n.language === "si"
@@ -110,7 +110,7 @@ const AddNewFarmUnloackPro: React.FC = () => {
                     ]}
                   >
                     {"\n"}
-                    {t("Farms.No limits & No restrictions.")}
+                    {t("Farms.NoLimits&NoRestrictions")}
                   </Text>
                 </Text>
 
@@ -124,7 +124,7 @@ const AddNewFarmUnloackPro: React.FC = () => {
                         : { fontSize: 16 },
                   ]}
                 >
-                  • {t("Farms.Unlimited Crop Calendars")}
+                  • {t("Farms.UnlimitedCropCalendars")}
                 </Text>
                 <Text
                   className="text-base text-black mt-1 ml-3"
@@ -137,7 +137,7 @@ const AddNewFarmUnloackPro: React.FC = () => {
                   ]}
                 >
                   {t(
-                    "Farms.Plan, track, and optimize all your crop cycles without boundaries.",
+                    "Farms.PlanTrackAndOptimizeAllYourCropCCyclesWithoutBoundaries",
                   )}
                 </Text>
               </View>
@@ -163,7 +163,7 @@ const AddNewFarmUnloackPro: React.FC = () => {
                       : { fontSize: 17 },
                 ]}
               >
-                {t("Farms.Unlock PRO")}
+                {t("Farms.UnlockPro")}
               </Text>
             </TouchableOpacity>
           </LinearGradient>

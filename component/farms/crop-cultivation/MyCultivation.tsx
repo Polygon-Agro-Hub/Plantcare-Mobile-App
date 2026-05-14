@@ -98,7 +98,7 @@ const MyCultivation = () => {
       if (!token) {
         Alert.alert(
           t("Main.Error"),
-          t("Farms.No authentication token found"),
+          t("Farms.NoAuthenticationTokenFound"),
           [{ text: t("Main.OK") }],
         );
         return;
@@ -138,7 +138,7 @@ const MyCultivation = () => {
       if (!token) {
         Alert.alert(
           t("Main.Error"),
-          t("Farms.No authentication token found"),
+          t("Farms.NoAuthenticationTokenFound"),
           [{ text: t("Main.OK") }],
         );
         return;
@@ -347,7 +347,7 @@ const MyCultivation = () => {
                   {t(`District.${farm.district}`)}
                 </Text>
                 <Text className="text-gray-600 text-sm">
-                  {farm.farmCropCount} {t("Farms.crops")}
+                  {farm.farmCropCount} {t("Farms.Crops")}
                 </Text>
               </View>
               {membershipDisplay.isBlocked && (
@@ -380,10 +380,10 @@ const MyCultivation = () => {
       >
         <View style={{ paddingVertical: 20 }}>
           <Text className="text-center font-semibold text-lg">
-            {t("Farms.My Cultivation")}
+            {t("Farms.MyCultivation")}
           </Text>
           <Text className="text-center text-[#5B5B5B] text-sm mt-2">
-            {t("Farms.Select a farm to manage your cultivation and assets")}
+            {t("Farms.SelectAFarmToManageYourCultivationAndAssets")}
           </Text>
         </View>
 
@@ -400,7 +400,7 @@ const MyCultivation = () => {
               />
             </View>
             <Text className="text-center text-gray-600 -mt-[30%]">
-              {t("MyCrop.NoDataFound")}
+              {t("MyCrop.NoFarmCultivationsYet")}
             </Text>
           </View>
         ) : (
