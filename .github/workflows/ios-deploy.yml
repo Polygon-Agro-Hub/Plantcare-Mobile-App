@@ -138,13 +138,12 @@ jobs:
           # restore-keys: |
           #   pods-
           path: |
-            ios/Pods
-            ~/Library/Caches/CocoaPods
-            ~/.cocoapods
-          key: pods-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}
+              ~/Library/Caches/CocoaPods
+              ~/.cocoapods
+          key: pods-v2-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}
           restore-keys: |
-            pods-${{ runner.os }}-
-
+            pods-v2-${{ runner.os }}-
+#
       # ─────────────────────────────────────────────────────────────────
       # STEP 8: Install CocoaPods dependencies
       # Installs native iOS packages defined in the Podfile
@@ -153,6 +152,9 @@ jobs:
       - name: "🍫 Install CocoaPods dependencies"
         run: |
           cd ios
+          # Clear the stale React-Core-prebuilt podspec that causes version conflicts
+          # after React Native upgrades (Expo 54→55 / RN 0.77→0.83)
+          pod cache clean "React-Core-prebuilt" 2>/dev/null || true
           pod install
           cd ..
 
@@ -212,5 +214,3 @@ jobs:
           path: build/GoVi-Transport.ipa
           retention-days: 7
           if-no-files-found: warn   # Don't fail if build never produced an .ipa
-
-
