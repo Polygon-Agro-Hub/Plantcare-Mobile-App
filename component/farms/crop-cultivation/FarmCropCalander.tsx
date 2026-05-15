@@ -461,7 +461,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
 
       if (remainingDays > 0) {
         updateMessage = `${t("CropCalender.YouHave")} ${t(
-          "CropCalender.daysRemaining",
+          "CropCalender.DaysRemainingUntilTheNextUpdate",
           {
             date: remainingDays,
           },
@@ -475,7 +475,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
 
       if (!updateMessage) {
         updateMessage = `${t("CropCalender.YouHave")} ${t(
-          "CropCalender.daysRemaining",
+          "CropCalender.DaysRemainingUntilTheNextUpdate",
           {
             date: remainingDays,
           },
@@ -556,7 +556,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
       ) {
         Alert.alert(
           t("CropCalender.sorry"),
-          t("CropCalender.cannotChangeStatus"),
+          t("CropCalender.YouCantChangeTheStatusBackToPendingOnce1HourHasPassedAfterMarkingItAsCompleted"),
           [{ text: t("Main.OK") }],
         );
       } else if (
@@ -750,8 +750,8 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
 
         const result = await Notifications.scheduleNotificationAsync({
           content: {
-            title: `${t("Notification.Reminder")}`,
-            body: `${t("Notification.CompleteMsg", {
+            title: `${t("Notification.CropTaskUpdate")}`,
+            body: `${t("Notification.YouAreAbleToCompleteTheTaskTomorrow", {
               task: taskId,
             })}`,
             sound: true,
@@ -873,7 +873,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
       if (!location) {
         Alert.alert(
           t("Main.Error"),
-          t("Farms.Unable to fetch location after multiple attempts"),
+          t("Farms.UnableToFetchLocationAAfterMultipleAttemptsPleaseTryAgainLater"),
           [{ text: t("Main.OK") }],
         );
         setLoading(false);
@@ -956,7 +956,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
 
       if (!crop) {
         console.warn("Crop data not found for index:", cropIndex);
-        Alert.alert(t("Main.Error"), t("Farms.Task data not found"), [
+        Alert.alert(t("Main.Error"), t("Farms.TaskDataNotFound"), [
           { text: t("Main.OK") },
         ]);
         return;
@@ -969,7 +969,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
       if (!token) {
         Alert.alert(
           t("Main.Error"),
-          t("Farms.No authentication token found"),
+          t("Farms.NoAuthenticationTokenFound"),
           [{ text: t("Main.OK") }],
         );
         setLoading(false);
@@ -1007,7 +1007,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
       } else {
         Alert.alert(
           t("CropCalender.No Images Yet"),
-          t("CropCalender.No Images Message", { taskIndex: crop.taskIndex }),
+          t("CropCalender.YouHaventUploadedAnyImagesForTaskYetCompleteThisTaskByTakingPhotosToTrackYourProgress", { taskIndex: crop.taskIndex }),
           [
             {
               text: t("Main.OK"),
@@ -1113,7 +1113,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
 
               <View className="px-6 pb-6 ">
                 <Text className="text-center text-base text-gray-800 mb-5">
-                  {t("CropCalender.Buy a Certification for")} {cropName}?
+                  {t("CropCalender.BuyACertificationFor")} {cropName}?
                 </Text>
 
                 <View className="flex-row justify-center gap-4">
@@ -1135,7 +1135,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
                     activeOpacity={0.8}
                   >
                     <Text className="text-white font-semibold text-base">
-                      {t("CropCalender.Buy Now")}
+                      {t("CropCalender.BuyNow")}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -1221,7 +1221,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
               onPress={viewPreviousTasks}
             >
               <Text className="text-black font-bold">
-                {t("CropCalender.viewPrevious")}
+                {t("CropCalender.ViewPrevious")}
               </Text>
             </TouchableOpacity>
           )}
@@ -1348,7 +1348,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
                 >
                   <View className="flex rounded-lg items-center m-4  bg-black">
                     <Text className="text-white p-3 text-center">
-                      {t("CropCalender.viewImage")}
+                      {t("CropCalender.SeePhotos")}
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -1370,7 +1370,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
                   >
                     <View className="flex items-center m-4 -mt-2 rounded-xl bg-black">
                       <Text className="text-white p-3 text-center">
-                        {t("CropCalender.viewVideo")}
+                        {t("CropCalender.WatchVideo")}
                       </Text>
                     </View>
                   </TouchableOpacity>
@@ -1394,7 +1394,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
               onPress={viewNextTasks}
             >
               <Text className="text-black font-bold mt-4">
-                {t("CropCalender.viewMore")}
+                {t("CropCalender.ViewMore")}
               </Text>
             </TouchableOpacity>
           )}

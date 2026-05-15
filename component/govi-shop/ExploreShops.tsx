@@ -155,7 +155,7 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
   return (
     <View className="flex-1 bg-white">
       <CustomHeader
-        title={t("ExploreShops.Title") || "Explore Shops"}
+        title={t("ExploreShops.ExploreShops") || "Explore Shops"}
         showBackButton={true}
         navigation={navigation}
         rightComponent={
@@ -182,7 +182,7 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder={
-              t("ExploreShops.SearchPlaceholder") ||
+              t("ExploreShops.SearchShopsProducts") ||
               "Search Shops / Products..."
             }
             placeholderTextColor="#373737"

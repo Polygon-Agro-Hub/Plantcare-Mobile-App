@@ -77,13 +77,13 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
         }
       } else if (status === "denied") {
         Alert.alert(
-          t("LocationAccess.permissionDenied") || "Permission Denied",
-          t("LocationAccess.enableLocationManually") ||
+          t("LocationAccess.PermissionDenied") || "Permission Denied",
+          t("LocationAccess.LocationAccessIsRequiredPleaseEnableItInSettings") ||
           "Location access is required. Please enable it in settings.",
           [
             { text: t("Main.Cancel"), style: "cancel" },
             {
-              text: t("LocationAccess.openSettings") || "Open Settings",
+              text: t("LocationAccess.OpenSettings") || "Open Settings",
               onPress: () => Linking.openSettings(),
             },
           ],
@@ -93,7 +93,7 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
       console.error("Error requesting location permission:", error);
       Alert.alert(
         t("Main.Error") || "Error",
-        t("LocationAccess.permissionError") ||
+        t("LocationAccess.UnableToRequestLocationPermissionPleaseTryAgain") ||
         "Unable to request location permission. Please try again.",
         [{ text: t("Main.OK") }],
       );
@@ -124,12 +124,12 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
 
           {/* Title */}
           <Text className="text-white font-bold text-center mt-8 text-2xl">
-            {t("LocationAccess.locationAccess") || "Location Access"}
+            {t("LocationAccess.LocationAccess")}
           </Text>
 
           {/* Description */}
           <Text className="text-gray-400 text-center mt-4 px-8 text-base">
-            {t("LocationAccess.enableLocationMessage") ||
+            {t("LocationAccess.EnableLocationAccessToAccessLocationInformation") ||
               "Enable location access to access location information for better service delivery and personalized experience."}
           </Text>
 
@@ -159,8 +159,8 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
                 >
                   <Text className="text-white font-semibold text-center text-lg">
                     {isLoading
-                      ? t("LocationAccess.requesting") || "Requesting..."
-                      : t("LocationAccess.allow") || "Allow"}
+                      ? t("LocationAccess.Requesting...") || "Requesting..."
+                      : t("LocationAccess.Allow") || "Allow"}
                   </Text>
                 </LinearGradient>
               </TouchableOpacity>

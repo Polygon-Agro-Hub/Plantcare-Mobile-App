@@ -70,21 +70,21 @@ const DripIrrigationCalculatorScreen: React.FC<DripIrrigationProps> = ({
     if (isNaN(NP) || NP <= 0) {
       Alert.alert(
         t("IrrigationWaterCalculators.InvalidInput"),
-        t("IrrigationWaterCalculators.NumberGreaterThanZero"),
+        t("IrrigationWaterCalculators.NumberOfPlantsGreaterThan0"),
       );
       return;
     }
     if (isNaN(FR) || FR <= 0) {
       Alert.alert(
         t("IrrigationWaterCalculators.InvalidInput"),
-        t("IrrigationWaterCalculators.FlowRateGreaterThanZero"),
+        t("IrrigationWaterCalculators.FlowRateMustBeGreaterThan0"),
       );
       return;
     }
     if (isNaN(T) || T <= 0) {
       Alert.alert(
         t("IrrigationWaterCalculators.InvalidInput"),
-        t("IrrigationWaterCalculators.TimeGreaterThanZero"),
+        t("IrrigationWaterCalculators.IrrigationTimeMustBeGreaterThan0"),
       );
       return;
     }
@@ -130,7 +130,7 @@ const DripIrrigationCalculatorScreen: React.FC<DripIrrigationProps> = ({
         <TextInput
           value={numberOfPlants}
           onChangeText={handleNumberOfPlantsChange}
-          placeholder={t("IrrigationWaterCalculators.TypeHere")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="numeric"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900"
@@ -138,12 +138,12 @@ const DripIrrigationCalculatorScreen: React.FC<DripIrrigationProps> = ({
 
         {/* Flow Rate Per Dripper */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          {t("IrrigationWaterCalculators.FlowRate")} *
+          {t("IrrigationWaterCalculators.FlowRatePerDripperLHr")} *
         </Text>
         <TextInput
           value={flowRate}
           onChangeText={handleFlowRateChange}
-          placeholder={t("IrrigationWaterCalculators.TypeHere")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900"
@@ -151,12 +151,12 @@ const DripIrrigationCalculatorScreen: React.FC<DripIrrigationProps> = ({
 
         {/* Irrigation Time */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          {t("IrrigationWaterCalculators.IrrigationTimeHours")} *
+          {t("IrrigationWaterCalculators.IrrigationTimeInHours")} *
         </Text>
         <TextInput
           value={irrigationTime}
           onChangeText={handleIrrigationTimeChange}
-          placeholder={t("IrrigationWaterCalculators.TypeHere")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900"

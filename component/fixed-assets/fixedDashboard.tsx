@@ -44,15 +44,15 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
 
   const [assetData, setAssetData] = useState<AssetCategory[]>([
     {
-      category: t("FixedAssets.buildings"),
+      category: t("FixedAssets.BuildingAndInfrastructures"),
       value: "Building and Infrastructures",
     },
-    { category: t("FixedAssets.lands"), value: "Land" },
+    { category: t("FixedAssets.Lands"), value: "Land" },
     {
-      category: t("FixedAssets.machineryVehicles"),
+      category: t("FixedAssets.MachineryVehicles"),
       value: "Machine and Vehicles",
     },
-    { category: t("FixedAssets.toolsEquipments"), value: "Tools" },
+    { category: t("FixedAssets.ToolsAndEquipments"), value: "Tools" },
   ]);
 
   const [loading, setLoading] = useState(false);
@@ -60,21 +60,21 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
   const isFocused = useIsFocused();
 
   const categoryMapping: Record<string, string> = {
-    [t("FixedAssets.buildings")]: "Building and Infrastructures",
-    [t("FixedAssets.lands")]: "Land",
-    [t("FixedAssets.machineryVehicles")]: "Machine and Vehicles",
-    [t("FixedAssets.toolsEquipments")]: "Tools",
+    [t("FixedAssets.BuildingAndInfrastructures")]: "Building and Infrastructures",
+    [t("FixedAssets.Lands")]: "Land",
+    [t("FixedAssets.MachineryVehicles")]: "Machine and Vehicles",
+    [t("FixedAssets.ToolsAndEquipments")]: "Tools",
   };
 
   const getIcon = (category: string) => {
     switch (category) {
-      case t("FixedAssets.buildings"):
+      case t("FixedAssets.BuildingAndInfrastructures"):
         return icon2;
-      case t("FixedAssets.lands"):
+      case t("FixedAssets.Lands"):
         return icon4;
-      case t("FixedAssets.machineryVehicles"):
+      case t("FixedAssets.MachineryVehicles"):
         return icon5;
-      case t("FixedAssets.toolsEquipments"):
+      case t("FixedAssets.ToolsAndEquipments"):
         return icon;
       default:
         return icon3;
@@ -123,15 +123,15 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
   useEffect(() => {
     const translatedAssetData = [
       {
-        category: t("FixedAssets.buildings"),
+        category: t("FixedAssets.BuildingAndInfrastructures"),
         value: "Building and Infrastructures",
       },
-      { category: t("FixedAssets.lands"), value: "Land" },
+      { category: t("FixedAssets.Lands"), value: "Land" },
       {
-        category: t("FixedAssets.machineryVehicles"),
+        category: t("FixedAssets.MachineryVehicles"),
         value: "Machine and Vehicles",
       },
-      { category: t("FixedAssets.toolsEquipments"), value: "Tools" },
+      { category: t("FixedAssets.ToolsAndEquipments"), value: "Tools" },
     ];
     setAssetData(translatedAssetData);
   }, [isFocused]);
@@ -165,7 +165,7 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
   return (
     <View className="flex-1 bg-[#F7F7F7]">
       <CustomHeader
-        title={t("FixedAssets.myAssets")}
+        title={t("FixedAssets.MyAssets")}
         navigation={navigation}
         onBackPress={() => navigation.navigate("Dashboard")}
       />
@@ -176,7 +176,7 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
             onPress={() => navigation.navigate("CurrentAssert")}
           >
             <Text className="text-black font-semibold text-center text-lg">
-              {t("FixedAssets.currentAssets")}
+              {t("FixedAssets.CurrentAssets")}
             </Text>
             <View className="border-t-[2px] border-[#D9D9D9]" />
           </TouchableOpacity>
@@ -184,7 +184,7 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
         <View className="w-1/2">
           <TouchableOpacity>
             <Text className="text-black text-center font-semibold text-lg">
-              {t("FixedAssets.fixedAssets")}
+              {t("FixedAssets.FixedAssets")}
             </Text>
             <View className="border-t-[2px] border-black" />
           </TouchableOpacity>
@@ -254,7 +254,7 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({ navigation }) => {
           </View>
         ) : (
           <View className="flex items-center">
-            <Text>{t("FixedAssets.No assets available")}</Text>
+            <Text>{t("FixedAssets.NoAssetsAvailableAddANewAssetUsingTheButtonAbove")}</Text>
           </View>
         )}
       </ScrollView>

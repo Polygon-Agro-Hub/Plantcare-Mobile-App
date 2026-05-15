@@ -188,7 +188,7 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
   const actionItems = [
     {
       image: require("../../assets/images/dashboard/weather.webp"),
-      label: t("Dashboard.weather"),
+      label: t("Dashboard.Weather"),
       action: handleWeatherNavigation,
       bgColor: "#FFFFFF",
     },
@@ -279,7 +279,7 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
 
         <View style={{ marginTop: 15, marginLeft: 15, flex: 1 }}>
           <Text style={{ fontSize: 15, fontWeight: "bold", flexWrap: "wrap" }}>
-            {t("Dashboard.hi")},{" "}
+            {t("Dashboard.Hello")},{" "}
             {user ? (
               <Text numberOfLines={1} ellipsizeMode="tail">
                 {user.firstName} ✋🏻
@@ -311,7 +311,7 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
       >
         <View style={{ marginLeft: 20, marginTop: 20 }}>
           <Text style={{ fontSize: 15, color: "gray", marginBottom: 5 }}>
-            {t("Dashboard.marketplace")}
+            {t("Dashboard.MarketPrice")}
           </Text>
           <View
             style={{
@@ -336,7 +336,7 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
 
         <View style={{ marginLeft: 20 }}>
           <Text style={{ fontSize: 15, color: "gray", marginBottom: 5 }}>
-            {t("Dashboard.news")}
+            {t("Dashboard.News")}
           </Text>
           <View
             style={{

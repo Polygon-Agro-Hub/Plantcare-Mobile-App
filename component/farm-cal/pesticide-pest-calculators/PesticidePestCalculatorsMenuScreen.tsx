@@ -58,7 +58,7 @@ const PesticidePestCalculatorsMenuScreen: React.FC<
   return (
     <View className="flex-1 bg-white">
       <CustomHeader
-        title={t("PesticidePestCalculators.Title")}
+        title={t("PesticidePestCalculators.Pesticide&PestCalculators")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}

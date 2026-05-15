@@ -164,7 +164,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
     const netState = await NetInfo.fetch();
     if (!netState.isConnected) {
       setLoading(false);
-      Alert.alert(t('WeatherForecast.NoInternet'), t('WeatherForecast.CheckInternet'));
+      Alert.alert(t('WeatherForecast.NoInternet'), t('WeatherForecast.PleaseCheckYourInternetConnectionAndTryAgain'));
       return;
     }
 
@@ -191,7 +191,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
           setForecastData(forecastData.list);
         } else {
           setForecastData([]);
-          Alert.alert(t('WeatherForecast.NoForecastAvailable'));
+          Alert.alert(t('WeatherForecast.NoForecastDataAvailable'));
         }
       } else {
         setWeatherData(null);
@@ -199,7 +199,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
       }
     } catch (error) {
       console.error('Error fetching weather data:', error);
-      Alert.alert(t('WeatherForecast.ErrorFetching'));
+      Alert.alert(t('WeatherForecast.AnErrorOccurredWhileFetchingWeatherData'));
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -289,7 +289,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
       }
     } catch (error) {
       console.error('Error getting current location:', error);
-      Alert.alert(t('Main.Error'), t('WeatherForecast.UnableToFetchLocation'));
+      Alert.alert(t('Main.Error'), t('WeatherForecast.UnableToFetchCurrentLocation'));
     }
   };
 
@@ -410,7 +410,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
       }
     } catch (error) {
       console.error('Error refreshing with current location:', error);
-      Alert.alert(t('Main.Error'), t('WeatherForecast.UnableToFetchLocation'));
+      Alert.alert(t('Main.Error'), t('WeatherForecast.UnableToFetchCurrentLocation'));
     } finally {
       setRefreshing(false);
     }
@@ -542,7 +542,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
                       }}
                     >
                       <Text className="text-l mb-2 font-semibold -mr-3">
-                        {t('WeatherForecast.Days')}
+                        {t('WeatherForecast.5Days')}
                         <AntDesign name="caret-right" size={14} color="black" />
                       </Text>
                     </TouchableOpacity>
@@ -565,7 +565,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
                       contentContainerStyle={{ paddingHorizontal: 10 }}
                     />
                   ) : (
-                    <Text className="text-center text-lg text-gray-700">{t('WeatherForecast.Forecast')}</Text>
+                    <Text className="text-center text-lg text-gray-700">{t('WeatherForecast.NoForecastDataAvailable')}</Text>
                   )}
                 </ScrollView>
               </View>

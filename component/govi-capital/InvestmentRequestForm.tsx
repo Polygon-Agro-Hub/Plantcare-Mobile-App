@@ -258,7 +258,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
   };
 
   const getSelectedCropLabel = () => {
-    if (!selectedCrop) return t("Govicapital.Select Crop");
+    if (!selectedCrop) return t("Govicapital.SelectCrop");
     const crop = items.find((item) => item.value === selectedCrop);
     return crop ? crop.label : selectedCrop;
   };
@@ -375,7 +375,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
       <StatusBar barStyle="dark-content" backgroundColor="white" />
 
       <CustomHeader
-        title={t("Govicapital.Investment Request")}
+        title={t("Govicapital.InvestmentRequest")}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
       />
@@ -408,7 +408,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
         {/* Cultivation Extent - 3 Inputs */}
         <View className="mb-5">
           <Text className="text-[#070707] mb-2">
-            {t("Govicapital.Cultivation Extent")} *
+            {t("Govicapital.CultivationExtent")} *
           </Text>
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center gap-2">
@@ -461,7 +461,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
         {/* Expected Investment */}
         <View className="mb-5">
           <Text className="text-[#070707] mb-2">
-            {t("Govicapital.Expected Investment (Rs.)")} *
+            {t("Govicapital.ExpectedInvestmentRs")} *
           </Text>
           <TextInput
             value={formatWithCommas(investment)}
@@ -480,7 +480,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
         {/* Expected Yield */}
         <View className="mb-5">
           <Text className="text-[#070707] mb-2">
-            {t("Govicapital.Expected Yield (kg)")} *
+            {t("Govicapital.ExpectedYieldkg")} *
           </Text>
           <TextInput
             value={expectedYield}
@@ -488,7 +488,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
               const validatedText = validateNumericInput(text);
               setExpectedYield(validatedText);
             }}
-            placeholder={t("Govicapital.Type here")}
+            placeholder={t("Main.TypeHere")}
             placeholderTextColor="#D1D5DB"
             keyboardType="numeric"
             className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
@@ -498,7 +498,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
         {/* Expected Start Date with Calendar */}
         <View className="mb-5">
           <Text className="text-[#070707] mb-2">
-            {t("Govicapital.Expected Start Date")} *
+            {t("Govicapital.ExpectedStartDate")} *
           </Text>
           <TouchableOpacity
             onPress={() => setShowDatePicker(true)}
@@ -507,7 +507,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             <Text
               className={`text-sm ${startDate ? "text-gray-900" : "text-gray-400"}`}
             >
-              {startDate ? formatDate(startDate) : t("Govicapital.Select Date")}
+              {startDate ? formatDate(startDate) : t("Govicapital.SelectDate")}
             </Text>
             <MaterialCommunityIcons
               name="calendar-blank"
@@ -530,7 +530,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
         {/* NIC Front Image */}
         <View className="mb-5">
           <Text className="text-[#070707] mb-2">
-            {t("Govicapital.NIC Front Image")} *
+            {t("Govicapital.NICFrontImage")} *
           </Text>
 
           {nicFrontImage ? (
@@ -558,8 +558,8 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             <FontAwesome6 name="cloud-arrow-up" size={14} color="black" />
             <Text className="text-gray-900 ml-2 font-medium ">
               {nicFrontImage
-                ? t("Govicapital.Re-upload image")
-                : t("Govicapital.Upload Image")}
+                ? t("Govicapital.ReUploadImage")
+                : t("Govicapital.UploadImage")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -567,7 +567,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
         {/* NIC Back Image */}
         <View className="mb-6">
           <Text className="text-[#070707] mb-2">
-            {t("Govicapital.NIC Back Image")} *
+            {t("Govicapital.NICBackImage")} *
           </Text>
 
           {nicBackImage ? (
@@ -595,8 +595,8 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             <FontAwesome6 name="cloud-arrow-up" size={14} color="black" />
             <Text className="text-gray-900 ml-2 font-medium text-sm">
               {nicBackImage
-                ? t("Govicapital.Re-upload image")
-                : t("Govicapital.Upload Image")}
+                ? t("Govicapital.ReUploadImage")
+                : t("Govicapital.UploadImage")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -604,12 +604,12 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
         {/* Land’s Plot Number */}
         <View className="mb-5">
           <Text className="text-[#070707] mb-2">
-            {t("Govicapital.Land’s Plot Number")} *
+            {t("Govicapital.LandsPlotNumber")} *
           </Text>
           <TextInput
             value={plotNumber}
             onChangeText={(text) => setPlotNumber(text.trimStart())}
-            placeholder={t("Govicapital.plotnumberplaceholder")}
+            placeholder={t("Govicapital.Eg10B")}
             placeholderTextColor="#D1D5DB"
             className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
           />
@@ -618,12 +618,12 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
         {/*Land’s Street Name */}
         <View className="mb-5">
           <Text className="text-[#070707] mb-2">
-            {t("Govicapital.Land’s Street Name")} *
+            {t("Govicapital.LandsStreetName")} *
           </Text>
           <TextInput
             value={streetName}
             onChangeText={(text) => setStreetName(text.trimStart())}
-            placeholder={t("Govicapital.Type here")}
+            placeholder={t("Main.TypeHere")}
             placeholderTextColor="#D1D5DB"
             className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
           />
@@ -632,7 +632,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
         {/* Land’s City */}
         <View className="mb-5">
           <Text className="text-[#070707] mb-2">
-            {t("Govicapital.Land’s City")} *
+            {t("Govicapital.LandsCity")} *
           </Text>
           <TextInput
             value={landCity}
@@ -642,7 +642,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
                 trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
               setLandCity(capitalized);
             }}
-            placeholder={t("Govicapital.Type here")}
+            placeholder={t("Main.TypeHere")}
             placeholderTextColor="#D1D5DB"
             className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
           />
@@ -689,11 +689,11 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
       <GlobalSearchModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        title={t("Govicapital.Select Crop")}
+        title={t("Govicapital.SelectCrop")}
         data={items}
         selectedItems={selectedCrop ? [selectedCrop] : []}
         onSelect={handleCropSelect}
-        searchPlaceholder={t("Govicapital.Search crop")}
+        searchPlaceholder={t("Govicapital.SearchCrop")}
         doneButtonText={t("Govicapital.Done")}
         noResultsText={t("Govicapital.No crops found")}
         multiSelect={false}

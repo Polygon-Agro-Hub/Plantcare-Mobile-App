@@ -238,7 +238,7 @@ const FiveDayForecast: React.FC<FiveDayForecastProps> = ({ navigation }) => {
   return (
     <View className="flex-1 bg-white">
       <CustomHeader
-        title={t('FiveDayForcast.Title')}
+        title={t('FiveDayForcast.5DaysForecast')}
         showBackButton={true}
         navigation={navigation as any}
         onBackPress={() => navigation.navigate('WeatherForecast')}

@@ -100,7 +100,7 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
         console.error("Error fetching crop groups:", error);
         Alert.alert(
           t("Main.Error"),
-          t("CropPlanningCalculators.FetchError"),
+          t("CropPlanningCalculators.FailedToLoadCropsPleaseTryAgain"),
         );
       } finally {
         setCropsLoading(false);
@@ -128,7 +128,7 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
     if (isNaN(areaNum) || areaNum <= 0) {
       Alert.alert(
         t("CropPlanningCalculators.InvalidInput"),
-        t("CropPlanningCalculators.AreaError"),
+        t("CropPlanningCalculators.AreaMustBeGreaterThan0"),
       );
       return;
     }
@@ -224,7 +224,7 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
           <TextInput
             value={area}
             onChangeText={handleAreaChange}
-            placeholder={t("CropPlanningCalculators.TypeHere")}
+            placeholder={t("Main.TypeHere")}
             placeholderTextColor="#9CA3AF"
             keyboardType="decimal-pad"
             className="flex-1 bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900"
@@ -246,7 +246,7 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
 
         {/* Row Spacing Auto Fill */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          {t("CropPlanningCalculators.RowSpacing")}
+          {t("CropPlanningCalculators.RowSpacingCm")}
         </Text>
         <View className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
           <Text
@@ -261,7 +261,7 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
 
         {/* Plant Spacing Auto Fill */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          {t("CropPlanningCalculators.PlantSpacing")}
+          {t("CropPlanningCalculators.PlantSpacingCm")}
         </Text>
         <View className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
           <Text
@@ -294,7 +294,7 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
         data={crops}
         selectedItems={selectedCropValue ? [selectedCropValue] : []}
         onSelect={handleCropSelect}
-        searchPlaceholder={t("CropPlanningCalculators.SearchCrops")}
+        searchPlaceholder={t("CropPlanningCalculators.SearchCrops...")}
         noResultsText={t("CropPlanningCalculators.NoCropsFound")}
         multiSelect={false}
         searchKeys={["label"]}
@@ -308,7 +308,7 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
         data={AREA_UNITS}
         selectedItems={[areaUnit]}
         onSelect={handleUnitSelect}
-        searchPlaceholder={t("CropPlanningCalculators.SearchUnits")}
+        searchPlaceholder={t("CropPlanningCalculators.SearchUnits...")}
         noResultsText={t("CropPlanningCalculators.NoUnitsFound")}
         multiSelect={false}
         searchKeys={["label"]}

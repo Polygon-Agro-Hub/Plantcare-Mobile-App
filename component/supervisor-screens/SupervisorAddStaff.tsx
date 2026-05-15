@@ -111,7 +111,7 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
       setPhoneError(null);
     } catch (error: any) {
       if (error?.response?.status === 409) {
-        setPhoneError(t("Farms.This phone number is already registered"));
+        setPhoneError(t("Farms.ThisPhoneNumberIsAlreadyRegistered"));
       } else if (error?.response) {
         setPhoneError(t("Farms.Error checking phone number"));
       } else {
@@ -134,7 +134,7 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
     setPhoneError(null);
 
     if (digitsOnly.length > 9) {
-      setValidationError(t("Farms.Phone number cannot exceed 9 digits"));
+      setValidationError(t("Farms.PhoneNumberCannotExceed9Digits"));
       setPhoneNumber(formatPhoneInput(text));
       return;
     }
@@ -145,9 +145,9 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
 
     if (formattedText.length > 0) {
       if (formattedText[0] !== "7") {
-        setValidationError(t("Farms.Phone number must start with 7"));
+        setValidationError(t("Farms.PhoneNumberMustStartWith7"));
       } else if (formattedText.length < 9) {
-        setValidationError(t("Farms.Phone number must be exactly 9 digits"));
+        setValidationError(t("Farms.PhoneNumberMustBeExactly9Digits"));
       } else if (!validateSriLankanPhoneNumber(formattedText)) {
         setValidationError(t("Farms.Please enter a valid phone number"));
       }
@@ -192,7 +192,7 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
     } catch (error: any) {
       if (error?.response?.status === 409) {
         setNicDuplicateErrors(
-          t("Farms.This NIC is already used by another staff member"),
+          t("Farms.ThisNICIsAlreadyUsedByAnotherStaffMember"),
         );
       } else {
         setNicDuplicateErrors(null);
@@ -217,7 +217,7 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
 
     if (formattedNic.length > 0) {
       if (!validateSriLankanNic(formattedNic)) {
-        setNicErrors(t("Farms.Please enter a valid Sri Lankan NIC"));
+        setNicErrors(t("Farms.PleaseEnterAValidSriLankanNIC"));
       } else {
         setNicErrors(null);
         debouncedCheckNic(formattedNic);
@@ -259,25 +259,25 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
 
   const validateForm = () => {
     if (!firstName.trim()) {
-      Alert.alert(t("Main.Sorry"), t("Farms.Please enter first name"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterFirstName"), [
         { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!lastName.trim()) {
-      Alert.alert(t("Main.Sorry"), t("Farms.Please enter last name"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterLastName"), [
         { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!phoneNumber.trim()) {
-      Alert.alert(t("Main.Sorry"), t("Farms.Please enter phone number"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterPhoneNumber"), [
         { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!nic.trim()) {
-      Alert.alert(t("Main.Sorry"), t("Farms.Please enter NIC"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterNIC"), [
         { text: t("Main.OK") },
       ]);
       return false;
@@ -285,9 +285,9 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
     if (!validateSriLankanPhoneNumber(phoneNumber)) {
       const msg =
         phoneNumber.length !== 9
-          ? t("Farms.Phone number must be exactly 9 digits")
+          ? t("Farms.PhoneNumberMustBeExactly9Digits")
           : phoneNumber[0] !== "7"
-            ? t("Farms.Phone number must start with 7")
+            ? t("Farms.PhoneNumberMustStartWith7")
             : t("Farms.Please enter a valid phone number");
       Alert.alert(t("Main.Sorry"), msg, [{ text: t("Main.OK") }]);
       return false;
@@ -307,7 +307,7 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
     if (nicErrors || !validateSriLankanNic(nic)) {
       Alert.alert(
         t("Main.Sorry"),
-        t("Farms.Please enter a valid Sri Lankan NIC"),
+        t("Farms.PleaseEnterAValidSriLankanNIC"),
         [{ text: t("Main.OK") }],
       );
       return false;
@@ -347,12 +347,12 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
       );
       Alert.alert(
         t("Main.Success"),
-        t("Farms.Staff members has been added successfully!"),
+        t("Farms.StaffMembersHasBeenAddedSuccessfully"),
         [{ text: t("Main.OK"), onPress: () => navigation.goBack() }],
       );
     } catch (error: any) {
       let errorMessage = t(
-        "Farms.Failed to add staff member. Please try again.",
+        "Farms.FailedToAddStaffMemberPleaseTryAgain",
       );
       if (error.response) {
         errorMessage = error.response.data?.message || errorMessage;
@@ -361,11 +361,11 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
           error.response.data?.message?.includes("NIC")
         ) {
           errorMessage = t(
-            "Farms.This NIC is already used by another staff member",
+            "Farms.ThisNICIsAlreadyUsedByAnotherStaffMember",
           );
         }
       } else if (error.request) {
-        errorMessage = t("Farms.Network error. Please check your connection.");
+        errorMessage = t("Farms.NetworkErrorPleaseCheckYourConnection");
       }
       Alert.alert("Error", errorMessage, [{ text: t("Main.OK") }]);
     } finally {
@@ -409,7 +409,7 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
         keyboardShouldPersistTaps="handled"
       >
         <CustomHeader
-          title={t("Farms.Add New Staff Member")}
+          title={t("Farms.AddNewStaffMember")}
           showBackButton={true}
           navigation={navigation}
           onBackPress={() => navigation.goBack()}
@@ -429,11 +429,11 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
           {/* First Name */}
           <View className="gap-2">
             <Text className="text-gray-900 text-base">
-              {t("Farms.First Name")}
+              {t("Inputs.FirstName")}
             </Text>
             <TextInput
               className="bg-gray-100 px-4 py-3 rounded-full text-base text-gray-700"
-              placeholder={t("Farms.Enter First Name")}
+              placeholder={t("Farms.EnterFirstName")}
               placeholderTextColor="#9CA3AF"
               value={firstName}
               onChangeText={setFirstName}
@@ -445,11 +445,11 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
           {/* Last Name */}
           <View className="gap-2">
             <Text className="text-gray-900 text-base">
-              {t("Farms.Last Name")}
+              {t("Inputs.LastName")}
             </Text>
             <TextInput
               className="bg-gray-100 px-4 py-3 rounded-full text-base text-gray-700"
-              placeholder={t("Farms.Enter Last Name")}
+              placeholder={t("Farms.EnterLastName")}
               placeholderTextColor="#9CA3AF"
               value={lastName}
               onChangeText={setLastName}
@@ -461,7 +461,7 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
           {/* Phone Number */}
           <View className="gap-2">
             <Text className="text-gray-900 text-base">
-              {t("Farms.Phone Number")}
+              {t("Farms.PhoneNumber")}
             </Text>
             <View className="flex-row items-center gap-2">
               <TouchableOpacity
@@ -496,7 +496,7 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
               <View className="flex-row items-center mt-1 ml-3">
                 <ActivityIndicator size="small" color="#2563EB" />
                 <Text className="text-blue-600 text-sm ml-2">
-                  {t("Farms.Checking number...")}
+                  {t("Farms.CheckingNumber...")}
                 </Text>
               </View>
             )}
@@ -518,7 +518,7 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
             <TextInput
               value={nic}
               onChangeText={handleNicChange}
-              placeholder={t("Farms.Enter NIC")}
+              placeholder={t("Farms.EnterNIC")}
               placeholderTextColor="#9CA3AF"
               className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
               editable={!isSubmitting}
@@ -529,7 +529,7 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
               <View className="flex-row items-center mt-1 ml-3">
                 <ActivityIndicator size="small" color="#2563EB" />
                 <Text className="text-blue-600 text-sm ml-2">
-                  {t("Farms.Checking NIC...")}
+                  {t("Farms.CheckingNIC...")}
                 </Text>
               </View>
             )}

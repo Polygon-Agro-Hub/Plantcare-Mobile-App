@@ -178,7 +178,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
   return (
     <View className="flex-1 bg-white">
       <CustomHeader
-        title={t("TransactionList.Transaction History")}
+        title={t("TransactionList.TransactionHistory")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
@@ -232,7 +232,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
               <View>
                 <View className="flex-row mb-1">
                   <Text className="text-gray-800 font-medium">
-                    {t("TransactionList.GRN No")}
+                    {t("TransactionList.GRNNo")}
                   </Text>
                   <Text className="text-gray-800 ml-2 font-medium">
                     : {item.grnNo}
@@ -279,7 +279,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                     loop
                   />
                   <Text className="text-center text-gray-600 mt-[-30%]">
-                    --{t("TransactionList.No transactions found")}--
+                    --{t("TransactionList.NoTransactionsFound")}--
                   </Text>
                 </View>
               )}

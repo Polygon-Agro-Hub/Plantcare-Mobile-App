@@ -147,9 +147,9 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
 
     if (!isValid) {
       Alert.alert(
-        t("NewCrop.Not Allowed"),
+        t("NewCrop.NotAllowed"),
         t(
-          "NewCrop.The certificate you purchased does not include this crop variety",
+          "NewCrop.TheCertificateYouPurchasedDoesNotIncludeThisCropVariety",
         ),
         [{ text: t("Main.OK") }],
       );
@@ -521,7 +521,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
       <StatusBar style="dark" />
 
       <CustomHeader
-        title={t("NewCrop.NewCrop")}
+        title={t("NewCrop.SelectANewCrop")}
         navigation={navigation}
         onBackPress={() =>
           navigation.navigate("Main", {
@@ -541,7 +541,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
             <TextInput
               ref={inputRef}
               className="ml-2 mr-6 text-lg flex-1"
-              placeholder={t("NewCrop.Search")}
+              placeholder={t("NewCrop.SearchCrop")}
               placeholderTextColor="gray"
               style={{ textAlignVertical: "center" }}
               value={searchQuery}
@@ -577,11 +577,11 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
             className="bg-slate-100"
             onPress={() => setShowDistricts(true)}
           >
-            <Text className="text-base mb-2">{t("NewCrop.District")}</Text>
+            <Text className="text-base mb-2">{t("NewCrop.ByDistrict")}</Text>
           </TouchableOpacity>
           <View className="border-t border-gray-400" />
           <TouchableOpacity className="bg-slate-100">
-            <Text className="text-base">{t("NewCrop.Price")}</Text>
+            <Text className="text-base">{t("NewCrop.ByPrice")}</Text>
           </TouchableOpacity>
 
           {showDistricts && (
@@ -716,8 +716,8 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
                     }}
                   >
                     {searchQuery
-                      ? t("NewCrop.No results found")
-                      : t("NewCrop.No results found")}
+                      ? t("NewCrop.NoResultsFound")
+                      : t("NewCrop.NoResultsFound")}
                   </Text>
                 </View>
               )}
@@ -775,7 +775,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
                           marginTop: 20,
                         }}
                       >
-                        {t("NewCrop.No results found")}
+                        {t("NewCrop.NoResultsFound")}
                       </Text>
                     </View>
                   )}

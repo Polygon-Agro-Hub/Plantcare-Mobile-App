@@ -65,7 +65,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
     if (status !== "granted") {
       Alert.alert(
         t("PublicForum.sorry"),
-        t("PublicForum.permissionDeniedMessage"),
+        t("PublicForum.WeNeedAccessToYourCameraToContinuePleaseEnablePermissions"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -84,8 +84,8 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
 
   const handleImageRemove = () => {
     Alert.alert(
-      t("PublicForum.removeImage") || "Remove Image",
-      t("PublicForum.removeImageConfirm") ||
+      t("PublicForum.RemoveImage") || "Remove Image",
+      t("PublicForum.AreYouSureYouWantToRemovThisImage?") ||
       "Are you sure you want to remove this image?",
       [
         {
@@ -93,7 +93,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
           style: "cancel",
         },
         {
-          text: t("PublicForum.remove") || "Remove",
+          text: t("PublicForum.Remove") || "Remove",
           style: "destructive",
           onPress: () => setPostImageUri(null),
         },
@@ -121,7 +121,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
     if (!trimmedHeading) {
       Alert.alert(
         t("PublicForum.sorry"),
-        t("PublicForum.titleRequired") || "Title is required",
+        t("PublicForum.TitleIsRequired") || "Title is required",
         [{ text: t("Main.OK") }],
       );
       return;
@@ -130,7 +130,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
     if (!trimmedMessage) {
       Alert.alert(
         t("PublicForum.sorry"),
-        t("PublicForum.descriptionRequired") || "Description is required",
+        t("PublicForum.DescriptionIsRequired") || "Description is required",
         [{ text: t("Main.OK") }],
       );
       return;
@@ -148,7 +148,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
     if (trimmedHeading.length > 250) {
       Alert.alert(
         t("PublicForum.sorry"),
-        t("PublicForum.Maximum 250 characters allowed."),
+        t("PublicForum.Maximum250charactersAllowed"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -185,7 +185,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
         },
       );
 
-      Alert.alert(t("Main.Success"), t("PublicForum.postSuccess"), [
+      Alert.alert(t("Main.Success"), t("PublicForum.YourPostAddedSuccessfully"), [
         {
           text: t("Main.OK"),
           onPress: () => {
@@ -205,7 +205,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
     } catch (error) {
       console.error("Error creating post:", error);
       setLoading(false);
-      Alert.alert(t("PublicForum.sorry"), t("PublicForum.postFailed"), [
+      Alert.alert(t("PublicForum.sorry"), t("PublicForum.FailedToCreateThePostPleaseTryAgain"), [
         { text: t("Main.OK") },
       ]);
     } finally {
@@ -232,7 +232,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
     >
       <View className="flex-1 bg-white">
         <CustomHeader
-          title={t("PublicForum.createyourpost")}
+          title={t("PublicForum.CreateYourPost")}
           showBackButton={true}
           navigation={navigation}
           onBackPress={() => navigation.navigate("PublicForum" as any)}
@@ -241,11 +241,11 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
         <ScrollView className="px-4 py-6 p-7">
           <View className="mb-4">
             <Text className="text-base font-semibold">
-              {t("PublicForum.title")}
+              {t("PublicForum.Title")}
             </Text>
             <TextInput
               className="border-gray-300 bg-[#F4F7FF] rounded-3xl px-4 h-[50px] mt-2"
-              placeholder={t("PublicForum.addyourtitlehere")}
+              placeholder={t("PublicForum.AddYourTitleHere")}
               value={heading}
               onChangeText={setHeading}
               maxLength={250}
@@ -253,18 +253,18 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
             />
             {heading.length >= 250 && (
               <Text className="text-red-500 mt-1 text-sm">
-                {t("PublicForum.Maximum 250 characters allowed.")}
+                {t("PublicForum.Maximum250charactersAllowed")}
               </Text>
             )}
           </View>
 
           <View className="mb-4 mt-6">
             <Text className="text-base font-semibold ml-4">
-              {t("PublicForum.discussion")}
+              {t("PublicForum.Discussion")}
             </Text>
             <TextInput
               className="bg-[#F4F7FF] border-gray-300 rounded-3xl px-4 py-2 mt-2 h-44 p-4"
-              placeholder={t("PublicForum.addyourdiscussionhere")}
+              placeholder={t("PublicForum.AddYourDiscussionHere")}
               value={message}
               onChangeText={setMessage}
               multiline
@@ -279,7 +279,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
               onPress={handleImagePick}
             >
               <Text className="text-[#667BA5]">
-                {t("PublicForum.uploadImage")}
+                {t("PublicForum.UploadImage")}
               </Text>
             </TouchableOpacity>
 
@@ -323,7 +323,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
               }}
             >
               <Text className="text-white text-lg">
-                {t("PublicForum.publish")}
+                {t("PublicForum.Publish")}
               </Text>
             </TouchableOpacity>
           </View>

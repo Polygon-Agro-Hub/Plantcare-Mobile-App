@@ -77,22 +77,22 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
       case "under_review":
       case "pending":
         return {
-          text: t("Govicapital.Request Under Review"),
+          text: t("Govicapital.RequestUnderReview"),
           color: "#C49400",
         };
       case "approved":
         return {
-          text: t("Govicapital.Request Approved"),
+          text: t("Govicapital.RequestApproved"),
           color: "#00C1AB",
         };
       case "rejected":
         return {
-          text: t("Govicapital.Request Rejected"),
+          text: t("Govicapital.RequestRejected"),
           color: "#FF0000",
         };
       default:
         return {
-          text: status || t("Govicapital.Unknown Status"),
+          text: status || t("Govicapital.UnknownStatus"),
           color: "#9CA3AF",
         };
     }
@@ -107,19 +107,19 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
         return (
           request.cropNameSinhala ||
           request.cropNameEnglish ||
-          t("Govicapital.Unknown Crop")
+          t("Govicapital.UnknownCrop")
         );
       case "ta":
       case "tamil":
         return (
           request.cropNameTamil ||
           request.cropNameEnglish ||
-          t("Govicapital.Unknown Crop")
+          t("Govicapital.UnknownCrop")
         );
       case "en":
       case "english":
       default:
-        return request.cropNameEnglish || t("Govicapital.Unknown Crop");
+        return request.cropNameEnglish || t("Govicapital.UnknownCrop");
     }
   };
 
@@ -239,7 +239,7 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
       <StatusBar barStyle="dark-content" backgroundColor="#f9fafb" />
 
       <CustomHeader
-        title={t("Govicapital.Investment / Loan Requests")}
+        title={t("Govicapital.InvestmentLoanRequests")}
         navigation={navigation}
         onBackPress={() => navigation?.goBack()}
       />
@@ -249,7 +249,7 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color="#000" />
           <Text className="text-gray-500 mt-4">
-            {t("Govicapital.Loading requests")}
+            {t("Govicapital.LoadingRequests")}
           </Text>
         </View>
       ) : investmentRequests.length === 0 ? (
@@ -273,7 +273,7 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
               loop
             />
             <Text className=" text-[#393939]">
-              --{t("Govicapital.No Requests Yet")}--
+              --{t("Govicapital.NoRequestsYet")}--
             </Text>
           </View>
         </ScrollView>

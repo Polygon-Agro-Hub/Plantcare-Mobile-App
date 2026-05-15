@@ -69,7 +69,7 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
   const farmCount = useSelector(selectUserFarmCount);
 
   const getTranslatedStatus = (status: string) => {
-    const statusKey = `RequestHistory.status.${status.replace(/\s+/g, "")}`;
+    const statusKey = `RequestHistory.Status.${status.replace(/\s+/g, "")}`;
     return t(statusKey);
   };
 
@@ -112,7 +112,7 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
               const year = date.getFullYear();
               const monthIndex = date.getMonth();
 
-              const monthKey = `RequestHistory.months.${monthIndex}`;
+              const monthKey = `RequestHistory.Months.${monthIndex}`;
               const month = t(monthKey);
 
               return `${month} ${day}, ${year}`;
@@ -231,8 +231,8 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
   const handleFABPress = () => {
     if (farmCount === 0) {
       Alert.alert(
-        t("RequestHistory.noFarmTitle") || "No Farm Available",
-        t("RequestHistory.noFarmMessage") ||
+        t("RequestHistory.NoFarmAvailable") || "No Farm Available",
+        t("RequestHistory.YouMustCreateAFarmAndEnrollInAtLeastOneCropVarietyBeforeYouCanContinue") ||
           "You must create a farm and enroll in at least one crop variety before you can continue.",
         [{ text: t("OK") || "OK" }],
       );
@@ -251,9 +251,9 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
       />
       <Text className="text-center text-gray-600 px-8 -mt-[30%]">
         {farmCount === 0
-          ? t("RequestHistory.noFarmMessage") ||
+          ? t("RequestHistory.YouMustCreateAFarmAndEnrollInAtLeastOneCropVarietyBeforeYouCanContinue") ||
             "You must create a farm and enroll in at least one crop variety before you can continue."
-          : t("RequestHistory.noData") || "You have no requests added yet"}
+          : t("RequestHistory.YouHaveNoRequestsAddedYet") || "You have no requests added yet"}
       </Text>
     </View>
   );
@@ -273,7 +273,7 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
         <View className="gap-2">
           <View className="flex-row justify-between items-center">
             <Text className="text-gray-600 text-sm">
-              {t("RequestHistory.Scheduled")} {request.scheduledDate}
+              {t("RequestHistory.ScheduledTo")} {request.scheduledDate}
             </Text>
             <AntDesign name="right" size={18} color="#9CA3AF" />
           </View>
@@ -304,7 +304,7 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
     >
       <View className="flex-1">
         <CustomHeader
-          title={t("RequestHistory.Request History")}
+          title={t("RequestHistory.RequestHistory")}
           showBackButton={true}
           navigation={navigation}
           onBackPress={() =>

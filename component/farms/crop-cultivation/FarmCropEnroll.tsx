@@ -188,7 +188,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
     if (!natureOfCultivation) {
       Alert.alert(
         t("Cropenroll.sorry"),
-        t("Cropenroll.plzselectNatureOfCultivation"),
+        t("Cropenroll.PleaseSelectNatureOfCultivation"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -196,7 +196,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
     if (!cultivationMethod) {
       Alert.alert(
         t("Cropenroll.sorry"),
-        t("Cropenroll.plzselectCultivationMethod"),
+        t("Cropenroll.PleaseSelectCultivationMethod"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -211,12 +211,12 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         setCropCalender(res.data[0]);
         setSearch(true);
       } else {
-        Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"), [
+        Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.NoCropsFoundForTheSelectedMethodPleaseTryAgain"), [
           { text: t("Main.OK") },
         ]);
       }
     } catch {
-      Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"), [
+      Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.NoCropsFoundForTheSelectedMethodPleaseTryAgain"), [
         { text: t("Main.OK") },
       ]);
     } finally {
@@ -270,9 +270,9 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
       } = farmExtent.cultivatedExtent;
       Alert.alert(
         t("Cropenroll.sorry"),
-        `${t("Cropenroll.cultivationExtentExceedsAvailable")}\n\n` +
-        `${t("Cropenroll.availableExtent")}: ${aHa} ${t("FixedAssets.ha")}, ${aAc} ${t("FixedAssets.ac")}, ${aP} ${t("FixedAssets.p")}\n` +
-        `${t("Cropenroll.alreadyCultivated")}: ${cHa} ${t("FixedAssets.ha")}, ${cAc} ${t("FixedAssets.ac")}, ${cP} ${t("FixedAssets.p")}`,
+        `${t("Cropenroll.CultivationExtentExceedsAvailableFarmExtent")}\n\n` +
+        `${t("Cropenroll.AvailableExtent")}: ${aHa} ${t("FixedAssets.ha")}, ${aAc} ${t("FixedAssets.ac")}, ${aP} ${t("FixedAssets.p")}\n` +
+        `${t("Cropenroll.AlreadyCultivated")}: ${cHa} ${t("FixedAssets.ha")}, ${cAc} ${t("FixedAssets.ac")}, ${cP} ${t("FixedAssets.p")}`,
         [{ text: t("Main.OK") }],
       );
       return false;
@@ -323,7 +323,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         createFarmQuestionnaire();
         Alert.alert(
           t("Main.Success"),
-          t("Cropenroll.EnrollSucess"),
+          t("Cropenroll.SuccessfullyEnrolledTheCrop"),
           [{ text: t("Main.OK"), onPress: goToDashboard }],
           { cancelable: false },
         );
@@ -336,7 +336,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         }
         Alert.alert(
           t("Main.Success"),
-          t("Cropenroll.EnrollSucess"),
+          t("Cropenroll.SuccessfullyEnrolledTheCrop"),
           [
             {
               text: t("Main.OK"),
@@ -353,7 +353,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
       } else {
         Alert.alert(
           t("Main.Success"),
-          t("Cropenroll.EnrollSucess"),
+          t("Cropenroll.SuccessfullyEnrolledTheCrop"),
           [{ text: t("Main.OK"), onPress: goToDashboard }],
           { cancelable: false },
         );
@@ -361,7 +361,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
     } catch {
       Alert.alert(
         t("Main.Success"),
-        t("Cropenroll.EnrollSucess"),
+        t("Cropenroll.SuccessfullyEnrolledTheCrop"),
         [
           {
             text: t("Main.OK"),
@@ -383,7 +383,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
     if (!extentha && !extentac && !extentp) {
       Alert.alert(
         t("Cropenroll.sorry"),
-        t("Cropenroll.EnterAtLeastOneExtent"),
+        t("Cropenroll.PleaseEnterAtLeastOneExtent"),
         [{ text: t("Main.OK") }],
         { cancelable: false },
       );
@@ -397,7 +397,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.Error"), t("Farms.No authentication token found"), [
+        Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"), [
           { text: t("Main.OK") },
         ]);
         setIsLoading(false);
@@ -437,8 +437,8 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
           Alert.alert(
             t("Main.Error"),
             data.message === "You have already enrolled in 3 crops"
-              ? t("Cropenroll.enrollmentLimitReached")
-              : t("Cropenroll.alreadyEnrolled"),
+              ? t("Cropenroll.YouHaveReachedTheLimitOf3CropEnrollments")
+              : t("Cropenroll.ThisCropIsAlreadyEnrolled"),
             [{ text: t("Main.OK") }],
             { cancelable: false },
           );
@@ -497,7 +497,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
       } else {
         Alert.alert(
           t("Cropenroll.Failed"),
-          t("Cropenroll.FialedOngoinCultivationUpdate"),
+          t("Cropenroll.UnableToUpdateCultivationDetailsPleaseTryAgain"),
           [{ text: t("Main.OK") }],
         );
         setIsLoading(false);
@@ -505,7 +505,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
     } catch {
       Alert.alert(
         t("Cropenroll.Failed"),
-        t("Cropenroll.FialedOngoinCultivationUpdate"),
+        t("Cropenroll.UnableToUpdateCultivationDetailsPleaseTryAgain"),
         [{ text: t("Main.OK") }],
       );
       setIsLoading(false);
@@ -576,8 +576,8 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         <CustomHeader
           title={
             formStatus === "newAdd"
-              ? t("Cropenroll.StartCultivaiton")
-              : t("Cropenroll.UpdateCultivation")
+              ? t("Cropenroll.StartYourCultivaiton")
+              : t("Cropenroll.UpdateYourCultivation")
           }
           navigation={navigation}
           onBackPress={() => navigation.goBack()}
@@ -590,24 +590,24 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         {formStatus === "newAdd" ? (
           <View className="px-4">
             {/* Nature of Cultivation */}
-            <Text className="mb-2">{t("Farms.Nature of Cultivation")}</Text>
+            <Text className="mb-2">{t("Farms.NatureOfCultivation")}</Text>
             <DropdownButton
               value={getLabelFromOptions(
                 NatureOfCultivationOptions,
                 natureOfCultivation,
               )}
-              placeholder={t("Cropenroll.selectNaofCultivation")}
+              placeholder={t("Cropenroll.SelectNaOfCultivation")}
               onPress={() => openModal("natureOfCultivation")}
             />
 
             {/* Cultivation Method */}
-            <Text className="mt-6 mb-2">{t("Farms.Cultivation Method")}</Text>
+            <Text className="mt-6 mb-2">{t("Farms.CultivationMethod")}</Text>
             <DropdownButton
               value={getLabelFromOptions(
                 CultivationMethodOptions,
                 cultivationMethod,
               )}
-              placeholder={t("Cropenroll.selectCultivationMethod")}
+              placeholder={t("Cropenroll.SelectCultivationMethod")}
               onPress={() => openModal("cultivationMethod")}
             />
 
@@ -627,17 +627,17 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
                 }}
               >
                 <Text className="text-white text-lg font-bold">
-                  {t("Cropenroll.search")}
+                  {t("Main.Search...")}
                 </Text>
               </TouchableOpacity>
             </View>
             {/* Results */}
             {search && (
               <>
-                <Text className="mt-8">{t("Cropenroll.selectExtent")}</Text>
+                <Text className="mt-8">{t("Main.Extent")}</Text>
                 {renderExtentInputs()}
 
-                <Text className="mt-4">{t("Cropenroll.selectStartDate")}</Text>
+                <Text className="mt-4">{t("Main.SelectStartDate")}</Text>
                 <TouchableOpacity
                   onPress={() => setShowDatePicker((p) => !p)}
                   className="border-b border-gray-400 my-3 flex-row justify-between items-center p-3"
@@ -666,7 +666,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
                       <ActivityIndicator size="small" color="#fff" />
                     ) : (
                       <Text className="text-white text-lg font-bold">
-                        {t("Cropenroll.enroll")}
+                        {t("Main.Enroll")}
                       </Text>
                     )}
                   </TouchableOpacity>
@@ -676,7 +676,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
           </View>
         ) : (
           <View className="p-4">
-            <Text className="mt-8">{t("Cropenroll.selectExtent")}</Text>
+            <Text className="mt-8">{t("Main.Extent")}</Text>
             {renderExtentInputs()}
             {renderDatePicker()}
 
@@ -708,7 +708,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
       <GlobalSearchModal
         visible={activeModal === "natureOfCultivation"}
         onClose={closeModal}
-        title={t("Farms.Nature of Cultivation")}
+        title={t("Farms.NatureOfCultivation")}
         data={NatureOfCultivationOptions}
         selectedItems={natureOfCultivation ? [natureOfCultivation] : []}
         onSelect={(items) => {
@@ -721,7 +721,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
       <GlobalSearchModal
         visible={activeModal === "cultivationMethod"}
         onClose={closeModal}
-        title={t("Farms.Cultivation Method")}
+        title={t("Farms.CultivationMethod")}
         data={CultivationMethodOptions}
         selectedItems={cultivationMethod ? [cultivationMethod] : []}
         onSelect={(items) => {

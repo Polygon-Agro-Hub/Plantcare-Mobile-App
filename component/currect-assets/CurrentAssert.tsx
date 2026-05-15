@@ -202,7 +202,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   );
 
   const headerTitle =
-    assets?.farmName === "My Assets" ? t("CurrentAssets.myAssets") : "Farm";
+    assets?.farmName === "My Assets" ? t("CurrentAssets.MyAssets") : "Farm";
 
   return (
     <View className="flex-1">
@@ -216,7 +216,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
         <View className="w-1/2">
           <TouchableOpacity>
             <Text className="text-black text-center font-semibold text-lg">
-              {t("CurrentAssets.currentAssets")}
+              {t("CurrentAssets.CurrentAssets")}
             </Text>
             <View className="border-t-[2px] border-black" />
           </TouchableOpacity>
@@ -226,7 +226,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
             onPress={() => navigation.navigate("fixedDashboard")}
           >
             <Text className="text-black text-center font-semibold text-lg">
-              {t("CurrentAssets.fixedAssets")}
+              {t("CurrentAssets.FixedAssets")}
             </Text>
             <View className="border-t-[2px] border-[#D9D9D9]" />
           </TouchableOpacity>
@@ -355,7 +355,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
                   </View>
                   <View>
                     <Text>
-                      {t("CurrentAssets.rs")}
+                      {t("CurrentAssets.Rs")}
                       {Number(asset.totalSum).toLocaleString("en-US", {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,

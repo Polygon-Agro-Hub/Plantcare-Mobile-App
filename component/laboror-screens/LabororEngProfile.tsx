@@ -112,7 +112,7 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({
     const phoneNumber = "+94770111999";
     const url = `tel:${phoneNumber}`;
     Linking.openURL(url).catch((err) =>
-      Alert.alert(t("Main.Error"), t("Profile.UnabletoOpen"), [
+      Alert.alert(t("Main.Error"), t("Profile.UnableToOpenTheDialerPleaseTryAgain"), [
         { text: t("Main.OK") },
       ]),
     );
@@ -269,7 +269,7 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({
           >
             <Ionicons name="qr-code" size={20} color="black" />
             <Text className="flex-1 text-lg ml-2">
-              {t("Profile.View QR Code")}
+              {t("Profile.ViewQRCode")}
             </Text>
           </TouchableOpacity>
 
@@ -344,7 +344,7 @@ const LabororEngProfile: React.FC<LabororEngProfileProps> = ({
                   {t("Profile.NeedHelp")}?
                 </Text>
                 <Text className="text-base text-center mb-8">
-                  {t("Profile.NeedGoViCareHelp")}
+                  {t("Profile.NeedGoViCareHelpTapTheCallButtonForInstantSupport")}
                 </Text>
                 <View className="flex-row justify-around">
                   <TouchableOpacity

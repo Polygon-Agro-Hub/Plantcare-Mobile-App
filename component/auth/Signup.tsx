@@ -128,7 +128,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
 
   const validateMobileNumber = (number: string) => {
     const regex = /^[1-9][0-9]{8}$/;
-    setError(regex.test(number) ? "" : t("SignUp.EnterValidMobile"));
+    setError(regex.test(number) ? "" : t("SignUp.PleaseEnterAValid9DigitMobileNumberExcludeTheLeadingZero"));
   };
 
   const handleMobileNumberChange = (text: string) => {
@@ -144,7 +144,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
     setErr: React.Dispatch<React.SetStateAction<string>>,
   ) => {
     if (name.startsWith(" ")) {
-      setErr(t("SignUp.CannotStartWithSpace"));
+      setErr(t("SignUp.CanNotStartWithSpace"));
       return false;
     }
     if (name.includes(" ")) {
@@ -171,7 +171,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
 
     if (blocked) {
       const msg = text.startsWith(" ")
-        ? t("SignUp.CannotStartWithSpace")
+        ? t("SignUp.CanNotStartWithSpace")
         : text.includes(" ")
           ? t("SignUp.NoSpacesAllowed")
           : t("SignUp.OnlyLettersAllowed");
@@ -199,7 +199,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
 
     if (blocked) {
       const msg = text.startsWith(" ")
-        ? t("SignUp.CannotStartWithSpace")
+        ? t("SignUp.CanNotStartWithSpace")
         : text.includes(" ")
           ? t("SignUp.NoSpacesAllowed")
           : t("SignUp.OnlyLettersAllowed");
@@ -221,7 +221,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
 
   const validateNic = (value: string) => {
     const nicRegex = /^(\d{12}|\d{9}[VvXx])$/;
-    setEre(value && !nicRegex.test(value) ? t("SignUp.Enteravalidenic") : "");
+    setEre(value && !nicRegex.test(value) ? t("SignUp.PleaseEnterAValidNICNumber") : "");
   };
 
   const handleNicChange = (text: string) => {
@@ -276,7 +276,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
       !selectedCountryCode ||
       !district
     ) {
-      Alert.alert(t("Main.Sorry"), t("SignUp.fillAllFields"), [
+      Alert.alert(t("Main.Sorry"), t("Main.PleaseFillAllRequiredFields"), [
         { text: t("Main.OK") },
       ]);
       return;
@@ -300,7 +300,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
 
       const msg = checkResponse.data.message;
       if (msg === "This Phone Number already exists.") {
-        Alert.alert(t("Main.Sorry"), t("SignUp.phoneExists"), [
+        Alert.alert(t("Main.Sorry"), t("SignUp.ThePhoneNumberYouEnteredIsAlreadyRegisteredPleaseUseADifferentNumberOrLogIn"), [
           {
             text: t("Main.OK"),
             onPress: () => navigation.navigate("Signup"),
@@ -311,7 +311,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
         return;
       }
       if (msg === "This NIC already exists.") {
-        Alert.alert(t("Main.Sorry"), t("SignUp.nicExists"), [
+        Alert.alert(t("Main.Sorry"), t("SignUp.TheNICNumberYouEnteredIsAlreadyRegisteredPleaseCheckYourDetailsOrLogIn"), [
           {
             text: t("Main.OK"),
             onPress: () => navigation.navigate("Signup"),
@@ -322,7 +322,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
         return;
       }
       if (msg === "This Phone Number and NIC already exist.") {
-        Alert.alert(t("Main.Sorry"), t("SignUp.phoneNicExist"), [
+        Alert.alert(t("Main.Sorry"), t("SignUp.BothThePhoneNumberAndNICNumberEnteredAreAlreadyRegisteredPleaseLogInInstead"), [
           {
             text: t("Main.OK"),
             onPress: () => navigation.navigate("Signup"),
@@ -426,13 +426,13 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
 
           <View className="flex-1 items-center">
             <Text className="font-bold" style={{ fontSize: wp(6) }}>
-              {t("SignUp.Create Account")}
+              {t("SignUp.CreateAccount")}
             </Text>
 
             <View className="flex-1 w-full px-4">
               <View className="pt-6">
                 <Text className="text-[#070707] text-sm mb-2">
-                  {t("SignUp.Mobile Number")}
+                  {t("Inputs.MobileNumber")}
                 </Text>
                 <View className="mt-2 flex-row items-center gap-2">
                   <TouchableOpacity
@@ -474,10 +474,10 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
 
               <View>
                 <Text className="text-[#070707] text-sm mt-2">
-                  {t("SignUp.FirstName")}
+                  {t("Inputs.FirstName")}
                 </Text>
                 <TextInput
-                  placeholder={t("SignUp.Enter First Name Here")}
+                  placeholder={t("SignUp.EnterFirstNameHere")}
                   placeholderTextColor="#585858"
                   underlineColorAndroid="transparent"
                   cursorColor="#141415ff"
@@ -502,10 +502,10 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
                 ) : null}
 
                 <Text className="text-[#070707] text-sm mt-2">
-                  {t("SignUp.LastName")}
+                  {t("Inputs.LastName")}
                 </Text>
                 <TextInput
-                  placeholder={t("SignUp.Enter Last Name Here")}
+                  placeholder={t("SignUp.EnterLastNameHere")}
                   value={lastName}
                   placeholderTextColor="#585858"
                   underlineColorAndroid="transparent"
@@ -530,7 +530,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
                 ) : null}
 
                 <Text className="text-[#070707] text-sm mt-2">
-                  {t("SignUp.NICNumber")}
+                  {t("Inputs.NICNumber")}
                 </Text>
                 <TextInput
                   ref={nicInputRef}
@@ -568,7 +568,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
                   >
                     {district
                       ? (districtItems.find((d) => d.value === district)
-                          ?.label ?? district)
+                        ?.label ?? district)
                       : t("SignUp.Select Your District")}
                   </Text>
                   <AntDesign name="caret-down" size={14} color="#555" />
@@ -577,7 +577,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
 
               <View className="flex items-center justify-center mt-6">
                 {language === "en" ||
-                (language !== "si" && language !== "ta") ? (
+                  (language !== "si" && language !== "ta") ? (
                   <View className="flex-row justify-center flex-wrap">
                     <Text className="text-sm text-black font-thin">See </Text>
                     <TouchableOpacity
@@ -685,7 +685,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
                   className="text-[#282828] ml-2 font-semibold"
                   style={{ fontSize: adjustFontSize(12) }}
                 >
-                  {t("Membership.AgreeToT&C")}
+                  {t("Membership.IAgreeToTheTerms&Conditions")}
                 </Text>
               </View>
 

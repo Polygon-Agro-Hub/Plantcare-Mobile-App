@@ -103,12 +103,12 @@ const SelectCrop: React.FC<SelectCropProps> = ({ navigation, route }) => {
               resizeMode="contain"
             />
           ) : (
-            <Text>{t("SelectCrop.noImage")}</Text>
+            <Text>{t("SelectCrop.NoImageAvailable")}</Text>
           )}
         </View>
         <View className="flex-1 px-4 pl-7">
           <Text className="font-bold text-lg mb-4">
-            {t("SelectCrop.description")}
+            {t("SelectCrop.Description")}
           </Text>
           <View className="min-h-[260px] pt-0 pb-4">
             <Text className="text-base leading-relaxed">

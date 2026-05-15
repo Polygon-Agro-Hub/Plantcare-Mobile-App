@@ -353,7 +353,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
             loop
           />
           <Text className="text-center text-gray-600 ">
-            --{t("MyCrop.NoAlreasdyEnrolled")}--
+            --{t("MyCrop.YouHaveNotEnrolledAnyCropsYet")}--
           </Text>
         </View>
       ) : (

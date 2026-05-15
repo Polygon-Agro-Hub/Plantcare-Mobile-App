@@ -49,7 +49,7 @@ const DeleteFarmer: React.FC<DeleteFarmerProps> = ({ navigation }) => {
     <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="bg-white">
       <View className="flex-1 bg-white">
         <CustomHeader
-          title={t("DeleteFarmer.title")}
+          title={t("DeleteFarmer.DeleteMyAccount")}
           navigation={navigation}
           onBackPress={handleGoBack}
         />
@@ -57,13 +57,13 @@ const DeleteFarmer: React.FC<DeleteFarmerProps> = ({ navigation }) => {
         <View className="flex-1  px-4">
           <View className="mt-8">
             <Text className="text-black text-xl font-semibold mb-4 mt-4 ">
-              {t("DeleteFarmer.confirmationMessage")}
+              {t("DeleteFarmer.AreYouSureDoYouWantToDeleteYourAccount")}
             </Text>
             <Text className="text-gray-600 leading-relaxed mt-4">
-              {t("DeleteFarmer.warningMessage")}
+              {t("DeleteFarmer.OnceYouDeleteYourAccountItCannotBeUndoneAllYourDataWillBePermanentlyErasedFromThisAppIncludesYourProfileInformationPreferencesSavedAndAnyActivityHistory")}
             </Text>
             <Text className="text-gray-600 leading-relaxed mt-6">
-              {t("DeleteFarmer.sadMessage")}
+              {t("DeleteFarmer.WeAreSadToSeeYouGoButWeUnderstandThatSometimesItsNecessaryPleaseTakeAMomentToConsiderTheConsequencesBeforeProceeding")}
             </Text>
           </View>
 
@@ -80,7 +80,7 @@ const DeleteFarmer: React.FC<DeleteFarmerProps> = ({ navigation }) => {
               }}
             >
               <Text className="text-center text-white text-base font-semibold">
-                {t("DeleteFarmer.deleteButton")}
+                {t("DeleteFarmer.DeleteAccount")}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity

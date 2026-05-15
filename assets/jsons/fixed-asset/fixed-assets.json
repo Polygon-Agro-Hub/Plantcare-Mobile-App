@@ -5,7 +5,7 @@
       "value": "Building and Infrastructures"
     },
     {
-      "labelKey": "FixedAssets.machineandVehicles",
+      "labelKey": "FixedAssets.MachineAndVehicles",
       "value": "Machine and Vehicles"
     },
     { "labelKey": "FixedAssets.land", "value": "Land" },
@@ -14,10 +14,10 @@
 
   "ownershipCategories": [
     {
-      "labelKey": "FixedAssets.ownBuilding",
+      "labelKey": "FixedAssets.OwnBuildingWithTitleOwnership",
       "value": "Own Building (with title ownership)"
     },
-    { "labelKey": "FixedAssets.leasedBuilding", "value": "Leased Building" },
+    { "labelKey": "FixedAssets.LeasedBuilding", "value": "Leased Building" },
     { "labelKey": "FixedAssets.permitBuilding", "value": "Permitted Building" },
     {
       "labelKey": "FixedAssets.sharedOwnership",

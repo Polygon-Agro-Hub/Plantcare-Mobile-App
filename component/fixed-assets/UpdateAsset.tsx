@@ -117,10 +117,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const landownershipCategoriesWithDisplay = [
-    { label: t("FixedAssets.ownLand"), value: "Own" },
-    { label: t("FixedAssets.leaseLand"), value: "Lease" },
-    { label: t("FixedAssets.permittedLand"), value: "Permited" },
-    { label: t("FixedAssets.sharedLand"), value: "Shared" },
+    { label: t("FixedAssets.OwnLand"), value: "Own" },
+    { label: t("FixedAssets.LeaseLand"), value: "Lease" },
+    { label: t("FixedAssets.PermittedLand"), value: "Permited" },
+    { label: t("FixedAssets.SharedLand"), value: "Shared" },
   ];
 
   const getOwnershipDisplayText = (
@@ -130,26 +130,26 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
     if (category === "Land") {
       switch (ownershipValue) {
         case "Own":
-          return t("FixedAssets.ownLand");
+          return t("FixedAssets.OwnLand");
         case "Lease":
-          return t("FixedAssets.leaseLand");
+          return t("FixedAssets.LeaseLand");
         case "Permited":
-          return t("FixedAssets.permittedLand");
+          return t("FixedAssets.PermittedLand");
         case "Shared":
-          return t("FixedAssets.sharedLand");
+          return t("FixedAssets.SharedLand");
         default:
           return ownershipValue;
       }
     } else if (category === "Building and Infrastructures") {
       switch (ownershipValue) {
         case "Own Building (with title ownership)":
-          return t("FixedAssets.ownBuilding");
+          return t("FixedAssets.OwnBuildingWithTitleOwnership");
         case "Leased Building":
-          return t("FixedAssets.leasedBuilding");
+          return t("FixedAssets.LeasedBuilding");
         case "Permitted Building":
-          return t("FixedAssets.permittedBuilding");
+          return t("FixedAssets.PermittedBuilding");
         case "Shared / No Ownership":
-          return t("FixedAssets.sharedNoOwnership");
+          return t("FixedAssets.SharedNoOwnership");
         default:
           return ownershipValue;
       }
@@ -170,25 +170,25 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         !toolDetails.extentac &&
         !toolDetails.extentp
       ) {
-        errors.extent = t("FixedAssets.extentRequired");
+        errors.extent = t("FixedAssets.AtLeastOneExtentTypeIsRequired");
       }
       if (!toolDetails.landName) {
-        errors.landName = t("FixedAssets.enterLandName");
+        errors.landName = t("FixedAssets.LandNameIsRequired");
       }
       if (!toolDetails.ownership) {
-        errors.ownership = t("FixedAssets.ownershipRequired");
+        errors.ownership = t("FixedAssets.OwnershipIsRequired");
       }
 
       const ownershipDetails = toolDetails.ownershipDetails || {};
       switch (toolDetails.ownership) {
         case "Own":
           if (!ownershipDetails.estimateValue) {
-            errors.estimateValue = t("FixedAssets.estimateValueRequired");
+            errors.estimateValue = t("FixedAssets.EstimatedValueIsRequired");
           }
           break;
         case "Lease":
           if (!ownershipDetails.startDate) {
-            errors.startDate = t("FixedAssets.startDateRequired");
+            errors.startDate = t("FixedAssets.StartDateIsRequired");
           }
           if (
             !ownershipDetails.durationYears &&
@@ -197,50 +197,50 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
             errors.duration = t("FixedAssets.durationRequired");
           }
           if (!ownershipDetails.leastAmountAnnually) {
-            errors.leastAmountAnnually = t("FixedAssets.leasedAmountRequired");
+            errors.leastAmountAnnually = t("FixedAssets.AnnualLeaseAmountIsRequired");
           }
           break;
         case "Permited":
           if (!ownershipDetails.issuedDate) {
-            errors.issuedDate = t("FixedAssets.issuedDateRequired");
+            errors.issuedDate = t("FixedAssets.AnnualLeaseAmountIsRequired");
           }
           if (!ownershipDetails.permitFeeAnnually) {
-            errors.permitFeeAnnually = t("FixedAssets.permitFeeRequired");
+            errors.permitFeeAnnually = t("FixedAssets.AnnualPermitFeeIsRequired");
           }
           break;
         case "Shared":
           if (!ownershipDetails.paymentAnnually) {
-            errors.paymentAnnually = t("FixedAssets.paymentAnnuallyRequired");
+            errors.paymentAnnually = t("FixedAssets.AnnualPaymentFeeIsRequired");
           }
           break;
       }
     } else if (category === "Building and Infrastructures") {
       if (!toolDetails.type) {
-        errors.type = t("FixedAssets.typeRequired");
+        errors.type = t("FixedAssets.TypeIsRequired");
       }
       if (!toolDetails.buildingName) {
-        errors.buildingName = t("FixedAssets.enterBuildingName");
+        errors.buildingName = t("FixedAssets.BuildingNameIsRequired");
       }
       if (!toolDetails.floorArea) {
-        errors.floorArea = t("FixedAssets.floorAreaRequired");
+        errors.floorArea = t("FixedAssets.FloorAreaIsRequired");
       }
       if (!toolDetails.ownership) {
-        errors.ownership = t("FixedAssets.ownershipRequired");
+        errors.ownership = t("FixedAssets.OwnershipIsRequired");
       }
       if (!toolDetails.generalCondition) {
-        errors.generalCondition = t("FixedAssets.generalConditionRequired");
+        errors.generalCondition = t("FixedAssets.GeneralConditionIsRequired");
       }
 
       const ownershipDetails = toolDetails.ownershipDetails || {};
       switch (toolDetails.ownership) {
         case "Own Building (with title ownership)":
           if (!ownershipDetails.estimateValue) {
-            errors.estimateValue = t("FixedAssets.estimateValueRequired");
+            errors.estimateValue = t("FixedAssets.EstimatedValueIsRequired");
           }
           break;
         case "Leased Building":
           if (!ownershipDetails.startDate) {
-            errors.startDate = t("FixedAssets.startDateRequired");
+            errors.startDate = t("FixedAssets.StartDateIsRequired");
           }
           if (
             !ownershipDetails.durationYears &&
@@ -249,48 +249,48 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
             errors.duration = t("FixedAssets.durationRequired");
           }
           if (!ownershipDetails.leastAmountAnnually) {
-            errors.leastAmountAnnually = t("FixedAssets.leasedAmountRequired");
+            errors.leastAmountAnnually = t("FixedAssets.AnnualLeaseAmountIsRequired");
           }
           break;
         case "Permitted Building":
           if (!ownershipDetails.issuedDate) {
-            errors.issuedDate = t("FixedAssets.issuedDateRequired");
+            errors.issuedDate = t("FixedAssets.AnnualLeaseAmountIsRequired");
           }
           if (!ownershipDetails.permitFeeAnnually) {
-            errors.permitFeeAnnually = t("FixedAssets.permitFeeRequired");
+            errors.permitFeeAnnually = t("FixedAssets.AnnualPermitFeeIsRequired");
           }
           break;
         case "Shared / No Ownership":
           if (!ownershipDetails.paymentAnnually) {
-            errors.paymentAnnually = t("FixedAssets.paymentAnnuallyRequired");
+            errors.paymentAnnually = t("FixedAssets.AnnualPaymentFeeIsRequired");
           }
           break;
       }
     } else if (category === "Machine and Vehicles" || category === "Tools") {
       if (!toolDetails.asset) {
-        errors.asset = t("FixedAssets.assetRequired");
+        errors.asset = t("FixedAssets.AssetIsRequired");
       }
       if (toolDetails.asset === "Other" && !toolDetails.mentionOther) {
-        errors.mentionOther = t("FixedAssets.mentionOtherRequired");
+        errors.mentionOther = t("FixedAssets.MentionOtherIsRequired");
       }
       if (!toolDetails.brand) {
-        errors.brand = t("FixedAssets.brandRequired");
+        errors.brand = t("FixedAssets.BrandIsRequired");
       }
       if (!toolDetails.numberOfUnits) {
-        errors.numberOfUnits = t("FixedAssets.numberOfUnitsRequired");
+        errors.numberOfUnits = t("FixedAssets.NumberOfUnitsIsRequired");
       }
       if (!toolDetails.unitPrice) {
-        errors.unitPrice = t("FixedAssets.unitPriceRequired");
+        errors.unitPrice = t("FixedAssets.UnitPriceIsRequired");
       }
       if (!toolDetails.totalPrice) {
-        errors.totalPrice = t("FixedAssets.totalPriceRequired");
+        errors.totalPrice = t("FixedAssets.TotalPriceIsRequired");
       }
       if (toolDetails.warranty === "yes") {
         if (!toolDetails.ownershipDetails?.purchaseDate) {
-          errors.purchaseDate = t("FixedAssets.purchaseDateRequired");
+          errors.purchaseDate = t("FixedAssets.PurchaseDateIsRequired");
         }
         if (!toolDetails.ownershipDetails?.expireDate) {
-          errors.expireDate = t("FixedAssets.expireDateRequired");
+          errors.expireDate = t("FixedAssets.ExpireDateIsRequired");
         }
       }
     }
@@ -500,11 +500,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
   const translateCategory = (category: string): string => {
     switch (category) {
       case "Land":
-        return t("FixedAssets.lands");
+        return t("FixedAssets.Lands");
       case "Building and Infrastructures":
         return t("FixedAssets.buildingandInfrastructures");
       case "Machine and Vehicles":
-        return t("FixedAssets.machineandVehicles");
+        return t("FixedAssets.MachineAndVehicles");
       case "Tools":
         return t("FixedAssets.toolsandEquipments");
       default:
@@ -516,7 +516,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
     if (!validateAllTools()) {
       Alert.alert(
         t("FixedAssets.sorry"),
-        t("FixedAssets.pleaseFillRequiredFields"),
+        t("FixedAssets.PleaseFillRequiredFields"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -633,7 +633,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
       Alert.alert(
         t("FixedAssets.successTitle"),
-        t("FixedAssets.assetsUpdatedSuccessfully"),
+        t("FixedAssets.AssetDetailsUpdatedSuccessfully"),
         [{ text: t("Main.OK") }],
       );
       setIsLoading(false);
@@ -648,7 +648,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       } else {
         Alert.alert(
           t("FixedAssets.sorry"),
-          t("FixedAssets.failToUpdateAssets"),
+          t("FixedAssets.FailedToUpdateAssetDetailsPleaseTryAgain"),
           [{ text: t("Main.OK") }],
         );
       }
@@ -727,7 +727,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
           {tools.map((tool) => (
             <View key={tool.id} className="bg-white rounded">
               <CustomHeader
-                title={`${translateCategory(category)} ${t("FixedAssets.edit")}`}
+                title={`${translateCategory(category)} ${t("FixedAssets.Edit")}`}
                 navigation={navigation as any}
                 onBackPress={() => navigation.goBack()}
               />
@@ -737,10 +737,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                   <>
                     {/* Land Name */}
                     <Text className="pb-2 pt-2 font-bold">
-                      {t("FixedAssets.Land Name")} *
+                      {t("FixedAssets.LandName")} *
                     </Text>
                     <TextInput
-                      placeholder={t("FixedAssets.Enter Land Name")}
+                      placeholder={t("FixedAssets.EnterLandName")}
                       value={updatedDetails[tool.id]?.landName ?? ""}
                       onChangeText={(text) => {
                         const trimmed = text.replace(/^\s+/, "");
@@ -758,7 +758,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     ) : null}
                     {/* Extent */}
                     <Text className="pb-2 pt-2 font-bold">
-                      {t("FixedAssets.extent")} *
+                      {t("FixedAssets.Extent")} *
                     </Text>
                     <View className="flex-row justify-between items-center  w-full">
                       <Text className="pr-1 font-[#3A3A3A]">
@@ -827,7 +827,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                     {/* Land Ownership */}
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.ownership")} *
+                      {t("FixedAssets.Ownership")} *
                     </Text>
                     <DropdownTrigger
                       value={getOwnershipDisplayText(
@@ -844,7 +844,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     <GlobalSearchModal
                       visible={showOwnershipModal}
                       onClose={() => setShowOwnershipModal(false)}
-                      title={t("FixedAssets.ownership")}
+                      title={t("FixedAssets.Ownership")}
                       data={landownershipCategoriesWithDisplay}
                       selectedItems={
                         updatedDetails[tool.id]?.ownership
@@ -871,10 +871,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {updatedDetails[tool.id]?.ownership === "Own" && (
                       <>
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.estimateValue")} *
+                          {t("FixedAssets.EstimatedValue")} *
                         </Text>
                         <TextInput
-                          placeholder={t("FixedAssets.estimateValue")}
+                          placeholder={t("FixedAssets.EstimatedValue")}
                           value={
                             updatedDetails[
                               tool.id
@@ -903,7 +903,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {updatedDetails[tool.id]?.ownership === "Lease" && (
                       <>
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.startDate")} *
+                          {t("FixedAssets.LeaseStartDate")} *
                         </Text>
                         <TouchableOpacity
                           onPress={() => {
@@ -921,7 +921,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               )
                                 .toISOString()
                                 .split("T")[0]
-                              : t("FixedAssets.startDate")}
+                              : t("FixedAssets.LeaseStartDate")}
                           </Text>
                           <Icon
                             name="calendar-outline"
@@ -989,14 +989,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           ))}
 
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.duration")} *
+                          {t("FixedAssets.Duration")} *
                         </Text>
                         <View className="items-center flex-row justify-center">
                           <Text className="w-[20%] text-right pr-2">
-                            {t("FixedAssets.years")}
+                            {t("FixedAssets.Years")}
                           </Text>
                           <TextInput
-                            placeholder={t("FixedAssets.years")}
+                            placeholder={t("FixedAssets.Years")}
                             keyboardType="numeric"
                             value={
                               updatedDetails[
@@ -1015,10 +1015,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             className="border border-gray-300 p-2 w-[30%] px-4 rounded-3xl h-[50px] bg-gray-100"
                           />
                           <Text className="w-[20%] text-right pr-2">
-                            {t("FixedAssets.months")}
+                            {t("FixedAssets.Months")}
                           </Text>
                           <TextInput
-                            placeholder={t("FixedAssets.months")}
+                            placeholder={t("FixedAssets.Months")}
                             keyboardType="numeric"
                             value={
                               updatedDetails[
@@ -1044,10 +1044,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         ) : null}
 
                         <Text className="pb-2 mt-4 font-bold">
-                          {t("FixedAssets.leasedAmountAnnually")} *
+                          {t("FixedAssets.AnnualLeaseAmount")} *
                         </Text>
                         <TextInput
-                          placeholder={t("FixedAssets.leasedAmountAnnuallyLKR")}
+                          placeholder={t("FixedAssets.EnterAnnualLeasedAmount")}
                           value={
                             updatedDetails[
                               tool.id
@@ -1077,7 +1077,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {updatedDetails[tool.id]?.ownership === "Permited" && (
                       <>
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.issuedDate")} *
+                          {t("FixedAssets.IssuedDate")} *
                         </Text>
                         <TouchableOpacity
                           onPress={() => {
@@ -1095,7 +1095,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               )
                                 .toISOString()
                                 .split("T")[0]
-                              : t("FixedAssets.issuedDate")}
+                              : t("FixedAssets.IssuedDate")}
                           </Text>
                           <Icon
                             name="calendar-outline"
@@ -1163,10 +1163,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           ))}
 
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.permitAnnuallyLKR")} *
+                          {t("FixedAssets.AnnualPermitFee")} *
                         </Text>
                         <TextInput
-                          placeholder={t("FixedAssets.EnterpermitAnnually")}
+                          placeholder={t("FixedAssets.EnterAnnualPermitFee")}
                           value={
                             updatedDetails[
                               tool.id
@@ -1196,10 +1196,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {updatedDetails[tool.id]?.ownership === "Shared" && (
                       <>
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.paymentAnnuallyLKR")} *
+                          {t("FixedAssets.AnnualPaymentFee")} *
                         </Text>
                         <TextInput
-                          placeholder={t("FixedAssets.paymentAnnuallyEnter")}
+                          placeholder={t("FixedAssets.EnterAnnualPaymentFee")}
                           value={
                             updatedDetails[
                               tool.id
@@ -1227,7 +1227,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                     {/* Land Fenced */}
                     <Text className="font-bold pb-2 pt-2">
-                      {t("FixedAssets.isLandFenced")} *
+                      {t("FixedAssets.IsTheLandFenced")} *
                     </Text>
                     <View className="flex-row justify-around mb-1">
                       {["yes", "no"].map((val) => (
@@ -1253,7 +1253,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                     {/* Perennial Crops */}
                     <Text className="font-bold pb-2">
-                      {t("FixedAssets.areThereAnyPerennialCrops")} *
+                      {t("FixedAssets.DoesTheLandHavePerennialCrops")} *
                     </Text>
                     <View className="flex-row justify-around mb-1">
                       {["yes", "no"].map((val) => (
@@ -1283,7 +1283,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                   <>
                     {/* Type */}
                     <Text className="pb-2 pt-2 font-bold">
-                      {t("FixedAssets.type")} *
+                      {t("FixedAssets.Type")} *
                     </Text>
                     <DropdownTrigger
                       value={updatedDetails[tool.id]?.type ?? ""}
@@ -1297,7 +1297,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     <GlobalSearchModal
                       visible={showTypeModal}
                       onClose={() => setShowTypeModal(false)}
-                      title={t("FixedAssets.type")}
+                      title={t("FixedAssets.Type")}
                       data={assetTypesForBuilding}
                       selectedItems={
                         updatedDetails[tool.id]?.type
@@ -1314,10 +1314,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     />
                     {/* Building Name */}
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.Building Name")} *
+                      {t("FixedAssets.BuildingName")} *
                     </Text>
                     <TextInput
-                      placeholder={t("FixedAssets.Enter Building Name")}
+                      placeholder={t("FixedAssets.EnterBuildingName")}
                       value={updatedDetails[tool.id]?.buildingName ?? ""}
                       onChangeText={(text) => {
                         const trimmed = text.replace(/^\s+/, "");
@@ -1336,10 +1336,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                     {/* Floor Area */}
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.floorAreaSqrFt")} *
+                      {t("FixedAssets.FloorArea")} *
                     </Text>
                     <TextInput
-                      placeholder={t("FixedAssets.floorAreaSqrFt")}
+                      placeholder={t("FixedAssets.FloorArea")}
                       value={
                         updatedDetails[tool.id]?.floorArea?.toString() ?? ""
                       }
@@ -1362,7 +1362,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                     {/* Building Ownership */}
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.ownership")} *
+                      {t("FixedAssets.Ownership")} *
                     </Text>
                     <DropdownTrigger
                       value={getOwnershipDisplayText(
@@ -1379,7 +1379,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     <GlobalSearchModal
                       visible={showOwnershipModal}
                       onClose={() => setShowOwnershipModal(false)}
-                      title={t("FixedAssets.ownership")}
+                      title={t("FixedAssets.Ownership")}
                       data={ownershipCategories}
                       selectedItems={
                         updatedDetails[tool.id]?.ownership
@@ -1408,11 +1408,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                     {/* General Condition */}
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.generalCondition")} *
+                      {t("FixedAssets.GeneralCondition")} *
                     </Text>
                     <DropdownTrigger
                       value={updatedDetails[tool.id]?.generalCondition ?? ""}
-                      placeholder={t("FixedAssets.selectGeneralCondition")}
+                      placeholder={t("FixedAssets.SelectGeneralConditionIsRequired")}
                       onPress={() => {
                         clearFieldError(tool.id, "generalCondition");
                         setShowGeneralConditionModal(true);
@@ -1422,7 +1422,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     <GlobalSearchModal
                       visible={showGeneralConditionModal}
                       onClose={() => setShowGeneralConditionModal(false)}
-                      title={t("FixedAssets.generalCondition")}
+                      title={t("FixedAssets.GeneralCondition")}
                       data={generalConditionOptions}
                       selectedItems={
                         updatedDetails[tool.id]?.generalCondition
@@ -1448,10 +1448,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       "Own Building (with title ownership)" && (
                         <>
                           <Text className="pb-2 font-bold">
-                            {t("FixedAssets.estimateValue")} *
+                            {t("FixedAssets.EstimatedValue")} *
                           </Text>
                           <TextInput
-                            placeholder={t("FixedAssets.estimateValue")}
+                            placeholder={t("FixedAssets.EstimatedValue")}
                             value={
                               updatedDetails[
                                 tool.id
@@ -1481,7 +1481,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       "Leased Building" && (
                         <>
                           <Text className="pb-2 font-bold">
-                            {t("FixedAssets.startDate")} *
+                            {t("FixedAssets.LeaseStartDate")} *
                           </Text>
                           <TouchableOpacity
                             onPress={() => {
@@ -1499,7 +1499,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                 )
                                   .toISOString()
                                   .split("T")[0]
-                                : t("FixedAssets.startDate")}
+                                : t("FixedAssets.LeaseStartDate")}
                             </Text>
                             <Icon
                               name="calendar-outline"
@@ -1567,14 +1567,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             ))}
 
                           <Text className="pb-2 mt-2 font-bold">
-                            {t("FixedAssets.duration")} *
+                            {t("FixedAssets.Duration")} *
                           </Text>
                           <View className="items-center flex-row justify-center">
                             <Text className="w-[20%] text-right pr-2">
-                              {t("FixedAssets.years")}
+                              {t("FixedAssets.Years")}
                             </Text>
                             <TextInput
-                              placeholder={t("FixedAssets.years")}
+                              placeholder={t("FixedAssets.Years")}
                               keyboardType="numeric"
                               value={
                                 updatedDetails[
@@ -1593,10 +1593,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               className="border border-gray-300 p-2 w-[30%] px-4 rounded-3xl h-[50px] bg-gray-100"
                             />
                             <Text className="w-[20%] text-right pr-2">
-                              {t("FixedAssets.months")}
+                              {t("FixedAssets.Months")}
                             </Text>
                             <TextInput
-                              placeholder={t("FixedAssets.months")}
+                              placeholder={t("FixedAssets.Months")}
                               keyboardType="numeric"
                               value={
                                 updatedDetails[
@@ -1622,10 +1622,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           ) : null}
 
                           <Text className="pb-2 mt-4 font-bold">
-                            {t("FixedAssets.leasedAmountAnnually")} *
+                            {t("FixedAssets.AnnualLeaseAmount")} *
                           </Text>
                           <TextInput
-                            placeholder={t("FixedAssets.leasedAmountAnnuallyLKR")}
+                            placeholder={t("FixedAssets.EnterAnnualLeasedAmount")}
                             value={
                               updatedDetails[
                                 tool.id
@@ -1658,7 +1658,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       "Permit Building") && (
                         <>
                           <Text className="pb-2 font-bold">
-                            {t("FixedAssets.issuedDate")} *
+                            {t("FixedAssets.IssuedDate")} *
                           </Text>
                           <TouchableOpacity
                             onPress={() => {
@@ -1676,7 +1676,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                 )
                                   .toISOString()
                                   .split("T")[0]
-                                : t("FixedAssets.issuedDate")}
+                                : t("FixedAssets.IssuedDate")}
                             </Text>
                             <Icon
                               name="calendar-outline"
@@ -1778,10 +1778,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       "Shared / No Ownership" && (
                         <>
                           <Text className="pb-2 font-bold">
-                            {t("FixedAssets.paymentAnnuallyLKR")} *
+                            {t("FixedAssets.AnnualPaymentFee")} *
                           </Text>
                           <TextInput
-                            placeholder={t("FixedAssets.paymentAnnuallyEnter")}
+                            placeholder={t("FixedAssets.EnterAnnualPaymentFee")}
                             value={
                               updatedDetails[
                                 tool.id
@@ -1812,11 +1812,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                 {tool.category === "Machine and Vehicles" && (
                   <>
                     <Text className="pb-2 pt-2 font-bold">
-                      {t("FixedAssets.asset")} *
+                      {t("FixedAssets.Asset")} *
                     </Text>
                     <DropdownTrigger
                       value={updatedDetails[tool.id]?.asset ?? ""}
-                      placeholder={t("FixedAssets.selectAsset")}
+                      placeholder={t("FixedAssets.SelectAssetIsRequired")}
                       onPress={() => {
                         clearFieldError(tool.id, "asset");
                         setShowAssetModal(true);
@@ -1826,7 +1826,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     <GlobalSearchModal
                       visible={showAssetModal}
                       onClose={() => setShowAssetModal(false)}
-                      title={t("FixedAssets.asset")}
+                      title={t("FixedAssets.Asset")}
                       data={Machineasset}
                       selectedItems={
                         updatedDetails[tool.id]?.asset
@@ -1846,11 +1846,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {selectedAsset && assetTypesForAssets[selectedAsset] && (
                       <>
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.assetType")} *
+                          {t("FixedAssets.AssetType")} *
                         </Text>
                         <DropdownTrigger
                           value={updatedDetails[tool.id]?.assetType ?? ""}
-                          placeholder={t("FixedAssets.selectAssetType")}
+                          placeholder={t("FixedAssets.SelectAssetTypeIsRequired")}
                           onPress={() => {
                             clearFieldError(tool.id, "assetType");
                             setShowAssetTypeModal(true);
@@ -1860,7 +1860,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         <GlobalSearchModal
                           visible={showAssetTypeModal}
                           onClose={() => setShowAssetTypeModal(false)}
-                          title={t("FixedAssets.assetType")}
+                          title={t("FixedAssets.AssetType")}
                           data={assetTypesForAssets[selectedAsset]}
                           selectedItems={
                             updatedDetails[tool.id]?.assetType
@@ -1881,10 +1881,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {updatedDetails[tool.id]?.assetType === "Other" && (
                       <>
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.mentionOther")}
+                          {t("FixedAssets.MentionOtherDetails")}
                         </Text>
                         <TextInput
-                          placeholder={t("FixedAssets.mentionOther")}
+                          placeholder={t("FixedAssets.MentionOtherDetails")}
                           value={updatedDetails[tool.id]?.mentionOther ?? ""}
                           onChangeText={(value) => {
                             handleInputChange(
@@ -1905,10 +1905,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     )}
 
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.brand")} *
+                      {t("FixedAssets.Brand")} *
                     </Text>
                     <TextInput
-                      placeholder={t("FixedAssets.selectBrand")}
+                      placeholder={t("FixedAssets.SelectBrand")}
                       value={updatedDetails[tool.id]?.brand ?? ""}
                       editable={false}
                       className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-3 mb-1 pl-4"
@@ -1920,10 +1920,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     ) : null}
 
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.numberofUnits")} *
+                      {t("FixedAssets.NumberOfUnits")} *
                     </Text>
                     <TextInput
-                      placeholder={t("FixedAssets.numberofUnits")}
+                      placeholder={t("FixedAssets.NumberOfUnits")}
                       value={
                         updatedDetails[tool.id]?.numberOfUnits?.toString() ?? ""
                       }
@@ -1945,10 +1945,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     ) : null}
 
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.unitPrice")} *
+                      {t("FixedAssets.UnitPrice")} *
                     </Text>
                     <TextInput
-                      placeholder={t("FixedAssets.unitPrice")}
+                      placeholder={t("FixedAssets.UnitPrice")}
                       value={
                         updatedDetails[tool.id]?.unitPrice?.toString() ?? ""
                       }
@@ -1970,7 +1970,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     ) : null}
 
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.totalPrice")} *
+                      {t("FixedAssets.TotalPrice")} *
                     </Text>
                     <Text className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-1 pl-4">
                       {updatedDetails[tool.id]?.totalPrice
@@ -1986,7 +1986,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     ) : null}
 
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.warranty")} *
+                      {t("FixedAssets.Warranty")} *
                     </Text>
                     <View className="flex-row justify-around mb-4">
                       {["yes", "no"].map((val) => (
@@ -2015,7 +2015,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {updatedDetails[tool.id]?.warranty === "yes" && (
                       <>
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.purchasedDate")} *
+                          {t("FixedAssets.PurchasedDate")} *
                         </Text>
                         <TouchableOpacity
                           onPress={() => {
@@ -2033,7 +2033,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               )
                                 .toISOString()
                                 .split("T")[0]
-                              : t("FixedAssets.purchasedDate")}
+                              : t("FixedAssets.PurchasedDate")}
                           </Text>
                           <Icon
                             name="calendar-outline"
@@ -2111,7 +2111,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           ))}
 
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.warrantyExpireDate")} *
+                          {t("FixedAssets.WarrantyExpireDate")} *
                         </Text>
                         <TouchableOpacity
                           onPress={() => {
@@ -2129,7 +2129,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               )
                                 .toISOString()
                                 .split("T")[0]
-                              : t("FixedAssets.warrantyExpireDate")}
+                              : t("FixedAssets.WarrantyExpireDate")}
                           </Text>
                           <Icon
                             name="calendar-outline"
@@ -2223,7 +2223,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           ))}
 
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.warrantyStatus")}
+                          {t("FixedAssets.WarrantyCoverageStatus")}
                         </Text>
                         <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
                           <Text
@@ -2247,9 +2247,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                 updatedDetails[tool.id].ownershipDetails
                                   .expireDate,
                               ) > new Date()
-                                ? t("FixedAssets.valid")
-                                : t("FixedAssets.expired")
-                              : t("FixedAssets.notSelected")}
+                                ? t("FixedAssets.UnderWarranty")
+                                : t("FixedAssets.Expired")
+                              : t("FixedAssets.NotSelected")}
                           </Text>
                         </View>
                       </>
@@ -2260,11 +2260,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                 {tool.category === "Tools" && (
                   <>
                     <Text className="pb-2 pt-2 font-bold">
-                      {t("FixedAssets.asset")} *
+                      {t("FixedAssets.Asset")} *
                     </Text>
                     <DropdownTrigger
                       value={updatedDetails[tool.id]?.asset ?? ""}
-                      placeholder={t("FixedAssets.selectAsset")}
+                      placeholder={t("FixedAssets.SelectAssetIsRequired")}
                       onPress={() => {
                         clearFieldError(tool.id, "asset");
                         setShowAssetModal(true);
@@ -2274,7 +2274,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     <GlobalSearchModal
                       visible={showAssetModal}
                       onClose={() => setShowAssetModal(false)}
-                      title={t("FixedAssets.asset")}
+                      title={t("FixedAssets.Asset")}
                       data={ToolAssets}
                       selectedItems={
                         updatedDetails[tool.id]?.asset
@@ -2294,10 +2294,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {updatedDetails[tool.id]?.asset === "Other" && (
                       <>
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.mentionOther")}
+                          {t("FixedAssets.MentionOtherDetails")}
                         </Text>
                         <TextInput
-                          placeholder={t("FixedAssets.mentionOther")}
+                          placeholder={t("FixedAssets.MentionOtherDetails")}
                           value={updatedDetails[tool.id]?.mentionOther ?? ""}
                           onChangeText={(value) => {
                             handleInputChange(
@@ -2318,10 +2318,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     )}
 
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.brand")} *
+                      {t("FixedAssets.Brand")} *
                     </Text>
                     <TextInput
-                      placeholder={t("FixedAssets.selectBrand")}
+                      placeholder={t("FixedAssets.SelectBrand")}
                       value={updatedDetails[tool.id]?.brand ?? ""}
                       editable={false}
                       className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-3 mb-1 pl-4"
@@ -2333,10 +2333,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     ) : null}
 
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.numberofUnits")} *
+                      {t("FixedAssets.NumberOfUnits")} *
                     </Text>
                     <TextInput
-                      placeholder={t("FixedAssets.numberofUnits")}
+                      placeholder={t("FixedAssets.NumberOfUnits")}
                       value={
                         updatedDetails[tool.id]?.numberOfUnits?.toString() ?? ""
                       }
@@ -2358,10 +2358,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     ) : null}
 
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.unitPrice")} *
+                      {t("FixedAssets.UnitPrice")} *
                     </Text>
                     <TextInput
-                      placeholder={t("FixedAssets.unitPrice")}
+                      placeholder={t("FixedAssets.UnitPrice")}
                       value={
                         updatedDetails[tool.id]?.unitPrice?.toString() ?? ""
                       }
@@ -2383,10 +2383,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     ) : null}
 
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.totalPrice")}
+                      {t("FixedAssets.TotalPrice")}
                     </Text>
                     <TextInput
-                      placeholder={t("FixedAssets.totalPrice")}
+                      placeholder={t("FixedAssets.TotalPrice")}
                       value={
                         updatedDetails[tool.id]?.totalPrice
                           ? (() => {
@@ -2408,7 +2408,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     />
 
                     <Text className="pb-2 font-bold">
-                      {t("FixedAssets.warranty")} *
+                      {t("FixedAssets.Warranty")} *
                     </Text>
                     <View className="flex-row justify-around mb-4">
                       {["yes", "no"].map((val) => (
@@ -2437,7 +2437,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {updatedDetails[tool.id]?.warranty === "yes" && (
                       <>
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.purchasedDate")} *
+                          {t("FixedAssets.PurchasedDate")} *
                         </Text>
                         <TouchableOpacity
                           onPress={() => {
@@ -2455,7 +2455,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               )
                                 .toISOString()
                                 .split("T")[0]
-                              : t("FixedAssets.purchasedDate")}
+                              : t("FixedAssets.PurchasedDate")}
                           </Text>
                           <Icon
                             name="calendar-outline"
@@ -2533,7 +2533,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           ))}
 
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.warrantyExpireDate")} *
+                          {t("FixedAssets.WarrantyExpireDate")} *
                         </Text>
                         <TouchableOpacity
                           onPress={() => {
@@ -2551,7 +2551,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               )
                                 .toISOString()
                                 .split("T")[0]
-                              : t("FixedAssets.warrantyExpireDate")}
+                              : t("FixedAssets.WarrantyExpireDate")}
                           </Text>
                           <Icon
                             name="calendar-outline"
@@ -2645,7 +2645,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           ))}
 
                         <Text className="pb-2 font-bold">
-                          {t("FixedAssets.warrantyStatus")}
+                          {t("FixedAssets.WarrantyCoverageStatus")}
                         </Text>
                         <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
                           <Text
@@ -2665,8 +2665,8 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               updatedDetails[tool.id]?.ownershipDetails
                                 ?.expireDate,
                             ) > new Date()
-                              ? t("FixedAssets.valid")
-                              : t("FixedAssets.expired")}
+                              ? t("FixedAssets.UnderWarranty")
+                              : t("FixedAssets.Expired")}
                           </Text>
                         </View>
                       </>
@@ -2692,7 +2692,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       <ActivityIndicator size="small" color="#fff" />
                     ) : (
                       <Text className="text-white text-center text-lg">
-                        {t("FixedAssets.updateAsset")}
+                        {t("FixedAssets.UpdateAsset")}
                       </Text>
                     )}
                   </TouchableOpacity>

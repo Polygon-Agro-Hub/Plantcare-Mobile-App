@@ -32,38 +32,38 @@ const FirstLoginView: React.FC = () => {
           <View className="text-center justify-center items-center  p-2">
             <View className="flex-row items-center justify-center gap-2">
               <Text className="text-xl font-bold text-black">
-                {t("Farms.UPGRADE")}
+                {t("Farms.Upgrade")}
               </Text>
               <Text className="text-base text-[#E2BE00] font-semibold bg-[#FFF5BD] p-1 px-6 rounded-md">
-                {t("Farms.PRO")}
+                {t("Farms.Pro")}
               </Text>
             </View>
 
             <Text className="mt-6 text-lg text-black text-center  ">
               {t(
-                "Farms.Please upgrade to PRO membership to access all the features",
+                "Farms.PleaseUpgradeToProMembershipToAccessAllTheFeatures",
               )}
             </Text>
             
             <View className="mt-8 justify-center items-center w-[90%]">
               <View className="">
                 <Text className="text-base text-black font-bold">
-                  • {t("Farms.Create Unlimited Farms")}
+                  • {t("Farms.CreateUnlimitedFarms")}
                 </Text>
                 <Text className="text-base text-black mt-1 ml-3">
-                  {t("Farms.Manage as many farms as you need.")}
+                  {t("Farms.ManageAsManyFarmsAsYouNeed")}
                   <Text>
                     {"\n"}
-                    {t("Farms.No limits & No restrictions.")}
+                    {t("Farms.NoLimits&NoRestrictions")}
                   </Text>
                 </Text>
 
                 <Text className="text-base text-black font-bold mt-8">
-                  • {t("Farms.Unlimited Crop Calendars")}
+                  • {t("Farms.UnlimitedCropCalendars")}
                 </Text>
                 <Text className="text-base text-black mt-1 ml-3">
                   {t(
-                    "Farms.Plan, track, and optimize all your crop cycles without boundaries.",
+                    "Farms.PlanTrackAndOptimizeAllYourCropCCyclesWithoutBoundaries",
                   )}
                 </Text>
               </View>
@@ -80,7 +80,7 @@ const FirstLoginView: React.FC = () => {
               onPress={() => navigation.navigate("UnloackPro" as any)}
             >
               <Text className="text-[#7E5E00] text-lg font-semibold">
-                {t("Farms.Unlock PRO")}
+                {t("Farms.UnlockPro")}
               </Text>
             </TouchableOpacity>
           </LinearGradient>

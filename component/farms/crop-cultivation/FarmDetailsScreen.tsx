@@ -525,7 +525,7 @@ const FarmDetailsScreen = () => {
         if (!token) {
           Alert.alert(
             t("Main.Error"),
-            t("Farms.No authentication token found"),
+            t("Farms.NoAuthenticationTokenFound"),
             [{ text: t("Main.OK") }],
           );
           return;
@@ -736,7 +736,7 @@ const FarmDetailsScreen = () => {
       if (!token) {
         Alert.alert(
           t("Main.Error"),
-          t("Farms.No authentication token found"),
+          t("Farms.NoAuthenticationTokenFound"),
           [{ text: t("Main.OK") }],
         );
         return;
@@ -748,11 +748,11 @@ const FarmDetailsScreen = () => {
       dispatch(resetFarm());
       setPageLoading(false);
       navigation.navigate("Main", { screen: "Dashboard" });
-      Alert.alert(t("Main.Success"), t("Farms.Farm deleted successfully"), [
+      Alert.alert(t("Main.Success"), t("Farms.FarmDeletedSuccessfully"), [
         { text: t("Main.OK") },
       ]);
     } catch {
-      Alert.alert(t("Main.Sorry"), t("Farms.Failed to delete farm"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.FailedToDeleteFarm"), [
         { text: t("Main.OK") },
       ]);
       setPageLoading(false);
@@ -928,10 +928,10 @@ const FarmDetailsScreen = () => {
           </Text>
           <View className="flex-row items-center mt-1 gap-6">
             <Text className="text-[#6B6B6B] text-sm">
-              • {farmData?.appUserCount || 0} {t("Farms.Staff")}
+              • {farmData?.appUserCount || 0} {t("Farms.Members")}
             </Text>
             <Text className="text-[#6B6B6B] text-sm ml-2">
-              • {farmData?.staffCount || 0} {t("Farms.Other Staff")}
+              • {farmData?.staffCount || 0} {t("Farms.OtherStaff")}
             </Text>
           </View>
         </View>
@@ -969,7 +969,7 @@ const FarmDetailsScreen = () => {
               />
             </View>
             <Text className="text-black text-sm font-medium mt-4">
-              {t("Farms.Staff")}
+              {t("Farms.Members")}
             </Text>
           </TouchableOpacity>
 
@@ -998,7 +998,7 @@ const FarmDetailsScreen = () => {
               />
             </View>
             <Text className="text-black text-sm font-medium mt-4">
-              {t("Farms.Farm Assets")}
+              {t("Farms.FarmAssets")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -1048,21 +1048,21 @@ const FarmDetailsScreen = () => {
                           ) {
                             return (
                               <Text className="text-red-600 text-sm mt-1 font-medium">
-                                {t("Farms.Certificate has expired")}
+                                {t("Farms.CertificateHasExpired")}
                               </Text>
                             );
                           }
-                          let validityText = t("Farms.Valid for next") + " ";
+                          let validityText = t("Farms.ValidFor next") + " ";
                           if (remainingTime.months > 0)
                             validityText += `${remainingTime.months} ${remainingTime.months === 1
-                              ? t("Farms.month")
-                              : t("Farms.months")
+                              ? t("Farms.Month")
+                              : t("Farms.Months")
                               }`;
                           if (remainingTime.days > 0) {
                             if (remainingTime.months > 0) validityText += " ";
                             validityText += `${remainingTime.days} ${remainingTime.days === 1
-                              ? t("Farms.day")
-                              : t("Farms.days")
+                              ? t("Farms.Day")
+                              : t("Farms.Days")
                               }`;
                           }
                           return (
@@ -1078,7 +1078,7 @@ const FarmDetailsScreen = () => {
                             }`}
                         >
                           {certificate.isAllCompleted
-                            ? t("Farms.All Completed")
+                            ? t("Farms.AllCompleted")
                             : t("Farms.Pending")}
                         </Text>
                       </View>
@@ -1107,7 +1107,7 @@ const FarmDetailsScreen = () => {
                 loop
               />
               <Text className="text-center text-gray-600 -mt-8">
-                --{t("MyCrop.No Ongoing Cultivations yet")}--
+                --{t("MyCrop.NoOngoingCultivationsYet")}--
               </Text>
             </View>
           ) : (
@@ -1195,7 +1195,7 @@ const FarmDetailsScreen = () => {
             </View>
             <Text className="text-gray-600 text-center text-sm leading-5 mb-6">
               {t(
-                "CropCalender.Please complete the certification tasks to unlock the calendar tasks",
+                "CropCalender.PleaseCompleteTheCertificationTasksToUnlockTheCalendarTasks",
               )}
             </Text>
             <TouchableOpacity
@@ -1254,14 +1254,14 @@ const FarmDetailsScreen = () => {
               />
             </View>
             <Text className="text-lg font-bold text-center mb-2">
-              {t("Farms.Are you sure you want to delete this farm?")}
+              {t("Farms.AreYouSureYouWantToDeleteThisFarm")}
             </Text>
             <Text className="text-gray-600 text-center mb-6">
               {t(
-                "Farms.Deleting this farm will permanently remove all associated managers, crop calendars, and assets.",
+                "Farms.DeletingThisFarmWillPermanentlyRemoveAllAssociatedManagersCropCalendarsAndAssets",
               )}
               {"\n\n"}
-              {t("Farms.This action cannot be undone.")}
+              {t("Farms.ThisActionCannotBeUndone")}
             </Text>
             <View className="px-4">
               <TouchableOpacity
@@ -1269,7 +1269,7 @@ const FarmDetailsScreen = () => {
                 className="px-6 py-2 bg-[#000000] rounded-full"
               >
                 <View className="justify-center items-center">
-                  <Text className="text-white">{t("Farms.Yes, Delete")}</Text>
+                  <Text className="text-white">{t("Farms.YesDelete")}</Text>
                 </View>
               </TouchableOpacity>
             </View>
@@ -1280,7 +1280,7 @@ const FarmDetailsScreen = () => {
               >
                 <View className="justify-center items-center">
                   <Text className="text-gray-700">
-                    {t("Main.Go Back")}
+                    {t("Main.GoBack")}
                   </Text>
                 </View>
               </TouchableOpacity>

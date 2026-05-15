@@ -132,7 +132,7 @@ const EditManagersScreen = () => {
       if (!token) {
         Alert.alert(
           t("Main.Error"),
-          t("Farms.No authentication token found"),
+          t("Farms.NoAuthenticationTokenFound"),
           [{ text: t("Main.OK") }],
         );
         return;
@@ -302,7 +302,7 @@ const EditManagersScreen = () => {
           </Text>
 
           <Text className="text-gray-600 text-sm">
-            {farmData?.appUserCount || 0} {t("Farms.Staff")}
+            {farmData?.appUserCount || 0} {t("Farms.Members")}
           </Text>
         </View>
       </View>
@@ -355,7 +355,7 @@ const EditManagersScreen = () => {
         {staffData.length === 0 && (
           <View className="items-center mt-12">
             <Text className="text-gray-500 text-center">
-              {t("Farms.No staff members found")}
+              {t("Farms.NoStaffMembersFound")}
             </Text>
           </View>
         )}

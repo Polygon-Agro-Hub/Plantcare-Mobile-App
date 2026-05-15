@@ -118,7 +118,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
     const phoneNumber = "+94770111999";
     const url = `tel:${phoneNumber}`;
     Linking.openURL(url).catch((err) =>
-      Alert.alert(t("Main.Error"), t("Profile.UnabletoOpen"), [
+      Alert.alert(t("Main.Error"), t("Profile.UnableToOpenTheDialerPleaseTryAgain"), [
         { text: t("Main.OK") },
       ]),
     );
@@ -283,7 +283,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
           >
             <Ionicons name="qr-code" size={20} color="#434343" />
             <Text className="flex-1 text-lg ml-2 text-[#434343]">
-              {t("Profile.ViewQR")}
+              {t("Profile.ViewMyQR")}
             </Text>
           </TouchableOpacity>
 
@@ -402,7 +402,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
                   {t("Profile.NeedHelp")}?
                 </Text>
                 <Text className="text-base text-center mb-8">
-                  {t("Profile.NeedGoViCareHelp")}
+                  {t("Profile.NeedGoViCareHelpTapTheCallButtonForInstantSupport")}
                 </Text>
                 <View className="flex-row justify-around">
                   <TouchableOpacity

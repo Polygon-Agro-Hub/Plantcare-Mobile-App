@@ -74,7 +74,7 @@ const CropPlanningCalculatorsMenuScreen: React.FC<CropPlanningProps> = ({
   return (
     <View className="flex-1 bg-white">
       <CustomHeader
-        title={t("CropPlanningCalculators.Title")}
+        title={t("CropPlanningCalculators.CropPlanning&YieldCalculators")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}

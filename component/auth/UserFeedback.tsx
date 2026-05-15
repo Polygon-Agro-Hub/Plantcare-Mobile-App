@@ -164,7 +164,7 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
       if (response.ok) {
         await AsyncStorage.removeItem("userToken");
         await AsyncStorage.clear();
-        Alert.alert(t("Main.Success"), t("Feedback.successMessage"), [
+        Alert.alert(t("Main.Success"), t("Feedback.DeleteSuccessThankYou"), [
           {
             text: t("Main.OK"),
             onPress: () => {
@@ -188,7 +188,7 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="bg-white">
       <CustomHeader
-        title={t("Feedback.title")}
+        title={t("Feedback.Feedback")}
         navigation={navigation}
         onBackPress={handleGoBack}
       />
@@ -211,10 +211,10 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
                       : { fontSize: 19 },
                 ]}
               >
-                {t("Feedback.whyLeave")}
+                {t("Feedback.WhyDidYouDecideToLeaveThisApp")}
               </Text>
               <Text className="text-gray-600 leading-relaxed">
-                {t("Feedback.optionalFeedback")}
+                {t("Feedback.GiveAnOptionalFeedbackToHelpUsImprove")}
               </Text>
 
               <View className="mt-6 mb-2">
@@ -270,7 +270,7 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
                 }}
               >
                 <Text className="text-center text-white text-base font-semibold">
-                  {t("Feedback.doneButton")}
+                  {t("Feedback.Done")}
                 </Text>
               </TouchableOpacity>
             </View>

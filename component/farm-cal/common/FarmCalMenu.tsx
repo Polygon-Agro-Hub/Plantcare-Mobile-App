@@ -32,43 +32,43 @@ interface CalculatorItem {
 const calculatorItems: CalculatorItem[] = [
   {
     id: "crop",
-    labelKey: "CropPlanningCalculators.Title",
+    labelKey: "CropPlanningCalculators.CropPlanning&YieldCalculators",
     icon: require("@/assets/images/farm-cal/menu/crop-planning.webp"),
     screen: "CropPlanningCalculatorsMenu",
   },
   {
     id: "irrigation",
-    labelKey: "IrrigationWaterCalculators.Title",
+    labelKey: "IrrigationWaterCalculators.Irrigation&WaterCalculators",
     icon: require("@/assets/images/farm-cal/menu/irrigation-water.webp"),
     screen: "IrrigationWaterCalculatorsMenu",
   },
   {
     id: "soil",
-    labelKey: "SoilFertilizerCalculators.Title",
+    labelKey: "SoilFertilizerCalculators.Soil&FertilizerCalculators",
     icon: require("@/assets/images/farm-cal/menu/soil.webp"),
     screen: "SoilFertilizerCalculatorsMenu",
   },
   {
     id: "pesticide",
-    labelKey: "PesticidePestCalculators.Title",
+    labelKey: "PesticidePestCalculators.Pesticide&PestCalculators",
     icon: require("@/assets/images/farm-cal/menu/pesticide.webp"),
     screen: "PesticidePestCalculatorsMenu",
   },
   {
     id: "economic",
-    labelKey: "EconomicCostCalendars.Title",
+    labelKey: "EconomicCostCalendars.Economic&CostCalendars",
     icon: require("@/assets/images/farm-cal/menu/economic.webp"),
     screen: "EconomicCostCalendarsMenu",
   },
   {
     id: "weather",
-    labelKey: "WeatherClimateCalculators.Title",
+    labelKey: "WeatherClimateCalculators.Weather&ClimateCalculators",
     icon: require("@/assets/images/farm-cal/menu/weather.webp"),
     screen: "WeatherClimateCalculatorsMenu",
   },
   {
     id: "postharvest",
-    labelKey: "PostHarvestStorageCalculators.Title",
+    labelKey: "PostHarvestStorageCalculators.PostHarvestStorageCalculators",
     icon: require("@/assets/images/farm-cal/menu/post-harvest.webp"),
     screen: "PostHarvestStorageCalculatorsMenu",
   },
@@ -82,7 +82,7 @@ const FarmCalMenuScreen: React.FC<FarmCalMenuProps> = ({ navigation }) => {
       <StatusBar barStyle="dark-content" backgroundColor="white" />
 
       <CustomHeader
-        title={t("TransactionList.Farm Cal")}
+        title={t("TransactionList.FarmCal")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}

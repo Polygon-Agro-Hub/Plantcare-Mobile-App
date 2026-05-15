@@ -236,7 +236,7 @@ const PaymentGatewayeRenew: React.FC<PaymentGatewayeRenewProps> = ({
         className="bg-white"
       >
         <CustomHeader
-          title={t("Farms.Credit Debit Card")}
+          title={t("Farms.CreditDebitCard")}
           navigation={navigation}
           onBackPress={() => navigation.navigate("UnLockProRenew" as any)}
         />
@@ -341,7 +341,7 @@ const PaymentGatewayeRenew: React.FC<PaymentGatewayeRenewProps> = ({
             disabled={isProcessing}
           >
             <Text className="text-white text-lg font-semibold text-center">
-              {isProcessing ? t("Farms.Processing") : t("Farms.Pay Now")}
+              {isProcessing ? t("Farms.Processing...") : t("Farms.PayNow")}
             </Text>
           </TouchableOpacity>
         </View>

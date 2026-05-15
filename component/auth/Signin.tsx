@@ -65,7 +65,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
     const regex = /^[1-9][0-9]{8}$/;
 
     if (!regex.test(localNumber)) {
-      setError(t("SignUp.EnterValidMobile"));
+      setError(t("SignUp.PleaseEnterAValid9DigitMobileNumberExcludeTheLeadingZero"));
       setIsButtonDisabled(true);
       setIsValid(false);
     } else {
@@ -110,7 +110,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
 
   const handleLogin = async () => {
     if (!phonenumber) {
-      Alert.alert(t("signinForm.sorry"), t("signinForm.phoneNumberRequired"), [
+      Alert.alert(t("SignIn.sorry"), t("SignIn.PhoneNumberIsRequired"), [
         {
           text: t("Main.OK"),
           onPress: () => navigation.navigate("Signin"),
@@ -180,7 +180,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
             setIsButtonDisabled(false);
             setIsLoading(false);
           } catch (error) {
-            Alert.alert(t("Main.Error"), t("SignUp.otpSendFailed"), [
+            Alert.alert(t("Main.Error"), t("SignUp.FailedToSendOTPPleaseCheckYourNumberAndTryAgain"), [
               {
                 text: t("Main.OK"),
                 onPress: () => navigation.navigate("Signin"),
@@ -200,8 +200,8 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
             return;
           }
           Alert.alert(
-            t("signinForm.loginFailed"),
-            t("signinForm.notRegistered"),
+            t("SignIn.LoginFailed"),
+            t("SignIn.ThisUserIsNotRegisteredPleaseSignUpFirst"),
             [
               {
                 text: t("Main.OK"),
@@ -223,7 +223,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
     } catch (error) {
       setIsButtonDisabled(false);
       setIsLoading(false);
-      Alert.alert(t("signinForm.loginFailed"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+      Alert.alert(t("SignIn.LoginFailed"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
         {
           text: t("Main.OK"),
           onPress: () => navigation.navigate("Signin"),
@@ -276,7 +276,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                   : { fontSize: 25 }
               }
             >
-              {t("signinForm.welcome")}
+              {t("SignIn.Welcome")}
             </Text>
 
             <Text
@@ -289,7 +289,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                     : { fontSize: 16 }
               }
             >
-              {t("signinForm.enteryourphno")}
+              {t("SignIn.EnterYourPhoneNumberOfYourLoginID")}
             </Text>
           </View>
 
@@ -321,7 +321,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                   >
                     <TextInput
                       className="flex-1 px-4"
-                      placeholder={t("SignUp.PhoneNumber")}
+                      placeholder={t("Inputs.PhoneNumber")}
                       value={phonenumber}
                       onChangeText={handlePhoneNumberChange}
                       keyboardType="phone-pad"
@@ -391,7 +391,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                       <ActivityIndicator size="small" color="#fff" />
                     ) : (
                       <Text className="text-white font-semibold text-center text-lg">
-                        {t("signinForm.signin")}
+                        {t("SignIn.SignIn")}
                       </Text>
                     )}
                   </LinearGradient>
@@ -401,7 +401,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
               {/* Signup Link */}
               <View className="mt-6 flex-row justify-center items-center ">
                 <Text className="font-bold text-[#3F3F3F] mr-2">
-                  {t("signinForm.donthaveanaccount")}
+                  {t("SignIn.DontHaveAnAccount")}
                 </Text>
 
                 <TouchableOpacity
@@ -415,7 +415,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                   }}
                 >
                   <Text className="text-[#0085FF] font-semibold underline">
-                    {t("signinForm.signuphere")}
+                    {t("SignIn.SignUpHere")}
                   </Text>
                 </TouchableOpacity>
               </View>

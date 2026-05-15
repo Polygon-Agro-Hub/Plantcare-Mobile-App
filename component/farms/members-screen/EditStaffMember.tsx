@@ -160,7 +160,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
       setPhoneError(null);
     } catch (error: any) {
       if (error?.response?.status === 409) {
-        setPhoneError(t("Farms.This phone number is already registered"));
+        setPhoneError(t("Farms.ThisPhoneNumberIsAlreadyRegistered"));
       } else if (error?.response) {
         setPhoneError(t("Farms.Error checking phone number"));
       } else {
@@ -185,10 +185,10 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
     } catch (error: any) {
       if (error?.response?.status === 409) {
         setNicDuplicateErrors(
-          t("Farms.This NIC is already used by another staff member"),
+          t("Farms.ThisNICIsAlreadyUsedByAnotherStaffMember"),
         );
       } else if (error?.response) {
-        setNicDuplicateErrors(t("Farms.Error checking NIC number"));
+        setNicDuplicateErrors(t("Farms.ErrorCheckingNICNumber"));
       } else {
         setNicDuplicateErrors(null);
       }
@@ -208,7 +208,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
     setValidationError(null);
 
     if (digitsOnly.length > 9) {
-      setValidationError(t("Farms.Phone number cannot exceed 9 digits"));
+      setValidationError(t("Farms.PhoneNumberCannotExceed9Digits"));
       setPhoneNumber(formatPhoneInput(text));
       return;
     }
@@ -218,9 +218,9 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
 
     if (formatted.length > 0) {
       if (formatted[0] !== "7") {
-        setValidationError(t("Farms.Phone number must start with 7"));
+        setValidationError(t("Farms.PhoneNumberMustStartWith7"));
       } else if (formatted.length < 9) {
-        setValidationError(t("Farms.Phone number must be exactly 9 digits"));
+        setValidationError(t("Farms.PhoneNumberMustBeExactly9Digits"));
       } else if (!validateSriLankanPhoneNumber(formatted)) {
         setValidationError(t("Farms.Please enter a valid phone number"));
       }
@@ -240,7 +240,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
     setNicDuplicateErrors(null);
 
     if (formatted && !validateSriLankanNic(formatted)) {
-      setNicErrors(t("Farms.Please enter a valid Sri Lankan NIC"));
+      setNicErrors(t("Farms.PleaseEnterAValidSriLankanNIC"));
     } else {
       setNicErrors(null);
     }
@@ -259,19 +259,19 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
 
   const validateForm = (): boolean => {
     if (!firstName.trim()) {
-      Alert.alert(t("Main.Sorry"), t("Farms.Please enter first name"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterFirstName"), [
         { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!lastName.trim()) {
-      Alert.alert(t("Main.Sorry"), t("Farms.Please enter last name"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterLastName"), [
         { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!phoneNumber.trim()) {
-      Alert.alert(t("Main.Sorry"), t("Farms.Please enter phone number"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterPhoneNumber"), [
         { text: t("Main.OK") },
       ]);
       return false;
@@ -279,27 +279,27 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
     if (!validateSriLankanPhoneNumber(phoneNumber)) {
       const msg =
         phoneNumber.length !== 9
-          ? t("Farms.Phone number must be exactly 9 digits")
+          ? t("Farms.PhoneNumberMustBeExactly9Digits")
           : phoneNumber[0] !== "7"
-            ? t("Farms.Phone number must start with 7")
+            ? t("Farms.PhoneNumberMustStartWith7")
             : t("Farms.Please enter a valid phone number");
       Alert.alert(t("Main.Sorry"), msg, [{ text: t("Main.OK") }]);
       return false;
     }
     if (!selectedRole) {
-      Alert.alert(t("Main.Sorry"), t("Farms.Please select a role"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseSelectARole"), [
         { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!nic.trim()) {
-      Alert.alert(t("Main.Sorry"), t("Farms.Please enter NIC"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterNIC"), [
         { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!validateSriLankanNic(nic)) {
-      Alert.alert(t("Main.Sorry"), t("Farms.Please enter a valid NIC"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterAValidNIC"), [
         { text: t("Main.OK") },
       ]);
       return false;
@@ -319,7 +319,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
     if (nicDuplicateErrors) {
       Alert.alert(
         t("Main.Sorry"),
-        t("Farms.This NIC is already used by another staff member"),
+        t("Farms.ThisNICIsAlreadyUsedByAnotherStaffMember"),
         [{ text: t("Main.OK") }],
       );
       return false;
@@ -329,7 +329,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
 
   const fetchStaffMember = async () => {
     if (!staffMemberId) {
-      Alert.alert(t("Main.Sorry"), t("Farms.Staff member ID is missing"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.StaffMemberIDIsMissing"), [
         { text: t("Main.OK") },
       ]);
       setLoading(false);
@@ -346,7 +346,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
       if (!token) {
         Alert.alert(
           t("Main.Sorry"),
-          t("Farms.No authentication token found"),
+          t("Farms.NoAuthenticationTokenFound"),
           [{ text: t("Main.OK") }],
         );
         return;
@@ -367,7 +367,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
     } catch {
       Alert.alert(
         t("Main.Sorry"),
-        t("Farms.Failed to fetch staff member data"),
+        t("Farms.FailedToFFetchStaffMemberData"),
         [{ text: t("Main.OK") }],
       );
     } finally {
@@ -454,7 +454,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
       if (error.response) {
         errorMessage = error.response.data?.message || errorMessage;
       } else if (error.request) {
-        errorMessage = t("Farms.Network error. Please check your connection.");
+        errorMessage = t("Farms.NetworkErrorPleaseCheckYourConnection");
       }
       Alert.alert(t("Main.Sorry"), errorMessage, [
         { text: t("Main.OK") },
@@ -472,7 +472,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
       if (!token) {
         Alert.alert(
           t("Main.Error"),
-          t("Farms.No authentication token found"),
+          t("Farms.NoAuthenticationTokenFound"),
           [{ text: t("Main.OK") }],
         );
         return;
@@ -483,7 +483,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
       );
       Alert.alert(
         t("Main.Success"),
-        t("Farms.Farm member deleted successfully"),
+        t("Farms.FarmMemberDeletedSuccessfully"),
         [
           {
             text: t("Main.OK"),
@@ -499,7 +499,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
         ],
       );
     } catch {
-      Alert.alert(t("Main.Sorry"), t("Farms.Failed to delete staff member"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.FailedToDeleteStaffMember"), [
         { text: t("Main.OK") },
       ]);
     } finally {
@@ -523,7 +523,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
         keyboardShouldPersistTaps="handled"
       >
         <CustomHeader
-          title={t("Farms.Edit Details", {
+          title={t("Farms.EditSelectedRoleDetails", {
             selectedRole: getRoleText(selectedRole),
           })}
           navigation={navigation}
@@ -557,7 +557,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
               >
                 {selectedRole
                   ? roleItems.find((r) => r.value === selectedRole)?.label
-                  : t("Farms.Select Role")}
+                  : t("Farms.SelectRole")}
               </Text>
               <AntDesign name="caret-down" size={14} color="#555" />
             </TouchableOpacity>
@@ -568,7 +568,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
               data={roleItems}
               selectedItems={selectedRole ? [selectedRole] : []}
               onSelect={(items) => setSelectedRole(items[0] ?? "")}
-              searchPlaceholder={t("Farms.Select Role")}
+              searchPlaceholder={t("Farms.SelectRole")}
               showSearch={false}
               multiSelect={false}
             />
@@ -577,11 +577,11 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
           {/* First Name */}
           <View className="gap-2">
             <Text className="text-gray-900 text-base">
-              {t("Farms.First Name")}
+              {t("Inputs.FirstName")}
             </Text>
             <TextInput
               className="bg-gray-100 px-4 h-[50px] rounded-3xl text-base text-gray-700"
-              placeholder={t("Farms.Enter First Name")}
+              placeholder={t("Farms.EnterFirstName")}
               placeholderTextColor="#9CA3AF"
               value={firstName}
               onChangeText={setFirstName}
@@ -593,11 +593,11 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
           {/* Last Name */}
           <View className="gap-2">
             <Text className="text-gray-900 text-base">
-              {t("Farms.Last Name")}
+              {t("Inputs.LastName")}
             </Text>
             <TextInput
               className="bg-gray-100 px-4 rounded-3xl h-[50px] text-base text-gray-700"
-              placeholder={t("Farms.Enter Last Name")}
+              placeholder={t("Farms.EnterLastName")}
               placeholderTextColor="#9CA3AF"
               value={lastName}
               onChangeText={setLastName}
@@ -609,7 +609,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
           {/* Phone Number */}
           <View className="gap-2">
             <Text className="text-gray-900 text-base">
-              {t("Farms.Phone Number")}
+              {t("Farms.PhoneNumber")}
             </Text>
             <View className="flex-row items-center">
               <TouchableOpacity
@@ -646,7 +646,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
               <View className="flex-row items-center mt-1 ml-3">
                 <ActivityIndicator size="small" color="#2563EB" />
                 <Text className="text-blue-600 text-sm ml-2">
-                  {t("Farms.Checking number...")}
+                  {t("Farms.CheckingNumber...")}
                 </Text>
               </View>
             )}
@@ -682,7 +682,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
             <TextInput
               value={nic}
               onChangeText={handleNicChange}
-              placeholder={t("Farms.Enter NIC")}
+              placeholder={t("Farms.EnterNIC")}
               placeholderTextColor="#9CA3AF"
               className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
               editable={!isSubmitting}
@@ -693,7 +693,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
               <View className="flex-row items-center mt-1 ml-3">
                 <ActivityIndicator size="small" color="#2563EB" />
                 <Text className="text-blue-600 text-sm ml-2">
-                  {t("Farms.Checking NIC...")}
+                  {t("Farms.CheckingNIC...")}
                 </Text>
               </View>
             )}
@@ -756,7 +756,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
             }}
           >
             <Text className="text-white text-lg font-semibold">
-              {t("Farms.Delete Member")}
+              {t("Farms.DeleteMember")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -777,14 +777,14 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
                 />
               </View>
               <Text className="text-lg font-bold text-center mb-2">
-                {t("Farms.Are you sure you want to delete this member?")}
+                {t("Farms.AreYouSureYouWantToDeleteThisMember")}
               </Text>
               <Text className="text-gray-600 text-center mb-6">
                 {t(
-                  "Farms.Deleting this member will permanently remove all data related to that member.",
+                  "Farms.DeletingThisMemberWillPermanentlyRemoveAllDataRelatedToThatMember",
                 )}
                 {"\n\n"}
-                {t("Farms.This action cannot be undone.")}
+                {t("Farms.ThisActionCannotBeUndone")}
               </Text>
               <View className="px-4">
                 <TouchableOpacity
@@ -792,7 +792,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
                   className="px-6 h-[50px] justify-center bg-black rounded-3xl"
                 >
                   <View className="justify-center items-center">
-                    <Text className="text-white text-lg">{t("Farms.Yes, Delete")}</Text>
+                    <Text className="text-white text-lg">{t("Farms.YesDelete")}</Text>
                   </View>
                 </TouchableOpacity>
               </View>
@@ -803,7 +803,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
                 >
                   <View className="justify-center items-center">
                     <Text className="text-gray-700 text-lg">
-                      {t("Main.Go Back")}
+                      {t("Main.GoBack")}
                     </Text>
                   </View>
                 </TouchableOpacity>

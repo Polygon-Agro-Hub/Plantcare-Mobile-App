@@ -132,9 +132,9 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
 
     if (updateQuantity === 0) {
       Alert.alert(
-        t("CurrentAssets.Confirm Deletion"),
+        t("CurrentAssets.ConfirmDeletion"),
         t(
-          "CurrentAssets.Setting quantity to 0 will clear this record. Do you want to continue?",
+          "CurrentAssets.SettingQuantityToZeroWillClearThisRecordDoYouWantToContinue",
         ),
         [
           {
@@ -142,7 +142,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
             style: "cancel",
           },
           {
-            text: t("CurrentAssets.Yes, Clear Record"),
+            text: t("CurrentAssets.YesClearRecord"),
             onPress: async () => {
               await performUpdate();
             },
@@ -187,8 +187,8 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
         Alert.alert(
           t("Main.Success"),
           updateQuantity === 0
-            ? t("CurrentAssets.Asset record cleared successfully")
-            : t("CurrentAssets.Asset updated successfully"),
+            ? t("CurrentAssets.AssetRecordClearedSuccessfully")
+            : t("CurrentAssets.AssetUpdatedSuccessfully"),
           [{ text: t("Main.OK") }],
         );
         setModalVisible(false);
@@ -383,7 +383,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
           <View className="w-1/2">
             <TouchableOpacity>
               <Text className="text-black text-center font-semibold text-lg">
-                {t("CurrentAssets.currentAssets")}
+                {t("CurrentAssets.CurrentAssets")}
               </Text>
               <View className="border-t-[2px] border-black" />
             </TouchableOpacity>
@@ -398,7 +398,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
               }
             >
               <Text className="text-black text-center font-semibold text-lg">
-                {t("CurrentAssets.fixedAssets")}
+                {t("CurrentAssets.FixedAssets")}
               </Text>
               <View className="border-t-[2px] border-[#D9D9D9]" />
             </TouchableOpacity>
@@ -562,7 +562,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
 
                       <View className="flex-row items-center">
                         <Text>
-                          {t("CurrentAssets.rs")}
+                          {t("CurrentAssets.Rs")}
                           {Number(asset.totalSum).toLocaleString("en-US", {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
@@ -578,7 +578,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
                             {t("CurrentAssets.Asset")}
                           </Text>
                           <Text className="w-[50px] text-xs text-[#5C5C5C] text-center">
-                            {t("CurrentAssets.B.No")}
+                            {t("CurrentAssets.BNo")}
                           </Text>
                           <Text className="w-[80px] text-xs text-[#5C5C5C] text-center">
                             {t("CurrentAssets.Qty")}
@@ -646,7 +646,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
               ) : (
                 <View className="w-[90%] items-center py-10">
                   <Text className="text-gray-500 text-lg">
-                    {t("CurrentAssets.No assets found")}
+                    {t("CurrentAssets.NoAssetsFound")}
                   </Text>
                 </View>
               );
@@ -688,7 +688,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
         <View className="flex-1 justify-center items-center bg-black/50">
           <View className="bg-white rounded-2xl w-[85%]">
             <Text className="text-lg font-semibold text-center pt-4 pb-3">
-              {t("CurrentAssets.Update Asset")}
+              {t("CurrentAssets.UpdateAsset")}
             </Text>
 
             <View className="px-5">
@@ -714,7 +714,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
               {/* Batch Number */}
               <View className="mb-2 ">
                 <Text className="text-base text-black mb-1">
-                  {t("CurrentAssets.Batch No")}
+                  {t("CurrentAssets.BatchNo")}
                 </Text>
                 <View className="bg-[#F6F6F6] rounded-3xl px-3 justify-center h-[50px]">
                   <Text className="text-base">{selectedItem?.batchNum}</Text>
@@ -753,7 +753,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
                 {updateQuantity === 0 && (
                   <Text className="text-red-500 text-xs mt-1">
                     {t(
-                      "CurrentAssets.The total record will be cleared when updating.",
+                      "CurrentAssets.YouHaveSetTheQuantityToZeroTheTotalRecordWillBeClearedWhenUpdating",
                     )}
                   </Text>
                 )}
@@ -762,7 +762,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
               <View className="flex-row gap-x-2 mb-3">
                 <View className="flex-1">
                   <Text className="text-base text-black mb-1">
-                    {t("CurrentAssets.Unit Price")}
+                    {t("CurrentAssets.UnitPrice")}
                   </Text>
                   <View className="bg-[#F6F6F6] rounded-3xl h-[50px] justify-center px-3 py-2">
                     <Text className="text-sm" numberOfLines={1}>
@@ -780,7 +780,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
 
                 <View className="flex-1">
                   <Text className="text-base text-black mb-1">
-                    {t("CurrentAssets.Total Amount")}
+                    {t("CurrentAssets.TotalAmount")}
                   </Text>
                   <View className="bg-[#F6F6F6] rounded-full px-3 h-[50px] justify-center">
                     <Text className="text-sm font-semibold" numberOfLines={1}>

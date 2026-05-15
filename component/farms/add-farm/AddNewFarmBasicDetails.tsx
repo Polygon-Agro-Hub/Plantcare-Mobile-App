@@ -162,37 +162,37 @@ const AddNewFarmBasicDetails: React.FC = () => {
 
   const handleContinue = () => {
     if (!farmName.trim()) {
-      Alert.alert(t("Main.Error"), t("Farms.enterFarmName"), [
+      Alert.alert(t("Main.Error"), t("Farms.PleaseEnterAFarmName"), [
         { text: t("Main.OK") },
       ]);
       return;
     }
     if (!extentha.trim() && !extentac.trim() && !extentp.trim()) {
-      Alert.alert(t("Main.Error"), t("Farms.enterFarmExtent"), [
+      Alert.alert(t("Main.Error"), t("Farms.PleaseEnterFarmExtentAtLeastOneFieldHaAcOrP"), [
         { text: t("Main.OK") },
       ]);
       return;
     }
     if (!district.trim()) {
-      Alert.alert(t("Main.Error"), t("Farms.selectDistrict"), [
+      Alert.alert(t("Main.Error"), t("Farms.PleaseSelectADistrict"), [
         { text: t("Main.OK") },
       ]);
       return;
     }
     if (!plotNo.trim()) {
-      Alert.alert(t("Main.Error"), t("Farms.enterPlotNumber"), [
+      Alert.alert(t("Main.Error"), t("Farms.PleaseEnterPlotNumber"), [
         { text: t("Main.OK") },
       ]);
       return;
     }
     if (!streetName.trim()) {
-      Alert.alert(t("Main.Error"), t("Farms.enterStreetName"), [
+      Alert.alert(t("Main.Error"), t("Farms.PleaseEnterStreetName"), [
         { text: t("Main.OK") },
       ]);
       return;
     }
     if (!city.trim()) {
-      Alert.alert(t("Main.Error"), t("Farms.enterCityName"), [
+      Alert.alert(t("Main.Error"), t("Farms.PleaseEnterCityName"), [
         { text: t("Main.OK") },
       ]);
       return;
@@ -253,7 +253,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                   i18n.language === "si" ? { fontSize: 14 } : { fontSize: 20 },
                 ]}
               >
-                {t("Farms.Add New Farm")}
+                {t("Farms.AddNewFarm")}
               </Text>
               <View
                 className={`absolute right-[-5%] ${membershipDisplay.bgColor} px-2 py-1 rounded-lg`}
@@ -309,12 +309,12 @@ const AddNewFarmBasicDetails: React.FC = () => {
           <View className="gap-6">
             <View>
               <Text className="text-[#070707] font-medium mb-2">
-                {t("Farms.Farm Name")}
+                {t("Farms.FarmName")}
               </Text>
               <TextInput
                 value={farmName}
                 onChangeText={setFarmName}
-                placeholder={t("Farms.Enter Farm Name Here")}
+                placeholder={t("Farms.EnterFarmNameHere")}
                 placeholderTextColor="#9CA3AF"
                 className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
               />
@@ -380,7 +380,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                     selectedDistrictLabel ? "text-gray-800" : "text-[#9CA3AF]"
                   }
                 >
-                  {selectedDistrictLabel || t("Farms.Select District")}
+                  {selectedDistrictLabel || t("Farms.SelectDistrict")}
                 </Text>
                 <AntDesign name="caret-down" size={14} color="#555" />
               </TouchableOpacity>
@@ -392,19 +392,19 @@ const AddNewFarmBasicDetails: React.FC = () => {
                 data={districtItems}
                 selectedItems={district ? [district] : []}
                 onSelect={(values) => setDistrict(values[0] ?? "")}
-                searchPlaceholder={t("Farms.Search district..")}
+                searchPlaceholder={t("Farms.SearchDistrict")}
                 multiSelect={false}
               />
             </View>
 
             <View>
               <Text className="text-[#070707] font-medium mb-2">
-                {t("Farms.Plot No")}
+                {t("Farms.PlotNo")}
               </Text>
               <TextInput
                 value={plotNo}
                 onChangeText={setPlotNo}
-                placeholder={t("Farms.Enter Plot Number Here")}
+                placeholder={t("Farms.EnterPlotNumberHere")}
                 placeholderTextColor="#9CA3AF"
                 className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
               />
@@ -412,12 +412,12 @@ const AddNewFarmBasicDetails: React.FC = () => {
 
             <View>
               <Text className="text-[#070707] font-medium mb-2">
-                {t("Farms.Street Name")}
+                {t("Farms.StreetName")}
               </Text>
               <TextInput
                 value={streetName}
                 onChangeText={setStreetName}
-                placeholder={t("Farms.Enter Street Name")}
+                placeholder={t("Farms.EnterStreetName")}
                 placeholderTextColor="#9CA3AF"
                 className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
               />
@@ -430,7 +430,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
               <TextInput
                 value={city}
                 onChangeText={setCity}
-                placeholder={t("Farms.Enter City Name")}
+                placeholder={t("Farms.EnterCityName")}
                 placeholderTextColor="#9CA3AF"
                 className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
               />

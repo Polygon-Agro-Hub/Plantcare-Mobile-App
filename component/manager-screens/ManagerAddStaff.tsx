@@ -133,7 +133,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
       setPhoneError(null);
     } catch (error: any) {
       if (error?.response?.status === 409) {
-        setPhoneError(t("Farms.This phone number is already registered"));
+        setPhoneError(t("Farms.ThisPhoneNumberIsAlreadyRegistered"));
       } else if (error?.response) {
         setPhoneError(t("Farms.Error checking phone number"));
       } else {
@@ -158,7 +158,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
     setPhoneError(null);
 
     if (digitsOnly.length > 9) {
-      setValidationError(t("Farms.Phone number cannot exceed 9 digits"));
+      setValidationError(t("Farms.PhoneNumberCannotExceed9Digits"));
       const formattedText = formatPhoneInput(text);
       setPhoneNumber(formattedText);
       return;
@@ -171,9 +171,9 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
 
     if (formattedText.length > 0) {
       if (formattedText[0] !== "7") {
-        setValidationError(t("Farms.Phone number must start with 7"));
+        setValidationError(t("Farms.PhoneNumberMustStartWith7"));
       } else if (formattedText.length < 9) {
-        setValidationError(t("Farms.Phone number must be exactly 9 digits"));
+        setValidationError(t("Farms.PhoneNumberMustBeExactly9Digits"));
       } else if (!validateSriLankanPhoneNumber(formattedText)) {
         setValidationError(t("Farms.Please enter a valid phone number"));
       } else {
@@ -224,25 +224,25 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
 
   const validateForm = () => {
     if (!firstName.trim()) {
-      Alert.alert(t("Main.Sorry"), t("Farms.Please enter first name"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterFirstName"), [
         { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!lastName.trim()) {
-      Alert.alert(t("Main.Sorry"), t("Farms.Please enter last name"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterLastName"), [
         { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!phoneNumber.trim()) {
-      Alert.alert(t("Main.Sorry"), t("Farms.Please enter phone number"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterPhoneNumber"), [
         { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!nic.trim()) {
-      Alert.alert(t("Main.Sorry"), t("Farms.Please enter NIC"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterNIC"), [
         { text: t("Main.OK") },
       ]);
       return false;
@@ -252,19 +252,19 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
       if (phoneNumber.length !== 9) {
         Alert.alert(
           t("Main.Sorry"),
-          t("Farms.Phone number must be exactly 9 digits"),
+          t("Farms.PhoneNumberMustBeExactly9Digits"),
           [{ text: t("Main.OK") }],
         );
       } else if (phoneNumber[0] !== "7") {
         Alert.alert(
           t("Main.Sorry"),
-          t("Farms.Phone number must start with 7"),
+          t("Farms.PhoneNumberMustStartWith7"),
           [{ text: t("Main.OK") }],
         );
       } else if (phoneNumber.length > 9) {
         Alert.alert(
           t("Main.Sorry"),
-          t("Farms.Phone number cannot exceed 9 digits"),
+          t("Farms.PhoneNumberCannotExceed9Digits"),
           [{ text: t("Main.OK") }],
         );
       } else {
@@ -278,7 +278,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
     }
 
     if (!selectedRole) {
-      Alert.alert(t("Main.Sorry"), t("Farms.Please select a role"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseSelectARole"), [
         { text: t("Main.OK") },
       ]);
       return false;
@@ -299,7 +299,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
     if (nicErrors) {
       Alert.alert(
         t("Main.Sorry"),
-        t("Farms.Please enter a valid Sri Lankan NIC"),
+        t("Farms.PleaseEnterAValidSriLankanNIC"),
         [{ text: t("Main.OK") }],
       );
       return false;
@@ -307,7 +307,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
     if (nicDuplicateErrors) {
       Alert.alert(
         t("Main.Sorry"),
-        t("Farms.This NIC is already used by another staff member"),
+        t("Farms.ThisNICIsAlreadyUsedByAnotherStaffMember"),
         [{ text: t("Main.OK") }],
       );
       return false;
@@ -350,7 +350,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
 
       Alert.alert(
         t("Main.Success"),
-        `${t("Farms.Staff members has been added successfully!")}`,
+        `${t("Farms.StaffMembersHasBeenAddedSuccessfully")}`,
         [
           {
             text: t("Main.OK"),
@@ -363,13 +363,13 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
     } catch (error: any) {
       console.error("Error in handleSave:", error);
       let errorMessage = t(
-        "Farms.Failed to add staff member. Please try again.",
+        "Farms.FailedToAddStaffMemberPleaseTryAgain",
       );
 
       if (error.response) {
         errorMessage = error.response.data?.message || errorMessage;
       } else if (error.request) {
-        errorMessage = t("Farms.Network error. Please check your connection.");
+        errorMessage = t("Farms.NetworkErrorPleaseCheckYourConnection");
       }
 
       Alert.alert("Error", errorMessage, [{ text: t("Main.OK") }]);
@@ -404,7 +404,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
     setNicDuplicateErrors(null);
 
     if (formattedNic && !validateSriLankanNic(formattedNic)) {
-      setNicErrors(t("Farms.Please enter a valid Sri Lankan NIC"));
+      setNicErrors(t("Farms.PleaseEnterAValidSriLankanNIC"));
     } else {
       setNicErrors(null);
     }
@@ -457,10 +457,10 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
     } catch (error: any) {
       if (error?.response?.status === 409) {
         setNicDuplicateErrors(
-          t("Farms.This NIC is already used by another staff member"),
+          t("Farms.ThisNICIsAlreadyUsedByAnotherStaffMember"),
         );
       } else if (error?.response) {
-        setNicDuplicateErrors(t("Farms.Error checking NIC number"));
+        setNicDuplicateErrors(t("Farms.ErrorCheckingNICNumber"));
       } else {
         setNicDuplicateErrors(null);
       }
@@ -482,7 +482,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
   };
 
   const getSelectedRoleLabel = () => {
-    if (!selectedRole) return t("Farms.Select Role");
+    if (!selectedRole) return t("Farms.SelectRole");
     const role = roleItems.find((item) => item.value === selectedRole);
     return role ? role.label : selectedRole;
   };
@@ -508,7 +508,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
         keyboardShouldPersistTaps="handled"
       >
         <CustomHeader
-          title={t("Farms.Add New Staff Member")}
+          title={t("Farms.AddNewStaffMember")}
           showBackButton={true}
           navigation={navigation}
           onBackPress={() => navigation.goBack()}
@@ -534,11 +534,11 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
 
           <View className="gap-2">
             <Text className="text-gray-900 text-base">
-              {t("Farms.First Name")}
+              {t("Inputs.FirstName")}
             </Text>
             <TextInput
               className="bg-gray-100 px-4 h-[50px] rounded-3xl text-base text-gray-700"
-              placeholder={t("Farms.Enter First Name")}
+              placeholder={t("Farms.EnterFirstName")}
               placeholderTextColor="#9CA3AF"
               value={firstName}
               onChangeText={setFirstName}
@@ -549,11 +549,11 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
 
           <View className="gap-2">
             <Text className="text-gray-900 text-base">
-              {t("Farms.Last Name")}
+              {t("Inputs.LastName")}
             </Text>
             <TextInput
               className="bg-gray-100 px-4 h-[50px] rounded-3xl text-base text-gray-700"
-              placeholder={t("Farms.Enter Last Name")}
+              placeholder={t("Farms.EnterLastName")}
               placeholderTextColor="#9CA3AF"
               value={lastName}
               onChangeText={setLastName}
@@ -564,7 +564,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
 
           <View className="gap-2">
             <Text className="text-gray-900 text-base">
-              {t("Farms.Phone Number")}
+              {t("Farms.PhoneNumber")}
             </Text>
             <View className="flex-row items-center gap-2">
               <TouchableOpacity
@@ -600,7 +600,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
               <View className="flex-row items-center mt-1 ml-3">
                 <ActivityIndicator size="small" color="#2563EB" />
                 <Text className="text-blue-600 text-sm ml-2">
-                  {t("Farms.Checking number...")}
+                  {t("Farms.CheckingNumber...")}
                 </Text>
               </View>
             )}
@@ -621,7 +621,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
             <TextInput
               value={nic}
               onChangeText={(text: string) => handleNicChange(text)}
-              placeholder={t("Farms.Enter NIC")}
+              placeholder={t("Farms.EnterNIC")}
               placeholderTextColor="#9CA3AF"
               className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
               editable={!isSubmitting}
@@ -632,7 +632,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
               <View className="flex-row items-center mt-1 ml-3">
                 <ActivityIndicator size="small" color="#2563EB" />
                 <Text className="text-blue-600 text-sm ml-2">
-                  {t("Farms.Checking NIC...")}
+                  {t("Farms.CheckingNIC...")}
                 </Text>
               </View>
             )}
@@ -675,7 +675,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
         <GlobalSearchModal
           visible={roleModalVisible}
           onClose={() => setRoleModalVisible(false)}
-          title={t("Farms.Select Role")}
+          title={t("Farms.SelectRole")}
           data={roleItems}
           selectedItems={selectedRole ? [selectedRole] : []}
           onSelect={handleRoleSelect}

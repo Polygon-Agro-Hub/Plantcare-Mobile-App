@@ -52,7 +52,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
             className="text-gray-600 text-center mt-1"
             style={{ fontSize: adjustFontSize(14) }}
           >
-            {t("Membership.ActiveYourMemvbershipText")}
+            {t("Membership.ActivateYourMembershipAsAnPolygonAgroRegisteredFarmer")}
           </Text>
         </View>
 
@@ -95,7 +95,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
                     lineHeight: adjustFontSize(16),
                   }}
                 >
-                  {t("Membership.SellYourHarvestDes")}
+                  {t("Membership.EasilySellYourHarvestDirectlyToPolygonAgro")}
                 </Text>
               </View>
             </View>
@@ -127,7 +127,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
                     lineHeight: adjustFontSize(16),
                   }}
                 >
-                  {t("Membership.FairPricingDes")}
+                  {t("Membership.ReceiveFairMarketPricesForYourCrops")}
                 </Text>
               </View>
             </View>
@@ -161,7 +161,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
                     lineHeight: adjustFontSize(16),
                   }}
                 >
-                  {t("Membership.QrCodeAcessDes")}
+                  {t("Membership.UniqueQRCodeForEntryAtOurCentre")}
                 </Text>
               </View>
             </View>
@@ -193,7 +193,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
                     lineHeight: adjustFontSize(16),
                   }}
                 >
-                  {t("Membership.CustomerSupportDes")}
+                  {t("Membership.AssistanceWheneverYouNeedIt")}
                 </Text>
               </View>
             </View>
@@ -204,7 +204,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
           className="text-gray-600 text-center text-sm mb-6 p-2"
           style={{ fontSize: adjustFontSize(12) }}
         >
-          {t("Membership.Terms&ConditionsDes")}
+          {t("Membership.ToObtainAccessToYourUniqueQRCodePleaseRegisterAsAMemberByEnteringYourBankDetailsThisCodeWillEnsureSmoothTransactionsAndSecurePaymentsDirectlyToYourBankAtOurCollectionCentres")}
         </Text>
         <View className="flex items-center justify-center">
           {language === "en" ? (

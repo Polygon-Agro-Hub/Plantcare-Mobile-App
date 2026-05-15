@@ -170,8 +170,8 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
         <View className="items-center z-10">
           <View
             className={`w-12 h-12 rounded-full items-center justify-center ${currentStep >= 1
-                ? "bg-[#0FC7B2]"
-                : "bg-white border-2 border-gray-300"
+              ? "bg-[#0FC7B2]"
+              : "bg-white border-2 border-gray-300"
               }`}
           >
             <AntDesign
@@ -186,8 +186,8 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
         <View className="items-center z-10">
           <View
             className={`w-12 h-12 rounded-full items-center justify-center ${currentStep >= 2
-                ? "bg-[#0FC7B2]"
-                : "bg-white border-2 border-[#0FC7B2]"
+              ? "bg-[#0FC7B2]"
+              : "bg-white border-2 border-[#0FC7B2]"
               }`}
           >
             <AntDesign
@@ -202,8 +202,8 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
         <View className="items-center z-10">
           <View
             className={`w-12 h-12 rounded-full items-center justify-center ${currentStep >= 3
-                ? "bg-[#0FC7B2]"
-                : "bg-white border-2 border-[#0FC7B2]"
+              ? "bg-[#0FC7B2]"
+              : "bg-white border-2 border-[#0FC7B2]"
               }`}
           >
             <FontAwesome5
@@ -258,7 +258,7 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
       return (
         <View className="mx-4 mb-4">
           <Text className="text-red-500 text-center">
-            {t("RequestSummary.noRequestData")}
+            {t("RequestSummary.NoRequestDataAvailablePleaseGoBackAndTryAgain")}
           </Text>
         </View>
       );
@@ -274,12 +274,12 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
           <>
             <DetailCard
               number="1"
-              description={t("RequestSummary.step1Description", {
+              description={t("RequestSummary.YourFieldInspectionRequestHasBeenPlacedSuccessfullyPaymentOfRsfeeReceived", {
                 fee: formattedFee,
               })}
             />
             <Text className="text-gray-600 text-sm text-center px-6 mt-4">
-              {t("RequestSummary.ourTeamWillReview")}
+              {t("RequestSummary.OurTeamWillReviewYourRequestSoon")}
             </Text>
           </>
         );
@@ -289,16 +289,16 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
           <>
             <DetailCard
               number="1"
-              description={t("RequestSummary.step1Description", {
+              description={t("RequestSummary.YourFieldInspectionRequestHasBeenPlacedSuccessfullyPaymentOfRsfeeReceived", {
                 fee: formattedFee,
               })}
             />
             <DetailCard
               number="2"
-              description={t("RequestSummary.step2Description")}
+              description={t("RequestSummary.WeHaveReviewedYourRequestOneOfOurFieldOfficersWillContactYouSoon")}
             />
             <Text className="text-gray-600 text-sm text-center px-6 mt-4">
-              {t("RequestSummary.fieldOfficerWillContact")}
+              {t("RequestSummary.AFieldOfficerWillContactYouSoon")}
             </Text>
           </>
         );
@@ -308,17 +308,17 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
           <>
             <DetailCard
               number="1"
-              description={t("RequestSummary.step1Description", {
+              description={t("RequestSummary.YourFieldInspectionRequestHasBeenPlacedSuccessfullyPaymentOfRsfeeReceived", {
                 fee: formattedFee,
               })}
             />
             <DetailCard
               number="2"
-              description={t("RequestSummary.step2Description")}
+              description={t("RequestSummary.WeHaveReviewedYourRequestOneOfOurFieldOfficersWillContactYouSoon")}
             />
             <DetailCard
               number="3"
-              description={t("RequestSummary.step3Description", {
+              description={t("RequestSummary.YourScheduledFieldInspectionWasCompletedByTimeOnDate", {
                 date: scheduledDate,
                 time: completionTime,
               })}
@@ -330,7 +330,7 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
         return (
           <DetailCard
             number="1"
-            description={t("RequestSummary.step1Description", {
+            description={t("RequestSummary.YourFieldInspectionRequestHasBeenPlacedSuccessfullyPaymentOfRsfeeReceived", {
               fee: formattedFee,
             })}
           />
@@ -343,17 +343,17 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
       <View className="flex-1 bg-white justify-center items-center px-6">
         <AntDesign size={64} color="#EF4444" />
         <Text className="text-lg text-red-500 font-bold text-center mb-2">
-          {t("RequestSummary.noRequestDataFound")}
+          {t("RequestSummary.NoRequestDataFound")}
         </Text>
         <Text className="text-gray-600 text-center mb-6">
-          {t("RequestSummary.unableToLoadDetails")}
+          {t("RequestSummary.UnableToLoadRequestDetailsPleaseGoBackAndTryAgain")}
         </Text>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           className="bg-[#00C1AB] px-8 py-4 rounded-lg"
         >
           <Text className="text-white font-bold text-lg">
-            {t("Main.Go Back")}
+            {t("Main.GoBack")}
           </Text>
         </TouchableOpacity>
       </View>
@@ -369,7 +369,7 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
     >
       <View className="flex-1">
         <CustomHeader
-          title={t("RequestSummary.requestSummary")}
+          title={t("RequestSummary.RequestSummary")}
           showBackButton={true}
           navigation={navigation}
           onBackPress={() => navigation.goBack()}
@@ -380,7 +380,7 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
 
           <View className="mt-4">
             <Text className="text-lg font-bold text-gray-800 px-6 mb-4">
-              {t("RequestSummary.details")}
+              {t("RequestSummary.Details")}
             </Text>
             {renderContent()}
           </View>

@@ -76,7 +76,7 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
     if (isNaN(expensesNum) || expensesNum <= 0) {
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("EconomicCostCalendars.ExpensesError") ||
+        t("EconomicCostCalendars.TotalFarmExpensesMustBeGreaterThan0") ||
         "Total farm expenses must be greater than 0.",
       );
       return;
@@ -84,7 +84,7 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
     if (isNaN(revenueNum) || revenueNum <= 0) {
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("EconomicCostCalendars.RevenueError") ||
+        t("EconomicCostCalendars.ExpectedRevenueMustBeGreaterThan0") ||
         "Expected revenue must be greater than 0.",
       );
       return;
@@ -106,7 +106,7 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
-        title={t("EconomicCostCalendars.FarmBudgetProfit")}
+        title={t("EconomicCostCalendars.FarmBudget&Profit")}
         icon={require("@/assets/images/farm-cal/economic-cost-calculators/farm-budget-profit-icon.webp")}
         onBack={() => navigation.goBack()}
       />
@@ -126,14 +126,14 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
 
         {/* Total Farm Expenses */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("EconomicCostCalendars.TotalFarmExpenses") ||
+          {t("EconomicCostCalendars.TotalFarmExpensesRs") ||
             "Total Farm Expenses (Rs.)"}{" "}
           *
         </Text>
         <TextInput
           value={formatWithCommas(totalExpenses)}
           onChangeText={(text) => handleNumberInput(text, setTotalExpenses, 2)}
-          placeholder={t("EconomicCostCalendars.TypeHere") || "--Type Here--"}
+          placeholder={t("Main.TypeHere") || "--Type Here--"}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"
@@ -141,7 +141,7 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
 
         {/* Expected Revenue */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("EconomicCostCalendars.ExpectedRevenue") ||
+          {t("EconomicCostCalendars.ExpectedRevenueRs") ||
             "Expected Revenue (Rs.)"}{" "}
           *
         </Text>
@@ -150,7 +150,7 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
           onChangeText={(text) =>
             handleNumberInput(text, setExpectedRevenue, 2)
           }
-          placeholder={t("EconomicCostCalendars.TypeHere") || "--Type Here--"}
+          placeholder={t("Main.TypeHere") || "--Type Here--"}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"

@@ -71,7 +71,7 @@ const IrrigationWaterCalculatorsMenuScreen: React.FC<
   return (
     <View className="flex-1 bg-white">
       <CustomHeader
-        title={t("IrrigationWaterCalculators.Title")}
+        title={t("IrrigationWaterCalculators.Irrigation&WaterCalculators")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}

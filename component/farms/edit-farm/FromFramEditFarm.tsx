@@ -164,10 +164,10 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
       }
     } catch (err: any) {
       console.error("Error fetching farms:", err);
-      let errorMessage = t("Farms.Failed to fetch farm data");
+      let errorMessage = t("Farms.FailedToFetchFarmData");
 
       if (err?.response?.status === 404) {
-        errorMessage = t("Farms.Farm not found. Please check the farm ID.");
+        errorMessage = t("Farms.FarmNotFoundPleaseCheckTheFarmID");
       } else if (err?.response?.status === 401) {
         errorMessage = "Authentication failed. Please login again.";
       } else if (err?.code === "ECONNABORTED") {
@@ -233,14 +233,14 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
 
   const validateForm = useCallback((): boolean => {
     if (!farmName?.trim()) {
-      Alert.alert(t("Main.Sorry"), t("Farms.Please enter a farm name"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterAFarmName"), [
         { text: t("Main.OK") },
       ]);
       return false;
     }
 
     if (!district) {
-      Alert.alert(t("Main.Sorry"), t("Farms.Please select a district"), [
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseSelectADistrict"), [
         { text: t("Main.OK") },
       ]);
       return false;
@@ -263,7 +263,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
     if (!numberOfStaff || numberOfStaff.trim() === "") {
       Alert.alert(
         t("Main.Sorry"),
-        t("Farms.Please enter the number of staff"),
+        t("Farms.PleaseEnterTheNNumberOfStaff"),
         [{ text: t("Main.OK") }],
       );
       return false;
@@ -283,7 +283,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
     if (staffCount < appUserCount) {
       Alert.alert(
         t("Main.Sorry"),
-        t("Farms.Staff count cannot be less than app user count", {
+        t("Farms.StaffCountCannotBeLessThanAppUserCountAppUsers", {
           appUserCount,
         }),
         [{ text: t("Main.OK") }],
@@ -419,7 +419,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
         },
       );
 
-      Alert.alert(t("Main.Success"), t("Farms.Farm updated successfully"), [
+      Alert.alert(t("Main.Success"), t("Farms.FarmUpdatedSuccessfully"), [
         { text: t("Main.OK"), onPress: () => navigation.goBack() },
       ]);
     } catch (err: any) {
@@ -429,10 +429,10 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
       if (err.response) {
         if (err.response.data?.message) {
           let message = err.response.data.message;
-          message = message.replace(/\"plotNo\"/g, `"${t("Farms.Plot No")}"`);
+          message = message.replace(/\"plotNo\"/g, `"${t("Farms.PlotNo")}"`);
           message = message.replace(
             /\"farmName\"/g,
-            `"${t("Farms.Farm Name")}"`,
+            `"${t("Farms.FarmName")}"`,
           );
           message = message.replace(
             /\"district\"/g,
@@ -440,7 +440,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
           );
           message = message.replace(
             /\"street\"/g,
-            `"${t("Farms.Street Name")}"`,
+            `"${t("Farms.StreetName")}"`,
           );
           message = message.replace(/\"city\"/g, `"${t("Farms.City")}"`);
           message = message.replace(/\"extentha\"/g, `"${t("Farms.ha")}"`);
@@ -448,7 +448,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
           message = message.replace(/\"extentp\"/g, `"${t("Farms.p")}"`);
           message = message.replace(
             /\"staffCount\"/g,
-            `"${t("Farms.Number of Staff")}"`,
+            `"${t("Farms.NumberOfStaff")}"`,
           );
           message = message.replace(
             /"farmImage"/g,
@@ -524,7 +524,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
         />
 
         <CustomHeader
-          title={t("Farms.Edit Farm")}
+          title={t("Farms.EditFarm")}
           navigation={navigation}
           onBackPress={() =>
             navigation.navigate("Main", {
@@ -558,12 +558,12 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
             {/* Farm Name */}
             <View>
               <Text className="text-[#070707] font-medium mb-2">
-                {t("Farms.Farm Name")}
+                {t("Farms.FarmName")}
               </Text>
               <TextInput
                 value={farmName}
                 onChangeText={setFarmName}
-                placeholder={t("Farms.Enter Farm Name Here")}
+                placeholder={t("Farms.EnterFarmNameHere")}
                 placeholderTextColor="#9CA3AF"
                 className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
                 autoCapitalize="words"
@@ -639,7 +639,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
                     selectedDistrictLabel ? "text-gray-800" : "text-[#9CA3AF]"
                   }
                 >
-                  {selectedDistrictLabel || t("Farms.Select District")}
+                  {selectedDistrictLabel || t("Farms.SelectDistrict")}
                 </Text>
                 <AntDesign name="caret-down" size={14} color="#555" />
               </TouchableOpacity>
@@ -648,12 +648,12 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
             {/* Plot No */}
             <View>
               <Text className="text-[#070707] font-medium mb-2">
-                {t("Farms.Plot No")}
+                {t("Farms.PlotNo")}
               </Text>
               <TextInput
                 value={plotNo}
                 onChangeText={setPlotNo}
-                placeholder={t("Farms.Enter Plot Number Here")}
+                placeholder={t("Farms.EnterPlotNumberHere")}
                 placeholderTextColor="#9CA3AF"
                 className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
                 autoCapitalize="characters"
@@ -663,12 +663,12 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
             {/* Street Name */}
             <View>
               <Text className="text-[#070707] font-medium mb-2">
-                {t("Farms.Street Name")}
+                {t("Farms.StreetName")}
               </Text>
               <TextInput
                 value={streetName}
                 onChangeText={setStreetName}
-                placeholder={t("Farms.Enter Street Name")}
+                placeholder={t("Farms.EnterStreetName")}
                 placeholderTextColor="#9CA3AF"
                 className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
                 autoCapitalize="words"
@@ -683,7 +683,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
               <TextInput
                 value={city}
                 onChangeText={setCity}
-                placeholder={t("Farms.Enter City Name")}
+                placeholder={t("Farms.EnterCityName")}
                 placeholderTextColor="#9CA3AF"
                 className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
                 autoCapitalize="words"
@@ -694,7 +694,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
             <View>
               <View className="flex-row justify-between items-center mb-2">
                 <Text className="text-[#070707] font-medium">
-                  {t("Farms.Number of Staff")} *
+                  {t("Farms.NumberOfStaff")} *
                 </Text>
               </View>
               <TextInput
@@ -702,7 +702,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
                 onChangeText={(text) =>
                   setNumberOfStaff(validateNumericInput(text))
                 }
-                placeholder={t("Farms.Enter Number of Staff")}
+                placeholder={t("Farms.EnterNumberOfStaff")}
                 placeholderTextColor="#9CA3AF"
                 className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
                 keyboardType="numeric"
@@ -755,7 +755,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
             setDistrict(items[0]);
           }
         }}
-        searchPlaceholder={t("Farms.Search district..")}
+        searchPlaceholder={t("Farms.SearchDistrict")}
         multiSelect={false}
       />
 
@@ -769,7 +769,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
         <View className="flex-1 justify-center items-center bg-[#667BA54D]">
           <View className="bg-white p-6 rounded-lg w-4/5 max-h-96">
             <Text className="text-lg font-semibold text-center mb-4">
-              {t("Farms.Select Farm Image")}
+              {t("Farms.SelectFarmImage")}
             </Text>
             <ScrollView showsVerticalScrollIndicator={false}>
               <View className="flex-row flex-wrap justify-center">
