@@ -187,7 +187,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
     setSearch(false);
     if (!natureOfCultivation) {
       Alert.alert(
-        t("Cropenroll.sorry"),
+        t("Main.Sorry"),
         t("Cropenroll.PleaseSelectNatureOfCultivation"),
         [{ text: t("Main.OK") }],
       );
@@ -195,7 +195,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
     }
     if (!cultivationMethod) {
       Alert.alert(
-        t("Cropenroll.sorry"),
+        t("Main.Sorry"),
         t("Cropenroll.PleaseSelectCultivationMethod"),
         [{ text: t("Main.OK") }],
       );
@@ -211,12 +211,12 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         setCropCalender(res.data[0]);
         setSearch(true);
       } else {
-        Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.NoCropsFoundForTheSelectedMethodPleaseTryAgain"), [
+        Alert.alert(t("Main.Sorry"), t("Cropenroll.NoCropsFoundForTheSelectedMethodPleaseTryAgain"), [
           { text: t("Main.OK") },
         ]);
       }
     } catch {
-      Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.NoCropsFoundForTheSelectedMethodPleaseTryAgain"), [
+      Alert.alert(t("Main.Sorry"), t("Cropenroll.NoCropsFoundForTheSelectedMethodPleaseTryAgain"), [
         { text: t("Main.OK") },
       ]);
     } finally {
@@ -269,7 +269,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         perches: cP,
       } = farmExtent.cultivatedExtent;
       Alert.alert(
-        t("Cropenroll.sorry"),
+        t("Main.Sorry"),
         `${t("Cropenroll.CultivationExtentExceedsAvailableFarmExtent")}\n\n` +
         `${t("Cropenroll.AvailableExtent")}: ${aHa} ${t("FixedAssets.ha")}, ${aAc} ${t("FixedAssets.ac")}, ${aP} ${t("FixedAssets.p")}\n` +
         `${t("Cropenroll.AlreadyCultivated")}: ${cHa} ${t("FixedAssets.ha")}, ${cAc} ${t("FixedAssets.ac")}, ${cP} ${t("FixedAssets.p")}`,
@@ -382,7 +382,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
   const HandleEnrollBtn = async () => {
     if (!extentha && !extentac && !extentp) {
       Alert.alert(
-        t("Cropenroll.sorry"),
+        t("Main.Sorry"),
         t("Cropenroll.PleaseEnterAtLeastOneExtent"),
         [{ text: t("Main.OK") }],
         { cancelable: false },
@@ -530,6 +530,8 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
           <TextInput
             className="border border-gray-300 p-2 px-4 w-20 rounded-3xl h-[50px] bg-gray-100 text-left"
             value={value}
+            style={{ color: '#000000' }} 
+            placeholderTextColor="#000000"
             onChangeText={(text) => setter(text.replace(/[-*#.]/g, ""))}
             keyboardType="numeric"
             placeholder="0"
@@ -634,10 +636,10 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
             {/* Results */}
             {search && (
               <>
-                <Text className="mt-8">{t("Main.Extent")}</Text>
+                <Text className="mt-8">{t("Farms.Extent")}</Text>
                 {renderExtentInputs()}
 
-                <Text className="mt-4">{t("Main.SelectStartDate")}</Text>
+                <Text className="mt-4">{t("Cropenroll.SelectStartDate")}</Text>
                 <TouchableOpacity
                   onPress={() => setShowDatePicker((p) => !p)}
                   className="border-b border-gray-400 my-3 flex-row justify-between items-center p-3"
@@ -666,7 +668,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
                       <ActivityIndicator size="small" color="#fff" />
                     ) : (
                       <Text className="text-white text-lg font-bold">
-                        {t("Main.Enroll")}
+                        {t("Cropenroll.Enroll")}
                       </Text>
                     )}
                   </TouchableOpacity>

@@ -68,6 +68,7 @@
     "November": "නොවැම්බර්",
     "December": "දෙසැම්බර්"
   },
+
   "SignUp": {
     "SignUp": "ලියාපදිංචි වන්න",
     "District": "දිස්ත්‍රික්කය",
@@ -118,12 +119,12 @@
     "Complaints": "පැමිණිලි",
     "PrivacyPolicy": "රහස්‍යතා ප්‍රතිපත්තිය",
     "Terms&Conditions": "නියමයන් සහ කොන්දේසි",
-    "GoViCareHelp": "ගොවිකෙයා උදව්",
+    "GoViCareHelp": "GoViCare උදව්",
     "ReportComplaint": "පැමිණිල්ලක් වාර්තා කරන්න",
     "ViewComplaintHistory": "පැමිණිලි ඉතිහාසය බලන්න",
     "NeedHelp": "උදව් අවශ්‍යයි",
     "UnableToOpenTheDialerPleaseTryAgain": "අමතන්න විවෘත කළ නොහැක. කරුණාකර නැවත උත්සාහ කරන්න.",
-    "NeedGoViCareHelpTapTheCallButtonForInstantSupport": "ගොවිකෙයා උදව් අවශ්‍යද? ක්ෂණික සහාය සඳහා ඇමතුම් බොත්තම ඔබන්න."
+    "NeedGoViCareHelpTapTheCallButtonForInstantSupport": "GoViCare උදව් අවශ්‍යද? ක්ෂණික සහාය සඳහා ඇමතුම් බොත්තම ඔබන්න."
   },
   "EditProfile": {
     "EditProfile": "පැතිකඩ සංස්කරණය කරන්න",
@@ -436,7 +437,7 @@
     "EnterFirstName": "මුල් නම ඇතුළත් කරන්න",
     "NIC": "ජාතික හැඳුනුම්පත් අංකය",
     "EnterNIC": "ජාතික හැඳුනුම්පත් අංකය ඇතුළත් කරන්න",
-    "Role": "භූමිකාව",
+    "Role": "තනතුර",
     "SelectRole": "භූමිකාව තෝරන්න",
     "SaveFarm": "ගොවිපල සුරකින්න",
     "Saving...": "සුරකිමින්...",
@@ -454,7 +455,7 @@
     "LoginCredentialsCannotExceedTheTotalNumberOfStaff": "පිවිසුම් අක්තපත්‍ර මුළු කාර්ය මණ්ඩල සංඛ්‍යාව ඉක්මවිය නොහැක",
     "NoOfStaffLoginRequired": "පිවිසුම් අවශ්‍ය කාර්ය මණ්ඩල සංඛ්‍යාව",
     "TotalNumberOfStaffWorking": "වැඩ කරන මුළු කාර්ය මණ්ඩල සංඛ්‍යාව",
-    "HowManyStaffWillBe": "කී දෙනෙකුට පිවිසුම් අවශ්‍ය වේද?",
+    "HowManyStaffWillBe": "GoviCare භාවිතා කරන සේවකයන් කී \nදෙනෙක් සිටීද?",
     "NumberOfLoginCredentialsNeeded": "අවශ්‍ය පිවිසුම් අක්තපත්‍ර ගණන",
     "AddStaff": "කාර්ය මණ්ඩලය එක් කරන්න",
     "NoLoginCredentialsRequired": "පිවිසුම් අක්තපත්‍ර අවශ්‍ය නොවේ",
@@ -482,7 +483,7 @@
     "StaffMember": "කාර්ය මණ්ඩල සාමාජික -",
     "Rs": "රු.",
     "CreditDebitCard": "ක්‍රෙඩිට් / ඩෙබිට් කාඩ්",
-    "Processing....": "සැකසෙමින්...",
+    "Processing...": "සැකසෙමින්...",
     "PayNow": "දැන් ගෙවන්න",
     "FarmIDOrFarmNameIsMissingOrInvalid": "ගොවිපල හැඳුනුම්පත හෝ ගොවිපල නම මග හැරී ඇත හෝ වලංගු නොවේ.",
     "NatureOfCultivation": "වගාවේ ස්වභාවය",
@@ -520,7 +521,13 @@
     "CannotRemove": "ඉවත් කළ නොහැක",
     "CompletionCannotBeRemovedAfter1Hour": "පැය 1 කට පසු සම්පූර්ණ කිරීම ඉවත් කළ නොහැක.",
     "ConfirmRemove": "ඉවත් කිරීම තහවුරු කරන්න",
-    "ThisWillRemoveTheCompletionForThisTaskAreYouSureYouWantToContinue": "මෙය මෙම කාර්යය සඳහා සම්පූර්ණ කිරීම ඉවත් කරනු ඇත. ඔබට දිගටම කරගෙන යාමට අවශ්‍ය බව ඔබට විශ්වාසද?"
+    "ThisWillRemoveTheCompletionForThisTaskAreYouSureYouWantToContinue": "මෙය මෙම කාර්යය සඳහා සම්පූර්ණ කිරීම ඉවත් කරනු ඇත. ඔබට දිගටම කරගෙන යාමට අවශ්‍ය බව ඔබට විශ්වාසද?",
+    "AddNewFarmsAssignManagersAndOverseeOperationsFromASinglePowerfulPlatform": "නව ගොවිපලවල් එකතු කරන්න, කළමනාකරුවන් පත් කරන්න, සහ එක් ශක්තිමත් වේදිකාවකින් මෙහෙයුම් අධීක්ෂණය කරන්න.",
+    "DesignedForFarmOwnersWhoWantEfficiencyTransparencyAndGrowthAllInOnePlace": "කාර්යක්ෂමතාව, විනිවිදභාවය සහ වර්ධනය එක් තැනක අවශ්‍ය ගොවිපල හිමිකරුවන් සඳහා නිර්මාණය කර ඇත.",
+    "ValidityPeriod":"වලංගු කාලය",
+     "BASIC":"මූලික",
+    "RENEW":"අලුත් කිරීම",
+    "PRO":"PRO"
   },
   "SelectCrop": {
     "Description": "විස්තරය",
@@ -742,15 +749,15 @@
     "MentionOther": "වෙනත් සඳහන් කරන්න",
     "SelectBatchNumber": "කණ්ඩායම් අංකය තෝරන්න",
     "Unit": "ඒකකය",
-    "AgroChemicals": "කෘෂි රසායනික ද්‍රව්‍ය",
+    "Agro chemicals": "කෘෂි රසායනික ද්‍රව්‍ය",
     "Fertilizers": "පොහොර",
     "Seeds": "බීජ",
-    "LivestockForSale": "විකිණීම සඳහා පශු සම්පත්",
-    "AnimalFeed": "සත්ව ආහාර",
+    "Livestock for sale": "විකිණීම සඳහා පශු සම්පත්",
+    "Animal feed": "සත්ව ආහාර",
     "Other": "වෙනත්",
     "AddAsset": "වත්කම එක් කරන්න",
-    "SeedsAndSeedlings": "බීජ සහ පැල",
-    "OtherConsumables": "වෙනත් පරිභෝජන ද්‍රව්‍ය",
+    "Seeds and Seedlings": "බීජ සහ පැල",
+    "Other consumables": "වෙනත් පරිභෝජන ද්‍රව්‍ය",
     "ml": "මිලි ලීටර්",
     "kg": "කිලෝග්‍රෑම්",
     "l": "ලීටර්",
@@ -908,7 +915,8 @@
     "PurchasedDateIsRequired": "මිලදී ගත් දිනය අවශ්‍ය වේ",
     "SelectDate": "දිනය තෝරන්න",
     "WarrantyPurchasedDateIsRequired": "වගකීම් මිලදී ගත් දිනය අවශ්‍ය වේ",
-    "WarrantyExpireDateIsRequired": "වගකීම් කල් ඉකුත්වන දිනය අවශ්‍ය වේ"
+    "WarrantyExpireDateIsRequired": "වගකීම් කල් ඉකුත්වන දිනය අවශ්‍ය වේ",
+    "AssetTypeselect":"වත්කම් වර්ගය තෝරන්න"
   },
   "ImageViewerModal": {
     "UploadedBy": "උඩුගත කළේ :",
@@ -967,7 +975,7 @@
   "Govicapital": {
     "HowCanWeHelpYou": "අපට ඔබට උදව් කළ හැක්කේ කෙසේද?",
     "GoviCapitalProvidesYouWithCultivationInvestmentsAndLoans": "GoviCapital ඔබට වගා ආයෝජන සහ ණය ලබා දෙයි.",
-    "INeedAAnInvestment": "මට ආයෝජනයක් අවශ්‍යයි",
+    "INeedAAnInvestment": "මට \nආයෝජනයක් \nඅවශ්‍යයි",
     "INeedALoan": "මට ණයක් අවශ්‍යයි",
     "InvestmentRequest": "ආයෝජන ඉල්ලීම",
     "Crop": "බෝගය",
@@ -1107,6 +1115,15 @@
       "9": "ඔක්තෝබර්",
       "10": "නොවැම්බර්",
       "11": "දෙසැම්බර්"
+    },
+    "Days": {
+      "Sun": "ඉරිදා",
+      "Mon": "සඳුදා",
+      "Tue": "අඟහ",
+      "Wed": "බදා",
+      "Thu": "බ්‍රහස්",
+      "Fri": "සිකු",
+      "Sat": "සෙන"
     }
   },
   "RequestSummary": {

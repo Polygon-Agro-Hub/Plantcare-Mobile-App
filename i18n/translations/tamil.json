@@ -1,5 +1,5 @@
 {
-   "Main": {
+  "Main": {
     "OK": "சரி",
     "LNG": "ta",
     "Save": "சேமிக்கவும்",
@@ -133,7 +133,7 @@
     "PermissionDenied": "அனுமதி மறுக்கப்பட்டது",
     "PleaseAllowAccessToYourGalleryToProceed": "தொடர, தயவுசெய்து உங்கள் கேலரிக்கான அணுகலை அனுமதிக்கவும்!"
   },
- "PrivacyPolicy": {
+  "PrivacyPolicy": {
     "PrivacyPolicy": "தனியுரிமைக் கொள்கை",
     "By": "மூலம்",
     "GoviCarePrivacy": "GoViCare உங்கள் தனியுரிமையைப் பாதுகாப்பதில் உறுதியாக உள்ளது. இந்த தனியுரிமைக் கொள்கையானது, விவசாய வழிகாட்டுதல், சொத்து மேலாண்மை, வானிலை அறிக்கைகள், கண்காணிப்பு ஆதரவு மற்றும் விவசாயிகளுக்கான பொது மன்றத்தை வழங்கும் எங்கள் மொபைல் பயன்பாட்டை நீங்கள் பயன்படுத்தும்போது, உங்கள் தகவலை நாங்கள் எவ்வாறு சேகரித்தல், பயன்படுத்துதல், வெளிப்படுத்துதல் மற்றும் பாதுகாத்தல் என்பதை விளக்குகிறது. எங்கள் பயன்பாட்டைப் பயன்படுத்துவதன் மூலம், இந்த தனியுரிமைக் கொள்கையின் விதிமுறைகளை நீங்கள் ஏற்கிறீர்கள். நீங்கள் உடன்படவில்லை என்றால், எங்கள் பயன்பாட்டைப் பயன்படுத்துவதை நிறுத்துங்கள்.",
@@ -454,7 +454,7 @@
     "LoginCredentialsCannotExceedTheTotalNumberOfStaff": "உள்நுழைவுச் சான்றுகள் மொத்த ஊழியர்களின் எண்ணிக்கையை விட அதிகமாக இருக்க முடியாது",
     "NoOfStaffLoginRequired": "உள்நுழைவு தேவைப்படும் ஊழியர்களின் எண்ணிக்கை",
     "TotalNumberOfStaffWorking": "வேலை செய்யும் மொத்த ஊழியர்களின் எண்ணிக்கை",
-    "HowManyStaffWillBe": "எத்தனை ஊழியர்களுக்கு உள்நுழைவு தேவைப்படும்?",
+    "HowManyStaffWillBe": "எத்தனை ஊழியர்களுக்கு\nஉள்நுழைவு தேவைப்படும்?",
     "NumberOfLoginCredentialsNeeded": "தேவையான உள்நுழைவுச் சான்றுகளின் எண்ணிக்கை",
     "AddStaff": "ஊழியர்களைச் சேர்க்கவும்",
     "NoLoginCredentialsRequired": "உள்நுழைவுச் சான்றுகள் தேவையில்லை",
@@ -482,7 +482,7 @@
     "StaffMember": "ஊழியர் -",
     "Rs": "ரூ.",
     "CreditDebitCard": "கிரெடிட் / டெபிட் கார்டு",
-    "Processing....": "செயலாக்குகிறது...",
+    "Processing...": "செயலாக்குகிறது...",
     "PayNow": "இப்போது செலுத்துங்கள்",
     "FarmIDOrFarmNameIsMissingOrInvalid": "பண்ணை ஐடி அல்லது பண்ணை பெயர் காணவில்லை அல்லது தவறானது.",
     "NatureOfCultivation": "சாகுபடியின் தன்மை",
@@ -520,7 +520,13 @@
     "CannotRemove": "அகற்ற முடியாது",
     "CompletionCannotBeRemovedAfter1Hour": "1 மணி நேரத்திற்குப் பிறகு முடிவினை அகற்ற முடியாது.",
     "ConfirmRemove": "அகற்றுவதை உறுதிப்படுத்தவும்",
-    "ThisWillRemoveTheCompletionForThisTaskAreYouSureYouWantToContinue": "இது இந்தப் பணிக்கான முடிவினை அகற்றும். நீங்கள் தொடர விரும்புகிறீர்களா?"
+    "ThisWillRemoveTheCompletionForThisTaskAreYouSureYouWantToContinue": "இது இந்தப் பணிக்கான முடிவினை அகற்றும். நீங்கள் தொடர விரும்புகிறீர்களா?",
+    "AddNewFarmsAssignManagersAndOverseeOperationsFromASinglePowerfulPlatform": "புதிய பண்ணைகளைச் சேர்க்கவும், மேலாளர்களை நியமிக்கவும், ஒரே சக்திவாய்ந்த தளத்திலிருந்து செயல்பாடுகளை மேற்பார்வையிடவும்.",
+    "DesignedForFarmOwnersWhoWantEfficiencyTransparencyAndGrowthAllInOnePlace": "திறன், வெளிப்படைத்தன்மை மற்றும் வளர்ச்சி அனைத்தையும் ஒரே இடத்தில் விரும்பும் பண்ணை உரிமையாளர்களுக்காக வடிவமைக்கப்பட்டது.",
+    "ValidityPeriod":"செல்லுபடியாகும் காலம்",
+     "BASIC":"அடிப்படை",
+    "RENEW":"புதுப்பி",
+    "PRO":"புரோ"
   },
   "SelectCrop": {
     "Description": "விளக்கம்",
@@ -613,7 +619,7 @@
     "OngoingCultivations": "--நடைபெற்று வரும் சாகுபடிகள்--",
     "NoOngoingCultivationsFound": "நடைபெற்று வரும் சாகுபடிகள் எதுவும் கிடைக்கவில்லை"
   },
-   "Payment": {
+  "Payment": {
     "EnterCardNumber": "அட்டை எண்ணை உள்ளிடவும்",
     "EnterNameOnCard": "அட்டையில் உள்ள பெயரை உள்ளிடவும்",
     "EnterExpirationDate": "காலாவதி தேதியை உள்ளிடவும் (MM/YY)",
@@ -742,15 +748,15 @@
     "MentionOther": "மற்றவற்றைக் குறிப்பிடவும்",
     "SelectBatchNumber": "தொகுதி எண்ணைத் தேர்ந்தெடுக்கவும்",
     "Unit": "அலகு",
-    "AgroChemicals": "வேளாண் இரசாயனங்கள்",
+    "Agro chemicals": "வேளாண் இரசாயனங்கள்",
     "Fertilizers": "உரங்கள்",
     "Seeds": "விதைகள்",
-    "LivestockForSale": "விற்பனைக்கான கால்நடைகள்",
-    "AnimalFeed": "விலங்குத் தீவனம்",
+    "Livestock for sale": "விற்பனைக்கான கால்நடைகள்",
+    "Animal feed": "விலங்குத் தீவனம்",
     "Other": "மற்றவை",
     "AddAsset": "சொத்தைச் சேர்க்கவும்",
-    "SeedsAndSeedlings": "விதைகள் மற்றும் நாற்றுகள்",
-    "OtherConsumables": "பிற நுகர்பொருட்கள்",
+    "Seeds and Seedlings": "விதைகள் மற்றும் நாற்றுகள்",
+    "Other consumables": "பிற நுகர்பொருட்கள்",
     "ml": "மிலி",
     "kg": "கிலோ",
     "l": "லி",
@@ -908,7 +914,8 @@
     "PurchasedDateIsRequired": "வாங்கிய தேதி தேவை",
     "SelectDate": "தேதியைத் தேர்ந்தெடுக்கவும்",
     "WarrantyPurchasedDateIsRequired": "உத்தரவாதம் வாங்கிய தேதி தேவை",
-    "WarrantyExpireDateIsRequired": "உத்தரவாதம் காலாவதியாகும் தேதி தேவை"
+    "WarrantyExpireDateIsRequired": "உத்தரவாதம் காலாவதியாகும் தேதி தேவை",
+    "AssetTypeselect":"சொத்து வகையைத் தேர்ந்தெடுக்கவும்"
   },
   "ImageViewerModal": {
     "UploadedBy": "பதிவேற்றியவர் :",
@@ -1107,7 +1114,16 @@
       "9": "October",
       "10": "November",
       "11": "December"
-    }
+    },
+    "Days": {
+  "Sun": "ஞாயி",
+  "Mon": "திங்",
+  "Tue": "செவ்",
+  "Wed": "புதன்",
+  "Thu": "வியா",
+  "Fri": "வெள்",
+  "Sat": "சனி"
+}
   },
   "RequestSummary": {
     "RequestSummary": "Request Summary",

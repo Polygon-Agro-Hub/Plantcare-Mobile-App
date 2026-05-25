@@ -513,7 +513,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
                 <View className="flex-row justify-between p-5 mt-2">
                   <View className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center" style={{ shadowColor: 'grey', shadowOffset: { width: 1, height: 2 }, shadowOpacity: 0.9, shadowRadius: 4, elevation: 4 }}>
                     <Image source={require('../../assets/images/weather icons/common/wind-image.webp')} className="w-8 h-8" resizeMode="contain" />
-                    <Text className="text-l font-bold">{weatherData.wind.speed} m/s</Text>
+                    <Text className="text-l font-bold">{weatherData.wind.speed} km/h</Text>
                     <Text style={{ fontSize: isSmallScreen ? 13 : 16, color: '#666' }}>{t('WeatherForecast.Wind')}</Text>
                   </View>
                   <View className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center" style={{ shadowColor: 'grey', shadowOffset: { width: 1, height: 2 }, shadowOpacity: 0.9, shadowRadius: 4, elevation: 4 }}>

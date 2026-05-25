@@ -254,7 +254,7 @@ const CultivationEarnCertificate: React.FC = () => {
                     {t("EarnCertificate.Rs")}.{formatPrice(certificate.price)}
                   </Text>
                   <Text className="text-[#6B6B6B] text-sm">
-                    {t("EarnCertificate.ValidFor")} {certificate.timeLine}{" "}
+                    {t("Farms.ValidityPeriod")} {certificate.timeLine}{" "}
                     {getMonthLabel(certificate.timeLine)}
                   </Text>
                 </View>

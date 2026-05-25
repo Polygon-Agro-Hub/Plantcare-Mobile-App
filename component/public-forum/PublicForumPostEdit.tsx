@@ -222,6 +222,7 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
               value={heading}
               onChangeText={setHeading}
               maxLength={250}
+              placeholderTextColor="#000000"
             />
             {heading.length >= 250 && (
               <Text className="text-red-500 mt-1 text-sm">
@@ -241,6 +242,7 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
               onChangeText={setMessage}
               multiline
               textAlignVertical="top"
+              placeholderTextColor="#000000"
             />
           </View>
 

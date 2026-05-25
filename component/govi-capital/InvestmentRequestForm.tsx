@@ -414,6 +414,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             <View className="flex-row items-center gap-2">
               <TextInput
                 className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
+                style={{ color: '#000000' }} 
                 value={extentha}
                 onChangeText={(text) => {
                   const validatedText = validateNumericInput(text);
@@ -421,7 +422,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
                 }}
                 keyboardType="numeric"
                 placeholder="0"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor="#000000"
               />
               <Text className="text-sm">{t("Govicapital.ha")}</Text>
             </View>
@@ -429,6 +430,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             <View className="flex-row items-center gap-2">
               <TextInput
                 className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
+                style={{ color: '#000000' }} 
                 value={extentac}
                 onChangeText={(text) => {
                   const validatedText = validateNumericInput(text);
@@ -436,7 +438,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
                 }}
                 keyboardType="numeric"
                 placeholder="0"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor="#000000"
               />
               <Text className="text-sm">{t("Govicapital.ac")}</Text>
             </View>
@@ -444,6 +446,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             <View className="flex-row items-center gap-2">
               <TextInput
                 className="bg-[#F4F4F4] p-2 w-20 px-4 rounded-3xl h-[50px] text-center"
+                style={{ color: '#000000' }} 
                 value={extentp}
                 onChangeText={(text) => {
                   const validatedText = validateNumericInput(text);
@@ -451,7 +454,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
                 }}
                 keyboardType="numeric"
                 placeholder="0"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor="#000000"
               />
               <Text className="text-sm">{t("Govicapital.p")}</Text>
             </View>
@@ -471,7 +474,8 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
               setInvestment(validated);
             }}
             placeholder="0.00"
-            placeholderTextColor="#D1D5DB"
+            style={{ color: '#000000' }} 
+            placeholderTextColor="#000000"
             keyboardType="numeric"
             className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
           />
@@ -489,7 +493,8 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
               setExpectedYield(validatedText);
             }}
             placeholder={t("Main.TypeHere")}
-            placeholderTextColor="#D1D5DB"
+            style={{ color: '#000000' }} 
+            placeholderTextColor="#000000"
             keyboardType="numeric"
             className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
           />
@@ -610,7 +615,8 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             value={plotNumber}
             onChangeText={(text) => setPlotNumber(text.trimStart())}
             placeholder={t("Govicapital.Eg10B")}
-            placeholderTextColor="#D1D5DB"
+            style={{ color: '#000000' }} 
+            placeholderTextColor="#000000"
             className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
           />
         </View>
@@ -624,7 +630,8 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             value={streetName}
             onChangeText={(text) => setStreetName(text.trimStart())}
             placeholder={t("Main.TypeHere")}
-            placeholderTextColor="#D1D5DB"
+            style={{ color: '#000000' }} 
+            placeholderTextColor="#000000"
             className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
           />
         </View>
@@ -643,7 +650,8 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
               setLandCity(capitalized);
             }}
             placeholder={t("Main.TypeHere")}
-            placeholderTextColor="#D1D5DB"
+            style={{ color: '#000000' }} 
+            placeholderTextColor="#000000"
             className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
           />
         </View>

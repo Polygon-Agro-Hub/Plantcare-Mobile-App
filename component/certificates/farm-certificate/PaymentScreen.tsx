@@ -348,6 +348,8 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
           <TextInput
             className="h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl p-3 mb-8 text-base"
             placeholder={t("Payment.EnterCardNumber") ?? "Enter Card Number"}
+            style={{ color: '#000000' }} 
+            placeholderTextColor="#000000"
             keyboardType="numeric"
             maxLength={19}
             value={cardNumber}
@@ -358,6 +360,8 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
           <TextInput
             className="h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl p-3 mb-8 text-base"
             placeholder={t("Payment.EnterNameOnCard")}
+            style={{ color: '#000000' }} 
+            placeholderTextColor="#000000"
             value={cardHolderName}
             onChangeText={handleCardHolderNameChange}
           />
@@ -367,6 +371,8 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
             <TextInput
               className="flex-1 h-full text-base"
               placeholder={t("Payment.EnterExpirationDate")}
+              style={{ color: '#000000' }} 
+              placeholderTextColor="#000000"
               keyboardType="numeric"
               maxLength={5}
               value={cardExpiryDate}
@@ -379,6 +385,8 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
           <TextInput
             className="h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl p-3 mb-5 text-base"
             placeholder={t("Payment.EnterCVV")}
+            style={{ color: '#000000' }} 
+            placeholderTextColor="#000000"
             keyboardType="numeric"
             maxLength={3}
             value={cvv}

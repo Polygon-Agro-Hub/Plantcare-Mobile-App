@@ -979,7 +979,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 </View>
 
                 {/* Warranty */}
-                <Text className="pt-5 pb-3">{t("FixedAssets.Warranty")}</Text>
+                <Text className="pt-5 pb-3">{t("FixedAssets.warranty")}</Text>
                 <View className="flex-row justify-around">
                   {["yes", "no"].map((w) => (
                     <TouchableOpacity
@@ -1636,7 +1636,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
                 </View>
 
                 {/* Warranty */}
-                <Text className="pt-5 pb-3">{t("FixedAssets.Warranty")}</Text>
+                <Text className="pt-5 pb-3">{t("FixedAssets.warranty")}</Text>
                 <View className="flex-row justify-around mb-5">
                   {["yes", "no"].map((w) => (
                     <TouchableOpacity

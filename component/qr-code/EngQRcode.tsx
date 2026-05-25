@@ -195,7 +195,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
   return (
     <ScrollView className="flex-1 bg-white">
       <CustomHeader
-        title={t("QRCode.MyQRCode")}
+        title={t("QRcode.MyQRCode")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.navigate("EngProfile")}
@@ -228,7 +228,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         ) : (
           <View className="items-center justify-center">
             <Text className=" text-center mt-4 p-2 gap-y-4 max-w-[80%] leading-7 text-gray-500 ">
-              {t("QRCode.ToObtainAccessToYourUniqueQRCodePleaseRegisterAsAMemberByEnteringYourBankDetailsThisCodeWillEnsureSmoothTransactionsAndSecurePaymentsDirectlyToYourBankAtOurCollectionCentres")}
+              {t("Membership.ToObtainAccessToYourUniqueQRCodePleaseRegisterAsAMemberByEnteringYourBankDetailsThisCodeWillEnsureSmoothTransactionsAndSecurePaymentsDirectlyToYourBankAtOurCollectionCentres")}
             </Text>
             <View className="flex items-center justify-center">
               {language === "en" ? (
@@ -315,7 +315,7 @@ const EngQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
                   style={{ width: 32, height: 32 }}
                 />
                 <Text className="text-white text-center text-lg " >
-                  {t("QRCode.GenerateMyQr")}
+                  {t("QRcode.GenerateMyQr")}
                 </Text>
               </View>
             </TouchableOpacity>

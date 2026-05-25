@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   View,
   Text,
@@ -32,6 +32,8 @@ interface FertilizerRequirementProps {
 interface CropGroup {
   id: number;
   cropNameEnglish: string;
+  cropNameSinhala: string;
+  cropNameTamil: string;
   nitrogen: number;
   phosphorus: number;
   potassium: number;
@@ -41,6 +43,9 @@ interface CropGroup {
 interface CropItem {
   label: string;
   value: string;
+  nameEnglish: string;
+  nameSinhala: string;
+  nameTamil: string;
   nitrogen: number;
   phosphorus: number;
   potassium: number;
@@ -61,8 +66,8 @@ const AREA_UNITS = [
 const FertilizerRequirementCalculatorScreen: React.FC<
   FertilizerRequirementProps
 > = ({ navigation }) => {
-  const { t } = useTranslation();
-  const [crops, setCrops] = useState<CropItem[]>([]);
+  const { t, i18n } = useTranslation();
+  const [rawCrops, setRawCrops] = useState<CropItem[]>([]);
   const [cropsLoading, setCropsLoading] = useState(false);
 
   const [cropModalVisible, setCropModalVisible] = useState(false);
@@ -79,6 +84,19 @@ const FertilizerRequirementCalculatorScreen: React.FC<
     K: "",
   });
   const [showValidation, setShowValidation] = useState(false);
+
+  const crops = useMemo<CropItem[]>(() => {
+    const lang = i18n.language;
+    return rawCrops.map((c) => ({
+      ...c,
+      label:
+        lang === "si"
+          ? c.nameSinhala
+          : lang === "ta"
+            ? c.nameTamil
+            : c.nameEnglish,
+    }));
+  }, [rawCrops, i18n.language]);
 
   const selectedCrop = crops.find((c) => c.value === selectedCropValue) || null;
 
@@ -104,12 +122,15 @@ const FertilizerRequirementCalculatorScreen: React.FC<
             .map((item: CropGroup) => ({
               label: item.cropNameEnglish,
               value: item.cropNameEnglish,
+              nameEnglish: item.cropNameEnglish,
+              nameSinhala: item.cropNameSinhala || item.cropNameEnglish,
+              nameTamil: item.cropNameTamil || item.cropNameEnglish,
               nitrogen: Number(item.nitrogen),
               phosphorus: Number(item.phosphorus),
               potassium: Number(item.potassium),
               icon: item.image ?? null,
             }));
-          setCrops(mapped);
+          setRawCrops(mapped);
         }
       } catch (error) {
         console.error("Error fetching crop groups:", error);
@@ -223,8 +244,7 @@ const FertilizerRequirementCalculatorScreen: React.FC<
           ) : (
             <>
               <Text
-                className={`text-sm ${selectedCropValue ? "text-gray-900" : "text-gray-400"
-                  }`}
+                className={`text-sm ${selectedCropValue ? "text-gray-900" : "text-gray-400"}`}
               >
                 {getSelectedCropLabel()}
               </Text>

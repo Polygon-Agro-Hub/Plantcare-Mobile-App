@@ -123,7 +123,7 @@
     "ViewComplaintHistory": "View Complaint History",
     "NeedHelp": "Need Assistance",
     "UnableToOpenTheDialerPleaseTryAgain": "Unable to open the dialer. Please try again.",
-    "NeedGoViCareHelpTapTheCallButtonForInstantSupport": "Need GoVi care help? Tap the call button for instant support."
+    "NeedGoViCareHelpTapTheCallButtonForInstantSupport": "Need GoViCare help? Tap the call button for instant support."
   },
   "EditProfile": {
     "EditProfile": "Edit Profile",
@@ -454,7 +454,7 @@
     "LoginCredentialsCannotExceedTheTotalNumberOfStaff": "Login credentials cannot exceed the total number of staff",
     "NoOfStaffLoginRequired": "No of Staff Login Required",
     "TotalNumberOfStaffWorking": "Total number of staff working",
-    "HowManyStaffWillBe": "How many staff who will be ",
+    "HowManyStaffWillBe": "How many staff who will be\nusing the app?",
     "NumberOfLoginCredentialsNeeded": "Number of login credentials needed",
     "AddStaff": "Add Staff",
     "NoLoginCredentialsRequired": "No Login Credentials Required",
@@ -482,7 +482,7 @@
     "StaffMember": "Staff Member -",
     "Rs": "Rs.",
     "CreditDebitCard": "Credit / Debit Card",
-    "Processing....": "Processing...",
+    "Processing...": "Processing...",
     "PayNow": "Pay Now",
     "FarmIDOrFarmNameIsMissingOrInvalid": "Farm ID or Farm Name is missing or invalid.",
     "NatureOfCultivation": "Nature of Cultivation",
@@ -520,7 +520,13 @@
     "CannotRemove": "Cannot Remove",
     "CompletionCannotBeRemovedAfter1Hour": "Completion cannot be removed after 1 hour.",
     "ConfirmRemove": "Confirm Remove",
-    "ThisWillRemoveTheCompletionForThisTaskAreYouSureYouWantToContinue": "This will remove the completion for this task. Are you sure you want to continue?"
+    "ThisWillRemoveTheCompletionForThisTaskAreYouSureYouWantToContinue": "This will remove the completion for this task. Are you sure you want to continue?",
+    "AddNewFarmsAssignManagersAndOverseeOperationsFromASinglePowerfulPlatform": "Add new farms, assign managers, and oversee operations from a single powerful platform.",
+    "DesignedForFarmOwnersWhoWantEfficiencyTransparencyAndGrowthAllInOnePlace": "Designed for farm owners who want efficiency, transparency, and growth all in one place.",
+    "ValidityPeriod":"Validity Period",
+    "BASIC":"BASIC",
+    "RENEW":"RENEW",
+    "PRO":"PRO"
   },
   "SelectCrop": {
     "Description": "Description",
@@ -742,15 +748,15 @@
     "MentionOther": "Mention Other",
     "SelectBatchNumber": "Select Batch Number",
     "Unit": "unit",
-    "AgroChemicals": "Agro chemicals",
+    "Agro chemicals": "Agro chemicals",
     "Fertilizers": "Fertilizer",
     "Seeds": "Seeds",
-    "LivestockForSale": "Livestock for Sale",
-    "AnimalFeed": "Animal Feed",
+    "Livestock for sale": "Livestock for Sale",
+    "Animal feed": "Animal Feed",
     "Other": "Other",
     "AddAsset": "Add Asset",
-    "SeedsAndSeedlings": "Seeds and Seedlings",
-    "OtherConsumables": "Other Consumables",
+    "Seeds and Seedlings": "Seeds and Seedlings",
+    "Other consumables": "Other Consumables",
     "ml": "ml",
     "kg": "kg",
     "l": "l",
@@ -908,7 +914,8 @@
     "PurchasedDateIsRequired": "Purchased Date is required",
     "SelectDate": "Select Date",
     "WarrantyPurchasedDateIsRequired": "Warranty Purchased Date is required",
-    "WarrantyExpireDateIsRequired": "Warranty Expire Date is required"
+    "WarrantyExpireDateIsRequired": "Warranty Expire Date is required",
+    "AssetTypeselect":"Asset Type Select"
   },
   "ImageViewerModal": {
     "UploadedBy": "Uploaded By :",
@@ -1107,6 +1114,15 @@
       "9": "October",
       "10": "November",
       "11": "December"
+    },
+    "Days": {
+      "Sun": "Sun",
+      "Mon": "Mon",
+      "Tue": "Tue",
+      "Wed": "Wed",
+      "Thu": "Thu",
+      "Fri": "Fri",
+      "Sat": "Sat"
     }
   },
   "RequestSummary": {

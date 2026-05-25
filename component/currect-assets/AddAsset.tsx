@@ -715,6 +715,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               </Text>
               <TextInput
                 placeholder={t("CurrentAssets.EnterAsset")}
+                placeholderTextColor="#000000"
                 value={selectedAsset}
                 onChangeText={(text) => {
                   clearError("selectedAsset");
@@ -729,6 +730,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   </Text>
                   <TextInput
                     placeholder={t("CurrentAssets.EnterBrand")}
+                    placeholderTextColor="#000000"
                     value={brand}
                     onChangeText={(text) => {
                       clearError("brand");
@@ -758,6 +760,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   </Text>
                   <TextInput
                     placeholder={t("CurrentAssets.Other")}
+                    placeholderTextColor="#000000"
                     value={customAsset}
                     onChangeText={(text) => {
                       clearError("selectedAsset");
@@ -772,6 +775,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                       </Text>
                       <TextInput
                         placeholder={t("CurrentAssets.SelectBrand")}
+                        placeholderTextColor="#000000"
                         value={brand}
                         onChangeText={(text) => {
                           clearError("brand");
@@ -807,6 +811,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             </Text>
             <TextInput
               placeholder={t("CurrentAssets.BatchNumber")}
+              placeholderTextColor="#000000"
               value={batchNum}
               onChangeText={handleBatchNumChange}
               className="bg-[#F4F4F4] p-2 pl-4 rounded-3xl h-[50px]"
@@ -826,6 +831,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             <View className="flex-row items-center justify-between">
               <TextInput
                 placeholder={t("CurrentAssets.UnitVolumeWeight")}
+                placeholderTextColor="#000000"
                 value={volume}
                 onChangeText={handleVolumeChange}
                 keyboardType="decimal-pad"
@@ -855,6 +861,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             </Text>
             <TextInput
               placeholder={t("CurrentAssets.NumberOfUnits")}
+              placeholderTextColor="#000000"
               keyboardType="numeric"
               value={numberOfUnits}
               onChangeText={(text) =>
@@ -875,6 +882,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             </Text>
             <TextInput
               placeholder={t("CurrentAssets.UnitPrice")}
+              placeholderTextColor="#000000"
               keyboardType="decimal-pad"
               value={unitPrice}
               onChangeText={handleUnitPriceChange}
@@ -891,6 +899,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           <Text className="text-gray-600">{t("CurrentAssets.TotalPrice")}</Text>
           <TextInput
             placeholder={t("CurrentAssets.TotalPrice")}
+            placeholderTextColor="#000000"
             value={
               totalPrice
                 ? parseFloat(totalPrice).toLocaleString("en-US", {
@@ -1016,6 +1025,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           </Text>
           <TextInput
             placeholder={t("CurrentAssets.WarrentyInMonths")}
+            placeholderTextColor="#000000"
             value={warranty}
             keyboardType="numeric"
             className="bg-[#F4F4F4] p-2 pl-4 rounded-3xl h-[50px]"
