@@ -502,11 +502,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       case "Land":
         return t("FixedAssets.Lands");
       case "Building and Infrastructures":
-        return t("FixedAssets.buildingandInfrastructures");
+        return t("FixedAssets.BuildingAndInfrastructures");
       case "Machine and Vehicles":
         return t("FixedAssets.MachineAndVehicles");
       case "Tools":
-        return t("FixedAssets.toolsandEquipments");
+        return t("FixedAssets.ToolsAndEquipments");
       default:
         return category;
     }

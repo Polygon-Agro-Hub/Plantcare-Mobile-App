@@ -594,7 +594,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       label: t(`CurrentAssets.${cat}`),
       value: cat,
     })),
-    { label: t("CurrentAssets.OtherConsumables"), value: "Other consumables" },
+    { label: t("CurrentAssets.Other consumables"), value: "Other consumables" },
   ];
 
   const assetItems = [

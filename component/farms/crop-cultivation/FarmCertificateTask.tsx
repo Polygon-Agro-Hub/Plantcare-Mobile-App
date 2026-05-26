@@ -738,7 +738,7 @@ const FarmCertificateTask: React.FC = () => {
                       </Text>
                     );
                   } else {
-                    let validityText = t("Farms.ValidFor next") + " ";
+                    let validityText = t("Farms.ValidFor") + " ";
 
                     if (time.months > 0) {
                       validityText += `${time.months} ${time.months === 1 ? t("Farms.Month") : t("Farms.Months")

@@ -1,15 +1,15 @@
 {
   "categoryOptions": [
     {
-      "labelKey": "FixedAssets.buildingandInfrastructures",
+      "labelKey": "FixedAssets.BuildingAndInfrastructures",
       "value": "Building and Infrastructures"
     },
     {
       "labelKey": "FixedAssets.MachineAndVehicles",
       "value": "Machine and Vehicles"
     },
-    { "labelKey": "FixedAssets.land", "value": "Land" },
-    { "labelKey": "FixedAssets.toolsandEquipments", "value": "Tools" }
+    { "labelKey": "FixedAssets.Lands", "value": "Land" },
+    { "labelKey": "FixedAssets.ToolsAndEquipments", "value": "Tools" }
   ],
 
   "ownershipCategories": [

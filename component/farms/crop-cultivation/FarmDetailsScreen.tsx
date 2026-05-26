@@ -1049,7 +1049,7 @@ const FarmDetailsScreen = () => {
                               </Text>
                             );
                           }
-                          let validityText = t("Farms.ValidFor next") + " ";
+                          let validityText = t("Farms.ValidFor") + " ";
                           if (remainingTime.months > 0)
                             validityText += `${remainingTime.months} ${remainingTime.months === 1
                               ? t("Farms.Month")

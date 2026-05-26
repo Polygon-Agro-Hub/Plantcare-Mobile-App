@@ -89,18 +89,18 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
   const { farmId, farmName } = route.params as RouteParams;
 
   const categoryItems = [
-    { label: t("CurrentAssets.AgroChemicals"), value: "Agro Chemicals" },
+    { label: t("CurrentAssets.Agro chemicals"), value: "Agro chemicals" },
     { label: t("CurrentAssets.Fertilizers"), value: "Fertilizers" },
     {
-      label: t("CurrentAssets.SeedsAndSeedlings"),
+      label: t("CurrentAssets.Seeds and Seedlings"),
       value: "Seeds and Seedlings",
     },
     {
-      label: t("CurrentAssets.LivestockForSale"),
-      value: "Livestock for Sale",
+      label: t("CurrentAssets.Livestock for sale"),
+      value: "Livestock for sale",
     },
-    { label: t("CurrentAssets.AnimalFeed"), value: "Animal Feed" },
-    { label: t("CurrentAssets.OtherConsumables"), value: "Other Consumables" },
+    { label: t("CurrentAssets.Animal feed"), value: "Animal feed" },
+    { label: t("CurrentAssets.Other consumables"), value: "Other consumables" },
   ];
 
   const unitvol = [
