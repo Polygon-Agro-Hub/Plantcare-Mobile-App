@@ -84,8 +84,8 @@
             "deploymentTarget": "15.1"
           },
           "android": {
-            "compileSdkVersion": 35,
-            "targetSdkVersion": 35,
+            "compileSdkVersion": 36,
+            "targetSdkVersion": 36,
             "minSdkVersion": 24,
             "ndkVersion": "28.0.12433566",
             "enableProguardInReleaseBuilds": true,
@@ -124,7 +124,7 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "0e03cacc-a139-45fd-9407-3936e86b20ea"
+        "projectId": ""
       }
     }
   }
