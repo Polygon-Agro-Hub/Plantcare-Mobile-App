@@ -915,7 +915,7 @@ const RequestInspectionForm = () => {
 
   return (
     <View className="flex-1 bg-[#FFFFFF]">
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      
 
       <CustomHeader
         title={t("RequestInspectionForm.RequestInspection")}
@@ -1040,6 +1040,8 @@ const RequestInspectionForm = () => {
             onChangeText={setPrice}
             placeholder="0.00"
             keyboardType="numeric"
+            style={{ color: '#000000' }} 
+            placeholderTextColor="#000000"
             className="bg-[#F4F4F4] rounded-3xl h-[50px] p-3 border border-[#F4F4F4] text-gray-900"
             editable={false}
           />
@@ -1079,6 +1081,8 @@ const RequestInspectionForm = () => {
             value={plotNo}
             onChangeText={(text) => handleTextInputChange(text, setPlotNo)}
             placeholder={t("RequestInspectionForm.EnterPlotNumber")}
+            style={{ color: '#000000' }} 
+            placeholderTextColor="#000000"
             className="bg-[#F4F4F4] rounded-3xl h-[50px] p-3 border border-[#F4F4F4] text-gray-900"
           />
         </View>
@@ -1091,6 +1095,8 @@ const RequestInspectionForm = () => {
             value={streetName}
             onChangeText={(text) => handleTextInputChange(text, setStreetName)}
             placeholder={t("RequestInspectionForm.EnterStreetName")}
+            style={{ color: '#000000' }} 
+            placeholderTextColor="#000000"
             className="bg-[#F4F4F4] rounded-3xl h-[50px] p-3 border border-[#F4F4F4] text-gray-900"
           />
         </View>
@@ -1102,6 +1108,8 @@ const RequestInspectionForm = () => {
           <TextInput
             value={city}
             onChangeText={(text) => handleTextInputChange(text, setCity)}
+            style={{ color: '#000000' }} 
+            placeholderTextColor="#000000"
             placeholder={t("RequestInspectionForm.EnterCity")}
             className="bg-[#F4F4F4] rounded-3xl h-[50px] p-3 border border-[#F4F4F4] text-gray-900"
           />

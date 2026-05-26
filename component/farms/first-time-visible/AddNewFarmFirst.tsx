@@ -38,12 +38,12 @@ const AddNewFarmFirst: React.FC = () => {
             </Text>
             <Text className="text-sm text-center text-white mt-2">
               {t(
-                "Farms.Add new farms, assign managers, and oversee operations from a single powerful platform.",
+                "Farms.AddNewFarmsAssignManagersAndOverseeOperationsFromASinglePowerfulPlatform",
               )}
             </Text>
             <Text className="text-sm text-center text-white mt-2">
               {t(
-                "Farms.Designed for farm owners who want efficiency, transparency, and growth all in one place.",
+                "Farms.DesignedForFarmOwnersWhoWantEfficiencyTransparencyAndGrowthAllInOnePlace",
               )}
             </Text>
           </View>

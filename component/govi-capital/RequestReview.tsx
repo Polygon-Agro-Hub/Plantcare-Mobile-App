@@ -89,7 +89,7 @@ const RequestReview: React.FC<RequestReviewProps> = ({ navigation, route }) => {
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      
 
       <CustomHeader
         title={`#${request?.jobId || t("Govicapital.RequestReview")}`}

@@ -347,7 +347,7 @@ const MyCultivation = () => {
                   {t(`District.${farm.district}`)}
                 </Text>
                 <Text className="text-gray-600 text-sm">
-                  {farm.farmCropCount} {t("Farms.Crops")}
+                 {t("Farms.Crops")} - {farm.farmCropCount} 
                 </Text>
               </View>
               {membershipDisplay.isBlocked && (

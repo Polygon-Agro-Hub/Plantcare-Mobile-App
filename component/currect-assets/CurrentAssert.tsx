@@ -50,7 +50,7 @@ const icon7 = require("../../assets/images/currect-assets/icon7.webp");
 const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   const [assetData, setAssetData] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(true);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const assets = useSelector((state: RootState) => state.assets.assetsData);
 
   const getAuthToken = async () => {
@@ -156,7 +156,10 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation }) => {
   };
 
   const getTranslatedCategory = (category: string) => {
-    return t(`CurrentAssets.${category}`) || category;
+    const categoryData = require("@/assets/jsons/current-asset/categories.json");
+    const item = categoryData.find((c: any) => c.value === category);
+    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
+    return item ? (item.translations[lang] || item.translations["en"]) : category;
   };
 
   const CATEGORY_ORDER = [

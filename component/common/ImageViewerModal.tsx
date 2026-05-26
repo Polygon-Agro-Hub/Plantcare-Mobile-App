@@ -74,7 +74,7 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
       onRequestClose={onClose}
       presentationStyle="fullScreen"
     >
-      <StatusBar backgroundColor="white" barStyle="dark-content" />
+      
       <View style={styles.container}>
         <View style={styles.header}>
           <View style={styles.headerContent}>

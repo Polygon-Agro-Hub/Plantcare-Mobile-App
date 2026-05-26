@@ -249,9 +249,7 @@ const EditManagersScreen = () => {
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar
-        barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"}
-      />
+      
       <CustomHeader
         title={""}
         navigation={navigation as any}

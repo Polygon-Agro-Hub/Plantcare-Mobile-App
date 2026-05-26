@@ -16,7 +16,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import * as Location from 'expo-location';
-import { Ionicons, Entypo, AntDesign } from '@expo/vector-icons';
+import { Ionicons, Entypo, AntDesign, FontAwesome6 } from '@expo/vector-icons';
 import debounce from 'lodash.debounce';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/types';
@@ -485,15 +485,18 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
           </View>
         </View>
 
-        <ScrollView
-          className="mt-6"
-          contentContainerStyle={{ flexGrow: 1, zIndex: 1 }}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-        >
-          <View className="p-1 pt-0 mt-0 pb-4">
-            {loading ? (
-              <LoadingPage fullScreen />
-            ) : weatherData ? (
+        {loading ? (
+          <View className="flex-1 justify-center items-center">
+            <LoadingPage fullScreen />
+          </View>
+        ) : (
+          <ScrollView
+            className="mt-6"
+            contentContainerStyle={{ flexGrow: 1, zIndex: 1 }}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+          >
+            <View className="p-1 pt-0 mt-0 pb-4">
+              {weatherData ? (
               <View className="items-center">
                 <Image
                   source={getWeatherImage(weatherData.weather[0].id, weatherData.weather[0].icon)}
@@ -512,18 +515,26 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
 
                 <View className="flex-row justify-between p-5 mt-2">
                   <View className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center" style={{ shadowColor: 'grey', shadowOffset: { width: 1, height: 2 }, shadowOpacity: 0.9, shadowRadius: 4, elevation: 4 }}>
-                    <Image source={require('../../assets/images/weather icons/common/wind-image.webp')} className="w-8 h-8" resizeMode="contain" />
-                    <Text className="text-l font-bold">{weatherData.wind.speed} m/s</Text>
+                    <FontAwesome6 name="wind" size={24} color="#0075FF" style={{ marginBottom: 8 }} />
+                    <Text className="text-l font-bold">{weatherData.wind.speed} km/h</Text>
                     <Text style={{ fontSize: isSmallScreen ? 13 : 16, color: '#666' }}>{t('WeatherForecast.Wind')}</Text>
                   </View>
                   <View className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center" style={{ shadowColor: 'grey', shadowOffset: { width: 1, height: 2 }, shadowOpacity: 0.9, shadowRadius: 4, elevation: 4 }}>
-                    <Image source={require('../../assets/images/weather icons/common/water-image.webp')} className="w-8 h-8" resizeMode="contain" />
+                    <FontAwesome6 name="water" size={24} color="#0075FF" style={{ marginBottom: 8 }} />
                     <Text className="text-l font-bold">{weatherData.main.humidity}%</Text>
                     <Text style={{ fontSize: isSmallScreen ? 13 : 16, color: '#666' }}>{t('WeatherForecast.Humidity')}</Text>
                   </View>
                   <View className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center" style={{ shadowColor: 'grey', shadowOffset: { width: 1, height: 2 }, shadowOpacity: 0.9, shadowRadius: 4, elevation: 4 }}>
-                    <Image source={require('../../assets/images/weather icons/common/rain-image.webp')} className="w-8 h-8" resizeMode="contain" />
-                    <Text className="text-l font-bold">{weatherData.rain ? `${weatherData.rain['1h']} mm` : '0 mm'}</Text>
+                    <FontAwesome6 name="cloud-rain" size={24} color="#0075FF" style={{ marginBottom: 8 }} />
+                    <Text className="text-l font-bold">
+                      {`${
+                        weatherData?.rain?.['1h'] ??
+                        weatherData?.rain?.['3h'] ??
+                        forecastData?.[0]?.rain?.['1h'] ??
+                        forecastData?.[0]?.rain?.['3h'] ??
+                        0
+                      } mm`}
+                    </Text>
                     <Text style={{ fontSize: isSmallScreen ? 13 : 16, color: '#666' }}>{t('WeatherForecast.Rain')}</Text>
                   </View>
                 </View>
@@ -569,13 +580,14 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
                   )}
                 </ScrollView>
               </View>
-            ) : (
-              <View className="flex-1 justify-center items-center">
-                <ActivityIndicator size="large" color="#26D041" />
-              </View>
-            )}
-          </View>
-        </ScrollView>
+              ) : (
+                <View className="flex-1 justify-center items-center">
+                  <ActivityIndicator size="large" color="#26D041" />
+                </View>
+              )}
+            </View>
+          </ScrollView>
+        )}
       </View>
     </View>
   );

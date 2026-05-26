@@ -78,12 +78,21 @@ const DropdownButton = ({
 );
 
 const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const getCategoryLabel = (val: string) => {
+    const item = assetData.categoryOptions.find((c: any) => c.value === val);
+    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
+    return item ? (item.translations[lang] || item.translations["en"]) : val;
+  };
 
   const toOptions = (raw: RawOption[]) =>
     raw.map((item) => ({ label: t(item.labelKey), value: item.value }));
 
-  const categoryOptions = toOptions(assetData.categoryOptions);
+  const categoryOptions = assetData.categoryOptions.map((item: any) => ({
+    label: getCategoryLabel(item.value),
+    value: item.value,
+  }));
   const ownershipOptions = toOptions(assetData.ownershipCategories);
   const landOwnershipOptions = toOptions(assetData.landOwnershipOptions);
   const buildingTypeOptions = toOptions(assetData.buildingTypeOptions);
@@ -846,11 +855,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
       style={{ flex: 1 }}
     >
       <View style={{ flex: 1 }}>
-        <StatusBar
-          barStyle="dark-content"
-          backgroundColor="transparent"
-          translucent={false}
-        />
+        
         <ScrollView
           ref={scrollViewRef}
           className="flex-1 pb-20 bg-white "

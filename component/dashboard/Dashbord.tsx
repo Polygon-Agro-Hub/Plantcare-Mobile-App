@@ -7,6 +7,7 @@ import {
   Alert,
   ScrollView,
   RefreshControl,
+  StatusBar,
 } from "react-native";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";

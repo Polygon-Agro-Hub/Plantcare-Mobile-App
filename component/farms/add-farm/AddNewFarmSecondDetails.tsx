@@ -471,20 +471,16 @@ const AddNewFarmSecondDetails = () => {
                   selectTextOnFocus={false}
                 />
 
-                <View className="flex-1 items-center justify-center mt-2">
-                  <Text className="font-semibold text-base mt-2">
+                <View className="flex-1 items-center justify-center mt-2 ">
+                  <Text className="font-semibold text-center text-base mt-2">
                     {t("Farms.HowManyStaffWillBe")}
                   </Text>
-                  <View className="flex-1 items-center justify-center">
-                    <Text className="font-semibold text-base">
-                      {t("Farms.using the app")}
-                    </Text>
-                  </View>
+                  
                 </View>
                 <TextInput
                   value={loginCredentialsNeeded}
                   onChangeText={handleLoginCredentialsChange}
-                  placeholder={t("Farms.NumberOfLoginCredentialsNeeded")}
+                  placeholder={t("Main.TypeHere")}
                   placeholderTextColor="#585858"
                   className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800 mt-2"
                   keyboardType="number-pad"

@@ -831,6 +831,7 @@ const AddMemberDetails: React.FC = () => {
                       placeholder="7X XXXXXXX"
                       value={member.phone}
                       onChangeText={(text) => handlePhoneChange(text, index)}
+                      placeholderTextColor="#9CA3AF"
                       keyboardType="phone-pad"
                       maxLength={9}
                       style={{ fontSize: 14, borderWidth: 0 }}

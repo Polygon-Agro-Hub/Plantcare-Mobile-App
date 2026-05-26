@@ -988,7 +988,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
   return (
     <View className="flex-1">
-      <StatusBar style="dark" />
+      
 
       {isCultivatedLandModalVisible &&
         lastCompletedIndex !== null &&

@@ -391,6 +391,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
             <TextInput
               value={newComment}
               onChangeText={setNewComment}
+              placeholderTextColor="#000000"
               placeholder={
                 editingCommentId
                   ? t("PublicForum.EditYourComment...")

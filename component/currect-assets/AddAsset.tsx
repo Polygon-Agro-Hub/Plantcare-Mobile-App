@@ -74,8 +74,13 @@ const preventLeadingSpace = (text: string): string => text.replace(/^\s+/, "");
 
 const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const scrollViewRef = useRef<ScrollView>(null);
-  const { t } = useTranslation();
-  const [categories, setCategories] = useState<string[]>([]);
+  const { t, i18n } = useTranslation();
+  const unitOptions = [
+    { label: t("CurrentAssets.ml"), value: "ml" },
+    { label: t("CurrentAssets.kg"), value: "kg" },
+    { label: t("CurrentAssets.l"), value: "l" },
+  ];
+
   const [assets, setAssets] = useState<any[]>([]);
   const [brands, setBrands] = useState<string[]>([]);
   const [farms, setFarms] = useState<Farm[]>([]);
@@ -173,19 +178,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     return unsubscribe;
   }, [navigation]);
 
-  useEffect(() => {
-    setLoading(true);
-    try {
-      const data = require("@/assets/jsons/current-asset/current-asset.json");
-      setCategories(Object.keys(data));
-    } catch {
-      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        { text: t("Main.OK") },
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+
 
   useEffect(() => {
     if (numberOfUnits && unitPrice) {
@@ -589,16 +582,29 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     value: f.id.toString(),
   }));
 
-  const categoryItems = [
-    ...categories.map((cat) => ({
-      label: t(`CurrentAssets.${cat}`),
-      value: cat,
-    })),
-    { label: t("CurrentAssets.OtherConsumables"), value: "Other consumables" },
-  ];
+  const categoryData = require("@/assets/jsons/current-asset/categories.json");
+  const assetTranslationData = require("@/assets/jsons/current-asset/assets-translations.json");
+
+  const getCategoryLabel = (val: string) => {
+    const item = categoryData.find((c: any) => c.value === val);
+    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
+    return item ? (item.translations[lang] || item.translations["en"]) : val;
+  };
+
+  const getAssetLabel = (val: string) => {
+    if (val === "Other") return t("CurrentAssets.Other");
+    const item = assetTranslationData.find((a: any) => a.value === val);
+    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
+    return item ? (item.translations[lang] || item.translations["en"]) : val;
+  };
+
+  const categoryItems = categoryData.map((item: any) => ({
+    label: getCategoryLabel(item.value),
+    value: item.value,
+  }));
 
   const assetItems = [
-    ...assets.map((a) => ({ label: t(`${a.asset}`), value: a.asset })),
+    ...assets.map((a) => ({ label: getAssetLabel(a.asset), value: a.asset })),
     { label: t("CurrentAssets.Other"), value: "Other" },
   ];
 
@@ -646,11 +652,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         className="flex-1 bg-white"
         keyboardShouldPersistTaps="handled"
       >
-        <StatusBar
-          barStyle="dark-content"
-          backgroundColor="transparent"
-          translucent={false}
-        />
+        
 
         <CustomHeader
           title={t("FixedAssets.MyAssets")}
@@ -701,7 +703,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           </Text>
           <PickerTrigger
             label={
-              selectedCategory ? t(`CurrentAssets.${selectedCategory}`) : ""
+              selectedCategory ? getCategoryLabel(selectedCategory) : ""
             }
             placeholder={t("CurrentAssets.Selectcategory")}
             onPress={() => openModal("category")}
@@ -715,6 +717,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               </Text>
               <TextInput
                 placeholder={t("CurrentAssets.EnterAsset")}
+                placeholderTextColor="#000000"
                 value={selectedAsset}
                 onChangeText={(text) => {
                   clearError("selectedAsset");
@@ -729,6 +732,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   </Text>
                   <TextInput
                     placeholder={t("CurrentAssets.EnterBrand")}
+                    placeholderTextColor="#000000"
                     value={brand}
                     onChangeText={(text) => {
                       clearError("brand");
@@ -745,7 +749,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 {t("CurrentAssets.Asset")} *
               </Text>
               <PickerTrigger
-                label={selectedAsset ? t(`${selectedAsset}`) : ""}
+                label={selectedAsset ? getAssetLabel(selectedAsset) : ""}
                 placeholder={t("CurrentAssets.SelectAsset")}
                 onPress={() => openModal("asset")}
                 error={fieldErrors.selectedAsset}
@@ -758,6 +762,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   </Text>
                   <TextInput
                     placeholder={t("CurrentAssets.Other")}
+                    placeholderTextColor="#000000"
                     value={customAsset}
                     onChangeText={(text) => {
                       clearError("selectedAsset");
@@ -772,6 +777,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                       </Text>
                       <TextInput
                         placeholder={t("CurrentAssets.SelectBrand")}
+                        placeholderTextColor="#000000"
                         value={brand}
                         onChangeText={(text) => {
                           clearError("brand");
@@ -807,6 +813,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             </Text>
             <TextInput
               placeholder={t("CurrentAssets.BatchNumber")}
+              placeholderTextColor="#000000"
               value={batchNum}
               onChangeText={handleBatchNumChange}
               className="bg-[#F4F4F4] p-2 pl-4 rounded-3xl h-[50px]"
@@ -826,6 +833,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             <View className="flex-row items-center justify-between">
               <TextInput
                 placeholder={t("CurrentAssets.UnitVolumeWeight")}
+                placeholderTextColor="#000000"
                 value={volume}
                 onChangeText={handleVolumeChange}
                 keyboardType="decimal-pad"
@@ -838,7 +846,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 }}
                 className="bg-[#F4F4F4] rounded-[30px] h-[50px] w-28 flex-row items-center justify-between px-3"
               >
-                <Text className="text-sm text-black">{unit}</Text>
+                <Text className="text-sm text-black">{t(`CurrentAssets.${unit}`, unit)}</Text>
                 <AntDesign name="caret-down" size={14} color="#5e5d5d" />
               </TouchableOpacity>
             </View>
@@ -855,6 +863,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             </Text>
             <TextInput
               placeholder={t("CurrentAssets.NumberOfUnits")}
+              placeholderTextColor="#000000"
               keyboardType="numeric"
               value={numberOfUnits}
               onChangeText={(text) =>
@@ -875,6 +884,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             </Text>
             <TextInput
               placeholder={t("CurrentAssets.UnitPrice")}
+              placeholderTextColor="#000000"
               keyboardType="decimal-pad"
               value={unitPrice}
               onChangeText={handleUnitPriceChange}
@@ -891,6 +901,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           <Text className="text-gray-600">{t("CurrentAssets.TotalPrice")}</Text>
           <TextInput
             placeholder={t("CurrentAssets.TotalPrice")}
+            placeholderTextColor="#000000"
             value={
               totalPrice
                 ? parseFloat(totalPrice).toLocaleString("en-US", {
@@ -1016,6 +1027,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           </Text>
           <TextInput
             placeholder={t("CurrentAssets.WarrentyInMonths")}
+            placeholderTextColor="#000000"
             value={warranty}
             keyboardType="numeric"
             className="bg-[#F4F4F4] p-2 pl-4 rounded-3xl h-[50px]"
@@ -1119,7 +1131,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         visible={modals.unit}
         onClose={() => closeModal("unit")}
         title={t("CurrentAssets.UnitVolumeWeight")}
-        data={UNIT_OPTIONS}
+        data={unitOptions}
         selectedItems={[unit]}
         onSelect={(items) => setUnit(items[0] ?? "ml")}
         showSearch={false}

@@ -11,7 +11,6 @@ import {
   KeyboardAvoidingView,
   ActivityIndicator,
   BackHandler,
-  StatusBar,
 } from "react-native";
 import axios from "axios";
 import { RootStackParamList } from "../types/types";
@@ -295,11 +294,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       enabled
       style={{ flex: 1, backgroundColor: "white" }}
     >
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="transparent"
-        translucent={false}
-      />
+      
 
       <GlobalSearchModal
         visible={bankModalVisible}

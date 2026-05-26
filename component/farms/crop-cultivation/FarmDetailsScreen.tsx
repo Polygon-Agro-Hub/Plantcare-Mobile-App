@@ -815,10 +815,7 @@ const FarmDetailsScreen = () => {
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar
-        barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"}
-        backgroundColor="#ffffff"
-      />
+      
 
       <View className="bg-white px-4 py-3 flex-row items-center justify-between">
         <TouchableOpacity
@@ -1052,7 +1049,7 @@ const FarmDetailsScreen = () => {
                               </Text>
                             );
                           }
-                          let validityText = t("Farms.ValidFor next") + " ";
+                          let validityText = t("Farms.ValidFor") + " ";
                           if (remainingTime.months > 0)
                             validityText += `${remainingTime.months} ${remainingTime.months === 1
                               ? t("Farms.Month")

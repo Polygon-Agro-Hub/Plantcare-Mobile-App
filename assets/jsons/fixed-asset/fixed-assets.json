@@ -1,15 +1,37 @@
 {
   "categoryOptions": [
     {
-      "labelKey": "FixedAssets.buildingandInfrastructures",
-      "value": "Building and Infrastructures"
+      "value": "Building and Infrastructures",
+      "translations": {
+        "en": "Building and Infrastructures",
+        "si": "ගොඩනැගිලි සහ යටිතල පහසුකම්",
+        "ta": "கட்டிடங்கள் மற்றும் உள்கட்டமைப்புகள்"
+      }
     },
     {
-      "labelKey": "FixedAssets.MachineAndVehicles",
-      "value": "Machine and Vehicles"
+      "value": "Machine and Vehicles",
+      "translations": {
+        "en": "Machine and Vehicles",
+        "si": "යන්ත්‍රෝපකරණ සහ වාහන",
+        "ta": "இயந்திரங்கள் மற்றும் வாகனங்கள்"
+      }
     },
-    { "labelKey": "FixedAssets.land", "value": "Land" },
-    { "labelKey": "FixedAssets.toolsandEquipments", "value": "Tools" }
+    {
+      "value": "Land",
+      "translations": {
+        "en": "Land",
+        "si": "ඉඩම්",
+        "ta": "நிலங்கள்"
+      }
+    },
+    {
+      "value": "Tools",
+      "translations": {
+        "en": "Tools",
+        "si": "මෙවලම් සහ උපකරණ",
+        "ta": "கருவிகள் மற்றும் உபகரணங்கள்"
+      }
+    }
   ],
 
   "ownershipCategories": [

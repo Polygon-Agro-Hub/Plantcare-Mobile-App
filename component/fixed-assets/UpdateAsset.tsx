@@ -65,7 +65,7 @@ interface ToolErrors {
 
 const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
   const { selectedTools, category } = route.params;
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const toOptions = (raw: RawOption[]) =>
     raw.map((item) => ({ label: t(item.labelKey), value: item.value }));
@@ -498,18 +498,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const translateCategory = (category: string): string => {
-    switch (category) {
-      case "Land":
-        return t("FixedAssets.Lands");
-      case "Building and Infrastructures":
-        return t("FixedAssets.buildingandInfrastructures");
-      case "Machine and Vehicles":
-        return t("FixedAssets.MachineAndVehicles");
-      case "Tools":
-        return t("FixedAssets.toolsandEquipments");
-      default:
-        return category;
-    }
+    const match = assetData.categoryOptions.find((o: any) => o.value === category);
+    if (!match) return category;
+    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
+    return match.translations[lang] || match.translations["en"] || category;
   };
 
   const handleUpdateTools = async () => {
@@ -714,11 +706,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       enabled
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="transparent"
-        translucent={false}
-      />
+      
 
       {loading ? (
         <LoadingPage fullScreen />

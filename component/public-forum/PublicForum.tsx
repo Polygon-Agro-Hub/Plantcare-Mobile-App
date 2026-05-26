@@ -522,6 +522,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
               <TextInput
                 className="flex-1 text-gray-500 bg-[#F2F2F2] text-sm  h-[50px] px-4 pr-10 rounded-3xl"
                 placeholder={t("PublicForum.WriteAComment")}
+                placeholderTextColor="#000000"
                 value={comment[item.id] || ""}
                 onChangeText={(text) =>
                   setComment((prev) => ({ ...prev, [item.id]: text }))
@@ -623,7 +624,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
       <View className="p-4 bg-white">
         <View className="flex-row items-center bg-white border rounded-3xl  shadow-sm">
           <TextInput
-            className="flex-1 text-gray-600  px-4 h-[50px] text-lg"
+            className="flex-1 text-gray-600  px-4 h-[40px] text-lg"
             placeholder={t("Main.Search...")}
             value={searchText}
             onChangeText={(text) => {
@@ -636,7 +637,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
             }}
             placeholderTextColor="#9CA3AF"
           />
-          <View className="">
+          <View className="h-[40px]">
             <TouchableOpacity className="bg-black rounded-full p-3">
               <Feather name="search" size={20} color="white" />
             </TouchableOpacity>

@@ -6,7 +6,6 @@ import {
   ScrollView,
   TextInput,
   Platform,
-  StatusBar,
   KeyboardAvoidingView,
   Image,
   Modal,
@@ -243,7 +242,7 @@ const CropEarnCertificate: React.FC = () => {
       className="bg-white"
       style={{ flex: 1 }}
     >
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      
 
       <CustomHeader
         title={t("EarnCertificate.EarnACertificate")}
@@ -325,7 +324,7 @@ const CropEarnCertificate: React.FC = () => {
                     {t("EarnCertificate.Rs")}.{formatPrice(certificate.price)}
                   </Text>
                   <Text className="text-[#6B6B6B] text-sm">
-                    {t("EarnCertificate.ValidFor")} {certificate.timeLine}{" "}
+                    {t("Farms.ValidityPeriod")} : {certificate.timeLine}{" "}
                     {getMonthLabel(certificate.timeLine)}
                   </Text>
                 </View>

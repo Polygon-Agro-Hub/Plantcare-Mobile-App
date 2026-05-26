@@ -1,0 +1,354 @@
+[
+  {
+    "value": "Buffaloes",
+    "translations": {
+      "en": "Buffaloes",
+      "si": "මීහරකුන්",
+      "ta": "எருமைகள்"
+    }
+  },
+  {
+    "value": "Cattle",
+    "translations": {
+      "en": "Cattle",
+      "si": "ගවයින්",
+      "ta": "கால்நடைகள்"
+    }
+  },
+  {
+    "value": "Chicken",
+    "translations": {
+      "en": "Chicken",
+      "si": "කුකුළන්",
+      "ta": "கோழிகள்"
+    }
+  },
+  {
+    "value": "Goats",
+    "translations": {
+      "en": "Goats",
+      "si": "එළුවන්",
+      "ta": "ஆடுகள்"
+    }
+  },
+  {
+    "value": "Pigs",
+    "translations": {
+      "en": "Pigs",
+      "si": "ඌරන්",
+      "ta": "பன்றிகள்"
+    }
+  },
+  {
+    "value": "Calf",
+    "translations": {
+      "en": "Calf",
+      "si": "පැටවුන්",
+      "ta": "கன்று"
+    }
+  },
+  {
+    "value": "Chick",
+    "translations": {
+      "en": "Chick",
+      "si": "පැටවුන් (කුකුළු)",
+      "ta": "குஞ்சு"
+    }
+  },
+  {
+    "value": "Dairy Cow Feed",
+    "translations": {
+      "en": "Dairy Cow Feed",
+      "si": "කිරි ගව ආහාර",
+      "ta": "கறவை மாடு தீவனம்"
+    }
+  },
+  {
+    "value": "Layer",
+    "translations": {
+      "en": "Layer",
+      "si": "බිත්තර දමන සතුන්ගේ ආහාර",
+      "ta": "முட்டையிடும் கோழி தீவனம்"
+    }
+  },
+  {
+    "value": "Milking cow",
+    "translations": {
+      "en": "Milking cow",
+      "si": "කිරි දෙන දෙනුන්",
+      "ta": "கறவை மாடு"
+    }
+  },
+  {
+    "value": "Poultry feed",
+    "translations": {
+      "en": "Poultry feed",
+      "si": "කුකුළු ආහාර",
+      "ta": "கோழித் தீவனம்"
+    }
+  },
+  {
+    "value": "Albert Solution",
+    "translations": {
+      "en": "Albert Solution",
+      "si": "ඇල්බට් ද්‍රාවණය",
+      "ta": "ஆல்பர்ட் கரைசல்"
+    }
+  },
+  {
+    "value": "Ammonium Nitrate",
+    "translations": {
+      "en": "Ammonium Nitrate",
+      "si": "ඇමෝනියම් නයිට්රේට්",
+      "ta": "அம்மோனியம் நைட்ரேட்"
+    }
+  },
+  {
+    "value": "Ammonium Sulfate",
+    "translations": {
+      "en": "Ammonium Sulfate",
+      "si": "ඇමෝනියම් සල්ෆේට්",
+      "ta": "அம்மோனியம் சல்பேட்"
+    }
+  },
+  {
+    "value": "Biofertilizers",
+    "translations": {
+      "en": "Biofertilizers",
+      "si": "ජෛව පොහොර",
+      "ta": "உயிர் உரங்கள்"
+    }
+  },
+  {
+    "value": "Calcium Ammonium Nitrate",
+    "translations": {
+      "en": "Calcium Ammonium Nitrate",
+      "si": "කැල්සියම් ඇමෝනියම් නයිට්රේට්",
+      "ta": "கால்சியம் அம்மோனியம் நைட்ரேட்"
+    }
+  },
+  {
+    "value": "Calcium Fertilizers",
+    "translations": {
+      "en": "Calcium Fertilizers",
+      "si": "කැල්සියම් පොහොර",
+      "ta": "கால்சியம் உரங்கள்"
+    }
+  },
+  {
+    "value": "Controlled-release fertilizers",
+    "translations": {
+      "en": "Controlled-release fertilizers",
+      "si": "පාලිත මුදාහැරීමේ පොහොර",
+      "ta": "கட்டுப்படுத்தப்பட்ட வெளியீட்டு உரங்கள்"
+    }
+  },
+  {
+    "value": "Diammonium Phosphate (DAP)",
+    "translations": {
+      "en": "Diammonium Phosphate (DAP)",
+      "si": "ඩයැමෝනියම් පොස්පේට් (DAP)",
+      "ta": "டைஅம்மோனியம் பாஸ்பேட் (DAP)"
+    }
+  },
+  {
+    "value": "Eppawala Rock Phosphate (ERP)",
+    "translations": {
+      "en": "Eppawala Rock Phosphate (ERP)",
+      "si": "එප්පාවල රොක් පොස්පේට් (ERP)",
+      "ta": "எப்பாவல ராக் பாஸ்பேட் (ERP)"
+    }
+  },
+  {
+    "value": "Foliar fertilizers",
+    "translations": {
+      "en": "Foliar fertilizers",
+      "si": "පත්‍රීය පොහොර",
+      "ta": "இலை வழி உரங்கள்"
+    }
+  },
+  {
+    "value": "Fruit fertilizer",
+    "translations": {
+      "en": "Fruit fertilizer",
+      "si": "පලතුරු පොහොර",
+      "ta": "பழ உரம்"
+    }
+  },
+  {
+    "value": "Liquid fertilizers",
+    "translations": {
+      "en": "Liquid fertilizers",
+      "si": "දියර පොහොර",
+      "ta": "திரவ உரங்கள்"
+    }
+  },
+  {
+    "value": "Organic Fertilizers",
+    "translations": {
+      "en": "Organic Fertilizers",
+      "si": "කාබනික පොහොර",
+      "ta": "இயற்கை உரங்கள்"
+    }
+  },
+  {
+    "value": "Potassium Nitrate",
+    "translations": {
+      "en": "Potassium Nitrate",
+      "si": "පොටෑසියම් නයිට්රේට්",
+      "ta": "பொட்டாசியம் நைட்ரேட்"
+    }
+  },
+  {
+    "value": "Potassium Sulfate",
+    "translations": {
+      "en": "Potassium Sulfate",
+      "si": "පොටෑසියම් සල්ෆේට්",
+      "ta": "பொட்டாசியம் சல்பேட்"
+    }
+  },
+  {
+    "value": "Triple Super Phosphate (TSP)",
+    "translations": {
+      "en": "Triple Super Phosphate (TSP)",
+      "si": "ත්‍රිත්ව සුපිරි පොස්පේට් (TSP)",
+      "ta": "திரிபிள் சூப்பர் பாஸ்பேட் (TSP)"
+    }
+  },
+  {
+    "value": "Urea",
+    "translations": {
+      "en": "Urea",
+      "si": "යූරියා",
+      "ta": "யூரியா"
+    }
+  },
+  {
+    "value": "Vegetable fertilizer",
+    "translations": {
+      "en": "Vegetable fertilizer",
+      "si": "එළවළු පොහොර",
+      "ta": "காயகறி உரம்"
+    }
+  },
+  {
+    "value": "Bean",
+    "translations": {
+      "en": "Bean",
+      "si": "බෝංචි",
+      "ta": "பீன்ஸ்"
+    }
+  },
+  {
+    "value": "Bitter Gourd",
+    "translations": {
+      "en": "Bitter Gourd",
+      "si": "කරවිල",
+      "ta": "பாகற்காய்"
+    }
+  },
+  {
+    "value": "Brinjal",
+    "translations": {
+      "en": "Brinjal",
+      "si": "වම්බටු",
+      "ta": "கத்தரிக்காய்"
+    }
+  },
+  {
+    "value": "Broccoli",
+    "translations": {
+      "en": "Broccoli",
+      "si": "බ්‍රොකොලි",
+      "ta": "ப்ரோக்கோலி"
+    }
+  },
+  {
+    "value": "Capsicum",
+    "translations": {
+      "en": "Capsicum",
+      "si": "මාළු මිරිස්",
+      "ta": "குடைமிளகாய்"
+    }
+  },
+  {
+    "value": "Cauliflower",
+    "translations": {
+      "en": "Cauliflower",
+      "si": "කෝලිෆ්ලවර්",
+      "ta": "கோலிஃபிளவர்"
+    }
+  },
+  {
+    "value": "Chilli",
+    "translations": {
+      "en": "Chilli",
+      "si": "මිරිස්",
+      "ta": "மிளகாய்"
+    }
+  },
+  {
+    "value": "Cucumber",
+    "translations": {
+      "en": "Cucumber",
+      "si": "පිපිඤ්ඤා",
+      "ta": "வெள்ளரிக்காய்"
+    }
+  },
+  {
+    "value": "Gherkin",
+    "translations": {
+      "en": "Gherkin",
+      "si": "කැකිරි",
+      "ta": "கெர்கின்"
+    }
+  },
+  {
+    "value": "Lettuce",
+    "translations": {
+      "en": "Lettuce",
+      "si": "ලෙටුස්",
+      "ta": "லெட்டூஸ்"
+    }
+  },
+  {
+    "value": "Tomato",
+    "translations": {
+      "en": "Tomato",
+      "si": "තක්කාලි",
+      "ta": "தக்காளி"
+    }
+  },
+  {
+    "value": "Watermelon",
+    "translations": {
+      "en": "Watermelon",
+      "si": "පැණි කොමඩු",
+      "ta": "தர்பூசணி"
+    }
+  },
+  {
+    "value": "Strawberry",
+    "translations": {
+      "en": "Strawberry",
+      "si": "ස්ට්‍රෝබෙරි",
+      "ta": "ஸ்ட்ராபெரி"
+    }
+  },
+  {
+    "value": "Black Gram",
+    "translations": {
+      "en": "Black Gram",
+      "si": "උඳු",
+      "ta": "உளுந்து"
+    }
+  },
+  {
+    "value": "Green gram",
+    "translations": {
+      "en": "Green gram",
+      "si": "මුං ඇට",
+      "ta": "பாசிப்பயறு"
+    }
+  }
+]

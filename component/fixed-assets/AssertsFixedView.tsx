@@ -71,7 +71,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   const [showDeleteOptions, setShowDeleteOptions] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const District = districtData.reduce(
     (acc, item) => {
@@ -102,8 +102,10 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   const toggleModal = () => setModalVisible((v) => !v);
 
   const translateCategory = (cat: string): string => {
-    const match = assetData.categoryOptions.find((o) => o.value === cat);
-    return match ? t(match.labelKey) : cat;
+    const match = assetData.categoryOptions.find((o: any) => o.value === cat);
+    if (!match) return cat;
+    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
+    return match.translations[lang] || match.translations["en"] || cat;
   };
 
   const fetchTools = async () => {
@@ -367,7 +369,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
   return (
     <View className="flex-1 bg-[#F7F7F7]">
-      <StatusBar style="dark" />
+      
       <TabHeader />
 
       {/* Category title + menu */}

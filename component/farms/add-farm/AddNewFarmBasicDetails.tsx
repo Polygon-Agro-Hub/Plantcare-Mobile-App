@@ -239,11 +239,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
           nestedScrollEnabled={true}
           keyboardShouldPersistTaps="handled"
         >
-          <StatusBar
-            barStyle="dark-content"
-            backgroundColor="transparent"
-            translucent={false}
-          />
+          
 
           <View style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
             <View className="flex-row items-center justify-center mb-6 relative">

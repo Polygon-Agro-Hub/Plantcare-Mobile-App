@@ -534,7 +534,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
                 </Text>
                 <TextInput
                   ref={nicInputRef}
-                  placeholder={t("SignUp.Enter NIC Here")}
+                  placeholder={t("SignUp.EnterNICHere")}
                   value={nic}
                   underlineColorAndroid="transparent"
                   cursorColor="#141415ff"
@@ -569,7 +569,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
                     {district
                       ? (districtItems.find((d) => d.value === district)
                         ?.label ?? district)
-                      : t("SignUp.Select Your District")}
+                      : t("SignUp.SelectYourDistrict")}
                   </Text>
                   <AntDesign name="caret-down" size={14} color="#555" />
                 </TouchableOpacity>
@@ -767,7 +767,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
       <GlobalSearchModal
         visible={districtModalVisible}
         onClose={() => setDistrictModalVisible(false)}
-        title={t("SignUp.Select Your District")}
+        title={t("SignUp.SelectYourDistrict")}
         data={districtItems}
         selectedItems={district ? [district] : []}
         onSelect={handleDistrictSelect}

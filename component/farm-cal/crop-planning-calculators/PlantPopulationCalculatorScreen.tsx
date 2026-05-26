@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   View,
   Text,
@@ -31,6 +31,8 @@ interface PlantPopulationProps {
 interface CropGroup {
   id: number;
   cropNameEnglish: string;
+  cropNameSinhala: string;
+  cropNameTamil: string;
   rowSpace: number;
   plantSpace: number;
   image: string | null;
@@ -39,6 +41,9 @@ interface CropGroup {
 interface CropItem {
   label: string;
   value: string;
+  nameEnglish: string;
+  nameSinhala: string;
+  nameTamil: string;
   rowSpace: number;
   plantSpace: number;
   icon: string | null;
@@ -52,8 +57,8 @@ const AREA_UNITS = [
 const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
   navigation,
 }) => {
-  const { t } = useTranslation();
-  const [crops, setCrops] = useState<CropItem[]>([]);
+  const { t, i18n } = useTranslation();
+  const [rawCrops, setRawCrops] = useState<CropItem[]>([]);
   const [cropsLoading, setCropsLoading] = useState(false);
 
   const [cropModalVisible, setCropModalVisible] = useState(false);
@@ -66,6 +71,19 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
   const [modalVisible, setModalVisible] = useState(false);
   const [result, setResult] = useState({ value: "", unit: "" });
   const [showValidation, setShowValidation] = useState(false);
+
+  const crops = useMemo<CropItem[]>(() => {
+    const lang = i18n.language;
+    return rawCrops.map((c) => ({
+      ...c,
+      label:
+        lang === "si"
+          ? c.nameSinhala
+          : lang === "ta"
+            ? c.nameTamil
+            : c.nameEnglish,
+    }));
+  }, [rawCrops, i18n.language]);
 
   const selectedCrop = crops.find((c) => c.value === selectedCropValue) || null;
 
@@ -90,11 +108,14 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
             .map((item: CropGroup) => ({
               label: item.cropNameEnglish,
               value: item.cropNameEnglish,
+              nameEnglish: item.cropNameEnglish,
+              nameSinhala: item.cropNameSinhala || item.cropNameEnglish,
+              nameTamil: item.cropNameTamil || item.cropNameEnglish,
               rowSpace: Number(item.rowSpace),
               plantSpace: Number(item.plantSpace),
               icon: item.image ?? null,
             }));
-          setCrops(mapped);
+          setRawCrops(mapped);
         }
       } catch (error) {
         console.error("Error fetching crop groups:", error);
@@ -206,8 +227,7 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
           ) : (
             <>
               <Text
-                className={`text-sm ${selectedCropValue ? "text-gray-900" : "text-gray-400"
-                  }`}
+                className={`text-sm ${selectedCropValue ? "text-gray-900" : "text-gray-400"}`}
               >
                 {getSelectedCropLabel()}
               </Text>
@@ -250,8 +270,7 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
         </Text>
         <View className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
           <Text
-            className={`text-sm ${selectedCrop ? "text-[#287097]" : "text-gray-400"
-              }`}
+            className={`text-sm ${selectedCrop ? "text-[#287097]" : "text-gray-400"}`}
           >
             {selectedCrop
               ? `${selectedCrop.rowSpace} cm`
@@ -265,8 +284,7 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
         </Text>
         <View className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
           <Text
-            className={`text-sm ${selectedCrop ? "text-[#287097]" : "text-gray-400"
-              }`}
+            className={`text-sm ${selectedCrop ? "text-[#287097]" : "text-gray-400"}`}
           >
             {selectedCrop
               ? `${selectedCrop.plantSpace} cm`

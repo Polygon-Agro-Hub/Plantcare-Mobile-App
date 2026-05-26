@@ -87,20 +87,6 @@ const NavigationBar = ({
     }
   }, [user]);
 
-  useEffect(() => {
-    const loadActiveTab = async () => {
-      const storedTab = await AsyncStorage.getItem("activeTab");
-      const currentRoute =
-        navigation.getState().routes[navigation.getState().index].name;
-
-      if (!storedTab || storedTab !== currentRoute) {
-        await AsyncStorage.setItem("activeTab", currentRoute);
-      } else {
-        console.error("Navigation Tab Error");
-      }
-    };
-    loadActiveTab();
-  }, []);
 
   useFocusEffect(
     useCallback(() => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   View,
   Text,
@@ -31,6 +31,8 @@ interface YieldEstimationProps {
 interface CropGroup {
   id: number;
   cropNameEnglish: string;
+  cropNameSinhala: string;
+  cropNameTamil: string;
   AvgYield: number;
   rowSpace: number;
   plantSpace: number;
@@ -40,6 +42,9 @@ interface CropGroup {
 interface CropItem {
   label: string;
   value: string;
+  nameEnglish: string;
+  nameSinhala: string;
+  nameTamil: string;
   avgYield: number;
   rowSpace: number;
   plantSpace: number;
@@ -54,8 +59,8 @@ const AREA_UNITS = [
 const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
   navigation,
 }) => {
-  const { t } = useTranslation();
-  const [crops, setCrops] = useState<CropItem[]>([]);
+  const { t, i18n } = useTranslation();
+  const [rawCrops, setRawCrops] = useState<CropItem[]>([]);
   const [cropsLoading, setCropsLoading] = useState(false);
 
   const [cropModalVisible, setCropModalVisible] = useState(false);
@@ -68,6 +73,19 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
   const [modalVisible, setModalVisible] = useState(false);
   const [result, setResult] = useState({ value: "", unit: "kg" });
   const [showValidation, setShowValidation] = useState(false);
+
+  const crops = useMemo<CropItem[]>(() => {
+    const lang = i18n.language;
+    return rawCrops.map((c) => ({
+      ...c,
+      label:
+        lang === "si"
+          ? c.nameSinhala
+          : lang === "ta"
+            ? c.nameTamil
+            : c.nameEnglish,
+    }));
+  }, [rawCrops, i18n.language]);
 
   const selectedCrop = crops.find((c) => c.value === selectedCropValue) || null;
 
@@ -93,12 +111,15 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
             .map((item: CropGroup) => ({
               label: item.cropNameEnglish,
               value: item.cropNameEnglish,
+              nameEnglish: item.cropNameEnglish,
+              nameSinhala: item.cropNameSinhala || item.cropNameEnglish,
+              nameTamil: item.cropNameTamil || item.cropNameEnglish,
               avgYield: Number(item.AvgYield),
               rowSpace: Number(item.rowSpace),
               plantSpace: Number(item.plantSpace),
               icon: item.image ?? null,
             }));
-          setCrops(mapped);
+          setRawCrops(mapped);
         }
       } catch (error) {
         console.error("Error fetching crop groups:", error);
@@ -145,9 +166,7 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
       areaUnit === "Hectares" ? areaNum : areaNum * 0.404686;
 
     const PP = getPlantsPerHectare(selectedCrop);
-
     const YP = selectedCrop.avgYield;
-
     const estimatedYield = PP * YP * areaInHectares;
 
     const formatted = estimatedYield.toLocaleString("en-US", {
@@ -160,13 +179,11 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
   };
 
   const handleCropSelect = (selectedValues: string[]) => {
-    const newCropValue = selectedValues[0] || null;
-    setSelectedCropValue(newCropValue);
+    setSelectedCropValue(selectedValues[0] || null);
   };
 
   const handleUnitSelect = (selectedValues: string[]) => {
-    const newUnit = selectedValues[0] || "Hectares";
-    setAreaUnit(newUnit);
+    setAreaUnit(selectedValues[0] || "Hectares");
   };
 
   const getSelectedCropLabel = () => {
@@ -214,7 +231,7 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
             dismissKeyboard();
             setCropModalVisible(true);
           }}
-          className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px]  flex-row justify-between items-center"
+          className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] flex-row justify-between items-center"
           disabled={cropsLoading}
         >
           {cropsLoading ? (
@@ -222,8 +239,7 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
           ) : (
             <>
               <Text
-                className={`text-sm ${selectedCropValue ? "text-gray-900" : "text-gray-400"
-                  }`}
+                className={`text-sm ${selectedCropValue ? "text-gray-900" : "text-gray-400"}`}
               >
                 {getSelectedCropLabel()}
               </Text>
@@ -266,8 +282,7 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
         </Text>
         <View className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
           <Text
-            className={`text-sm ${selectedCrop ? "text-[#287097]" : "text-gray-400"
-              }`}
+            className={`text-sm ${selectedCrop ? "text-[#287097]" : "text-gray-400"}`}
           >
             {selectedCrop
               ? `${selectedCrop.rowSpace} cm`
@@ -281,8 +296,7 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
         </Text>
         <View className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
           <Text
-            className={`text-sm ${selectedCrop ? "text-[#287097]" : "text-gray-400"
-              }`}
+            className={`text-sm ${selectedCrop ? "text-[#287097]" : "text-gray-400"}`}
           >
             {selectedCrop
               ? `${selectedCrop.plantSpace} cm`
@@ -296,8 +310,7 @@ const YieldEstimationCalculatorScreen: React.FC<YieldEstimationProps> = ({
         </Text>
         <View className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
           <Text
-            className={`text-sm ${selectedCrop ? "text-[#287097]" : "text-gray-400"
-              }`}
+            className={`text-sm ${selectedCrop ? "text-[#287097]" : "text-gray-400"}`}
           >
             {selectedCrop
               ? `${selectedCrop.avgYield} kg`

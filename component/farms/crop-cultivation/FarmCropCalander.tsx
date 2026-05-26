@@ -1054,11 +1054,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
 
   return (
     <View className="flex-1">
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="transparent"
-        translucent={false}
-      />
+      
 
       {!hasCertificate && (
         <Modal

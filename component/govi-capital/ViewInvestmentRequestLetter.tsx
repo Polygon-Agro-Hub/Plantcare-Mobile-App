@@ -245,7 +245,7 @@ const ViewInvestmentRequestLetter: React.FC<
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar barStyle="dark-content" backgroundColor="white" />
+      
 
       <CustomHeader
         title={t("Govicapital.RequestLetter")}

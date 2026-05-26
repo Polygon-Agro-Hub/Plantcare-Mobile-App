@@ -1657,7 +1657,7 @@ const FramcropCalenderwithcertificate: React.FC<
 
   return (
     <View className="flex-1 bg-gray-50">
-      <StatusBar style="dark" />
+      
 
       {isCultivatedLandModalVisible &&
         lastCompletedIndex !== null &&
@@ -1780,13 +1780,13 @@ const FramcropCalenderwithcertificate: React.FC<
                       ) {
                         return t("CropCalender.CertificateExpired");
                       } else if (remainingTime.months === 0) {
-                        return `${t("Farms.ValidFor next")} ${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.Day") : t("Farms.Days")}`;
+                        return `${t("Farms.ValidityPeriod")} : ${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.Day") : t("Farms.Days")}`;
                       } else if (remainingTime.days === 0) {
-                        return `${t("Farms.ValidFor next")} ${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.Month") : t("Farms.Months")}`;
+                        return `${t("Farms.ValidityPeriod")} : ${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.Month") : t("Farms.Months")}`;
                       } else {
                         const monthText = `${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.Month") : t("Farms.Months")}`;
                         const dayText = `${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.Day") : t("Farms.Days")}`;
-                        return `${t("Farms.ValidFor next")} ${monthText} ${dayText}`;
+                        return `${t("Farms.ValidityPeriod")} : ${monthText} ${dayText}`;
                       }
                     })()
                   : t("CropCalender.NoActiveCertificate")}

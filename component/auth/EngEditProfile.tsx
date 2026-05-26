@@ -11,7 +11,7 @@ import {
   BackHandler,
   Keyboard,
 } from "react-native";
-import { StatusBar, Platform } from "react-native";
+import { Platform } from "react-native";
 import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -314,11 +314,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
       enabled
       style={{ flex: 1 }}
     >
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="transparent"
-        translucent={false}
-      />
+      
       <View className="flex-1 bg-white">
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}

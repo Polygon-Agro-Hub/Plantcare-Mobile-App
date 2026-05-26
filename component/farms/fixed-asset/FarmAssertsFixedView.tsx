@@ -89,7 +89,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [currentFarmId, setCurrentFarmId] = useState(farmId);
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const BuildingTypes = buildLookup(assetData.buildingTypeOptions, t);
 
@@ -118,8 +118,10 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     );
 
   const translateCategory = (cat: string): string => {
-    const match = assetData.categoryOptions.find((o) => o.value === cat);
-    return match ? t(match.labelKey) : cat;
+    const match = assetData.categoryOptions.find((o: any) => o.value === cat);
+    if (!match) return cat;
+    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
+    return match.translations[lang] || match.translations["en"] || cat;
   };
 
   const fetchTools = useCallback(
@@ -379,7 +381,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar style="dark" />
+      
 
       <CustomHeader
         title={farmName}

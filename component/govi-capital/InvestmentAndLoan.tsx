@@ -57,7 +57,7 @@ const InvestmentAndLoan: React.FC<InvestmentAndLoanProps> = ({
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar />
+      
 
       <View className="relative" style={{ height: hp(35) }}>
         <View style={{ position: "absolute" }} pointerEvents="none">
