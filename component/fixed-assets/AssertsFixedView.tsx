@@ -367,7 +367,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
   return (
     <View className="flex-1 bg-[#F7F7F7]">
-      <StatusBar style="dark" />
+      
       <TabHeader />
 
       {/* Category title + menu */}

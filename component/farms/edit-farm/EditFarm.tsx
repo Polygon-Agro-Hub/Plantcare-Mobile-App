@@ -433,11 +433,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="transparent"
-        translucent={false}
-      />
+      
 
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}

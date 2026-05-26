@@ -517,11 +517,7 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
         nestedScrollEnabled={true}
         keyboardShouldPersistTaps="handled"
       >
-        <StatusBar
-          barStyle="dark-content"
-          backgroundColor="transparent"
-          translucent={false}
-        />
+        
 
         <CustomHeader
           title={t("Farms.EditFarm")}

@@ -13,6 +13,7 @@ import { RootStackParamList } from "../types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../common/CustomHeader";
+import { FontAwesome6 } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import LoadingPage from "../common/LoadingPage";
 
@@ -53,7 +54,8 @@ interface ForecastItem {
     speed: number;
   };
   rain?: {
-    "3h": number;
+    "1h"?: number;
+    "3h"?: number;
   };
   dt_txt: string;
 }
@@ -202,7 +204,7 @@ const FiveDayForecast: React.FC<FiveDayForecastProps> = ({ navigation }) => {
       setWeatherStats({
         wind: firstEntry.wind.speed,
         humidity: firstEntry.main.humidity,
-        rain: firstEntry.rain ? firstEntry.rain["3h"] : 0,
+        rain: firstEntry.rain ? (firstEntry.rain["1h"] ?? firstEntry.rain["3h"] ?? 0) : 0,
       });
 
       const fiveDayForecast = futureDays.map((item: ForecastItem) => ({
@@ -214,7 +216,6 @@ const FiveDayForecast: React.FC<FiveDayForecastProps> = ({ navigation }) => {
           temp_max: (item.main.temp_max - 273.15).toFixed(2),
         },
       }));
-
       setForecastData(fiveDayForecast);
     } catch (error) {
       console.error("Error fetching weather data:", error);
@@ -307,10 +308,7 @@ const FiveDayForecast: React.FC<FiveDayForecastProps> = ({ navigation }) => {
               elevation: 4,
             }}
           >
-            <Image
-              source={require("../../assets/images/weather icons/common/wind-image.webp")}
-              className="w-6 h-6"
-            />
+            <FontAwesome6 name="wind" size={24} color="#0075FF" style={{ marginBottom: 8 }} />
             <Text className="text-l font-bold">
               {Math.round(weatherStats.wind)} km/h
             </Text>
@@ -329,10 +327,7 @@ const FiveDayForecast: React.FC<FiveDayForecastProps> = ({ navigation }) => {
               elevation: 4,
             }}
           >
-            <Image
-              source={require("../../assets/images/weather icons/common/water-image.webp")}
-              className="w-8 h-8"
-            />
+            <FontAwesome6 name="water" size={24} color="#0075FF" style={{ marginBottom: 8 }} />
             <Text className="text-l font-bold">{weatherStats.humidity}%</Text>
             <Text style={{ fontSize: isSmallScreen ? 13 : 16, color: "#666" }}>
               {t("WeatherForecast.Humidity")}
@@ -349,10 +344,7 @@ const FiveDayForecast: React.FC<FiveDayForecastProps> = ({ navigation }) => {
               elevation: 4,
             }}
           >
-            <Image
-              source={require("../../assets/images/weather icons/common/rain-image.webp")}
-              className="w-8 h-8"
-            />
+            <FontAwesome6 name="cloud-rain" size={24} color="#0075FF" style={{ marginBottom: 8 }} />
             <Text className="text-l font-bold">{weatherStats.rain} mm</Text>
             <Text style={{ fontSize: isSmallScreen ? 13 : 16, color: "#666" }}>
               {t("WeatherForecast.Rain")}

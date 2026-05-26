@@ -202,7 +202,7 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar barStyle="dark-content" backgroundColor="#FFC107" />
+      
 
       <View className="pt-5 pb-6 overflow-hidden" style={{ height: 180 }}>
         <VideoView

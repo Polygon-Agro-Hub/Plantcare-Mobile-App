@@ -558,11 +558,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
       style={{ flex: 1 }}
     >
       <View style={{ flex: 1 }}>
-        <StatusBar
-          barStyle="dark-content"
-          backgroundColor="transparent"
-          translucent={false}
-        />
+        
 
         {/* Farm */}
         <GlobalSearchModal

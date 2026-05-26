@@ -26,7 +26,7 @@ const Verify: React.FC = ({ navigation }: any) => {
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar style="light" />
+      
 
       <View className="flex justify-center items-center ">
         <Image

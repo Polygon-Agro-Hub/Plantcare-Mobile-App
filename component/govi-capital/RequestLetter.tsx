@@ -346,7 +346,7 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar barStyle="dark-content" backgroundColor="white" />
+      
 
       <CustomHeader
         title={t("Govicapital.InvestmentRequest")}

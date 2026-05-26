@@ -846,11 +846,7 @@ const FarmAddFixAssert: React.FC<FarmAddFixAssertProps> = ({ navigation }) => {
       style={{ flex: 1 }}
     >
       <View style={{ flex: 1 }}>
-        <StatusBar
-          barStyle="dark-content"
-          backgroundColor="transparent"
-          translucent={false}
-        />
+        
         <ScrollView
           ref={scrollViewRef}
           className="flex-1 pb-20 bg-white "

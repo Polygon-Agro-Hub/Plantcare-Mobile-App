@@ -337,7 +337,8 @@ function AppContent() {
   }, []);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#fff" }}>
+     <StatusBar backgroundColor="#fff" style="light" />
       <SafeAreaView
         style={{
           flex: 1,

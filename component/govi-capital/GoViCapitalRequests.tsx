@@ -236,7 +236,7 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar barStyle="dark-content" backgroundColor="#f9fafb" />
+      
 
       <CustomHeader
         title={t("Govicapital.InvestmentLoanRequests")}

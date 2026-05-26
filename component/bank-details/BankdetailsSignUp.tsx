@@ -299,11 +299,7 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       enabled
       style={{ flex: 1 }}
     >
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="transparent"
-        translucent={false}
-      />
+      
       <ScrollView
         contentContainerStyle={{ paddingBottom: 24 }}
         className="flex-1 bg-white "

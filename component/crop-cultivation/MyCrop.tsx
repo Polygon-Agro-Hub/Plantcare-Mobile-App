@@ -318,7 +318,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      <StatusBar style="dark" />
+      
 
       <CustomHeader
         title={t("Farms.Cultivation")}

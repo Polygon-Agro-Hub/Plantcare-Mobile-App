@@ -1139,7 +1139,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
+      
 
       <CustomHeader
         title={t("GoviPensionForm.GoViPension")}

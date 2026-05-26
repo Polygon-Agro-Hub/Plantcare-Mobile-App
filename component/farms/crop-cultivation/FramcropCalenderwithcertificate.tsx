@@ -1657,7 +1657,7 @@ const FramcropCalenderwithcertificate: React.FC<
 
   return (
     <View className="flex-1 bg-gray-50">
-      <StatusBar style="dark" />
+      
 
       {isCultivatedLandModalVisible &&
         lastCompletedIndex !== null &&

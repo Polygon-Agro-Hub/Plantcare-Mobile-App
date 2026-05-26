@@ -282,7 +282,7 @@ const ManageMembersManager = () => {
 
   return (
     <View className="flex-1 bg-gray-50">
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+      
 
       <ScrollView
         className="flex-1"

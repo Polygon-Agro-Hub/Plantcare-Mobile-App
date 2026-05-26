@@ -314,11 +314,7 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
       enabled
       style={{ flex: 1 }}
     >
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="transparent"
-        translucent={false}
-      />
+      
       <View className="flex-1 bg-white">
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}

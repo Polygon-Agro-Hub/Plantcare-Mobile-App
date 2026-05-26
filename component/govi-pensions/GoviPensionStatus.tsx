@@ -162,7 +162,7 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
   if (isLoading) {
     return (
       <View className="flex-1 bg-white">
-        <StatusBar barStyle="dark-content" backgroundColor="white" />
+        
         <CustomHeader
           title={t("TransactionList.GoViPension")}
           showBackButton={true}
@@ -183,7 +183,7 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar barStyle="dark-content" backgroundColor="white" />
+      
 
       <CustomHeader
         title={t("TransactionList.GoViPension")}

@@ -280,7 +280,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   return (
     <ScrollView keyboardShouldPersistTaps="handled" className="bg-[#FFFFFF]">
       <View className="flex-1 ">
-        <StatusBar style="dark" />
+        
         <CustomHeader
           title=""
           navigation={navigation}

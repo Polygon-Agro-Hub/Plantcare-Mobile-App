@@ -211,7 +211,7 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar style="auto" />
+      
 
       <View style={{ flexDirection: "row" }} className="mb-2">
         <TouchableOpacity

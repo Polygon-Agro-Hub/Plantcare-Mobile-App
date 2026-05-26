@@ -198,7 +198,7 @@ const EarnCertificate: React.FC = () => {
       className="bg-white"
       style={{ flex: 1 }}
     >
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      
 
       <CustomHeader
         title={t("EarnCertificate.EarnACertificate")}

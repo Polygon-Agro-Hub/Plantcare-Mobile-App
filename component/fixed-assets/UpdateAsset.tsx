@@ -714,11 +714,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       enabled
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="transparent"
-        translucent={false}
-      />
+      
 
       {loading ? (
         <LoadingPage fullScreen />

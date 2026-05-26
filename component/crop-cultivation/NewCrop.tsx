@@ -419,7 +419,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar style="dark" />
+      
 
       <CustomHeader
         title={t("NewCrop.SelectANewCrop")}

@@ -379,7 +379,7 @@ const FarmAssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar style="dark" />
+      
 
       <CustomHeader
         title={farmName}

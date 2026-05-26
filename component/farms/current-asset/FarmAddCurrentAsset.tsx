@@ -532,11 +532,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
         className="flex-1 bg-white"
         keyboardShouldPersistTaps="handled"
       >
-        <StatusBar
-          barStyle="dark-content"
-          backgroundColor="transparent"
-          translucent={false}
-        />
+        
 
         <CustomHeader
           title={farmName}

@@ -646,11 +646,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         className="flex-1 bg-white"
         keyboardShouldPersistTaps="handled"
       >
-        <StatusBar
-          barStyle="dark-content"
-          backgroundColor="transparent"
-          translucent={false}
-        />
+        
 
         <CustomHeader
           title={t("FixedAssets.MyAssets")}

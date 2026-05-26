@@ -915,7 +915,7 @@ const RequestInspectionForm = () => {
 
   return (
     <View className="flex-1 bg-[#FFFFFF]">
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      
 
       <CustomHeader
         title={t("RequestInspectionForm.RequestInspection")}

@@ -676,7 +676,7 @@ const FarmCertificateTask: React.FC = () => {
   if (!certificateStatus) {
     return (
       <View className="flex-1 bg-white">
-        <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+        
 
         <CustomHeader
           title={t("Farms.Certificate Tasks")}
@@ -699,7 +699,7 @@ const FarmCertificateTask: React.FC = () => {
 
   return (
     <View className="flex-1 bg-[#F7F7F7]">
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+      
 
       {/* Header */}
       <View className="bg-white">
