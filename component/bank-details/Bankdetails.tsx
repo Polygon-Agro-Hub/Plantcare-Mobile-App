@@ -11,7 +11,6 @@ import {
   KeyboardAvoidingView,
   ActivityIndicator,
   BackHandler,
-  StatusBar,
 } from "react-native";
 import axios from "axios";
 import { RootStackParamList } from "../types/types";

@@ -49,14 +49,14 @@ interface UserData {
 const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
   navigation,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const route = useRoute();
   const { farmId, farmName } = route.params as RouteParams;
   const user = useSelector(
     (state: RootState) => state.user.userData,
   ) as UserData | null;
 
-  const [categories, setCategories] = useState<string[]>([]);
+
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedAsset, setSelectedAsset] = useState("");
   const [assets, setAssets] = useState<any[]>([]);
@@ -134,19 +134,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
     return () => subscription.remove();
   }, [navigation]);
 
-  useEffect(() => {
-    setLoading(true);
-    try {
-      const data = require("@/assets/jsons/current-asset/current-asset.json");
-      setCategories(Object.keys(data));
-    } catch {
-      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        { text: t("Main.OK") },
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", resetForm);
@@ -507,16 +495,29 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
     return <LoadingPage fullScreen />;
   }
 
-  const categoryItems = [
-    ...categories.map((cat) => ({
-      label: t(`CurrentAssets.${cat}`),
-      value: cat,
-    })),
-    { label: t("CurrentAssets.Other consumables"), value: "Other consumables" },
-  ];
+  const categoryData = require("@/assets/jsons/current-asset/categories.json");
+  const assetTranslationData = require("@/assets/jsons/current-asset/assets-translations.json");
+
+  const getCategoryLabel = (val: string) => {
+    const item = categoryData.find((c: any) => c.value === val);
+    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
+    return item ? (item.translations[lang] || item.translations["en"]) : val;
+  };
+
+  const getAssetLabel = (val: string) => {
+    if (val === "Other") return t("CurrentAssets.Other");
+    const item = assetTranslationData.find((a: any) => a.value === val);
+    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
+    return item ? (item.translations[lang] || item.translations["en"]) : val;
+  };
+
+  const categoryItems = categoryData.map((item: any) => ({
+    label: getCategoryLabel(item.value),
+    value: item.value,
+  }));
 
   const assetItems = [
-    ...assets.map((a) => ({ label: t(`${a.asset}`), value: a.asset })),
+    ...assets.map((a) => ({ label: getAssetLabel(a.asset), value: a.asset })),
     { label: t("CurrentAssets.Other"), value: "Other" },
   ];
 
@@ -580,7 +581,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             </Text>
             <PickerTrigger
               value={
-                selectedCategory ? t(`CurrentAssets.${selectedCategory}`) : ""
+                selectedCategory ? getCategoryLabel(selectedCategory) : ""
               }
               placeholder={t("CurrentAssets.Selectcategory")}
               onPress={() => setCategoryModalVisible(true)}
@@ -644,7 +645,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
                 {t("CurrentAssets.Asset")} *
               </Text>
               <PickerTrigger
-                value={selectedAsset ? t(`${selectedAsset}`) : ""}
+                value={selectedAsset ? getAssetLabel(selectedAsset) : ""}
                 placeholder={t("CurrentAssets.SelectAsset")}
                 onPress={() => setAssetModalVisible(true)}
                 disabled={!selectedCategory}
@@ -762,7 +763,7 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
             />
             <View className="rounded-3xl h-[50px] w-32">
               <PickerTrigger
-                value={unit}
+                value={t(`CurrentAssets.${unit}`, unit)}
                 placeholder="unit"
                 onPress={() => setUnitModalVisible(true)}
               />

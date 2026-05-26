@@ -77,7 +77,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
   const [batchModalVisible, setBatchModalVisible] = useState(false);
   const [unitModalVisible, setUnitModalVisible] = useState(false);
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const unitvol = [
     { value: "ml", label: t("CurrentAssets.ml") },
@@ -85,24 +85,30 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
     { value: "l", label: t("CurrentAssets.l") },
   ];
 
-  const categoryItems = [
-    { label: t("CurrentAssets.Agro chemicals"), value: "Agro chemicals" },
-    { label: t("CurrentAssets.Fertilizers"), value: "Fertilizers" },
-    {
-      label: t("CurrentAssets.Seeds and Seedlings"),
-      value: "Seeds and Seedlings",
-    },
-    {
-      label: t("CurrentAssets.Livestock for sale"),
-      value: "Livestock for sale",
-    },
-    { label: t("CurrentAssets.Animal feed"), value: "Animal feed" },
-    { label: t("CurrentAssets.Other consumables"), value: "Other consumables" },
-  ];
+  const categoryData = require("@/assets/jsons/current-asset/categories.json");
+  const assetTranslationData = require("@/assets/jsons/current-asset/assets-translations.json");
+
+  const getCategoryLabel = (val: string) => {
+    const item = categoryData.find((c: any) => c.value === val);
+    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
+    return item ? (item.translations[lang] || item.translations["en"]) : val;
+  };
+
+  const getAssetLabel = (val: string) => {
+    if (val === "Other") return t("CurrentAssets.Other");
+    const item = assetTranslationData.find((a: any) => a.value === val);
+    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
+    return item ? (item.translations[lang] || item.translations["en"]) : val;
+  };
+
+  const categoryItems = categoryData.map((item: any) => ({
+    label: getCategoryLabel(item.value),
+    value: item.value,
+  }));
 
   const uniqueAssetNames = [...new Set(assets.map((a: Asset) => a.asset))].map(
     (name) => ({
-      label: name,
+      label: getAssetLabel(name),
       value: name,
     }),
   );
@@ -417,13 +423,13 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                   asset ? "text-gray-800 text-sm" : "text-gray-400 text-sm"
                 }
               >
-                {asset || t("CurrentAssets.SelectAsset")}
+                {asset ? getAssetLabel(asset) : t("CurrentAssets.SelectAsset")}
               </Text>
             </TouchableOpacity>
           </View>
 
           {/* Brand */}
-          {category !== "Livestock for Sale" && (
+          {category !== "Livestock for sale" && (
             <View>
               <Text className="text-gray-600 mt-4 mb-2">
                 {t("CurrentAssets.Brand")}

@@ -6,7 +6,6 @@ import {
   ScrollView,
   TextInput,
   Platform,
-  StatusBar,
   KeyboardAvoidingView,
   Image,
   Modal,

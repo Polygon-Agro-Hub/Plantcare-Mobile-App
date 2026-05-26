@@ -72,12 +72,21 @@ const SelectorButton = ({
 );
 
 const AddAsset: React.FC<AddAssetProps> = ({ navigation }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const getCategoryLabel = (val: string) => {
+    const item = assetData.categoryOptions.find((c: any) => c.value === val);
+    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
+    return item ? (item.translations[lang] || item.translations["en"]) : val;
+  };
 
   const toOptions = (raw: RawOption[]) =>
     raw.map((item) => ({ label: t(item.labelKey), value: item.value }));
 
-  const categoryOptions = toOptions(assetData.categoryOptions);
+  const categoryOptions = assetData.categoryOptions.map((item: any) => ({
+    label: getCategoryLabel(item.value),
+    value: item.value,
+  }));
   const ownershipCategories = toOptions(assetData.ownershipCategories);
   const landOwnershipOptions = toOptions(assetData.landOwnershipOptions);
   const generalConditionOptions = toOptions(assetData.generalConditionOptions);

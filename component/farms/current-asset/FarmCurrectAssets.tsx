@@ -84,7 +84,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
   const [expandedCategories, setExpandedCategories] = useState<{
     [key: string]: boolean;
   }>({});
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const route = useRoute();
   const { farmId, farmName } = route.params as RouteParams;
   const [selectedFarmName, setSelectedFarmName] = useState(farmName);
@@ -339,7 +339,18 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
   };
 
   const getTranslatedCategory = (category: string) => {
-    return t(`CurrentAssets.${category}`) || category;
+    const categoryData = require("@/assets/jsons/current-asset/categories.json");
+    const item = categoryData.find((c: any) => c.value === category);
+    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
+    return item ? (item.translations[lang] || item.translations["en"]) : category;
+  };
+
+  const getTranslatedAsset = (assetName: string) => {
+    if (assetName === "Other") return t("CurrentAssets.Other");
+    const assetTranslationData = require("@/assets/jsons/current-asset/assets-translations.json");
+    const item = assetTranslationData.find((a: any) => a.value === assetName);
+    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
+    return item ? (item.translations[lang] || item.translations["en"]) : assetName;
   };
 
   const pieData =
@@ -599,7 +610,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
                                     className="text-sm font-semibold text-gray-800"
                                     numberOfLines={1}
                                   >
-                                    {item.asset}
+                                    {getTranslatedAsset(item.asset)}
                                   </Text>
                                 </View>
 
@@ -706,7 +717,7 @@ const FarmCurrectAssets: React.FC<FarmCurrectAssetsProps> = ({
                     }}
                     style={{ maxHeight: 38 }}
                   >
-                    <Text className="text-base">{selectedItem?.asset}</Text>
+                    <Text className="text-base">{selectedItem ? getTranslatedAsset(selectedItem.asset) : ""}</Text>
                   </ScrollView>
                 </View>
               </View>

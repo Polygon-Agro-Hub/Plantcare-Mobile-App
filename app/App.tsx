@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Alert, BackHandler, Text, TextInput } from "react-native";
+import { Alert, BackHandler, StatusBar, Text, TextInput } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -107,7 +107,6 @@ import RequestSummery from "@/component/request-inspection/RequestSummery";
 import FramcropCalenderwithcertificate from "@/component/farms/crop-cultivation/FramcropCalenderwithcertificate";
 import CropEarnCertificateAfterEnroll from "@/component/certificates/crop-certificate/CropEarnCertificateAfterEnroll";
 import CropPaymentScreenAfterEnroll from "@/component/certificates/crop-certificate/CropPaymentScreenAfterEnroll";
-import { StatusBar } from "expo-status-bar";
 import FarmCertificateTask from "@/component/farms/crop-cultivation/FarmCertificateTask";
 import ManagerFarmDetails from "@/component/manager-screens/ManagerFarmDetails";
 import ManageMembersManager from "@/component/manager-screens/ManageMembersManager";
@@ -161,6 +160,7 @@ import SoilGridsScreen from "@/component/soil-grids/SoilGridsScreen";
 import CartScreen from "@/component/govi-shop/CartScreen";
 
 LogBox.ignoreAllLogs(true);
+
 
 (Text as any).defaultProps = {
   ...(Text as any).defaultProps,
@@ -338,7 +338,7 @@ function AppContent() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#fff" }}>
-     <StatusBar backgroundColor="#fff" style="light" />
+     <StatusBar backgroundColor="#fff" barStyle="dark-content" />
       <SafeAreaView
         style={{
           flex: 1,

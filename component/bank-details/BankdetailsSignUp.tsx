@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
   BackHandler,
 } from "react-native";
-import { StatusBar, Platform } from "react-native";
+import { Platform } from "react-native";
 import axios from "axios";
 import CustomHeader from "../../component/common/CustomHeader";
 import { RootStackParamList } from "../types/types";

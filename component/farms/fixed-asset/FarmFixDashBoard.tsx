@@ -16,6 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
 import LoadingPage from "@/component/common/LoadingPage";
+import assetJsonData from "@/assets/jsons/fixed-asset/fixed-assets.json";
 
 type FarmFixDashBoardNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -45,19 +46,25 @@ const icon4 = require("../../../assets/images/farms/icons4.webp");
 const icon5 = require("../../../assets/images/farms/icons5.webp");
 
 const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const getCategoryLabel = (val: string) => {
+    const item = assetJsonData.categoryOptions.find((c: any) => c.value === val);
+    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
+    return item ? (item.translations[lang] || item.translations["en"]) : val;
+  };
 
   const [assetData, setAssetData] = useState<AssetCategory[]>([
     {
-      category: t("FixedAssets.BuildingAndInfrastructures"),
+      category: getCategoryLabel("Building and Infrastructures"),
       value: "Building and Infrastructures",
     },
-    { category: t("FixedAssets.Lands"), value: "Land" },
+    { category: getCategoryLabel("Land"), value: "Land" },
     {
-      category: t("FixedAssets.MachineryVehicles"),
+      category: getCategoryLabel("Machine and Vehicles"),
       value: "Machine and Vehicles",
     },
-    { category: t("FixedAssets.ToolsAndEquipments"), value: "Tools" },
+    { category: getCategoryLabel("Tools"), value: "Tools" },
   ]);
 
   const [loading, setLoading] = useState(false);
@@ -71,22 +78,15 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
     (state: RootState) => state.user.userData,
   ) as UserData | null;
 
-  const categoryMapping = {
-    [t("FixedAssets.BuildingAndInfrastructures")]: "Building and Infrastructures",
-    [t("FixedAssets.Lands")]: "Land",
-    [t("FixedAssets.MachineryVehicles")]: "Machine and Vehicles",
-    [t("FixedAssets.ToolsAndEquipments")]: "Tools",
-  };
-
-  const getIcon = (category: string) => {
-    switch (category) {
-      case t("FixedAssets.BuildingAndInfrastructures"):
+  const getIcon = (value: string) => {
+    switch (value) {
+      case "Building and Infrastructures":
         return icon2;
-      case t("FixedAssets.Lands"):
+      case "Land":
         return icon4;
-      case t("FixedAssets.MachineryVehicles"):
+      case "Machine and Vehicles":
         return icon5;
-      case t("FixedAssets.ToolsAndEquipments"):
+      case "Tools":
         return icon;
       default:
         return icon3;
@@ -167,18 +167,18 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
   useEffect(() => {
     const translatedAssetData = [
       {
-        category: t("FixedAssets.BuildingAndInfrastructures"),
+        category: getCategoryLabel("Building and Infrastructures"),
         value: "Building and Infrastructures",
       },
-      { category: t("FixedAssets.Lands"), value: "Land" },
+      { category: getCategoryLabel("Land"), value: "Land" },
       {
-        category: t("FixedAssets.MachineryVehicles"),
+        category: getCategoryLabel("Machine and Vehicles"),
         value: "Machine and Vehicles",
       },
-      { category: t("FixedAssets.ToolsAndEquipments"), value: "Tools" },
+      { category: getCategoryLabel("Tools"), value: "Tools" },
     ];
     setAssetData(translatedAssetData);
-  }, [isFocused]);
+  }, [isFocused, i18n.language]);
 
   if (loading) {
     return (
@@ -242,7 +242,7 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
                 key={index}
                 onPress={() =>
                   navigation.navigate("FarmAssertsFixedView", {
-                    category: categoryMapping[asset.category],
+                    category: asset.value,
                     farmId: farmId,
                     farmName: farmName,
                   } as any)
@@ -262,7 +262,7 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
                 >
                   <View className="flex-row items-center">
                     <Image
-                      source={getIcon(asset.category)}
+                      source={getIcon(asset.value)}
                       className="w-[24px] h-[24px] mr-2"
                     />
                     <Text className="text-center pl-1">
@@ -273,7 +273,7 @@ const FarmFixDashBoard: React.FC<FarmFixDashBoardProps> = ({ navigation }) => {
 
                   <View className="bg-[#353535] rounded-full w-7 h-7 items-center justify-center">
                     <Text className="text-xs font-bold text-[#FFFFFF]">
-                      {assetCounts[categoryMapping[asset.category]] ?? 0}
+                      {assetCounts[asset.value] ?? 0}
                     </Text>
                   </View>
                 </View>

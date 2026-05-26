@@ -6,7 +6,6 @@
     "orientation": "portrait",
     "icon": "./assets/images/public/favicon.png",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/public/favicon.png",
       "resizeMode": "contain",
@@ -24,14 +23,10 @@
         "foregroundImage": "./assets/images/public/favicon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "pan",
       "package": "com.polygonagro.GoviCare",
       "versionCode": 17,
-      "compileSdkVersion": 35,
-      "targetSdkVersion": 35,
-      "minSdkVersion": 24,
       "permissions": [
         "android.permission.INTERNET",
         "android.permission.CAMERA",
@@ -59,12 +54,7 @@
         "android.permission.READ_MEDIA_IMAGES",
         "android.permission.READ_MEDIA_VIDEO",
         "android.permission.READ_MEDIA_AUDIO"
-      ],
-      "androidStatusBar": {
-        "backgroundColor": "white",
-        "barStyle": "dark-content",
-        "translucent": false
-      }
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -89,9 +79,6 @@
             "deploymentTarget": "15.1"
           },
           "android": {
-            "compileSdkVersion": 36,
-            "targetSdkVersion": 36,
-            "minSdkVersion": 24,
             "ndkVersion": "28.0.12433566",
             "enableProguardInReleaseBuilds": true,
             "packagingOptions": {
@@ -125,7 +112,8 @@
       ],
       "expo-media-library",
       "expo-image-picker",
-      "expo-location"
+      "expo-location",
+      "expo-router"
     ],
     "extra": {
       "eas": {
