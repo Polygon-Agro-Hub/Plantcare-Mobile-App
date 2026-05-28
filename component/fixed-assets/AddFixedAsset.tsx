@@ -18,7 +18,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
@@ -67,7 +67,7 @@ const SelectorButton = ({
     >
       {label || placeholder}
     </Text>
-    <AntDesign name="caret-down" size={14} color="#5e5d5d" />
+    <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
   </TouchableOpacity>
 );
 

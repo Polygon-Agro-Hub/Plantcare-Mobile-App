@@ -14,7 +14,7 @@ import {
   Modal,
   Image,
 } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import {
@@ -559,7 +559,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
                   ? roleItems.find((r) => r.value === selectedRole)?.label
                   : t("Farms.SelectRole")}
               </Text>
-              <AntDesign name="caret-down" size={14} color="#555" />
+              <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
             </TouchableOpacity>
             <GlobalSearchModal
               visible={roleModalVisible}
@@ -622,7 +622,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
                   {selectedCountry?.emoji ?? "🇱🇰"}
                   {"  "}({countryCode})
                 </Text>
-                <AntDesign name="caret-down" size={14} color="#555" />
+                <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
               </TouchableOpacity>
 
               {/* Phone Input */}

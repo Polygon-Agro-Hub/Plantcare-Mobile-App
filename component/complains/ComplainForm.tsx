@@ -18,7 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { environment } from "@/environment/environment";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
-import { AntDesign } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 import { useFocusEffect } from "@react-navigation/native";
 import GlobalSearchModal from "../common/GlobalSearchModal";
@@ -267,7 +267,11 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
                         ? t(selectedCategoryLabel)
                         : t("ReportComplaint.SelectComplaintCategory")}
                     </Text>
-                    <AntDesign name="caret-down" size={14} color="#555" />
+                    <MaterialIcons
+                      name="arrow-drop-down"
+                      size={24}
+                      color="#666"
+                    />
                   </TouchableOpacity>
                 </View>
 

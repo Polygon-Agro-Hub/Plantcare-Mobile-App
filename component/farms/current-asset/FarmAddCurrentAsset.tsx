@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { AntDesign } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { environment } from "@/environment/environment";
@@ -487,7 +487,11 @@ const FarmAddCurrentAsset: React.FC<FarmAddCurrentAssetProps> = ({
       >
         {value || placeholder}
       </Text>
-      <AntDesign name="caret-down" size={14} color="#5e5d5d" />
+      <MaterialIcons
+        name="arrow-drop-down"
+        size={24}
+        color="#666"
+      />
     </TouchableOpacity>
   );
 

@@ -13,7 +13,7 @@ import {
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import * as ImagePicker from "expo-image-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { AntDesign, FontAwesome6, Ionicons } from "@expo/vector-icons";
+import { FontAwesome6, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -401,7 +401,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
               {loadingCrops ? "Loading crops..." : getSelectedCropLabel()}
             </Text>
 
-            <AntDesign name="caret-down" size={14} color="#555" />
+            <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
           </TouchableOpacity>
         </View>
 

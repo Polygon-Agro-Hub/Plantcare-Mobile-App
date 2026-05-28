@@ -23,7 +23,7 @@ import { useTranslation } from "react-i18next";
 import i18n from "@/i18n/i18n";
 import CustomHeader from "../../common/CustomHeader";
 import GlobalSearchModal from "../../common/GlobalSearchModal";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import { MaterialIcons } from "@expo/vector-icons";
 import LoadingPage from "@/component/common/LoadingPage";
 
 type FromFramEditFarmNavigationProp = StackNavigationProp<
@@ -637,7 +637,11 @@ const FromFramEditFarm: React.FC<FromFramEditFarmProps> = ({
                 >
                   {selectedDistrictLabel || t("Farms.SelectDistrict")}
                 </Text>
-                <AntDesign name="caret-down" size={14} color="#555" />
+                <MaterialIcons
+                  name="arrow-drop-down"
+                  size={24}
+                  color="#666"
+                />
               </TouchableOpacity>
             </View>
 

@@ -22,7 +22,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
 import assetData from "@/assets/jsons/fixed-asset/fixed-assets.json";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import { MaterialIcons } from "@expo/vector-icons";
 import LoadingPage from "../common/LoadingPage";
 
 type RootStackParamList = {
@@ -692,7 +692,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         >
           {value || placeholder}
         </Text>
-        <AntDesign name="caret-down" size={14} color="#5e5d5d" />
+        <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
       </TouchableOpacity>
       {error ? (
         <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">{error}</Text>

@@ -18,8 +18,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
 import { useTranslation } from "react-i18next";
 import { environment } from "@/environment/environment";
-import Icon from "@expo/vector-icons/MaterialIcons";
-import { AntDesign } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import moment from "moment";
@@ -104,7 +103,11 @@ const DropdownButton = ({
     <Text style={{ color: value ? "#000000" : "#6B7280", fontSize: 14 }}>
       {value || placeholder}
     </Text>
-    <AntDesign name="caret-down" size={14} color="#555" />
+    <MaterialIcons
+      name="arrow-drop-down"
+      size={24}
+      color="#666"
+    />
   </TouchableOpacity>
 );
 
@@ -645,7 +648,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
                   className="border-b border-gray-400 my-3 flex-row justify-between items-center p-3"
                 >
                   <Text>{startDate.toDateString()}</Text>
-                  <Icon name="arrow-drop-down" size={24} color="gray" />
+                  <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
                 </TouchableOpacity>
                 {renderDatePicker()}
 

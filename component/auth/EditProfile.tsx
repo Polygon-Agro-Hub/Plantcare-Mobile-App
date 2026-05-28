@@ -16,7 +16,7 @@ import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import * as ImagePicker from "expo-image-picker";
@@ -29,16 +29,16 @@ import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../../component/common/CustomHeader";
 import LoadingPage from "../common/LoadingPage";
 
-type EngEditProfileNavigationProps = StackNavigationProp<
+type EditProfileNavigationProps = StackNavigationProp<
   RootStackParamList,
-  "EngEditProfile"
+  "EditProfile"
 >;
 
-interface EngEditProfileProps {
-  navigation: EngEditProfileNavigationProps;
+interface EditProfileProps {
+  navigation: EditProfileNavigationProps;
 }
 
-const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
+const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -127,14 +127,18 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
               : require("../../assets/images/auth/profile.webp"),
           );
         } else {
-          Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-            { text: t("Main.OK") },
-          ]);
+          Alert.alert(
+            t("Main.Error"),
+            t("Main.SomethingWentWrongPleaseTryAgainlater"),
+            [{ text: t("Main.OK") }],
+          );
         }
       } catch (error) {
-        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error"),
+          t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
       } finally {
         setIsDataLoading(false);
       }
@@ -146,9 +150,11 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error"),
+          t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
         return;
       }
       const formData = new FormData();
@@ -175,14 +181,18 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
       );
       const data = await response.json();
       if (data.status !== "success") {
-        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error"),
+          t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
       }
     } catch (error) {
-      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(
+        t("Main.Error"),
+        t("Main.SomethingWentWrongPleaseTryAgainlater"),
+        [{ text: t("Main.OK") }],
+      );
     }
   };
 
@@ -224,9 +234,11 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     const trimmedLastName = lastName.trim();
 
     if (!trimmedFirstName && !trimmedLastName) {
-      Alert.alert(t("SignIn.sorry"), t("EditProfile.FirstNameAndLastNameCannotBeEmpty"), [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(
+        t("SignIn.sorry"),
+        t("EditProfile.FirstNameAndLastNameCannotBeEmpty"),
+        [{ text: t("Main.OK") }],
+      );
       return;
     } else if (!trimmedFirstName) {
       Alert.alert(t("SignIn.sorry"), t("Inputs.FirstNameRequired"), [
@@ -244,9 +256,11 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error"),
+          t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
         return;
       }
 
@@ -288,14 +302,18 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
           ],
         );
       } else {
-        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error"),
+          t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
       }
     } catch (error) {
-      Alert.alert(t("Main.Error"), t("EditProfile.FailedToUpdateProfileTryAgainLater"), [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(
+        t("Main.Error"),
+        t("EditProfile.FailedToUpdateProfileTryAgainLater"),
+        [{ text: t("Main.OK") }],
+      );
     } finally {
       setIsLoading(false);
     }
@@ -314,201 +332,223 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
       enabled
       style={{ flex: 1 }}
     >
-      
       <View className="flex-1 bg-white">
+        <View className="relative">
+          <CustomHeader
+            title={t("EditProfile.EditProfile")}
+            navigation={navigation}
+            onBackPress={() => navigation.navigate("EngProfile")}
+            rightComponent={
+              <TouchableOpacity
+                onPress={() => setMenuVisible(!isMenuVisible)}
+                hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+              >
+                <Entypo name="dots-three-vertical" size={20} color="black" />
+              </TouchableOpacity>
+            }
+          />
+          {isMenuVisible && (
+            <View 
+              className="absolute bg-white rounded-lg border border-gray-200 shadow-lg z-50"
+              style={{ top: 48, right: 16 }}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  setMenuVisible(false);
+                  navigation.navigate("DeleteFarmer");
+                }}
+                className="rounded-lg py-3 px-4"
+              >
+                <Text className="text-[16px] text-center">
+                  {t("DeleteFarmer.DeleteMyAccount")}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           keyboardShouldPersistTaps="handled"
         >
-          <View className="relative">
-            <CustomHeader
-              title={t("EditProfile.EditProfile")}
-              navigation={navigation}
-              onBackPress={() => navigation.navigate("EngProfile")}
-            />
-
-            <TouchableOpacity
-              onPress={() => setMenuVisible(!isMenuVisible)}
-              hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-              style={{ position: "absolute", right: 16, top: 16 }}
-            >
-              <Entypo name="dots-three-vertical" size={24} color="black" />
-            </TouchableOpacity>
-          </View>
-
           <View className="flex-1 bg-white w-full">
-            <View className="p-2 flex-1">
-              <View className="items-center mb-6 relative">
-                <Image
-                  source={profileImage}
-                  style={{ width: 100, height: 100, borderRadius: 50 }}
-                />
-                <TouchableOpacity
-                  className="absolute right-[-25] bottom-0 p-1 bg-black mr-40 rounded-full"
-                  onPress={pickImage}
-                >
+            <View className="flex-1">
+              <View className="items-center mb-6">
+                <View style={{ width: 100, height: 100, position: "relative" }}>
                   <Image
-                    source={require("../../assets/images/auth/pencil.webp")}
-                    style={{ width: 17, height: 17, tintColor: "white" }}
+                    source={profileImage}
+                    style={{ width: 100, height: 100, borderRadius: 50 }}
                   />
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    className="absolute bottom-0 right-0 p-2 bg-black rounded-full"
+                    onPress={pickImage}
+                    style={{
+                      shadowColor: "#000",
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.25,
+                      shadowRadius: 3.84,
+                      elevation: 5,
+                    }}
+                  >
+                    <Image
+                      source={require("../../assets/images/auth/pencil.webp")}
+                      style={{ width: 16, height: 16, tintColor: "white" }}
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
 
-              <View className="p-4">
-                <View className="gap-8">
-                  <View>
-                    <Text className="text-sm text-gray-700 mb-1">
-                      {t("Inputs.FirstName")}
-                    </Text>
-                    <View className={inputStyle}>
-                      <TextInput
-                        value={firstName}
-                        onChangeText={setFirstName}
-                        maxLength={20}
-                      />
-                    </View>
-                  </View>
-
-                  <View>
-                    <Text className="text-sm text-gray-700 mb-1">
-                      {t("Inputs.LastName")}
-                    </Text>
-                    <View className={inputStyle}>
-                      <TextInput
-                        value={lastName}
-                        onChangeText={setLastName}
-                        maxLength={20}
-                      />
-                    </View>
-                  </View>
-
-                  <View>
-                    <Text className="text-sm text-gray-700 mb-1">
-                      {t("Inputs.PhoneNumber")}
-                    </Text>
-                    <View className={`${inputStyle} text-[#8492A3]`}>
-                      <TextInput
-                        value={phoneNumber}
-                        keyboardType="phone-pad"
-                        editable={false}
-                      />
-                    </View>
-                    {phoneNumberError ? (
-                      <Text className="text-xs text-red-500 mt-1">
-                        {phoneNumberError}
-                      </Text>
-                    ) : null}
-                  </View>
-
-                  <View>
-                    <Text className="text-sm text-gray-700 mb-1">
-                      {t("Inputs.NICNumber")}
-                    </Text>
-                    <View className={`${inputStyle} text-[#8492A3]`}>
-                      <TextInput value={NICnumber} editable={false} />
-                    </View>
-                  </View>
-
-                  <View>
-                    <Text className="text-sm text-gray-700 mb-1">
-                      {t("AddressDetails.BuildingHouseNo")}
-                    </Text>
-                    <View className={inputStyle}>
-                      <TextInput
-                        placeholder={
-                          t("AddressDetails.EnterHouseBuildingNo") ||
-                          "Enter House / Building No"
-                        }
-                        value={buidingname}
-                        onChangeText={setBuildingName}
-                      />
-                    </View>
-                  </View>
-
-                  <View>
-                    <Text className="text-sm text-gray-700 mb-1">
-                      {t("AddressDetails.Streetname")}
-                    </Text>
-                    <View className={inputStyle}>
-                      <TextInput
-                        placeholder={
-                          t("AddressDetails.EnterStreetName") ||
-                          "Enter Street Name"
-                        }
-                        value={streetname}
-                        onChangeText={setStreetName}
-                      />
-                    </View>
-                  </View>
-
-                  <View>
-                    <Text className="text-sm text-gray-700 mb-1">
-                      {t("AddressDetails.City")}
-                    </Text>
-                    <View className={inputStyle}>
-                      <TextInput
-                        placeholder={
-                          t("AddressDetails.EnterCityName") || "Enter City Name"
-                        }
-                        value={city}
-                        onChangeText={setCity}
-                      />
-                    </View>
-                  </View>
-
-                  <View>
-                    <Text className="text-sm text-gray-700 mb-2">
-                      {t("FixedAssets.District")}
-                    </Text>
-                    <TouchableOpacity
-                      className="h-[50px] rounded-3xl"
-                      onPress={() => {
-                        Keyboard.dismiss();
-                        setDistrictModalVisible(true);
-                      }}
-                      style={{
-                        backgroundColor: "#F4F4F4",
-                        paddingHorizontal: 14,
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: district ? "#111" : "#ccc",
-                          flex: 1,
-                        }}
-                      >
-                        {district
-                          ? (districtItems.find((d) => d.value === district)
-                            ?.label ?? district)
-                          : t("FixedAssets.SelectDistrict")}
-                      </Text>
-                      <AntDesign name="down" size={13} color="#555" />
-                    </TouchableOpacity>
+              <View className="px-6 py-4">
+                <View className="mb-4">
+                  <Text className="text-[#070707] text-sm mb-2">
+                    {t("Inputs.FirstName")}
+                  </Text>
+                  <View className={inputStyle}>
+                    <TextInput
+                      value={firstName}
+                      onChangeText={setFirstName}
+                      maxLength={20}
+                    />
                   </View>
                 </View>
 
-                <View className="flex-1 items-center justify-center mt-10 mb-12">
+                <View className="mb-4">
+                  <Text className="text-[#070707] text-sm mb-2">
+                    {t("Inputs.LastName")}
+                  </Text>
+                  <View className={inputStyle}>
+                    <TextInput
+                      value={lastName}
+                      onChangeText={setLastName}
+                      maxLength={20}
+                    />
+                  </View>
+                </View>
+
+                <View className="mb-4">
+                  <Text className="text-[#070707] text-sm mb-2">
+                    {t("Inputs.PhoneNumber")}
+                  </Text>
+                  <View className={`${inputStyle} text-[#8492A3]`}>
+                    <TextInput
+                      value={phoneNumber}
+                      keyboardType="phone-pad"
+                      editable={false}
+                    />
+                  </View>
+                  {phoneNumberError ? (
+                    <Text className="text-xs text-red-500 mt-1">
+                      {phoneNumberError}
+                    </Text>
+                  ) : null}
+                </View>
+
+                <View className="mb-4">
+                  <Text className="text-[#070707] text-sm mb-2">
+                    {t("Inputs.NICNumber")}
+                  </Text>
+                  <View className={`${inputStyle} text-[#8492A3]`}>
+                    <TextInput value={NICnumber} editable={false} />
+                  </View>
+                </View>
+
+                <View className="mb-4">
+                  <Text className="text-[#070707] text-sm mb-2">
+                    {t("AddressDetails.BuildingHouseNo")}
+                  </Text>
+                  <View className={inputStyle}>
+                    <TextInput
+                      placeholder={
+                        t("AddressDetails.EnterHouseBuildingNo") ||
+                        "Enter House / Building No"
+                      }
+                      value={buidingname}
+                      onChangeText={setBuildingName}
+                    />
+                  </View>
+                </View>
+
+                <View className="mb-4">
+                  <Text className="text-[#070707] text-sm mb-2">
+                    {t("AddressDetails.Streetname")}
+                  </Text>
+                  <View className={inputStyle}>
+                    <TextInput
+                      placeholder={
+                        t("AddressDetails.EnterStreetName") ||
+                        "Enter Street Name"
+                      }
+                      value={streetname}
+                      onChangeText={setStreetName}
+                    />
+                  </View>
+                </View>
+
+                <View className="mb-4">
+                  <Text className="text-[#070707] text-sm mb-2">
+                    {t("AddressDetails.City")}
+                  </Text>
+                  <View className={inputStyle}>
+                    <TextInput
+                      placeholder={
+                        t("AddressDetails.EnterCityName") || "Enter City Name"
+                      }
+                      value={city}
+                      onChangeText={setCity}
+                    />
+                  </View>
+                </View>
+
+                <View className="mb-4">
+                  <Text className="text-[#070707] text-sm mb-2">
+                    {t("FixedAssets.District")}
+                  </Text>
+                  <TouchableOpacity
+                    className="h-[50px] rounded-3xl"
+                    onPress={() => {
+                      Keyboard.dismiss();
+                      setDistrictModalVisible(true);
+                    }}
+                    style={{
+                      backgroundColor: "#F4F4F4",
+                      paddingHorizontal: 14,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color: district ? "#111" : "#ccc",
+                        flex: 1,
+                      }}
+                    >
+                      {district
+                        ? (districtItems.find((d) => d.value === district)
+                            ?.label ?? district)
+                        : t("FixedAssets.SelectDistrict")}
+                    </Text>
+                    <MaterialIcons
+                      name="arrow-drop-down"
+                      size={24}
+                      color="#666"
+                    />
+                  </TouchableOpacity>
+                </View>
+
+                <View className="flex-1 items-center justify-center mt-6 mb-20 w-full px-6">
                   <TouchableOpacity
                     onPress={handleSave}
-                    className={`bg-gray-800 rounded-3xl justify-center w-2/3 h-[50px] ${isLoading ? "opacity-50" : ""
-                      }`}
                     disabled={isLoading}
-                    style={{
-                      shadowColor: "#000000",
-                      shadowOffset: { width: 0, height: 4 },
-                      shadowOpacity: 0.25,
-                      shadowRadius: 4,
-                      elevation: 4,
-                    }}
+                    activeOpacity={0.8}
+                    className={`w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 ${
+                      isLoading ? "bg-[#9CA3AF]" : "bg-[#353535]"
+                    }`}
                   >
                     {isLoading ? (
                       <ActivityIndicator size="small" color="#fff" />
                     ) : (
-                      <Text className="text-center text-white text-lg">
+                      <Text className="text-center text-white text-lg font-semibold">
                         {t("Main.Save")}
                       </Text>
                     )}
@@ -518,18 +558,6 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
             </View>
           </View>
 
-          {isMenuVisible && (
-            <View className="absolute top-12 right-6 bg-white rounded-lg border border-gray-200 shadow-lg">
-              <TouchableOpacity
-                onPress={() => navigation.navigate("DeleteFarmer")}
-                className="rounded-lg py-3 px-4"
-              >
-                <Text className="text-[16px] text-center">
-                  {t("DeleteFarmer.DeleteMyAccount")}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
         </ScrollView>
       </View>
 
@@ -548,4 +576,4 @@ const EngEditProfile: React.FC<EngEditProfileProps> = ({ navigation }) => {
   );
 };
 
-export default EngEditProfile;
+export default EditProfile;

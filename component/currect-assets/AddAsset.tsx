@@ -23,7 +23,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { RootStackParamList } from "../types/types";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import { MaterialIcons } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
 
 type AddAssetNavigationProp = StackNavigationProp<
@@ -634,7 +634,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         >
           {label || placeholder}
         </Text>
-        <AntDesign name="caret-down" size={14} color="#5e5d5d" />
+        <MaterialIcons
+          name="arrow-drop-down"
+          size={24}
+          color="#666"
+        />
       </TouchableOpacity>
       {error ? (
         <Text className="text-red-500 text-xs mt-1 ml-2">{error}</Text>
@@ -847,7 +851,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 className="bg-[#F4F4F4] rounded-[30px] h-[50px] w-28 flex-row items-center justify-between px-3"
               >
                 <Text className="text-sm text-black">{t(`CurrentAssets.${unit}`, unit)}</Text>
-                <AntDesign name="caret-down" size={14} color="#5e5d5d" />
+                <MaterialIcons
+                  name="arrow-drop-down"
+                  size={24}
+                  color="#666"
+                />
               </TouchableOpacity>
             </View>
             {fieldErrors.volume ? (

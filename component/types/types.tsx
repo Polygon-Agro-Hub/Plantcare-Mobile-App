@@ -42,7 +42,7 @@ export type RootStackParamList = {
   TamilDashbord: undefined;
   TamilNewCrop: undefined;
   EngProfile: undefined;
-  EngQRcode: undefined;
+  QRcode: undefined;
   WeatherForecast: undefined;
   FiveDayForecast: undefined;
   SinProfile: undefined;
@@ -99,7 +99,7 @@ export type RootStackParamList = {
   TermsConditions: undefined;
   LocationDetailsScreen: undefined;
   Main: { screen: keyof RootStackParamList; params?: any };
-  EngEditProfile: undefined;
+  EditProfile: undefined;
   ManagerDashbord: undefined;
   DeleteFarmer: undefined;
   UserFeedback: undefined;

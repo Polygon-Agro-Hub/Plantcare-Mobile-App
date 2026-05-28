@@ -24,7 +24,7 @@ import { environment } from "@/environment/environment";
 import { RootStackParamList } from "../../types/types";
 import CustomHeader from "../../common/CustomHeader";
 import GlobalSearchModal from "../../common/GlobalSearchModal";
-import { AntDesign } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import LoadingPage from "@/component/common/LoadingPage";
 
 type EditFarmNavigationProp = StackNavigationProp<
@@ -550,7 +550,11 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
                     ? districtItems.find((d) => d.value === district)?.label
                     : t("Farms.SelectDistrict")}
                 </Text>
-                <AntDesign name="caret-down" size={14} color="#5e5d5d" />
+                <MaterialIcons
+                  name="arrow-drop-down"
+                  size={24}
+                  color="#666"
+                />
               </TouchableOpacity>
 
               <GlobalSearchModal

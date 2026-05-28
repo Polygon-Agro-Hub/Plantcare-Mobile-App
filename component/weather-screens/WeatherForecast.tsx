@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 import * as Location from 'expo-location';
 import { Ionicons, Entypo, AntDesign, FontAwesome6 } from '@expo/vector-icons';
-import debounce from 'lodash.debounce';
+const debounce = require('lodash.debounce');
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -295,11 +295,24 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
 
   const getCurrentTimeDate = (): string => {
     const now = new Date();
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     const month = t(`Months.${months[now.getMonth()]}`);
-    const dayName = t(`Days.${days[now.getDay()]}`);
+    const dayName = t(`RequestHistory.Days.${days[now.getDay()]}`);
     const dd = now.getDate();
     let hours = now.getHours();
     let mins: any = now.getMinutes();
@@ -444,7 +457,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
             </View>
 
             <View className="relative flex-1 items-center">
-              <View className="flex-row items-center bg-[#F6F6F6CC] rounded-3xl max-w-[300px] h-[50px]">
+              <View className="flex-row items-center bg-[#F6F6F6CC] rounded-3xl max-w-[300px] h-[40px]">
                 <TextInput
                   className="flex-1 p-1 text-lg text-black ml-4"
                   placeholder={t('WeatherForecast.SearchLocation')}
@@ -475,10 +488,10 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
             </View>
 
             <TouchableOpacity
-              className="bg-transparent ml-2 h-[50px] w-[50px] items-center justify-center"
+              className="bg-transparent ml-2 h-[40px] w-[40px] items-center justify-center"
               onPress={handleLocationIconPress}
             >
-              <View className="bg-[#F8F8F8] rounded-xl w-[50px] h-[50px] items-center justify-center">
+              <View className="bg-[#F8F8F8] rounded-xl w-[40px] h-[40px] items-center justify-center">
                 <AntDesign name="aim" size={20} color="#000502" />
               </View>
             </TouchableOpacity>
@@ -507,8 +520,8 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
                 <Text className="text-lg text-gray-400 mb-4">{getWeatherName(weatherData.weather[0].id, weatherData.weather[0].icon)}</Text>
 
                 <View className="flex-row gap-1 items-baseline">
-                  <Entypo name="location-pin" size={20} color="black" className="ml-2 mt-2" />
-                  <Text className="text-lg font-semibold">{weatherData.name}, {weatherData.sys.country}</Text>
+                  <Entypo name="location-pin" size={18} color="black" className="ml-2 mt-2" />
+                  <Text className="text-xl font-semibold">{weatherData.name}, {weatherData.sys.country}</Text>
                 </View>
 
                 <Text className="text font-semibold text-gray-700 mb-2">{getCurrentTimeDate()}</Text>
@@ -540,7 +553,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
                 </View>
 
                 <ScrollView className="mt-0 pt-0">
-                  <View className="flex-row justify-between items-center px-4 pt-0">
+                  <View className="flex-row justify-between items-center px-6 pt-0">
                     <Text className="text-l mb-2 font-semibold">{t('WeatherForecast.Today')}</Text>
                     <TouchableOpacity
                       className="p-2"
@@ -566,7 +579,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
                       horizontal
                       keyExtractor={(item) => item.dt.toString()}
                       renderItem={({ item }) => (
-                        <View className="bg-white p-4 rounded-lg shadow-lg mx-2 items-center mt-1 mb-2" style={{ shadowColor: 'gray', shadowOffset: { width: 1, height: 1 }, shadowOpacity: 0.8, shadowRadius: 2, elevation: 4 }}>
+                        <View className="bg-white p-4 rounded-lg shadow-lg mx-2 items-center mt-1 mb-2 min-w-28" style={{ shadowColor: 'gray', shadowOffset: { width: 1, height: 1 }, shadowOpacity: 0.8, shadowRadius: 2, elevation: 4 }}>
                           <Image source={getWeatherImage(item.weather[0].id, item.weather[0].icon)} className="w-6 h-6" resizeMode="contain" />
                           <Text className="text-base font-bold mb-1">{item.main.temp}°C</Text>
                           <Text className="text-gray-600">{formatForecastTime(item.dt)}</Text>

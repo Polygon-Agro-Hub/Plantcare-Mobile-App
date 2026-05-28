@@ -37,7 +37,7 @@ import { useTranslation } from "react-i18next";
 import i18n from "@/i18n/i18n";
 import { useCallback } from "react";
 import GlobalSearchModal from "../../common/GlobalSearchModal";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import { MaterialIcons } from "@expo/vector-icons";
 
 interface RouteParams {
   membership?: string;
@@ -378,7 +378,11 @@ const AddNewFarmBasicDetails: React.FC = () => {
                 >
                   {selectedDistrictLabel || t("Farms.SelectDistrict")}
                 </Text>
-                <AntDesign name="caret-down" size={14} color="#555" />
+                <MaterialIcons
+                  name="arrow-drop-down"
+                  size={24}
+                  color="#666"
+                />
               </TouchableOpacity>
 
               <GlobalSearchModal

@@ -27,9 +27,9 @@ import Otpverification from "@/component/otp-screens/Otpverification";
 import Dashboard from "@/component/dashboard/Dashbord";
 import NewCrop from "@/component/crop-cultivation/NewCrop";
 import SelectCrop from "@/component/crop-cultivation/SelectCrop";
-import EngProfile from "@/component/auth/UserProfile";
-import EngQRcode from "@/component/qr-code/EngQRcode";
-import EngEditProfile from "@/component/auth/EngEditProfile";
+import UserProfile from "@/component/auth/UserProfile";
+import QRcode from "@/component/qr-code/QRcode";
+import EditProfile from "@/component/auth/EditProfile";
 import WeatherForecast from "@/component/weather-screens/WeatherForecast";
 import FiveDayForecast from "@/component/weather-screens/FiveDayForecast";
 import CurrentAssert from "@/component/currect-assets/CurrentAssert";
@@ -44,13 +44,10 @@ import PublicForum from "@/component/public-forum/PublicForum";
 import PublicForumReplies from "@/component/public-forum/PublicForumReplies";
 import PublicForumPost from "@/component/public-forum/PublicForumPost";
 import UpdateAsset from "@/component/fixed-assets/UpdateAsset";
-import OtpverificationOldUser from "@/component/otp-screens/OtpverificationOldUser";
 import CropEnrol from "@/component/crop-cultivation/CropEnrol";
 import { LogBox } from "react-native";
 import MembershipScreen from "@/component/membership-screens/MembershipScreen";
-import MembershipScreenUP from "@/component/membership-screens/MembershipScreenSignUp";
 import BankDetailsScreen from "@/component/bank-details/Bankdetails";
-import BankDetailsSignUp from "@/component/bank-details/BankdetailsSignUp";
 import PrivacyPolicy from "@/component/policies/PrivacyPolicy";
 import TermsConditions from "@/component/policies/TermsConditions";
 import ComplainForm from "@/component/complains/ComplainForm";
@@ -83,7 +80,6 @@ import EditStaffMember from "@/component/farms/members-screen/EditStaffMember";
 import PublicForumPostEdit from "@/component/public-forum/PublicForumPostEdit";
 import MyCultivation from "@/component/farms/crop-cultivation/MyCultivation";
 import LabororDashbord from "@/component/laboror-screens/LabororDashbord";
-import LabororEngProfile from "@/component/laboror-screens/LabororEngProfile";
 import OwnerQRcode from "@/component/laboror-screens/OwnerQRcode";
 import FarmCurrectAssets from "@/component/farms/current-asset/FarmCurrectAssets";
 import FarmAssertsFixedView from "@/component/farms/fixed-asset/FarmAssertsFixedView";
@@ -212,7 +208,7 @@ function MainTabNavigator() {
       <Tab.Screen name="ComplainHistory" component={ComplainHistory} />
       <Tab.Screen name="CropCalander" component={CropCalander as any} />
       <Tab.Screen name="CurrentAssert" component={CurrentAssert} />
-      <Tab.Screen name="EngEditProfile" component={EngEditProfile} />
+      <Tab.Screen name="EditProfile" component={EditProfile} />
       <Tab.Screen name="FiveDayForecast" component={FiveDayForecast as any} />
       <Tab.Screen name="fixedDashboard" component={FixedDashboard} />
       <Tab.Screen name="NewCrop" component={NewCrop} />
@@ -233,7 +229,7 @@ function MainTabNavigator() {
         name="PaymentGatewayeRenew"
         component={PaymentGatewayeRenew as any}
       />
-      <Tab.Screen name="EngQRcode" component={EngQRcode} />
+      <Tab.Screen name="QRcode" component={QRcode} />
       <Tab.Screen name="ComplainForm" component={ComplainForm} />
       <Tab.Screen name="AddAsset" component={AddAsset} />
       <Tab.Screen name="FarmAddFixAssert" component={FarmAddFixAssert} />
@@ -317,7 +313,7 @@ function AppContent() {
         return false;
       }
 
-      const currentRouteName = navigationRef.getCurrentRoute()?.name ?? "";
+      const currentRouteName = (navigationRef.getCurrentRoute() as any)?.name ?? "";
 
       if (currentRouteName === "Dashboard") {
         BackHandler.exitApp();
@@ -357,10 +353,10 @@ function AppContent() {
             <Stack.Screen name="OTPE" component={Otpverification} />
             <Stack.Screen
               name="OTPEOLDUSER"
-              component={OtpverificationOldUser}
+              component={Otpverification}
             />
             <Stack.Screen name="SelectCrop" component={SelectCrop as any} />
-            <Stack.Screen name="EngProfile" component={EngProfile as any} />
+            <Stack.Screen name="EngProfile" component={UserProfile as any} />
             <Stack.Screen name="UpdateAsset" component={UpdateAsset as any} />
             <Stack.Screen name="PublicForum" component={PublicForum as any} />
             <Stack.Screen
@@ -379,7 +375,7 @@ function AppContent() {
             />
             <Stack.Screen
               name="MembershipScreenSignUp"
-              component={MembershipScreenUP}
+              component={MembershipScreen}
             />
 
             <Stack.Screen
@@ -388,7 +384,7 @@ function AppContent() {
             />
             <Stack.Screen
               name="BankDetailsSignUp"
-              component={BankDetailsSignUp}
+              component={BankDetailsScreen}
             />
             <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
             <Stack.Screen name="TermsConditions" component={TermsConditions} />
@@ -444,7 +440,7 @@ function AppContent() {
             />
             <Stack.Screen
               name="LabororEngProfile"
-              component={LabororEngProfile}
+              component={UserProfile as any}
             />
             <Stack.Screen name="OwnerQRcode" component={OwnerQRcode} />
             <Stack.Screen

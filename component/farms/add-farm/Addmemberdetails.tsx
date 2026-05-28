@@ -18,7 +18,7 @@ import {
   useFocusEffect,
 } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { AntDesign } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/component/types/types";
 import { environment } from "@/environment/environment";
@@ -756,7 +756,11 @@ const AddMemberDetails: React.FC = () => {
                   >
                     {getRoleLabel(member.role) ?? t("Farms.SelectRole")}
                   </Text>
-                  <AntDesign name="caret-down" size={14} color="#5e5d5d" />
+                  <MaterialIcons
+                    name="arrow-drop-down"
+                    size={24}
+                    color="#666"
+                  />
                 </TouchableOpacity>
                 {roleErrors[index] && (
                   <Text className="text-red-500 text-sm mt-1 ml-3">
@@ -821,7 +825,11 @@ const AddMemberDetails: React.FC = () => {
                     <Text style={{ fontSize: 14, color: "#374151" }}>
                       {getCountryLabel(member.countryCode)}
                     </Text>
-                    <AntDesign name="caret-down" size={14} color="#5e5d5d" />
+                    <MaterialIcons
+                      name="arrow-drop-down"
+                      size={24}
+                      color="#666"
+                    />
                   </TouchableOpacity>
 
                   {/* Phone input */}

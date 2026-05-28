@@ -21,7 +21,7 @@ import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import GlobalSearchModal from "@/component/common/GlobalSearchModal";
-import { AntDesign } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import assetData from "@/assets/jsons/fixed-asset/fixed-assets.json";
 
 type FarmAddFixAssertNavigationProp = StackNavigationProp<
@@ -73,7 +73,11 @@ const DropdownButton = ({
     <Text style={{ color: value ? "#111827" : "#6B7280", fontSize: 14 }}>
       {value || placeholder}
     </Text>
-    <AntDesign name="caret-down" size={14} color="#5e5d5d" />
+    <MaterialIcons
+      name="arrow-drop-down"
+      size={24}
+      color="#666"
+    />
   </TouchableOpacity>
 );
 
