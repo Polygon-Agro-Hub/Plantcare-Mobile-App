@@ -51,38 +51,36 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
   const [cartCount, setCartCount] = useState(3);
 
   const fetchShops = async (search = "") => {
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const token = await AsyncStorage.getItem("userToken");
+    const token = await AsyncStorage.getItem("userToken");
 
-      if (!token) {
-        Alert.alert(
-          "Error",
-          "Authentication token not found. Please login again.",
-        );
-        return;
-      }
-
-      const response = await axios.get(
-        `${environment.API_BASE_URL}api/govi-shop/shops`,
-        {
-          params: { search },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      setShops(response.data);
-    } catch (error) {
-      console.error("Error fetching shops:", error);
-      setShops([]);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
+    if (!token) {
+      Alert.alert("Error", "Authentication token not found. Please login again.");
+      return;
     }
-  };
+
+    const response = await axios.get(
+      `${environment.API_BASE_URL}api/govi-shop/shops`,
+      {
+        params: { search },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    setShops(Array.isArray(response.data) ? response.data : []);
+
+  } catch (error: any) {
+    
+    setShops([]);
+    console.error("Error fetching shops:", error?.response?.status, error?.message);
+  } finally {
+    setLoading(false);
+    setRefreshing(false);
+  }
+};
 
   useEffect(() => {
     fetchShops();
@@ -123,7 +121,7 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
       activeOpacity={0.7}
     >
       {/* Logo */}
-      <View className="w-24 h-24 rounded-lg bg-gray-100 mr-4 overflow-hidden">
+      <View className="w-24 h-24  mr-4 overflow-hidden">
         <Image
           source={{ uri: item.logo }}
           className="w-full h-full"

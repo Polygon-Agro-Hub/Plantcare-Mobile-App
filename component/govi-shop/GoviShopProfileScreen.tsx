@@ -39,8 +39,18 @@ interface GoviShopProfileProps {
   route: GoviShopProfileRouteProp;
 }
 
+interface ColorDetail {
+  colorId: number;
+  color: string;
+  normalPrice: number;
+  discountPrice?: number;
+  availableQty: number;
+  batches?: Batch[];
+}
+
 interface ProductCategory {
   id: string;
+
   name: string;
   image: string;
   productCount: number;
@@ -59,6 +69,7 @@ interface Product {
   categoryId: string;
   availableQty?: number;
   description?: string;
+  searchKeyWord?: string;
 }
 interface Batch {
   qty: number;
@@ -75,6 +86,7 @@ interface SubProduct {
   availableQty?: number;
   isMRP?: number;
   batches?: Batch[];
+  colorDetails?: ColorDetail[];
 }
 interface FilterButton {
   id: string;
@@ -106,6 +118,47 @@ const resolveColor = (raw: string): string => {
   if (!raw) return "#CCCCCC";
   const trimmed = raw.trim();
   return trimmed.startsWith("#") ? trimmed : `#${trimmed}`;
+};
+
+const UNIT_TO_BASE: Record<string, number> = {
+  g: 1,
+  kg: 1000,
+  ml: 1,
+  l: 1000,
+  mm: 0.001,
+  cm: 0.01,
+  m: 1,
+  km: 1000,
+  pc: 1,
+  pcs: 1,
+};
+
+const parseVariantQty = (label: string): number => {
+  if (!label) return 0;
+  const rollMatch = label.match(/^([\d.]+)\s*x\s*([\d.]+)\s*(\w+)?$/i);
+  if (rollMatch) {
+    const w = parseFloat(rollMatch[1]);
+    const h = parseFloat(rollMatch[2]);
+    const unit = (rollMatch[3] ?? "").toLowerCase();
+    const multiplier = UNIT_TO_BASE[unit] ?? 1;
+    return w * h * multiplier;
+  }
+  const match = label.match(/^([\d.]+)\s*(\w+)?$/i);
+  if (match) {
+    const qty = parseFloat(match[1]);
+    const unit = (match[2] ?? "").toLowerCase();
+    const multiplier = UNIT_TO_BASE[unit] ?? 1;
+    return qty * multiplier;
+  }
+  return 0;
+};
+
+const sortSubProducts = (subs: SubProduct[]): SubProduct[] => {
+  return [...subs].sort((a, b) => {
+    const aVal = parseVariantQty(a.label);
+    const bVal = parseVariantQty(b.label);
+    return aVal - bVal;
+  });
 };
 
 const CARD_H_PADDING = 14;
@@ -154,6 +207,10 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
   const [categoriesLoading, setCategoriesLoading] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [productsLoading, setProductsLoading] = useState(false);
+
+  const [selectedColorIndexMap, setSelectedColorIndexMap] = useState<
+    Record<string, number>
+  >({});
   const [filterButtons, setFilterButtons] = useState<FilterButton[]>([
     { id: "all", name: "All" },
   ]);
@@ -206,6 +263,14 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
   };
 
   const getTotalCap = (sub: SubProduct): number | undefined => sub.availableQty;
+
+  const getActiveColorDetail = (
+    sub: SubProduct | undefined,
+    colorIdx: number,
+  ): ColorDetail | undefined => {
+    if (!sub?.colorDetails || sub.colorDetails.length === 0) return undefined;
+    return sub.colorDetails[colorIdx] ?? sub.colorDetails[0];
+  };
 
   const getCartQty = (productId: string, subProductId: string): number =>
     cart.find(
@@ -479,8 +544,141 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
         categoryId: String(p.categoryId),
         availableQty: p.maxQty ?? undefined,
         description: p.discription ?? "",
+        searchKeyWord: p.searchKeyWord ?? "",
       }));
-      setProducts(mappedProducts);
+
+      const variantChecks = await Promise.allSettled(
+        mappedProducts.map((p) =>
+          axios.get(
+            `${environment.API_BASE_URL}api/govi-shop/products/${p.id}/variants`,
+            {
+              params: { branchId },
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          ),
+        ),
+      );
+
+      const validProducts: Product[] = [];
+      const cachedSubProducts: Record<string, SubProduct[]> = {};
+      const cachedSelectedSubProductId: Record<string, string> = {};
+
+      const cachedColorIndexMap: Record<string, number> = {};
+
+      mappedProducts.forEach((p, i) => {
+        const result = variantChecks[i];
+
+        if (result.status === "rejected") return;
+        const variants = result.value.data;
+        if (!Array.isArray(variants) || variants.length === 0) return;
+
+        const mode = getDisplayMode(p.baseUom);
+        const mapped: SubProduct[] = variants.map((v: any) => {
+          const basePrice = Number(v.normalPrice ?? 0);
+          const salePrice =
+            v.discountPrice != null ? Number(v.discountPrice) : undefined;
+          let label = "";
+          if (mode === "ROLL") {
+            const w = v.width != null ? parseFloat(String(v.width)) : "";
+            const h = v.height != null ? parseFloat(String(v.height)) : "";
+            const uom = v.uom ?? "m";
+            label =
+              w !== "" && h !== ""
+                ? `${w} x ${h} ${uom}`.trim()
+                : `${w || h} ${uom}`.trim();
+          } else if (mode === "COLOR") {
+            const qty = v.qty != null ? parseFloat(String(v.qty)) : 1;
+            label = `${qty} ${qty === 1 ? "pc" : "pcs"}`;
+          } else if (mode === "EQUIPMENT") {
+            label = v.color ?? "";
+          } else {
+            const qty = v.qty != null ? parseFloat(String(v.qty)) : "";
+            label = `${qty} ${v.uom ?? ""}`.trim();
+          }
+          return {
+            id: String(v.variantId),
+            label,
+            price: basePrice,
+            discountPrice: salePrice,
+            colorCode: v.color ?? undefined,
+            colors: Array.isArray(v.colorDetails)
+              ? v.colorDetails.map((c: any) => c.color)
+              : Array.isArray(v.colors)
+                ? v.colors
+                : undefined,
+            colorDetails: Array.isArray(v.colorDetails)
+              ? v.colorDetails.map((c: any) => ({
+                  colorId: c.colorId,
+                  color: c.color,
+                  normalPrice: Number(c.normalPrice ?? 0),
+                  discountPrice:
+                    c.discountPrice != null
+                      ? Number(c.discountPrice)
+                      : undefined,
+                  availableQty: Number(c.availableQty ?? 0),
+                  batches: Array.isArray(c.batches)
+                    ? c.batches.map((b: any) => ({
+                        qty: Number(b.qty),
+                        salePrice: Number(b.salePrice),
+                        originalPrice:
+                          b.originalPrice != null
+                            ? Number(b.originalPrice)
+                            : null,
+                      }))
+                    : undefined,
+                }))
+              : undefined,
+            availableQty: Number(v.availableQty ?? 0),
+            isMRP: v.isMRP ?? 0,
+            batches: Array.isArray(v.batches)
+              ? v.batches.map((b: any) => ({
+                  qty: Number(b.qty),
+                  salePrice: Number(b.salePrice),
+                  originalPrice:
+                    b.originalPrice != null ? Number(b.originalPrice) : null,
+                }))
+              : undefined,
+          };
+        });
+
+        const hasStock = mapped.some((s) => (s.availableQty ?? 0) > 0);
+        if (!hasStock) return;
+
+        const sortedMapped = sortSubProducts(mapped);
+
+        const firstSub = sortedMapped[0];
+        const updatedProduct: Product = {
+          ...p,
+          normalPrice: firstSub.price,
+          discountPrice: firstSub.discountPrice,
+          availableQty:
+            firstSub.availableQty && firstSub.availableQty > 0
+              ? firstSub.availableQty
+              : undefined,
+        };
+
+        cachedSubProducts[p.id] = sortedMapped;
+        const firstSelectable =
+          mode === "EQUIPMENT" || mode === "COLOR"
+            ? (sortedMapped.find((s) => s.colorCode && s.colorCode.trim()) ??
+              sortedMapped[0])
+            : sortedMapped[0];
+        cachedSelectedSubProductId[p.id] = firstSelectable.id;
+
+        if (mode === "COLOR") {
+          cachedColorIndexMap[p.id] = 0;
+        }
+
+        validProducts.push(updatedProduct);
+      });
+
+      setSubProducts((prev) => ({ ...prev, ...cachedSubProducts }));
+      setSelectedSubProductId((prev) => ({
+        ...prev,
+        ...cachedSelectedSubProductId,
+      }));
+      setSelectedColorIndexMap((prev) => ({ ...prev, ...cachedColorIndexMap }));
+      setProducts(validProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
       setProducts([]);
@@ -517,12 +715,13 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
               ? `${w} x ${h} ${uom}`.trim()
               : `${w || h} ${uom}`.trim();
         } else if (mode === "COLOR") {
-          const qty = v.qty ?? 1;
+          const qty = v.qty != null ? parseFloat(String(v.qty)) : 1;
           label = `${qty} ${qty === 1 ? "pc" : "pcs"}`;
         } else if (mode === "EQUIPMENT") {
           label = v.color ?? "";
         } else {
-          label = `${v.qty ?? ""} ${v.uom ?? ""}`.trim();
+          const qty = v.qty != null ? parseFloat(String(v.qty)) : "";
+          label = `${qty} ${v.uom ?? ""}`.trim();
         }
         return {
           id: String(v.variantId),
@@ -530,7 +729,31 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
           price: basePrice,
           discountPrice: salePrice,
           colorCode: v.color ?? undefined,
-          colors: Array.isArray(v.colors) ? v.colors : undefined,
+          colors: Array.isArray(v.colorDetails)
+            ? v.colorDetails.map((c: any) => c.color)
+            : Array.isArray(v.colors)
+              ? v.colors
+              : undefined,
+          colorDetails: Array.isArray(v.colorDetails)
+            ? v.colorDetails.map((c: any) => ({
+                colorId: c.colorId,
+                color: c.color,
+                normalPrice: Number(c.normalPrice ?? 0),
+                discountPrice:
+                  c.discountPrice != null ? Number(c.discountPrice) : undefined,
+                availableQty: Number(c.availableQty ?? 0),
+                batches: Array.isArray(c.batches)
+                  ? c.batches.map((b: any) => ({
+                      qty: Number(b.qty),
+                      salePrice: Number(b.salePrice),
+                      originalPrice:
+                        b.originalPrice != null
+                          ? Number(b.originalPrice)
+                          : null,
+                    }))
+                  : undefined,
+              }))
+            : undefined,
           availableQty: Number(v.availableQty ?? 0),
           isMRP: v.isMRP ?? 0,
           batches: Array.isArray(v.batches)
@@ -543,8 +766,18 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
             : undefined,
         };
       });
-      if (mapped.length > 0) {
-        const firstSub = mapped[0];
+
+      const hasStock = mapped.some((s) => (s.availableQty ?? 0) > 0);
+      if (mapped.length === 0 || !hasStock) {
+        setProducts((prev) => prev.filter((p) => p.id !== productId));
+        setSubProducts((prev) => ({ ...prev, [productId]: [] }));
+        return [];
+      }
+
+      const sortedMapped = sortSubProducts(mapped);
+
+      if (sortedMapped.length > 0) {
+        const firstSub = sortedMapped[0];
         setProducts((prev) =>
           prev.map((p) =>
             p.id === productId
@@ -561,21 +794,34 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
           ),
         );
       }
-      setSubProducts((prev) => ({ ...prev, [productId]: mapped }));
-      if (mapped.length > 0) {
+
+      setSubProducts((prev) => ({ ...prev, [productId]: sortedMapped }));
+
+      if (sortedMapped.length > 0) {
         const firstSelectable =
-          mode === "EQUIPMENT"
-            ? (mapped.find((s) => s.colorCode && s.colorCode.trim()) ??
-              mapped[0])
-            : mapped[0];
+          mode === "EQUIPMENT" || mode === "COLOR"
+            ? (sortedMapped.find((s) => s.colorCode && s.colorCode.trim()) ??
+              sortedMapped[0])
+            : sortedMapped[0];
         setSelectedSubProductId((prev) => ({
           ...prev,
           [productId]: firstSelectable.id,
         }));
+
+        if (mode === "COLOR") {
+          setSelectedColorIndexMap((prev) => ({
+            ...prev,
+            [productId]: prev[productId] ?? 0,
+          }));
+        }
       }
-      return mapped;
-    } catch (error) {
+      return sortedMapped;
+    } catch (error: any) {
       console.error("Error fetching sub-products:", error);
+      const status = error?.response?.status;
+      if (status === 404 || status === 400) {
+        setProducts((prev) => prev.filter((p) => p.id !== productId));
+      }
       setSubProducts((prev) => ({ ...prev, [productId]: [] }));
       return [];
     } finally {
@@ -629,6 +875,13 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
       setExpandedProductId(null);
     } else {
       setExpandedProductId(productId);
+      const mode = getDisplayMode(product.baseUom);
+      if (mode === "COLOR") {
+        setSelectedColorIndexMap((prev) => ({
+          ...prev,
+          [productId]: prev[productId] ?? 0,
+        }));
+      }
       if (!subProducts[productId]) fetchSubProducts(productId, product.baseUom);
     }
   };
@@ -637,11 +890,13 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
     fetchCategories();
     fetchProducts("All", "");
   }, [branchId]);
+
   useEffect(() => {
     setExpandedProductId(null);
     setLooseStateMap({});
     fetchProducts(selectedFilter, searchQuery);
   }, [selectedFilter]);
+
   useEffect(() => {
     const delay = setTimeout(() => {
       fetchProducts(selectedFilter, searchQuery);
@@ -748,20 +1003,28 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
 
     if (displayMode === "COLOR") {
       const activeSub = subs.find((s) => s.id === activeSubId);
-      const dotColors: string[] =
-        activeSub?.colors && activeSub.colors.length > 0
-          ? activeSub.colors
-          : activeSub?.colorCode
-            ? [activeSub.colorCode]
-            : [];
+      const colorDetails: ColorDetail[] = activeSub?.colorDetails ?? [];
+
+      const selectedColorIdx = selectedColorIndexMap[item.id] ?? 0;
+
+      const activeDetail = colorDetails[selectedColorIdx] ?? colorDetails[0];
+      const displayPrice = activeDetail
+        ? (activeDetail.discountPrice ?? activeDetail.normalPrice)
+        : (activeSub?.discountPrice ?? activeSub?.price ?? 0);
+      const originalPrice = activeDetail?.discountPrice
+        ? activeDetail.normalPrice
+        : null;
+      const dotAvailableQty = activeDetail?.availableQty ?? 0;
+
       return (
         <>
+          {/* ── Quantity chips ── */}
           <View
             style={{
               flexDirection: "row",
               flexWrap: "wrap",
               gap: CHIP_GAP,
-              marginBottom: dotColors.length > 0 ? 10 : 4,
+              marginBottom: colorDetails.length > 0 ? 10 : 4,
             }}
           >
             {subs.map((sub) => {
@@ -769,12 +1032,17 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
               return (
                 <TouchableOpacity
                   key={sub.id}
-                  onPress={() =>
+                  onPress={() => {
                     setSelectedSubProductId((prev) => ({
                       ...prev,
                       [item.id]: sub.id,
-                    }))
-                  }
+                    }));
+
+                    setSelectedColorIndexMap((prev) => ({
+                      ...prev,
+                      [item.id]: 0,
+                    }));
+                  }}
                   activeOpacity={0.7}
                   style={{
                     paddingHorizontal: 18,
@@ -800,7 +1068,9 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
               );
             })}
           </View>
-          {dotColors.length > 0 && (
+
+          {/* ── Color dots — each with its own price ── */}
+          {colorDetails.length > 0 && (
             <View
               style={{
                 flexDirection: "row",
@@ -809,21 +1079,40 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                 marginBottom: 8,
               }}
             >
-              {dotColors.map((rawColor, index) => {
-                const hex = resolveColor(rawColor);
+              {colorDetails.map((cd, index) => {
+                const hex = resolveColor(cd.color);
+                const isWhite = hex.toLowerCase() === "#ffffff";
+                const isSelected = selectedColorIdx === index;
+                const outOfStock = cd.availableQty <= 0;
+
                 return (
-                  <View
-                    key={index}
+                  <TouchableOpacity
+                    key={cd.colorId}
+                    activeOpacity={outOfStock ? 1 : 0.75}
+                    disabled={outOfStock}
+                    onPress={() =>
+                      setSelectedColorIndexMap((prev) => ({
+                        ...prev,
+                        [item.id]: index,
+                      }))
+                    }
                     style={{
                       width: COLOR_DOT_SIZE,
                       height: COLOR_DOT_SIZE,
                       borderRadius: COLOR_DOT_SIZE / 2,
                       backgroundColor: hex,
-                      borderWidth: 1.5,
-                      borderColor:
-                        hex.toLowerCase() === "#ffffff"
+                      opacity: outOfStock ? 0.3 : 1,
+                      borderWidth: isSelected ? 3 : 1.5,
+                      borderColor: isSelected
+                        ? "#FF8000"
+                        : isWhite
                           ? "#E0E0E0"
                           : "transparent",
+                      shadowColor: isSelected ? "#FF8000" : "transparent",
+                      shadowOffset: { width: 0, height: 0 },
+                      shadowOpacity: isSelected ? 0.45 : 0,
+                      shadowRadius: 4,
+                      elevation: isSelected ? 4 : 0,
                     }}
                   />
                 );
@@ -841,12 +1130,12 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
             style={{
               flexDirection: "row",
               flexWrap: "wrap",
-              gap: ROLL_GAP,
               marginBottom: 4,
             }}
           >
-            {visibleSubs.map((sub) => {
+            {visibleSubs.map((sub, index) => {
               const isSelected = activeSubId === sub.id;
+              const isLeftChip = index % 2 === 0;
               return (
                 <TouchableOpacity
                   key={sub.id}
@@ -858,7 +1147,9 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                   }
                   activeOpacity={0.7}
                   style={{
-                    width: ROLL_CHIP_WIDTH,
+                    width: "48%",
+                    marginRight: isLeftChip ? "4%" : 0,
+                    marginBottom: ROLL_GAP,
                     paddingVertical: 9,
                     borderRadius: 20,
                     borderWidth: 1.5,
@@ -1311,19 +1602,14 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
         : subs.find((s) => s.id === activeSubId);
     const cartQty = activeSub ? getCartQty(item.id, activeSub.id) : 0;
 
-    const looseSubtitle =
-      isLoose && item.minQtyRaw
-        ? `${item.minQtyRaw}${item.minQtyUom ? ` ${item.minQtyUom}` : ""} – By ${item.baseUom}`
-            .replace(/\s+/g, " ")
-            .trim()
-        : null;
-
     const previewPrice = item.discountPrice ?? item.normalPrice;
     const previewOriginalPrice = item.discountPrice ? item.normalPrice : null;
     const showImageInHeader = isLoose
       ? looseState === "collapsed"
       : !isExpanded;
-    const showTopRightPlus = isLoose ? looseState === "collapsed" : !isExpanded;
+    const showTopRightPlus = isLoose
+      ? looseState === "collapsed" || looseState === "preview"
+      : !isExpanded;
 
     const looseKey = activeSub ? cartItemKey(item.id, activeSub.id) : "";
     const isLooseSaved = activeSub ? savedToDb.has(looseKey) : false;
@@ -1331,6 +1617,14 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
     const isLooseDbUpdating = dbUpdateLoading[looseKey] ?? false;
 
     const looseShowCartIcon = cartQty > 0 && !isLooseSaved && activeSub != null;
+
+    const loosePillLabel: string | null = (() => {
+      if (item.minQtyRaw) {
+        return `${item.minQtyRaw}${item.minQtyUom ? ` ${item.minQtyUom}` : ""}`;
+      }
+      const firstSubLabel = subProducts[item.id]?.[0]?.label ?? null;
+      return firstSubLabel;
+    })();
 
     return (
       <View
@@ -1438,14 +1732,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
               paddingBottom: CARD_H_PADDING,
             }}
           >
-            <View
-              style={{
-                height: 1,
-                backgroundColor: "#F0F0F0",
-                marginBottom: 12,
-              }}
-            />
-            {looseSubtitle && (
+            {(loosePillLabel || item.baseUom) && (
               <Text
                 style={{
                   fontSize: 13,
@@ -1454,9 +1741,20 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                   marginBottom: 10,
                 }}
               >
-                {looseSubtitle}
+                {loosePillLabel
+                  ? `${loosePillLabel} - By ${item.baseUom}`
+                  : `By ${item.baseUom}`}
               </Text>
             )}
+
+            <View
+              style={{
+                height: 1,
+                backgroundColor: "#F0F0F0",
+                marginBottom: 12,
+              }}
+            />
+
             <View
               style={{
                 flexDirection: "row",
@@ -1732,7 +2030,6 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                               )}
                             </TouchableOpacity>
                           </View>
-                          {/* Cart icon */}
                           {looseShowCartIcon && (
                             <TouchableOpacity
                               style={{
@@ -1804,7 +2101,27 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
             ) : (
               <>
                 {renderChips(item, subs, activeSubId, displayMode)}
-                {activeSub && renderPriceActionRow(item, activeSub, cartQty)}
+                {activeSub &&
+                  (() => {
+                    const mode = getDisplayMode(item.baseUom);
+                    if (mode === "COLOR") {
+                      const cd = getActiveColorDetail(
+                        activeSub,
+                        selectedColorIndexMap[item.id] ?? 0,
+                      );
+                      if (cd) {
+                        const patchedSub: SubProduct = {
+                          ...activeSub,
+                          price: cd.normalPrice,
+                          discountPrice: cd.discountPrice,
+                          availableQty: cd.availableQty,
+                          batches: cd.batches,
+                        };
+                        return renderPriceActionRow(item, patchedSub, cartQty);
+                      }
+                    }
+                    return renderPriceActionRow(item, activeSub, cartQty);
+                  })()}
               </>
             )}
           </View>
@@ -1878,6 +2195,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
               fontWeight: "700",
               color: "#000000",
               marginBottom: 6,
+              textAlign: "center",
             }}
           >
             {shopname}
