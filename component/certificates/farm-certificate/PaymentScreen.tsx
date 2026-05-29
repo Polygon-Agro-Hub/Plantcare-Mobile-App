@@ -283,26 +283,25 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
       enabled
       style={{ flex: 1 }}
     >
+      <CustomHeader
+        title={t("Farms.CreditDebitCard")}
+        navigation={navigation}
+        onBackPress={() => navigation.goBack()}
+      />
       <ScrollView
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ flexGrow: 1 }}
-        className="bg-white"
+        className="bg-white px-6"
       >
-        <CustomHeader
-          title={t("Farms.CreditDebitCard")}
-          navigation={navigation}
-          onBackPress={() => navigation.goBack()}
-        />
-
         {/* Total Amount */}
-        <View className="flex-row mb-6 justify-between items-center mt-2 px-8">
+        <View className="flex-row mb-6 justify-between items-center mt-2">
           <Text className="text-lg">{t("Farms.Total")}</Text>
           <Text className="text-lg font-bold">{formattedPrice}</Text>
         </View>
 
         <View className="border-b border-[#F3F4F6] my-2 mb-4" />
 
-        <View className="px-4">
+        <View className="">
           {/* Card Type Selection */}
           <View className="flex-row justify-center mb-6">
             <View className="flex-row items-center p-2 gap-3">

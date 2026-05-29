@@ -372,17 +372,14 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
 
   return (
     <View className="flex-1 bg-white">
-      
-
       <CustomHeader
         title={t("Govicapital.InvestmentRequest")}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
       />
-
       <ScrollView
         ref={scrollViewRef}
-        className="flex-1 px-5"
+        className="flex-1 px-6"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 20 }}
         nestedScrollEnabled={true}
@@ -595,10 +592,10 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
 
           <TouchableOpacity
             onPress={() => pickImageFromGallery("back")}
-            className="bg-white border border-gray-300 rounded-3xl p-[50px] px-6 py-3 flex-row justify-center items-center"
+            className="bg-white border border-gray-300 rounded-full px-6 h-[50px] flex-row justify-center items-center"
           >
             <FontAwesome6 name="cloud-arrow-up" size={14} color="black" />
-            <Text className="text-gray-900 ml-2 font-medium text-sm">
+            <Text className="text-gray-900 ml-2 font-medium">
               {nicBackImage
                 ? t("Govicapital.ReUploadImage")
                 : t("Govicapital.UploadImage")}
@@ -676,7 +673,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
 
           <TouchableOpacity
             onPress={handleContinue}
-            className={`rounded-3xl h-[50px] justify-center ${isFormValid() ? "bg-black" : "bg-gray-400"}`}
+            className={`rounded-3xl h-[50px] mt-2 justify-center ${isFormValid() ? "bg-black" : "bg-gray-400"}`}
             disabled={!isFormValid()}
             style={{
               shadowColor: "#000000",

@@ -23,6 +23,7 @@ import {
 } from "react-native-responsive-screen";
 import { useTranslation } from "react-i18next";
 import LoadingPage from "@/component/common/LoadingPage";
+import CustomHeader from "../../common/CustomHeader";
 
 interface FarmItem {
   id: number;
@@ -307,7 +308,7 @@ const AddFarmList = () => {
 
     dispatch(setFarmBasicDetails(farmDetailsForRedux));
 
-    navigation.navigate("FromFramEditFarm", { farmId: farm.id });
+    navigation.navigate("EditFarm", { farmId: farm.id, from: "AddFarmList" });
   };
 
   const renderFarmItem = (farm: FarmItem, index: number) => {
@@ -319,7 +320,7 @@ const AddFarmList = () => {
         onPress={() => handleFarmPress(farm)}
         className="bg-white shadow-sm rounded-lg p-4 mb-4 border border-[#F2F2F2]"
       >
-        <View className="flex-row items-start">
+        <View className="flex-row items-center">
           <Image
             source={getImageSource(farm.imageId)}
             className="mr-4  rounded-full "
@@ -327,8 +328,8 @@ const AddFarmList = () => {
             resizeMode="cover"
           />
 
-          <View className="flex-1">
-            <View className="flex-row justify-between items-start">
+          <View className="flex-1 justify-center">
+            <View className="flex-row justify-between items-center">
               <View className="flex-1">
                 <Text className="font-semibold text-base text-black">
                   {farm.farmName}
@@ -363,16 +364,19 @@ const AddFarmList = () => {
 
   return (
     <View className="flex-1 bg-white">
+      <CustomHeader
+        title={t("Farms.MyFarms")}
+        navigation={navigation as any}
+        showBackButton={false}
+        onBackPress={() => navigation.goBack()}
+      />
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
-        className="px-4"
+        className="px-6"
       >
-        <View style={{ paddingVertical: 20 }}>
-          <Text className="text-center font-semibold text-lg text-black">
-            {t("Farms.MyFarms")}
-          </Text>
-          <Text className="text-center text-[#5B5B5B] text-sm mt-2">
+        <View style={{ paddingVertical: 10 }}>
+          <Text className="text-center text-[#5B5B5B] text-sm -mt-4">
             {t("Farms.ClickOnAFarmToEditFarmDetails")}
           </Text>
         </View>

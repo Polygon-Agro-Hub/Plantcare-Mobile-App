@@ -9,7 +9,6 @@ import {
   Modal,
   Image,
   RefreshControl,
-  StatusBar,
   BackHandler,
 } from "react-native";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
@@ -28,6 +27,7 @@ import moment from "moment";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import CustomHeader from "../../common/CustomHeader";
+import LoadingPage from "@/component/common/LoadingPage";
 
 interface QuestionnaireItem {
   id: number;
@@ -99,12 +99,13 @@ function CameraScreen({
   };
 
   return (
-    <CameraView
-      className="flex-1"
-      facing={facing}
-      ref={(ref) => setCamera(ref)}
-      onCameraReady={() => setIsCameraReady(true)}
-    >
+    <View style={{ flex: 1, backgroundColor: "black" }}>
+      <CameraView
+        style={{ flex: 1 }}
+        facing={facing}
+        ref={(ref) => setCamera(ref)}
+        onCameraReady={() => setIsCameraReady(true)}
+      />
       <View
         style={{
           position: "absolute",
@@ -144,7 +145,7 @@ function CameraScreen({
           </Text>
         </TouchableOpacity>
       </View>
-    </CameraView>
+    </View>
   );
 }
 
@@ -663,21 +664,12 @@ const FarmCertificateTask: React.FC = () => {
   );
 
   if (loading) {
-    return (
-      <View className="flex-1 bg-white justify-center items-center">
-        <ActivityIndicator size="large" color="#000" />
-        <Text className="text-gray-500 mt-2">
-          {t("Farms.Loading certificate tasks")}
-        </Text>
-      </View>
-    );
+    return <LoadingPage fullScreen />;
   }
 
   if (!certificateStatus) {
     return (
       <View className="flex-1 bg-white">
-        
-
         <CustomHeader
           title={t("Farms.Certificate Tasks")}
           navigation={navigation as any}
@@ -699,8 +691,6 @@ const FarmCertificateTask: React.FC = () => {
 
   return (
     <View className="flex-1 bg-[#F7F7F7]">
-      
-
       {/* Header */}
       <View className="bg-white">
         <CustomHeader
@@ -710,12 +700,12 @@ const FarmCertificateTask: React.FC = () => {
         />
 
         {/* Certificate Info Card */}
-        <View className="pb-3 mt-[-3%] px-4">
-          <View className="bg-white rounded-2xl pb-3 pl-[12%] shadow-sm">
-            <View className="flex-row items-center mb-3">
+        <View className="pb-3 mt-[-3%] px-6">
+          <View className="bg-white rounded-2xl p-4">
+            <View className="flex-row items-center">
               <Image
                 source={require("../../../assets/images/farms/star-certificate.webp")}
-                className="w-12 h-14"
+                className="w-16 h-20"
                 resizeMode="contain"
               />
               <View className="ml-3 flex-1">
@@ -760,25 +750,25 @@ const FarmCertificateTask: React.FC = () => {
                     );
                   }
                 })()}
+                <Text
+                  className={`mt-1 font-medium ${certificateStatus.isAllCompleted
+                    ? "text-green-700"
+                    : "text-[#FF0000]"
+                    }`}
+                >
+                  {certificateStatus.isAllCompleted
+                    ? t("Farms.AllCompleted")
+                    : t("Farms.Pending")}
+                </Text>
               </View>
             </View>
-            <Text
-              className={`mt-[-4] font-medium ml-[22%] ${certificateStatus.isAllCompleted
-                ? "text-green-700"
-                : "text-[#FF0000]"
-                }`}
-            >
-              {certificateStatus.isAllCompleted
-                ? t("Farms.AllCompleted")
-                : t("Farms.Pending")}
-            </Text>
           </View>
         </View>
       </View>
       {/* Tasks List */}
       <ScrollView
-        className="flex-1 mt-5"
-        contentContainerStyle={{ padding: 16, paddingTop: 0 }}
+        className="flex-1 mt-5 px-6"
+        contentContainerStyle={{ paddingBottom: 32 }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -802,8 +792,7 @@ const FarmCertificateTask: React.FC = () => {
                 shadowColor: "#000000",
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.25,
-                shadowRadius: 4,
-                elevation: 4,
+                shadowRadius: 4
               }}
             >
               <View className="flex-row justify-between items-start mb-3">
@@ -903,7 +892,7 @@ const FarmCertificateTask: React.FC = () => {
 
             <Text className="text-gray-500 text-center mt-2 mb-6">
               {t(
-                "Farms.PleaseTakeAPhotoOfTheCompletedWorkInTheField",
+                "Farms.PleaseTakeAPhotoOfTheCompletedWorkInTheField.",
               )}
             </Text>
 

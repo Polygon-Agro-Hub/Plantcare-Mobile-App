@@ -166,8 +166,8 @@ export type RootStackParamList = {
   };
   FarmCropItem: undefined;
   FarmCropVariety: undefined;
-  EditFarm: { farmId: number };
-  FromFramEditFarm: { farmId: number };
+  EditFarm: { farmId: number; from?: string };
+  FromFramEditFarm: { farmId: number; from?: string };
   AddnewStaff: { farmId: number; regCode: string };
   ManagerAddStaff: { farmId: number };
   EditStaffMember: {

@@ -276,29 +276,25 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
       enabled
       style={{ flex: 1 }}
     >
+      <CustomHeader
+        title={t("Farms.CreditDebitCard")}
+        showBackButton={true}
+        navigation={navigation as any}
+        onBackPress={() => navigation.goBack()}
+      />
       <ScrollView
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ flexGrow: 1 }}
-        className="bg-white"
+        className="bg-white px-6"
       >
-        <CustomHeader
-          title={t("Farms.CreditDebitCard")}
-          showBackButton={true}
-          navigation={navigation as any}
-          onBackPress={() => navigation.goBack()}
-        />
-
-        <View
-          className="flex-row mb-6 justify-between items-center"
-          style={{ paddingHorizontal: wp(8) }}
-        >
+        <View className="flex-row mb-6 justify-between items-center">
           <Text className="text-lg">{t("Farms.Total")}</Text>
           <Text className="text-lg font-bold">Rs.{formattedAmount}</Text>
         </View>
 
         <View className="border-b border-[#F3F4F6] my-2 mb-4" />
 
-        <View style={{ paddingHorizontal: wp(4) }}>
+        <View className="">
           {/* Card Type Selection */}
           <View className="flex-row justify-center mb-6">
             <View className="flex-row items-center p-2 gap-3">
@@ -392,7 +388,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
 
           {/* Pay Now Button */}
           <TouchableOpacity
-            className="bg-black h-[50px] justify-center rounded-full mt-5 mb-24"
+            className="bg-black py-3 rounded-3xl h-[50px] mt-5 mb-24"
             onPress={handlePayNow}
             disabled={isProcessing}
             style={{

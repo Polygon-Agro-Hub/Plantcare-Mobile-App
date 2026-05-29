@@ -34,6 +34,7 @@ import {
 import LottieView from "lottie-react-native";
 import ImageData from "@/assets/jsons/farm/farm-image.json";
 import LoadingPage from "@/component/common/LoadingPage";
+import CustomHeader from "../../common/CustomHeader";
 
 interface CropCardProps {
   id: number;
@@ -724,7 +725,7 @@ const FarmDetailsScreen = () => {
   };
 
   const handleEditFarm = () => {
-    navigation.navigate("EditFarm", { farmId });
+    navigation.navigate("EditFarm", { farmId, from: "FarmDetailsScreen" });
     setShowMenu(false);
   };
 
@@ -809,93 +810,90 @@ const FarmDetailsScreen = () => {
     }
   };
 
+  const rightComponent = (
+    <View className="relative">
+      <TouchableOpacity
+        onPress={() => setShowMenu(!showMenu)}
+        hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+      >
+        <Ionicons name="ellipsis-vertical" size={24} color="#374151" />
+      </TouchableOpacity>
+
+      {showMenu && (
+        <View
+          className="absolute right-0 border border-[#A49B9B] top-[30px] bg-white rounded-lg shadow-lg p-2 z-20 w-24"
+          style={{
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+            elevation: 3,
+          }}
+        >
+          <TouchableOpacity
+            onPress={handleEditFarm}
+            className="py-1 px-2 items-center justify-center"
+            accessibilityLabel="Edit farm"
+            accessibilityRole="button"
+          >
+            <Text className="text-sm text-gray-700 text-center font-medium">
+              {t("Farms.Edit")}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </View>
+  );
+
   if (pageLoading) {
-    return <LoadingPage fullScreen />;
+    return (
+      <View className="flex-1 bg-white">
+        <CustomHeader
+          title=""
+          navigation={navigation as any}
+          showBackButton={true}
+          onBackPress={() =>
+            navigation.navigate("Main", { screen: "MyCultivation" })
+          }
+          rightComponent={rightComponent}
+        />
+        <LoadingPage fullScreen />
+      </View>
+    );
   }
 
   return (
     <View className="flex-1 bg-white">
-      
-
-      <View className="bg-white px-4 py-3 flex-row items-center justify-between">
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate("Main", { screen: "MyCultivation" })
+      <CustomHeader
+        title=""
+        navigation={navigation as any}
+        showBackButton={true}
+        onBackPress={() =>
+          navigation.navigate("Main", { screen: "MyCultivation" })
+        }
+        rightComponent={rightComponent}
+      />
+      <View className="items-center bg-white pb-3">
+        <Image
+          source={getImageSource(farmData?.imageId)}
+          className="w-28 h-28 rounded-full border-2 border-gray-200"
+          resizeMode="cover"
+          accessible
+          accessibilityLabel={
+            farmData?.farmName || farmBasicDetails?.farmName
           }
-          className="p-2 mt-[-50]"
-          accessibilityLabel="Go back"
-          accessibilityRole="button"
-        >
-          <Ionicons
-            name="chevron-back"
-            size={24}
-            color="#374151"
-            style={{
-              paddingHorizontal: wp(3),
-              paddingVertical: hp(1.5),
-              backgroundColor: "#F6F6F680",
-              borderRadius: 50,
-            }}
-          />
-        </TouchableOpacity>
-
-        {showMenu && (
-          <View
-            className="absolute right-0 border border-[#A49B9B] top-full mt-[-45] mr-8 bg-white rounded-lg shadow-lg p-2 z-10"
-            style={{
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.1,
-              shadowRadius: 4,
-              elevation: 3,
-            }}
-          >
-            <TouchableOpacity
-              onPress={handleEditFarm}
-              className="px-4 items-center justify-center"
-              accessibilityLabel="Edit farm"
-              accessibilityRole="button"
-            >
-              <Text className="text-sm text-gray-700 text-center">
-                {t("Farms.Edit")}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
-
-        <View className="items-center bg-white">
-          <Image
-            source={getImageSource(farmData?.imageId)}
-            className="w-20 h-20 rounded-full border-2 border-gray-200"
-            resizeMode="cover"
-            accessible
-            accessibilityLabel={
-              farmData?.farmName || farmBasicDetails?.farmName
-            }
-          />
-        </View>
-
-        <View className="relative bg-white">
-          <TouchableOpacity
-            onPress={() => setShowMenu(!showMenu)}
-            className="p-2 mt-[-50]"
-            accessibilityLabel="Open menu"
-            accessibilityRole="button"
-          >
-            <Ionicons name="ellipsis-vertical" size={24} color="#374151" />
-          </TouchableOpacity>
-        </View>
+        />
       </View>
 
       <ScrollView
-        className="flex-1"
+        className="flex-1 px-6 bg-white"
         contentContainerStyle={{ paddingBottom: 100 }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         showsVerticalScrollIndicator={true}
       >
-        <View className="items-center px-4 py-4">
+        <View className="items-center py-4 w-full">
           <View className="flex-row items-center">
             <Text className="font-bold text-xl text-gray-900 mr-3">
               {farmData?.farmName || farmBasicDetails?.farmName}
@@ -933,15 +931,16 @@ const FarmDetailsScreen = () => {
           </View>
         </View>
 
-        <View className="flex-row justify-center mt-5 gap-5 px-4">
+        <View className="flex-row justify-between mt-5 w-full">
           <TouchableOpacity
-            className="bg-white p-4 rounded-xl justify-center items-center w-36 h-40 border border-[#445F4A33]"
+            className="bg-white p-4 rounded-xl justify-center items-center border border-[#445F4A33]"
             style={{
               shadowColor: "#000",
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: 0.1,
               shadowRadius: 4,
               elevation: 3,
+              width: "48%",
             }}
             accessibilityLabel="View managers"
             accessibilityRole="button"
@@ -959,25 +958,27 @@ const FarmDetailsScreen = () => {
               }
             }}
           >
-            <View className="w-12 h-12 rounded-full items-center justify-center mb-2">
+            <View className="w-24 h-24 rounded-lg justify-center items-center mb-3 overflow-hidden">
               <Image
-                className="w-[75px] h-[75px]"
                 source={require("../../../assets/images/farms/managers-image.webp")}
+                style={{ width: "100%", height: "100%" }}
+                resizeMode="contain"
               />
             </View>
-            <Text className="text-black text-sm font-medium mt-4">
+            <Text className="text-sm font-medium text-gray-800 text-center">
               {t("Farms.Members")}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="bg-white p-4 rounded-xl justify-center items-center w-36 h-40 border border-[#445F4A33]"
+            className="bg-white p-4 rounded-xl justify-center items-center border border-[#445F4A33]"
             style={{
               shadowColor: "#000",
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: 0.1,
               shadowRadius: 4,
               elevation: 3,
+              width: "48%",
             }}
             accessibilityLabel="View farm assets"
             accessibilityRole="button"
@@ -988,20 +989,21 @@ const FarmDetailsScreen = () => {
               })
             }
           >
-            <View className="w-12 h-12 bg-purple-600 rounded-full items-center justify-center mb-2">
+            <View className="w-24 h-24 rounded-lg justify-center items-center mb-3 overflow-hidden">
               <Image
-                className="w-[75px] h-[75px]"
                 source={require("../../../assets/images/farms/farm-assets.webp")}
+                style={{ width: "100%", height: "100%" }}
+                resizeMode="contain"
               />
             </View>
-            <Text className="text-black text-sm font-medium mt-4">
+            <Text className="text-sm font-medium text-gray-800 text-center">
               {t("Farms.FarmAssets")}
             </Text>
           </TouchableOpacity>
         </View>
 
         {certificateStatuses.length > 0 && (
-          <View className="mt-6 px-7">
+          <View className="mt-6 w-full px-0">
             {certificateStatuses.map((certificate, index) => {
               const getCertificateName = () => {
                 if (language === "si" && certificate.srtNameSinhala)
@@ -1024,11 +1026,11 @@ const FarmDetailsScreen = () => {
                     elevation: 4,
                   }}
                 >
-                  <View className="flex-row items-start justify-between">
-                    <View className="flex-row items-start flex-1">
+                  <View className="flex-row items-center justify-between">
+                    <View className="flex-row items-center flex-1">
                       <Image
                         source={require("../../../assets/images/farms/star-certificate.webp")}
-                        className="w-12 h-12 mt-1"
+                        className="w-24 h-24"
                         resizeMode="contain"
                       />
                       <View className="ml-3 flex-1">
@@ -1080,7 +1082,7 @@ const FarmDetailsScreen = () => {
                         </Text>
                       </View>
                     </View>
-                    <View className="ml-2 mt-1 mt-6">
+                    <View className="ml-2">
                       <Ionicons
                         name="chevron-forward"
                         size={20}
@@ -1094,7 +1096,7 @@ const FarmDetailsScreen = () => {
           </View>
         )}
 
-        <View className="mt-6 px-4">
+        <View className="mt-6 w-full px-0">
           {crops.length === 0 ? (
             <View className="justify-center items-center p-4 min-h-[300px] -mt-8">
               <LottieView
@@ -1144,9 +1146,9 @@ const FarmDetailsScreen = () => {
         </View>
       </ScrollView>
 
-      <View className="mb-[8%]">
+      <View>
         <TouchableOpacity
-          className="absolute bottom-12 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
+          className="absolute bottom-20 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
           onPress={() => {
             if (membership.toLowerCase() === "basic" && cropCount >= 3) {
               Alert.alert(
@@ -1288,7 +1290,7 @@ const FarmDetailsScreen = () => {
 
       {showMenu && (
         <TouchableOpacity
-          className="absolute inset-0 bg-black/20"
+          className="absolute inset-0"
           onPress={() => setShowMenu(false)}
           activeOpacity={1}
           accessibilityLabel="Close menu"

@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
 import { LinearGradient } from "expo-linear-gradient";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import { setPackageType, setPackagePrice } from "../../../store/packageSlice";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
+import CustomHeader from "../../common/CustomHeader";
 
 type UnLockProRenewNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -72,37 +68,31 @@ const UnLockProRenew: React.FC<UnLockProRenewProps> = ({ navigation }) => {
   };
 
   return (
-    <View className="f bg-white">
+    <View className="flex-1 bg-white">
+      <CustomHeader
+        title=""
+        navigation={navigation}
+        showBackButton={true}
+        onBackPress={handleBackNavigation}
+      />
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
         className="bg-white"
       >
-        <View
-          className="flex-row items-center justify-between mb-2"
-          style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-        >
-          <TouchableOpacity
-            onPress={handleBackNavigation}
-            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-          >
-            <AntDesign name="left" size={24} color="#000502" />
-          </TouchableOpacity>
-        </View>
-
-        <View className="flex-1 justify-center items-center p-4">
+        <View className="flex-1 justify-center items-center p-6 w-full">
           <Image
             source={require("../../../assets/images/farms/payment-plan.webp")}
             resizeMode="contain"
             style={{ width: "100%", height: 250 }}
           />
 
-          <View className="text-center justify-center items-center mt-6">
+          <View className="text-center justify-center items-center mt-6 w-full">
             <View className="flex-row items-center justify-center gap-2">
               <Text className="text-xl font-bold text-[#E5B323]">
                 {t("Farms.Upgrade TO PRO")}
               </Text>
-              <Text>{t("Farms.Pro")}</Text>
+              <Text> {t("Farms.Pro")}</Text>
             </View>
 
             <View className="mt-6 items-center">
@@ -196,21 +186,23 @@ const UnLockProRenew: React.FC<UnLockProRenewProps> = ({ navigation }) => {
               </View>
             </View>
 
-            <LinearGradient
-              className="w-64 mt-8 py-3 rounded-full shadow-lg shadow-black mb-4"
-              colors={["#FDCF3F", "#FEE969"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-            >
-              <TouchableOpacity
-                className="text-center justify-center items-center"
-                onPress={handleSubmit}
+            <View className="w-full px-6 mt-8">
+              <LinearGradient
+                className="w-full rounded-3xl h-[50px] shadow-lg elevation-6 overflow-hidden"
+                colors={["#FDCF3F", "#FEE969"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
               >
-                <Text className="text-[#7E5E00] text-lg font-semibold">
-                  {packageType}
-                </Text>
-              </TouchableOpacity>
-            </LinearGradient>
+                <TouchableOpacity
+                  className="w-full h-full justify-center items-center"
+                  onPress={handleSubmit}
+                >
+                  <Text className="text-[#7E5E00] text-lg font-semibold text-center">
+                    {packageType}
+                  </Text>
+                </TouchableOpacity>
+              </LinearGradient>
+            </View>
 
             <Text className="text-lg font-semibold text-black text-center mt-6">
               {t("Farms.WhenShouldIBeBilled")}
@@ -223,7 +215,7 @@ const UnLockProRenew: React.FC<UnLockProRenewProps> = ({ navigation }) => {
               </Text>
               <Text className="text-sm text-black text-center">
                 {t(
-                  "Farms.We'll send you a payment reminder 14 days before your next billing date to ensure you have time to prepare.",
+                  "Farms.WellSendYouAPaymentReminder14DaysBeforeYourNextBillingDateToEnsureYouHaveTimeToPrepare",
                 )}
               </Text>
             </View>

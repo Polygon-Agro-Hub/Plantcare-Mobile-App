@@ -22,10 +22,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import ImageData from "@/assets/jsons/farm/farm-image.json";
 import districtData from "@/assets/jsons/common/district.json";
 import { RootStackParamList } from "../../types/types";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
+import CustomHeader from "../../common/CustomHeader";
 import {
   setFarmBasicDetails,
   selectFarmBasicDetails,
@@ -232,74 +229,64 @@ const AddNewFarmBasicDetails: React.FC = () => {
       behavior={Platform.OS === "ios" ? "padding" : "padding"}
     >
       <View className="flex-1 bg-white">
+        <CustomHeader
+          title={t("Farms.AddNewFarm")}
+          navigation={navigation as any}
+          showBackButton={false}
+          onBackPress={() => navigation.goBack()}
+          titleSize={i18n.language === "si" ? 14 : 20}
+          rightComponent={
+            <View className={`${membershipDisplay.bgColor} px-2 py-1 rounded-lg`}>
+              <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
+                {t(`Farms.${membershipDisplay.text}`)}
+              </Text>
+            </View>
+          }
+        />
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
-          className="px-4"
+          className="px-6"
           nestedScrollEnabled={true}
           keyboardShouldPersistTaps="handled"
         >
-          
-
-          <View style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
-            <View className="flex-row items-center justify-center mb-6 relative">
-              <Text
-                className="font-bold text-lg text-center"
-                style={[
-                  i18n.language === "si" ? { fontSize: 14 } : { fontSize: 20 },
-                ]}
-              >
-                {t("Farms.AddNewFarm")}
-              </Text>
-              <View
-                className={`absolute right-[-5%] ${membershipDisplay.bgColor} px-2 py-1 rounded-lg`}
-              >
-                <Text
-                  className={`${membershipDisplay.textColor} text-xs font-medium`}
-                >
-                  {t(`Farms.${membershipDisplay.text}`)}
-                </Text>
-              </View>
+          <View className="flex-row items-center justify-center mb-8 mt-6">
+            <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-white rounded-full flex items-center justify-center">
+              <Image
+                className="w-[10px] h-[13px] bg-white rounded-full"
+                source={require("../../../assets/images/farms/location.webp")}
+              />
             </View>
-
-            <View className="flex-row items-center justify-center mb-8">
-              <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-white rounded-full flex items-center justify-center">
-                <Image
-                  className="w-[10px] h-[13px] bg-white rounded-full"
-                  source={require("../../../assets/images/farms/location.webp")}
-                />
-              </View>
-              <View className="w-24 h-0.5 bg-[#C6C6C6] mx-2" />
-              <View className="w-[29px] h-[29px] border border-[#C6C6C6] rounded-full flex items-center justify-center">
-                <Image
-                  className="w-[11px] h-[12px] bg-white"
-                  source={require("../../../assets/images/farms/user.webp")}
-                />
-              </View>
-              <View className="w-24 h-0.5 bg-[#C6C6C6] mx-2" />
-              <View className="w-[29px] h-[29px] border border-[#C6C6C6] rounded-full flex items-center justify-center">
-                <Image
-                  className="w-[13.125px] h-[15px] bg-white rounded-full"
-                  source={require("../../../assets/images/farms/checks.webp")}
-                />
-              </View>
+            <View className="w-24 h-0.5 bg-[#C6C6C6] mx-2" />
+            <View className="w-[29px] h-[29px] border border-[#C6C6C6] rounded-full flex items-center justify-center">
+              <Image
+                className="w-[11px] h-[12px] bg-white"
+                source={require("../../../assets/images/farms/user.webp")}
+              />
             </View>
-
-            <View className="items-center mb-8">
-              <TouchableOpacity onPress={() => setModalVisible(true)}>
-                <Image
-                  source={getImageSource(selectedImageId)}
-                  className="w-24 h-24 rounded-full"
-                  resizeMode="cover"
-                />
-                <View className="w-7 h-7 bg-black rounded-full absolute bottom-0 right-0 items-center justify-center">
-                  <Image
-                    source={require("../../../assets/images/farms/pen.webp")}
-                    className="w-3 h-3"
-                  />
-                </View>
-              </TouchableOpacity>
+            <View className="w-24 h-0.5 bg-[#C6C6C6] mx-2" />
+            <View className="w-[29px] h-[29px] border border-[#C6C6C6] rounded-full flex items-center justify-center">
+              <Image
+                className="w-[13.125px] h-[15px] bg-white rounded-full"
+                source={require("../../../assets/images/farms/checks.webp")}
+              />
             </View>
+          </View>
+
+          <View className="items-center mb-8">
+            <TouchableOpacity onPress={() => setModalVisible(true)}>
+              <Image
+                source={getImageSource(selectedImageId)}
+                className="w-24 h-24 rounded-full"
+                resizeMode="cover"
+              />
+              <View className="w-7 h-7 bg-black rounded-full absolute bottom-0 right-0 items-center justify-center">
+                <Image
+                  source={require("../../../assets/images/farms/pen.webp")}
+                  className="w-3 h-3"
+                />
+              </View>
+            </TouchableOpacity>
           </View>
 
           <View className="gap-6">
@@ -437,17 +424,11 @@ const AddNewFarmBasicDetails: React.FC = () => {
             </View>
           </View>
 
-          <View className="mt-8 mb-[30%] items-center justify-center">
+          <View className="mt-8 mb-[30%] items-center justify-center w-full px-6">
             <TouchableOpacity
-              className="bg-black  rounded-3xl h-[50px] w-2/3 justify-center"
+              activeOpacity={0.8}
+              className="w-full rounded-3xl h-[50px] justify-center items-center bg-[#353535] shadow-lg elevation-6"
               onPress={handleContinue}
-              style={{
-                shadowColor: "#000000",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.25,
-                shadowRadius: 4,
-                elevation: 4,
-              }}
             >
               <Text className="text-white text-center font-semibold text-lg">
                 {t("Main.Continue")}

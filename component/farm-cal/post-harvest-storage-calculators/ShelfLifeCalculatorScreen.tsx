@@ -121,7 +121,7 @@ const ShelfLifeCalculatorScreen: React.FC<ShelfLifeProps> = ({
       />
 
       <ScrollView
-        className="flex-1 px-4"
+        className="flex-1 px-6"
         contentContainerStyle={{
           paddingBottom: 40,
         }}

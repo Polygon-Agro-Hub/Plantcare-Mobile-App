@@ -18,6 +18,7 @@ import Svg, { Ellipse, Defs, LinearGradient, Stop } from "react-native-svg";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import { RouteProp } from "@react-navigation/native";
+import CustomHeader from "../common/CustomHeader";
 
 type InvestmentAndLoanNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -57,80 +58,72 @@ const InvestmentAndLoan: React.FC<InvestmentAndLoanProps> = ({
 
   return (
     <View className="flex-1 bg-white">
-      
-
-      <View className="relative" style={{ height: hp(35) }}>
-        <View style={{ position: "absolute" }} pointerEvents="none">
-          <Svg height={hp(50)} width={wp(100)}>
-            <Defs>
-              <LinearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
-                <Stop offset="0" stopColor="#FFFFFF" stopOpacity="1" />
-                <Stop offset="1" stopColor="#72FFF5" stopOpacity="1" />
-              </LinearGradient>
-            </Defs>
-            <Ellipse
-              cx={wp(50)}
-              cy={hp(14)}
-              rx={wp(80)}
-              ry={hp(30)}
-              fill="url(#grad)"
-            />
-          </Svg>
-        </View>
-
-        <View
-          className="absolute items-center justify-center"
-          style={{
-            width: wp(100),
-            bottom: hp(-9),
-          }}
-          pointerEvents="none"
-        >
-          <Image
-            source={require("../../assets/images/govi-capital/investmentuser.webp")}
-            style={{
-              width: wp(100),
-              height: hp(45),
-            }}
-            resizeMode="contain"
+      {/* Background Gradient - Top Half */}
+      <View className="absolute top-0 w-full" style={{ height: hp(50) }} pointerEvents="none">
+        <Svg height="100%" width={wp(100)}>
+          <Defs>
+            <LinearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
+              <Stop offset="0" stopColor="#FFFFFF" stopOpacity="1" />
+              <Stop offset="1" stopColor="#72FFF5" stopOpacity="1" />
+            </LinearGradient>
+          </Defs>
+          <Ellipse
+            cx={wp(50)}
+            cy={hp(14)}
+            rx={wp(80)}
+            ry={hp(30)}
+            fill="url(#grad)"
           />
-        </View>
-
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate("Main", { screen: "GoViCapitalRequests" })
-          }
-          className="absolute top-3 left-4 w-10 h-10 items-center justify-center "
-          style={{ zIndex: 10 }}
-          activeOpacity={0.7}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <MaterialCommunityIcons
-            name="chevron-left"
-            size={28}
-            color="#374151"
-          />
-        </TouchableOpacity>
+        </Svg>
       </View>
 
-      <View className="px-6 mt-[25%]" >
+      {/* Custom Header */}
+      <CustomHeader
+        title=""
+        navigation={navigation}
+        showBackButton={true}
+        onBackPress={() =>
+          navigation.navigate("Main", { screen: "GoViCapitalRequests" })
+        }
+        transparent={true}
+        backButtonStyle={{
+          backgroundColor: "rgba(255, 255, 255, 0.8)",
+          borderRadius: 50,
+          padding: 10,
+        }}
+      />
+
+      {/* Top Section with Image - First Half */}
+      <View className="w-full items-center justify-center" style={{ height: hp(40) }}>
+        <Image
+          source={require("../../assets/images/govi-capital/investmentuser.webp")}
+          className="w-full h-96"
+          resizeMode="contain"
+        />
+      </View>
+
+      {/* Bottom Section - Second Half */}
+      <View className="flex-1 px-6 pt-8" style={{ backgroundColor: "#FFFFFF" }}>
         <View className="items-center mb-8">
-          <Text className="text-2xl font-semibold text-[#000000] mb-3">
+          <Text className="text-2xl font-semibold text-[#000000] mb-3 text-center">
             {t("Govicapital.HowCanWeHelpYou")}
           </Text>
-          <Text className="text-sm text-[#4B6B87] text-center leading-5">
-            {t("Govicapital.GoviCapitalProvidesYouWithCultivationInvestmentsAndLoans")}
+          <Text className="text-sm text-[#4B6B87] text-center leading-5 px-4">
+            {t(
+              "Govicapital.GoviCapitalProvidesYouWithCultivationInvestmentsAndLoans",
+            )}
           </Text>
         </View>
 
-        <View className="flex-row gap-4">
+        {/* Buttons Container */}
+        <View className="flex-row gap-4 justify-center px-2">
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("InvestmentRequestForm");
             }}
-            className="flex-1 bg-white rounded-2xl p-6 items-center justify-between"
+            className="flex-1 bg-white rounded-2xl py-6 px-4 items-center justify-between"
             style={{
-              minHeight: hp(18),
+              minHeight: 150,
               shadowColor: "#000",
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: 0.1,
@@ -142,10 +135,7 @@ const InvestmentAndLoan: React.FC<InvestmentAndLoanProps> = ({
             <Text className="text-center text-gray-800 font-medium text-base leading-6 mb-4">
               {t("Govicapital.INeedAAnInvestment")}
             </Text>
-            <View
-              className="w-12 h-12 rounded-full items-center justify-center"
-              style={{ backgroundColor: "#0FC7B2" }}
-            >
+            <View className="w-12 h-12 rounded-full items-center justify-center bg-[#0FC7B2]">
               <MaterialCommunityIcons
                 name="arrow-right"
                 size={20}
@@ -155,12 +145,9 @@ const InvestmentAndLoan: React.FC<InvestmentAndLoanProps> = ({
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => {
-              // Navigate to loan screen
-            }}
-            className="flex-1 bg-white rounded-2xl p-6 items-center justify-between"
+            className="flex-1 bg-white rounded-2xl py-6 px-4 items-center justify-between"
             style={{
-              minHeight: hp(18),
+              minHeight: 150,
               shadowColor: "#000",
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: 0.1,
@@ -172,10 +159,7 @@ const InvestmentAndLoan: React.FC<InvestmentAndLoanProps> = ({
             <Text className="text-center text-gray-800 font-medium text-base leading-6 mb-4">
               {t("Govicapital.INeedALoan")}
             </Text>
-            <View
-              className="w-12 h-12 rounded-full items-center justify-center"
-              style={{ backgroundColor: "#0FC7B2" }}
-            >
+            <View className="w-12 h-12 rounded-full items-center justify-center bg-[#0FC7B2]">
               <MaterialCommunityIcons
                 name="arrow-right"
                 size={20}

@@ -346,16 +346,13 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
 
   return (
     <View className="flex-1 bg-white">
-      
-
       <CustomHeader
         title={t("Govicapital.InvestmentRequest")}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
       />
-
       <ScrollView
-        className="flex-1 px-4"
+        className="flex-1 px-6"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 20 }}
       >

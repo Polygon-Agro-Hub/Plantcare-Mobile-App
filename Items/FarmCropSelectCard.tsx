@@ -29,6 +29,7 @@ const FarmCropSelectCard: React.FC<FarmCropSelectCardProps> = ({
   lang,
   setSelectedCrop,
   onCropSelect,
+  isAllowed,
 }) => {
   const bufferToBase64 = (buffer: number[]): string => {
     const uint8Array = new Uint8Array(buffer);
@@ -49,46 +50,46 @@ const FarmCropSelectCard: React.FC<FarmCropSelectCardProps> = ({
   };
 
   return (
-    <View className="mt-5 pl-6 pr-6 ">
-      <TouchableOpacity onPress={handlePress} style={{ opacity: 1 }}>
-        <View
-          className="flex justify-center items-center w-[100px] h-[115px] rounded-[10px] shadow-l p-1"
-          style={{
-            backgroundColor: item.bgColor,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 6 },
-            shadowOpacity: 0.25,
-            shadowRadius: 6,
-            elevation: 8,
-            opacity: 1,
-          }}
+    <TouchableOpacity
+      onPress={handlePress}
+      activeOpacity={0.7}
+      style={{ width: "100%", height: "100%" }}
+      disabled={!isAllowed}
+    >
+      <View
+        className="flex-1 justify-center items-center rounded-2xl p-2"
+        style={{
+          backgroundColor: item.bgColor || "#F3F4F6",
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.15,
+          shadowRadius: 4,
+          elevation: 5,
+          opacity: isAllowed ? 1 : 0.5,
+        }}
+      >
+        <Image
+          source={
+            typeof item.image === "string"
+              ? { uri: item.image }
+              : { uri: formatImage(item.image) }
+          }
+          resizeMode="contain"
+          style={{ width: "85%", height: "55%", marginBottom: 6 }}
+        />
+        <Text
+          className="text-center font-bold text-[12px] text-gray-800"
+          numberOfLines={2}
+          style={{ width: "95%", lineHeight: 15 }}
         >
-          <Image
-            className=""
-            source={
-              typeof item.image === "string"
-                ? { uri: item.image }
-                : { uri: formatImage(item.image) }
-            }
-            resizeMode="contain"
-            style={{ width: 80, height: 60 }}
-          />
-          <Text className="text-center text-[14px]">
-            {lang === "si"
-              ? item.cropNameSinhala.length > 20
-                ? item.cropNameSinhala.slice(0, 30) + "..."
-                : item.cropNameSinhala
-              : lang === "ta"
-                ? item.cropNameTamil.length > 20
-                  ? item.cropNameTamil.slice(0, 30) + "..."
-                  : item.cropNameTamil
-                : item.cropNameEnglish.length > 20
-                  ? item.cropNameEnglish.slice(0, 30) + "..."
-                  : item.cropNameEnglish}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    </View>
+          {lang === "si"
+            ? item.cropNameSinhala
+            : lang === "ta"
+              ? item.cropNameTamil
+              : item.cropNameEnglish}
+        </Text>
+      </View>
+    </TouchableOpacity>
   );
 };
 

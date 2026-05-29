@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { Alert, BackHandler, StatusBar, Text, TextInput } from "react-native";
+import {
+  Alert,
+  BackHandler,
+  StatusBar,
+  Text,
+  TextInput,
+  Platform,
+} from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -9,6 +16,7 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import NavigationBar from "@/Items/NavigationBar";
+import * as ExpoNavigationBar from "expo-navigation-bar";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider, useSelector } from "react-redux";
@@ -74,7 +82,6 @@ import AddNewCrop from "@/component/farms/crop-cultivation/AddNewCrop";
 import FarmCropEnroll from "@/component/farms/crop-cultivation/FarmCropEnroll";
 import FarmSelectCrop from "@/component/farms/crop-cultivation/FarmSelectCrop";
 import EditFarm from "@/component/farms/edit-farm/EditFarm";
-import FromFramEditFarm from "@/component/farms/edit-farm/FromFramEditFarm";
 import AddnewStaff from "@/component/farms/members-screen/AddnewStaff";
 import EditStaffMember from "@/component/farms/members-screen/EditStaffMember";
 import PublicForumPostEdit from "@/component/public-forum/PublicForumPostEdit";
@@ -156,7 +163,6 @@ import SoilGridsScreen from "@/component/soil-grids/SoilGridsScreen";
 import CartScreen from "@/component/govi-shop/CartScreen";
 
 LogBox.ignoreAllLogs(true);
-
 
 (Text as any).defaultProps = {
   ...(Text as any).defaultProps,
@@ -250,7 +256,7 @@ function MainTabNavigator() {
       <Tab.Screen name="EditManagersScreen" component={EditManagersScreen} />
       <Tab.Screen name="AddnewStaff" component={AddnewStaff as any} />
       <Tab.Screen name="EditStaffMember" component={EditStaffMember as any} />
-      <Tab.Screen name="FromFramEditFarm" component={FromFramEditFarm as any} />
+      <Tab.Screen name="FromFramEditFarm" component={EditFarm as any} />
       <Tab.Screen name="AddNewCrop" component={AddNewCrop} />
       <Tab.Screen name="AssertsFixedView" component={AssertsFixedView as any} />
       <Tab.Screen
@@ -284,6 +290,16 @@ function AppContent() {
   }, []);
 
   useEffect(() => {
+    async function setupNavBar() {
+      if (Platform.OS === "android") {
+        await ExpoNavigationBar.setStyle("light");
+      }
+    }
+
+    setupNavBar();
+  }, []);
+
+  useEffect(() => {
     const unsubscribeNetInfo = NetInfo.addEventListener((state) => {
       if (!state.isConnected && !isOfflineAlertShown) {
         setIsOfflineAlertShown(true);
@@ -313,7 +329,8 @@ function AppContent() {
         return false;
       }
 
-      const currentRouteName = (navigationRef.getCurrentRoute() as any)?.name ?? "";
+      const currentRouteName =
+        (navigationRef.getCurrentRoute() as any)?.name ?? "";
 
       if (currentRouteName === "Dashboard") {
         BackHandler.exitApp();
@@ -334,7 +351,7 @@ function AppContent() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#fff" }}>
-     <StatusBar backgroundColor="#fff" barStyle="dark-content" />
+      <StatusBar backgroundColor="#fff" barStyle="dark-content" />
       <SafeAreaView
         style={{
           flex: 1,
@@ -351,10 +368,7 @@ function AppContent() {
             <Stack.Screen name="Signup" component={Signup} />
             <Stack.Screen name="Verify" component={Verify} />
             <Stack.Screen name="OTPE" component={Otpverification} />
-            <Stack.Screen
-              name="OTPEOLDUSER"
-              component={Otpverification}
-            />
+            <Stack.Screen name="OTPEOLDUSER" component={Otpverification} />
             <Stack.Screen name="SelectCrop" component={SelectCrop as any} />
             <Stack.Screen name="EngProfile" component={UserProfile as any} />
             <Stack.Screen name="UpdateAsset" component={UpdateAsset as any} />
@@ -669,10 +683,7 @@ function AppContent() {
               name="GoviShopCartScreen"
               component={GoviShopCartScreen as any}
             />
-            <Stack.Screen
-              name="CartScreen"
-              component={CartScreen as any}
-            />
+            <Stack.Screen name="CartScreen" component={CartScreen as any} />
             <Stack.Screen
               name="GoviShopProfileScreen"
               component={GoviShopProfileScreen as any}

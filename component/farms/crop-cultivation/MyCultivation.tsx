@@ -24,6 +24,7 @@ import {
 } from "react-native-responsive-screen";
 import { Entypo } from "@expo/vector-icons";
 import LoadingPage from "@/component/common/LoadingPage";
+import CustomHeader from "../../common/CustomHeader";
 
 interface FarmItem {
   id: number;
@@ -332,7 +333,7 @@ const MyCultivation = () => {
         onPress={() => handleFarmPress(farm)}
         disabled={membershipDisplay.isBlocked}
       >
-        <View className="flex-row items-start">
+        <View className="flex-row items-center">
           <Image
             source={getImageSource(farm.imageId)}
             className="justify-center rounded-full mr-4"
@@ -340,7 +341,7 @@ const MyCultivation = () => {
             style={{ width: wp(20), height: wp(20) }}
           />
           <View className="flex-1">
-            <View className="flex-row justify-between items-start mt-2">
+            <View className="flex-row justify-between items-center">
               <View>
                 <Text className="font-semibold text-base">{farm.farmName}</Text>
                 <Text className="text-gray-600 text-sm">
@@ -364,11 +365,15 @@ const MyCultivation = () => {
 
   return (
     <View className="flex-1 bg-white">
+      <CustomHeader
+        title={t("Farms.MyCultivation")}
+        showBackButton={false}
+      />
       <ScrollView
         key={refreshKey}
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
-        className="px-6"
+        className="px-6 bg-white"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -378,11 +383,8 @@ const MyCultivation = () => {
           />
         }
       >
-        <View style={{ paddingVertical: 20 }}>
-          <Text className="text-center font-semibold text-lg">
-            {t("Farms.MyCultivation")}
-          </Text>
-          <Text className="text-center text-[#5B5B5B] text-sm mt-2">
+        <View style={{ paddingVertical: 10 }}>
+          <Text className="text-center text-[#5B5B5B] text-sm -mt-4">
             {t("Farms.SelectAFarmToManageYourCultivationAndAssets")}
           </Text>
         </View>

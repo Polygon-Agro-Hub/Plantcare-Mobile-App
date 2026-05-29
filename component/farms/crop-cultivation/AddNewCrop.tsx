@@ -10,7 +10,6 @@ import {
   BackHandler,
   Alert,
 } from "react-native";
-import { StatusBar } from "expo-status-bar";
 import axios from "axios";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
@@ -518,8 +517,6 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
 
   return (
     <View className="flex-1 bg-white">
-      
-
       <CustomHeader
         title={t("NewCrop.SelectANewCrop")}
         navigation={navigation}
@@ -531,22 +528,23 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
         }
       />
 
-      <View className="flex-row mt-6 items-center ml-5 mr-5">
+      <View className="px-6 mt-6 w-full">
         <TouchableOpacity
           onPress={handlePress}
-          className="flex-row justify-center"
+          activeOpacity={1}
+          className="w-full"
         >
-          <View className="flex-row items-center bg-gray-100 rounded-3xl h-[50px] p-1 w-full max-w-md">
-            <EvilIcons name="search" size={26} color="gray" />
+          <View className="flex-row items-center bg-gray-100 rounded-3xl h-[50px] px-4 w-full">
             <TextInput
               ref={inputRef}
-              className="ml-2 mr-6 text-lg flex-1"
+              className="text-base flex-1 h-full mr-2 text-black"
               placeholder={t("NewCrop.SearchCrop")}
               placeholderTextColor="gray"
               style={{ textAlignVertical: "center" }}
               value={searchQuery}
               onChangeText={setSearchQuery}
             />
+            <EvilIcons name="search" size={28} color="gray" />
           </View>
         </TouchableOpacity>
       </View>
@@ -672,25 +670,21 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
           {selectedCrop === false && (
             <>
               {filteredCrops && filteredCrops.length > 0 ? (
-                <ScrollView
-                  contentContainerStyle={{ flexGrow: 1, zIndex: 1 }}
+                <FarmCropItem
+                  data={filteredCrops}
+                  navigation={navigation}
+                  lang={language}
+                  selectedCrop={selectedCrop}
+                  setSelectedCrop={setSelectedCrop}
+                  onCropSelect={handleCropSelect}
+                  allowedCropIds={allowedCropIds}
                   refreshControl={
                     <RefreshControl
                       refreshing={refreshing}
                       onRefresh={handleRefresh}
                     />
                   }
-                >
-                  <FarmCropItem
-                    data={filteredCrops}
-                    navigation={navigation}
-                    lang={language}
-                    selectedCrop={selectedCrop}
-                    setSelectedCrop={setSelectedCrop}
-                    onCropSelect={handleCropSelect}
-                    allowedCropIds={allowedCropIds}
-                  />
-                </ScrollView>
+                />
               ) : (
                 <View
                   style={{
@@ -743,15 +737,13 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
               ) : (
                 <>
                   {filterdVareity && filterdVareity.length > 0 ? (
-                    <ScrollView>
-                      <CropVariety
-                        data={filterdVareity}
-                        navigation={navigation as any}
-                        lang={language}
-                        selectedCrop={selectedCrop}
-                        farmId={farmId}
-                      />
-                    </ScrollView>
+                    <CropVariety
+                      data={filterdVareity}
+                      navigation={navigation as any}
+                      lang={language}
+                      selectedCrop={selectedCrop}
+                      farmId={farmId}
+                    />
                   ) : (
                     <View
                       style={{
