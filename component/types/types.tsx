@@ -51,12 +51,12 @@ export type RootStackParamList = {
   TamilEditProfile: undefined;
   SinQRcode: undefined;
   TamilQRcode: undefined;
-  CurrentAssert: undefined;
-  AddAsset: undefined;
+  CurrentAssert: { farmId?: Number | number; farmName?: string } | undefined;
+  AddAsset: { farmId?: Number | number; farmName?: string } | undefined;
   RemoveAsset: undefined;
-  AssertsFixedView: { category: string; toolId: any };
-  AddFixedAsset: undefined;
-  fixedDashboard: undefined;
+  AssertsFixedView: { category: string; toolId?: any; farmId?: Number | number; farmName?: string };
+  AddFixedAsset: { farmId?: Number | number; farmName?: string } | undefined;
+  fixedDashboard: { farmId?: Number | number; farmName?: string } | undefined;
   News: { newsId: number };
   NewsSinhala: { newsId: number };
   NewsTamil: { newsId: number };
@@ -207,14 +207,7 @@ export type RootStackParamList = {
     selectedVariety: string;
     farmId: number;
   };
-  FarmCurrectAssets: { farmId: Number; farmName: string };
-  FarmFixDashBoard: { farmId: Number; farmName: string };
-  FarmAssertsFixedView: {
-    category: string;
-    toolId: any;
-    farmId: number;
-    farmName: string;
-  };
+
   FarmCropCalander: {
     cropId: string;
     cropName: string;
@@ -225,9 +218,7 @@ export type RootStackParamList = {
     ongoingCropId: string;
     hasCertificate: boolean;
   };
-  FarmAddFixAssert: { farmId: Number; farmName: string };
   FarmCertificateTask: { farmId: Number; farmName: string };
-  FarmAddCurrentAsset: { farmId: Number; farmName: string };
   FarmCurrectAssetRemove: { farmId: Number; farmName: string };
   EarnCertificate: {
     farmId: number;

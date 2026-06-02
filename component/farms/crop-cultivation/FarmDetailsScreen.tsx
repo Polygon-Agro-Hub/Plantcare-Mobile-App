@@ -983,7 +983,7 @@ const FarmDetailsScreen = () => {
             accessibilityLabel="View farm assets"
             accessibilityRole="button"
             onPress={() =>
-              navigation.navigate("FarmCurrectAssets", {
+              navigation.navigate("CurrentAssert", {
                 farmId,
                 farmName: farmData?.farmName ?? farmName ?? "",
               })

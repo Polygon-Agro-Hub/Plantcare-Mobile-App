@@ -88,11 +88,7 @@ import PublicForumPostEdit from "@/component/public-forum/PublicForumPostEdit";
 import MyCultivation from "@/component/farms/crop-cultivation/MyCultivation";
 import LabororDashbord from "@/component/laboror-screens/LabororDashbord";
 import OwnerQRcode from "@/component/laboror-screens/OwnerQRcode";
-import FarmCurrectAssets from "@/component/farms/current-asset/FarmCurrectAssets";
-import FarmAssertsFixedView from "@/component/farms/fixed-asset/FarmAssertsFixedView";
-import FarmFixDashBoard from "@/component/farms/fixed-asset/FarmFixDashBoard";
-import FarmAddFixAssert from "@/component/farms/fixed-asset/FarmAddFixAssert";
-import FarmAddCurrentAsset from "@/component/farms/current-asset/FarmAddCurrentAsset";
+
 import FarmCurrectAssetRemove from "@/component/farms/current-asset/FarmCurrectAssetRemove";
 import FarmCropCalander from "@/component/farms/crop-cultivation/FarmCropCalander";
 import ManagerDashbord from "@/component/manager-screens/ManagerDashbord";
@@ -238,8 +234,6 @@ function MainTabNavigator() {
       <Tab.Screen name="QRcode" component={QRcode} />
       <Tab.Screen name="ComplainForm" component={ComplainForm} />
       <Tab.Screen name="AddAsset" component={AddAsset} />
-      <Tab.Screen name="FarmAddFixAssert" component={FarmAddFixAssert} />
-      <Tab.Screen name="FarmCurrectAssets" component={FarmCurrectAssets} />
       <Tab.Screen name="MyCultivation" component={MyCultivation} />
       <Tab.Screen name="FarmDetailsScreen" component={FarmDetailsScreen} />
       <Tab.Screen name="AddFarmList" component={AddFarmList} />
@@ -259,15 +253,7 @@ function MainTabNavigator() {
       <Tab.Screen name="FromFramEditFarm" component={EditFarm as any} />
       <Tab.Screen name="AddNewCrop" component={AddNewCrop} />
       <Tab.Screen name="AssertsFixedView" component={AssertsFixedView as any} />
-      <Tab.Screen
-        name="FarmAddCurrentAsset"
-        component={FarmAddCurrentAsset as any}
-      />
-      <Tab.Screen
-        name="FarmAssertsFixedView"
-        component={FarmAssertsFixedView as any}
-      />
-      <Tab.Screen name="FarmFixDashBoard" component={FarmFixDashBoard as any} />
+
       <Tab.Screen
         name="GoViCapitalRequests"
         component={GoViCapitalRequests as any}

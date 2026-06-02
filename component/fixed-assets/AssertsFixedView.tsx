@@ -10,7 +10,6 @@ import {
 import { StatusBar } from "expo-status-bar";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import Modal from "react-native-modal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { environment } from "@/environment/environment";
@@ -27,11 +26,9 @@ import CustomHeader from "../common/CustomHeader";
 import districtData from "@/assets/jsons/common/district.json";
 import assetData from "@/assets/jsons/fixed-asset/fixed-assets.json";
 import LoadingPage from "../common/LoadingPage";
-
-type RootStackParamList = {
-  AssertsFixedView: { category: string; toolId: any };
-  UpdateAsset: { selectedTools: number[]; category: string; toolId: any };
-};
+import { useSelector } from "react-redux";
+import type { RootState } from "../../services/reducxStore";
+import { RootStackParamList } from "../types/types";
 
 type Props = NativeStackScreenProps<RootStackParamList, "AssertsFixedView">;
 
@@ -50,6 +47,10 @@ interface Tool {
   buildingName: string;
 }
 
+interface UserData {
+  role: string;
+}
+
 const buildLookup = (
   items: { labelKey: string; value: string }[],
   t: (key: string) => string,
@@ -63,8 +64,9 @@ const buildLookup = (
   );
 
 const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
-  const { category } = route.params;
-  const [isModalVisible, setModalVisible] = useState(false);
+  const { category, farmId, farmName = "" } = route.params;
+  const isGlobal = !farmId;
+
   const [tools, setTools] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTools, setSelectedTools] = useState<number[]>([]);
@@ -72,6 +74,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const { t, i18n } = useTranslation();
+  const user = useSelector((state: RootState) => state.user.userData) as UserData | null;
 
   const District = districtData.reduce(
     (acc, item) => {
@@ -82,9 +85,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   );
 
   const BuildingTypes = buildLookup(assetData.buildingTypeOptions, t);
-
   const Machineasset = buildLookup(assetData.machineasset, t);
-
   const AseetTools = buildLookup(assetData.assetOptions, t);
 
   const assetTypesForAssets: Record<string, string> = Object.values(
@@ -99,7 +100,23 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       {} as Record<string, string>,
     );
 
-  const toggleModal = () => setModalVisible((v) => !v);
+  const getDistrictLabel = (districtValue: string | undefined): string | null => {
+    if (!districtValue) return null;
+    const trimmed = districtValue.trim();
+
+    const numericId = Number(trimmed);
+    if (!isNaN(numericId)) {
+      const found = districtData.find((d) => d.id === numericId);
+      if (found) return t(found.translationKey);
+    }
+
+    const foundByName = districtData.find(
+      (d) => d.name.toLowerCase() === trimmed.toLowerCase(),
+    );
+    if (foundByName) return t(foundByName.translationKey);
+
+    return District[trimmed] ?? trimmed;
+  };
 
   const translateCategory = (cat: string): string => {
     const match = assetData.categoryOptions.find((o: any) => o.value === cat);
@@ -108,7 +125,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     return match.translations[lang] || match.translations["en"] || cat;
   };
 
-  const fetchTools = async () => {
+  const fetchTools = useCallback(async () => {
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
@@ -117,33 +134,26 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         return;
       }
 
-      const response = await axios.get(
-        `${environment.API_BASE_URL}api/auth/fixed-assets/${category}`,
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
+      const endpoint = isGlobal
+        ? `${environment.API_BASE_URL}api/auth/fixed-assets/${category}`
+        : `${environment.API_BASE_URL}api/farm/fixed-assets/${category}/${farmId}`;
 
-      setTools(response.data.data ? (response.data.data as Tool[]) : []);
-    } catch (error) {
+      const response = await axios.get(endpoint, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (isGlobal) {
+        setTools(response.data.data ? (response.data.data as Tool[]) : []);
+      } else {
+        setTools(response.data.fixedAssets ? (response.data.fixedAssets as Tool[]) : []);
+      }
+    } catch (error: any) {
       console.error("Error fetching tools:", error);
       setTools([]);
     } finally {
       setLoading(false);
     }
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      const onBackPress = () => {
-        navigation.navigate("fixedDashboard" as any);
-        return true;
-      };
-      const sub = BackHandler.addEventListener(
-        "hardwareBackPress",
-        onBackPress,
-      );
-      return () => sub.remove();
-    }, [navigation]),
-  );
+  }, [category, farmId, isGlobal]);
 
   useFocusEffect(
     useCallback(() => {
@@ -151,24 +161,46 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       setShowDeleteOptions(false);
       setShowDropdown(false);
       fetchTools();
-    }, [category]),
+    }, [fetchTools])
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        if (isGlobal) {
+          navigation.navigate("fixedDashboard" as any);
+        } else {
+          navigation.navigate("fixedDashboard" as any, { farmId, farmName });
+        }
+        return true;
+      };
+      const sub = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
+      );
+      return () => sub.remove();
+    }, [navigation, isGlobal, farmId, farmName]),
   );
 
   const renderToolDetails = (tool: Tool) => {
     switch (category) {
       case "Land": {
-        const districtDisplay =
-          District[tool.district?.trim() ?? ""] ?? tool.district;
+        const districtDisplay = getDistrictLabel(tool.district);
         return (
           <View className="flex-1 justify-center">
-            {districtDisplay && (
-              <Text className="font-semibold text-base text-[#070707]">
-                {tool.landName}
-              </Text>
+            <Text className="font-semibold text-base text-[#070707]">
+              {tool.landName}
+            </Text>
+            {!isGlobal && districtDisplay && (
+              <Text className="text-sm text-[#6E8BC4]">{districtDisplay}</Text>
             )}
-            <Text className="text-sm text-[#6E8BC4]">{tool.farmName}</Text>
-            {districtDisplay && (
-              <Text className=" text-sm text-[#6E8BC4]">{districtDisplay}</Text>
+            {isGlobal && (
+              <>
+                <Text className="text-sm text-[#6E8BC4]">{tool.farmName}</Text>
+                {districtDisplay && (
+                  <Text className="text-sm text-[#6E8BC4]">{districtDisplay}</Text>
+                )}
+              </>
             )}
           </View>
         );
@@ -177,16 +209,22 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       case "Building and Infrastructures": {
         const buildingDisplay =
           BuildingTypes[tool.type?.trim() ?? ""] ?? tool.type;
-        const districtDisplay =
-          District[tool.district?.trim() ?? ""] ?? tool.district;
+        const districtDisplay = getDistrictLabel(tool.district);
         return (
           <View className="flex-1 justify-center">
             <Text className="text-base font-semibold text-[#070707]">
               {tool.buildingName}
             </Text>
-            <Text className="text-sm text-[#6E8BC4]">{tool.farmName}</Text>
-            {buildingDisplay && (
-              <Text className=" text-sm text-[#6E8BC4]">{districtDisplay}</Text>
+            {!isGlobal && districtDisplay && (
+              <Text className="text-sm text-[#6E8BC4]">{districtDisplay}</Text>
+            )}
+            {isGlobal && (
+              <>
+                <Text className="text-sm text-[#6E8BC4]">{tool.farmName}</Text>
+                {districtDisplay && (
+                  <Text className="text-sm text-[#6E8BC4]">{districtDisplay}</Text>
+                )}
+              </>
             )}
           </View>
         );
@@ -209,7 +247,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                 {assetTypeDisplay}
               </Text>
             )}
-            <Text className="text-sm text-[#070707] mt-1">{tool.farmName}</Text>
+            {isGlobal && <Text className="text-sm text-[#070707] mt-1">{tool.farmName}</Text>}
           </View>
         );
       }
@@ -223,7 +261,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                 {toolDisplay}
               </Text>
             )}
-            <Text className="text-sm text-[#070707]">{tool.farmName}</Text>
+            {isGlobal && <Text className="text-sm text-[#070707]">{tool.farmName}</Text>}
           </View>
         );
       }
@@ -331,46 +369,54 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
     );
   };
 
-  const TabHeader = () => (
-    <>
-      <CustomHeader
-        title={t("FixedAssets.MyAssets")}
-        navigation={navigation as any}
-        onBackPress={() => navigation.navigate("fixedDashboard" as any)}
-      />
-      <View className="flex-row ml-8 mr-8 justify-center">
-        <View className="w-1/2">
-          <TouchableOpacity
-            onPress={() =>
-              (navigation as any).navigate("Main", { screen: "CurrentAssert" })
-            }
-          >
-            <Text className="text-black font-semibold text-center text-lg">
-              {t("FixedAssets.CurrentAssets")}
-            </Text>
-            <View className="border-t-[2px] border-[#D9D9D9]" />
-          </TouchableOpacity>
-        </View>
-        <View className="w-1/2">
-          <TouchableOpacity>
-            <Text className="text-black text-center font-semibold text-lg">
-              {t("FixedAssets.FixedAssets")}
-            </Text>
-            <View className="border-t-[2px] border-black" />
-          </TouchableOpacity>
-        </View>
-      </View>
-    </>
-  );
-
-  if (loading) {
-    return <LoadingPage fullScreen />;
-  }
+  const headerTitle = isGlobal ? t("FixedAssets.MyAssets") : farmName;
 
   return (
-    <View className="flex-1 bg-[#F7F7F7]">
-      
-      <TabHeader />
+    <View className="flex-1 bg-white">
+      <CustomHeader
+        title={headerTitle}
+        navigation={navigation as any}
+        onBackPress={() => {
+          if (isGlobal) {
+            navigation.navigate("fixedDashboard" as any);
+          } else {
+            navigation.navigate("fixedDashboard" as any, { farmId, farmName });
+          }
+        }}
+      />
+
+      {/* Tabs */}
+      {(!isGlobal ? (user && user.role !== "Supervisor") : true) && (
+        <View className="flex-row mt-2 justify-center">
+          <View className="w-1/2">
+            <TouchableOpacity
+              onPress={() => {
+                if (isGlobal) {
+                  navigation.navigate("CurrentAssert");
+                } else {
+                  navigation.navigate("Main", {
+                    screen: "CurrentAssert",
+                    params: { farmId, farmName },
+                  });
+                }
+              }}
+            >
+              <Text className="text-black text-center font-semibold text-lg">
+                {t("CurrentAssets.CurrentAssets")}
+              </Text>
+              <View className="border-t-[2px] border-[#D9D9D9] mt-2" />
+            </TouchableOpacity>
+          </View>
+          <View className="w-1/2">
+            <TouchableOpacity>
+              <Text className="text-black text-center font-semibold text-lg">
+                {t("CurrentAssets.FixedAssets")}
+              </Text>
+              <View className="border-t-[2px] border-black mt-2" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
 
       {/* Category title + menu */}
       <View
@@ -406,19 +452,6 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
       {/* Delete bar */}
       {showDeleteOptions && (
-        // <View className="px-4 mb-2">
-        //   <TouchableOpacity
-        //     className={`bg-red-500 p-3 rounded-full self-end w-[48%] ${
-        //       selectedTools.length === 0 ? "opacity-50" : ""
-        //     }`}
-        //     disabled={selectedTools.length === 0}
-        //     onPress={handleDeleteSelected}
-        //   >
-        //     <Text className="text-white text-center font-bold">
-        //       {t("FixedAssets.DeleteSelected")}
-        //     </Text>
-        //   </TouchableOpacity>
-        // </View>
         <View className="mt-2 px-4">
           <View className="flex-row justify-end mb-2">
             <TouchableOpacity
@@ -440,7 +473,9 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         className="mt-2 p-4"
         contentContainerStyle={{ paddingBottom: 100 }}
       >
-        {tools.length > 0 ? (
+        {loading ? (
+          <LoadingPage fullScreen />
+        ) : tools.length > 0 ? (
           tools.map((tool) => (
             <View
               key={tool.id}
@@ -499,17 +534,6 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
           </View>
         )}
       </ScrollView>
-
-      <Modal isVisible={isModalVisible}>
-        <View className="flex-1 justify-center items-center bg-white p-4 rounded-lg">
-          <Text className="font-bold text-xl mb-4">
-            {t("FixedAssets.AddNewTool")}
-          </Text>
-          <TouchableOpacity onPress={toggleModal}>
-            <Text className="text-red-500 mt-4">{t("FixedAssets.Close")}</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
     </View>
   );
 };
