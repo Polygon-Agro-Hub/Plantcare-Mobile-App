@@ -1491,7 +1491,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         />
                       ))}
                     <Text className="text-[#070707] text-sm mt-2">
-                      {t("FixedAssets.permitFeeAnnuallyLKR")} *
+                      {t("FixedAssets.PermitFeeAnnuallyLKR")} *
                     </Text>
                     <TextInput
                       className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"

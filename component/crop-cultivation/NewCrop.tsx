@@ -513,6 +513,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
               style={{
                 width: wp("20%"),
                 height: wp("20%"),
+                ...({ outlineStyle: "none" } as any),
               }}
             >
               <Image

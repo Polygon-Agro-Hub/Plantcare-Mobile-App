@@ -258,6 +258,22 @@ function MainTabNavigator() {
         name="GoViCapitalRequests"
         component={GoViCapitalRequests as any}
       />
+      <Tab.Screen
+        name="RequestInspectionPayment"
+        component={RequestInspectionPayment as any}
+      />
+      <Tab.Screen
+        name="RequestHistory"
+        component={RequestHistory as any}
+      />
+      <Tab.Screen
+        name="RequestSummery"
+        component={RequestSummery as any}
+      />
+      <Tab.Screen
+        name="RequestInspectionForm"
+        component={RequestInspectionForm as any}
+      />
     </Tab.Navigator>
   );
 }
@@ -471,18 +487,7 @@ function AppContent() {
               name="CultivationPaymentScreen"
               component={CultivationPaymentScreen as any}
             />
-            <Stack.Screen
-              name="RequestInspectionPayment"
-              component={RequestInspectionPayment as any}
-            />
-            <Stack.Screen
-              name="RequestHistory"
-              component={RequestHistory as any}
-            />
-            <Stack.Screen
-              name="RequestSummery"
-              component={RequestSummery as any}
-            />
+
             <Stack.Screen
               name="ManagerFarmDetails"
               component={ManagerFarmDetails as any}
@@ -548,10 +553,7 @@ function AppContent() {
               name="ViewInvestmentRequestLetter"
               component={ViewInvestmentRequestLetter as any}
             />
-            <Stack.Screen
-              name="RequestInspectionForm"
-              component={RequestInspectionForm as any}
-            />
+
             <Stack.Screen
               name="GoviPensionInformation"
               component={GoviPensionInformation as any}

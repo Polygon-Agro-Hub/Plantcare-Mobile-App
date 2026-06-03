@@ -628,6 +628,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
                     width: wp("20%"),
                     height: wp("20%"),
                     padding: wp("2%"),
+                    ...({ outlineStyle: "none" } as any),
                   }}
                   disabled={selectedCrop}
                 >

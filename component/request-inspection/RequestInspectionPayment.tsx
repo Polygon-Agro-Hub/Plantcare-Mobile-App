@@ -388,7 +388,7 @@ const RequestInspectionPayment: React.FC<RequestInspectionPaymentProps> = ({
 
           {/* Pay Now Button */}
           <TouchableOpacity
-            className="bg-black py-3 rounded-3xl h-[50px] mt-5 mb-24"
+            className="bg-black py-3 rounded-3xl h-[50px] mt-5 mb-24 mx-6"
             onPress={handlePayNow}
             disabled={isProcessing}
             style={{

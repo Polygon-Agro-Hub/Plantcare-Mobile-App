@@ -74,7 +74,9 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const { t, i18n } = useTranslation();
-  const user = useSelector((state: RootState) => state.user.userData) as UserData | null;
+  const user = useSelector(
+    (state: RootState) => state.user.userData,
+  ) as UserData | null;
 
   const District = districtData.reduce(
     (acc, item) => {
@@ -100,7 +102,9 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       {} as Record<string, string>,
     );
 
-  const getDistrictLabel = (districtValue: string | undefined): string | null => {
+  const getDistrictLabel = (
+    districtValue: string | undefined,
+  ): string | null => {
     if (!districtValue) return null;
     const trimmed = districtValue.trim();
 
@@ -121,7 +125,13 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
   const translateCategory = (cat: string): string => {
     const match = assetData.categoryOptions.find((o: any) => o.value === cat);
     if (!match) return cat;
-    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
+    const lang = i18n.language
+      ? i18n.language.startsWith("si")
+        ? "si"
+        : i18n.language.startsWith("ta")
+          ? "ta"
+          : "en"
+      : "en";
     return match.translations[lang] || match.translations["en"] || cat;
   };
 
@@ -145,7 +155,11 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       if (isGlobal) {
         setTools(response.data.data ? (response.data.data as Tool[]) : []);
       } else {
-        setTools(response.data.fixedAssets ? (response.data.fixedAssets as Tool[]) : []);
+        setTools(
+          response.data.fixedAssets
+            ? (response.data.fixedAssets as Tool[])
+            : [],
+        );
       }
     } catch (error: any) {
       console.error("Error fetching tools:", error);
@@ -161,7 +175,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       setShowDeleteOptions(false);
       setShowDropdown(false);
       fetchTools();
-    }, [fetchTools])
+    }, [fetchTools]),
   );
 
   useFocusEffect(
@@ -198,7 +212,9 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               <>
                 <Text className="text-sm text-[#6E8BC4]">{tool.farmName}</Text>
                 {districtDisplay && (
-                  <Text className="text-sm text-[#6E8BC4]">{districtDisplay}</Text>
+                  <Text className="text-sm text-[#6E8BC4]">
+                    {districtDisplay}
+                  </Text>
                 )}
               </>
             )}
@@ -222,7 +238,9 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               <>
                 <Text className="text-sm text-[#6E8BC4]">{tool.farmName}</Text>
                 {districtDisplay && (
-                  <Text className="text-sm text-[#6E8BC4]">{districtDisplay}</Text>
+                  <Text className="text-sm text-[#6E8BC4]">
+                    {districtDisplay}
+                  </Text>
                 )}
               </>
             )}
@@ -247,7 +265,11 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                 {assetTypeDisplay}
               </Text>
             )}
-            {isGlobal && <Text className="text-sm text-[#070707] mt-1">{tool.farmName}</Text>}
+            {isGlobal && (
+              <Text className="text-sm text-[#070707] mt-1">
+                {tool.farmName}
+              </Text>
+            )}
           </View>
         );
       }
@@ -261,7 +283,9 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                 {toolDisplay}
               </Text>
             )}
-            {isGlobal && <Text className="text-sm text-[#070707]">{tool.farmName}</Text>}
+            {isGlobal && (
+              <Text className="text-sm text-[#070707]">{tool.farmName}</Text>
+            )}
           </View>
         );
       }
@@ -327,8 +351,8 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
       selectedTools.length === 1
         ? t("FixedAssets.AreYouSureYouWantToDeleteThisAsset")
         : t("FixedAssets.AreYouSureYouWantToDeletecountAssets", {
-          count: selectedTools.length,
-        }),
+            count: selectedTools.length,
+          }),
       [
         { text: t("Main.Cancel"), style: "cancel" },
         {
@@ -350,7 +374,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                 prev.filter((tool) => !selectedTools.includes(tool.id)),
               );
               Alert.alert(
-                t("FixedAssets.successTitle"),
+                t("Main.Success"),
                 t("CurrentAssets.AssetRemovedSuccessfully"),
                 [{ text: t("Main.OK") }],
               );
@@ -385,155 +409,164 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
         }}
       />
 
-      {/* Tabs */}
-      {(!isGlobal ? (user && user.role !== "Supervisor") : true) && (
-        <View className="flex-row mt-2 justify-center">
-          <View className="w-1/2">
-            <TouchableOpacity
-              onPress={() => {
-                if (isGlobal) {
-                  navigation.navigate("CurrentAssert");
-                } else {
-                  navigation.navigate("Main", {
-                    screen: "CurrentAssert",
-                    params: { farmId, farmName },
-                  });
-                }
-              }}
-            >
-              <Text className="text-black text-center font-semibold text-lg">
-                {t("CurrentAssets.CurrentAssets")}
-              </Text>
-              <View className="border-t-[2px] border-[#D9D9D9] mt-2" />
-            </TouchableOpacity>
-          </View>
-          <View className="w-1/2">
-            <TouchableOpacity>
-              <Text className="text-black text-center font-semibold text-lg">
-                {t("CurrentAssets.FixedAssets")}
-              </Text>
-              <View className="border-t-[2px] border-black mt-2" />
-            </TouchableOpacity>
-          </View>
+      {loading ? (
+        <View className="flex-1 justify-center items-center">
+          <LoadingPage fullScreen />
         </View>
-      )}
-
-      {/* Category title + menu */}
-      <View
-        className={`flex-row mt-5 justify-between items-center px-4 ${showDropdown ? "mb-8" : ""}`}
-      >
-        <Text className="text-lg font-semibold">
-          {translateCategory(category)}
-        </Text>
-
-        {tools.length > 0 && (
-          <View className="relative">
-            <TouchableOpacity onPress={() => setShowDropdown((v) => !v)}>
-              <MaterialIcons name="more-vert" size={24} color="black" />
-            </TouchableOpacity>
-
-            {showDropdown && (
-              <View className="absolute top-6 right-0 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[120px]">
+      ) : (
+        <>
+          {/* Tabs */}
+          {(!isGlobal ? user && user.role !== "Supervisor" : true) && (
+            <View className="flex-row mt-2 justify-center">
+              <View className="w-1/2">
                 <TouchableOpacity
-                  onPress={handleSelectAll}
-                  className="px-4 py-2"
+                  onPress={() => {
+                    if (isGlobal) {
+                      navigation.navigate("CurrentAssert");
+                    } else {
+                      navigation.navigate("Main", {
+                        screen: "CurrentAssert",
+                        params: { farmId, farmName },
+                      });
+                    }
+                  }}
                 >
-                  <Text className="text-sm">
-                    {areAllToolsSelected()
-                      ? t("FixedAssets.DeselectAll")
-                      : t("FixedAssets.SelectAll")}
+                  <Text className="text-black text-center font-semibold text-lg">
+                    {t("CurrentAssets.CurrentAssets")}
                   </Text>
+                  <View className="border-t-[2px] border-[#D9D9D9] mt-2" />
                 </TouchableOpacity>
+              </View>
+              <View className="w-1/2">
+                <TouchableOpacity>
+                  <Text className="text-black text-center font-semibold text-lg">
+                    {t("CurrentAssets.FixedAssets")}
+                  </Text>
+                  <View className="border-t-[2px] border-black mt-2" />
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+
+          {/* Category title + menu */}
+          <View
+            className={`flex-row mt-5 justify-between items-center px-6 ${showDropdown ? "mb-8" : ""}`}
+          >
+            <Text className="text-lg font-semibold">
+              {translateCategory(category)}
+            </Text>
+
+            {tools.length > 0 && (
+              <View className="relative">
+                <TouchableOpacity onPress={() => setShowDropdown((v) => !v)}>
+                  <MaterialIcons name="more-vert" size={24} color="black" />
+                </TouchableOpacity>
+
+                {showDropdown && (
+                  <View className="absolute top-6 right-0 bg-white border border-gray-200 rounded-xl shadow-lg z-10 min-w-[120px]">
+                    <TouchableOpacity
+                      onPress={handleSelectAll}
+                      className="px-4 py-2"
+                    >
+                      <Text className="text-sm">
+                        {areAllToolsSelected()
+                          ? t("FixedAssets.DeselectAll")
+                          : t("FixedAssets.SelectAll")}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
             )}
           </View>
-        )}
-      </View>
 
-      {/* Delete bar */}
-      {showDeleteOptions && (
-        <View className="mt-2 px-4">
-          <View className="flex-row justify-end mb-2">
-            <TouchableOpacity
-              className={`bg-red-500 p-3 w-[48%] rounded-full justify-end ${selectedTools.length === 0 ? "opacity-50" : ""
-                }`}
-              disabled={selectedTools.length === 0}
-              onPress={handleDeleteSelected}
-            >
-              <Text className="text-white text-center font-bold">
-                {t("FixedAssets.DeleteSelected")}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
-
-      {/* Tool list */}
-      <ScrollView
-        className="mt-2 p-4"
-        contentContainerStyle={{ paddingBottom: 100 }}
-      >
-        {loading ? (
-          <LoadingPage fullScreen />
-        ) : tools.length > 0 ? (
-          tools.map((tool) => (
-            <View
-              key={tool.id}
-              className="bg-[#FFFFFF] border border-[#E1E1E1] mb-2 rounded flex-row justify-between items-center"
-            >
-              <TouchableOpacity
-                className="flex-row items-center flex-1 p-4"
-                onPress={() => toggleSelectTool(tool.id)}
-              >
-                {/* Checkbox */}
-                <View className="mr-3">
-                  <View
-                    className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${selectedTools.includes(tool.id)
-                        ? "bg-black border-black"
-                        : "border-gray-400 bg-white"
-                      }`}
-                  >
-                    {selectedTools.includes(tool.id) && (
-                      <AntDesign name="check" size={14} color="white" />
-                    )}
-                  </View>
-                </View>
-
-                {/* Details */}
-                <View className="flex-1">{renderToolDetails(tool)}</View>
-              </TouchableOpacity>
-
-              {/* Edit button */}
-              <TouchableOpacity
-                onPress={() => handleEditTool(tool.id)}
-                className={`flex items-center justify-center w-12  ${selectedTools.includes(tool.id)
-                    ? "bg-[#E8F5F3]"
-                    : "bg-[#E8E8E8]"
+          {/* Delete bar */}
+          {showDeleteOptions && (
+            <View className="mt-2 px-6">
+              <View className="flex-row justify-end">
+                <TouchableOpacity
+                  className={`bg-red-500 p-3 w-[48%] rounded-full justify-end ${
+                    selectedTools.length === 0 ? "opacity-50" : ""
                   }`}
-                style={{ height: "100%", minHeight: 80 }}
-              >
-                <MaterialCommunityIcons
-                  name="pencil"
-                  size={24}
-                  color="#101010ff"
-                />
-              </TouchableOpacity>
+                  disabled={selectedTools.length === 0}
+                  onPress={handleDeleteSelected}
+                >
+                  <Text className="text-white text-center font-bold">
+                    {t("FixedAssets.DeleteSelected")}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          ))
-        ) : (
-          <View className="flex-1 justify-center items-center">
-            <LottieView
-              source={require("@/assets/jsons/common/no-data.json")}
-              style={{ width: wp(50), height: hp(50) }}
-              autoPlay
-              loop
-            />
-            <Text className="text-center text-gray-600 -mt-[30%]">
-              {t("FixedAssets.NoAssetsAvailableForThisCategory")}
-            </Text>
-          </View>
-        )}
-      </ScrollView>
+          )}
+
+          {/* Tool list */}
+          <ScrollView
+            className="p-4 px-6"
+            contentContainerStyle={{ paddingBottom: 100 }}
+          >
+            {tools.length > 0 ? (
+              tools.map((tool) => (
+                <View
+                  key={tool.id}
+                  className="bg-[#FFFFFF] border border-[#E1E1E1] mb-2 rounded-xl flex-row justify-between items-center"
+                >
+                  <TouchableOpacity
+                    className="flex-row items-center flex-1 p-4"
+                    onPress={() => toggleSelectTool(tool.id)}
+                  >
+                    {/* Checkbox */}
+                    <View className="mr-3">
+                      <View
+                        className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${
+                          selectedTools.includes(tool.id)
+                            ? "bg-black border-black"
+                            : "border-gray-400 bg-white"
+                        }`}
+                      >
+                        {selectedTools.includes(tool.id) && (
+                          <AntDesign name="check" size={14} color="white" />
+                        )}
+                      </View>
+                    </View>
+
+                    {/* Details */}
+                    <View className="flex-1">{renderToolDetails(tool)}</View>
+                  </TouchableOpacity>
+
+                  {/* Edit button */}
+                  <TouchableOpacity
+                    onPress={() => handleEditTool(tool.id)}
+                    className={`flex items-center justify-center w-12 rounded-r ${
+                      selectedTools.includes(tool.id)
+                        ? "bg-[#E8F5F3]"
+                        : "bg-[#E8E8E8]"
+                    }`}
+                    style={{ height: "100%", minHeight: 80 }}
+                  >
+                    <MaterialCommunityIcons
+                      name="pencil"
+                      size={24}
+                      color="#101010ff"
+                    />
+                  </TouchableOpacity>
+                </View>
+              ))
+            ) : (
+              <View className="flex-1 justify-center items-center">
+                <LottieView
+                  source={require("@/assets/jsons/common/no-data.json")}
+                  style={{ width: wp(50), height: hp(50) }}
+                  autoPlay
+                  loop
+                />
+                <Text className="text-center text-gray-600 -mt-[30%]">
+                  {t("FixedAssets.NoAssetsAvailableForThisCategory")}
+                </Text>
+              </View>
+            )}
+          </ScrollView>
+        </>
+      )}
     </View>
   );
 };

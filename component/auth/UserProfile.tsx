@@ -509,13 +509,13 @@ const UserProfile: React.FC<UserProfileProps> = ({ navigation }) => {
                 <View className="flex-row justify-around">
                   <TouchableOpacity
                     onPress={() => setModalVisible(false)}
-                    className="bg-gray-300 p-3 rounded-full flex-1 mx-1 px-2"
+                    className="bg-gray-300 p-3 rounded-full flex-1 mx-1 px-2 items-center justify-center"
                   >
                     <Text className="text-center">{t("Main.Cancel")}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={handleCall}
-                    className="bg-[#00A896] p-3 rounded-full flex-1 mx-1 px-2"
+                    className="bg-[#00A896] p-3 rounded-full flex-1 mx-1 px-2 items-center justify-center"
                   >
                     <Text className="text-center text-white">
                       {t("Profile.Call")}

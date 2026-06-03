@@ -371,20 +371,45 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation, route }) => {
       }))
     : [];
 
+  const headerTitle = isGlobal
+    ? assets?.farmName === "My Assets"
+      ? t("CurrentAssets.MyAssets")
+      : "Farm"
+    : farmName;
+
   if (loading) {
-    return <LoadingPage fullScreen />;
+    return (
+      <View className="flex-1 bg-white">
+        <CustomHeader
+          title={headerTitle}
+          navigation={navigation}
+          onBackPress={() => {
+            if (!isGlobal) {
+              if (user?.role === "Owner") {
+                navigation.navigate("Main", {
+                  screen: "FarmDetailsScreen",
+                  params: { farmId, farmName },
+                });
+              } else {
+                navigation.goBack();
+              }
+            } else {
+              navigation.navigate("Dashboard");
+            }
+          }}
+          titleStyle={{ color: "black" }}
+        />
+        <View className="flex-1 justify-center items-center bg-white">
+          <LoadingPage fullScreen />
+        </View>
+      </View>
+    );
   }
 
   const totalPopulation = pieData.reduce(
     (sum, item) => sum + item.population,
     0,
   );
-
-  const headerTitle = isGlobal
-    ? assets?.farmName === "My Assets"
-      ? t("CurrentAssets.MyAssets")
-      : "Farm"
-    : farmName;
 
   return (
     <View className="flex-1 bg-[#F7F7F7]">
@@ -564,7 +589,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation, route }) => {
                       <View className="flex-row items-center">
                         <Image
                           source={getIconByAssetType(asset.category)}
-                          className="w-[24px] h-[24px] mr-2"
+                          className="w-[32px] h-[32px] mr-2"
                         />
                         <Text>
                           {getTranslatedCategory(asset.category).length > 20
@@ -607,7 +632,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation, route }) => {
                         <View className="flex-row items-center flex-1">
                           <Image
                             source={getIconByAssetType(asset.category)}
-                            className="w-[24px] h-[24px] mr-2"
+                            className="w-[32px] h-[32px] mr-2"
                           />
                           <View className="flex-1">
                             <Text>

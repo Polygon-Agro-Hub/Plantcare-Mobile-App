@@ -49,16 +49,12 @@ const CropSelectCard: React.FC<CropSelectCardProps> = ({
           setSelectedCrop(true);
           onCropSelect(item.id);
         }}
+        style={{ ...({ outlineStyle: "none" } as any) }}
       >
         <View
-          className="flex justify-center items-center w-[100px] h-[115px] rounded-[10px] shadow-l p-1"
+          className="flex justify-center items-center w-[100px] h-[115px] rounded-[10px] p-1"
           style={{
             backgroundColor: item.bgColor,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 6 },
-            shadowOpacity: 0.25,
-            shadowRadius: 6,
-            elevation: 8,
             opacity: 1,
           }}
         >

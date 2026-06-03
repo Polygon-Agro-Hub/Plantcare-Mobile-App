@@ -26,6 +26,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
 
 import countryData from "@/assets/jsons/common/country-flag.json";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
@@ -359,16 +360,29 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                 onPress={handleLogin}
                 disabled={isButtonDisabled}
                 activeOpacity={0.8}
-                className={`w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 ${
-                  isButtonDisabled ? "bg-[#9CA3AF]" : "bg-[#353535]"
-                }`}
+                className="w-full rounded-3xl h-[50px] overflow-hidden shadow-lg elevation-6"
               >
-                {isLoading ? (
-                  <ActivityIndicator size="small" color="#fff" />
+                {isButtonDisabled ? (
+                  <View className="w-full h-full bg-[#9CA3AF] justify-center items-center">
+                    <Text className="text-white font-semibold text-center text-lg">
+                      {t("SignIn.SignIn")}
+                    </Text>
+                  </View>
                 ) : (
-                  <Text className="text-white font-semibold text-center text-lg">
-                    {t("SignIn.SignIn")}
-                  </Text>
+                  <LinearGradient
+                    colors={["#0FC7B2", "#10A37D"]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    className="w-full h-full justify-center items-center"
+                  >
+                    {isLoading ? (
+                      <ActivityIndicator size="small" color="#fff" />
+                    ) : (
+                      <Text className="text-white font-semibold text-center text-lg">
+                        {t("SignIn.SignIn")}
+                      </Text>
+                    )}
+                  </LinearGradient>
                 )}
               </TouchableOpacity>
 

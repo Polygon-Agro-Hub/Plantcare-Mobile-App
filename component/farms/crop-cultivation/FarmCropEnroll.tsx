@@ -680,28 +680,23 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
             {renderExtentInputs()}
             {renderDatePicker()}
 
-            <TouchableOpacity
-              onPress={updateOngoingCultivation}
-              className={`rounded-lg mb-4 mt-8 items-center ${
-                isLoading ? "bg-gray-500" : "bg-gray-900"
-              }`}
-              disabled={isLoading}
-              style={{
-                shadowColor: "#000000",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.25,
-                shadowRadius: 4,
-                elevation: 4,
-              }}
-            >
-              {isLoading ? (
-                <ActivityIndicator size="small" color="#fff" />
-              ) : (
-                <Text className="text-white text-base font-bold">
-                  {t("Main.Update")}
-                </Text>
-              )}
-            </TouchableOpacity>
+            <View className="justify-center items-center px-6">
+              <TouchableOpacity
+                onPress={updateOngoingCultivation}
+                className={`w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 mt-8 mb-6 ${
+                  isLoading ? "bg-gray-500" : "bg-gray-900"
+                }`}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text className="text-white text-lg font-bold">
+                    {t("Main.Update")}
+                  </Text>
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
         )}
       </ScrollView>

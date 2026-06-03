@@ -87,16 +87,16 @@ const CropCard: React.FC<CropCardProps> = ({
     <TouchableOpacity
       onPress={handlePress}
       activeOpacity={0.7}
+      className="my-2"
       style={{
         width: "100%",
-        padding: 12,
         flexDirection: "row",
         alignItems: "center",
         backgroundColor: "white",
       }}
     >
       <View
-        className={`bg-white rounded-lg p-4 border-2 ${isBlocked ? "border-[#EFEFEF]" : "border-[#EFEFEF]"
+        className={`bg-white rounded-xl p-4 border-2 ${isBlocked ? "border-[#EFEFEF]" : "border-[#EFEFEF]"
           } flex-row items-center justify-between relative`}
         style={{
           shadowColor: "#000",

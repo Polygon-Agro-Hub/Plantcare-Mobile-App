@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   BackHandler,
+  Keyboard,
 } from "react-native";
 import { StatusBar, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -22,7 +23,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
 import assetData from "@/assets/jsons/fixed-asset/fixed-assets.json";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons, EvilIcons } from "@expo/vector-icons";
 import LoadingPage from "../common/LoadingPage";
 
 type RootStackParamList = {
@@ -624,7 +625,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       }
 
       Alert.alert(
-        t("FixedAssets.successTitle"),
+        t("Main.Success"),
         t("FixedAssets.AssetDetailsUpdatedSuccessfully"),
         [{ text: t("Main.OK") }],
       );
@@ -682,20 +683,25 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
     onPress: () => void;
     error?: string;
   }) => (
-    <View>
+    <View className="mt-2 mb-2">
       <TouchableOpacity
-        onPress={onPress}
-        className="border border-gray-300 bg-[#F4F4F4] rounded-full px-4 py-4 mb-1 flex-row justify-between items-center"
+        onPress={() => {
+          Keyboard.dismiss();
+          onPress();
+        }}
+        className="bg-[#F4F4F4] rounded-3xl h-[50px] flex-row items-center px-4 justify-between"
+        activeOpacity={0.7}
       >
         <Text
-          className={value ? "text-gray-800 text-sm" : "text-gray-400 text-sm"}
+          className={`text-sm flex-1 ${value ? "text-black" : "text-[#6B7280]"}`}
+          numberOfLines={1}
         >
           {value || placeholder}
         </Text>
         <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
       </TouchableOpacity>
       {error ? (
-        <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">{error}</Text>
+        <Text className="text-red-500 text-xs mt-1 ml-2">{error}</Text>
       ) : null}
     </View>
   );
@@ -706,25 +712,25 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       enabled
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      
+      <CustomHeader
+        title={`${translateCategory(category)} ${t("FixedAssets.Edit")}`}
+        navigation={navigation as any}
+        onBackPress={() => navigation.goBack()}
+      />
 
       {loading ? (
-        <LoadingPage fullScreen />
+        <View className="flex-1 justify-center items-center bg-white">
+          <LoadingPage fullScreen />
+        </View>
       ) : (
-        <ScrollView className="bg-white">
+        <ScrollView className="bg-white flex-1" keyboardShouldPersistTaps="handled">
           {tools.map((tool) => (
             <View key={tool.id} className="bg-white rounded">
-              <CustomHeader
-                title={`${translateCategory(category)} ${t("FixedAssets.Edit")}`}
-                navigation={navigation as any}
-                onBackPress={() => navigation.goBack()}
-              />
-
-              <View className="px-4">
+              <View className="px-6">
                 {tool.category === "Land" && (
                   <>
                     {/* Land Name */}
-                    <Text className="pb-2 pt-2 font-bold">
+                    <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.LandName")} *
                     </Text>
                     <TextInput
@@ -737,7 +743,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         handleInputChange(tool.id, "landName", capitalized);
                         clearFieldError(tool.id, "landName");
                       }}
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-full p-3 mb-1 pl-4"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
                     />
                     {fieldErrors[tool.id]?.landName ? (
                       <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -745,7 +751,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       </Text>
                     ) : null}
                     {/* Extent */}
-                    <Text className="pb-2 pt-2 font-bold">
+                    <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.Extent")} *
                     </Text>
                     <View className="flex-row justify-between items-center  w-full">
@@ -765,7 +771,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           );
                           clearFieldError(tool.id, "extent");
                         }}
-                        className="border border-gray-300 bg-[#F4F4F4] p-2 mb-2 px-4 rounded-3xl h-[50px] w-[25%]"
+                        className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[25%] mt-2 mb-2" placeholderTextColor="#585858"
                         keyboardType="numeric"
                       />
                       <Text className="pl-2 pr-1 font-[#3A3A3A]">
@@ -785,7 +791,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           clearFieldError(tool.id, "extent");
                         }}
                         keyboardType="numeric"
-                        className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-2 px-4 mb-2 w-[25%]"
+                        className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[25%] mt-2 mb-2" placeholderTextColor="#585858"
                       />
                       <Text className="pl-2 pr-1 font-[#3A3A3A]">
                         {t("FixedAssets.p")}
@@ -804,7 +810,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           clearFieldError(tool.id, "extent");
                         }}
                         keyboardType="numeric"
-                        className="border border-gray-300 bg-[#F4F4F4] rounded-full p-2 px-4 mb-2 w-[25%]"
+                        className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[25%] mt-2 mb-2" placeholderTextColor="#585858"
                       />
                     </View>
                     {fieldErrors[tool.id]?.extent ? (
@@ -814,7 +820,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     ) : null}
 
                     {/* Land Ownership */}
-                    <Text className="pb-2 font-bold">
+                    <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.Ownership")} *
                     </Text>
                     <DropdownTrigger
@@ -858,7 +864,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {/* Own */}
                     {updatedDetails[tool.id]?.ownership === "Own" && (
                       <>
-                        <Text className="pb-2 font-bold">
+                        <Text className="text-[#070707] text-sm mt-2">
                           {t("FixedAssets.EstimatedValue")} *
                         </Text>
                         <TextInput
@@ -877,7 +883,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             clearFieldError(tool.id, "estimateValue");
                           }}
                           keyboardType="numeric"
-                          className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-4 mb-1 pl-4"
+                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
                         />
                         {fieldErrors[tool.id]?.estimateValue ? (
                           <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -890,7 +896,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {/* Lease */}
                     {updatedDetails[tool.id]?.ownership === "Lease" && (
                       <>
-                        <Text className="pb-2 font-bold">
+                        <Text className="text-[#070707] text-sm mt-2">
                           {t("FixedAssets.LeaseStartDate")} *
                         </Text>
                         <TouchableOpacity
@@ -898,9 +904,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             clearFieldError(tool.id, "startDate");
                             setShowStartDatePicker((prev) => !prev);
                           }}
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-1 pl-4 flex-row justify-between"
+                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2 mb-2"
                         >
-                          <Text>
+                          <Text
+                            className={`flex-1 ${!updatedDetails[tool.id]?.ownershipDetails?.startDate ? "text-[#6B7280]" : "text-black"}`}
+                          >
                             {updatedDetails[tool.id]?.ownershipDetails
                               ?.startDate
                               ? new Date(
@@ -911,11 +919,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                 .split("T")[0]
                               : t("FixedAssets.LeaseStartDate")}
                           </Text>
-                          <Icon
-                            name="calendar-outline"
-                            size={20}
-                            color="#6B7280"
-                          />
+                          <EvilIcons name="calendar" size={28} color="#5e5d5d" />
                         </TouchableOpacity>
                         {fieldErrors[tool.id]?.startDate ? (
                           <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -976,7 +980,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             />
                           ))}
 
-                        <Text className="pb-2 font-bold">
+                        <Text className="text-[#070707] text-sm mt-2">
                           {t("FixedAssets.Duration")} *
                         </Text>
                         <View className="items-center flex-row justify-center">
@@ -1000,7 +1004,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               );
                               clearFieldError(tool.id, "duration");
                             }}
-                            className="border border-gray-300 p-2 w-[30%] px-4 rounded-3xl h-[50px] bg-gray-100"
+                            className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2" placeholderTextColor="#585858"
                           />
                           <Text className="w-[20%] text-right pr-2">
                             {t("FixedAssets.Months")}
@@ -1022,7 +1026,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               );
                               clearFieldError(tool.id, "duration");
                             }}
-                            className="border border-gray-300 p-2 w-24 rounded-3xl h-[50px] bg-gray-100 px-4"
+                            className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2" placeholderTextColor="#585858"
                           />
                         </View>
                         {fieldErrors[tool.id]?.duration ? (
@@ -1031,7 +1035,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           </Text>
                         ) : null}
 
-                        <Text className="pb-2 mt-4 font-bold">
+                        <Text className="text-[#070707] text-sm mt-2">
                           {t("FixedAssets.AnnualLeaseAmount")} *
                         </Text>
                         <TextInput
@@ -1051,7 +1055,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             clearFieldError(tool.id, "leastAmountAnnually");
                           }}
                           keyboardType="numeric"
-                          className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-4 mb-1 pl-4"
+                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
                         />
                         {fieldErrors[tool.id]?.leastAmountAnnually ? (
                           <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1064,7 +1068,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {/* Permited */}
                     {updatedDetails[tool.id]?.ownership === "Permited" && (
                       <>
-                        <Text className="pb-2 font-bold">
+                        <Text className="text-[#070707] text-sm mt-2">
                           {t("FixedAssets.IssuedDate")} *
                         </Text>
                         <TouchableOpacity
@@ -1072,9 +1076,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             clearFieldError(tool.id, "issuedDate");
                             setShowStartDatePicker((prev) => !prev);
                           }}
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-1 pl-4 flex-row justify-between"
+                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2 mb-2"
                         >
-                          <Text>
+                          <Text
+                            className={`flex-1 ${!updatedDetails[tool.id]?.ownershipDetails?.issuedDate ? "text-[#6B7280]" : "text-black"}`}
+                          >
                             {updatedDetails[tool.id]?.ownershipDetails
                               ?.issuedDate
                               ? new Date(
@@ -1085,11 +1091,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                 .split("T")[0]
                               : t("FixedAssets.IssuedDate")}
                           </Text>
-                          <Icon
-                            name="calendar-outline"
-                            size={20}
-                            color="#6B7280"
-                          />
+                          <EvilIcons name="calendar" size={28} color="#5e5d5d" />
                         </TouchableOpacity>
                         {fieldErrors[tool.id]?.issuedDate ? (
                           <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1150,7 +1152,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             />
                           ))}
 
-                        <Text className="pb-2 font-bold">
+                        <Text className="text-[#070707] text-sm mt-2">
                           {t("FixedAssets.AnnualPermitFee")} *
                         </Text>
                         <TextInput
@@ -1170,7 +1172,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             clearFieldError(tool.id, "permitFeeAnnually");
                           }}
                           keyboardType="numeric"
-                          className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-4 mb-1 pl-4"
+                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
                         />
                         {fieldErrors[tool.id]?.permitFeeAnnually ? (
                           <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1183,7 +1185,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {/* Shared */}
                     {updatedDetails[tool.id]?.ownership === "Shared" && (
                       <>
-                        <Text className="pb-2 font-bold">
+                        <Text className="text-[#070707] text-sm mt-2">
                           {t("FixedAssets.AnnualPaymentFee")} *
                         </Text>
                         <TextInput
@@ -1203,7 +1205,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             clearFieldError(tool.id, "paymentAnnually");
                           }}
                           keyboardType="numeric"
-                          className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-4 mb-1 pl-4"
+                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
                         />
                         {fieldErrors[tool.id]?.paymentAnnually ? (
                           <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1214,7 +1216,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     )}
 
                     {/* Land Fenced */}
-                    <Text className="font-bold pb-2 pt-2">
+                    <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.IsTheLandFenced")} *
                     </Text>
                     <View className="flex-row justify-around mb-1">
@@ -1240,7 +1242,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     </View>
 
                     {/* Perennial Crops */}
-                    <Text className="font-bold pb-2">
+                    <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.DoesTheLandHavePerennialCrops")} *
                     </Text>
                     <View className="flex-row justify-around mb-1">
@@ -1270,7 +1272,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                 {tool.category === "Building and Infrastructures" && (
                   <>
                     {/* Type */}
-                    <Text className="pb-2 pt-2 font-bold">
+                    <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.Type")} *
                     </Text>
                     <DropdownTrigger
@@ -1301,7 +1303,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       searchPlaceholder={t("Main.Search...")}
                     />
                     {/* Building Name */}
-                    <Text className="pb-2 font-bold">
+                    <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.BuildingName")} *
                     </Text>
                     <TextInput
@@ -1314,7 +1316,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         handleInputChange(tool.id, "buildingName", capitalized);
                         clearFieldError(tool.id, "buildingName");
                       }}
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-3 mb-1 pl-4"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
                     />
                     {fieldErrors[tool.id]?.buildingName ? (
                       <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1323,7 +1325,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     ) : null}
 
                     {/* Floor Area */}
-                    <Text className="pb-2 font-bold">
+                    <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.FloorArea")} *
                     </Text>
                     <TextInput
@@ -1339,7 +1341,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         );
                         clearFieldError(tool.id, "floorArea");
                       }}
-                      className="border bg-[#F4F4F4] border-gray-300 rounded-3xl h-[50px] p-3 mb-1 pl-4"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
                       keyboardType="numeric"
                     />
                     {fieldErrors[tool.id]?.floorArea ? (
@@ -1349,7 +1351,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     ) : null}
 
                     {/* Building Ownership */}
-                    <Text className="pb-2 font-bold">
+                    <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.Ownership")} *
                     </Text>
                     <DropdownTrigger
@@ -1395,7 +1397,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     />
 
                     {/* General Condition */}
-                    <Text className="pb-2 font-bold">
+                    <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.GeneralCondition")} *
                     </Text>
                     <DropdownTrigger
@@ -1435,7 +1437,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {updatedDetails[tool.id]?.ownership ===
                       "Own Building (with title ownership)" && (
                         <>
-                          <Text className="pb-2 font-bold">
+                          <Text className="text-[#070707] text-sm mt-2">
                             {t("FixedAssets.EstimatedValue")} *
                           </Text>
                           <TextInput
@@ -1454,7 +1456,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               clearFieldError(tool.id, "estimateValue");
                             }}
                             keyboardType="numeric"
-                            className="border bg-[#F4F4F4] border-gray-300 rounded-3xl h-[50px] p-3 mb-1 pl-4"
+                            className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
                           />
                           {fieldErrors[tool.id]?.estimateValue ? (
                             <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1468,7 +1470,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {updatedDetails[tool.id]?.ownership ===
                       "Leased Building" && (
                         <>
-                          <Text className="pb-2 font-bold">
+                          <Text className="text-[#070707] text-sm mt-2">
                             {t("FixedAssets.LeaseStartDate")} *
                           </Text>
                           <TouchableOpacity
@@ -1476,9 +1478,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               clearFieldError(tool.id, "startDate");
                               setShowStartDatePicker((prev) => !prev);
                             }}
-                            className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-1 pl-4 flex-row justify-between"
+                            className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2 mb-2"
                           >
-                            <Text>
+                            <Text
+                              className={`flex-1 ${!updatedDetails[tool.id]?.ownershipDetails?.startDate ? "text-[#6B7280]" : "text-black"}`}
+                            >
                               {updatedDetails[tool.id]?.ownershipDetails
                                 ?.startDate
                                 ? new Date(
@@ -1489,11 +1493,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                   .split("T")[0]
                                 : t("FixedAssets.LeaseStartDate")}
                             </Text>
-                            <Icon
-                              name="calendar-outline"
-                              size={20}
-                              color="#6B7280"
-                            />
+                            <EvilIcons name="calendar" size={28} color="#5e5d5d" />
                           </TouchableOpacity>
                           {fieldErrors[tool.id]?.startDate ? (
                             <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1554,7 +1554,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               />
                             ))}
 
-                          <Text className="pb-2 mt-2 font-bold">
+                          <Text className="text-[#070707] text-sm mt-2">
                             {t("FixedAssets.Duration")} *
                           </Text>
                           <View className="items-center flex-row justify-center">
@@ -1578,7 +1578,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                 );
                                 clearFieldError(tool.id, "duration");
                               }}
-                              className="border border-gray-300 p-2 w-[30%] px-4 rounded-3xl h-[50px] bg-gray-100"
+                              className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2" placeholderTextColor="#585858"
                             />
                             <Text className="w-[20%] text-right pr-2">
                               {t("FixedAssets.Months")}
@@ -1600,7 +1600,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                 );
                                 clearFieldError(tool.id, "duration");
                               }}
-                              className="border border-gray-300 p-2 w-24 rounded-3xl h-[50px] bg-gray-100 px-4"
+                              className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2" placeholderTextColor="#585858"
                             />
                           </View>
                           {fieldErrors[tool.id]?.duration ? (
@@ -1609,7 +1609,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             </Text>
                           ) : null}
 
-                          <Text className="pb-2 mt-4 font-bold">
+                          <Text className="text-[#070707] text-sm mt-2">
                             {t("FixedAssets.AnnualLeaseAmount")} *
                           </Text>
                           <TextInput
@@ -1629,7 +1629,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               clearFieldError(tool.id, "leastAmountAnnually");
                             }}
                             keyboardType="numeric"
-                            className="border bg-[#F4F4F4] border-gray-300 rounded-3xl h-[50px] p-3 mb-1 pl-4"
+                            className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
                           />
                           {fieldErrors[tool.id]?.leastAmountAnnually ? (
                             <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1645,7 +1645,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       updatedDetails[tool.id]?.ownership ===
                       "Permit Building") && (
                         <>
-                          <Text className="pb-2 font-bold">
+                          <Text className="text-[#070707] text-sm mt-2">
                             {t("FixedAssets.IssuedDate")} *
                           </Text>
                           <TouchableOpacity
@@ -1653,9 +1653,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               clearFieldError(tool.id, "issuedDate");
                               setShowStartDatePicker((prev) => !prev);
                             }}
-                            className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-1 pl-4 flex-row justify-between"
+                            className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2 mb-2"
                           >
-                            <Text>
+                            <Text
+                              className={`flex-1 ${!updatedDetails[tool.id]?.ownershipDetails?.issuedDate ? "text-[#6B7280]" : "text-black"}`}
+                            >
                               {updatedDetails[tool.id]?.ownershipDetails
                                 ?.issuedDate
                                 ? new Date(
@@ -1666,11 +1668,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                   .split("T")[0]
                                 : t("FixedAssets.IssuedDate")}
                             </Text>
-                            <Icon
-                              name="calendar-outline"
-                              size={20}
-                              color="#6B7280"
-                            />
+                            <EvilIcons name="calendar" size={28} color="#5e5d5d" />
                           </TouchableOpacity>
                           {fieldErrors[tool.id]?.issuedDate ? (
                             <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1710,11 +1708,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                 value={
                                   updatedDetails[tool.id]?.ownershipDetails
                                     ?.issuedDate
-                                    ? new Date(
-                                      updatedDetails[tool.id].ownershipDetails
-                                        .issuedDate,
-                                    )
-                                    : new Date()
+                                  ? new Date(
+                                    updatedDetails[tool.id].ownershipDetails
+                                      .issuedDate,
+                                  )
+                                  : new Date()
                                 }
                                 mode="date"
                                 display="default"
@@ -1731,11 +1729,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               />
                             ))}
 
-                          <Text className="pb-2 font-bold">
-                            {t("FixedAssets.permitFeeAnnuallyLKR")} *
+                          <Text className="text-[#070707] text-sm mt-2">
+                            {t("FixedAssets.PermitFeeAnnuallyLKR")} *
                           </Text>
                           <TextInput
-                            placeholder={t("FixedAssets.permitFeeAnnuallyLKR")}
+                            placeholder={t("FixedAssets.PermitFeeAnnuallyLKR")}
                             value={
                               updatedDetails[
                                 tool.id
@@ -1751,7 +1749,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               clearFieldError(tool.id, "permitFeeAnnually");
                             }}
                             keyboardType="numeric"
-                            className="border bg-[#F4F4F4] border-gray-300 rounded-3xl h-[50px] p-4 mb-1 pl-4"
+                            className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
                           />
                           {fieldErrors[tool.id]?.permitFeeAnnually ? (
                             <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1765,7 +1763,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     {updatedDetails[tool.id]?.ownership ===
                       "Shared / No Ownership" && (
                         <>
-                          <Text className="pb-2 font-bold">
+                          <Text className="text-[#070707] text-sm mt-2">
                             {t("FixedAssets.AnnualPaymentFee")} *
                           </Text>
                           <TextInput
@@ -1785,7 +1783,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               clearFieldError(tool.id, "paymentAnnually");
                             }}
                             keyboardType="numeric"
-                            className="border bg-[#F4F4F4] border-gray-300 rounded-3xl h-[50px] p-3 mb-1 pl-4"
+                            className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
                           />
                           {fieldErrors[tool.id]?.paymentAnnually ? (
                             <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1799,7 +1797,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                 {tool.category === "Machine and Vehicles" && (
                   <>
-                    <Text className="pb-2 pt-2 font-bold">
+                    <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.Asset")} *
                     </Text>
                     <DropdownTrigger
@@ -1833,7 +1831,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                     {selectedAsset && assetTypesForAssets[selectedAsset] && (
                       <>
-                        <Text className="pb-2 font-bold">
+                        <Text className="text-[#070707] text-sm mt-2">
                           {t("FixedAssets.AssetType")} *
                         </Text>
                         <DropdownTrigger
@@ -1868,7 +1866,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                     {updatedDetails[tool.id]?.assetType === "Other" && (
                       <>
-                        <Text className="pb-2 font-bold">
+                        <Text className="text-[#070707] text-sm mt-2">
                           {t("FixedAssets.MentionOtherDetails")}
                         </Text>
                         <TextInput
@@ -1882,7 +1880,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             );
                             clearFieldError(tool.id, "mentionOther");
                           }}
-                          className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-3 pl-4 mb-1"
+                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
                         />
                         {fieldErrors[tool.id]?.mentionOther ? (
                           <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1892,14 +1890,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       </>
                     )}
 
-                    <Text className="pb-2 font-bold">
+                    <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.Brand")} *
                     </Text>
                     <TextInput
                       placeholder={t("FixedAssets.SelectBrand")}
                       value={updatedDetails[tool.id]?.brand ?? ""}
                       editable={false}
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-3 mb-1 pl-4"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
                     />
                     {fieldErrors[tool.id]?.brand ? (
                       <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1907,7 +1905,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       </Text>
                     ) : null}
 
-                    <Text className="pb-2 font-bold">
+                    <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.NumberOfUnits")} *
                     </Text>
                     <TextInput
@@ -1924,7 +1922,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         clearFieldError(tool.id, "numberOfUnits");
                       }}
                       keyboardType="numeric"
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-3 mb-1 pl-4"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
                     />
                     {fieldErrors[tool.id]?.numberOfUnits ? (
                       <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1932,7 +1930,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       </Text>
                     ) : null}
 
-                    <Text className="pb-2 font-bold">
+                    <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.UnitPrice")} *
                     </Text>
                     <TextInput
@@ -1949,7 +1947,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         clearFieldError(tool.id, "unitPrice");
                       }}
                       keyboardType="numeric"
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-3 mb-1 pl-4"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
                     />
                     {fieldErrors[tool.id]?.unitPrice ? (
                       <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -1957,10 +1955,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       </Text>
                     ) : null}
 
-                    <Text className="pb-2 font-bold">
+                    <Text className="text-[#070707] text-sm my-2">
                       {t("FixedAssets.TotalPrice")} *
                     </Text>
-                    <Text className="border border-gray-300 bg-[#F4F4F4] rounded-full p-4 mb-1 pl-4">
+                    <Text className="border border-[#F4F4F4] p-4 pl-4 rounded-full bg-gray-100 mb-2">
                       {updatedDetails[tool.id]?.totalPrice
                         ? updatedDetails[tool.id].totalPrice
                           .toString()
@@ -1973,7 +1971,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       </Text>
                     ) : null}
 
-                    <Text className="pb-2 font-bold">
+                    <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.Warranty")} *
                     </Text>
                     <View className="flex-row justify-around mb-4">
@@ -2002,7 +2000,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                     {updatedDetails[tool.id]?.warranty === "yes" && (
                       <>
-                        <Text className="pb-2 font-bold">
+                        <Text className="text-[#070707] text-sm mt-2">
                           {t("FixedAssets.PurchasedDate")} *
                         </Text>
                         <TouchableOpacity
@@ -2010,9 +2008,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             clearFieldError(tool.id, "purchaseDate");
                             setShowPurchaseDatePicker((prev) => !prev);
                           }}
-                          className="border border-gray-300 p-4 pl-4 pr-4 rounded-full flex-row bg-gray-100 justify-between mb-1"
+                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2 mb-2"
                         >
-                          <Text>
+                          <Text
+                            className={`flex-1 ${!updatedDetails[tool.id]?.ownershipDetails?.purchaseDate ? "text-[#6B7280]" : "text-black"}`}
+                          >
                             {updatedDetails[tool.id]?.ownershipDetails
                               ?.purchaseDate
                               ? new Date(
@@ -2023,11 +2023,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                 .split("T")[0]
                               : t("FixedAssets.PurchasedDate")}
                           </Text>
-                          <Icon
-                            name="calendar-outline"
-                            size={20}
-                            color="#6B7280"
-                          />
+                          <EvilIcons name="calendar" size={28} color="#5e5d5d" />
                         </TouchableOpacity>
                         {fieldErrors[tool.id]?.purchaseDate ? (
                           <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -2098,7 +2094,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             </>
                           ))}
 
-                        <Text className="pb-2 font-bold">
+                        <Text className="text-[#070707] text-sm mt-2">
                           {t("FixedAssets.WarrantyExpireDate")} *
                         </Text>
                         <TouchableOpacity
@@ -2106,9 +2102,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             clearFieldError(tool.id, "expireDate");
                             setShowExpireDatePicker((prev) => !prev);
                           }}
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-1 pl-4 flex-row justify-between"
+                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2 mb-2"
                         >
-                          <Text>
+                          <Text
+                            className={`flex-1 ${!updatedDetails[tool.id]?.ownershipDetails?.expireDate ? "text-[#6B7280]" : "text-black"}`}
+                          >
                             {updatedDetails[tool.id]?.ownershipDetails
                               ?.expireDate
                               ? new Date(
@@ -2119,11 +2117,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                 .split("T")[0]
                               : t("FixedAssets.WarrantyExpireDate")}
                           </Text>
-                          <Icon
-                            name="calendar-outline"
-                            size={20}
-                            color="#6B7280"
-                          />
+                          <EvilIcons name="calendar" size={28} color="#5e5d5d" />
                         </TouchableOpacity>
                         {fieldErrors[tool.id]?.expireDate ? (
                           <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -2210,10 +2204,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             </>
                           ))}
 
-                        <Text className="pb-2 font-bold">
+                        <Text className="text-[#070707] text-sm mt-2">
                           {t("FixedAssets.WarrantyCoverageStatus")}
                         </Text>
-                        <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
+                        <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2 h-[50px] justify-center">
                           <Text
                             style={{
                               color: updatedDetails[tool.id]?.ownershipDetails
@@ -2247,7 +2241,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                 {tool.category === "Tools" && (
                   <>
-                    <Text className="pb-2 pt-2 font-bold">
+                    <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.Asset")} *
                     </Text>
                     <DropdownTrigger
@@ -2281,7 +2275,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                     {updatedDetails[tool.id]?.asset === "Other" && (
                       <>
-                        <Text className="pb-2 font-bold">
+                        <Text className="text-[#070707] text-sm mt-2">
                           {t("FixedAssets.MentionOtherDetails")}
                         </Text>
                         <TextInput
@@ -2295,7 +2289,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             );
                             clearFieldError(tool.id, "mentionOther");
                           }}
-                          className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-3 mb-1 pl-4"
+                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
                         />
                         {fieldErrors[tool.id]?.mentionOther ? (
                           <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -2305,14 +2299,14 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       </>
                     )}
 
-                    <Text className="pb-2 font-bold">
+                    <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.Brand")} *
                     </Text>
                     <TextInput
                       placeholder={t("FixedAssets.SelectBrand")}
                       value={updatedDetails[tool.id]?.brand ?? ""}
                       editable={false}
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-3 mb-1 pl-4"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
                     />
                     {fieldErrors[tool.id]?.brand ? (
                       <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -2320,7 +2314,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       </Text>
                     ) : null}
 
-                    <Text className="pb-2 font-bold">
+                    <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.NumberOfUnits")} *
                     </Text>
                     <TextInput
@@ -2337,7 +2331,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         clearFieldError(tool.id, "numberOfUnits");
                       }}
                       keyboardType="numeric"
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-3 mb-1 pl-4"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
                     />
                     {fieldErrors[tool.id]?.numberOfUnits ? (
                       <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -2345,7 +2339,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       </Text>
                     ) : null}
 
-                    <Text className="pb-2 font-bold">
+                    <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.UnitPrice")} *
                     </Text>
                     <TextInput
@@ -2362,7 +2356,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         clearFieldError(tool.id, "unitPrice");
                       }}
                       keyboardType="numeric"
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-3 mb-1 pl-4"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
                     />
                     {fieldErrors[tool.id]?.unitPrice ? (
                       <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -2370,14 +2364,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       </Text>
                     ) : null}
 
-                    <Text className="pb-2 font-bold">
+                    <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.TotalPrice")}
                     </Text>
-                    <TextInput
-                      placeholder={t("FixedAssets.TotalPrice")}
-                      value={
-                        updatedDetails[tool.id]?.totalPrice
-                          ? (() => {
+                    <Text className="border border-[#F4F4F4] p-4 pl-4 rounded-full bg-gray-100 mb-4">
+                      {updatedDetails[tool.id]?.totalPrice
+                        ? (() => {
                             const raw = updatedDetails[tool.id].totalPrice
                               .toString()
                               .replace(/,/g, "");
@@ -2389,13 +2381,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                 : ".00")
                             );
                           })()
-                          : ""
-                      }
-                      editable={false}
-                      className="border border-gray-300 bg-[#F4F4F4] rounded-3xl h-[50px] p-3 mb-4 pl-4"
-                    />
+                        : ""}
+                    </Text>
 
-                    <Text className="pb-2 font-bold">
+                    <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.Warranty")} *
                     </Text>
                     <View className="flex-row justify-around mb-4">
@@ -2424,7 +2413,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                     {updatedDetails[tool.id]?.warranty === "yes" && (
                       <>
-                        <Text className="pb-2 font-bold">
+                        <Text className="text-[#070707] text-sm mt-2">
                           {t("FixedAssets.PurchasedDate")} *
                         </Text>
                         <TouchableOpacity
@@ -2432,9 +2421,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             clearFieldError(tool.id, "purchaseDate");
                             setShowPurchaseDatePicker((prev) => !prev);
                           }}
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-1 pl-4 flex-row justify-between"
+                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2 mb-2"
                         >
-                          <Text>
+                          <Text
+                            className={`flex-1 ${!updatedDetails[tool.id]?.ownershipDetails?.purchaseDate ? "text-[#6B7280]" : "text-black"}`}
+                          >
                             {updatedDetails[tool.id]?.ownershipDetails
                               ?.purchaseDate
                               ? new Date(
@@ -2445,11 +2436,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                 .split("T")[0]
                               : t("FixedAssets.PurchasedDate")}
                           </Text>
-                          <Icon
-                            name="calendar-outline"
-                            size={20}
-                            color="#6B7280"
-                          />
+                          <EvilIcons name="calendar" size={28} color="#5e5d5d" />
                         </TouchableOpacity>
                         {fieldErrors[tool.id]?.purchaseDate ? (
                           <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -2520,7 +2507,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             </>
                           ))}
 
-                        <Text className="pb-2 font-bold">
+                        <Text className="text-[#070707] text-sm mt-2">
                           {t("FixedAssets.WarrantyExpireDate")} *
                         </Text>
                         <TouchableOpacity
@@ -2528,9 +2515,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             clearFieldError(tool.id, "expireDate");
                             setShowExpireDatePicker((prev) => !prev);
                           }}
-                          className="border bg-[#F4F4F4] border-gray-300 rounded-full p-4 mb-1 pl-4 flex-row justify-between"
+                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2 mb-2"
                         >
-                          <Text>
+                          <Text
+                            className={`flex-1 ${!updatedDetails[tool.id]?.ownershipDetails?.expireDate ? "text-[#6B7280]" : "text-black"}`}
+                          >
                             {updatedDetails[tool.id]?.ownershipDetails
                               ?.expireDate
                               ? new Date(
@@ -2541,11 +2530,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                 .split("T")[0]
                               : t("FixedAssets.WarrantyExpireDate")}
                           </Text>
-                          <Icon
-                            name="calendar-outline"
-                            size={20}
-                            color="#6B7280"
-                          />
+                          <EvilIcons name="calendar" size={28} color="#5e5d5d" />
                         </TouchableOpacity>
                         {fieldErrors[tool.id]?.expireDate ? (
                           <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
@@ -2632,7 +2617,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             </>
                           ))}
 
-                        <Text className="pb-2 font-bold">
+                        <Text className="text-[#070707] text-sm mt-2">
                           {t("FixedAssets.WarrantyCoverageStatus")}
                         </Text>
                         <View className="border border-[#F4F4F4] rounded-full bg-gray-100 p-2 mt-2">
@@ -2663,28 +2648,26 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                 )}
 
                 {/* Submit button */}
-                <View className="flex-1 items-center pt-8">
-                  <TouchableOpacity
-                    onPress={handleUpdateTools}
-                    className={`p-3 rounded-3xl mb-6 h-[50px] w-2/3 ${isLoading ? "bg-gray-500" : "bg-gray-900"}`}
-                    disabled={isLoading}
-                    style={{
-                      shadowColor: "#000000",
-                      shadowOffset: { width: 0, height: 4 },
-                      shadowOpacity: 0.25,
-                      shadowRadius: 4,
-                      elevation: 4,
-                    }}
-                  >
-                    {isLoading ? (
-                      <ActivityIndicator size="small" color="#fff" />
-                    ) : (
-                      <Text className="text-white text-center text-lg">
-                        {t("FixedAssets.UpdateAsset")}
-                      </Text>
-                    )}
-                  </TouchableOpacity>
-                </View>
+                <TouchableOpacity
+                  onPress={handleUpdateTools}
+                  className="bg-[#353535] rounded-3xl h-[50px] justify-center items-center m-6"
+                  style={{
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 4.65,
+                    elevation: 8,
+                  }}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <Text className="text-white text-center font-semibold text-lg">
+                      {t("FixedAssets.UpdateAsset")}
+                    </Text>
+                  )}
+                </TouchableOpacity>
               </View>
             </View>
           ))}

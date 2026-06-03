@@ -565,7 +565,7 @@ const EditFarm: React.FC<EditFarmProps> = ({
           </View>
 
           {/* Form Fields */}
-          <View className="gap-6">
+          <View className="gap-4">
             {/* Farm Name */}
             <View>
               <Text className="text-[#070707] font-medium mb-2">

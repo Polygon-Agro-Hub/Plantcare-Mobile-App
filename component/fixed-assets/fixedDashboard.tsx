@@ -202,11 +202,35 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({
     }, [navigation, isGlobal, user, farmId, farmName]),
   );
 
-  if (loading) {
-    return <LoadingPage fullScreen />;
-  }
-
   const headerTitle = isGlobal ? t("FixedAssets.MyAssets") : farmName;
+
+  if (loading) {
+    return (
+      <View className="flex-1 bg-white">
+        <CustomHeader
+          title={headerTitle}
+          navigation={navigation as any}
+          onBackPress={() => {
+            if (!isGlobal) {
+              if (user?.role === "Owner") {
+                navigation.navigate("Main", {
+                  screen: "FarmDetailsScreen",
+                  params: { farmId, farmName },
+                });
+              } else {
+                navigation.goBack();
+              }
+            } else {
+              navigation.navigate("Dashboard");
+            }
+          }}
+        />
+        <View className="flex-1 justify-center items-center bg-white">
+          <LoadingPage fullScreen />
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View className="flex-1 bg-white">
@@ -271,7 +295,7 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({
         className="px-6"
       >
         {assetData.length > 0 ? (
-          <View className="w-full items-center gap-y-4 mt-1">
+          <View className="w-full items-center gap-y-6 mt-1">
             {assetData.map((asset, index) => (
               <TouchableOpacity
                 key={index}
@@ -298,7 +322,7 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({
                   <View className="flex-row items-center">
                     <Image
                       source={getIcon(asset.value)}
-                      className="w-[24px] h-[24px] mr-2"
+                      className="w-[32px] h-[32px] mr-2"
                     />
                     <Text className="text-center pl-1">
                       {asset.category.charAt(0).toUpperCase() +

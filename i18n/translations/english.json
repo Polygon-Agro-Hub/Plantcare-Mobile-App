@@ -106,7 +106,7 @@
     "MyAssets": "My Assets",
     "Weather": "Weather",
     "Survey": "Survey",
-    "GoviShop": "GoviShop",
+    "GoviShop": "GoViShop",
     "SoilData": "Soil Data"
   },
   "Profile": {
@@ -118,7 +118,7 @@
     "Complaints": "Complaints",
     "PrivacyPolicy": "Privacy Policy",
     "Terms&Conditions": "Terms & Conditions",
-    "GoViCareHelp": "GoVi Care Help",
+    "GoViCareHelp": "GoViCare Help",
     "ReportComplaint": "Report a Complaint",
     "ViewComplaintHistory": "View Complaint History",
     "NeedHelp": "Need Assistance",
@@ -803,10 +803,10 @@
     "UnitPrice": "Unit Price (LKR)",
     "UnitPriceIsRequired": "Unit price is required",
     "TotalPrice": "Total Price (LKR)",
-    "warranty": "Warranty",
+    "Warranty": "Warranty",
     "SelectWarrantyIsRequired": "Select Warranty is required",
-    "Yes": "Yes",
-    "No": "No",
+    "yes": "Yes",
+    "no": "No",
     "PurchasedDate": "Purchased Date",
     "WarrantyExpireDate": "Warranty Expire Date",
     "GeneralCondition": "General Condition",
@@ -1064,7 +1064,8 @@
     "MaizeProcessingMachine": "Maize Processing Machine - ME",
     "MaizeCoenThresher": "Maize Coen Thresher - ME",
     "SteelSeedSowing": "Steel and Plastic Seed Sowing Machine",
-    "TractorMountedSpray": "Tractor Mounted Sprayer"
+    "TractorMountedSpray": "Tractor Mounted Sprayer",
+    "PermitFeeAnnuallyLKR": "Permit Fee Annually (LKR)"
   },
   "ImageViewerModal": {
     "UploadedBy": "Uploaded By :",

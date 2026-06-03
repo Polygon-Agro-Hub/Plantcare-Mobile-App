@@ -9,6 +9,7 @@ import {
   Platform,
 } from "react-native";
 import axios from "axios";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { environment } from "@/environment/environment";
@@ -549,7 +550,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         onBackPress={() => navigation.goBack()}
       />
 
-      <View className="p-6">
+      <View className="px-6 pt-4 pb-8">
         {/* GRN No & Date */}
         <View className="mb-4 -mt-2">
           <Text
@@ -706,29 +707,37 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         </View>
 
         {/* Action Buttons */}
-        <View className="flex-row justify-around w-full mb-7">
+        <View className="flex-row justify-center items-center gap-6 mb-12 mt-4 px-4">
           <TouchableOpacity
-            className="bg-black p-4 h-[80px] w-[120px] rounded-lg items-center justify-center"
+            className="bg-[#1E1E1E] w-1/3 h-24 rounded-xl items-center justify-center"
             onPress={handleDownloadPDF}
+            style={{
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+              elevation: 3,
+            }}
           >
-            <Image
-              source={require("../../assets/images/transaction/download.webp")}
-              style={{ width: 24, height: 24 }}
-            />
-            <Text className="text-sm text-cyan-50 text-center">
+            <MaterialIcons name="download" size={28} color="white" />
+            <Text className="text-white text-sm mt-2 font-medium text-center">
               {t("TransactionList.Download")}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="bg-black p-4 h-[80px] w-[120px] rounded-lg items-center justify-center"
+            className="bg-[#1E1E1E] w-1/3 h-24 rounded-xl items-center justify-center"
             onPress={handleSharePDF}
+            style={{
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+              elevation: 3,
+            }}
           >
-            <Image
-              source={require("../../assets/images/transaction/share.webp")}
-              style={{ width: 24, height: 24 }}
-            />
-            <Text className="text-sm text-cyan-50">
+            <MaterialIcons name="share" size={28} color="white" />
+            <Text className="text-white text-sm mt-2 font-medium text-center">
               {t("TransactionList.Share")}
             </Text>
           </TouchableOpacity>

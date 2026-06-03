@@ -19,6 +19,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../types/types";
 import CustomHeader from "../common/CustomHeader";
+import LoadingPage from "../common/LoadingPage";
 
 type GoViCapitalRequestsNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -243,11 +244,8 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
       />
       {/* Loading State */}
       {loading ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#000" />
-          <Text className="text-gray-500 mt-4">
-            {t("Govicapital.LoadingRequests")}
-          </Text>
+        <View className="flex-1 justify-center items-center bg-white">
+          <LoadingPage fullScreen />
         </View>
       ) : investmentRequests.length === 0 ? (
         /* Empty State */

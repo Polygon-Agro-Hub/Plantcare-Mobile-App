@@ -11,7 +11,7 @@ import {
   RefreshControl,
   BackHandler,
 } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Entypo } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import {
@@ -69,7 +69,7 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
   const farmCount = useSelector(selectUserFarmCount);
 
   const getTranslatedStatus = (status: string) => {
-    const statusKey = `RequestHistory.Status.${status.replace(/\s+/g, "")}`;
+    const statusKey = `RequestHistory.status.${status.replace(/\s+/g, "")}`;
     return t(statusKey);
   };
 
@@ -263,7 +263,7 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
       onPress={() => handleRequestPress(request)}
       activeOpacity={0.7}
     >
-      <View className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-3 mx-4">
+      <View className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-3 mx-6">
         <View className="flex-row justify-between items-start mb-3">
           <Text className="font-semibold text-gray-800 flex-1 mr-2">
             {request.serviceName}
@@ -275,7 +275,7 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
             <Text className="text-gray-600 text-sm">
               {t("RequestHistory.ScheduledTo")} {request.scheduledDate}
             </Text>
-            <AntDesign name="right" size={18} color="#9CA3AF" />
+            <Entypo name="chevron-right" size={18} color="#9CA3AF" />
           </View>
           <View className="flex-row items-center">
             <Text
@@ -332,8 +332,8 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
       </View>
 
       <View className="">
-        <TouchableOpacity
-          className={`absolute bottom-12 right-6 w-16 h-16 rounded-full items-center justify-center shadow-lg ${
+        <TouchableOpacity    
+          className={`absolute bottom-20 right-6 w-16 h-16 rounded-full items-center justify-center shadow-lg ${
             farmCount === 0 ? "bg-gray-400" : "bg-gray-800"
           }`}
           onPress={handleFABPress}
