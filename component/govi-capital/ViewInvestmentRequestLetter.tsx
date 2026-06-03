@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  StatusBar,
   Image,
   ScrollView,
   Alert,
@@ -245,16 +244,13 @@ const ViewInvestmentRequestLetter: React.FC<
 
   return (
     <View className="flex-1 bg-white">
-      
-
       <CustomHeader
         title={t("Govicapital.RequestLetter")}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
       />
-
       <ScrollView
-        className="flex-1 px-4"
+        className="flex-1 px-6"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 20 }}
       >

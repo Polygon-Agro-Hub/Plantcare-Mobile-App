@@ -257,7 +257,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
       enabled
       className="bg-[#F4F7FF]"
       style={{ flex: 1 }}
@@ -267,6 +267,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
+        transparent
       />
       <View className="flex-1 p-4 bg-[#F4F7FF]">
         <FlatList
@@ -387,7 +388,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
 
       <View className="absolute bottom-0 left-0 right-0 bg-[#F4F7FF] border-t border-gray-200">
         <View className="flex-row items-center p-4">
-          <View className="flex-row items-center w-full">
+          <View className="flex-row items-center w-full h-[50px]">
             <TextInput
               value={newComment}
               onChangeText={setNewComment}
@@ -409,7 +410,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                 borderColor: editingCommentId ? "#D1D5DB" : "#D1D5DB",
                 borderWidth: editingCommentId ? 2 : 1,
               }}
-              className={`flex-1 px-3 py-2 rounded-lg mr-2 ${editingCommentId ? "bg-gray-50" : "bg-gray-50"}`}
+              className={`flex-1 px-3 py-2 rounded-lg mr-2  ${editingCommentId ? "bg-gray-50" : "bg-gray-50"}`}
               scrollEnabled={inputHeight >= 120}
               autoFocus={editingCommentId ? true : false}
             />

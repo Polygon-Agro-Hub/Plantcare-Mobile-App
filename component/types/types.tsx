@@ -42,7 +42,7 @@ export type RootStackParamList = {
   TamilDashbord: undefined;
   TamilNewCrop: undefined;
   EngProfile: undefined;
-  EngQRcode: undefined;
+  QRcode: undefined;
   WeatherForecast: undefined;
   FiveDayForecast: undefined;
   SinProfile: undefined;
@@ -51,12 +51,12 @@ export type RootStackParamList = {
   TamilEditProfile: undefined;
   SinQRcode: undefined;
   TamilQRcode: undefined;
-  CurrentAssert: undefined;
-  AddAsset: undefined;
+  CurrentAssert: { farmId?: Number | number; farmName?: string } | undefined;
+  AddAsset: { farmId?: Number | number; farmName?: string } | undefined;
   RemoveAsset: undefined;
-  AssertsFixedView: { category: string; toolId: any };
-  AddFixedAsset: undefined;
-  fixedDashboard: undefined;
+  AssertsFixedView: { category: string; toolId?: any; farmId?: Number | number; farmName?: string };
+  AddFixedAsset: { farmId?: Number | number; farmName?: string } | undefined;
+  fixedDashboard: { farmId?: Number | number; farmName?: string } | undefined;
   News: { newsId: number };
   NewsSinhala: { newsId: number };
   NewsTamil: { newsId: number };
@@ -99,7 +99,7 @@ export type RootStackParamList = {
   TermsConditions: undefined;
   LocationDetailsScreen: undefined;
   Main: { screen: keyof RootStackParamList; params?: any };
-  EngEditProfile: undefined;
+  EditProfile: undefined;
   ManagerDashbord: undefined;
   DeleteFarmer: undefined;
   UserFeedback: undefined;
@@ -166,8 +166,8 @@ export type RootStackParamList = {
   };
   FarmCropItem: undefined;
   FarmCropVariety: undefined;
-  EditFarm: { farmId: number };
-  FromFramEditFarm: { farmId: number };
+  EditFarm: { farmId: number; from?: string };
+  FromFramEditFarm: { farmId: number; from?: string };
   AddnewStaff: { farmId: number; regCode: string };
   ManagerAddStaff: { farmId: number };
   EditStaffMember: {
@@ -207,14 +207,7 @@ export type RootStackParamList = {
     selectedVariety: string;
     farmId: number;
   };
-  FarmCurrectAssets: { farmId: Number; farmName: string };
-  FarmFixDashBoard: { farmId: Number; farmName: string };
-  FarmAssertsFixedView: {
-    category: string;
-    toolId: any;
-    farmId: number;
-    farmName: string;
-  };
+
   FarmCropCalander: {
     cropId: string;
     cropName: string;
@@ -225,9 +218,7 @@ export type RootStackParamList = {
     ongoingCropId: string;
     hasCertificate: boolean;
   };
-  FarmAddFixAssert: { farmId: Number; farmName: string };
   FarmCertificateTask: { farmId: Number; farmName: string };
-  FarmAddCurrentAsset: { farmId: Number; farmName: string };
   FarmCurrectAssetRemove: { farmId: Number; farmName: string };
   EarnCertificate: {
     farmId: number;

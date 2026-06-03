@@ -261,17 +261,17 @@ const EditManagersScreen = () => {
         }
       />
 
-      <View className="bg-white pb-6 items-center justify-center">
+      <View className="bg-white pb-6 items-center justify-center pt-2">
         <Image
           source={getImageSource(farmData?.imageId)}
-          className="w-20 h-20 rounded-full border-2 border-gray-200"
+          className="w-28 h-28 rounded-full border-2 border-gray-200"
           resizeMode="cover"
           accessible
           accessibilityLabel={farmData?.farmName || farmBasicDetails?.farmName}
         />
       </View>
 
-      <View className="bg-white px-6 pb-6">
+      <View className="bg-white px-6s">
         <View className="items-center">
           <View className="flex-row items-center ">
             <Text className="font-bold text-xl text-gray-900 mr-3">
@@ -295,7 +295,7 @@ const EditManagersScreen = () => {
           <View className="border border-[#434343] px-3 py-1 rounded-lg mt-2">
             <Text className="text-gray-700 text-xl font-medium">{regCode}</Text>
           </View>
-          <Text className="text-gray-600 text-sm mb-1">
+          <Text className="text-gray-600 text-sm mb-1 mt-2">
             {farmData?.district}
           </Text>
 
@@ -318,7 +318,7 @@ const EditManagersScreen = () => {
                 className="bg-white rounded-lg p-4 mb-3 border border-gray-100 shadow-sm flex-row items-center justify-between"
               >
                 <View className="flex-row items-center flex-1">
-                  <View className="w-12 h-12 rounded-full items-center justify-center mr-4">
+                  <View className="w-24 h-24 rounded-full items-center justify-center mr-4 overflow-hidden">
                     <Image
                       source={require("../../../assets/images/farms/farm-profile.webp")}
                       className="w-full h-full rounded-full"
@@ -359,9 +359,9 @@ const EditManagersScreen = () => {
         )}
       </ScrollView>
 
-      <View className="absolute bottom-6 right-6 mb-[8%]">
+      <View>
         <TouchableOpacity
-          className="bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
+          className="absolute bottom-20 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
           onPress={handleAddStaff}
           accessibilityLabel="Add new staff member"
           accessibilityRole="button"

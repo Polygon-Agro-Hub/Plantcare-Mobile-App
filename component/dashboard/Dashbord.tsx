@@ -7,7 +7,6 @@ import {
   Alert,
   ScrollView,
   RefreshControl,
-  StatusBar,
 } from "react-native";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
@@ -429,7 +428,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         </View>
 
         {/* Cards Grid Section */}
-        <View className="px-4 pt-4 pb-28">
+        <View className="px-6 pt-4 pb-28">
           {actionRows.map((row, rowIndex) => (
             <View key={rowIndex} className="flex-row justify-between mb-4 ">
               {row.map((action, index) => (

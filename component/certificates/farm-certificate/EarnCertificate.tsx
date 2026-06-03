@@ -209,7 +209,7 @@ const EarnCertificate: React.FC = () => {
           })
         }
       />
-      <View className="bg-white px-4 pb-4 shadow-sm">
+      <View className="bg-white px-6 pb-4 shadow-sm">
         <View className="bg-[#F6F6F6CC] rounded-3xl h-[50px] flex-row items-center px-4">
           <TextInput
             className="flex-1 text-lg text-gray-700"
@@ -224,15 +224,19 @@ const EarnCertificate: React.FC = () => {
 
       {loading ? (
         <View className="flex-1 justify-center items-center">
-          <ActivityIndicator size="large" color="#A07700" />
+          <LottieView
+            source={require("@/assets/jsons/common/loader.json")}
+            autoPlay
+            loop
+            style={{ width: 150, height: 150 }}
+          />
           <Text className="text-gray-600 mt-4">
-            {" "}
             {t("EarnCertificate.LoadingCertificates")}
           </Text>
         </View>
       ) : (
         <ScrollView
-          className="flex-1 px-4"
+          className="flex-1 px-6"
           showsVerticalScrollIndicator={false}
         >
           {filteredCertificates.length > 0 && (
@@ -349,9 +353,9 @@ const EarnCertificate: React.FC = () => {
         visible={modalVisible}
         onRequestClose={handleGoBack}
       >
-        <View className="flex-1 justify-center items-center bg-black/50 px-6">
+        <View className="flex-1 justify-center items-center bg-black/50 bg-opacity-50">
           <View
-            className="bg-white rounded-3xl w-full max-w-sm shadow-lg"
+            className="bg-white rounded-3xl w-11/12 shadow-lg"
             style={{
               paddingTop: hp(4),
               paddingBottom: hp(3),

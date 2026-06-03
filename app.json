@@ -6,16 +6,25 @@
     "orientation": "portrait",
     "icon": "./assets/images/public/favicon.png",
     "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/public/favicon.png",
       "resizeMode": "contain",
       "backgroundColor": "#26D041"
     },
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.polygonagro.GoviCare",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSCameraUsageDescription": "Camera access is required to scan documents and capture images.",
+        "NSMicrophoneUsageDescription": "Microphone access is required for in-app communication.",
+        "NSPhotoLibraryUsageDescription": "Photo library access is required to upload images.",
+        "NSPhotoLibraryAddUsageDescription": "Allow GoviCare to save QR codes to your photo library.",
+        "NSLocationWhenInUseUsageDescription": "Location access is required to track location.",
+        "NSUserTrackingUsageDescription": "Tracking is used to improve app experience.",
+        "NSUserNotificationUsageDescription": "Notifications are used to send important updates.",
+        "NSPhoneUsageDescription": "Phone access is used to make calls directly."
       }
     },
     "android": {
@@ -26,12 +35,13 @@
       "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "pan",
       "package": "com.polygonagro.GoviCare",
-      "versionCode": 17,
+      "versionCode": 18,
       "permissions": [
         "android.permission.INTERNET",
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO",
         "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.VIBRATE",
@@ -49,7 +59,6 @@
         "android.permission.CALL_PHONE",
         "android.permission.MODIFY_AUDIO_SETTINGS",
         "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
-        "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.READ_MEDIA_VISUAL_USER_SELECTED",
         "android.permission.READ_MEDIA_IMAGES",
         "android.permission.READ_MEDIA_VIDEO",
@@ -62,6 +71,7 @@
       "favicon": "./assets/images/public/favicon.png"
     },
     "plugins": [
+      "expo-router",
       [
         "expo-notifications",
         {
@@ -110,12 +120,21 @@
           "recordAudioAndroid": true
         }
       ],
-      "expo-media-library",
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
+          "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
+          "isAccessMediaLocationEnabled": true
+        }
+      ],
       "expo-image-picker",
-      "expo-location",
-      "expo-router"
+      "expo-location"
     ],
     "extra": {
+      "router": {
+        "origin": false
+      },
       "eas": {
         "projectId": "84c9f4b6-3be8-4431-b041-0bcd7d753d63"
       }

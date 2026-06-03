@@ -9,22 +9,21 @@ import {
   Modal,
   Alert,
   BackHandler,
-  StatusBar,
 } from "react-native";
+import { StatusBar } from "react-native";
 import { RouteProp, useFocusEffect } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
-import { heightPercentageToDP as hp } from "react-native-responsive-screen";
-import { useTranslation } from "react-i18next";
-import i18n from "@/i18n/i18n";
 import ImageData from "@/assets/jsons/farm/farm-image.json";
 import districtData from "@/assets/jsons/common/district.json";
+import { StackNavigationProp } from "@react-navigation/stack";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
+import axios from "axios";
 import { RootStackParamList } from "../../types/types";
+import { useTranslation } from "react-i18next";
+import i18n from "@/i18n/i18n";
 import CustomHeader from "../../common/CustomHeader";
 import GlobalSearchModal from "../../common/GlobalSearchModal";
-import { AntDesign } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import LoadingPage from "@/component/common/LoadingPage";
 
 type EditFarmNavigationProp = StackNavigationProp<
@@ -72,79 +71,65 @@ interface FarmDetailsResponse {
   staff: Staff[];
 }
 
-const imageMap: { [key: string]: any } = {
-  "@/assets/images/farms/1.webp": require("@/assets/images/farms/1.webp"),
-  "@/assets/images/farms/2.webp": require("@/assets/images/farms/2.webp"),
-  "@/assets/images/farms/3.webp": require("@/assets/images/farms/3.webp"),
-  "@/assets/images/farms/4.webp": require("@/assets/images/farms/4.webp"),
-  "@/assets/images/farms/5.webp": require("@/assets/images/farms/5.webp"),
-  "@/assets/images/farms/6.webp": require("@/assets/images/farms/6.webp"),
-  "@/assets/images/farms/7.webp": require("@/assets/images/farms/7.webp"),
-  "@/assets/images/farms/8.webp": require("@/assets/images/farms/8.webp"),
-  "@/assets/images/farms/9.webp": require("@/assets/images/farms/9.webp"),
-};
-
-const getImageSource = (imagePath?: string) => {
-  if (!imagePath) return require("@/assets/images/farms/1.webp");
-  return imageMap[imagePath] ?? require("@/assets/images/farms/1.webp");
-};
-
-const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
+const EditFarm: React.FC<EditFarmProps> = ({
+  route,
+  navigation,
+}) => {
   const farmId = route?.params?.farmId ?? null;
-  const { t } = useTranslation();
+  const fromScreen = route?.params?.from;
 
-  const [farmName, setFarmName] = useState("");
-  const [extentha, setExtentha] = useState("");
-  const [extentac, setExtentac] = useState("");
-  const [extentp, setExtentp] = useState("");
-  const [district, setDistrict] = useState("");
-  const [plotNo, setPlotNo] = useState("");
-  const [streetName, setStreetName] = useState("");
-  const [city, setCity] = useState("");
-  const [numberOfStaff, setNumberOfStaff] = useState("");
-  const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedImageId, setSelectedImageId] = useState(1);
-  const [tempSelectedImage, setTempSelectedImage] = useState(0);
-  const [tempSelectedImageId, setTempSelectedImageId] = useState(1);
-  const [imageModalVisible, setImageModalVisible] = useState(false);
-  const [districtModalVisible, setDistrictModalVisible] = useState(false);
+  const [farmName, setFarmName] = useState<string>("");
+  const [extentha, setExtentha] = useState<string>("");
+  const [extentac, setExtentac] = useState<string>("");
+  const [extentp, setExtentp] = useState<string>("");
+  const [district, setDistrict] = useState<string>("");
+  const [plotNo, setPlotNo] = useState<string>("");
+  const [streetName, setStreetName] = useState<string>("");
+  const [city, setCity] = useState<string>("");
+  const [numberOfStaff, setNumberOfStaff] = useState<string>("");
+  const [selectedImage, setSelectedImage] = useState<number>(0);
+  const [selectedImageId, setSelectedImageId] = useState<number>(1);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [districtModalVisible, setDistrictModalVisible] =
+    useState<boolean>(false);
   const [farmData, setFarmData] = useState<FarmItem | null>(null);
-  const [loading, setLoading] = useState(true);
+
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation();
+  const [tempSelectedImage, setTempSelectedImage] = useState<number>(0);
+  const [tempSelectedImageId, setTempSelectedImageId] = useState<number>(1);
 
-  const images = React.useMemo(
-    () => (Array.isArray(ImageData) ? ImageData.filter((img) => img?.id) : []),
-    [],
-  );
-
-  const districtItems = districtData
-    .filter((item) => item?.name)
-    .map((item) => ({
-      label: t(`District.${item.name}`),
-      value: item.name,
-    }));
-
-  const populateFormFields = useCallback(
-    (farm: FarmItem) => {
-      setFarmName(farm.farmName ? String(farm.farmName) : "");
-      setExtentha(farm.extentha ? String(farm.extentha) : "");
-      setExtentac(farm.extentac ? String(farm.extentac) : "");
-      setExtentp(farm.extentp ? String(farm.extentp) : "");
-      setDistrict(farm.district ? String(farm.district) : "");
-      setPlotNo(farm.plotNo ? String(farm.plotNo) : "");
-      setStreetName(farm.street ? String(farm.street) : "");
-      setCity(farm.city ? String(farm.city) : "");
-      setNumberOfStaff(farm.staffCount ? String(farm.staffCount) : "0");
-
-      if (farm.imageId && images.length > 0) {
-        const imageId = Number(farm.imageId);
-        setSelectedImageId(imageId);
-        const imageIndex = images.findIndex((img) => img?.id === imageId);
-        setSelectedImage(imageIndex >= 0 ? imageIndex : 0);
+  const districtItems = React.useMemo(() => {
+    try {
+      if (districtData && Array.isArray(districtData)) {
+        return districtData
+          .filter((item) => item && typeof item === "object" && item.name)
+          .map((item) => ({
+            label: String(t(`District.${item.name}`)),
+            value: String(item.name),
+          }));
       }
-    },
-    [images],
-  );
+      return [];
+    } catch (err) {
+      console.error("Error initializing district items:", err);
+      return [];
+    }
+  }, [t]);
+
+  const images = React.useMemo(() => {
+    try {
+      if (ImageData && Array.isArray(ImageData)) {
+        return ImageData.filter(
+          (img) => img && typeof img === "object" && img.id,
+        );
+      }
+      return [];
+    } catch (err) {
+      console.error("Error loading image data:", err);
+      return [];
+    }
+  }, []);
 
   const fetchFarms = useCallback(async () => {
     if (!farmId) {
@@ -158,23 +143,28 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
       setError(null);
 
       const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No authentication token found");
+      if (!token) {
+        throw new Error("No authentication token found");
+      }
 
       const res = await axios.get<FarmDetailsResponse>(
         `${environment.API_BASE_URL}api/farm/get-farms/byFarm-Id/${farmId}`,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
           timeout: 10000,
         },
       );
 
-      if (res.data?.farm) {
+      if (res.data && typeof res.data === "object" && res.data.farm) {
         setFarmData(res.data.farm);
         populateFormFields(res.data.farm);
       } else {
         throw new Error("Invalid response format");
       }
     } catch (err: any) {
+      console.error("Error fetching farms:", err);
       let errorMessage = t("Farms.FailedToFetchFarmData");
 
       if (err?.response?.status === 404) {
@@ -194,37 +184,53 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
     } finally {
       setLoading(false);
     }
-  }, [farmId, populateFormFields]);
+  }, [farmId]);
+
+  const populateFormFields = useCallback(
+    (farm: FarmItem) => {
+      try {
+        if (!farm || typeof farm !== "object") {
+          throw new Error("Invalid farm data");
+        }
+
+        setFarmName(farm.farmName ? String(farm.farmName) : "");
+        setExtentha(farm.extentha ? String(farm.extentha) : "");
+        setExtentac(farm.extentac ? String(farm.extentac) : "");
+        setExtentp(farm.extentp ? String(farm.extentp) : "");
+        setDistrict(farm.district ? String(farm.district) : "");
+        setPlotNo(farm.plotNo ? String(farm.plotNo) : "");
+        setStreetName(farm.street ? String(farm.street) : "");
+        setCity(farm.city ? String(farm.city) : "");
+        setNumberOfStaff(farm.staffCount ? String(farm.staffCount) : "0");
+
+        if (farm.imageId && images.length > 0) {
+          const imageId = Number(farm.imageId);
+          setSelectedImageId(imageId);
+          const imageIndex = images.findIndex(
+            (img) => img && img.id === imageId,
+          );
+          setSelectedImage(imageIndex >= 0 ? imageIndex : 0);
+        }
+      } catch (err) {
+        console.error("Error populating form fields:", err);
+      }
+    },
+    [images],
+  );
 
   useEffect(() => {
     fetchFarms();
   }, [fetchFarms]);
+
+  const validateNumericInput = useCallback((text: string): string => {
+    return text.replace(/[^0-9]/g, "");
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
       fetchFarms();
     }, [fetchFarms]),
   );
-
-  useFocusEffect(
-    useCallback(() => {
-      const handleBackPress = () => {
-        navigation.navigate("Main", {
-          screen: "FarmDetailsScreen",
-          params: { farmId },
-        });
-        return true;
-      };
-
-      const subscription = BackHandler.addEventListener(
-        "hardwareBackPress",
-        handleBackPress,
-      );
-      return () => subscription.remove();
-    }, [navigation, farmId]),
-  );
-
-  const validateNumericInput = (text: string) => text.replace(/[^0-9]/g, "");
 
   const validateForm = useCallback((): boolean => {
     if (!farmName?.trim()) {
@@ -233,6 +239,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
       ]);
       return false;
     }
+
     if (!district) {
       Alert.alert(t("Main.Sorry"), t("Farms.PleaseSelectADistrict"), [
         { text: t("Main.OK") },
@@ -240,11 +247,12 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
       return false;
     }
 
-    const hasExtent =
+    const hasExtentValue =
       (extentha && extentha !== "0") ||
       (extentac && extentac !== "0") ||
       (extentp && extentp !== "0");
-    if (!hasExtent) {
+
+    if (!hasExtentValue) {
       Alert.alert(
         t("Main.Sorry"),
         t("Farms.Please enter at least one extent value"),
@@ -252,7 +260,8 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
       );
       return false;
     }
-    if (!numberOfStaff?.trim()) {
+
+    if (!numberOfStaff || numberOfStaff.trim() === "") {
       Alert.alert(
         t("Main.Sorry"),
         t("Farms.PleaseEnterTheNNumberOfStaff"),
@@ -271,7 +280,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
       return false;
     }
 
-    const appUserCount = farmData?.appUserCount ?? 0;
+    const appUserCount = farmData?.appUserCount || 0;
     if (staffCount < appUserCount) {
       Alert.alert(
         t("Main.Sorry"),
@@ -295,18 +304,107 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
     t,
   ]);
 
+  const getImageSource = useCallback((imagePath?: string) => {
+    if (!imagePath || typeof imagePath !== "string") {
+      return require("@/assets/images/farms/1.webp");
+    }
+
+    try {
+      const imageMap: { [key: string]: any } = {
+        "@/assets/images/farms/1.webp": require("@/assets/images/farms/1.webp"),
+        "@/assets/images/farms/2.webp": require("@/assets/images/farms/2.webp"),
+        "@/assets/images/farms/3.webp": require("@/assets/images/farms/3.webp"),
+        "@/assets/images/farms/4.webp": require("@/assets/images/farms/4.webp"),
+        "@/assets/images/farms/5.webp": require("@/assets/images/farms/5.webp"),
+        "@/assets/images/farms/6.webp": require("@/assets/images/farms/6.webp"),
+        "@/assets/images/farms/7.webp": require("@/assets/images/farms/7.webp"),
+        "@/assets/images/farms/8.webp": require("@/assets/images/farms/8.webp"),
+        "@/assets/images/farms/9.webp": require("@/assets/images/farms/9.webp"),
+      };
+      return imageMap[imagePath] || require("@/assets/images/farms/1.webp");
+    } catch (err) {
+      console.error("Error loading image:", err);
+      return require("@/assets/images/farms/1.webp");
+    }
+  }, []);
+
+  const handleImageSelect = useCallback((index: number, imageId: number) => {
+    if (typeof index === "number" && typeof imageId === "number") {
+      setTempSelectedImage(index);
+      setTempSelectedImageId(imageId);
+    }
+  }, []);
+
+  const openImageModal = useCallback(() => {
+    setTempSelectedImage(selectedImage);
+    setTempSelectedImageId(selectedImageId);
+    setModalVisible(true);
+  }, [selectedImage, selectedImageId]);
+
+  const handleImageUpdate = useCallback(() => {
+    setSelectedImage(tempSelectedImage);
+    setSelectedImageId(tempSelectedImageId);
+    setModalVisible(false);
+  }, [tempSelectedImage, tempSelectedImageId]);
+
+  const handleModalCancel = useCallback(() => {
+    setTempSelectedImage(selectedImage);
+    setTempSelectedImageId(selectedImageId);
+    setModalVisible(false);
+  }, [selectedImage, selectedImageId]);
+
+  const handleModalClose = useCallback(() => {
+    setModalVisible(false);
+  }, []);
+
+  const selectedDistrictLabel = React.useMemo(() => {
+    const found = districtItems.find((item) => item.value === district);
+    return found ? found.label : "";
+  }, [district, districtItems]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const handleBackPress = () => {
+        if (fromScreen === "FarmDetailsScreen") {
+          navigation.navigate("Main", {
+            screen: "FarmDetailsScreen",
+            params: { farmId },
+          });
+        } else {
+          navigation.navigate("Main", {
+            screen: "AddFarmList",
+            params: { farmId: farmId },
+          });
+        }
+        return true;
+      };
+
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        handleBackPress,
+      );
+
+      return () => subscription.remove();
+    }, [navigation, farmId, fromScreen]),
+  );
+
   const handleUpdateFarm = useCallback(async () => {
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      return;
+    }
 
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No authentication token found");
+
+      if (!token) {
+        throw new Error("No authentication token found");
+      }
 
       const updateData = {
-        farmId,
+        farmId: farmId,
         farmName: farmName.trim(),
-        farmIndex: farmData?.farmIndex ?? 1,
+        farmIndex: farmData?.farmIndex || 1,
         farmImage: selectedImageId,
         extentha: String(extentha || "0"),
         extentac: String(extentac || "0"),
@@ -330,37 +428,46 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
       );
 
       Alert.alert(t("Main.Success"), t("Farms.FarmUpdatedSuccessfully"), [
-        {
-          text: t("Main.OK"),
-          onPress: () =>
-            navigation.navigate("Main", {
-              screen: "FarmDetailsScreen",
-              params: { farmId },
-            }),
-        },
+        { text: t("Main.OK"), onPress: () => navigation.goBack() },
       ]);
     } catch (err: any) {
-      let errorMessage = t("Farms.Failed to update farm");
+      console.error("Error updating farm:", err);
 
-      if (err.response?.data?.message) {
-        const fieldMap: [RegExp, string][] = [
-          [/"plotNo"/g, `"${t("Farms.PlotNo")}"`],
-          [/"farmName"/g, `"${t("Farms.FarmName")}"`],
-          [/"district"/g, `"${t("Farms.District")}"`],
-          [/"street"/g, `"${t("Farms.StreetName")}"`],
-          [/"city"/g, `"${t("Farms.City")}"`],
-          [/"extentha"/g, `"${t("Farms.ha")}"`],
-          [/"extentac"/g, `"${t("Farms.ac")}"`],
-          [/"extentp"/g, `"${t("Farms.p")}"`],
-          [/"staffCount"/g, `"${t("Farms.NumberOfStaff")}"`],
-          [/"farmImage"/g, `"${t("Farms.Farm Image")}"`],
-        ];
-        errorMessage = fieldMap.reduce(
-          (msg, [pattern, replacement]) => msg.replace(pattern, replacement),
-          err.response.data.message,
-        );
-      } else if (err.response?.status === 400) {
-        errorMessage = t("Farms.Invalid data format. Please check all fields.");
+      let errorMessage = t("Farms.Failed to update farm");
+      if (err.response) {
+        if (err.response.data?.message) {
+          let message = err.response.data.message;
+          message = message.replace(/\"plotNo\"/g, `"${t("Farms.PlotNo")}"`);
+          message = message.replace(
+            /\"farmName\"/g,
+            `"${t("Farms.FarmName")}"`,
+          );
+          message = message.replace(
+            /\"district\"/g,
+            `"${t("Farms.District")}"`,
+          );
+          message = message.replace(
+            /\"street\"/g,
+            `"${t("Farms.StreetName")}"`,
+          );
+          message = message.replace(/\"city\"/g, `"${t("Farms.City")}"`);
+          message = message.replace(/\"extentha\"/g, `"${t("Farms.ha")}"`);
+          message = message.replace(/\"extentac\"/g, `"${t("Farms.ac")}"`);
+          message = message.replace(/\"extentp\"/g, `"${t("Farms.p")}"`);
+          message = message.replace(
+            /\"staffCount\"/g,
+            `"${t("Farms.NumberOfStaff")}"`,
+          );
+          message = message.replace(
+            /"farmImage"/g,
+            `"${t("Farms.Farm Image")}"`,
+          );
+          errorMessage = message;
+        } else if (err.response.status === 400) {
+          errorMessage = t(
+            "Farms.Invalid data format. Please check all fields.",
+          );
+        }
       }
 
       Alert.alert(t("Main.Error"), errorMessage, [
@@ -387,31 +494,10 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
     navigation,
   ]);
 
-  const openImageModal = () => {
-    setTempSelectedImage(selectedImage);
-    setTempSelectedImageId(selectedImageId);
-    setImageModalVisible(true);
-  };
-
-  const handleImageSelect = (index: number, imageId: number) => {
-    setTempSelectedImage(index);
-    setTempSelectedImageId(imageId);
-  };
-
-  const handleImageUpdate = () => {
-    setSelectedImage(tempSelectedImage);
-    setSelectedImageId(tempSelectedImageId);
-    setImageModalVisible(false);
-  };
-
-  const handleImageModalCancel = () => {
-    setTempSelectedImage(selectedImage);
-    setTempSelectedImageId(selectedImageId);
-    setImageModalVisible(false);
-  };
-
   if (loading) {
-    return <LoadingPage fullScreen />;
+    return (
+      <LoadingPage fullScreen />
+    );
   }
 
   if (error && !farmData) {
@@ -433,29 +519,33 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
 
   return (
     <View className="flex-1 bg-white">
-      
-
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
+        nestedScrollEnabled={true}
         keyboardShouldPersistTaps="handled"
       >
+        
+
         <CustomHeader
           title={t("Farms.EditFarm")}
           navigation={navigation}
-          onBackPress={() =>
-            navigation.navigate("Main", {
-              screen: "FarmDetailsScreen",
-              params: { farmId },
-            })
-          }
+          onBackPress={() => {
+            if (fromScreen === "FarmDetailsScreen") {
+              navigation.navigate("Main", {
+                screen: "FarmDetailsScreen",
+                params: { farmId },
+              });
+            } else {
+              navigation.navigate("Main", {
+                screen: "AddFarmList",
+              });
+            }
+          }}
         />
-        <View className="px-4">
-          {/* Farm Image Selector */}
-          <View
-            className="items-center mb-8 mt-3"
-            style={{ paddingVertical: hp(2) }}
-          >
+        <View className="px-6">
+          {/* Farm Icon with Update Option */}
+          <View className="items-center mb-6">
             <TouchableOpacity
               onPress={openImageModal}
               accessibilityLabel="Change farm image"
@@ -474,7 +564,8 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
             </TouchableOpacity>
           </View>
 
-          <View className="gap-6">
+          {/* Form Fields */}
+          <View className="gap-4">
             {/* Farm Name */}
             <View>
               <Text className="text-[#070707] font-medium mb-2">
@@ -497,34 +588,50 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
                 {t("Farms.Extent")}
               </Text>
               <View className="flex-row items-center justify-between">
-                {[
-                  {
-                    label: t("Farms.ha"),
-                    value: extentha,
-                    setter: setExtentha,
-                  },
-                  {
-                    label: t("Farms.ac"),
-                    value: extentac,
-                    setter: setExtentac,
-                  },
-                  { label: t("Farms.p"), value: extentp, setter: setExtentp },
-                ].map(({ label, value, setter }) => (
-                  <View key={label} className="flex-row items-center gap-2">
-                    <Text className="font-semibold">{label}</Text>
-                    <TextInput
-                      className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl text-center h-[50px]"
-                      value={value}
-                      onChangeText={(text) =>
-                        setter(validateNumericInput(text))
-                      }
-                      keyboardType="numeric"
-                      placeholder="0"
-                      placeholderTextColor="#9CA3AF"
-                      maxLength={5}
-                    />
-                  </View>
-                ))}
+                <View className="flex-row items-center gap-2">
+                  <Text className="font-semibold">{t("Farms.ha")}</Text>
+                  <TextInput
+                    className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
+                    value={extentha}
+                    onChangeText={(text) =>
+                      setExtentha(validateNumericInput(text))
+                    }
+                    keyboardType="numeric"
+                    placeholder="0"
+                    placeholderTextColor="#9CA3AF"
+                    maxLength={5}
+                  />
+                </View>
+
+                <View className="flex-row items-center gap-2">
+                  <Text className="font-semibold">{t("Farms.ac")}</Text>
+                  <TextInput
+                    className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
+                    value={extentac}
+                    onChangeText={(text) =>
+                      setExtentac(validateNumericInput(text))
+                    }
+                    keyboardType="numeric"
+                    placeholder="0"
+                    placeholderTextColor="#9CA3AF"
+                    maxLength={5}
+                  />
+                </View>
+
+                <View className="flex-row items-center gap-2">
+                  <Text className="font-semibold">{t("Farms.p")}</Text>
+                  <TextInput
+                    className="bg-[#F4F4F4] p-2 w-20 px-4 rounded-3xl h-[50px] text-center"
+                    value={extentp}
+                    onChangeText={(text) =>
+                      setExtentp(validateNumericInput(text))
+                    }
+                    keyboardType="numeric"
+                    placeholder="0"
+                    placeholderTextColor="#9CA3AF"
+                    maxLength={5}
+                  />
+                </View>
               </View>
             </View>
 
@@ -534,37 +641,23 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
                 {t("Farms.District")}
               </Text>
               <TouchableOpacity
+                className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] flex-row justify-between items-center"
                 onPress={() => setDistrictModalVisible(true)}
-                className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] flex-row items-center justify-between"
-                style={{ height: hp(7) }}
-                activeOpacity={0.7}
+                accessibilityLabel="Select district"
               >
                 <Text
                   className={
-                    district
-                      ? "text-gray-700 text-base"
-                      : "text-gray-400 text-base"
+                    selectedDistrictLabel ? "text-gray-800" : "text-[#9CA3AF]"
                   }
                 >
-                  {district
-                    ? districtItems.find((d) => d.value === district)?.label
-                    : t("Farms.SelectDistrict")}
+                  {selectedDistrictLabel || t("Farms.SelectDistrict")}
                 </Text>
-                <AntDesign name="caret-down" size={14} color="#5e5d5d" />
+                <MaterialIcons
+                  name="arrow-drop-down"
+                  size={24}
+                  color="#666"
+                />
               </TouchableOpacity>
-
-              <GlobalSearchModal
-                visible={districtModalVisible}
-                onClose={() => setDistrictModalVisible(false)}
-                title={t("Farms.District")}
-                data={districtItems}
-                selectedItems={district ? [district] : []}
-                onSelect={(items) => setDistrict(items[0] ?? "")}
-                searchPlaceholder={t("Farms.SearchDistrict")}
-                searchKeys={["label"]}
-                showSearch={true}
-                multiSelect={false}
-              />
             </View>
 
             {/* Plot No */}
@@ -614,9 +707,11 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
 
             {/* Number of Staff */}
             <View>
-              <Text className="text-[#070707] font-medium mb-2">
-                {t("Farms.NumberOfStaff")} *
-              </Text>
+              <View className="flex-row justify-between items-center mb-2">
+                <Text className="text-[#070707] font-medium">
+                  {t("Farms.NumberOfStaff")} *
+                </Text>
+              </View>
               <TextInput
                 value={numberOfStaff}
                 onChangeText={(text) =>
@@ -632,19 +727,12 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
           </View>
 
           {/* Update Button */}
-          <View className="mt-8 mb-[40%] items-center">
+          <View className="mt-8 mb-[40%] w-full px-6">
             <TouchableOpacity
-              className="bg-black justify-center w-2/3 rounded-3xl h-[50px]"
+              className="bg-black h-[50px] rounded-3xl w-full justify-center items-center shadow-lg elevation-6"
               onPress={handleUpdateFarm}
               disabled={loading}
               accessibilityLabel="Update farm details"
-              style={{
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 6 },
-                shadowOpacity: 0.25,
-                shadowRadius: 6,
-                elevation: 8,
-              }}
             >
               <Text
                 className="text-white text-center font-semibold text-lg"
@@ -653,7 +741,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
                     ? { fontSize: 15 }
                     : i18n.language === "ta"
                       ? { fontSize: 13 }
-                      : { fontSize: 18 },
+                      : { fontSize: 17 },
                 ]}
               >
                 {loading ? t("Farms.Updating...") : t("Main.Update")}
@@ -663,12 +751,28 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
         </View>
       </ScrollView>
 
+      {/* District Search Modal */}
+      <GlobalSearchModal
+        visible={districtModalVisible}
+        onClose={() => setDistrictModalVisible(false)}
+        title={t("Farms.District")}
+        data={districtItems}
+        selectedItems={district ? [district] : []}
+        onSelect={(items) => {
+          if (items.length > 0) {
+            setDistrict(items[0]);
+          }
+        }}
+        searchPlaceholder={t("Farms.SearchDistrict")}
+        multiSelect={false}
+      />
+
       {/* Farm Image Modal */}
       <Modal
         animationType="slide"
         transparent={true}
-        visible={imageModalVisible}
-        onRequestClose={handleImageModalCancel}
+        visible={modalVisible}
+        onRequestClose={handleModalClose}
       >
         <View className="flex-1 justify-center items-center bg-[#667BA54D]">
           <View className="bg-white p-6 rounded-lg w-4/5 max-h-96">
@@ -679,8 +783,8 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
               <View className="flex-row flex-wrap justify-center">
                 {images.map((imageItem, index) => (
                   <TouchableOpacity
-                    key={imageItem?.id ?? index}
-                    onPress={() => handleImageSelect(index, imageItem?.id ?? 1)}
+                    key={imageItem?.id || index}
+                    onPress={() => handleImageSelect(index, imageItem?.id || 1)}
                     className="w-1/3 p-2 flex items-center"
                     accessibilityLabel={`Farm image ${index + 1}`}
                   >
@@ -710,7 +814,7 @@ const EditFarm: React.FC<EditFarmProps> = ({ route, navigation }) => {
             <View className="flex-row gap-3 mt-4">
               <TouchableOpacity
                 className="flex-1 bg-gray-300 py-3 rounded-full"
-                onPress={handleImageModalCancel}
+                onPress={handleModalCancel}
               >
                 <Text className="text-center text-gray-800 font-semibold">
                   {t("Main.Cancel")}

@@ -183,15 +183,12 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
 
   return (
     <View className="flex-1 bg-white">
-      
-
       <CustomHeader
         title={t("TransactionList.GoViPension")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.navigate("Main", { screen: "Dashboard" })}
       />
-
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ flexGrow: 1 }}
@@ -214,7 +211,7 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
         </View>
 
         {/* Status Content */}
-        <View className="px-8 mb-10">
+        <View className="px-6 mb-10">
           <Text className="text-md text-[#4B6B87] text-center leading-7">
             {config.content}
           </Text>
@@ -224,7 +221,7 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
       </ScrollView>
 
       {/* Action Button */}
-      <View className="px-5 pb-6 pt-4 bg-white">
+      <View className="px-6 pb-6 pt-4 bg-white">
         <TouchableOpacity
           onPress={config.onPress}
           className={`${config.buttonStyle} rounded-3xl h-[50px] justify-center `}

@@ -18,17 +18,14 @@ import {
   useFocusEffect,
 } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { AntDesign } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/component/types/types";
 import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import countryData from "@/assets/jsons/common/country-flag.json";
+import CustomHeader from "../../common/CustomHeader";
 
 import {
   selectFarmSecondDetails,
@@ -128,7 +125,7 @@ const AddMemberDetails: React.FC = () => {
   const numStaff = parseInt(loginCredentialsNeeded || "1", 10) || 1;
 
   const [staff, setStaff] = useState<StaffMember[]>([]);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const roleItems = [
     { label: t("Farms.Manager"), value: "Manager" },
@@ -665,6 +662,11 @@ const AddMemberDetails: React.FC = () => {
     );
   }
 
+  const getCountryEmoji = (dialCode: string) => {
+    const country = countryData.find((c) => c.dial_code === dialCode);
+    return country?.emoji ?? "🏳️";
+  };
+
   const getCountryLabel = (dialCode: string) => {
     const country = countryData.find((c) => c.dial_code === dialCode);
     return country ? `${country.emoji}  (${dialCode})` : dialCode;
@@ -681,57 +683,53 @@ const AddMemberDetails: React.FC = () => {
       behavior={Platform.OS === "ios" ? "padding" : "padding"}
     >
       <View className="flex-1 bg-white">
+        <CustomHeader
+          title={t("Farms.AddNewFarm")}
+          navigation={navigation as any}
+          showBackButton={false}
+          onBackPress={handleGoBack}
+          titleSize={i18n.language === "si" ? 14 : 20}
+          rightComponent={
+            <View className={`${membershipDisplay.bgColor} px-2 py-1 rounded-lg`}>
+              <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
+                {t(`Farms.${membershipDisplay.text}`)}
+              </Text>
+            </View>
+          }
+        />
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
-          className="px-4"
+          className="px-6"
           keyboardShouldPersistTaps="handled"
         >
-          {/* Header */}
-          <View style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}>
-            <View className="flex-row items-center justify-center mb-6 relative">
-              <Text className="font-bold text-lg text-center">
-                {t("Farms.AddNewFarm")}
-              </Text>
-              <View
-                className={`absolute right-[-5%] ${membershipDisplay.bgColor} px-2 py-1 rounded-lg`}
-              >
-                <Text
-                  className={`${membershipDisplay.textColor} text-xs font-medium`}
-                >
-                  {t(`Farms.${membershipDisplay.text}`)}
-                </Text>
-              </View>
+          {/* Step indicator */}
+          <View className="flex-row items-center justify-center mb-8 mt-6">
+            <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-[#2AAD7A] rounded-full flex items-center justify-center">
+              <Image
+                className="w-[10px] h-[13px]"
+                source={require("../../../assets/images/farms/location-white.webp")}
+              />
             </View>
-
-            {/* Step indicator */}
-            <View className="flex-row items-center justify-center mb-3">
-              <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-[#2AAD7A] rounded-full flex items-center justify-center">
-                <Image
-                  className="w-[10px] h-[13px]"
-                  source={require("../../../assets/images/farms/location-white.webp")}
-                />
-              </View>
-              <View className="w-24 h-0.5 bg-[#2AAD7A] mx-2" />
-              <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-[#2AAD7A] rounded-full flex items-center justify-center">
-                <Image
-                  className="w-[11px] h-[12px]"
-                  source={require("../../../assets/images/farms/userwhite.webp")}
-                />
-              </View>
-              <View className="w-24 h-0.5 bg-[#2AAD7A] mx-2" />
-              <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-white rounded-full flex items-center justify-center">
-                <Image
-                  className="w-[13.125px] h-[15px]"
-                  source={require("../../../assets/images/farms/checks.webp")}
-                />
-              </View>
+            <View className="w-24 h-0.5 bg-[#2AAD7A] mx-2" />
+            <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-[#2AAD7A] rounded-full flex items-center justify-center">
+              <Image
+                className="w-[11px] h-[12px]"
+                source={require("../../../assets/images/farms/userwhite.webp")}
+              />
+            </View>
+            <View className="w-24 h-0.5 bg-[#2AAD7A] mx-2" />
+            <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-white rounded-full flex items-center justify-center">
+              <Image
+                className="w-[13.125px] h-[15px]"
+                source={require("../../../assets/images/farms/checks.webp")}
+              />
             </View>
           </View>
 
           {/* Staff forms */}
           {staff.map((member, index) => (
-            <View key={index} className="ml-3 mr-3 gap-4 mt-6">
+            <View key={index} className=" gap-4 mt-6">
               <Text className="font-semibold text-[#5A5A5A]">
                 {`${t("Farms.StaffMember")} ${index + 1}`}
               </Text>
@@ -745,8 +743,7 @@ const AddMemberDetails: React.FC = () => {
                 <TouchableOpacity
                   onPress={() => openModal(index, "role")}
                   disabled={isSubmitting}
-                  className="bg-[#F4F4F4] rounded-full px-4 flex-row items-center justify-between"
-                  style={{ height: hp(7) }}
+                  className="bg-[#F4F4F4] rounded-3xl px-4 flex-row items-center justify-between h-[50px]"
                 >
                   <Text
                     style={{
@@ -756,7 +753,11 @@ const AddMemberDetails: React.FC = () => {
                   >
                     {getRoleLabel(member.role) ?? t("Farms.SelectRole")}
                   </Text>
-                  <AntDesign name="caret-down" size={14} color="#5e5d5d" />
+                  <MaterialIcons
+                    name="arrow-drop-down"
+                    size={24}
+                    color="#666"
+                  />
                 </TouchableOpacity>
                 {roleErrors[index] && (
                   <Text className="text-red-500 text-sm mt-1 ml-3">
@@ -775,7 +776,7 @@ const AddMemberDetails: React.FC = () => {
                   onChangeText={(text) => updateStaff(index, "firstName", text)}
                   placeholder={t("Farms.EnterFirstName")}
                   placeholderTextColor="#9CA3AF"
-                  className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
+                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] text-gray-800"
                   editable={!isSubmitting}
                 />
                 {firstNameErrors[index] && (
@@ -795,7 +796,7 @@ const AddMemberDetails: React.FC = () => {
                   onChangeText={(text) => updateStaff(index, "lastName", text)}
                   placeholder={t("Farms.EnterLastName")}
                   placeholderTextColor="#9CA3AF"
-                  className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
+                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] text-gray-800"
                   editable={!isSubmitting}
                 />
                 {lastNameErrors[index] && (
@@ -815,31 +816,27 @@ const AddMemberDetails: React.FC = () => {
                   <TouchableOpacity
                     onPress={() => openModal(index, "countryCode")}
                     disabled={isSubmitting}
-                    className="bg-[#F4F4F4] rounded-full px-3 h-[50px] flex-row items-center justify-between"
-                    style={{ width: wp(33), height: hp(7) }}
+                    className="bg-[#F4F4F4] rounded-3xl flex-row items-center justify-center px-3 h-[50px] min-w-[100px]"
                   >
-                    <Text style={{ fontSize: 14, color: "#374151" }}>
-                      {getCountryLabel(member.countryCode)}
+                    <Text className="text-[18px]">{getCountryEmoji(member.countryCode)}</Text>
+                    <Text className="text-[#333] text-center text-[13px] ml-1">
+                      {member.countryCode}
                     </Text>
-                    <AntDesign name="caret-down" size={14} color="#5e5d5d" />
                   </TouchableOpacity>
 
                   {/* Phone input */}
-                  <View style={{ flex: 1 }}>
-                    <TextInput
-                      className="bg-[#F4F4F4] rounded-full px-4 h-[50px]"
-                      placeholder="7X XXXXXXX"
-                      value={member.phone}
-                      onChangeText={(text) => handlePhoneChange(text, index)}
-                      placeholderTextColor="#9CA3AF"
-                      keyboardType="phone-pad"
-                      maxLength={9}
-                      style={{ fontSize: 14, borderWidth: 0 }}
-                      underlineColorAndroid="transparent"
-                      cursorColor="#141415ff"
-                      editable={!isSubmitting}
-                    />
-                  </View>
+                  <TextInput
+                    className="flex-1 bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-800"
+                    placeholder="7X XXXXXXX"
+                    value={member.phone}
+                    onChangeText={(text) => handlePhoneChange(text, index)}
+                    placeholderTextColor="#585858"
+                    keyboardType="phone-pad"
+                    maxLength={9}
+                    underlineColorAndroid="transparent"
+                    cursorColor="#141415ff"
+                    editable={!isSubmitting}
+                  />
                 </View>
 
                 {checkingNumber[index] && (
@@ -872,7 +869,7 @@ const AddMemberDetails: React.FC = () => {
                   onChangeText={(text) => handleNicChange(index, text)}
                   placeholder={t("Farms.EnterNIC")}
                   placeholderTextColor="#9CA3AF"
-                  className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
+                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] text-gray-800"
                   editable={!isSubmitting}
                   autoCapitalize="characters"
                   maxLength={12}
@@ -900,38 +897,43 @@ const AddMemberDetails: React.FC = () => {
           ))}
 
           {/* Buttons */}
-          <View className="mt-8 mb-2">
+          <View className="mt-6 w-full px-6">
             <TouchableOpacity
-              className="bg-[#F3F3F5] py-3 mx-6 rounded-full"
+              className="w-full bg-[#F3F3F5] h-[50px] rounded-3xl justify-center items-center"
               onPress={handleGoBack}
               disabled={isSubmitting}
             >
-              <Text className="text-[#84868B] text-center font-semibold text-lg">
+              <Text
+                className="text-[#84868B] text-center font-semibold text-lg"
+                style={[
+                  i18n.language === "si"
+                    ? { fontSize: 16 }
+                    : i18n.language === "ta"
+                      ? { fontSize: 13 }
+                      : { fontSize: 16 },
+                ]}
+              >
                 {t("Main.GoBack")}
               </Text>
             </TouchableOpacity>
           </View>
-          <View className="mt-2 mb-[40%]">
+
+          <View className="mt-3 mb-[20%] w-full px-6">
             <TouchableOpacity
-              className={`py-3 mx-6 rounded-full ${isSubmitting ||
+              activeOpacity={0.8}
+              className={`w-full h-[50px] rounded-3xl justify-center items-center shadow-lg elevation-6 ${
+                isSubmitting ||
                 Object.values(checkingNumber).includes(true) ||
                 Object.values(checkingNIC).includes(true)
-                ? "bg-gray-400"
-                : "bg-black"
-                }`}
+                  ? "bg-[#9CA3AF]"
+                  : "bg-[#353535]"
+              }`}
               onPress={handleSaveFarm}
               disabled={
                 isSubmitting ||
                 Object.values(checkingNumber).includes(true) ||
                 Object.values(checkingNIC).includes(true)
               }
-              style={{
-                shadowColor: "#000000",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.25,
-                shadowRadius: 4,
-                elevation: 4,
-              }}
             >
               <View className="flex-row items-center justify-center">
                 {isSubmitting && (
@@ -941,7 +943,16 @@ const AddMemberDetails: React.FC = () => {
                     style={{ marginRight: 8 }}
                   />
                 )}
-                <Text className="text-white text-center font-semibold text-lg">
+                <Text
+                  className="text-white text-center font-semibold text-lg"
+                  style={[
+                    i18n.language === "si"
+                      ? { fontSize: 15 }
+                      : i18n.language === "ta"
+                        ? { fontSize: 13 }
+                        : { fontSize: 16 },
+                  ]}
+                >
                   {isSubmitting ? t("Farms.Saving...") : t("Farms.SaveFarm")}
                 </Text>
               </View>

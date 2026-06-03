@@ -82,7 +82,7 @@ const CropPlanningCalculatorsMenuScreen: React.FC<CropPlanningProps> = ({
       />
 
       <ScrollView
-        className="flex-1 px-4 pt-4"
+        className="flex-1 px-6 pt-4"
         contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >

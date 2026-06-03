@@ -19,6 +19,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../types/types";
 import CustomHeader from "../common/CustomHeader";
+import LoadingPage from "../common/LoadingPage";
 
 type GoViCapitalRequestsNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -236,21 +237,15 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
 
   return (
     <View className="flex-1 bg-white">
-      
-
       <CustomHeader
         title={t("Govicapital.InvestmentLoanRequests")}
         navigation={navigation}
         onBackPress={() => navigation?.goBack()}
       />
-
       {/* Loading State */}
       {loading ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#000" />
-          <Text className="text-gray-500 mt-4">
-            {t("Govicapital.LoadingRequests")}
-          </Text>
+        <View className="flex-1 justify-center items-center bg-white">
+          <LoadingPage fullScreen />
         </View>
       ) : investmentRequests.length === 0 ? (
         /* Empty State */
@@ -278,9 +273,8 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
           </View>
         </ScrollView>
       ) : (
-    
         <ScrollView
-          className="flex-1 px-4 pt-4 mb-20"
+          className="flex-1 px-6 pt-4 mb-20"
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
@@ -351,14 +345,7 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
       <TouchableOpacity
         onPress={handleAddRequest}
         activeOpacity={0.8}
-        className="absolute bottom-20 right-6 bg-gray-800 w-14 h-14 rounded-full items-center justify-center shadow-lg"
-        style={{
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.3,
-          shadowRadius: 8,
-          elevation: 8,
-        }}
+        className="absolute bottom-20 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
       >
         <MaterialIcons name="add" size={28} color="#fff" />
       </TouchableOpacity>

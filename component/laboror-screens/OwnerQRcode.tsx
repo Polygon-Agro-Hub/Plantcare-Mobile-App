@@ -21,16 +21,16 @@ import type { NativeEventSubscription } from "react-native";
 import CustomHeader from "../common/CustomHeader";
 import LoadingPage from "../common/LoadingPage";
 
-type EngQRcodeNavigationPrps = StackNavigationProp<
+type QRcodeNavigationPrps = StackNavigationProp<
   RootStackParamList,
-  "EngQRcode"
+  "QRcode"
 >;
 
-interface EngQRcodeProps {
-  navigation: EngQRcodeNavigationPrps;
+interface QRcodeProps {
+  navigation: QRcodeNavigationPrps;
 }
 
-const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
+const OwnerQRcode: React.FC<QRcodeProps> = ({ navigation }) => {
   const { t } = useTranslation();
   const [QR, setQR] = useState<string>("");
 
@@ -106,7 +106,7 @@ const OwnerQRcode: React.FC<EngQRcodeProps> = ({ navigation }) => {
         return;
       }
 
-      const { status } = await MediaLibrary.requestPermissionsAsync();
+      const { status } = await MediaLibrary.requestPermissionsAsync(true);
       if (status !== "granted") {
         Alert.alert(
           t("QRCode.AccessRequired"),

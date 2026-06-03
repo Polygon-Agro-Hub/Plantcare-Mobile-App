@@ -2,9 +2,8 @@ import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
-import { RouteProp } from "@react-navigation/native";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { useTranslation } from "react-i18next";
+import { RouteProp } from "@react-navigation/native";
 import i18n from "@/i18n/i18n";
 import CustomHeader from "@/component/common/CustomHeader";
 import LoadingPage from "@/component/common/LoadingPage";
@@ -80,84 +79,64 @@ const FarmSelectCrop: React.FC<FarmSelectCropProps> = ({
 
   return (
     <View className="flex-1 bg-white">
-      <ScrollView>
-        <CustomHeader
-          title=""
-          navigation={navigation}
-          onBackPress={() => navigation.goBack()}
-        />
-        <View className=" items-center">
+      <CustomHeader
+        title=""
+        navigation={navigation}
+        onBackPress={() => navigation.goBack()}
+      />
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 24 }}
+        className="px-6"
+      >
+        <View className="items-center mt-4">
           <Text
-            className="font-bold pb-10 px-4"
-            style={[
-              i18n.language === "si" ? { fontSize: 20 } : { fontSize: 20 },
-              {
-                flexWrap: "wrap",
-                textAlign: "center",
-                width: wp(90),
-                lineHeight: 28,
-              },
-            ]}
-            numberOfLines={2}
-            ellipsizeMode="tail"
+            className="font-bold text-xl text-center mb-6 text-black"
+            style={{ lineHeight: 28 }}
           >
             {getCropName()}
           </Text>
           {selectedVariety?.image &&
-            typeof selectedVariety.image === "string" ? (
+          typeof selectedVariety.image === "string" ? (
             <Image
               source={{ uri: selectedVariety.image || "" }}
-              className="rounded-[30px] h-14 w-14 mb-4"
+              className="rounded-[30px] mb-6"
               style={{ width: 250, height: 250 }}
               resizeMode="contain"
             />
           ) : (
-            <Text>{t("SelectCrop.NoImageAvailable")}</Text>
+            <Text className="text-gray-400 mb-6">
+              {t("SelectCrop.NoImageAvailable")}
+            </Text>
           )}
         </View>
-        <View className="flex-1 px-4 pl-7">
-          <Text className="font-bold text-lg mb-4">
+        <View className="mt-4">
+          <Text className="font-bold text-lg mb-2 text-black">
             {t("SelectCrop.Description")}
           </Text>
-          <View className="min-h-[260px] pt-0 pb-4">
-            <Text
-              className="text-base leading-relaxed"
-              style={[
-                i18n.language === "si" ? { fontSize: 14 } : { fontSize: 16 },
-              ]}
-            >
+          <View className="min-h-[200px]">
+            <Text className="text-base leading-relaxed text-gray-700">
               {getSpecialNotes() ||
                 "No additional notes available for this crop."}
             </Text>
           </View>
         </View>
-        <TouchableOpacity
-          className="bg-[#353535] p-3 mx-8 mb-4 items-center bottom-0 left-0 right-0  rounded-full"
-          onPress={() =>
-            navigation.navigate("FarmCropEnroll", {
-              cropId,
-              status: "newAdd",
-              onCulscropID: 0,
-              farmId: farmId,
-            })
-          }
-          style={{
-            shadowColor: "#000000",
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.25,
-            shadowRadius: 4,
-            elevation: 4,
-          }}
-        >
-          <Text
-            className="text-white text-xl"
-            style={[
-              i18n.language === "si" ? { fontSize: 16 } : { fontSize: 20 },
-            ]}
+        <View className="px-6">
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("FarmCropEnroll", {
+                cropId,
+                status: "newAdd",
+                onCulscropID: 0,
+                farmId: farmId,
+              })
+            }
+            className="bg-[#353535] w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 mt-8 mb-6"
           >
-            {t("Main.Continue")}
-          </Text>
-        </TouchableOpacity>
+            <Text className="text-white text-base font-bold">
+              {t("Main.Continue")}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </View>
   );

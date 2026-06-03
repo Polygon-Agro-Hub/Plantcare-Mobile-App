@@ -22,7 +22,7 @@ import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomHeader from "../common/CustomHeader";
 import GlobalSearchModal from "../common/GlobalSearchModal";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import { MaterialIcons } from "@expo/vector-icons";
 
 interface ServiceItem {
   label: string;
@@ -1004,122 +1004,107 @@ const RequestInspectionForm = () => {
         </View>
       )}
 
-      <ScrollView className="flex-1 px-5 py-4" ref={scrollViewRef}>
-        <View className="mb-4">
-          <Text className="text-sm text-gray-600 mb-2">
-            {t("RequestInspectionForm.Service")}
-          </Text>
-          <TouchableOpacity
-            onPress={() => !loadingServices && setServiceModalVisible(true)}
-            disabled={loadingServices}
-            className="bg-[#F4F4F4] rounded-full px-4 flex-row items-center justify-between"
-            style={{ height: hp(7) }}
+      <ScrollView className="flex-1 px-5 py-4" ref={scrollViewRef} contentContainerStyle={{ paddingBottom: 20 }}>
+        <Text className="text-[#070707] text-sm mt-2">
+          {t("RequestInspectionForm.Service")}
+        </Text>
+        <TouchableOpacity
+          onPress={() => !loadingServices && setServiceModalVisible(true)}
+          disabled={loadingServices}
+          className="bg-[#F4F4F4] rounded-3xl px-4 mt-2 mb-2 flex-row items-center justify-between h-[50px]"
+        >
+          <Text
+            className={`text-base ${getSelectedLabel(serviceItems, selectedService) ? "text-gray-900" : "text-gray-400"}`}
           >
-            <Text
-              className={`text-base ${getSelectedLabel(serviceItems, selectedService) ? "text-gray-900" : "text-gray-400"}`}
-            >
-              {loadingServices
-                ? t("RequestInspectionForm.LoadingServices...")
-                : getSelectedLabel(serviceItems, selectedService) ||
-                t("RequestInspectionForm.SelectService...")}
-            </Text>
-            {loadingServices ? (
-              <ActivityIndicator size="small" color="#9CA3AF" />
-            ) : (
-              <AntDesign name="caret-down" size={14} color="#555" />
-            )}
-          </TouchableOpacity>
-        </View>
-
-        <View className="mb-4">
-          <Text className="text-sm text-gray-600 mb-2">
-            {t("RequestInspectionForm.PriceRs")}
+            {loadingServices
+              ? t("RequestInspectionForm.LoadingServices...")
+              : getSelectedLabel(serviceItems, selectedService) ||
+              t("RequestInspectionForm.SelectService...")}
           </Text>
-          <TextInput
-            value={price ? formatCurrency(price) : "0.00"}
-            onChangeText={setPrice}
-            placeholder="0.00"
-            keyboardType="numeric"
-            style={{ color: '#000000' }} 
-            placeholderTextColor="#000000"
-            className="bg-[#F4F4F4] rounded-3xl h-[50px] p-3 border border-[#F4F4F4] text-gray-900"
-            editable={false}
-          />
-        </View>
+          {loadingServices ? (
+            <ActivityIndicator size="small" color="#9CA3AF" />
+          ) : (
+            <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
+          )}
+        </TouchableOpacity>
 
-        <View className="mb-4">
-          <Text className="text-sm text-gray-600 mb-2">
-            {t("RequestInspectionForm.Farm")}
-          </Text>
-          <TouchableOpacity
-            onPress={() => !loadingFarms && setFarmModalVisible(true)}
-            disabled={loadingFarms}
-            className="bg-[#F4F4F4] rounded-full px-4 flex-row items-center justify-between"
-            style={{ height: hp(7) }}
+        <Text className="text-[#070707] text-sm mt-2">
+          {t("RequestInspectionForm.PriceRs")}
+        </Text>
+        <TextInput
+          value={price ? formatCurrency(price) : "0.00"}
+          onChangeText={setPrice}
+          placeholder="0.00"
+          keyboardType="numeric"
+          style={{ color: '#000000' }} 
+          placeholderTextColor="#000000"
+          className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px] text-gray-900"
+          editable={false}
+        />
+
+        <Text className="text-[#070707] text-sm mt-2">
+          {t("RequestInspectionForm.Farm")}
+        </Text>
+        <TouchableOpacity
+          onPress={() => !loadingFarms && setFarmModalVisible(true)}
+          disabled={loadingFarms}
+          className="bg-[#F4F4F4] rounded-3xl px-4 mt-2 mb-2 flex-row items-center justify-between h-[50px]"
+        >
+          <Text
+            className={`text-base ${getSelectedLabel(farmItems, selectedFarm) ? "text-gray-900" : "text-gray-400"}`}
           >
-            <Text
-              className={`text-base ${getSelectedLabel(farmItems, selectedFarm) ? "text-gray-900" : "text-gray-400"}`}
-            >
-              {loadingFarms
-                ? t("RequestInspectionForm.LoadingFarms...")
-                : getSelectedLabel(farmItems, selectedFarm) ||
-                t("RequestInspectionForm.SelectFarm...")}
-            </Text>
-            {loadingFarms ? (
-              <ActivityIndicator size="small" color="#9CA3AF" />
-            ) : (
-              <AntDesign name="caret-down" size={14} color="#555" />
-            )}
-          </TouchableOpacity>
-        </View>
-
-        <View className="mb-4 ">
-          <Text className="text-sm text-gray-600 mb-2">
-            {t("RequestInspectionForm.PlotNo")}
+            {loadingFarms
+              ? t("RequestInspectionForm.LoadingFarms...")
+              : getSelectedLabel(farmItems, selectedFarm) ||
+              t("RequestInspectionForm.SelectFarm...")}
           </Text>
-          <TextInput
-            value={plotNo}
-            onChangeText={(text) => handleTextInputChange(text, setPlotNo)}
-            placeholder={t("RequestInspectionForm.EnterPlotNumber")}
-            style={{ color: '#000000' }} 
-            placeholderTextColor="#000000"
-            className="bg-[#F4F4F4] rounded-3xl h-[50px] p-3 border border-[#F4F4F4] text-gray-900"
-          />
-        </View>
+          {loadingFarms ? (
+            <ActivityIndicator size="small" color="#9CA3AF" />
+          ) : (
+            <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
+          )}
+        </TouchableOpacity>
 
-        <View className="mb-4">
-          <Text className="text-sm text-gray-600 mb-2">
-            {t("RequestInspectionForm.StreetName")}
-          </Text>
-          <TextInput
-            value={streetName}
-            onChangeText={(text) => handleTextInputChange(text, setStreetName)}
-            placeholder={t("RequestInspectionForm.EnterStreetName")}
-            style={{ color: '#000000' }} 
-            placeholderTextColor="#000000"
-            className="bg-[#F4F4F4] rounded-3xl h-[50px] p-3 border border-[#F4F4F4] text-gray-900"
-          />
-        </View>
+        <Text className="text-[#070707] text-sm mt-2">
+          {t("RequestInspectionForm.PlotNo")}
+        </Text>
+        <TextInput
+          value={plotNo}
+          onChangeText={(text) => handleTextInputChange(text, setPlotNo)}
+          placeholder={t("RequestInspectionForm.EnterPlotNumber")}
+          style={{ color: '#000000' }} 
+          placeholderTextColor="#000000"
+          className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px] text-gray-900"
+        />
 
-        <View className="mb-4">
-          <Text className="text-sm text-gray-600 mb-2">
-            {t("RequestInspectionForm.City")}
-          </Text>
-          <TextInput
-            value={city}
-            onChangeText={(text) => handleTextInputChange(text, setCity)}
-            style={{ color: '#000000' }} 
-            placeholderTextColor="#000000"
-            placeholder={t("RequestInspectionForm.EnterCity")}
-            className="bg-[#F4F4F4] rounded-3xl h-[50px] p-3 border border-[#F4F4F4] text-gray-900"
-          />
-        </View>
+        <Text className="text-[#070707] text-sm mt-2">
+          {t("RequestInspectionForm.StreetName")}
+        </Text>
+        <TextInput
+          value={streetName}
+          onChangeText={(text) => handleTextInputChange(text, setStreetName)}
+          placeholder={t("RequestInspectionForm.EnterStreetName")}
+          style={{ color: '#000000' }} 
+          placeholderTextColor="#000000"
+          className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px] text-gray-900"
+        />
 
-        <View className="mb-4 mt-2">
-          <Text className="text-sm text-gray-600 mb-3">
-            {t("RequestInspectionForm.FieldVisitRequestFor")}
-          </Text>
+        <Text className="text-[#070707] text-sm mt-2">
+          {t("RequestInspectionForm.City")}
+        </Text>
+        <TextInput
+          value={city}
+          onChangeText={(text) => handleTextInputChange(text, setCity)}
+          style={{ color: '#000000' }} 
+          placeholderTextColor="#000000"
+          placeholder={t("RequestInspectionForm.EnterCity")}
+          className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px] text-gray-900"
+        />
 
+        <Text className="text-[#070707] text-sm mt-2">
+          {t("RequestInspectionForm.FieldVisitRequestFor")}
+        </Text>
+        <View className="mt-2 mb-2">
           {loadingCrops && selectedFarm ? (
             <Text className="text-gray-500 text-center py-4">
               {t("RequestInspectionForm.LoadingCrops...")}
@@ -1180,26 +1165,26 @@ const RequestInspectionForm = () => {
           )}
         </View>
 
-        <View className="mb-4">
-          <Text className="text-sm text-gray-600 mb-3">
-            {t("RequestInspectionForm.ScheduleDate")}
-          </Text>
+        <Text className="text-[#070707] text-sm mt-2">
+          {t("RequestInspectionForm.ScheduleDate")}
+        </Text>
+        <View className="mt-2 mb-2">
           {renderCalendar()}
         </View>
 
-        <View className="pr-10 pl-10">
+        <View className="mt-8 mb-6 mx-6">
           <TouchableOpacity
             onPress={handleAddMore}
-            className="bg-gray-800 rounded-3xl h-[50px] justify-center items-center mb-6"
+            className="w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 bg-[#353535]"
           >
-            <Text className="text-white font-semibold text-lg">
+            <Text className="text-white text-center font-semibold text-lg">
               {t("RequestInspectionForm.AddMore")}
             </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
 
-      <View className="bg-white border-t border-gray-200 px-5 py-4 flex-row justify-between items-center">
+      <View className="bg-white border-t border-gray-200 px-5 pt-4 pb-20 flex-row justify-between items-center">
         <View>
           <Text className="text-base">
             <Text className="text-gray-600">
@@ -1213,9 +1198,10 @@ const RequestInspectionForm = () => {
         </View>
         <TouchableOpacity
           onPress={handleSubmit}
-          className="bg-teal-500 rounded-3xl px-8 h-[50px] justify-center"
+          className={`rounded-3xl px-8 h-[50px] justify-center items-center shadow-lg elevation-6 ${
+            addedItems.length === 0 ? "bg-[#9CA3AF]" : "bg-[#00A896]"
+          }`}
           disabled={addedItems.length === 0}
-          style={{ opacity: addedItems.length === 0 ? 0.5 : 1 }}
         >
           <Text className="text-white font-semibold text-lg">
             {t("RequestInspectionForm.Done")}

@@ -405,7 +405,6 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
     >
       <ScrollView
         className="flex-1 bg-[#FFFFFF]"
-        style={{ paddingHorizontal: wp(2) }}
         keyboardShouldPersistTaps="handled"
       >
         <CustomHeader
@@ -423,7 +422,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
         </View>
 
         {formStatus === "newAdd" ? (
-          <View className="p-4">
+          <View className="px-6">
             <TouchableOpacity
               className="border border-gray-300 rounded-lg px-4 py-3 mb-8 flex-row justify-between items-center bg-white"
               onPress={() => {
@@ -472,16 +471,19 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
               <Icon name="arrow-drop-down" size={24} color="gray" />
             </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={handleSearch}
-              className={`p-3 mx-5 items-center rounded-full ${isLoading ? "bg-gray-400" : "bg-gray-800"
+            <View className="justify-center items-center px-6">
+              <TouchableOpacity
+                onPress={handleSearch}
+                className={`w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 mt-8 mb-6 ${
+                  isLoading ? "bg-gray-400" : "bg-gray-800"
                 }`}
-              disabled={isLoading}
-            >
-              <Text className="text-white text-base font-bold">
-                {t("Main.Search...")}
-              </Text>
-            </TouchableOpacity>
+                disabled={isLoading}
+              >
+                <Text className="text-white text-lg font-bold">
+                  {t("Main.Search...")}
+                </Text>
+              </TouchableOpacity>
+            </View>
 
             {search && (
               <>
@@ -561,25 +563,28 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                     />
                   ))}
 
-                <TouchableOpacity
-                  onPress={HandleEnrollBtn}
-                  className={`rounded-lg mb-4 p-3 mt-8 items-center ${isLoading ? "bg-gray-500" : "bg-gray-900"
+                <View className="justify-center items-center px-6">
+                  <TouchableOpacity
+                    onPress={HandleEnrollBtn}
+                    className={`w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 mt-8 mb-6 ${
+                      isLoading ? "bg-gray-400" : "bg-gray-800"
                     }`}
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <ActivityIndicator size="small" color="#fff" />
-                  ) : (
-                    <Text className="text-white text-base font-bold">
-                      {t("Main.Enroll")}
-                    </Text>
-                  )}
-                </TouchableOpacity>
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <ActivityIndicator size="small" color="#fff" />
+                    ) : (
+                      <Text className="text-white text-lg font-bold">
+                        {t("Main.Enroll")}
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+                </View>
               </>
             )}
           </View>
         ) : (
-          <View className="p-4">
+          <View className="px-6">
             <Text className="mt-8">{t("Main.Extent")}</Text>
             <View className="flex-row items-center justify-between w-full mt-4">
               <View className="flex-row items-center gap-1">
@@ -649,20 +654,23 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                 />
               ))}
 
-            <TouchableOpacity
-              onPress={updateOngoingCultivation}
-              className={`rounded-lg mb-4 p-3 mt-8 items-center ${isLoading ? "bg-gray-500" : "bg-gray-900"
+            <View className="justify-center items-center px-6">
+              <TouchableOpacity
+                onPress={updateOngoingCultivation}
+                className={`w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 mt-8 mb-6 ${
+                  isLoading ? "bg-gray-500" : "bg-gray-900"
                 }`}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <ActivityIndicator size="small" color="#fff" />
-              ) : (
-                <Text className="text-white text-base font-bold">
-                  {t("Main.Update")}
-                </Text>
-              )}
-            </TouchableOpacity>
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text className="text-white text-lg font-bold">
+                    {t("Main.Update")}
+                  </Text>
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
         )}
       </ScrollView>

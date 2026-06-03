@@ -12,13 +12,9 @@ import {
   BackHandler,
   Keyboard,
 } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
@@ -466,14 +462,13 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
           }
         />
 
-        <View className="px-4 gap-6 pt-3">
+        <View className="px-6 gap-6 pt-3">
           {/* Role */}
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.Role")}</Text>
             <TouchableOpacity
               onPress={() => !isSubmitting && setRoleModalVisible(true)}
-              className="bg-gray-100 px-4 rounded-full flex-row items-center justify-between"
-              style={{ height: hp(7) }}
+              className="bg-gray-100 px-4 rounded-3xl flex-row items-center justify-between h-[50px]"
               activeOpacity={0.7}
             >
               <Text
@@ -487,7 +482,11 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
                   ? roleItems.find((r) => r.value === selectedRole)?.label
                   : t("Farms.SelectRole")}
               </Text>
-              <AntDesign name="caret-down" size={14} color="#555" />
+              <MaterialIcons
+                name="arrow-drop-down"
+                size={24}
+                color="#666"
+              />
             </TouchableOpacity>
 
             <GlobalSearchModal
@@ -525,7 +524,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
               {t("Inputs.LastName")}
             </Text>
             <TextInput
-              className="bg-gray-100 px-4 py-3 rounded-3xl h-[50px] text-base text-gray-700"
+              className="bg-gray-100 px-4 rounded-3xl h-[50px] text-base text-gray-700"
               placeholder={t("Farms.EnterLastName")}
               placeholderTextColor="#9CA3AF"
               value={lastName}
@@ -544,27 +543,26 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
               {/* Country Code Trigger */}
               <TouchableOpacity
                 onPress={() => !isSubmitting && setCountryModalVisible(true)}
-                className="bg-[#F4F4F4] rounded-3xl h-[50px] flex-row items-center justify-between px-4 mr-2"
-                style={{ width: wp(33), height: hp(7) }}
+                className="bg-[#F4F4F4] rounded-3xl h-[50px] flex-row items-center justify-center px-3 mr-2 min-w-[100px]"
                 activeOpacity={0.7}
               >
-                <Text className="text-base text-gray-700">
+                <Text className="text-[18px]">
                   {selectedCountry?.emoji ?? "🇱🇰"}
-                  {"  "}({countryCode})
                 </Text>
-                <AntDesign name="caret-down" size={14} color="#555" />
+                <Text className="text-[#333] text-center text-[13px] ml-1">
+                  {countryCode}
+                </Text>
               </TouchableOpacity>
 
               {/* Phone Input */}
               <View style={{ flex: 1 }}>
                 <TextInput
-                  className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4"
+                  className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4 text-base text-gray-700"
                   placeholder="7X XXXXXXX"
                   value={phoneNumber}
                   onChangeText={handlePhoneChange}
                   keyboardType="phone-pad"
                   maxLength={9}
-                  style={{ height: hp(7), fontSize: 14 }}
                   underlineColorAndroid="transparent"
                   cursorColor="#141415ff"
                   editable={!isSubmitting}
@@ -614,7 +612,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
               onChangeText={(text: string) => handleNicChange(text)}
               placeholder={t("Farms.EnterNIC")}
               placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] p-4 mx-4 rounded-3xl h-[50px] text-gray-800  text-base"
+              className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] text-gray-800 text-base"
               editable={!isSubmitting}
               autoCapitalize="characters"
               maxLength={12}
@@ -641,22 +639,15 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
         </View>
 
         {/* Save Button */}
-        <View className="pt-10 pb-32 items-center">
+        <View className="pt-10 pb-32 px-12 items-center w-full">
           <TouchableOpacity
             onPress={handleSave}
             className={`${isSubmitting || checkingNumber || checkingNIC
               ? "bg-gray-400"
               : "bg-black"
-              } rounded-3xl h-[50px] items-center justify-center w-2/3`}
+              } rounded-3xl h-[50px] items-center justify-center w-full shadow-lg elevation-6`}
             activeOpacity={0.8}
             disabled={isSubmitting || checkingNumber || checkingNIC}
-            style={{
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 6 },
-              shadowOpacity: 0.25,
-              shadowRadius: 6,
-              elevation: 8,
-            }}
           >
             {isSubmitting ? (
               <View className="flex-row items-center">

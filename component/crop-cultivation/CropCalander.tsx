@@ -420,7 +420,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           },
         )}`;
 
-        Alert.alert(t("CropCalender.sorry"), updateMessage, [
+        Alert.alert(t("Main.Sorry"), updateMessage, [
           { text: t("Main.OK") },
         ]);
         return;
@@ -508,7 +508,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         )
       ) {
         Alert.alert(
-          t("CropCalender.sorry"),
+          t("Main.Sorry"),
           t("CropCalender.YouCantChangeTheStatusBackToPendingOnce1HourHasPassedAfterMarkingItAsCompleted"),
           [{ text: t("Main.OK") }],
         );
@@ -516,11 +516,11 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         error.response &&
         error.response.data.message.includes("You need to wait 6 hours")
       ) {
-        Alert.alert(t("CropCalender.sorry"), updateMessage, [
+        Alert.alert(t("Main.Sorry"), updateMessage, [
           { text: t("Main.OK") },
         ]);
       } else {
-        Alert.alert(t("CropCalender.sorry"), updateMessage, [
+        Alert.alert(t("Main.Sorry"), updateMessage, [
           { text: t("Main.OK") },
         ]);
       }

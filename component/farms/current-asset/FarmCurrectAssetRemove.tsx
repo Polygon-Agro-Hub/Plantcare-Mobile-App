@@ -372,7 +372,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
               text: t("Main.OK"),
               onPress: () =>
                 navigation.navigate("Main", {
-                  screen: "FarmCurrectAssets",
+                  screen: "CurrentAssert",
                   params: { farmId, farmName },
                 }),
             },
@@ -409,7 +409,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
           navigation={navigation}
           onBackPress={() =>
             navigation.navigate("Main", {
-              screen: "FarmCurrectAssets",
+              screen: "CurrentAssert",
               params: { farmId, farmName },
             })
           }

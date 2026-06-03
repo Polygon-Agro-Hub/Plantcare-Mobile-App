@@ -253,25 +253,31 @@ function CameraScreen({
         <TouchableOpacity
           onPress={toggleCameraFacing}
           style={{
-            backgroundColor: "#26D041",
+            backgroundColor: "#2AAD7A",
             padding: 16,
             borderRadius: 50,
             marginBottom: 12,
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <Text style={{ color: "black" }}>{t("CropCalender.FlipCamera")}</Text>
+          <Text style={{ color: "black", textAlign: "center" }}>{t("CropCalender.FlipCamera")}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           onPress={captureImage}
           style={{
-            backgroundColor: "#26D041",
+            backgroundColor: "#2AAD7A",
             padding: 16,
             borderRadius: 50,
             marginBottom: 12,
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <Text style={{ color: "black", fontWeight: "600" }}>
+          <Text style={{ color: "black", fontWeight: "600", textAlign: "center" }}>
             {t("CropCalender.Capture")}
           </Text>
         </TouchableOpacity>
@@ -1109,7 +1115,7 @@ const FramcropCalenderwithcertificate: React.FC<
           },
         )}`;
 
-        Alert.alert(t("CropCalender.sorry"), updateMessage, [
+        Alert.alert(t("Main.Sorry"), updateMessage, [
           { text: t("Main.OK") },
         ]);
         return;
@@ -1197,7 +1203,7 @@ const FramcropCalenderwithcertificate: React.FC<
         )
       ) {
         Alert.alert(
-          t("CropCalender.sorry"),
+          t("Main.Sorry"),
           t("CropCalender.YouCantChangeTheStatusBackToPendingOnce1HourHasPassedAfterMarkingItAsCompleted"),
           [{ text: t("Main.OK") }],
         );
@@ -1205,11 +1211,11 @@ const FramcropCalenderwithcertificate: React.FC<
         error.response &&
         error.response.data.message.includes("You need to wait 6 hours")
       ) {
-        Alert.alert(t("CropCalender.sorry"), updateMessage, [
+        Alert.alert(t("Main.Sorry"), updateMessage, [
           { text: t("Main.OK") },
         ]);
       } else {
-        Alert.alert(t("CropCalender.sorry"), updateMessage, [
+        Alert.alert(t("Main.Sorry"), updateMessage, [
           { text: t("Main.OK") },
         ]);
       }
@@ -2315,9 +2321,9 @@ const FramcropCalenderwithcertificate: React.FC<
 
             <TouchableOpacity
               onPress={() => setShowCamera(true)}
-              className="bg-black rounded-3xl w-full py-3 items-center justify-center"
+              className="bg-black py-2 px-6 rounded-full h-[50px] items-center justify-center w-full"
             >
-              <Text className="text-white font-semibold text-base">
+              <Text className="text-white text-base">
                 {t("CropCalender.OpenCamera")}
               </Text>
             </TouchableOpacity>
@@ -2356,9 +2362,9 @@ const FramcropCalenderwithcertificate: React.FC<
           }}
         >
           <View className="flex-1 bg-black/50 justify-center items-center px-6">
-            <View className="bg-white rounded-2xl p-8 items-center w-full">
-              <Text className="text-lg font-semibold mt-2 text-center">
-                {t("Farms.ClickAPhoto")}
+            <View className="bg-white rounded-2xl p-6 shadow-lg items-center w-full">
+              <Text className="text-lg font-semibold mb-2">
+                {t("CropCalender.ImagePreview")}
               </Text>
 
               <Image
@@ -2368,29 +2374,22 @@ const FramcropCalenderwithcertificate: React.FC<
                 className="mt-2"
               />
 
-              <View className="flex justify-center w-full -mt-2">
+              <View className="gap-4 w-full">
                 {isButtonEnabled ? (
-                  <Text className="text-center font-semibold mb-2">
+                  <Text className="text-center font-semibold">
                     {t("Farms.ReadyToSubmit")}
                   </Text>
                 ) : (
-                  <Text className="text-gray-600 text-center mb-2">
+                  <Text className="text-gray-600 text-center text-lg">
                     {countdown} {t("Farms.Seconds")}
                   </Text>
                 )}
 
                 <TouchableOpacity
-                  onPress={() => setShowCamera(true)}
-                  className="border border-black rounded-3xl py-3 items-center"
-                >
-                  <Text className="text-black font-semibold text-base">
-                    {t("Farms.RetakePreviousPhoto")}
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
                   onPress={handleSubmitPhoto}
-                  className="bg-[#353535] rounded-3xl py-3 items-center mt-4"
+                  className={`py-2 px-6 rounded-full h-[50px] items-center justify-center ${
+                    isButtonEnabled ? "bg-[#353535]" : "bg-gray-400"
+                  }`}
                   disabled={
                     uploadingImageForItem === selectedQuestion?.id ||
                     !isButtonEnabled
@@ -2399,25 +2398,34 @@ const FramcropCalenderwithcertificate: React.FC<
                   {uploadingImageForItem === selectedQuestion?.id ? (
                     <ActivityIndicator size="small" color="#fff" />
                   ) : (
-                    <Text className="text-white font-semibold text-base">
+                    <Text className="text-white text-base text-center">
                       {t("Farms.Submit")}
                     </Text>
                   )}
                 </TouchableOpacity>
-              </View>
 
-              <TouchableOpacity
-                onPress={() => {
-                  setCapturedImage(null);
-                  setShowCameraModal(false);
-                  setSelectedQuestion(null);
-                }}
-                className="mt-4"
-              >
-                <Text className="text-gray-400 text-sm">
-                  {t("Main.Cancel")}
-                </Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setShowCamera(true)}
+                  className="border-2 border-black bg-white py-2 px-6 rounded-full h-[50px] items-center justify-center"
+                >
+                  <Text className="text-black text-base text-center">
+                    {t("Farms.RetakePreviousPhoto")}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    setCapturedImage(null);
+                    setShowCameraModal(false);
+                    setSelectedQuestion(null);
+                  }}
+                  className="items-center mt-2"
+                >
+                  <Text className="text-gray-400 text-sm">
+                    {t("Main.Cancel")}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </Modal>

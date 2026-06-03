@@ -20,8 +20,7 @@ import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import bankNames from "@/assets/jsons/bank-details/banks.json";
 import { useTranslation } from "react-i18next";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import { MaterialIcons } from "@expo/vector-icons";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 
 type BankDetailsScreenNavigationProp = StackNavigationProp<
@@ -31,6 +30,7 @@ type BankDetailsScreenNavigationProp = StackNavigationProp<
 
 interface BankDetailsScreenProps {
   navigation: BankDetailsScreenNavigationProp;
+  route: any;
 }
 
 interface allBranches {
@@ -39,7 +39,10 @@ interface allBranches {
   name: string;
 }
 
-const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
+const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
+  navigation,
+  route,
+}) => {
   const [accountNumber, setAccountNumber] = useState("");
   const [confirmAccountNumber, setConfirmAccountNumber] = useState("");
   const [bankName, setBankName] = useState("");
@@ -57,6 +60,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
   const [accountNumbermisMatchError, setAccountNumbermisMatchError] =
     useState("");
   const [accountNumberError, setAccountNumberError] = useState("");
+
+  const isSignUp = route.name === "BankDetailsSignUp";
 
   const adjustFontSize = (size: number) =>
     language !== "en" ? size * 0.9 : size;
@@ -85,9 +90,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       if (selectedBank) {
         try {
           const data = require("@/assets/jsons/bank-details/branches.json");
-          const filteredBranches = data[selectedBank.ID] || [];
+          const branchesList = data[selectedBank.ID] || [];
 
-          const sortedBranches = filteredBranches.sort(
+          const sortedBranches = branchesList.sort(
             (a: { name: string }, b: { name: any }) =>
               a.name.localeCompare(b.name),
           );
@@ -95,9 +100,11 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           setFilteredBranches(sortedBranches);
         } catch (error) {
           console.error("Error loading branches", error);
-          Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-            { text: t("Main.OK") },
-          ]);
+          Alert.alert(
+            t("Main.Error"),
+            t("Main.SomethingWentWrongPleaseTryAgainlater"),
+            [{ text: t("Main.OK") }],
+          );
         } finally {
           setLoading(false);
         }
@@ -107,13 +114,17 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
     } else {
       setFilteredBranches([]);
     }
+
+    setBranchName("");
   }, [bankName]);
 
   const handleRegister = async () => {
-    if (loading) {
-      Alert.alert(t("Main.Loading..."), t("BankDetails.PleaseWaitDataIsBeingLoaded"), [
-        { text: t("Main.OK") },
-      ]);
+    if (loading && bankName) {
+      Alert.alert(
+        t("Main.Loading..."),
+        t("BankDetails.PleaseWaitDataIsBeingLoaded"),
+        [{ text: t("Main.OK") }],
+      );
       return;
     }
 
@@ -130,9 +141,11 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       !trimmedBankName ||
       !trimmedBranchName
     ) {
-      Alert.alert(t("BankDetails.sorry"), t("Main.PleaseFillAllRequiredFields"), [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(
+        t("BankDetails.sorry"),
+        t("Main.PleaseFillAllRequiredFields"),
+        [{ text: t("Main.OK") }],
+      );
       return;
     }
 
@@ -159,9 +172,11 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error"),
+          t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
         setDisableSubmit(false);
         setIsLoading(false);
         return;
@@ -181,9 +196,19 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         Alert.alert(
           t("Main.Success"),
           t("BankDetails.BankDetailsRegisteredSuccessfully"),
-          [{ text: t("Main.OK") }],
+          [
+            {
+              text: t("Main.OK"),
+              onPress: () => {
+                if (isSignUp) {
+                  navigation.navigate("Main", { screen: "Dashboard" });
+                } else {
+                  navigation.navigate("Main", { screen: "QRcode" });
+                }
+              },
+            },
+          ],
         );
-        navigation.navigate("Main", { screen: "EngQRcode" });
         setDisableSubmit(false);
         setIsLoading(false);
       } else {
@@ -201,16 +226,24 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             t("BankDetails.ExistingBankDetails"),
             [{ text: t("Main.OK") }],
           );
-          navigation.navigate("EngProfile");
+          if (isSignUp) {
+            navigation.navigate("Main", { screen: "Dashboard" });
+          } else {
+            navigation.navigate("EngProfile");
+          }
         } else {
-          Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-            { text: t("Main.OK") },
-          ]);
+          Alert.alert(
+            t("Main.Error"),
+            t("Main.SomethingWentWrongPleaseTryAgainlater"),
+            [{ text: t("Main.OK") }],
+          );
         }
       } else {
-        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error"),
+          t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
       }
     } finally {
       setDisableSubmit(false);
@@ -240,7 +273,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       setAccountHolderName(trimmedText);
       setHoldernameNameError("");
     } else {
-      setHoldernameNameError(t("SignUp.UserNameMustStartWithALetterAndContainNoSpaces"));
+      setHoldernameNameError(
+        t("SignUp.UserNameMustStartWithALetterAndContainNoSpaces"),
+      );
     }
   };
 
@@ -255,7 +290,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       setAccountNumberError("");
 
       if (confirmAccountNumber !== "" && confirmAccountNumber !== text) {
-        setAccountNumbermisMatchError(t("BankDetails.AccountNumbersDoNotMatch"));
+        setAccountNumbermisMatchError(
+          t("BankDetails.AccountNumbersDoNotMatch"),
+        );
       } else if (confirmAccountNumber === text) {
         setAccountNumbermisMatchError("");
       }
@@ -270,7 +307,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       setAccountNumberError("");
 
       if (text !== "" && accountNumber !== text) {
-        setAccountNumbermisMatchError(t("BankDetails.AccountNumbersDoNotMatch"));
+        setAccountNumbermisMatchError(
+          t("BankDetails.AccountNumbersDoNotMatch"),
+        );
       } else {
         setAccountNumbermisMatchError("");
       }
@@ -292,10 +331,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       enabled
-      style={{ flex: 1, backgroundColor: "white" }}
+      className="flex-1 bg-white"
     >
-      
-
       <GlobalSearchModal
         visible={bankModalVisible}
         onClose={() => setBankModalVisible(false)}
@@ -327,282 +364,274 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         isLoading={loading && !!bankName}
       />
 
+      <CustomHeader
+        title=""
+        navigation={navigation}
+        onBackPress={() => navigation.goBack()}
+      />
+
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 24 }}
+        contentContainerClassName="pb-6"
         className="flex-1 bg-white"
         keyboardShouldPersistTaps="handled"
       >
-        <CustomHeader
-          title=""
-          navigation={navigation}
-          onBackPress={() => navigation.goBack()}
-        />
-
-        <View className="items-center mb-6 mt-[-15%]">
+        <View className="items-center mb-4">
           <Image
             source={require("../../assets/images/bank-details/qr-screen.webp")}
-            style={{ width: 200, height: 200 }}
+            style={{ width: 280, height: 280 }}
             resizeMode="contain"
           />
         </View>
 
-        <Text className="text-lg font-bold text-center text-gray-900 mb-2 ml-[7%]">
+        <Text className="text-lg font-bold text-center text-gray-900 mb-4">
           {t("BankDetails.FillBankDetails")}
         </Text>
 
-        <View className="gap-4 p-4 ">
-          <Text
-            className="text-[#070707] -mb-2"
-            style={{ fontSize: adjustFontSize(14) }}
-          >
-            {t("BankDetails.AccountHoldersName")}
-          </Text>
-          <TextInput
-            placeholder={t("BankDetails.EnterAccountHoldersName")}
-            className="rounded-3xl h-[50px]"
-            placeholderTextColor="#5e5d5d"
-            value={accountHolderName}
-            onChangeText={handleFirstNameChange}
-            style={{
-              backgroundColor: "#F4F4F4",
-              borderRadius: 25,
-              paddingHorizontal: 16,
-              paddingVertical: 16,
-              textDecorationLine: "none",
-              borderBottomWidth: 0,
-              borderBottomColor: "transparent",
-              borderWidth: 0,
-              borderColor: "transparent",
-              elevation: 0,
-              shadowOpacity: 0,
-            }}
-            underlineColorAndroid="transparent"
-            cursorColor="#000000"
-          />
-          {holdernameNameError ? (
+        <View className="gap-4 px-6">
+          <View>
             <Text
-              className="text-red-500"
-              style={{ fontSize: wp(3), marginTop: wp(-4) }}
+              className="text-[#070707] mb-2"
+              style={{ fontSize: adjustFontSize(14) }}
             >
-              {holdernameNameError}
+              {t("BankDetails.AccountHoldersName")}
             </Text>
-          ) : null}
+            <TextInput
+              placeholder={t("BankDetails.EnterAccountHoldersName")}
+              className="rounded-3xl h-[50px] px-4"
+              placeholderTextColor="#5e5d5d"
+              value={accountHolderName}
+              onChangeText={handleFirstNameChange}
+              style={{
+                backgroundColor: "#F4F4F4",
+                borderRadius: 25,
+                paddingVertical: 16,
+                textDecorationLine: "none",
+                borderBottomWidth: 0,
+                borderBottomColor: "transparent",
+                borderWidth: 0,
+                borderColor: "transparent",
+                elevation: 0,
+                shadowOpacity: 0,
+              }}
+              underlineColorAndroid="transparent"
+              cursorColor="#000000"
+            />
+            {holdernameNameError ? (
+              <Text className="text-red-500 text-xs mb-2">
+                {holdernameNameError}
+              </Text>
+            ) : null}
+          </View>
 
-          <Text
-            className="text-[#070707] -mb-2"
-            style={{ fontSize: adjustFontSize(14) }}
-          >
-            {t("BankDetails.AccountNumber")}
-          </Text>
-          <TextInput
-            placeholder={t("BankDetails.EnterAccountNumber")}
-            placeholderTextColor="#5e5d5d"
-            className="pb-2 bg-[#F4F4F4] rounded-3xl h-[50px] p-4"
-            keyboardType="number-pad"
-            value={accountNumber}
-            onChangeText={handleAccountNumberChange}
-          />
-          {accountNumberError && !validateAccountNumber(accountNumber) ? (
+          <View>
             <Text
-              className="text-red-500"
-              style={{ fontSize: wp(3), marginTop: wp(-4) }}
+              className="text-[#070707] mb-2"
+              style={{ fontSize: adjustFontSize(14) }}
             >
-              {accountNumberError}
+              {t("BankDetails.AccountNumber")}
             </Text>
-          ) : null}
+            <TextInput
+              placeholder={t("BankDetails.EnterAccountNumber")}
+              placeholderTextColor="#5e5d5d"
+              className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4"
+              keyboardType="number-pad"
+              value={accountNumber}
+              onChangeText={handleAccountNumberChange}
+            />
+            {accountNumberError && !validateAccountNumber(accountNumber) ? (
+              <Text className="text-red-500 text-xs mt-2">
+                {accountNumberError}
+              </Text>
+            ) : null}
+          </View>
 
-          <Text
-            className="text-[#070707] -mb-2"
-            style={{ fontSize: adjustFontSize(14) }}
-          >
-            {t("BankDetails.ConfirmYourAccountNumber")}
-          </Text>
-          <TextInput
-            placeholder={t("BankDetails.ReEnterAccountNumber")}
-            placeholderTextColor="#5e5d5d"
-            className="pb-2 bg-[#F4F4F4] rounded-3xl h-[50px] p-4"
-            keyboardType="number-pad"
-            value={confirmAccountNumber}
-            onChangeText={handleConfirmAccountNumberChange}
-          />
-          {accountNumberError &&
+          <View>
+            <Text
+              className="text-[#070707] mb-2"
+              style={{ fontSize: adjustFontSize(14) }}
+            >
+              {t("BankDetails.ConfirmYourAccountNumber")}
+            </Text>
+            <TextInput
+              placeholder={t("BankDetails.ReEnterAccountNumber")}
+              placeholderTextColor="#5e5d5d"
+              className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4"
+              keyboardType="number-pad"
+              value={confirmAccountNumber}
+              onChangeText={handleConfirmAccountNumberChange}
+            />
+            {accountNumberError &&
             !validateAccountNumber(confirmAccountNumber) ? (
-            <Text
-              className="text-red-500"
-              style={{ fontSize: wp(3), marginTop: wp(-4) }}
-            >
-              {accountNumberError}
-            </Text>
-          ) : null}
+              <Text className="text-red-500 text-xs mt-2">
+                {accountNumberError}
+              </Text>
+            ) : null}
+            {accountNumbermisMatchError ? (
+              <Text className="text-red-500 text-xs mt-2">
+                {accountNumbermisMatchError}
+              </Text>
+            ) : null}
+          </View>
 
-          {accountNumbermisMatchError ? (
+          <View>
             <Text
-              className="text-red-500"
-              style={{ fontSize: wp(3), marginTop: wp(-4) }}
+              className="text-[#070707] mb-2"
+              style={{ fontSize: adjustFontSize(14) }}
             >
-              {accountNumbermisMatchError}
+              {t("BankDetails.BankName")}
             </Text>
-          ) : null}
+            <TouchableOpacity
+              onPress={() => setBankModalVisible(true)}
+              className="rounded-3xl h-[50px] px-4 flex-row justify-between items-center"
+              style={{ backgroundColor: "#F4F4F4", borderRadius: 25 }}
+            >
+              <Text
+                style={{
+                  color: bankName ? "#070707" : "#5e5d5d",
+                  fontSize: adjustFontSize(14),
+                }}
+              >
+                {bankName || t("BankDetails.SelectBankName")}
+              </Text>
+              <MaterialIcons
+                name="arrow-drop-down"
+                size={24}
+                color="#666"
+              />
+            </TouchableOpacity>
+          </View>
 
-          <Text
-            className="text-[#070707] -mb-2"
-            style={{ fontSize: adjustFontSize(14) }}
-          >
-            {t("BankDetails.BankName")}
-          </Text>
-          <TouchableOpacity
-            onPress={() => setBankModalVisible(true)}
-            className="rounded-3xl h-[50px]"
-            style={{
-              backgroundColor: "#F4F4F4",
-              borderRadius: 25,
-              paddingHorizontal: 16,
-              paddingVertical: 16,
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
+          <View>
             <Text
-              style={{
-                color: bankName ? "#070707" : "#5e5d5d",
-                fontSize: adjustFontSize(14),
+              className="text-[#070707] mb-2"
+              style={{ fontSize: adjustFontSize(14) }}
+            >
+              {t("BankDetails.BranchName")}
+            </Text>
+            <TouchableOpacity
+              onPress={() => {
+                if (bankName) {
+                  setBranchModalVisible(true);
+                } else {
+                  Alert.alert(
+                    t("BankDetails.sorry"),
+                    t("BankDetails.SelectBankFirst") ||
+                      "Please select a bank first.",
+                    [{ text: t("Main.OK") }],
+                  );
+                }
               }}
-            >
-              {bankName || t("BankDetails.SelectBankName")}
-            </Text>
-            <AntDesign name="caret-down" size={14} color="#555" />
-          </TouchableOpacity>
-
-          <Text
-            className="text-[#070707] -mb-2"
-            style={{ fontSize: adjustFontSize(14) }}
-          >
-            {t("BankDetails.BranchName")}
-          </Text>
-          <TouchableOpacity
-            onPress={() => {
-              if (bankName) {
-                setBranchModalVisible(true);
-              } else {
-                Alert.alert(
-                  t("BankDetails.sorry"),
-                  t("BankDetails.SelectBankFirst") ||
-                  "Please select a bank first.",
-                  [{ text: t("Main.OK") }],
-                );
-              }
-            }}
-            style={{
-              backgroundColor: "#F4F4F4",
-              borderRadius: 25,
-              paddingHorizontal: 16,
-              paddingVertical: 16,
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              opacity: bankName ? 1 : 0.5,
-            }}
-            className="rounded-3xl h-[50px]"
-          >
-            <Text
               style={{
-                color: branchName ? "#070707" : "#5e5d5d",
-                fontSize: adjustFontSize(14),
+                backgroundColor: "#F4F4F4",
+                borderRadius: 25,
+                opacity: bankName ? 1 : 0.5,
               }}
+              className="rounded-3xl h-[50px] px-4 flex-row justify-between items-center"
             >
-              {branchName || t("BankDetails.SelectBranchName")}
-            </Text>
-            <AntDesign name="caret-down" size={14} color="#555" />
-          </TouchableOpacity>
+              <Text
+                style={{
+                  color: branchName ? "#070707" : "#5e5d5d",
+                  fontSize: adjustFontSize(14),
+                }}
+              >
+                {branchName || t("BankDetails.SelectBranchName")}
+              </Text>
+              <MaterialIcons
+                name="arrow-drop-down"
+                size={24}
+                color="#666"
+              />
+            </TouchableOpacity>
+          </View>
         </View>
 
-        <View className="flex items-center justify-center pb-4">
+        <View className="items-center justify-center pb-4 w-full px-12 mt-6">
+          {isSignUp && (
+            <TouchableOpacity
+              className="w-full rounded-3xl  mb-2 bg-[#ECECEC] h-[50px] justify-center items-center shadow-lg elevation-6"
+              onPress={() =>
+                navigation.navigate("Main", { screen: "Dashboard" })
+              }
+            >
+              <Text className="text-[#686868] font-bold text-center text-lg">
+                {t("Membership.Skip")}
+              </Text>
+            </TouchableOpacity>
+          )}
+
           <TouchableOpacity
             onPress={handleRegister}
             disabled={disableSubmit || !isFormValid()}
-            className={`${disableSubmit || !isFormValid()
-              ? "bg-gray-400 rounded-full p-4 mt-2 w-60 "
-              : "bg-[#353535] rounded-full p-4 mt-2 w-60"
-              }`}
-            style={{
-              shadowColor: "#000000",
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.25,
-              shadowRadius: 4,
-              elevation: 4,
-            }}
+            className={`w-full rounded-3xl mt-2 h-[50px] justify-center items-center shadow-lg elevation-6 ${
+              disableSubmit || !isFormValid() ? "bg-[#9CA3AF]" : "bg-[#353535]"
+            }`}
           >
             {isLoading ? (
               <ActivityIndicator size="small" color="#fff" />
             ) : (
-              <Text className="text-white font-bold text-center">
+              <Text className="text-white font-bold text-center text-lg">
                 {t("BankDetails.Register")}
               </Text>
             )}
           </TouchableOpacity>
-        </View>
 
-        <View className="flex items-center justify-center mt-4 pb-4">
-          {language === "en" ? (
-            <View className="flex-row justify-center flex-wrap">
-              <Text className="text-sm text-black font-thin">View </Text>
-
-              <TouchableOpacity
-                onPress={() => navigation.navigate("TermsConditions")}
-              >
-                <Text className="text-sm text-black font-bold underline">
-                  Terms & Conditions
-                </Text>
-              </TouchableOpacity>
-
-              <Text className="text-sm text-black font-thin"> and </Text>
-
-              <TouchableOpacity
-                onPress={() => navigation.navigate("PrivacyPolicy")}
-              >
-                <Text className="text-sm text-black font-bold underline">
-                  Privacy Policy
-                </Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View className="flex-row justify-center flex-wrap">
-              <TouchableOpacity
-                onPress={() => navigation.navigate("TermsConditions")}
-              >
-                <Text
-                  className="text-black font-bold underline"
-                  style={{ fontSize: adjustFontSize(12) }}
-                >
-                  නියමයන් සහ කොන්දේසි
-                </Text>
-              </TouchableOpacity>
-
-              <Text
-                className="text-black font-thin"
-                style={{ fontSize: adjustFontSize(12), marginHorizontal: 2 }}
-              >
-                {""} සහ
-              </Text>
-
-              <TouchableOpacity
-                onPress={() => navigation.navigate("PrivacyPolicy")}
-              >
-                <Text
-                  className="text-black font-bold underline"
-                  style={{ fontSize: adjustFontSize(12) }}
-                >
-                  {""} රහස්‍යතා ප්‍රතිපත්තිය
-                </Text>
-              </TouchableOpacity>
-
-              <Text
-                className="text-black font-thin"
-                style={{ fontSize: adjustFontSize(12), marginLeft: 2 }}
-              >
-                {""} බලන්න
-              </Text>
+          {!isSignUp && (
+            <View className="items-center justify-center mt-6 w-full">
+              {language === "en" ? (
+                <View className="flex-row justify-center flex-wrap">
+                  <Text className="text-sm text-black font-thin">View </Text>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("TermsConditions")}
+                  >
+                    <Text className="text-sm text-black font-bold underline">
+                      Terms & Conditions
+                    </Text>
+                  </TouchableOpacity>
+                  <Text className="text-sm text-black font-thin"> and </Text>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("PrivacyPolicy")}
+                  >
+                    <Text className="text-sm text-black font-bold underline">
+                      Privacy Policy
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <View className="flex-row justify-center flex-wrap">
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("TermsConditions")}
+                  >
+                    <Text
+                      className="text-black font-bold underline"
+                      style={{ fontSize: adjustFontSize(12) }}
+                    >
+                      නියමයන් සහ කොන්දේසි
+                    </Text>
+                  </TouchableOpacity>
+                  <Text
+                    className="text-black font-thin mx-0.5"
+                    style={{ fontSize: adjustFontSize(12) }}
+                  >
+                    සහ
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("PrivacyPolicy")}
+                  >
+                    <Text
+                      className="text-black font-bold underline"
+                      style={{ fontSize: adjustFontSize(12) }}
+                    >
+                      රහස්‍යතා ප්‍රතිපත්තිය
+                    </Text>
+                  </TouchableOpacity>
+                  <Text
+                    className="text-black font-thin ml-0.5"
+                    style={{ fontSize: adjustFontSize(12) }}
+                  >
+                    බලන්න
+                  </Text>
+                </View>
+              )}
             </View>
           )}
         </View>

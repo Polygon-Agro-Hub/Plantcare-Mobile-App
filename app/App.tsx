@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { Alert, BackHandler, StatusBar, Text, TextInput } from "react-native";
+import {
+  Alert,
+  BackHandler,
+  StatusBar,
+  Text,
+  TextInput,
+  Platform,
+} from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -9,6 +16,7 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import NavigationBar from "@/Items/NavigationBar";
+import * as ExpoNavigationBar from "expo-navigation-bar";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider, useSelector } from "react-redux";
@@ -27,9 +35,9 @@ import Otpverification from "@/component/otp-screens/Otpverification";
 import Dashboard from "@/component/dashboard/Dashbord";
 import NewCrop from "@/component/crop-cultivation/NewCrop";
 import SelectCrop from "@/component/crop-cultivation/SelectCrop";
-import EngProfile from "@/component/auth/UserProfile";
-import EngQRcode from "@/component/qr-code/EngQRcode";
-import EngEditProfile from "@/component/auth/EngEditProfile";
+import UserProfile from "@/component/auth/UserProfile";
+import QRcode from "@/component/qr-code/QRcode";
+import EditProfile from "@/component/auth/EditProfile";
 import WeatherForecast from "@/component/weather-screens/WeatherForecast";
 import FiveDayForecast from "@/component/weather-screens/FiveDayForecast";
 import CurrentAssert from "@/component/currect-assets/CurrentAssert";
@@ -44,13 +52,10 @@ import PublicForum from "@/component/public-forum/PublicForum";
 import PublicForumReplies from "@/component/public-forum/PublicForumReplies";
 import PublicForumPost from "@/component/public-forum/PublicForumPost";
 import UpdateAsset from "@/component/fixed-assets/UpdateAsset";
-import OtpverificationOldUser from "@/component/otp-screens/OtpverificationOldUser";
 import CropEnrol from "@/component/crop-cultivation/CropEnrol";
 import { LogBox } from "react-native";
 import MembershipScreen from "@/component/membership-screens/MembershipScreen";
-import MembershipScreenUP from "@/component/membership-screens/MembershipScreenSignUp";
 import BankDetailsScreen from "@/component/bank-details/Bankdetails";
-import BankDetailsSignUp from "@/component/bank-details/BankdetailsSignUp";
 import PrivacyPolicy from "@/component/policies/PrivacyPolicy";
 import TermsConditions from "@/component/policies/TermsConditions";
 import ComplainForm from "@/component/complains/ComplainForm";
@@ -77,19 +82,13 @@ import AddNewCrop from "@/component/farms/crop-cultivation/AddNewCrop";
 import FarmCropEnroll from "@/component/farms/crop-cultivation/FarmCropEnroll";
 import FarmSelectCrop from "@/component/farms/crop-cultivation/FarmSelectCrop";
 import EditFarm from "@/component/farms/edit-farm/EditFarm";
-import FromFramEditFarm from "@/component/farms/edit-farm/FromFramEditFarm";
 import AddnewStaff from "@/component/farms/members-screen/AddnewStaff";
 import EditStaffMember from "@/component/farms/members-screen/EditStaffMember";
 import PublicForumPostEdit from "@/component/public-forum/PublicForumPostEdit";
 import MyCultivation from "@/component/farms/crop-cultivation/MyCultivation";
 import LabororDashbord from "@/component/laboror-screens/LabororDashbord";
-import LabororEngProfile from "@/component/laboror-screens/LabororEngProfile";
 import OwnerQRcode from "@/component/laboror-screens/OwnerQRcode";
-import FarmCurrectAssets from "@/component/farms/current-asset/FarmCurrectAssets";
-import FarmAssertsFixedView from "@/component/farms/fixed-asset/FarmAssertsFixedView";
-import FarmFixDashBoard from "@/component/farms/fixed-asset/FarmFixDashBoard";
-import FarmAddFixAssert from "@/component/farms/fixed-asset/FarmAddFixAssert";
-import FarmAddCurrentAsset from "@/component/farms/current-asset/FarmAddCurrentAsset";
+
 import FarmCurrectAssetRemove from "@/component/farms/current-asset/FarmCurrectAssetRemove";
 import FarmCropCalander from "@/component/farms/crop-cultivation/FarmCropCalander";
 import ManagerDashbord from "@/component/manager-screens/ManagerDashbord";
@@ -161,7 +160,6 @@ import CartScreen from "@/component/govi-shop/CartScreen";
 
 LogBox.ignoreAllLogs(true);
 
-
 (Text as any).defaultProps = {
   ...(Text as any).defaultProps,
   allowFontScaling: false,
@@ -212,7 +210,7 @@ function MainTabNavigator() {
       <Tab.Screen name="ComplainHistory" component={ComplainHistory} />
       <Tab.Screen name="CropCalander" component={CropCalander as any} />
       <Tab.Screen name="CurrentAssert" component={CurrentAssert} />
-      <Tab.Screen name="EngEditProfile" component={EngEditProfile} />
+      <Tab.Screen name="EditProfile" component={EditProfile} />
       <Tab.Screen name="FiveDayForecast" component={FiveDayForecast as any} />
       <Tab.Screen name="fixedDashboard" component={FixedDashboard} />
       <Tab.Screen name="NewCrop" component={NewCrop} />
@@ -233,11 +231,9 @@ function MainTabNavigator() {
         name="PaymentGatewayeRenew"
         component={PaymentGatewayeRenew as any}
       />
-      <Tab.Screen name="EngQRcode" component={EngQRcode} />
+      <Tab.Screen name="QRcode" component={QRcode} />
       <Tab.Screen name="ComplainForm" component={ComplainForm} />
       <Tab.Screen name="AddAsset" component={AddAsset} />
-      <Tab.Screen name="FarmAddFixAssert" component={FarmAddFixAssert} />
-      <Tab.Screen name="FarmCurrectAssets" component={FarmCurrectAssets} />
       <Tab.Screen name="MyCultivation" component={MyCultivation} />
       <Tab.Screen name="FarmDetailsScreen" component={FarmDetailsScreen} />
       <Tab.Screen name="AddFarmList" component={AddFarmList} />
@@ -254,21 +250,29 @@ function MainTabNavigator() {
       <Tab.Screen name="EditManagersScreen" component={EditManagersScreen} />
       <Tab.Screen name="AddnewStaff" component={AddnewStaff as any} />
       <Tab.Screen name="EditStaffMember" component={EditStaffMember as any} />
-      <Tab.Screen name="FromFramEditFarm" component={FromFramEditFarm as any} />
+      <Tab.Screen name="FromFramEditFarm" component={EditFarm as any} />
       <Tab.Screen name="AddNewCrop" component={AddNewCrop} />
       <Tab.Screen name="AssertsFixedView" component={AssertsFixedView as any} />
-      <Tab.Screen
-        name="FarmAddCurrentAsset"
-        component={FarmAddCurrentAsset as any}
-      />
-      <Tab.Screen
-        name="FarmAssertsFixedView"
-        component={FarmAssertsFixedView as any}
-      />
-      <Tab.Screen name="FarmFixDashBoard" component={FarmFixDashBoard as any} />
+
       <Tab.Screen
         name="GoViCapitalRequests"
         component={GoViCapitalRequests as any}
+      />
+      <Tab.Screen
+        name="RequestInspectionPayment"
+        component={RequestInspectionPayment as any}
+      />
+      <Tab.Screen
+        name="RequestHistory"
+        component={RequestHistory as any}
+      />
+      <Tab.Screen
+        name="RequestSummery"
+        component={RequestSummery as any}
+      />
+      <Tab.Screen
+        name="RequestInspectionForm"
+        component={RequestInspectionForm as any}
       />
     </Tab.Navigator>
   );
@@ -285,6 +289,16 @@ function AppContent() {
     SplashScreen.hideAsync().catch((err) => {
       console.warn("Failed to hide splash screen:", err);
     });
+  }, []);
+
+  useEffect(() => {
+    async function setupNavBar() {
+      if (Platform.OS === "android") {
+        await ExpoNavigationBar.setStyle("light");
+      }
+    }
+
+    setupNavBar();
   }, []);
 
   useEffect(() => {
@@ -317,7 +331,8 @@ function AppContent() {
         return false;
       }
 
-      const currentRouteName = navigationRef.getCurrentRoute()?.name ?? "";
+      const currentRouteName =
+        (navigationRef.getCurrentRoute() as any)?.name ?? "";
 
       if (currentRouteName === "Dashboard") {
         BackHandler.exitApp();
@@ -338,7 +353,7 @@ function AppContent() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#fff" }}>
-     <StatusBar backgroundColor="#fff" barStyle="dark-content" />
+      <StatusBar backgroundColor="#fff" barStyle="dark-content" />
       <SafeAreaView
         style={{
           flex: 1,
@@ -355,12 +370,9 @@ function AppContent() {
             <Stack.Screen name="Signup" component={Signup} />
             <Stack.Screen name="Verify" component={Verify} />
             <Stack.Screen name="OTPE" component={Otpverification} />
-            <Stack.Screen
-              name="OTPEOLDUSER"
-              component={OtpverificationOldUser}
-            />
+            <Stack.Screen name="OTPEOLDUSER" component={Otpverification} />
             <Stack.Screen name="SelectCrop" component={SelectCrop as any} />
-            <Stack.Screen name="EngProfile" component={EngProfile as any} />
+            <Stack.Screen name="EngProfile" component={UserProfile as any} />
             <Stack.Screen name="UpdateAsset" component={UpdateAsset as any} />
             <Stack.Screen name="PublicForum" component={PublicForum as any} />
             <Stack.Screen
@@ -379,7 +391,7 @@ function AppContent() {
             />
             <Stack.Screen
               name="MembershipScreenSignUp"
-              component={MembershipScreenUP}
+              component={MembershipScreen}
             />
 
             <Stack.Screen
@@ -388,7 +400,7 @@ function AppContent() {
             />
             <Stack.Screen
               name="BankDetailsSignUp"
-              component={BankDetailsSignUp}
+              component={BankDetailsScreen}
             />
             <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
             <Stack.Screen name="TermsConditions" component={TermsConditions} />
@@ -444,7 +456,7 @@ function AppContent() {
             />
             <Stack.Screen
               name="LabororEngProfile"
-              component={LabororEngProfile}
+              component={UserProfile as any}
             />
             <Stack.Screen name="OwnerQRcode" component={OwnerQRcode} />
             <Stack.Screen
@@ -475,18 +487,7 @@ function AppContent() {
               name="CultivationPaymentScreen"
               component={CultivationPaymentScreen as any}
             />
-            <Stack.Screen
-              name="RequestInspectionPayment"
-              component={RequestInspectionPayment as any}
-            />
-            <Stack.Screen
-              name="RequestHistory"
-              component={RequestHistory as any}
-            />
-            <Stack.Screen
-              name="RequestSummery"
-              component={RequestSummery as any}
-            />
+
             <Stack.Screen
               name="ManagerFarmDetails"
               component={ManagerFarmDetails as any}
@@ -552,10 +553,7 @@ function AppContent() {
               name="ViewInvestmentRequestLetter"
               component={ViewInvestmentRequestLetter as any}
             />
-            <Stack.Screen
-              name="RequestInspectionForm"
-              component={RequestInspectionForm as any}
-            />
+
             <Stack.Screen
               name="GoviPensionInformation"
               component={GoviPensionInformation as any}
@@ -673,10 +671,7 @@ function AppContent() {
               name="GoviShopCartScreen"
               component={GoviShopCartScreen as any}
             />
-            <Stack.Screen
-              name="CartScreen"
-              component={CartScreen as any}
-            />
+            <Stack.Screen name="CartScreen" component={CartScreen as any} />
             <Stack.Screen
               name="GoviShopProfileScreen"
               component={GoviShopProfileScreen as any}
