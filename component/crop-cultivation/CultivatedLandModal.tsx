@@ -131,23 +131,29 @@ function CameraScreen({
         <TouchableOpacity
           onPress={toggleCameraFacing}
           style={{
-            backgroundColor: "#26D041",
+            backgroundColor: "#2AAD7A",
             padding: 16,
             borderRadius: 50,
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <Text style={{ color: "black" }}>{t("CropCalender.FlipCamera")}</Text>
+          <Text style={{ color: "black", textAlign: "center" }}>{t("CropCalender.FlipCamera")}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           onPress={captureImage}
           style={{
-            backgroundColor: "#26D041",
+            backgroundColor: "#2AAD7A",
             padding: 16,
             borderRadius: 50,
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <Text style={{ color: "black", fontWeight: "600" }}>
+          <Text style={{ color: "black", fontWeight: "600", textAlign: "center" }}>
             {t("CropCalender.Capture")}
           </Text>
         </TouchableOpacity>
@@ -536,8 +542,8 @@ export default function CultivatedLandModal({
         onRequestClose={() => onClose()}
         animationType="fade"
       >
-        <View className="flex-1 justify-center items-center bg-black/50">
-          <View className="bg-white rounded-lg w-3/4 p-6 shadow-lg items-center">
+        <View className="flex-1 justify-center items-center bg-black/50 px-6">
+          <View className="bg-white rounded-2xl p-6 shadow-lg items-center w-full">
             <View className="bg-gray-200 p-4 rounded-full mb-4">
               <Image
                 source={require("../../assets/images/crop-cultivation/camera.webp")}
@@ -583,7 +589,7 @@ export default function CultivatedLandModal({
               {t("CropCalender.UploadAPhoto")} {t("CropCalender.OfYourCultivatedLandToReceiveOurGuidance")}
             </Text>
             <TouchableOpacity
-              className="bg-black py-2 px-6 rounded-full"
+              className="bg-black py-2 px-6 rounded-full h-[50px] items-center justify-center w-full"
               onPress={() => setShowCamera(true)}
             >
               <Text className="text-white text-base">
@@ -614,8 +620,8 @@ export default function CultivatedLandModal({
           onRequestClose={() => setCapturedImage(null)}
           animationType="slide"
         >
-          <View className="flex-1 justify-center items-center bg-black/50">
-            <View className="bg-white rounded-lg w-3/4 p-6 shadow-lg items-center">
+          <View className="flex-1 justify-center items-center bg-black/50 px-6">
+            <View className="bg-white rounded-2xl p-6 shadow-lg items-center w-full">
               <Text className="text-lg font-semibold mb-2">
                 {t("CropCalender.ImagePreview")}
               </Text>
@@ -624,7 +630,7 @@ export default function CultivatedLandModal({
                 style={{ width: 250, height: 250, marginBottom: 20 }}
               />
 
-              <View className="gap-4">
+              <View className="gap-4 w-full">
                 {isButtonEnabled ? (
                   <Text className="text-center font-semibold">
                     {t("CropCalender.ReadyToSubmit")}
@@ -636,7 +642,7 @@ export default function CultivatedLandModal({
                 )}
 
                 <TouchableOpacity
-                  className={`py-2 px-6 rounded-full ${
+                  className={`py-2 px-6 rounded-full h-[50px] items-center justify-center ${
                     isButtonEnabled ? "bg-black" : "bg-gray-400"
                   }`}
                   onPress={() => isButtonEnabled && uploadImage(capturedImage)}
@@ -648,7 +654,7 @@ export default function CultivatedLandModal({
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  className="border-2 border-black bg-white py-2 px-6 rounded-full"
+                  className="border-2 border-black bg-white py-2 px-6 rounded-full h-[50px] items-center justify-center"
                   onPress={() => setCapturedImage(null)}
                 >
                   <Text className="text-black text-base text-center">

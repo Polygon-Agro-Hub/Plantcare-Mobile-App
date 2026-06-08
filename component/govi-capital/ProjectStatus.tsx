@@ -202,16 +202,13 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
 
   return (
     <View className="flex-1 bg-white">
-      
-
       <View className="pt-5 pb-6 overflow-hidden" style={{ height: 180 }}>
         <VideoView
           player={player}
           className="absolute top-0 left-0 bottom-0 right-0 w-full h-[200%]"
           contentFit="cover"
         />
-
-        <View className="mb-2 z-10 px-4">
+        <View className="mb-2 z-10 px-6">
           <View className="flex-row items-center">
             <TouchableOpacity
               onPress={() =>

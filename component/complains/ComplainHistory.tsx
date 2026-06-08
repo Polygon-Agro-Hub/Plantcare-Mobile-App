@@ -16,10 +16,6 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import LottieView from "lottie-react-native";
 import { useSelector } from "react-redux";
@@ -164,26 +160,30 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
           title={t("ReportHistory.ComplaintHistory") || "Complaints"}
           navigation={navigation}
           onBackPress={() => navigation.navigate("EngProfile")}
+          headerStyle={{ backgroundColor: loading ? "#FFFFFF" : "#F9F9FA" }}
         />
 
         {loading ? (
-          <LoadingPage fullScreen  />
+          <LoadingPage fullScreen />
         ) : complains.length === 0 ? (
-          <View className="flex-1 items-center justify-center -mt-[70%]">
-            <LottieView
-              source={require("@/assets/jsons/common/no-data.json")}
-              style={{ width: wp(50), height: hp(50) }}
-              autoPlay
-              loop
-            />
-            <Text className="text-center text-gray-600 -mt-[30%]">
-              {t("ReportHistory.NoComplaintsFound") || "No complaints found"}
-            </Text>
+          <View className="flex-1 items-center justify-center">
+            <View className="items-center justify-center">
+              <LottieView
+                source={require("@/assets/jsons/common/no-data.json")}
+                style={{ width: 200, height: 200 }}
+                autoPlay
+                loop
+              />
+              <Text className="text-center text-gray-600 mt-4">
+                {t("ReportHistory.NoComplaintsFound") || "No complaints found"}
+              </Text>
+            </View>
           </View>
         ) : (
           <ScrollView
-            className="p-4 flex-1 mb-[25%]"
-            contentContainerStyle={{ paddingBottom: hp(4) }}
+            className="flex-1 px-6"
+            contentContainerStyle={{ paddingBottom: 100 }}
+            showsVerticalScrollIndicator={false}
           >
             {complains.map((complain) => (
               <View
@@ -213,9 +213,9 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
                       </Text>
                     </TouchableOpacity>
                   )}
-                  <View style={{ flex: 1, alignItems: "flex-end" }}>
+                  <View className="flex-1 items-end">
                     <Text
-                      className={`text-s font-semibold px-4 py-2 rounded ${
+                      className={`text-xs font-semibold px-4 py-2 rounded ${
                         complain.status === "Opened"
                           ? "bg-blue-100 text-[#0051FF]"
                           : "bg-green-100 text-green-800"
@@ -239,20 +239,14 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
           onRequestClose={() => setModalVisible(false)}
           statusBarTranslucent={false}
         >
-          <View
-            className="flex-1 items-center bg-white bg-opacity-50"
-            style={{
-              paddingTop:
-                Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
-            }}
-          >
+          <View className="flex-1 justify-center items-center bg-black/50">
             <ScrollView
-              className="bg-white rounded-lg shadow-lg w-full max-w-md"
+              className="bg-white rounded-lg w-11/12 max-w-md mx-4"
               contentContainerStyle={{ padding: 24, paddingBottom: 70 }}
               showsVerticalScrollIndicator={false}
             >
               <TouchableOpacity
-                className="absolute top-3 right-3 bg-gray-200 p-1 rounded-full"
+                className="absolute top-3 right-3 z-10 bg-gray-200 p-1 rounded-full"
                 onPress={() => setModalVisible(false)}
               >
                 <AntDesign name="close" size={18} color="gray" />
@@ -267,7 +261,7 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
                       : `Dear ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nWe are pleased to inform you that your complaint has been resolved\n\n${complainReply || "Loading..."}\n\nIf you have any further concerns or questions, feel free to reach out.\nThank you for your patience and understanding.\n\nSincerely,\nPolygon Agro Customer Support Team`}
                 </Text>
                 {selectedComplain?.replyTime && (
-                  <Text className="  mb-3 mt-1 ">
+                  <Text className="mb-3 mt-1 text-gray-500 text-xs">
                     {formatDate(selectedComplain.replyTime)}
                   </Text>
                 )}

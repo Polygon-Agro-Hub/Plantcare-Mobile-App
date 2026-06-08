@@ -657,7 +657,7 @@
     "TransactionHistory": "ගනුදෙනු ඉතිහාසය",
     "GoViCapital": "ගොවිකැපිටල්",
     "GoViPension": "ගොවිපෙන්ෂන්",
-    "FarmCal": "ෆාම් කැල්",
+    "FarmCal": "ගණක යන්ත්‍ර",
     "GRNNo": "GRN අංකය",
     "Amount": "මුදල",
     "OfItems": "අයිතම",
@@ -1488,7 +1488,7 @@
     "WelcomeToGoviShop": "GoViShop වෙත සාදරයෙන් පිළිගනිමු"
   },
   "ExploreShops": {
-    "ExploreShops": "සාප්පු ගවේෂණය කරන්න",
+    "ExploreShops": "ළඟම ඇති සාප්පු",
     "NoShopsFound": "සාප්පු හමු නොවීය",
     "SearchShopsProducts": "සාප්පු / නිෂ්පාදන සොයන්න..."
   }

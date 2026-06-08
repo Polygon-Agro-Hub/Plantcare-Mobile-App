@@ -212,7 +212,7 @@ const SupervisorDashbord: React.FC<SupervisorDashbordProps> = ({
           typeof user?.farmId === "number" &&
           typeof user?.farmName === "string"
         ) {
-          navigation.navigate("FarmCurrectAssets", {
+          navigation.navigate("CurrentAssert", {
             farmId: user.farmId,
             farmName: user.farmName,
           });

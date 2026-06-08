@@ -53,7 +53,7 @@ interface SubProduct {
 type UomDisplayMode = "DEFAULT" | "LOOSE" | "ROLL" | "COLOR" | "EQUIPMENT";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const IMAGE_HEIGHT = SCREEN_WIDTH * 0.85;
+const IMAGE_HEIGHT = SCREEN_WIDTH + 20;
 const H_PAD = 16;
 
 const CHIP_COLUMNS = 4;
@@ -186,7 +186,8 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
           } else if (displayMode === "EQUIPMENT") {
             label = v.color ?? "";
           } else {
-            label = `${v.qty ?? ""} ${v.uom ?? ""}`.trim();
+            const qty = v.qty != null ? parseFloat(String(v.qty)) : "";
+            label = `${qty} ${v.uom ?? ""}`.trim();
           }
           return {
             id: String(v.variantId),
@@ -787,9 +788,6 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#1A1A1A" }}>
-      
-
-      {/* Hero image */}
       <View style={{ height: IMAGE_HEIGHT }}>
         <Image
           source={require("@/assets/images/govi-shop/shop-profile-header.webp")}
@@ -811,10 +809,10 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
           }
           style={{
             position: "absolute",
-            bottom: 0,
+            top: 20,
             left: 0,
             width: SCREEN_WIDTH,
-            height: IMAGE_HEIGHT - 40,
+            height: SCREEN_WIDTH,
             zIndex: 1,
             borderRadius: 16,
           }}

@@ -721,7 +721,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
 
   const renderSection1 = () => (
     <ScrollView
-      className="flex-1 px-4"
+      className="flex-1 px-6"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 20 }}
     >
@@ -860,7 +860,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
 
     return (
       <ScrollView
-        className="flex-1 px-4"
+        className="flex-1 px-6"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 20 }}
       >
@@ -1139,15 +1139,12 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
 
   return (
     <View className="flex-1 bg-white">
-      
-
       <CustomHeader
         title={t("GoviPensionForm.GoViPension")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
       />
-
       <CustomDatePicker
         visible={showCustomDobPicker}
         onClose={() => setShowCustomDobPicker(false)}
@@ -1166,7 +1163,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
 
       {currentSection === 1 ? renderSection1() : renderSection2()}
 
-      <View className="px-5 pb-6 pt-4 bg-white">
+      <View className="px-6 pb-6 pt-4 bg-white">
         {currentSection === 1 ? (
           <View className="flex-row gap-3">
             <TouchableOpacity

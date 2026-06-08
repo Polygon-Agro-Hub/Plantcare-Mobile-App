@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+
 import { StackNavigationProp } from "@react-navigation/stack";
 
 interface CustomHeaderProps {
@@ -38,7 +38,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
       ]}
     >
       {/* LEFT - BACK BUTTON */}
-      <View style={{ width: wp(15) }}>
+      <View style={{ width: 50 }}>
         {showBackButton && navigation && (
           <TouchableOpacity
             onPress={onBackPress ?? (() => navigation.goBack())}
@@ -52,7 +52,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
                 {
                   backgroundColor: "#F6F6F6CC",
                   borderRadius: 50,
-                  padding: wp(2.5),
+                  padding: 10,
                 },
                 backButtonStyle,
               ]}
@@ -62,7 +62,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
       </View>
 
       {/* CENTER - TITLE */}
-      <View className="flex-1 items-center">
+      <View className="flex-1 items-center h-[50px] justify-center">
         {title && (
           <Text
             className="font-semibold text-center"
@@ -78,7 +78,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
       </View>
 
       {/* RIGHT - CUSTOMIZABLE SECTION */}
-      <View style={{ width: wp(15) }} className="items-end">
+      <View style={{ width: 50 }} className="items-end">
         {rightComponent || null}
       </View>
     </View>

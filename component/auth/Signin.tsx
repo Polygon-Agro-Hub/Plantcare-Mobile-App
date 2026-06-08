@@ -27,6 +27,7 @@ import {
 } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
+
 import countryData from "@/assets/jsons/common/country-flag.json";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -238,11 +239,6 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
     margingTopForBtn: screenWidth < 380 ? 10 : 20,
   };
 
-  const getFontSizeByLanguage = () => {
-    if (i18n.language === "si" || i18n.language === "ta") return wp(3);
-    return wp(4);
-  };
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -293,7 +289,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
             </Text>
           </View>
 
-          <View className="px-4 pt-8 pb-8">
+          <View className="px-6 pt-8 pb-8">
             <View className="flex">
               <View className="flex w-full">
                 <View className="flex-row items-center gap-2 w-full">
@@ -359,33 +355,25 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
               )}
             </View>
 
-            <View className="mt-8">
-              <View
-                className="flex m-auto w-2/3 rounded-3xl h-[50px]"
-                style={{
-                  shadowColor: "#000",
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.2,
-                  shadowRadius: 6,
-                  elevation: 6,
-                  backgroundColor: "transparent",
-                }}
+            <View className="mt-8 w-full px-6">
+              <TouchableOpacity
+                onPress={handleLogin}
+                disabled={isButtonDisabled}
+                activeOpacity={0.8}
+                className="w-full rounded-3xl h-[50px] overflow-hidden shadow-lg elevation-6"
               >
-                <TouchableOpacity
-                  onPress={handleLogin}
-                  disabled={isButtonDisabled}
-                  activeOpacity={0.8}
-                >
+                {isButtonDisabled ? (
+                  <View className="w-full h-full bg-[#9CA3AF] justify-center items-center">
+                    <Text className="text-white font-semibold text-center text-lg">
+                      {t("SignIn.SignIn")}
+                    </Text>
+                  </View>
+                ) : (
                   <LinearGradient
-                    colors={
-                      isButtonDisabled
-                        ? ["#353535", "#353535"]
-                        : ["#0FC7B2", "#10A37D"]
-                    }
+                    colors={["#0FC7B2", "#10A37D"]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
-                    className="w-full rounded-3xl h-[50px] justify-center items-center"
-                    style={{ overflow: "hidden" }}
+                    className="w-full h-full justify-center items-center"
                   >
                     {isLoading ? (
                       <ActivityIndicator size="small" color="#fff" />
@@ -395,8 +383,8 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                       </Text>
                     )}
                   </LinearGradient>
-                </TouchableOpacity>
-              </View>
+                )}
+              </TouchableOpacity>
 
               {/* Signup Link */}
               <View className="mt-6 flex-row justify-center items-center ">

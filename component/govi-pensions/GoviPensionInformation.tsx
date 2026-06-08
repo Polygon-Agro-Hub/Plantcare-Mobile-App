@@ -161,7 +161,8 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
     return (
       <ScrollView
         style={{ width: screenWidth }}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}
+        contentContainerStyle={{ paddingBottom: 20 }}
+        className="px-6"
         showsVerticalScrollIndicator={false}
       >
         <View
@@ -240,7 +241,7 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
       </View>
 
       {/* Apply Button */}
-      <View className="px-4 mb-4   ">
+      <View className="px-6 mb-4">
         <TouchableOpacity
           className="bg-[#353535] h-[50px] rounded-3xl justify-center"
           onPress={handleApplyPress}

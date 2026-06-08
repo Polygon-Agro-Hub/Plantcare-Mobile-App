@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StatusBar,
   ScrollView,
 } from "react-native";
 import LottieView from "lottie-react-native";
@@ -89,14 +88,11 @@ const RequestReview: React.FC<RequestReviewProps> = ({ navigation, route }) => {
 
   return (
     <View className="flex-1 bg-white">
-      
-
       <CustomHeader
         title={`#${request?.jobId || t("Govicapital.RequestReview")}`}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
       />
-
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ flexGrow: 1 }}

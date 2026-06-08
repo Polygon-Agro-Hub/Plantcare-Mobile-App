@@ -21,10 +21,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import CustomHeader from "../common/CustomHeader";
 
 type PublicForumPostNavigationProp = StackNavigationProp<
@@ -64,7 +60,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
       Alert.alert(
-        t("PublicForum.sorry"),
+        t("Main.Sorry"),
         t("PublicForum.WeNeedAccessToYourCameraToContinuePleaseEnablePermissions"),
         [{ text: t("Main.OK") }],
       );
@@ -120,7 +116,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
 
     if (!trimmedHeading) {
       Alert.alert(
-        t("PublicForum.sorry"),
+        t("Main.Sorry"),
         t("PublicForum.TitleIsRequired") || "Title is required",
         [{ text: t("Main.OK") }],
       );
@@ -129,7 +125,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
 
     if (!trimmedMessage) {
       Alert.alert(
-        t("PublicForum.sorry"),
+        t("Main.Sorry"),
         t("PublicForum.DescriptionIsRequired") || "Description is required",
         [{ text: t("Main.OK") }],
       );
@@ -138,7 +134,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
 
     if (!trimmedHeading || !trimmedMessage) {
       Alert.alert(
-        t("PublicForum.sorry"),
+        t("Main.Sorry"),
         t("PublicForum.fillAllRequiredFields") ||
         "Please fill in both Title and Description fields",
         [{ text: t("Main.OK") }],
@@ -147,7 +143,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
     }
     if (trimmedHeading.length > 250) {
       Alert.alert(
-        t("PublicForum.sorry"),
+        t("Main.Sorry"),
         t("PublicForum.Maximum250charactersAllowed"),
         [{ text: t("Main.OK") }],
       );
@@ -205,7 +201,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
     } catch (error) {
       console.error("Error creating post:", error);
       setLoading(false);
-      Alert.alert(t("PublicForum.sorry"), t("PublicForum.FailedToCreateThePostPleaseTryAgain"), [
+      Alert.alert(t("Main.Sorry"), t("PublicForum.FailedToCreateThePostPleaseTryAgain"), [
         { text: t("Main.OK") },
       ]);
     } finally {
@@ -238,7 +234,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
           onBackPress={() => navigation.navigate("PublicForum" as any)}
         />
 
-        <ScrollView className="px-4 py-6 p-7">
+        <ScrollView contentContainerClassName="pb-24" className="px-6 py-4">
           <View className="mb-4">
             <Text className="text-base font-semibold">
               {t("PublicForum.Title")}
@@ -258,7 +254,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
             )}
           </View>
 
-          <View className="mb-4 mt-6">
+          <View className="mb-4 mt-4">
             <Text className="text-base font-semibold ml-4">
               {t("PublicForum.Discussion")}
             </Text>
@@ -284,15 +280,15 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
             </TouchableOpacity>
 
             {postImageUri && (
-              <View className="relative mt-[10%]">
+              <View className="relative mt-[5%] w-full">
                 <Image
                   source={{ uri: postImageUri }}
-                  className="w-[60vw] h-32 rounded-lg"
-                  style={{ width: wp(60), height: hp(16) }}
+                  className="w-full min-h-60 rounded-lg"
+                  resizeMode="cover"
                 />
                 <TouchableOpacity
                   onPress={handleImageRemove}
-                  className="absolute -top-3 -right-2  rounded-full p-1"
+                  className="absolute -top-3 -right-2 rounded-full p-1"
                   style={{
                     width: 24,
                     height: 24,
@@ -310,24 +306,23 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
             )}
           </View>
 
-          <View className="items-center">
-            <TouchableOpacity
-              className="bg-[#353535] rounded-full py-3 w-[75%] items-center mt-[6%] mb-10"
-              onPress={handleSubmit}
-              style={{
-                shadowColor: "#000000",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.25,
-                shadowRadius: 4,
-                elevation: 4,
-              }}
-            >
-              <Text className="text-white text-lg">
-                {t("PublicForum.Publish")}
-              </Text>
-            </TouchableOpacity>
-          </View>
         </ScrollView>
+
+        {/* Publish button matching UserFeedback design */}
+        <View className="absolute bottom-0 left-0 right-0 bg-white px-10 py-4">
+          <TouchableOpacity
+            disabled={heading.trim() === "" || message.trim() === ""}
+            onPress={handleSubmit}
+            activeOpacity={0.8}
+            className={`w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 ${
+              (heading.trim() === "" || message.trim() === "") ? "bg-[#9CA3AF]" : "bg-[#353535]"
+            }`}
+          >
+            <Text className="text-white font-semibold text-center text-lg">
+              {t("PublicForum.Publish")}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </KeyboardAvoidingView>
   );

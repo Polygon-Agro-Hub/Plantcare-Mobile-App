@@ -26,13 +26,13 @@ const DeleteFarmer: React.FC<DeleteFarmerProps> = ({ navigation }) => {
   const { t } = useTranslation();
 
   const handleGoBack = () => {
-    navigation.navigate("Main", { screen: "EngEditProfile" });
+    navigation.navigate("Main", { screen: "EditProfile" });
   };
 
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.navigate("Main", { screen: "EngEditProfile" });
+        navigation.navigate("Main", { screen: "EditProfile" });
         return true;
       };
 
@@ -46,62 +46,52 @@ const DeleteFarmer: React.FC<DeleteFarmerProps> = ({ navigation }) => {
   );
 
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="bg-white">
-      <View className="flex-1 bg-white">
-        <CustomHeader
-          title={t("DeleteFarmer.DeleteMyAccount")}
-          navigation={navigation}
-          onBackPress={handleGoBack}
-        />
+    <View className="flex-1 bg-white">
+      <CustomHeader
+        title={t("DeleteFarmer.DeleteMyAccount")}
+        navigation={navigation}
+        onBackPress={handleGoBack}
+      />
+      <ScrollView 
+        className="flex-1"
+        contentContainerClassName="px-6 pb-40"
+        showsVerticalScrollIndicator={false}
+      >
+        <Text className="text-black text-xl font-semibold mb-4 mt-4 ">
+          {t("DeleteFarmer.AreYouSureDoYouWantToDeleteYourAccount")}
+        </Text>
+        <Text className="text-gray-600 leading-relaxed mt-4">
+          {t("DeleteFarmer.OnceYouDeleteYourAccountItCannotBeUndoneAllYourDataWillBePermanentlyErasedFromThisAppIncludesYourProfileInformationPreferencesSavedAndAnyActivityHistory")}
+        </Text>
+        <Text className="text-gray-600 leading-relaxed mt-6">
+          {t("DeleteFarmer.WeAreSadToSeeYouGoButWeUnderstandThatSometimesItsNecessaryPleaseTakeAMomentToConsiderTheConsequencesBeforeProceeding")}
+        </Text>
+      </ScrollView>
 
-        <View className="flex-1  px-4">
-          <View className="mt-8">
-            <Text className="text-black text-xl font-semibold mb-4 mt-4 ">
-              {t("DeleteFarmer.AreYouSureDoYouWantToDeleteYourAccount")}
-            </Text>
-            <Text className="text-gray-600 leading-relaxed mt-4">
-              {t("DeleteFarmer.OnceYouDeleteYourAccountItCannotBeUndoneAllYourDataWillBePermanentlyErasedFromThisAppIncludesYourProfileInformationPreferencesSavedAndAnyActivityHistory")}
-            </Text>
-            <Text className="text-gray-600 leading-relaxed mt-6">
-              {t("DeleteFarmer.WeAreSadToSeeYouGoButWeUnderstandThatSometimesItsNecessaryPleaseTakeAMomentToConsiderTheConsequencesBeforeProceeding")}
-            </Text>
-          </View>
+      <View className="absolute bottom-0 left-0 right-0 bg-white px-12 py-4">
+        {/* Delete Account Button */}
+        <TouchableOpacity
+          onPress={() => navigation.navigate("UserFeedback")}
+          activeOpacity={0.8}
+          className="w-full rounded-3xl h-[50px] justify-center items-center bg-[#353535] shadow-lg elevation-6"
+        >
+          <Text className="text-white font-semibold text-center text-lg">
+            {t("DeleteFarmer.DeleteAccount")}
+          </Text>
+        </TouchableOpacity>
 
-          <View className="absolute bottom-0 left-0 right-0 bg-white px-10 py-4">
-            <TouchableOpacity
-              className="bg-black rounded-full py-3 w-full"
-              onPress={() => navigation.navigate("UserFeedback")}
-              style={{
-                shadowColor: "#000000",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.25,
-                shadowRadius: 4,
-                elevation: 4,
-              }}
-            >
-              <Text className="text-center text-white text-base font-semibold">
-                {t("DeleteFarmer.DeleteAccount")}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={handleGoBack}
-              className="bg-gray-200 rounded-full py-3 w-full mt-4"
-              style={{
-                shadowColor: "#000000",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.25,
-                shadowRadius: 4,
-                elevation: 4,
-              }}
-            >
-              <Text className="text-center text-gray-700 text-base font-semibold">
-                {t("Main.Cancel")}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        {/* Cancel Button */}
+        <TouchableOpacity
+          onPress={handleGoBack}
+          activeOpacity={0.8}
+          className="w-full rounded-3xl h-[50px] justify-center items-center bg-[#E5E7EB] shadow-lg elevation-6 mt-4"
+        >
+          <Text className="text-[#374151] font-semibold text-center text-lg">
+            {t("Main.Cancel")}
+          </Text>
+        </TouchableOpacity>
       </View>
-    </ScrollView>
+    </View>
   );
 };
 

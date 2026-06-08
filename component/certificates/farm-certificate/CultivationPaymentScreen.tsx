@@ -200,11 +200,9 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(
-          t("Main.Error"),
-          t("Farms.NoAuthenticationTokenFound"),
-          [{ text: t("Main.OK") }],
-        );
+        Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"), [
+          { text: t("Main.OK") },
+        ]);
         return false;
       }
 
@@ -239,13 +237,16 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
         console.error("Error response:", error.response.data);
         Alert.alert(
           t("Main.Error"),
-          error.response.data.message || t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          error.response.data.message ||
+            t("Main.SomethingWentWrongPleaseTryAgainlater"),
           [{ text: t("Main.OK") }],
         );
       } else {
-        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error"),
+          t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
       }
 
       return false;
@@ -322,28 +323,24 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
       enabled
       style={{ flex: 1 }}
     >
+      <CustomHeader
+        title={t("Farms.CreditDebitCard")}
+        navigation={navigation}
+        onBackPress={() => navigation.goBack()}
+      />
       <ScrollView
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ flexGrow: 1 }}
-        className="bg-white"
+        className="bg-white px-6"
       >
-        <CustomHeader
-          title={t("Farms.CreditDebitCard")}
-          navigation={navigation}
-          onBackPress={() => navigation.goBack()}
-        />
-
-        <View
-          className="flex-row mb-6 justify-between items-center px-8"
-
-        >
+        <View className="flex-row mb-6 justify-between items-center">
           <Text className="text-lg">{t("Farms.Total")}</Text>
           <Text className="text-lg font-bold">{formattedCertificatePrice}</Text>
         </View>
 
         <View className="border-b border-[#F3F4F6] my-2 mb-4" />
 
-        <View className="px-4">
+        <View className="">
           <View className="flex-row justify-center mb-6">
             <View className="flex-row items-center p-2 gap-3">
               <View className="flex-row items-center rounded-xl border border-[#3E206D] p-2 px-4">
@@ -387,7 +384,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
           <TextInput
             className="h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl p-3 mb-8 text-base"
             placeholder={t("Payment.EnterCardNumber") ?? "Enter Card Number"}
-            style={{ color: '#000000' }} 
+            style={{ color: "#000000" }}
             placeholderTextColor="#000000"
             keyboardType="numeric"
             maxLength={19}
@@ -398,7 +395,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
           <TextInput
             className="h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl p-3 mb-8 text-base"
             placeholder={t("Payment.EnterNameOnCard")}
-            style={{ color: '#000000' }} 
+            style={{ color: "#000000" }}
             placeholderTextColor="#000000"
             value={cardHolderName}
             onChangeText={handleCardHolderNameChange}
@@ -408,7 +405,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
             <TextInput
               className="flex-1 h-full text-base"
               placeholder={t("Payment.EnterExpirationDate")}
-              style={{ color: '#000000' }} 
+              style={{ color: "#000000" }}
               placeholderTextColor="#000000"
               keyboardType="numeric"
               maxLength={5}
@@ -422,7 +419,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
             className="h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl p-3 mb-5 text-base"
             placeholder={t("Payment.EnterCVV")}
             placeholderTextColor="#000000"
-            style={{ color: '#000000' }} 
+            style={{ color: "#000000" }}
             keyboardType="numeric"
             maxLength={3}
             value={cvv}

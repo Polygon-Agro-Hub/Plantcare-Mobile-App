@@ -112,7 +112,7 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
       />
 
       <ScrollView
-        className="flex-1 px-4"
+        className="flex-1 px-6"
         contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"

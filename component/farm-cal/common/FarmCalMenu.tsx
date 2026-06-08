@@ -79,8 +79,6 @@ const FarmCalMenuScreen: React.FC<FarmCalMenuProps> = ({ navigation }) => {
 
   return (
     <View className="flex-1 bg-white">
-      
-
       <CustomHeader
         title={t("TransactionList.FarmCal")}
         showBackButton={true}
@@ -89,7 +87,7 @@ const FarmCalMenuScreen: React.FC<FarmCalMenuProps> = ({ navigation }) => {
       />
       {/* List */}
       <ScrollView
-        className="flex-1 px-4 pt-4"
+        className="flex-1 px-6 pt-4"
         contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >

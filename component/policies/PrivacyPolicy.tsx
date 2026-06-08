@@ -52,7 +52,7 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ navigation }) => {
         {t("PrivacyPolicy.By")} 11/08/2024
       </Text>
 
-      <View className="py-2 px-4">
+      <View className="py-2 px-6">
         <Text
           className="text-sm text-gray-700 mt-2"
           style={{ fontSize: adjustFontSize(14) }}

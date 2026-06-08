@@ -1,16 +1,13 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
 import { LinearGradient } from "expo-linear-gradient";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import { setPackageType, setPackagePrice } from "../../../store/packageSlice";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
+import CustomHeader from "../../common/CustomHeader";
+
 type FirstTimePackagePlanNavigationProp = StackNavigationProp<
   RootStackParamList,
   "FirstTimePackagePlan"
@@ -60,32 +57,27 @@ const FirstTimePackagePlan: React.FC<FirstTimePackagePlanProps> = ({
   };
 
   return (
-    <View className="f bg-white">
+    <View className="flex-1 bg-white">
+      <CustomHeader
+        title=""
+        navigation={navigation}
+        showBackButton={true}
+        onBackPress={() => navigation.goBack()}
+      />
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
         className="bg-white"
       >
-        <View
-          className="flex-row items-center justify-between mb-2"
-          style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-        >
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-          >
-            <AntDesign name="left" size={24} color="#000502" />
-          </TouchableOpacity>
-        </View>
 
-        <View className="flex-1 justify-center items-center p-4">
+        <View className="flex-1 justify-center items-center p-6 w-full">
           <Image
             source={require("../../../assets/images/farms/payment-plan.webp")}
             resizeMode="contain"
             style={{ width: "100%", height: 250 }}
           />
 
-          <View className="text-center justify-center items-center mt-6">
+          <View className="text-center justify-center items-center mt-6 w-full">
             <View className="flex-row items-center justify-center gap-2">
               <Text className="text-xl font-bold text-[#E5B323]">
                 {t("Farms.Upgrade TO PRO")}
@@ -183,41 +175,45 @@ const FirstTimePackagePlan: React.FC<FirstTimePackagePlanProps> = ({
               </View>
             </View>
 
+          <View className="w-full px-6 mt-8">
             <LinearGradient
-              className="w-64 mt-8 py-3 rounded-full shadow-lg shadow-black mb-4"
+              className="w-full rounded-3xl h-[50px] shadow-lg elevation-6 overflow-hidden"
               colors={["#FDCF3F", "#FEE969"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
             >
               <TouchableOpacity
-                className="text-center justify-center items-center"
+                className="w-full h-full justify-center items-center"
                 onPress={handleSubmit}
               >
-                <Text className="text-[#7E5E00] text-lg font-semibold">
+                <Text className="text-[#7E5E00] text-lg font-semibold text-center">
                   {packageType}
                 </Text>
               </TouchableOpacity>
             </LinearGradient>
+          </View>
 
+          <View className="w-full px-6 mt-3 mb-2">
             <LinearGradient
-              className="w-64 mt-2 py-3 rounded-full shadow-lg shadow-black mb-2"
+              className="w-full rounded-3xl h-[50px] shadow-lg elevation-6 overflow-hidden"
               colors={["#E0E0E0", "#FFFFFF"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
             >
               <TouchableOpacity
-                className="text-center justify-center items-center"
+                className="w-full h-full justify-center items-center"
                 onPress={() =>
                   navigation.navigate("Main", {
                     screen: "AddNewFarmBasicDetails" as any,
                   })
                 }
               >
-                <Text className="text-[#727272] text-lg font-semibold">
+                <Text className="text-[#727272] text-lg font-semibold text-center">
                   {t("Farms.Try1FarmForFree")}
                 </Text>
               </TouchableOpacity>
             </LinearGradient>
+          </View>
 
             <Text className="text-lg font-semibold text-black text-center mt-6">
               {t("Farms.WhenShouldIBeBilled")}

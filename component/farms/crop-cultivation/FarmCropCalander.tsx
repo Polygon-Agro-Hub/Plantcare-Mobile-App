@@ -467,7 +467,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
           },
         )}`;
 
-        Alert.alert(t("CropCalender.sorry"), updateMessage, [
+        Alert.alert(t("Main.Sorry"), updateMessage, [
           { text: t("Main.OK") },
         ]);
         return;
@@ -555,7 +555,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
         )
       ) {
         Alert.alert(
-          t("CropCalender.sorry"),
+          t("Main.Sorry"),
           t("CropCalender.YouCantChangeTheStatusBackToPendingOnce1HourHasPassedAfterMarkingItAsCompleted"),
           [{ text: t("Main.OK") }],
         );
@@ -563,11 +563,11 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
         error.response &&
         error.response.data.message.includes("You need to wait 6 hours")
       ) {
-        Alert.alert(t("CropCalender.sorry"), updateMessage, [
+        Alert.alert(t("Main.Sorry"), updateMessage, [
           { text: t("Main.OK") },
         ]);
       } else {
-        Alert.alert(t("CropCalender.sorry"), updateMessage, [
+        Alert.alert(t("Main.Sorry"), updateMessage, [
           { text: t("Main.OK") },
         ]);
       }

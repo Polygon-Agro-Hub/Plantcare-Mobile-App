@@ -411,7 +411,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
     };
 
     return (
-      <View className="bg-white  mb-4 mx-4 rounded-lg shadow-sm border border-gray-300">
+      <View className="bg-white mb-4 mx-6 rounded-lg shadow-sm border border-gray-300">
         <View className="flex-row justify-between p-4 ">
           <View className="flex-1 max-w-4/5">
             <Text
@@ -578,9 +578,9 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
     if (searchText.trim() !== "" || !hasMore) return null;
 
     return (
-      <View className="p-4">
+      <View className="px-6">
         {loading ? (
-          <View className="flex-row items-center justify-center">
+          <View className="flex-row items-center justify-center mt-6">
             <ActivityIndicator size="small" color="gray" />
             <Text className="ml-2 text-gray-500">
               {t("PublicForum.GettingNewPosts")}
@@ -588,7 +588,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
           </View>
         ) : (
           <TouchableOpacity
-            className="py-2 px-4 flex-row items-center justify-center"
+            className="py-2 px-6 flex-row items-center justify-center"
             onPress={loadMorePosts}
           >
             <Text className="text-black font-bold">
@@ -600,10 +600,10 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
     );
   };
   const title = (
-    <View className="flex-row items-center gap-2">
+    <View className="flex-row items-center gap-2 pr-6">
       <MaterialCommunityIcons
         name="message-processing"
-        size={22}
+        size={18}
         color="black"
       />
       <Text className="text-lg font-semibold">
@@ -621,7 +621,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
         onBackPress={() => navigation.navigate("Main" as any)}
       />
 
-      <View className="p-4 bg-white">
+      <View className="p-6 bg-white">
         <View className="flex-row items-center bg-white border rounded-3xl  shadow-sm">
           <TextInput
             className="flex-1 text-gray-600  px-4 h-[40px] text-lg"
@@ -646,7 +646,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
       </View>
 
       <TouchableOpacity
-        className="bg-black rounded-2xl p-3 mx-4 mb-4 flex-row items-center justify-between"
+        className="bg-black rounded-2xl p-3 mx-6 mb-4 flex-row items-center justify-between"
         onPress={() => {
           navigation.navigate("PublicForumPost");
         }}
@@ -654,7 +654,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
         <Text className="text-white font-bold text-base ml-2">
           {t("PublicForum.StartANewDiscussion")}
         </Text>
-        <View className="mr-2 bg-white rounded-lg ">
+        <View className="bg-white rounded-lg ">
           <Feather name="plus" size={24} color="black" />
         </View>
       </TouchableOpacity>
