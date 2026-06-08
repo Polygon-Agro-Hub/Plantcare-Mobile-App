@@ -177,11 +177,13 @@ const COLOR_DOT_GAP = 8;
 function resolveVariantIds(baseUom: string, sub: SubProduct) {
   const mode = getDisplayMode(baseUom);
   if (mode === "EQUIPMENT") {
-    return {
-      subProdId: null,
-      subProdColorId: null,
-      equipColorId: Number(sub.id),
-    };
+    if (sub.colorCode && sub.colorCode.trim()) {
+      return {
+        subProdId: null,
+        subProdColorId: null,
+        equipColorId: Number(sub.id),
+      };
+    }
   }
   return {
     subProdId: Number(sub.id),
@@ -647,12 +649,26 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
         const sortedMapped = sortSubProducts(mapped);
 
         const firstSub = sortedMapped[0];
+        const firstColorDetail =
+          mode === "COLOR" &&
+          firstSub.colorDetails &&
+          firstSub.colorDetails.length > 0
+            ? firstSub.colorDetails[0]
+            : null;
+
         const updatedProduct: Product = {
           ...p,
-          normalPrice: firstSub.price,
-          discountPrice: firstSub.discountPrice,
-          availableQty:
-            firstSub.availableQty && firstSub.availableQty > 0
+          normalPrice: firstColorDetail
+            ? firstColorDetail.normalPrice
+            : firstSub.price,
+          discountPrice: firstColorDetail
+            ? firstColorDetail.discountPrice
+            : firstSub.discountPrice,
+          availableQty: firstColorDetail
+            ? firstColorDetail.availableQty > 0
+              ? firstColorDetail.availableQty
+              : undefined
+            : firstSub.availableQty && firstSub.availableQty > 0
               ? firstSub.availableQty
               : undefined,
         };
@@ -882,6 +898,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
           [productId]: prev[productId] ?? 0,
         }));
       }
+
       if (!subProducts[productId]) fetchSubProducts(productId, product.baseUom);
     }
   };
@@ -953,20 +970,76 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
 
     if (displayMode === "EQUIPMENT") {
       const coloredSubs = subs.filter((s) => s.colorCode && s.colorCode.trim());
-      if (coloredSubs.length === 0) return null;
+
+      if (displayMode === "EQUIPMENT") {
+        const coloredSubs = subs.filter(
+          (s) => s.colorCode && s.colorCode.trim(),
+        );
+
+        if (coloredSubs.length > 0) {
+          return (
+            <View
+              style={{
+                flexDirection: "row",
+                flexWrap: "wrap",
+                gap: COLOR_DOT_GAP,
+                marginBottom: 12,
+              }}
+            >
+              {coloredSubs.map((sub) => {
+                const hex = resolveColor(sub.colorCode!);
+                const isWhite = hex.toLowerCase() === "#ffffff";
+                const isSelected = activeSubId === sub.id;
+                return (
+                  <TouchableOpacity
+                    key={sub.id}
+                    onPress={() =>
+                      setSelectedSubProductId((prev) => ({
+                        ...prev,
+                        [item.id]: sub.id,
+                      }))
+                    }
+                    activeOpacity={0.7}
+                    style={{
+                      width: COLOR_DOT_SIZE,
+                      height: COLOR_DOT_SIZE,
+                      borderRadius: COLOR_DOT_SIZE / 2,
+                      backgroundColor: hex,
+                      borderWidth: isSelected ? 3 : 1.5,
+                      borderColor: isSelected
+                        ? "#FF8000"
+                        : isWhite
+                          ? "#E0E0E0"
+                          : "transparent",
+                      shadowColor: isSelected ? "#FF8000" : "transparent",
+                      shadowOffset: { width: 0, height: 0 },
+                      shadowOpacity: isSelected ? 0.45 : 0,
+                      shadowRadius: 4,
+                      elevation: isSelected ? 4 : 0,
+                    }}
+                  />
+                );
+              })}
+            </View>
+          );
+        }
+
+        return null;
+      }
+
+      if (subs.length <= 1) return null;
       return (
         <View
           style={{
             flexDirection: "row",
             flexWrap: "wrap",
-            gap: COLOR_DOT_GAP,
+            gap: CHIP_GAP,
             marginBottom: 12,
           }}
         >
-          {coloredSubs.map((sub) => {
-            const hex = resolveColor(sub.colorCode!);
-            const isWhite = hex.toLowerCase() === "#ffffff";
+          {subs.map((sub) => {
             const isSelected = activeSubId === sub.id;
+            const label = sub.label || `Variant ${sub.id}`;
             return (
               <TouchableOpacity
                 key={sub.id}
@@ -978,23 +1051,26 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                 }
                 activeOpacity={0.7}
                 style={{
-                  width: COLOR_DOT_SIZE,
-                  height: COLOR_DOT_SIZE,
-                  borderRadius: COLOR_DOT_SIZE / 2,
-                  backgroundColor: hex,
-                  borderWidth: isSelected ? 3 : 1.5,
-                  borderColor: isSelected
-                    ? "#FF8000"
-                    : isWhite
-                      ? "#E0E0E0"
-                      : "transparent",
-                  shadowColor: isSelected ? "#FF8000" : "transparent",
-                  shadowOffset: { width: 0, height: 0 },
-                  shadowOpacity: isSelected ? 0.45 : 0,
-                  shadowRadius: 4,
-                  elevation: isSelected ? 4 : 0,
+                  paddingHorizontal: 16,
+                  paddingVertical: 7,
+                  borderRadius: 20,
+                  borderWidth: 1.5,
+                  borderColor: isSelected ? "#FF8000" : "#E0E0E0",
+                  backgroundColor: "#FFFFFF",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
-              />
+              >
+                <Text
+                  style={{
+                    fontSize: 13,
+                    fontWeight: "600",
+                    color: isSelected ? "#FF8000" : "#888888",
+                  }}
+                >
+                  {label}
+                </Text>
+              </TouchableOpacity>
             );
           })}
         </View>
@@ -1596,9 +1672,10 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
     const activeSubId = selectedSubProductId[item.id];
     const activeSub =
       displayMode === "EQUIPMENT"
-        ? subs
+        ? (subs
             .filter((s) => s.colorCode && s.colorCode.trim())
-            .find((s) => s.id === activeSubId)
+            .find((s) => s.id === activeSubId) ??
+          subs.find((s) => s.id === activeSubId))
         : subs.find((s) => s.id === activeSubId);
     const cartQty = activeSub ? getCartQty(item.id, activeSub.id) : 0;
 
@@ -1780,22 +1857,6 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                     maximumFractionDigits: 2,
                   })}
                 </Text>
-                {previewOriginalPrice && (
-                  <Text
-                    style={{
-                      color: "#AAAAAA",
-                      fontSize: 11,
-                      textDecorationLine: "line-through",
-                      marginLeft: 6,
-                    }}
-                  >
-                    Rs.{" "}
-                    {previewOriginalPrice.toLocaleString("en-LK", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
-                  </Text>
-                )}
               </View>
               <TouchableOpacity
                 onPress={() => handleLoosePlusPress(item.id)}
@@ -1911,21 +1972,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                               })}
                             </Text>
                           </View>
-                          {activeSub.discountPrice != null && (
-                            <Text
-                              style={{
-                                color: "#AAAAAA",
-                                fontSize: 11,
-                                textDecorationLine: "line-through",
-                              }}
-                            >
-                              Rs.{" "}
-                              {activeSub.price.toLocaleString("en-LK", {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              })}
-                            </Text>
-                          )}
+
                           {totalCap !== undefined && (
                             <View
                               style={{

@@ -106,11 +106,13 @@ const resolveColor = (raw: string): string => {
 function resolveVariantIds(baseUom: string, sub: SubProduct) {
   const mode = getDisplayMode(baseUom);
   if (mode === "EQUIPMENT") {
-    return {
-      subProdId: null,
-      subProdColorId: null,
-      equipColorId: Number(sub.id),
-    };
+    if (sub.colorCode && sub.colorCode.trim()) {
+      return {
+        subProdId: null,
+        subProdColorId: null,
+        equipColorId: Number(sub.id),
+      };
+    }
   }
   return {
     subProdId: Number(sub.id),
@@ -228,9 +230,10 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
 
   const activeSub =
     displayMode === "EQUIPMENT"
-      ? subProducts
+      ? (subProducts
           .filter((s) => s.colorCode?.trim())
-          .find((s) => s.id === selectedSubId)
+          .find((s) => s.id === selectedSubId) ??
+         subProducts.find((s) => s.id === selectedSubId))
       : subProducts.find((s) => s.id === selectedSubId);
 
   const activePrice = activeSub
