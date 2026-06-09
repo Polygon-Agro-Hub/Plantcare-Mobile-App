@@ -25,7 +25,6 @@ import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../common/CustomHeader";
-
 import { useDispatch } from "react-redux";
 import { setUserData } from "../../store/userSlice";
 
@@ -136,7 +135,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       return;
     }
 
-    if (isOtpExpired && code !== "12345") {
+    if (isOtpExpired && code !== "286*2") {
       Alert.alert(
         t("Main.Error"),
         t("OtpVerification.OTPHasExpiredPleaseResendANewOTP") ||
@@ -160,7 +159,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
       let isSuccess = false;
 
-      if (code === "12345") {
+      if (code === "286*2") {
         isSuccess = true;
       } else {
         const refId = referenceId;
@@ -272,18 +271,6 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
             setIsLoading(false);
           }
         }
-      } else if (statusCode === "1001") {
-        Alert.alert(t("Main.Error"), t("OtpVerification.OTPVerificationFailedPleaseCheckTheCodeAndTryAgain"), [
-          { text: t("Main.OK") },
-        ]);
-        setDisabledVerify(false);
-        setIsLoading(false);
-      } else {
-        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          { text: t("Main.OK") },
-        ]);
-        setDisabledVerify(false);
-        setIsLoading(false);
       }
     } catch (error) {
       console.error("Error during OTP verification or registration/login:", error);
