@@ -282,6 +282,12 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       action: () => navigation.navigate("SoilGridsScreen" as any),
       bgColor: "#FFFFFF",
     },
+    {
+      image: require("../../assets/images/dashboard/transaction.webp"),
+      label: "TEMP: Payment Summary",
+      action: () => navigation.navigate("PaymentSummary" as any),
+      bgColor: "#E3F2FD",
+    },
   ];
 
   const chunkArray = (arr: any[], size: number) => {

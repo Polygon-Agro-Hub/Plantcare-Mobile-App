@@ -623,7 +623,13 @@
     "EnterCardNumber": "කාඩ් අංකය ඇතුළත් කරන්න",
     "EnterNameOnCard": "කාඩ්පතේ නම ඇතුළත් කරන්න",
     "EnterExpirationDate": "කල් ඉකුත්වන දිනය ඇතුළත් කරන්න (MM/YY)",
-    "EnterCVV": "CVV ඇතුළත් කරන්න"
+    "EnterCVV": "CVV ඇතුළත් කරන්න",
+    "PaymentSummary": "ගෙවීම් සාරාංශය",
+    "SubTotal": "උප එකතුව",
+    "ProcessingFee": "සැකසුම් ගාස්තුව",
+    "FullTotal": "සම්පූර්ණ එකතුව",
+    "SecureInfo": "ඔබගේ ගෙවීම් තොරතුරු සුරක්ෂිත මෙන්ම සංකේතනය කර ඇත.",
+    "ContinueToPayment": "ගෙවීමට ඉදිරියට යන්න"
   },
   "AddressDetails": {
     "BuildingHouseNo": "ගොඩනැගිල්ල / නිවස අංකය",

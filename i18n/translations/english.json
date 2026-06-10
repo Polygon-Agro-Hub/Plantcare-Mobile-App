@@ -624,7 +624,13 @@
     "EnterCardNumber": "Enter Card Number",
     "EnterNameOnCard": "Enter Name on Card",
     "EnterExpirationDate": "Enter Expiration Date (MM/YY)",
-    "EnterCVV": "Enter CVV"
+    "EnterCVV": "Enter CVV",
+    "PaymentSummary": "Payment Summery",
+    "SubTotal": "Sub Total",
+    "ProcessingFee": "Processing Fee",
+    "FullTotal": "Full Total",
+    "SecureInfo": "Your payment information is secure and encrypted.",
+    "ContinueToPayment": "Continue to Payment"
   },
   "AddressDetails": {
     "BuildingHouseNo": "Building / House No.",

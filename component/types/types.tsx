@@ -236,7 +236,28 @@ export type RootStackParamList = {
     certificateId: number;
     farmId?: number;
     registrationCode?: string;
+    processFee?: number;
+    fullTotal?: number;
   };
+  PaymentSummary: {
+    subTotal?: number;
+    processingFeePercentage?: number;
+    processingFee?: number;
+    fullTotal?: number;
+    title?: string;
+    isRequestInspection?: boolean;
+    requestItems?: any[];
+    nextScreen?: string;
+    nextScreenParams?: any;
+    isCertificatePayment?: boolean;
+    certificateType?: "Farm" | "Cultivation" | "Crop" | "CropAfterEnroll";
+    certificateId?: number;
+    cropId?: string;
+    farmId?: number;
+    farmName?: string;
+    certificateName?: string;
+    validityMonths?: number;
+  } | undefined;
   CropEarnCertificate: {
     cropId: string;
     farmId: Number;
@@ -253,6 +274,8 @@ export type RootStackParamList = {
     certificateId: number;
     cropId?: string;
     farmId: Number;
+    processFee?: number;
+    fullTotal?: number;
   };
   CropPaymentScreenAfterEnroll: {
     certificateName: string;
@@ -261,6 +284,8 @@ export type RootStackParamList = {
     certificateId: number;
     cropId?: string;
     farmId: Number;
+    processFee?: number;
+    fullTotal?: number;
   };
   CultivationPaymentScreen: {
     certificateName: string;
@@ -270,14 +295,10 @@ export type RootStackParamList = {
     farmId?: number;
     registrationCode?: string;
     farmName?: string;
+    processFee?: number;
+    fullTotal?: number;
   };
   RequestInspectionForm: undefined;
-  RequestInspectionPayment: {
-    requestItems: any[];
-    addedItems: any[];
-    totalAmount: number;
-    itemsCount: number;
-  };
   RequestHistory: undefined;
   InvestmentAndLoan: undefined;
   InvestmentRequestForm: undefined;

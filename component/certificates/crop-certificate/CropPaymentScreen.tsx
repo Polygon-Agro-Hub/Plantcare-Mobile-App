@@ -44,6 +44,8 @@ const CropPaymentScreen: React.FC<CropPaymentScreenProps> = ({
     certificateId,
     cropId,
     farmId,
+    processFee,
+    fullTotal,
   } = route.params;
 
   const { t } = useTranslation();
@@ -76,7 +78,7 @@ const CropPaymentScreen: React.FC<CropPaymentScreenProps> = ({
     return `Rs.${formattedAmount}`;
   };
 
-  const formattedCertificatePrice = formatAmount(certificatePrice);
+  const formattedCertificatePrice = formatAmount(fullTotal ?? certificatePrice);
 
   const handleCardHolderNameChange = (text: string) => {
     const cleanedText = text.replace(/[^a-zA-Z\s]/g, "");
@@ -225,6 +227,7 @@ const CropPaymentScreen: React.FC<CropPaymentScreenProps> = ({
         certificateId: certificateId,
         amount: numericPrice,
         validityMonths: validityMonths,
+        processFee: processFee ?? 0,
       };
 
       const response = await axios.post(
