@@ -43,6 +43,8 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
     certificateValidity,
     certificateId,
     farmId,
+    processFee,
+    fullTotal,
   } = route.params;
 
   const { t } = useTranslation();
@@ -212,6 +214,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
         certificateId: certificateId,
         amount: numericPrice,
         validityMonths: validityMonths,
+        processFee: processFee ?? 0,
       };
 
       const response = await axios.post(
@@ -315,7 +318,7 @@ const CultivationPaymentScreen: React.FC<CultivationPaymentScreenProps> = ({
     setCardType(type);
   };
 
-  const formattedCertificatePrice = formatAmountWithCurrency(certificatePrice);
+  const formattedCertificatePrice = formatAmountWithCurrency(fullTotal ?? certificatePrice);
 
   return (
     <KeyboardAvoidingView

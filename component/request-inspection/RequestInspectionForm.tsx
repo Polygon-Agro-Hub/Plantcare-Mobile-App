@@ -631,14 +631,22 @@ const RequestInspectionForm = () => {
       };
     });
 
-    (navigation as any).navigate("RequestInspectionPayment", {
+    const subTotal = itemsToUse.reduce(
+      (sum, item) => sum + parseFloat(item.price || "0"),
+      0,
+    );
+    const processingFeePercentage = 5;
+    const processingFee = subTotal * 0.05;
+    const fullTotal = subTotal + processingFee;
+
+    (navigation as any).navigate("PaymentSummary", {
       requestItems,
-      addedItems: itemsToUse,
-      totalAmount: itemsToUse.reduce(
-        (sum, item) => sum + parseFloat(item.price || "0"),
-        0,
-      ),
-      itemsCount: itemsToUse.length,
+      subTotal,
+      processingFeePercentage,
+      processingFee,
+      fullTotal,
+      isRequestInspection: true,
+      title: t("Payment.PaymentSummary", "Payment Summary"),
     });
   };
 

@@ -623,7 +623,13 @@
     "EnterCardNumber": "அட்டை எண்ணை உள்ளிடவும்",
     "EnterNameOnCard": "அட்டையில் உள்ள பெயரை உள்ளிடவும்",
     "EnterExpirationDate": "காலாவதி தேதியை உள்ளிடவும் (MM/YY)",
-    "EnterCVV": "CVV ஐ உள்ளிடவும்"
+    "EnterCVV": "CVV ஐ உள்ளிடவும்",
+    "PaymentSummary": "பணம் செலுத்தல் சுருக்கம்",
+    "SubTotal": "உப மொத்தம்",
+    "ProcessingFee": "செயலாக்க கட்டணம்",
+    "FullTotal": "முழு மொத்தம்",
+    "SecureInfo": "உங்கள் கட்டணத் தகவல் பாதுகாப்பானது மற்றும் குறியாக்கம் செய்யப்பட்டுள்ளது.",
+    "ContinueToPayment": "பணம் செலுத்த தொடரவும்"
   },
   "AddressDetails": {
     "BuildingHouseNo": "கட்டிடம் / வீடு எண்",

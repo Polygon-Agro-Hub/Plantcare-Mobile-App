@@ -148,14 +148,28 @@ const CultivationEarnCertificate: React.FC = () => {
   const handleContinue = () => {
     setModalVisible(false);
 
-    navigation.navigate("CultivationPaymentScreen", {
-      certificateName: selectedCertificate?.srtName || "",
-      certificatePrice: selectedCertificate?.price || "",
-      certificateValidity: selectedCertificate?.timeLine || "",
+    const priceNum = parseFloat(selectedCertificate?.price || "0");
+    const commissionNum = parseFloat(selectedCertificate?.commission || "0");
+    const percent = parseFloat(commissionNum.toFixed(2));
+    const calculatedFee = parseFloat((priceNum * (percent / 100)).toFixed(2));
+    const calculatedTotal = priceNum + calculatedFee;
+
+    const match = String(selectedCertificate?.timeLine || "18").match(/(\d+)/);
+    const validity = match ? parseInt(match[1]) : 18;
+
+    navigation.navigate("PaymentSummary", {
+      subTotal: priceNum,
+      processingFee: calculatedFee,
+      processingFeePercentage: percent,
+      fullTotal: calculatedTotal,
+      title: t("Payment.PaymentSummary", "Payment Summary"),
+      isCertificatePayment: true,
+      certificateType: "Cultivation",
       certificateId: selectedCertificate?.id || 0,
       farmId: farmId,
-      registrationCode: registrationCode,
       farmName: farmName,
+      certificateName: selectedCertificate?.srtName || "",
+      validityMonths: validity,
     });
   };
 

@@ -99,8 +99,8 @@ import CropEarnCertificate from "@/component/certificates/crop-certificate/CropE
 import CropPaymentScreen from "@/component/certificates/crop-certificate/CropPaymentScreen";
 import CultivationEarnCertificate from "@/component/certificates/farm-certificate/CultivationEarnCertificate";
 import CultivationPaymentScreen from "@/component/certificates/farm-certificate/CultivationPaymentScreen";
+import PaymentSummary from "@/component/payments/PaymentSummary";
 import RequestInspectionForm from "@/component/request-inspection/RequestInspectionForm";
-import RequestInspectionPayment from "@/component/request-inspection/RequestInspectionPayment";
 import RequestHistory from "@/component/request-inspection/RequestHistory";
 import RequestSummery from "@/component/request-inspection/RequestSummery";
 import FramcropCalenderwithcertificate from "@/component/farms/crop-cultivation/FramcropCalenderwithcertificate";
@@ -257,10 +257,6 @@ function MainTabNavigator() {
       <Tab.Screen
         name="GoViCapitalRequests"
         component={GoViCapitalRequests as any}
-      />
-      <Tab.Screen
-        name="RequestInspectionPayment"
-        component={RequestInspectionPayment as any}
       />
       <Tab.Screen
         name="RequestHistory"
@@ -486,6 +482,10 @@ function AppContent() {
             <Stack.Screen
               name="CultivationPaymentScreen"
               component={CultivationPaymentScreen as any}
+            />
+            <Stack.Screen
+              name="PaymentSummary"
+              component={PaymentSummary as any}
             />
 
             <Stack.Screen

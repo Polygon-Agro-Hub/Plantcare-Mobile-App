@@ -53,6 +53,8 @@ const CropPaymentScreenAfterEnroll: React.FC<
     certificateId,
     cropId,
     farmId,
+    processFee,
+    fullTotal,
   } = route.params;
 
   const { t } = useTranslation();
@@ -273,6 +275,7 @@ const CropPaymentScreenAfterEnroll: React.FC<
         certificateId: certificateId,
         amount: numericPrice,
         validityMonths: validityMonths,
+        processFee: processFee ?? 0,
       };
 
       const response = await axios.post(
@@ -382,7 +385,7 @@ const CropPaymentScreenAfterEnroll: React.FC<
     setCardType(type);
   };
 
-  const formattedCertificatePrice = formatAmount(certificatePrice || "0");
+  const formattedCertificatePrice = formatAmount((fullTotal ?? certificatePrice ?? "0").toString());
 
   return (
     <KeyboardAvoidingView

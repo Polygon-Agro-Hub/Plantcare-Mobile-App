@@ -40,6 +40,8 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
     certificateValidity,
     certificateId,
     farmId,
+    processFee,
+    fullTotal,
   } = route.params;
 
   const { t } = useTranslation();
@@ -180,6 +182,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
         certificateId: certificateId,
         amount: numericPrice,
         validityMonths: validityMonths,
+        processFee: processFee ?? 0,
       };
 
       const response = await axios.post(
@@ -275,7 +278,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
     setCardType(type);
   };
 
-  const formattedPrice = formatCurrency(certificatePrice);
+  const formattedPrice = formatCurrency(fullTotal ?? certificatePrice);
 
   return (
     <KeyboardAvoidingView
