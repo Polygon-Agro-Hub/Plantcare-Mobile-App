@@ -370,7 +370,7 @@ const SummaryRow: React.FC<{
 }> = ({ label, value, highlight }) => (
   <View className="flex-row justify-between items-center mb-2">
     <Text
-      className={`text-sm text-[#415479] font-bold text-base`}
+      className={`text-sm text-[#415479] font-bold `}
     >
       {label}
     </Text>
@@ -442,19 +442,34 @@ const CartScreen: React.FC<CartScreenProps> = ({ route, navigation }) => {
     ]);
   };
 
-  const handleCheckout = () => {
-    if (outOfStockItems.length > 0) {
-      Alert.alert(
-        "Out of Stock Items",
-        "Please remove out-of-stock items before proceeding to checkout.",
-      );
-      return;
-    }
+const handleCheckout = () => {
+  if (outOfStockItems.length > 0) {
     Alert.alert(
-      "Checkout",
-      `Proceeding with ${cartCount} items — Rs. ${formatPrice(total)}`,
+      "Out of Stock Items",
+      "Please remove out-of-stock items before proceeding to checkout.",
     );
-  };
+    return;
+  }
+  
+  Alert.alert(
+    "Checkout",
+    `Proceeding with ${cartCount} items — Rs. ${formatPrice(total)}`,
+    [
+      { text: "Cancel", style: "cancel" },
+      { 
+        text: "Proceed", 
+        onPress: () => navigation.navigate('CheckoutScreen', {
+          cartItems: validItems,
+          subtotal: subtotal,
+          serviceCharge: serviceCharge,
+          total: total,
+          cartCount: cartCount,
+          shopName: shopname,
+        })
+      }
+    ]
+  );
+};
 
   const renderItem = ({ item }: { item: CartItem }) => (
     <CartCard

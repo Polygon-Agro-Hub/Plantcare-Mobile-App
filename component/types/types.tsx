@@ -387,6 +387,14 @@ export type RootStackParamList = {
     adress: string;
   };
   LocationAccess: undefined;
+  CheckoutScreen: {
+    cartItems: CartItem[];
+    subtotal: number;
+    serviceCharge: number;
+    total: number;
+    cartCount: number;
+    shopName: string;
+  };
   ViewProduct: {
     product: {
       id: string;
@@ -431,4 +439,29 @@ export interface RequestItem {
   cropNameEnglish: string;
   cropNameSinhala: string;
   cropNameTamil: string;
+}
+
+export type ProductType =
+  | "BOTTLE"
+  | "ROLL"
+  | "PACK"
+  | "LOOSE_WEIGHT"
+  | "LOOSE_VOLUME"
+  | "PIECES"
+  | "EQUIPMENT";
+
+export interface CartItem {
+  id: string;
+  productId: string;
+  productName: string;
+  subProductId: string;
+  variantLabel: string;
+  pricePerUnit: number;
+  originalPrice?: number;
+  quantity: number;
+  image: string;
+  type: ProductType;
+  colorCode?: string;
+  availableQty?: number;
+  isOutOfStock?: boolean;
 }

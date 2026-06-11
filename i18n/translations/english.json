@@ -1499,5 +1499,19 @@
     "ExploreShops": "Explore Shops",
     "NoShopsFound": "No shops found",
     "SearchShopsProducts": "Search Shops / Products..."
+  },
+  "CheckoutScreen": {
+    "Checkout": "Checkout",
+    "YourTotalAmount": "Your Total Amount",
+    "CreditDebitCards": "Credit / Debit Cards",
+    "CardHolderName": "Card Holder's Name",
+    "CardNumber": "Card Number",
+    "ExpiryDate": "Expiry Date",
+    "Cvv": "CVV",
+    "PayNow": "Pay Now",
+    "PleaseEnterName": "Please enter name",
+    "OrderSuccessful": "Order Successful!",
+    "ViewMyInvoice": "View My Invoice",
+    "Payment Failed": "Payment Failed!"
   }
 }
