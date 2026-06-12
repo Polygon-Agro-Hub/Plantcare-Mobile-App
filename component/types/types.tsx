@@ -348,7 +348,11 @@ export type RootStackParamList = {
     ongoingCropId: string;
   };
   GoviPensionInformation: undefined;
-    CartScreen:{shopname:string};
+  // In your RootStackParamList, update CartScreen entry:
+CartScreen: {
+  shopname: string;
+  branchId: number;  // ← add this line
+};
   GoviPensionForm: undefined;
   GoviPensionStatus: undefined;
   MyPensionAccount: undefined;
@@ -389,6 +393,7 @@ export type RootStackParamList = {
   LocationAccess: undefined;
   CheckoutScreen: {
     cartItems: CartItem[];
+    branchId: number;
     subtotal: number;
     serviceCharge: number;
     total: number;
@@ -455,6 +460,8 @@ export interface CartItem {
   productId: string;
   productName: string;
   subProductId: string;
+  subProdColorId?: string;
+  equipColorId?: string;
   variantLabel: string;
   pricePerUnit: number;
   originalPrice?: number;

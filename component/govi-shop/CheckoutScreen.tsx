@@ -9,6 +9,7 @@ import {
   Platform,
   Image,
   Modal,
+  ActivityIndicator,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/core";
@@ -17,6 +18,9 @@ import { RootStackParamList } from "../types/types";
 import CustomHeader from "../common/CustomHeader";
 import { FontAwesome6 } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { environment } from "@/environment/environment";
 
 type CheckoutNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -48,12 +52,14 @@ const formatExpiry = (value: string) => {
   return cleaned;
 };
 
+// Success Modal
 const SuccessModal: React.FC<{
   visible: boolean;
   shopAddress: string;
+  invNo: string;
   onViewInvoice: () => void;
   onClose: () => void;
-}> = ({ visible, shopAddress, onViewInvoice, onClose }) => {
+}> = ({ visible, shopAddress, invNo, onViewInvoice, onClose }) => {
   const { t } = useTranslation();
   return (
     <Modal
@@ -63,7 +69,7 @@ const SuccessModal: React.FC<{
       onRequestClose={onClose}
     >
       <View className="flex-1 bg-white">
-        {/* ── Header ── */}
+        {/* Header */}
         <View className="flex-row items-center justify-between px-5 mt-4 pb-4">
           <TouchableOpacity
             onPress={onClose}
@@ -77,7 +83,7 @@ const SuccessModal: React.FC<{
           <View className="w-8" />
         </View>
 
-        {/* ── Body ── */}
+        {/* Body */}
         <View className="flex-1 px-6 items-center justify-center pb-10">
           <LottieView
             source={require("@/assets/jsons/govi-capital/congratulation.json")}
@@ -85,6 +91,18 @@ const SuccessModal: React.FC<{
             loop={true}
             style={{ width: 220, height: 200, marginBottom: 24 }}
           />
+
+          {/* Invoice number */}
+          {invNo ? (
+            <View className="bg-orange-50 border border-orange-200 rounded-xl px-5 py-3 mb-4 w-full items-center">
+              <Text className="text-gray-500 text-xs mb-1">
+                Order Reference
+              </Text>
+              <Text className="text-[#FF8000] font-bold text-base tracking-widest">
+                {invNo}
+              </Text>
+            </View>
+          ) : null}
 
           <Text className="text-gray-600 text-sm text-center leading-6 mb-1">
             Orders can be collected from our shop at
@@ -110,6 +128,7 @@ const SuccessModal: React.FC<{
   );
 };
 
+// Failed Modal
 const FailedModal: React.FC<{
   visible: boolean;
   onTryAgain: () => void;
@@ -124,7 +143,7 @@ const FailedModal: React.FC<{
       onRequestClose={onClose}
     >
       <View className="flex-1 bg-white">
-        {/* ── Header ── */}
+        {/* Header */}
         <View className="flex-row items-center justify-between px-5 mt-4 pb-4">
           <TouchableOpacity
             onPress={onClose}
@@ -138,7 +157,7 @@ const FailedModal: React.FC<{
           <View className="w-8" />
         </View>
 
-        {/* ── Body ── */}
+        {/* Body */}
         <View className="flex-1 px-6 items-center justify-center pb-10">
           <LottieView
             source={require("@/assets/jsons/govi-capital/request-rejected.json")}
@@ -146,17 +165,13 @@ const FailedModal: React.FC<{
             loop={true}
             style={{ width: 220, height: 200, marginBottom: 24 }}
           />
-
           <Text className="text-black text-2xl font-bold mb-5">
             Payment Failed!
           </Text>
-
           <Text className="text-gray-600 text-sm text-center leading-6 mb-12">
             Oops! Your payment didn't go through. Please try again or use a
             different card.
           </Text>
-
-          {/* ✅ Added the Try Again button that was missing */}
           <TouchableOpacity
             onPress={onTryAgain}
             className="bg-gray-900 rounded-full h-[52px] w-full items-center justify-center"
@@ -176,12 +191,17 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
   route,
 }) => {
   const { t } = useTranslation();
-  const { total, subtotal, serviceCharge, cartCount, shopName } = route.params;
+  const { total, subtotal, serviceCharge, cartCount, shopName, cartItems } =
+    route.params;
+
+  const branchId = (route.params as any).branchId as number;
 
   const [cardHolderName, setCardHolderName] = useState("");
   const [cardNumber, setCardNumber] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
   const [cvv, setCvv] = useState("");
+  const [placing, setPlacing] = useState(false);
+  const [invNo, setInvNo] = useState("");
 
   const [showSuccess, setShowSuccess] = useState(false);
   const [showFailed, setShowFailed] = useState(false);
@@ -193,27 +213,35 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
     cvv.length >= 3;
 
   const handlePayNow = async () => {
-    if (!isFormValid) return;
+    if (!isFormValid || placing) return;
     try {
-      const simulateSuccess = true;
-      if (simulateSuccess) {
-        setShowSuccess(true);
-      } else {
-        setShowFailed(true);
-      }
-    } catch {
+      setPlacing(true);
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("Not authenticated");
+
+      const { data } = await axios.post(
+        `${environment.API_BASE_URL}api/govi-shop/checkout`,
+        { branchId },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+
+      setInvNo(data.invNo ?? "");
+      setShowSuccess(true);
+    } catch (err: any) {
+      console.error("Place order error:", err?.response?.data ?? err.message);
       setShowFailed(true);
+    } finally {
+      setPlacing(false);
     }
   };
 
   const handleViewInvoice = () => {
     setShowSuccess(false);
-    // navigation.navigate("InvoiceScreen", { ... });
+
+    navigation.popToTop();
   };
 
-  const handleTryAgain = () => {
-    setShowFailed(false);
-  };
+  const handleTryAgain = () => setShowFailed(false);
 
   return (
     <KeyboardAvoidingView
@@ -232,7 +260,7 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* ── Total Amount Card ── */}
+        {/* Total Amount Card */}
         <View className="mx-8 mt-5">
           <View className="border border-[#FF8000] rounded-xl py-4 px-5 items-center">
             <Text className="text-[#FF8000] text-sm font-medium mb-1">
@@ -244,7 +272,7 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
           </View>
         </View>
 
-        {/* ── Card brand logos ── */}
+        {/* Card brand logos */}
         <View className="flex-row items-center mt-6 mb-5">
           <Text className="text-black text-sm font-semibold mr-3">
             ** {t("CheckoutScreen.CreditDebitCards")}
@@ -268,7 +296,7 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
 
         <View className="h-px bg-gray-200 mb-5" />
 
-        {/* ── Card Holder Name ── */}
+        {/* Card Holder Name */}
         <View className="mb-4">
           <Text className="text-gray-800 text-sm font-medium mb-1.5">
             {t("CheckoutScreen.CardHolderName")} <Text>*</Text>
@@ -284,7 +312,7 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
           />
         </View>
 
-        {/* ── Card Number ── */}
+        {/* Card Number */}
         <View className="mb-4">
           <Text className="text-gray-800 text-sm font-medium mb-1.5">
             {t("CheckoutScreen.CardNumber")} <Text>*</Text>
@@ -301,7 +329,7 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
           />
         </View>
 
-        {/* ── Expiry + CVV ── */}
+        {/* Expiry + CVV */}
         <View className="flex-row gap-3 mb-8">
           <View className="flex-1">
             <Text className="text-gray-800 text-sm font-medium mb-1.5">
@@ -336,26 +364,33 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
           </View>
         </View>
 
-        {/* ── Pay Now Button ── */}
+        {/* Pay Now Button */}
         <TouchableOpacity
           onPress={handlePayNow}
-          disabled={!isFormValid}
+          disabled={!isFormValid || placing}
           activeOpacity={0.85}
           className={`rounded-full h-[50px] flex-row items-center justify-center ${
-            isFormValid ? "bg-gray-900" : "bg-gray-400"
+            isFormValid && !placing ? "bg-gray-900" : "bg-gray-400"
           }`}
         >
-          <Text className="text-white text-base font-semibold mr-2">
-            {t("CheckoutScreen.PayNow")}
-          </Text>
-          <FontAwesome6 name="arrow-right-long" size={24} color="#ffffff" />
+          {placing ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <>
+              <Text className="text-white text-base font-semibold mr-2">
+                {t("CheckoutScreen.PayNow")}
+              </Text>
+              <FontAwesome6 name="arrow-right-long" size={24} color="#ffffff" />
+            </>
+          )}
         </TouchableOpacity>
       </ScrollView>
 
-      {/* ── Modals ── */}
+      {/* Modals */}
       <SuccessModal
         visible={showSuccess}
         shopAddress="1/A, Galle Road, Dehiwala."
+        invNo={invNo}
         onViewInvoice={handleViewInvoice}
         onClose={() => setShowSuccess(false)}
       />
