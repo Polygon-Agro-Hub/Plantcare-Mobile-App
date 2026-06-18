@@ -7,7 +7,7 @@ import {
   TextInput,
   Platform,
 } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, createNavigationContainerRef } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
@@ -23,7 +23,6 @@ import { Provider, useSelector } from "react-redux";
 import store, { RootState } from "@/services/reducxStore";
 import NetInfo from "@react-native-community/netinfo";
 import { useTranslation } from "react-i18next";
-import { navigationRef } from "../navigationRef";
 import * as SplashScreen from "expo-splash-screen";
 import Splash from "../component/auth/Splash";
 import Lanuage from "../component/common/Lanuage";
@@ -54,6 +53,7 @@ import PublicForumPost from "@/component/public-forum/PublicForumPost";
 import UpdateAsset from "@/component/fixed-assets/UpdateAsset";
 import CropEnrol from "@/component/crop-cultivation/CropEnrol";
 import { LogBox } from "react-native";
+import { AlertModal, setGlobalAlertListener } from "@/component/common/AlertModal";
 import MembershipScreen from "@/component/membership-screens/MembershipScreen";
 import BankDetailsScreen from "@/component/bank-details/Bankdetails";
 import PrivacyPolicy from "@/component/policies/PrivacyPolicy";
@@ -173,6 +173,7 @@ LogBox.ignoreAllLogs(true);
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+export const navigationRef = createNavigationContainerRef();
 
 function MainTabNavigator() {
   const [initialTab, setInitialTab] = useState("Dashboard");
@@ -280,6 +281,34 @@ function AppContent() {
   const { t } = useTranslation();
 
   const [isOfflineAlertShown, setIsOfflineAlertShown] = useState(false);
+  const [alertState, setAlertState] = useState({
+    visible: false,
+    title: "",
+    message: "" as string | React.ReactNode,
+    type: "error" as "success" | "error",
+    onClose: (() => {}) as () => void,
+    autoClose: true,
+    showOkButton: undefined as boolean | undefined,
+  });
+
+  useEffect(() => {
+    setGlobalAlertListener((title, message, type, onClose, autoClose, showOkButton) => {
+      setAlertState({
+        visible: true,
+        title,
+        message,
+        type,
+        onClose: () => {
+          setAlertState((prev) => ({ ...prev, visible: false }));
+          if (onClose) {
+            onClose();
+          }
+        },
+        autoClose,
+        showOkButton,
+      });
+    });
+  }, []);
 
   useEffect(() => {
     // Hide splash screen when app is ready
@@ -687,6 +716,15 @@ function AppContent() {
             <Stack.Screen name="SoilGridsScreen" component={SoilGridsScreen} />
           </Stack.Navigator>
         </NavigationContainer>
+        <AlertModal
+          visible={alertState.visible}
+          title={alertState.title}
+          message={alertState.message}
+          type={alertState.type}
+          onClose={alertState.onClose}
+          autoClose={alertState.autoClose}
+          showOkButton={alertState.showOkButton}
+        />
       </SafeAreaView>
     </GestureHandlerRootView>
   );
