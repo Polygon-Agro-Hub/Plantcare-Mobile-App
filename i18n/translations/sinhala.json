@@ -1497,5 +1497,19 @@
     "ExploreShops": "ළඟම ඇති සාප්පු",
     "NoShopsFound": "සාප්පු හමු නොවීය",
     "SearchShopsProducts": "සාප්පු / නිෂ්පාදන සොයන්න..."
+  },
+  "CheckoutScreen": {
+    "checkout": "පරීක්ෂාකාරී වන්න",
+    "yourTotalAmount": "ඔබේ මුළු මුදල",
+    "creditDebitCards": "ණය / හර කාඩ්පත්",
+    "cardHolderName": "කාඩ්පත් ලාභියාගේ නම",
+    "cardNumber": "කාඩ්පත් අංකය",
+    "expiryDate": "කල්පිරෙන දිනය",
+    "cvv": "CVV",
+    "payNow": "දැන් ගෙවන්න",
+    "PleaseEnterName": "කරුණාකර නම ඇතුළත් කරන්න",
+    "OrderSuccessful": "ඇණවුම සාර්ථකයි!",
+    "ViewMyInvoice": "මගේ ඉන්වොයිසිය බලන්න",
+    "Payment Failed": "ගෙවීම අසාර්ථකයි!"
   }
 }

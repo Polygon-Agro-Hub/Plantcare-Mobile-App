@@ -157,6 +157,7 @@ import LocationAccess from "@/component/permission/LocationAccess";
 import ViewProduct from "@/component/govi-shop/ViewProduct";
 import SoilGridsScreen from "@/component/soil-grids/SoilGridsScreen";
 import CartScreen from "@/component/govi-shop/CartScreen";
+import CheckoutScreen from "@/component/govi-shop/CheckoutScreen";
 
 LogBox.ignoreAllLogs(true);
 
@@ -681,6 +682,7 @@ function AppContent() {
               name="LocationAccess"
               component={LocationAccess as any}
             />
+            <Stack.Screen name="CheckoutScreen" component={CheckoutScreen as any} />
             <Stack.Screen name="ViewProduct" component={ViewProduct as any} />
             <Stack.Screen name="SoilGridsScreen" component={SoilGridsScreen} />
           </Stack.Navigator>

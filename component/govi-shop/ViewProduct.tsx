@@ -129,6 +129,7 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
     baseUom = "",
     branchId,
     description: routeDescription = "",
+    shopname = "Cart",
   } = route.params as any;
 
   const displayMode = getDisplayMode(baseUom);
@@ -292,6 +293,7 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
       await axios.delete(`${environment.API_BASE_URL}api/govi-shop/cart/item`, {
         headers: { Authorization: `Bearer ${token}` },
         data: {
+          branchId: Number(branchId),
           productId: Number(productId),
           subProdId,
           subProdColorId,
@@ -955,7 +957,7 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
           }}
         >
           <TouchableOpacity
-            onPress={() => navigation.navigate("CartScreen" as any)}
+            onPress={() => navigation.navigate("CartScreen" as any, { shopname, branchId: Number(branchId) })}
             activeOpacity={0.9}
             style={{
               backgroundColor: "#FF8000CC",
