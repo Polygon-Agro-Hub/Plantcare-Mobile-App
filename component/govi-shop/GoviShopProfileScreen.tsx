@@ -23,6 +23,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { environment } from "@/environment/environment";
 import { RouteProp } from "@react-navigation/core";
+import { useFocusEffect } from "@react-navigation/native";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -174,8 +175,13 @@ const MAX_CHIPS_VISIBLE = CHIP_COLUMNS * MAX_CHIP_ROWS;
 const COLOR_DOT_SIZE = 34;
 const COLOR_DOT_GAP = 8;
 
-function resolveVariantIds(baseUom: string, sub: SubProduct) {
+function resolveVariantIds(
+  baseUom: string,
+  sub: SubProduct,
+  colorDetail?: ColorDetail,
+) {
   const mode = getDisplayMode(baseUom);
+
   if (mode === "EQUIPMENT") {
     if (sub.colorCode && sub.colorCode.trim()) {
       return {
@@ -185,6 +191,17 @@ function resolveVariantIds(baseUom: string, sub: SubProduct) {
       };
     }
   }
+
+  if (mode === "COLOR") {
+    if (colorDetail) {
+      return {
+        subProdId: null,
+        subProdColorId: Number(colorDetail.colorId),
+        equipColorId: null,
+      };
+    }
+  }
+
   return {
     subProdId: Number(sub.id),
     subProdColorId: null,
@@ -264,6 +281,51 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
     return { Authorization: `Bearer ${token}` };
   };
 
+  const fetchCart = useCallback(async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) return;
+
+      const { data } = await axios.get(
+        `${environment.API_BASE_URL}api/govi-shop/cart`,
+        {
+          params: { branchId },
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      const items = data.items ?? [];
+      const mappedCart: CartItem[] = items.map((r: any) => {
+        const subId = r.subProdId || r.subProdColorId || r.equipColorId || "";
+        return {
+          productId: String(r.productId),
+          productName: r.productName,
+          subProductId: String(subId),
+          subProductLabel: r.variantLabel ?? "",
+          price: Number(r.pricePerUnit ?? 0),
+          quantity: Number(r.qty ?? 0),
+          image: r.productImage ?? "",
+        };
+      });
+
+      setCart(mappedCart);
+
+      const dbKeys = new Set<string>();
+      mappedCart.forEach((item) => {
+        dbKeys.add(cartItemKey(item.productId, item.subProductId));
+      });
+      setSavedToDb(dbKeys);
+
+      if (mappedCart.length > 0) {
+        setShowViewCart(true);
+      } else {
+        setShowViewCart(false);
+      }
+    } catch (error) {
+      console.error("Error fetching cart on profile screen:", error);
+    }
+  }, [branchId]);
+
   const getTotalCap = (sub: SubProduct): number | undefined => sub.availableQty;
 
   const getActiveColorDetail = (
@@ -324,12 +386,14 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
     product: Product,
     sub: SubProduct,
     qty: number,
+    colorDetail?: ColorDetail,
   ): Promise<boolean> => {
     try {
       const headers = await getAuthHeaders();
       const { subProdId, subProdColorId, equipColorId } = resolveVariantIds(
         product.baseUom,
         sub,
+        colorDetail,
       );
       await axios.post(
         `${environment.API_BASE_URL}api/govi-shop/cart/item`,
@@ -357,16 +421,19 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
   const callDeleteAPI = async (
     product: Product,
     sub: SubProduct,
+    colorDetail?: ColorDetail,
   ): Promise<boolean> => {
     try {
       const headers = await getAuthHeaders();
       const { subProdId, subProdColorId, equipColorId } = resolveVariantIds(
         product.baseUom,
         sub,
+        colorDetail,
       );
       await axios.delete(`${environment.API_BASE_URL}api/govi-shop/cart/item`, {
         headers,
         data: {
+          branchId: Number(branchId),
           productId: Number(product.id),
           subProdId,
           subProdColorId,
@@ -921,13 +988,20 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
     return () => clearTimeout(delay);
   }, [searchQuery]);
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchCart();
+    }, [fetchCart]),
+  );
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     setExpandedProductId(null);
     setLooseStateMap({});
     fetchCategories();
     fetchProducts(selectedFilter, searchQuery);
-  }, [selectedFilter, searchQuery]);
+    fetchCart();
+  }, [selectedFilter, searchQuery, fetchCart]);
 
   const renderFilterButton = ({ item }: { item: FilterButton }) => (
     <TouchableOpacity
@@ -1730,6 +1804,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                 categoryId: item.categoryId,
                 branchId,
                 shopId,
+                shopname,
               });
             }
           }}
@@ -2385,7 +2460,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
         >
           <TouchableOpacity
             onPress={() =>
-              navigation.navigate("CartScreen" as any, { shopname })
+              navigation.navigate("CartScreen" as any, { shopname, branchId })
             }
             activeOpacity={0.9}
             style={{
