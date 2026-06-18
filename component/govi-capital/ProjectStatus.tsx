@@ -9,8 +9,8 @@ import {
   ActivityIndicator,
   BackHandler,
 } from "react-native";
-import { Video, ResizeMode } from "expo-av";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { useVideoPlayer, VideoView } from "expo-video";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
 import Svg, { Circle } from "react-native-svg";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -65,6 +65,13 @@ interface InvestmentDetail {
 const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
   const { id, jobid } = route.params;
   const { t } = useTranslation();
+
+  const videoSource = require("../../assets/images/govi-pension/pension-background.mov");
+  const player = useVideoPlayer(videoSource, player => {
+    player.loop = true;
+    player.muted = true;
+    player.play();
+  });
 
   const [loading, setLoading] = useState(true);
   const [investmentDetail, setInvestmentDetail] =
@@ -195,19 +202,13 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar barStyle="dark-content" backgroundColor="#FFC107" />
-
       <View className="pt-5 pb-6 overflow-hidden" style={{ height: 180 }}>
-        <Video
-          source={require("../../assets/images/govi-pension/pension-background.mov")}
+        <VideoView
+          player={player}
           className="absolute top-0 left-0 bottom-0 right-0 w-full h-[200%]"
-          shouldPlay
-          isLooping
-          isMuted
-          resizeMode={ResizeMode.COVER}
+          contentFit="cover"
         />
-
-        <View className="mb-2 z-10 px-4">
+        <View className="mb-2 z-10 px-6">
           <View className="flex-row items-center">
             <TouchableOpacity
               onPress={() =>
@@ -227,12 +228,12 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
           </View>
           <View className="absolute w-full left-0 right-0 items-center justify-center mt-[13%] mb-[10%] ml-[5%]">
             <Text className="text-black">
-              {t("ProjectStatus.Received Total Investment")}
+              {t("ProjectStatus.ReceivedTotalInvestment")}
             </Text>
           </View>
           <View className="w-full left-0 right-0 items-center justify-center mt-[14%] mb-[5%]">
             <Text className="text-3xl font-semibold text-black">
-              {t("ProjectStatus.Rs.")}{" "}
+              {t("ProjectStatus.Rs")}{" "}
               {projectData.receivedInvestment.toLocaleString("en-IN", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
@@ -248,14 +249,14 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
             <View className="flex-row justify-between items-center">
               <View className="flex-1">
                 <Text className="text-xs text-[#000000]">
-                  {t("ProjectStatus.Total Shares")}
+                  {t("ProjectStatus.TotalShares")}
                 </Text>
                 <Text className="text-base font-semibold text-[#000000] mb-2">
                   {projectData.totalShares}
                 </Text>
 
                 <Text className="text-xs text-[#000000]">
-                  {t("ProjectStatus.Shares Left")}
+                  {t("ProjectStatus.SharesLeft")}
                 </Text>
                 <Text className="text-base font-semibold text-[#000000]">
                   {projectData.sharesLeft}
@@ -300,12 +301,12 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
         <View className="flex-row justify-between mb-4">
           <View className="bg-[#FBFAED] border border-[#FFCD01] rounded-xl p-4 flex-1 mr-2">
             <Text className="text-xs text-[#000000] mb-2 text-center">
-              {t("ProjectStatus.Total Investment")}
+              {t("ProjectStatus.TotalInvestment")}
               {"\n"}
               {t("ProjectStatus.Needed")}
             </Text>
             <Text className="text-base font-semibold text-[#000000] text-center">
-              {t("ProjectStatus.Rs.")}{" "}
+              {t("ProjectStatus.Rs")}{" "}
               {projectData.totalInvestmentNeeded.toLocaleString("en-IN", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
@@ -315,12 +316,12 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
 
           <View className="bg-[#FBFAED] border border-[#FFCD01] rounded-xl p-4 flex-1 ml-2">
             <Text className="text-xs text-[#000000] mb-2 text-center">
-              {t("ProjectStatus.Pending Balance")}
+              {t("ProjectStatus.PendingBalance")}
               {"\n"}
-              {t("ProjectStatus.to Receive")}
+              {t("ProjectStatus.ToReceive")}
             </Text>
             <Text className="text-base font-semibold text-[#000000] text-center">
-              {t("ProjectStatus.Rs.")}{" "}
+              {t("ProjectStatus.Rs")}{" "}
               {projectData.pendingBalance.toLocaleString("en-IN", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
@@ -338,7 +339,7 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
             >
               <View className="flex-row justify-between">
                 <Text className="text-base font-semibold text-[#000000]">
-                  {t("ProjectStatus.Rs.")}{" "}
+                  {t("ProjectStatus.Rs")}{" "}
                   {parseFloat(transaction.totInvt).toLocaleString("en-IN", {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,

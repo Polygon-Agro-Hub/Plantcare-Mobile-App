@@ -15,8 +15,8 @@ import {
 } from "react-native-responsive-screen";
 import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { RootStackParamList } from "../types/types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -109,7 +109,7 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
   const fetchCultivationsAndProgress = async () => {
     setLoading(true);
     try {
-      setLanguage(t("MyCrop.LNG"));
+      setLanguage(t("Main.LNG"));
 
       const token = await AsyncStorage.getItem("userToken");
 
@@ -303,7 +303,7 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar style="dark" />
+      
 
       <ScrollView
         className="flex-1"
@@ -358,7 +358,7 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
                 />
               </View>
               <Text className="text-base font-semibold text-gray-800">
-                {t("Manager.Manage Workers")}
+                {t("Manager.ManageWorkers")}
               </Text>
             </View>
             <MaterialCommunityIcons
@@ -371,21 +371,27 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
 
         <View className="px-5 mt-6">
           <Text className="text-center text-sm text-gray-500 font-medium mb-4">
-            {t("Manager.Ongoing Cultivations")}
+            {t("Manager.OngoingCultivations")}
           </Text>
 
           {loading ? (
             <SkeletonLoader />
           ) : crops.length === 0 ? (
-            <View className="items-center justify-center py-10">
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               <LottieView
-                source={require("../../assets/jsons/NoComplaints.json")}
-                style={{ width: wp(50), height: hp(50) }}
+                source={require("@/assets/jsons/common/no-data.json")}
+                style={{ width: wp(50), height: hp(25) }}
                 autoPlay
                 loop
               />
-              <Text className="text-center text-gray-600 mt-[-30%]">
-                --{t("Manager.No ongoing cultivations found")}--
+              <Text className="text-center text-gray-600 ">
+                --{t("Manager.NoOngoingCultivationsFound")}--
               </Text>
             </View>
           ) : (

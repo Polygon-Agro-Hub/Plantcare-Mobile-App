@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -22,7 +22,7 @@ import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomHeader from "../common/CustomHeader";
 import GlobalSearchModal from "../common/GlobalSearchModal";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import { MaterialIcons } from "@expo/vector-icons";
 
 interface ServiceItem {
   label: string;
@@ -170,9 +170,9 @@ const RequestInspectionForm = () => {
       }
     } catch {
       Alert.alert(
-        t("RequestInspectionForm.Error"),
-        t("RequestInspectionForm.Failed to fetch services. Please try again."),
-        [{ text: t("RequestInspectionForm.OK") }],
+        t("Main.Error"),
+        t("RequestInspectionForm.FailedToFetchServicesPleaseTryAgain"),
+        [{ text: t("Main.OK") }],
       );
     } finally {
       setLoadingServices(false);
@@ -213,9 +213,9 @@ const RequestInspectionForm = () => {
       }
     } catch {
       Alert.alert(
-        t("RequestInspectionForm.Error"),
-        t("RequestInspectionForm.Failed to fetch farms. Please try again."),
-        [{ text: t("RequestInspectionForm.OK") }],
+        t("Main.Error"),
+        t("RequestInspectionForm.FailedToFetchFarmsPleaseTryAgain"),
+        [{ text: t("Main.OK") }],
       );
     } finally {
       setLoadingFarms(false);
@@ -293,11 +293,11 @@ const RequestInspectionForm = () => {
       }
     } catch {
       Alert.alert(
-        t("RequestInspectionForm.Error"),
+        t("Main.Error"),
         t(
-          "RequestInspectionForm.Failed to fetch farm crops. Please try again.",
+          "RequestInspectionForm.FailedToFetchFarmCropsPleaseTryAgain",
         ),
-        [{ text: t("RequestInspectionForm.OK") }],
+        [{ text: t("Main.OK") }],
       );
       setFarmCrops([
         {
@@ -347,7 +347,7 @@ const RequestInspectionForm = () => {
         t(
           "RequestInspectionForm.This farm has no enrolled crops. Please enroll crops first or contact support.",
         ),
-        [{ text: t("RequestInspectionForm.OK") }],
+        [{ text: t("Main.OK") }],
       );
       if (selectedRequests.includes(request)) {
         setSelectedRequests(selectedRequests.filter((r) => r !== request));
@@ -443,53 +443,53 @@ const RequestInspectionForm = () => {
   const handleAddMore = () => {
     if (!selectedService || !price || !selectedFarm) {
       Alert.alert(
-        t("RequestInspectionForm.Validation Error"),
+        t("RequestInspectionForm.ValidationError"),
         t(
-          "RequestInspectionForm.Please fill in Service, Price, and Farm fields",
+          "RequestInspectionForm.PleaseFillInServicePriceAndFarmFields",
         ),
-        [{ text: t("RequestInspectionForm.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
     if (!plotNo.trim()) {
       Alert.alert(
-        t("RequestInspectionForm.Validation Error"),
-        t("RequestInspectionForm.Please enter Plot Number"),
-        [{ text: t("RequestInspectionForm.OK") }],
+        t("RequestInspectionForm.ValidationError"),
+        t("RequestInspectionForm.PleaseEnterPlotNumber"),
+        [{ text: t("Main.OK") }],
       );
       return;
     }
     if (!streetName.trim()) {
       Alert.alert(
-        t("RequestInspectionForm.Validation Error"),
-        t("RequestInspectionForm.Please enter Street Name"),
-        [{ text: t("RequestInspectionForm.OK") }],
+        t("RequestInspectionForm.ValidationError"),
+        t("RequestInspectionForm.PleaseEnterStreetName"),
+        [{ text: t("Main.OK") }],
       );
       return;
     }
     if (!city.trim()) {
       Alert.alert(
-        t("RequestInspectionForm.Validation Error"),
-        t("RequestInspectionForm.Please enter City"),
-        [{ text: t("RequestInspectionForm.OK") }],
+        t("RequestInspectionForm.ValidationError"),
+        t("RequestInspectionForm.PleaseEnterCity"),
+        [{ text: t("Main.OK") }],
       );
       return;
     }
     if (!selectedDate) {
       Alert.alert(
-        t("RequestInspectionForm.Validation Error"),
-        t("RequestInspectionForm.Please select a schedule date"),
-        [{ text: t("RequestInspectionForm.OK") }],
+        t("RequestInspectionForm.ValidationError"),
+        t("RequestInspectionForm.PleaseSelectAScheduleDate"),
+        [{ text: t("Main.OK") }],
       );
       return;
     }
     if (selectedCrops.length === 0) {
       Alert.alert(
-        t("RequestInspectionForm.Validation Error"),
+        t("RequestInspectionForm.ValidationError"),
         t(
-          "RequestInspectionForm.Please select at least one crop for inspection",
+          "RequestInspectionForm.PleaseSelectAtLeastOneCropForInspection",
         ),
-        [{ text: t("RequestInspectionForm.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -589,19 +589,19 @@ const RequestInspectionForm = () => {
   const proceedToPaymentWithItems = (itemsToUse: AddedItem[]) => {
     if (itemsToUse.length === 0) {
       Alert.alert(
-        t("RequestInspectionForm.Error"),
-        t("RequestInspectionForm.Please add at least one inspection request"),
-        [{ text: t("RequestInspectionForm.OK") }],
+        t("Main.Error"),
+        t("RequestInspectionForm.PleaseAddAtLeastOneInspectionRequest"),
+        [{ text: t("Main.OK") }],
       );
       return;
     }
     if (itemsToUse.some((item) => !item.date)) {
       Alert.alert(
-        t("RequestInspectionForm.Error"),
+        t("Main.Error"),
         t(
-          "RequestInspectionForm.Please select a date for all inspection requests",
+          "RequestInspectionForm.PleaseSelectADateForAllInspectionRequests",
         ),
-        [{ text: t("RequestInspectionForm.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -631,14 +631,22 @@ const RequestInspectionForm = () => {
       };
     });
 
-    (navigation as any).navigate("RequestInspectionPayment", {
+    const subTotal = itemsToUse.reduce(
+      (sum, item) => sum + parseFloat(item.price || "0"),
+      0,
+    );
+    const processingFeePercentage = 5;
+    const processingFee = subTotal * 0.05;
+    const fullTotal = subTotal + processingFee;
+
+    (navigation as any).navigate("PaymentSummary", {
       requestItems,
-      addedItems: itemsToUse,
-      totalAmount: itemsToUse.reduce(
-        (sum, item) => sum + parseFloat(item.price || "0"),
-        0,
-      ),
-      itemsCount: itemsToUse.length,
+      subTotal,
+      processingFeePercentage,
+      processingFee,
+      fullTotal,
+      isRequestInspection: true,
+      title: t("Payment.PaymentSummary", "Payment Summary"),
     });
   };
 
@@ -666,22 +674,22 @@ const RequestInspectionForm = () => {
 
     if (hasCompleteUnsavedData && addedItems.length === 0) {
       Alert.alert(
-        t("RequestInspectionForm.Unsaved Data"),
+        t("RequestInspectionForm.UnsavedData"),
         t(
-          "RequestInspectionForm.You have unsaved inspection data. Do you want to add this request before proceeding?",
+          "RequestInspectionForm.YouHaveUnsavedInspectionDataDoYouWantToAddThisRequestBeforeProceeding",
         ),
         [
-          { text: t("RequestInspectionForm.Cancel"), style: "cancel" },
+          { text: t("Main.Cancel"), style: "cancel" },
           {
-            text: t("RequestInspectionForm.Proceed Without Adding"),
+            text: t("RequestInspectionForm.ProceedWithoutAdding"),
             onPress: () =>
               Alert.alert(
                 t("RequestInspectionForm.Confirmation"),
                 t(
-                  "RequestInspectionForm.Are you sure you want to discard the current form data?",
+                  "RequestInspectionForm.AreYouSureYouWantToDiscardTheCurrentFormData",
                 ),
                 [
-                  { text: t("RequestInspectionForm.Cancel"), style: "cancel" },
+                  { text: t("Main.Cancel"), style: "cancel" },
                   {
                     text: t("RequestInspectionForm.Discard and Proceed"),
                     style: "destructive",
@@ -691,7 +699,7 @@ const RequestInspectionForm = () => {
               ),
           },
           {
-            text: t("RequestInspectionForm.Add and Proceed"),
+            text: t("RequestInspectionForm.AddAndProceed"),
             onPress: () => {
               const newItem = createItemFromCurrentForm();
               const updated = [...addedItems, newItem];
@@ -709,18 +717,18 @@ const RequestInspectionForm = () => {
 
     if (hasCompleteUnsavedData && addedItems.length > 0) {
       Alert.alert(
-        t("RequestInspectionForm.Unsaved Data"),
+        t("RequestInspectionForm.UnsavedData"),
         t(
-          "RequestInspectionForm.You have unsaved inspection data. Do you want to add this request before proceeding?",
+          "RequestInspectionForm.YouHaveUnsavedInspectionDataDoYouWantToAddThisRequestBeforeProceeding",
         ),
         [
-          { text: t("RequestInspectionForm.Cancel"), style: "cancel" },
+          { text: t("Main.Cancel"), style: "cancel" },
           {
-            text: t("RequestInspectionForm.Proceed Without Adding"),
+            text: t("RequestInspectionForm.ProceedWithoutAdding"),
             onPress: () => proceedToPayment(),
           },
           {
-            text: t("RequestInspectionForm.Add and Proceed"),
+            text: t("RequestInspectionForm.AddAndProceed"),
             onPress: () => {
               const newItem = createItemFromCurrentForm();
               const updated = [...addedItems, newItem];
@@ -739,27 +747,27 @@ const RequestInspectionForm = () => {
     if (addedItems.length === 0) {
       Alert.alert(
         hasPartialData
-          ? t("RequestInspectionForm.Incomplete Data")
-          : t("RequestInspectionForm.Error"),
+          ? t("RequestInspectionForm.IncompleteData")
+          : t("Main.Error"),
         hasPartialData
           ? t(
-              "RequestInspectionForm.Please complete all required fields or click 'Add More' to save your current data",
-            )
+            "RequestInspectionForm.Please complete all required fields or click 'Add More' to save your current data",
+          )
           : t(
-              "RequestInspectionForm.Please add at least one inspection request",
-            ),
-        [{ text: t("RequestInspectionForm.OK") }],
+            "RequestInspectionForm.PleaseAddAtLeastOneInspectionRequest",
+          ),
+        [{ text: t("Main.OK") }],
       );
       return;
     }
 
     if (hasPartialData && !hasCompleteUnsavedData) {
       Alert.alert(
-        t("RequestInspectionForm.Incomplete Data"),
+        t("RequestInspectionForm.IncompleteData"),
         t(
-          "RequestInspectionForm.You have not completed the form. Please continue editing.",
+          "RequestInspectionForm.YouHaveNotCompletedTheFormPleaseContinueEditing",
         ),
-        [{ text: t("RequestInspectionForm.Cancel"), style: "cancel" }],
+        [{ text: t("Main.Cancel"), style: "cancel" }],
       );
       return;
     }
@@ -915,10 +923,10 @@ const RequestInspectionForm = () => {
 
   return (
     <View className="flex-1 bg-[#FFFFFF]">
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      
 
       <CustomHeader
-        title={t("RequestInspectionForm.Request Inspection")}
+        title={t("RequestInspectionForm.RequestInspection")}
         showBackButton={true}
         navigation={navigation as any}
         onBackPress={() => navigation.goBack()}
@@ -1004,129 +1012,122 @@ const RequestInspectionForm = () => {
         </View>
       )}
 
-      <ScrollView className="flex-1 px-5 py-4" ref={scrollViewRef}>
-        <View className="mb-4">
-          <Text className="text-sm text-gray-600 mb-2">
-            {t("RequestInspectionForm.Service")}
-          </Text>
-          <TouchableOpacity
-            onPress={() => !loadingServices && setServiceModalVisible(true)}
-            disabled={loadingServices}
-            className="bg-[#F4F4F4] rounded-full px-4 flex-row items-center justify-between"
-            style={{ height: hp(7) }}
+      <ScrollView className="flex-1 px-5 py-4" ref={scrollViewRef} contentContainerStyle={{ paddingBottom: 20 }}>
+        <Text className="text-[#070707] text-sm mt-2">
+          {t("RequestInspectionForm.Service")}
+        </Text>
+        <TouchableOpacity
+          onPress={() => !loadingServices && setServiceModalVisible(true)}
+          disabled={loadingServices}
+          className="bg-[#F4F4F4] rounded-3xl px-4 mt-2 mb-2 flex-row items-center justify-between h-[50px]"
+        >
+          <Text
+            className={`text-base ${getSelectedLabel(serviceItems, selectedService) ? "text-gray-900" : "text-gray-400"}`}
           >
-            <Text
-              className={`text-base ${getSelectedLabel(serviceItems, selectedService) ? "text-gray-900" : "text-gray-400"}`}
-            >
-              {loadingServices
-                ? t("RequestInspectionForm.Loading services")
-                : getSelectedLabel(serviceItems, selectedService) ||
-                  t("RequestInspectionForm.Select Service")}
-            </Text>
-            {loadingServices ? (
-              <ActivityIndicator size="small" color="#9CA3AF" />
-            ) : (
-            <AntDesign name="caret-down" size={14} color="#555" />
-            )}
-          </TouchableOpacity>
-        </View>
-
-        <View className="mb-4">
-          <Text className="text-sm text-gray-600 mb-2">
-            {t("RequestInspectionForm.Price")}
+            {loadingServices
+              ? t("RequestInspectionForm.LoadingServices...")
+              : getSelectedLabel(serviceItems, selectedService) ||
+              t("RequestInspectionForm.SelectService...")}
           </Text>
-          <TextInput
-            value={price ? formatCurrency(price) : "0.00"}
-            onChangeText={setPrice}
-            placeholder="0.00"
-            keyboardType="numeric"
-            className="bg-[#F4F4F4] rounded-full p-3 border border-[#F4F4F4] text-gray-900"
-            editable={false}
-          />
-        </View>
+          {loadingServices ? (
+            <ActivityIndicator size="small" color="#9CA3AF" />
+          ) : (
+            <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
+          )}
+        </TouchableOpacity>
 
-        <View className="mb-4">
-          <Text className="text-sm text-gray-600 mb-2">
-            {t("RequestInspectionForm.Farm")}
-          </Text>
-          <TouchableOpacity
-            onPress={() => !loadingFarms && setFarmModalVisible(true)}
-            disabled={loadingFarms}
-            className="bg-[#F4F4F4] rounded-full px-4 flex-row items-center justify-between"
-            style={{ height: hp(7) }}
+        <Text className="text-[#070707] text-sm mt-2">
+          {t("RequestInspectionForm.PriceRs")}
+        </Text>
+        <TextInput
+          value={price ? formatCurrency(price) : "0.00"}
+          onChangeText={setPrice}
+          placeholder="0.00"
+          keyboardType="numeric"
+          style={{ color: '#000000' }} 
+          placeholderTextColor="#000000"
+          className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px] text-gray-900"
+          editable={false}
+        />
+
+        <Text className="text-[#070707] text-sm mt-2">
+          {t("RequestInspectionForm.Farm")}
+        </Text>
+        <TouchableOpacity
+          onPress={() => !loadingFarms && setFarmModalVisible(true)}
+          disabled={loadingFarms}
+          className="bg-[#F4F4F4] rounded-3xl px-4 mt-2 mb-2 flex-row items-center justify-between h-[50px]"
+        >
+          <Text
+            className={`text-base ${getSelectedLabel(farmItems, selectedFarm) ? "text-gray-900" : "text-gray-400"}`}
           >
-            <Text
-              className={`text-base ${getSelectedLabel(farmItems, selectedFarm) ? "text-gray-900" : "text-gray-400"}`}
-            >
-              {loadingFarms
-                ? t("RequestInspectionForm.Loading farms")
-                : getSelectedLabel(farmItems, selectedFarm) ||
-                  t("RequestInspectionForm.Select Farm")}
-            </Text>
-            {loadingFarms ? (
-              <ActivityIndicator size="small" color="#9CA3AF" />
-            ) : (
-              <AntDesign name="caret-down" size={14} color="#555" />
-            )}
-          </TouchableOpacity>
-        </View>
-
-        <View className="mb-4">
-          <Text className="text-sm text-gray-600 mb-2">
-            {t("RequestInspectionForm.Plot No")}
+            {loadingFarms
+              ? t("RequestInspectionForm.LoadingFarms...")
+              : getSelectedLabel(farmItems, selectedFarm) ||
+              t("RequestInspectionForm.SelectFarm...")}
           </Text>
-          <TextInput
-            value={plotNo}
-            onChangeText={(text) => handleTextInputChange(text, setPlotNo)}
-            placeholder={t("RequestInspectionForm.Enter plot number")}
-            className="bg-[#F4F4F4] rounded-full p-3 border border-[#F4F4F4] text-gray-900"
-          />
-        </View>
+          {loadingFarms ? (
+            <ActivityIndicator size="small" color="#9CA3AF" />
+          ) : (
+            <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
+          )}
+        </TouchableOpacity>
 
-        <View className="mb-4">
-          <Text className="text-sm text-gray-600 mb-2">
-            {t("RequestInspectionForm.Street Name")}
-          </Text>
-          <TextInput
-            value={streetName}
-            onChangeText={(text) => handleTextInputChange(text, setStreetName)}
-            placeholder={t("RequestInspectionForm.Enter street name")}
-            className="bg-[#F4F4F4] rounded-full p-3 border border-[#F4F4F4] text-gray-900"
-          />
-        </View>
+        <Text className="text-[#070707] text-sm mt-2">
+          {t("RequestInspectionForm.PlotNo")}
+        </Text>
+        <TextInput
+          value={plotNo}
+          onChangeText={(text) => handleTextInputChange(text, setPlotNo)}
+          placeholder={t("RequestInspectionForm.EnterPlotNumber")}
+          style={{ color: '#000000' }} 
+          placeholderTextColor="#000000"
+          className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px] text-gray-900"
+        />
 
-        <View className="mb-4">
-          <Text className="text-sm text-gray-600 mb-2">
-            {t("RequestInspectionForm.City")}
-          </Text>
-          <TextInput
-            value={city}
-            onChangeText={(text) => handleTextInputChange(text, setCity)}
-            placeholder={t("RequestInspectionForm.Enter city")}
-            className="bg-[#F4F4F4] rounded-full p-3 border border-[#F4F4F4] text-gray-900"
-          />
-        </View>
+        <Text className="text-[#070707] text-sm mt-2">
+          {t("RequestInspectionForm.StreetName")}
+        </Text>
+        <TextInput
+          value={streetName}
+          onChangeText={(text) => handleTextInputChange(text, setStreetName)}
+          placeholder={t("RequestInspectionForm.EnterStreetName")}
+          style={{ color: '#000000' }} 
+          placeholderTextColor="#000000"
+          className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px] text-gray-900"
+        />
 
-        <View className="mb-4 mt-2">
-          <Text className="text-sm text-gray-600 mb-3">
-            {t("RequestInspectionForm.Field Visit Request For")}
-          </Text>
+        <Text className="text-[#070707] text-sm mt-2">
+          {t("RequestInspectionForm.City")}
+        </Text>
+        <TextInput
+          value={city}
+          onChangeText={(text) => handleTextInputChange(text, setCity)}
+          style={{ color: '#000000' }} 
+          placeholderTextColor="#000000"
+          placeholder={t("RequestInspectionForm.EnterCity")}
+          className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px] text-gray-900"
+        />
 
+        <Text className="text-[#070707] text-sm mt-2">
+          {t("RequestInspectionForm.FieldVisitRequestFor")}
+        </Text>
+        <View className="mt-2 mb-2">
           {loadingCrops && selectedFarm ? (
             <Text className="text-gray-500 text-center py-4">
-              {t("RequestInspectionForm.Loading crops")}
+              {t("RequestInspectionForm.LoadingCrops...")}
             </Text>
           ) : farmCrops.length > 0 ? (
             hasUnknownCrop ? (
               <View className="mb-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <Text className="text-yellow-800 text-sm">
                   {t(
-                    "RequestInspectionForm.This farm has no enrolled crops. Please enroll crops before requesting inspection.",
+                    "RequestInspectionForm.ThisFarmHasNoEnrolledCropsPleaseEnrollCropsBeforeRequestingInspection",
                   )}
                 </Text>
               </View>
             ) : (
-              <View className="space-y-3 pl-5">
+              <View className="gap-3 pl-5">
                 <TouchableOpacity
                   onPress={() => toggleRequest("All in this Farm")}
                   className="flex-row items-center mb-3"
@@ -1139,7 +1140,7 @@ const RequestInspectionForm = () => {
                     )}
                   </View>
                   <Text className="text-black font-medium">
-                    {t("RequestInspectionForm.All in this Farm")}
+                    {t("RequestInspectionForm.AllInThisFarm")}
                   </Text>
                 </TouchableOpacity>
 
@@ -1163,35 +1164,35 @@ const RequestInspectionForm = () => {
             )
           ) : selectedFarm ? (
             <Text className="text-gray-500 text-center py-4">
-              {t("RequestInspectionForm.No crops found for this farm")}
+              {t("RequestInspectionForm.NoCropsFoundForThisFarm")}
             </Text>
           ) : (
             <Text className="text-gray-500 text-center py-4">
-              {t("RequestInspectionForm.Please select a farm to view crops")}
+              {t("RequestInspectionForm.PleaseSelectAFarmToViewCrops")}
             </Text>
           )}
         </View>
 
-        <View className="mb-4">
-          <Text className="text-sm text-gray-600 mb-3">
-            {t("RequestInspectionForm.Schedule Date")}
-          </Text>
+        <Text className="text-[#070707] text-sm mt-2">
+          {t("RequestInspectionForm.ScheduleDate")}
+        </Text>
+        <View className="mt-2 mb-2">
           {renderCalendar()}
         </View>
 
-        <View className="pr-10 pl-10">
+        <View className="mt-8 mb-6 mx-6">
           <TouchableOpacity
             onPress={handleAddMore}
-            className="bg-gray-800 rounded-full py-4 items-center mb-6"
+            className="w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 bg-[#353535]"
           >
-            <Text className="text-white font-semibold text-base">
-              {t("RequestInspectionForm.Add More")}
+            <Text className="text-white text-center font-semibold text-lg">
+              {t("RequestInspectionForm.AddMore")}
             </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
 
-      <View className="bg-white border-t border-gray-200 px-5 py-4 flex-row justify-between items-center">
+      <View className="bg-white border-t border-gray-200 px-5 pt-4 pb-20 flex-row justify-between items-center">
         <View>
           <Text className="text-base">
             <Text className="text-gray-600">
@@ -1205,11 +1206,12 @@ const RequestInspectionForm = () => {
         </View>
         <TouchableOpacity
           onPress={handleSubmit}
-          className="bg-teal-500 rounded-full px-8 py-3"
+          className={`rounded-3xl px-8 h-[50px] justify-center items-center shadow-lg elevation-6 ${
+            addedItems.length === 0 ? "bg-[#9CA3AF]" : "bg-[#00A896]"
+          }`}
           disabled={addedItems.length === 0}
-          style={{ opacity: addedItems.length === 0 ? 0.5 : 1 }}
         >
-          <Text className="text-white font-semibold">
+          <Text className="text-white font-semibold text-lg">
             {t("RequestInspectionForm.Done")}
           </Text>
         </TouchableOpacity>
@@ -1218,11 +1220,11 @@ const RequestInspectionForm = () => {
       <GlobalSearchModal
         visible={serviceModalVisible}
         onClose={() => setServiceModalVisible(false)}
-        title={t("RequestInspectionForm.Select Service")}
+        title={t("RequestInspectionForm.SelectService...")}
         data={serviceItems}
         selectedItems={selectedService ? [selectedService] : []}
         onSelect={handleServiceSelect}
-        searchPlaceholder={t("RequestInspectionForm.Search services")}
+        searchPlaceholder={t("RequestInspectionForm.SearchServices...")}
         searchKeys={["label"]}
         multiSelect={false}
         showSearch={true}
@@ -1231,11 +1233,11 @@ const RequestInspectionForm = () => {
       <GlobalSearchModal
         visible={farmModalVisible}
         onClose={() => setFarmModalVisible(false)}
-        title={t("RequestInspectionForm.Select Farm")}
+        title={t("RequestInspectionForm.SelectFarm...")}
         data={farmItems}
         selectedItems={selectedFarm ? [selectedFarm] : []}
         onSelect={handleFarmSelect}
-        searchPlaceholder={t("RequestInspectionForm.Select Farm")}
+        searchPlaceholder={t("RequestInspectionForm.SelectFarm...")}
         searchKeys={["label"]}
         multiSelect={false}
         showSearch={true}

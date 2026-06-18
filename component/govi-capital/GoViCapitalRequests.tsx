@@ -19,6 +19,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../types/types";
 import CustomHeader from "../common/CustomHeader";
+import LoadingPage from "../common/LoadingPage";
 
 type GoViCapitalRequestsNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -77,22 +78,22 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
       case "under_review":
       case "pending":
         return {
-          text: t("Govicapital.Request Under Review"),
+          text: t("Govicapital.RequestUnderReview"),
           color: "#C49400",
         };
       case "approved":
         return {
-          text: t("Govicapital.Request Approved"),
+          text: t("Govicapital.RequestApproved"),
           color: "#00C1AB",
         };
       case "rejected":
         return {
-          text: t("Govicapital.Request Rejected"),
+          text: t("Govicapital.RequestRejected"),
           color: "#FF0000",
         };
       default:
         return {
-          text: status || t("Govicapital.Unknown Status"),
+          text: status || t("Govicapital.UnknownStatus"),
           color: "#9CA3AF",
         };
     }
@@ -107,19 +108,19 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
         return (
           request.cropNameSinhala ||
           request.cropNameEnglish ||
-          t("Govicapital.Unknown Crop")
+          t("Govicapital.UnknownCrop")
         );
       case "ta":
       case "tamil":
         return (
           request.cropNameTamil ||
           request.cropNameEnglish ||
-          t("Govicapital.Unknown Crop")
+          t("Govicapital.UnknownCrop")
         );
       case "en":
       case "english":
       default:
-        return request.cropNameEnglish || t("Govicapital.Unknown Crop");
+        return request.cropNameEnglish || t("Govicapital.UnknownCrop");
     }
   };
 
@@ -236,21 +237,15 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar barStyle="dark-content" backgroundColor="#f9fafb" />
-
       <CustomHeader
-        title={t("Govicapital.Investment / Loan Requests")}
+        title={t("Govicapital.InvestmentLoanRequests")}
         navigation={navigation}
         onBackPress={() => navigation?.goBack()}
       />
-
       {/* Loading State */}
       {loading ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#000" />
-          <Text className="text-gray-500 mt-4">
-            {t("Govicapital.Loading requests")}
-          </Text>
+        <View className="flex-1 justify-center items-center bg-white">
+          <LoadingPage fullScreen />
         </View>
       ) : investmentRequests.length === 0 ? (
         /* Empty State */
@@ -267,20 +262,19 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
         >
           <View className="flex-1 items-center justify-center mt-[-40%]">
             <LottieView
-              source={require("../../assets/jsons/NoComplaints.json")}
+              source={require("@/assets/jsons/common/no-data.json")}
               style={{ width: 200, height: 200 }}
               autoPlay
               loop
             />
             <Text className=" text-[#393939]">
-              --{t("Govicapital.No Requests Yet")}--
+              --{t("Govicapital.NoRequestsYet")}--
             </Text>
           </View>
         </ScrollView>
       ) : (
-    
         <ScrollView
-          className="flex-1 px-4 pt-4 mb-20"
+          className="flex-1 px-6 pt-4 mb-20"
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
@@ -351,14 +345,7 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
       <TouchableOpacity
         onPress={handleAddRequest}
         activeOpacity={0.8}
-        className="absolute bottom-20 right-6 bg-gray-800 w-14 h-14 rounded-full items-center justify-center shadow-lg"
-        style={{
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.3,
-          shadowRadius: 8,
-          elevation: 8,
-        }}
+        className="absolute bottom-20 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
       >
         <MaterialIcons name="add" size={28} color="#fff" />
       </TouchableOpacity>

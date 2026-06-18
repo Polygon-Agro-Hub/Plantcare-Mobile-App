@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { View, ImageBackground, Image, Text } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { View, ImageBackground, Image, Text, Animated } from "react-native";
 import * as Progress from "react-native-progress";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -20,29 +20,30 @@ type SplashNavigationProp = NativeStackNavigationProp<
 
 const Splash: React.FC = () => {
   const navigation = useNavigation<SplashNavigationProp>();
+  const progressAnim = useRef(new Animated.Value(0)).current;
   const [progress, setProgress] = useState(0);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      checkFirstLaunchAndNavigate();
-    }, 5000);
+    const listenerId = progressAnim.addListener(({ value }) => {
+      setProgress(value);
+    });
 
-    const progressInterval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev < 1) {
-          return prev + 0.1;
-        }
-        clearInterval(progressInterval);
-        return prev;
-      });
-    }, 500);
+    const animation = Animated.timing(progressAnim, {
+      toValue: 1,
+      duration: 2000,
+      useNativeDriver: false,
+    });
+
+    animation.start(async () => {
+      await checkFirstLaunchAndNavigate();
+    });
 
     return () => {
-      clearTimeout(timer);
-      clearInterval(progressInterval);
+      progressAnim.removeListener(listenerId);
+      animation.stop();
     };
-  }, [navigation]);
+  }, [navigation, progressAnim]);
 
   const checkFirstLaunchAndNavigate = async () => {
     try {
@@ -153,13 +154,15 @@ const Splash: React.FC = () => {
         >
           GOVI CARE
         </Text>
-        <View style={{ width: "80%", marginTop: 20 }}>
+        <View style={{ marginTop: 20 }}>
           <Progress.Bar
             progress={progress}
-            width={null}
+            animated={false}
             color="#ffffff"
+            unfilledColor="rgba(255, 255, 255, 0.3)"
             borderWidth={0}
-            style={{ height: 10 }}
+            height={10}
+            width={200}
           />
         </View>
       </View>

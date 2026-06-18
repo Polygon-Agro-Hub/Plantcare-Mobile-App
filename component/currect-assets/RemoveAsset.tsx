@@ -77,7 +77,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
   const [batchModalVisible, setBatchModalVisible] = useState(false);
   const [unitModalVisible, setUnitModalVisible] = useState(false);
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const unitvol = [
     { value: "ml", label: t("CurrentAssets.ml") },
@@ -85,24 +85,30 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
     { value: "l", label: t("CurrentAssets.l") },
   ];
 
-  const categoryItems = [
-    { label: t("CurrentAssets.Agro chemicals"), value: "Agro Chemicals" },
-    { label: t("CurrentAssets.Fertilizers"), value: "Fertilizers" },
-    {
-      label: t("CurrentAssets.Seeds and Seedlings"),
-      value: "Seeds and Seedlings",
-    },
-    {
-      label: t("CurrentAssets.Livestock for sale"),
-      value: "Livestock for Sale",
-    },
-    { label: t("CurrentAssets.Animal feed"), value: "Animal Feed" },
-    { label: t("CurrentAssets.Other consumables"), value: "Other Consumables" },
-  ];
+  const categoryData = require("@/assets/jsons/current-asset/categories.json");
+  const assetTranslationData = require("@/assets/jsons/current-asset/assets-translations.json");
+
+  const getCategoryLabel = (val: string) => {
+    const item = categoryData.find((c: any) => c.value === val);
+    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
+    return item ? (item.translations[lang] || item.translations["en"]) : val;
+  };
+
+  const getAssetLabel = (val: string) => {
+    if (val === "Other") return t("CurrentAssets.Other");
+    const item = assetTranslationData.find((a: any) => a.value === val);
+    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
+    return item ? (item.translations[lang] || item.translations["en"]) : val;
+  };
+
+  const categoryItems = categoryData.map((item: any) => ({
+    label: getCategoryLabel(item.value),
+    value: item.value,
+  }));
 
   const uniqueAssetNames = [...new Set(assets.map((a: Asset) => a.asset))].map(
     (name) => ({
-      label: name,
+      label: getAssetLabel(name),
       value: name,
     }),
   );
@@ -143,9 +149,9 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
-          t("Farms.No authentication token found"),
-          [{ text: t("PublicForum.OK") }],
+          t("Main.Error"),
+          t("Farms.NoAuthenticationTokenFound"),
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -162,9 +168,9 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
       const fetchedAssets = response.data.assets;
       if (!fetchedAssets || fetchedAssets.length === 0) {
         Alert.alert(
-          t("Farms.No Assets Found"),
+          t("Farms.NoAssetsFound"),
           t("Farms.There are no assets available for the selected category."),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
       } else {
         setAssets(fetchedAssets);
@@ -270,23 +276,23 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
     const unitPriceValue = parseFloat(unitPrice);
 
     if (!numberOfUnits || !assetId || !category) {
-      Alert.alert(t("PublicForum.sorry"), t("PublicForum.fillAllFields"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("PublicForum.sorry"), t("PublicForum.PleaseCompleteAllRequiredFieldsBeforeProceeding"), [
+        { text: t("Main.OK") },
       ]);
       return;
     }
     if (isNaN(numUnits) || numUnits <= 0) {
       Alert.alert(
-        t("Farms.Error"),
-        t("Farms.Please enter a valid number of units"),
+        t("Main.Error"),
+        t("Farms.PleaseEnterAValidNumberOfUnits"),
       );
       return;
     }
     if (numUnits > availableUnits) {
       Alert.alert(
         t("CurrentAssets.sorry"),
-        t("CurrentAssets.YouCannotRemove"),
-        [{ text: t("PublicForum.OK") }],
+        t("CurrentAssets.YouCannotRemoveMoreUnitsThanAvailable"),
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -298,7 +304,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
           t("CurrentAssets.totalPriceExceed", {
             maxValue: maxTotalValue.toFixed(2),
           }),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -309,9 +315,9 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
-          t("Farms.No authentication token found"),
-          [{ text: t("PublicForum.OK") }],
+          t("Main.Error"),
+          t("Farms.NoAuthenticationTokenFound"),
+          [{ text: t("Main.OK") }],
         );
         setIsLoading(false);
         return;
@@ -334,23 +340,23 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
 
       if (response.status === 200 || response.status === 204) {
         Alert.alert(
-          t("CurrentAssets.Success"),
-          t("CurrentAssets.RemoveSuccess"),
+          t("Main.Success"),
+          t("CurrentAssets.AssetRemovedSuccessfully"),
           [
             {
-              text: t("PublicForum.OK"),
+              text: t("Main.OK"),
               onPress: () => navigation.navigate("CurrentAssert"),
             },
           ],
         );
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
     } catch {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
     } finally {
       setIsLoading(false);
@@ -368,17 +374,17 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
         keyboardShouldPersistTaps="handled"
       >
         <CustomHeader
-          title={t("FixedAssets.myAssets")}
+          title={t("FixedAssets.MyAssets")}
           showBackButton={true}
           navigation={navigation as any}
           onBackPress={() => navigation.navigate("CurrentAssert")}
         />
 
-        <View className="space-y-4 p-8">
+        <View className="gap-4 p-8">
           {/* Category */}
           <View>
             <Text className="text-gray-600 mb-2">
-              {t("CurrentAssets.category")}
+              {t("CurrentAssets.Category")}
             </Text>
             <TouchableOpacity
               onPress={() => {
@@ -394,7 +400,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
               >
                 {category
                   ? getLabel(categoryItems, category)
-                  : t("CurrentAssets.selectcategory")}
+                  : t("CurrentAssets.Selectcategory")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -402,7 +408,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
           {/* Asset */}
           <View>
             <Text className="text-gray-600 mt-4 mb-2">
-              {t("CurrentAssets.asset")}
+              {t("CurrentAssets.Asset")}
             </Text>
             <TouchableOpacity
               onPress={() => {
@@ -417,16 +423,16 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                   asset ? "text-gray-800 text-sm" : "text-gray-400 text-sm"
                 }
               >
-                {asset || t("CurrentAssets.selectasset")}
+                {asset ? getAssetLabel(asset) : t("CurrentAssets.SelectAsset")}
               </Text>
             </TouchableOpacity>
           </View>
 
           {/* Brand */}
-          {category !== "Livestock for Sale" && (
+          {category !== "Livestock for sale" && (
             <View>
               <Text className="text-gray-600 mt-4 mb-2">
-                {t("CurrentAssets.brand")}
+                {t("CurrentAssets.Brand")}
               </Text>
               {availableBrands.length > 1 ? (
                 <TouchableOpacity
@@ -441,15 +447,15 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                       brand ? "text-gray-800 text-sm" : "text-gray-400 text-sm"
                     }
                   >
-                    {brand || t("CurrentAssets.selectbrand")}
+                    {brand || t("CurrentAssets.SelectBrand")}
                   </Text>
                 </TouchableOpacity>
               ) : (
                 <TextInput
-                  placeholder={t("CurrentAssets.brand")}
+                  placeholder={t("CurrentAssets.Brand")}
                   value={brand}
                   onChangeText={setBrand}
-                  className="bg-gray-200 p-2 pl-4 mt-2 rounded-[30px] h-[50px]"
+                  className="bg-gray-200 p-2 pl-4 mt-2 rounded-3xl h-[50px]"
                   editable={false}
                 />
               )}
@@ -459,7 +465,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
           {/* Batch */}
           <View>
             <Text className="text-gray-600 mb-2">
-              {t("CurrentAssets.batchnumber")}
+              {t("CurrentAssets.BatchNumber")}
             </Text>
             {availableBatches.length > 1 ? (
               <TouchableOpacity
@@ -474,15 +480,15 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                     batchNum ? "text-gray-800 text-sm" : "text-gray-400 text-sm"
                   }
                 >
-                  {batchNum || t("CurrentAssets.selectbatch")}
+                  {batchNum || t("CurrentAssets.SelectBatchNumber")}
                 </Text>
               </TouchableOpacity>
             ) : (
               <TextInput
-                placeholder={t("CurrentAssets.batchnumber")}
+                placeholder={t("CurrentAssets.BatchNumber")}
                 value={batchNum}
                 onChangeText={setBatchNum}
-                className="bg-gray-200 p-2 pl-4 rounded-[30px] h-[50px]"
+                className="bg-gray-200 p-2 pl-4 rounded-3xl h-[50px]"
                 editable={false}
               />
             )}
@@ -491,14 +497,14 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
           {/* Unit Volume */}
           <View>
             <Text className="text-gray-600 mb-2">
-              {t("CurrentAssets.unitvolume_weight")}
+              {t("CurrentAssets.UnitVolumeWeight")}
             </Text>
             <View className="flex-row items-center justify-between bg-white">
               <TextInput
-                placeholder={t("CurrentAssets.unitvolume_weight")}
+                placeholder={t("CurrentAssets.UnitVolumeWeight")}
                 value={volume}
                 editable={false}
-                className="flex-1 mr-2 py-2 pl-4 p-3 bg-gray-200 rounded-full"
+                className="flex-1 mr-2 py-2 pl-4 p-3 bg-gray-200 rounded-3xl h-[50px]"
               />
               <TouchableOpacity
                 onPress={() => {
@@ -512,7 +518,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
                     unit ? "text-gray-800 text-sm" : "text-gray-400 text-sm"
                   }
                 >
-                  {unit ? getLabel(unitvol, unit) : t("CurrentAssets.unit")}
+                  {unit ? getLabel(unitvol, unit) : t("CurrentAssets.Unit")}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -525,15 +531,15 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
               {availableUnits})
             </Text>
             <TextInput
-              placeholder={t("CurrentAssets.numberofunits")}
+              placeholder={t("CurrentAssets.NumberOfUnits")}
               value={numberOfUnits}
               onChangeText={(value) => {
                 const cleaned = value.replace(/[-.*#]/g, "");
                 if (parseFloat(cleaned) > availableUnits) {
                   Alert.alert(
                     t("CurrentAssets.sorry"),
-                    t("CurrentAssets.YouCannotRemove"),
-                    [{ text: t("PublicForum.OK") }],
+                    t("CurrentAssets.YouCannotRemoveMoreUnitsThanAvailable"),
+                    [{ text: t("Main.OK") }],
                   );
                 } else {
                   setNumberOfUnits(cleaned);
@@ -547,25 +553,25 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
           {/* Unit Price */}
           <View>
             <Text className="text-gray-600 mb-2">
-              {t("CurrentAssets.unitprice")}
+              {t("CurrentAssets.UnitPrice")}
             </Text>
             <TextInput
-              placeholder={t("CurrentAssets.unitprice")}
+              placeholder={t("CurrentAssets.UnitPrice")}
               value={unitPrice}
               onChangeText={setUnitPrice}
               keyboardType="numeric"
               editable={false}
-              className="bg-gray-200 p-2 rounded-[30px] pl-4 h-[50px]"
+              className="bg-gray-200 p-2 rounded-3xl pl-4 h-[50px]"
             />
           </View>
 
           {/* Total Price */}
           <View>
             <Text className="text-gray-600 mb-2">
-              {t("CurrentAssets.totalprice")}
+              {t("CurrentAssets.TotalPrice")}
             </Text>
             <TextInput
-              placeholder={t("CurrentAssets.totalprice")}
+              placeholder={t("CurrentAssets.TotalPrice")}
               value={totalPrice}
               editable={false}
               className="bg-gray-200 p-2 rounded-[30px] pl-4 h-[50px]"
@@ -581,7 +587,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
               <ActivityIndicator size="small" color="#fff" />
             ) : (
               <Text className="text-white text-center">
-                {t("CurrentAssets.removeAsset")}
+                {t("CurrentAssets.RemoveAsset")}
               </Text>
             )}
           </TouchableOpacity>
@@ -591,13 +597,13 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
       <GlobalSearchModal
         visible={categoryModalVisible}
         onClose={() => setCategoryModalVisible(false)}
-        title={t("CurrentAssets.category")}
+        title={t("CurrentAssets.Category")}
         data={categoryItems}
         selectedItems={category ? [category] : []}
         onSelect={(selected) => {
           if (selected.length > 0) setCategory(selected[0]);
         }}
-        searchPlaceholder={t("CurrentAssets.selectcategory")}
+        searchPlaceholder={t("CurrentAssets.Selectcategory")}
         multiSelect={false}
         showSearch={false}
       />
@@ -605,13 +611,13 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
       <GlobalSearchModal
         visible={assetModalVisible}
         onClose={() => setAssetModalVisible(false)}
-        title={t("CurrentAssets.asset")}
+        title={t("CurrentAssets.Asset")}
         data={uniqueAssetNames}
         selectedItems={asset ? [asset] : []}
         onSelect={(selected) => {
           if (selected.length > 0) handleAssetSelection(selected[0]);
         }}
-        searchPlaceholder={t("CurrentAssets.selectasset")}
+        searchPlaceholder={t("CurrentAssets.SelectAsset")}
         multiSelect={false}
         showSearch={true}
       />
@@ -619,13 +625,13 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
       <GlobalSearchModal
         visible={brandModalVisible}
         onClose={() => setBrandModalVisible(false)}
-        title={t("CurrentAssets.brand")}
+        title={t("CurrentAssets.Brand")}
         data={brandItems}
         selectedItems={brand ? [brand] : []}
         onSelect={(selected) => {
           if (selected.length > 0) handleBrandSelection(selected[0]);
         }}
-        searchPlaceholder={t("CurrentAssets.selectbrand")}
+        searchPlaceholder={t("CurrentAssets.SelectBrand")}
         multiSelect={false}
         showSearch={true}
       />
@@ -633,13 +639,13 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
       <GlobalSearchModal
         visible={batchModalVisible}
         onClose={() => setBatchModalVisible(false)}
-        title={t("CurrentAssets.batchnumber")}
+        title={t("CurrentAssets.BatchNumber")}
         data={batchItems}
         selectedItems={batchNum ? [batchNum] : []}
         onSelect={(selected) => {
           if (selected.length > 0) handleBatchSelection(selected[0]);
         }}
-        searchPlaceholder={t("CurrentAssets.selectbatch")}
+        searchPlaceholder={t("CurrentAssets.SelectBatchNumber")}
         multiSelect={false}
         showSearch={true}
       />
@@ -647,13 +653,13 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
       <GlobalSearchModal
         visible={unitModalVisible}
         onClose={() => setUnitModalVisible(false)}
-        title={t("CurrentAssets.unit")}
+        title={t("CurrentAssets.Unit")}
         data={unitvol}
         selectedItems={unit ? [unit] : []}
         onSelect={(selected) => {
           if (selected.length > 0) setUnit(selected[0]);
         }}
-        searchPlaceholder={t("CurrentAssets.unit")}
+        searchPlaceholder={t("CurrentAssets.Unit")}
         multiSelect={false}
         showSearch={false}
       />

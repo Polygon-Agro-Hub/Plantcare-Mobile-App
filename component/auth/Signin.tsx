@@ -14,7 +14,7 @@ import {
   TextInput,
 } from "react-native";
 import React, { useState } from "react";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -27,7 +27,8 @@ import {
 } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import countryData from "../../assets/jsons/countryflag.json";
+
+import countryData from "@/assets/jsons/common/country-flag.json";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import { MaterialIcons } from "@expo/vector-icons";
 import CustomHeader from "../common/CustomHeader";
@@ -65,7 +66,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
     const regex = /^[1-9][0-9]{8}$/;
 
     if (!regex.test(localNumber)) {
-      setError(t("Signup.Enteravalidmobile"));
+      setError(t("SignUp.PleaseEnterAValid9DigitMobileNumberExcludeTheLeadingZero"));
       setIsButtonDisabled(true);
       setIsValid(false);
     } else {
@@ -110,9 +111,9 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
 
   const handleLogin = async () => {
     if (!phonenumber) {
-      Alert.alert(t("signinForm.sorry"), t("signinForm.phoneNumberRequired"), [
+      Alert.alert(t("SignIn.sorry"), t("SignIn.PhoneNumberIsRequired"), [
         {
-          text: t("PublicForum.OK"),
+          text: t("Main.OK"),
           onPress: () => navigation.navigate("Signin"),
         },
       ]);
@@ -180,9 +181,9 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
             setIsButtonDisabled(false);
             setIsLoading(false);
           } catch (error) {
-            Alert.alert(t("Main.error"), t("Signup.otpSendFailed"), [
+            Alert.alert(t("Main.Error"), t("SignUp.FailedToSendOTPPleaseCheckYourNumberAndTryAgain"), [
               {
-                text: t("PublicForum.OK"),
+                text: t("Main.OK"),
                 onPress: () => navigation.navigate("Signin"),
               },
             ]);
@@ -191,20 +192,20 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
           setIsLoading(false);
           setIsButtonDisabled(false);
           if (data.message === "User is blocked") {
-            Alert.alert(t("Main.error"), t("Main.userBlocked"), [
+            Alert.alert(t("Main.Error"), t("Main.TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes"), [
               {
-                text: t("PublicForum.OK"),
+                text: t("Main.OK"),
                 onPress: () => navigation.navigate("Signin"),
               },
             ]);
             return;
           }
           Alert.alert(
-            t("signinForm.loginFailed"),
-            t("signinForm.notRegistered"),
+            t("SignIn.LoginFailed"),
+            t("SignIn.ThisUserIsNotRegisteredPleaseSignUpFirst"),
             [
               {
-                text: t("PublicForum.OK"),
+                text: t("Main.OK"),
                 onPress: () => navigation.navigate("Signin"),
               },
             ],
@@ -213,9 +214,9 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
       } else {
         setIsLoading(false);
         setIsButtonDisabled(false);
-        Alert.alert(t("Main.Sorry"), t("Main.somethingWentWrong"), [
+        Alert.alert(t("Main.Sorry"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
           {
-            text: t("PublicForum.OK"),
+            text: t("Main.OK"),
             onPress: () => navigation.navigate("Signin"),
           },
         ]);
@@ -223,9 +224,9 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
     } catch (error) {
       setIsButtonDisabled(false);
       setIsLoading(false);
-      Alert.alert(t("signinForm.loginFailed"), t("Main.somethingWentWrong"), [
+      Alert.alert(t("SignIn.LoginFailed"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
         {
-          text: t("PublicForum.OK"),
+          text: t("Main.OK"),
           onPress: () => navigation.navigate("Signin"),
         },
       ]);
@@ -236,11 +237,6 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
   const dynamicStyles = {
     imageHeight: screenWidth < 400 ? wp(70) : wp(60),
     margingTopForBtn: screenWidth < 380 ? 10 : 20,
-  };
-
-  const getFontSizeByLanguage = () => {
-    if (i18n.language === "si" || i18n.language === "ta") return wp(3);
-    return wp(4);
   };
 
   return (
@@ -276,7 +272,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                   : { fontSize: 25 }
               }
             >
-              {t("signinForm.welcome")}
+              {t("SignIn.Welcome")}
             </Text>
 
             <Text
@@ -289,11 +285,11 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                     : { fontSize: 16 }
               }
             >
-              {t("signinForm.enteryourphno")}
+              {t("SignIn.EnterYourPhoneNumberOfYourLoginID")}
             </Text>
           </View>
 
-          <View className="px-4 pt-8 pb-8">
+          <View className="px-6 pt-8 pb-8">
             <View className="flex">
               <View className="flex w-full">
                 <View className="flex-row items-center gap-2 w-full">
@@ -321,7 +317,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                   >
                     <TextInput
                       className="flex-1 px-4"
-                      placeholder={t("Signup.PhoneNumber")}
+                      placeholder={t("Inputs.PhoneNumber")}
                       value={phonenumber}
                       onChangeText={handlePhoneNumberChange}
                       keyboardType="phone-pad"
@@ -359,48 +355,41 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
               )}
             </View>
 
-            <View className="mt-8">
-              <View
-                className="flex m-auto w-2/3 rounded-3xl"
-                style={{
-                  shadowColor: "#000",
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.2,
-                  shadowRadius: 6,
-                  elevation: 6,
-                  backgroundColor: "transparent",
-                }}
+            <View className="mt-8 w-full px-6">
+              <TouchableOpacity
+                onPress={handleLogin}
+                disabled={isButtonDisabled}
+                activeOpacity={0.8}
+                className="w-full rounded-3xl h-[50px] overflow-hidden shadow-lg elevation-6"
               >
-                <TouchableOpacity
-                  onPress={handleLogin}
-                  disabled={isButtonDisabled}
-                  activeOpacity={0.8}
-                >
+                {isButtonDisabled ? (
+                  <View className="w-full h-full bg-[#9CA3AF] justify-center items-center">
+                    <Text className="text-white font-semibold text-center text-lg">
+                      {t("SignIn.SignIn")}
+                    </Text>
+                  </View>
+                ) : (
                   <LinearGradient
-                    colors={
-                      isButtonDisabled
-                        ? ["#353535", "#353535"]
-                        : ["#0FC7B2", "#10A37D"]
-                    }
+                    colors={["#0FC7B2", "#10A37D"]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
-                    className="w-full rounded-3xl h-[50px] justify-center items-center"
+                    className="w-full h-full justify-center items-center"
                   >
                     {isLoading ? (
                       <ActivityIndicator size="small" color="#fff" />
                     ) : (
                       <Text className="text-white font-semibold text-center text-lg">
-                        {t("signinForm.signin")}
+                        {t("SignIn.SignIn")}
                       </Text>
                     )}
                   </LinearGradient>
-                </TouchableOpacity>
-              </View>
+                )}
+              </TouchableOpacity>
 
               {/* Signup Link */}
               <View className="mt-6 flex-row justify-center items-center ">
                 <Text className="font-bold text-[#3F3F3F] mr-2">
-                  {t("signinForm.donthaveanaccount")}
+                  {t("SignIn.DontHaveAnAccount")}
                 </Text>
 
                 <TouchableOpacity
@@ -414,7 +403,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                   }}
                 >
                   <Text className="text-[#0085FF] font-semibold underline">
-                    {t("signinForm.signuphere")}
+                    {t("SignIn.SignUpHere")}
                   </Text>
                 </TouchableOpacity>
               </View>

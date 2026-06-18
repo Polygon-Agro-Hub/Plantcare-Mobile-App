@@ -23,6 +23,8 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Entypo } from "@expo/vector-icons";
+import LoadingPage from "@/component/common/LoadingPage";
+import CustomHeader from "../../common/CustomHeader";
 
 interface FarmItem {
   id: number;
@@ -96,9 +98,9 @@ const MyCultivation = () => {
 
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
-          t("Farms.No authentication token found"),
-          [{ text: t("PublicForum.OK") }],
+          t("Main.Error"),
+          t("Farms.NoAuthenticationTokenFound"),
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -121,8 +123,8 @@ const MyCultivation = () => {
         setMembership(res.data.membership);
       } else {
         console.error("Unexpected response structure:", res.data);
-        Alert.alert(t("Farms.Error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
     } catch (err) {
@@ -136,9 +138,9 @@ const MyCultivation = () => {
 
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
-          t("Farms.No authentication token found"),
-          [{ text: t("PublicForum.OK") }],
+          t("Main.Error"),
+          t("Farms.NoAuthenticationTokenFound"),
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -331,21 +333,22 @@ const MyCultivation = () => {
         onPress={() => handleFarmPress(farm)}
         disabled={membershipDisplay.isBlocked}
       >
-        <View className="flex-row items-start">
+        <View className="flex-row items-center">
           <Image
             source={getImageSource(farm.imageId)}
-            className="w-14 h-14 mr-4 mt-4 rounded-full"
+            className="justify-center rounded-full mr-4"
             resizeMode="cover"
+            style={{ width: wp(20), height: wp(20) }}
           />
           <View className="flex-1">
-            <View className="flex-row justify-between items-start mt-2">
+            <View className="flex-row justify-between items-center">
               <View>
                 <Text className="font-semibold text-base">{farm.farmName}</Text>
                 <Text className="text-gray-600 text-sm">
                   {t(`District.${farm.district}`)}
                 </Text>
                 <Text className="text-gray-600 text-sm">
-                  {farm.farmCropCount} {t("Farms.crops")}
+                 {t("Farms.Crops")} - {farm.farmCropCount} 
                 </Text>
               </View>
               {membershipDisplay.isBlocked && (
@@ -362,11 +365,15 @@ const MyCultivation = () => {
 
   return (
     <View className="flex-1 bg-white">
+      <CustomHeader
+        title={t("Farms.MyCultivation")}
+        showBackButton={false}
+      />
       <ScrollView
         key={refreshKey}
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
-        className="px-6"
+        className="px-6 bg-white"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -376,36 +383,26 @@ const MyCultivation = () => {
           />
         }
       >
-        <View style={{ paddingVertical: 20 }}>
-          <Text className="text-center font-semibold text-lg">
-            {t("Farms.My Cultivation")}
-          </Text>
-          <Text className="text-center text-[#5B5B5B] text-sm mt-2">
-            {t("Farms.Select a farm to manage your cultivation and assets")}
+        <View style={{ paddingVertical: 10 }}>
+          <Text className="text-center text-[#5B5B5B] text-sm -mt-4">
+            {t("Farms.SelectAFarmToManageYourCultivationAndAssets")}
           </Text>
         </View>
 
         {loading ? (
-          <View className="flex-1 justify-center items-center">
-            <LottieView
-              source={require("../../../assets/jsons/loader.json")}
-              autoPlay
-              loop
-              style={{ width: 300, height: 300 }}
-            />
-          </View>
+          <LoadingPage fullScreen />
         ) : farms.length === 0 ? (
           <View className="flex-1 justify-center items-center">
             <View className="-mt-[30%]">
               <LottieView
-                source={require("../../../assets/jsons/NoComplaints.json")}
+                source={require("@/assets/jsons/common/no-data.json")}
                 style={{ width: wp(50), height: hp(50) }}
                 autoPlay
                 loop
               />
             </View>
             <Text className="text-center text-gray-600 -mt-[30%]">
-              {t("MyCrop.NoDataFound")}
+              {t("MyCrop.NoFarmCultivationsYet")}
             </Text>
           </View>
         ) : (

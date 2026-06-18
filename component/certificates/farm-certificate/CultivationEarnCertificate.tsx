@@ -16,7 +16,7 @@ import {
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTranslation } from "react-i18next";
 import {
   widthPercentageToDP as wp,
@@ -76,7 +76,7 @@ const CultivationEarnCertificate: React.FC = () => {
     const months = parseInt(timeline);
     return months === 1
       ? t("EarnCertificate.month")
-      : t("EarnCertificate.months");
+      : t("EarnCertificate.Months");
   };
 
   const formatPrice = (price: string) => {
@@ -100,9 +100,9 @@ const CultivationEarnCertificate: React.FC = () => {
 
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
-          t("Farms.No authentication token found"),
-          [{ text: t("PublicForum.OK") }],
+          t("Main.Error"),
+          t("Farms.NoAuthenticationTokenFound"),
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -126,13 +126,13 @@ const CultivationEarnCertificate: React.FC = () => {
 
       if (err.response?.status === 404) {
         Alert.alert(
-          t("Main.error"),
+          t("Main.Error"),
           "No certificates available for farms at the moment",
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
     } finally {
@@ -148,14 +148,28 @@ const CultivationEarnCertificate: React.FC = () => {
   const handleContinue = () => {
     setModalVisible(false);
 
-    navigation.navigate("CultivationPaymentScreen", {
-      certificateName: selectedCertificate?.srtName || "",
-      certificatePrice: selectedCertificate?.price || "",
-      certificateValidity: selectedCertificate?.timeLine || "",
+    const priceNum = parseFloat(selectedCertificate?.price || "0");
+    const commissionNum = parseFloat(selectedCertificate?.commission || "0");
+    const percent = parseFloat(commissionNum.toFixed(2));
+    const calculatedFee = parseFloat((priceNum * (percent / 100)).toFixed(2));
+    const calculatedTotal = priceNum + calculatedFee;
+
+    const match = String(selectedCertificate?.timeLine || "18").match(/(\d+)/);
+    const validity = match ? parseInt(match[1]) : 18;
+
+    navigation.navigate("PaymentSummary", {
+      subTotal: priceNum,
+      processingFee: calculatedFee,
+      processingFeePercentage: percent,
+      fullTotal: calculatedTotal,
+      title: t("Payment.PaymentSummary", "Payment Summary"),
+      isCertificatePayment: true,
+      certificateType: "Cultivation",
       certificateId: selectedCertificate?.id || 0,
       farmId: farmId,
-      registrationCode: registrationCode,
       farmName: farmName,
+      certificateName: selectedCertificate?.srtName || "",
+      validityMonths: validity,
     });
   };
 
@@ -181,18 +195,18 @@ const CultivationEarnCertificate: React.FC = () => {
       className="bg-white"
       style={{ flex: 1 }}
     >
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      
 
       <CustomHeader
-        title={t("EarnCertificate.Earn a Certificate")}
+        title={t("EarnCertificate.EarnACertificate")}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
       />
       <View className="bg-white px-4 pb-4 shadow-sm">
-        <View className="bg-[#F6F6F6CC] rounded-full flex-row items-center px-4">
+        <View className="bg-[#F6F6F6CC] rounded-3xl h-[50px] flex-row items-center px-4">
           <TextInput
-            className="flex-1 text-base text-gray-700"
-            placeholder={t("EarnCertificate.Search")}
+            className="flex-1 text-lg text-gray-700"
+            placeholder={t("Main.Search...")}
             placeholderTextColor="#9CA3AF"
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -206,7 +220,7 @@ const CultivationEarnCertificate: React.FC = () => {
           <ActivityIndicator size="large" color="#A07700" />
           <Text className="text-gray-600 mt-4">
             {" "}
-            {t("EarnCertificate.Loading certificates")}
+            {t("EarnCertificate.LoadingCertificates")}
           </Text>
         </View>
       ) : (
@@ -217,7 +231,7 @@ const CultivationEarnCertificate: React.FC = () => {
           {filteredCertificates.length > 0 && (
             <Text className="text-center text-gray-600 text-sm mb-3 mr-3 ml-3">
               {t(
-                "EarnCertificate.Just click on the certificate you want to apply for",
+                "EarnCertificate.JustClickOnTheCertificateYouWantToApplyFor",
               )}
             </Text>
           )}
@@ -254,7 +268,7 @@ const CultivationEarnCertificate: React.FC = () => {
                     {t("EarnCertificate.Rs")}.{formatPrice(certificate.price)}
                   </Text>
                   <Text className="text-[#6B6B6B] text-sm">
-                    {t("EarnCertificate.Valid for")} {certificate.timeLine}{" "}
+                    {t("Farms.ValidityPeriod")} {certificate.timeLine}{" "}
                     {getMonthLabel(certificate.timeLine)}
                   </Text>
                 </View>
@@ -275,7 +289,7 @@ const CultivationEarnCertificate: React.FC = () => {
                 }}
               >
                 <LottieView
-                  source={require("../../../assets/jsons/NoComplaints.json")}
+                  source={require("@/assets/jsons/common/no-data.json")}
                   style={{ width: "100%", height: "100%" }}
                   autoPlay
                   loop
@@ -295,7 +309,7 @@ const CultivationEarnCertificate: React.FC = () => {
           {filteredCertificates.length > 0 && (
             <TouchableOpacity
               onPress={handleProceedWithout}
-              className="bg-[#F3F3F5] rounded-full py-3 px-6 mt-6 mb-8 shadow-sm"
+              className="bg-[#F3F3F5] rounded-3xl h-[50px] justify-center px-6 mt-6 mb-8 shadow-sm"
               activeOpacity={0.7}
               style={{
                 shadowColor: "#000000",
@@ -312,10 +326,10 @@ const CultivationEarnCertificate: React.FC = () => {
                     ? { fontSize: 14 }
                     : i18n.language === "ta"
                       ? { fontSize: 12 }
-                      : { fontSize: 16 },
+                      : { fontSize: 18 },
                 ]}
               >
-                {t("EarnCertificate.Proceed without a certificate")}
+                {t("EarnCertificate.ProceedWithoutACertificate")}
               </Text>
             </TouchableOpacity>
           )}
@@ -352,7 +366,7 @@ const CultivationEarnCertificate: React.FC = () => {
               </Text>
             </Text>
             <Text className="text-center text-gray-800 mb-2">
-              {t("EarnCertificate.costs")}{" "}
+              {t("EarnCertificate.Costs")}{" "}
               <Text className="text-[#A07700] font-semibold">
                 {t("EarnCertificate.Rs")}.
                 {formatPrice(selectedCertificate?.price || "0")}
@@ -367,17 +381,17 @@ const CultivationEarnCertificate: React.FC = () => {
                 {selectedCertificate?.timeLine}{" "}
                 {getMonthLabel(selectedCertificate?.timeLine || "0")}
               </Text>
-              . {t("EarnCertificate.Do you want to apply for it")}
+              . {t("EarnCertificate.DoYouWantToApplyForIt")}
             </Text>
 
             <View className="flex-row justify-between gap-3">
               <TouchableOpacity
                 onPress={handleGoBack}
-                className="flex-1 bg-[#ECECEC] rounded-lg py-3 px-4"
+                className="flex-1 bg-[#ECECEC] rounded-lg h-[50px] justify-center px-4"
                 activeOpacity={0.7}
               >
                 <Text
-                  className="text-center text-[#8E8E8E] text-base font-medium"
+                  className="text-center text-[#8E8E8E] text-lg font-medium"
                   style={[
                     i18n.language === "si"
                       ? { fontSize: 14 }
@@ -386,17 +400,17 @@ const CultivationEarnCertificate: React.FC = () => {
                         : { fontSize: 16 },
                   ]}
                 >
-                  {t("EarnCertificate.Go Back")}
+                  {t("Main.GoBack")}
                 </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 onPress={handleContinue}
-                className="flex-1 bg-black rounded-lg py-3 px-4"
+                className="flex-1 bg-black rounded-lg h-[50px] justify-center px-4"
                 activeOpacity={0.8}
               >
                 <Text
-                  className="text-center text-white text-base font-medium"
+                  className="text-center text-white text-lg font-medium"
                   style={[
                     i18n.language === "si"
                       ? { fontSize: 14 }
@@ -405,7 +419,7 @@ const CultivationEarnCertificate: React.FC = () => {
                         : { fontSize: 16 },
                   ]}
                 >
-                  {t("EarnCertificate.Continue")}
+                  {t("Main.Continue")}
                 </Text>
               </TouchableOpacity>
             </View>

@@ -5,11 +5,9 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  StyleSheet,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import i18n from "@/i18n/i18n";
 import { LinearGradient } from "expo-linear-gradient";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/component/types/types";
@@ -20,153 +18,75 @@ const AddNewFarmUnloackPro: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <View className="flex-1 bg-white justify-center items-center p-4">
+    <View className="flex-1 bg-white justify-center items-center p-6">
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         className=""
         showsVerticalScrollIndicator={false}
       >
-        <View className="flex-1 justify-center items-center  ">
+        <View className="flex-1 justify-center items-center">
           <Image
             source={require("../../../assets/images/farms/gradient-trophy.webp")}
-            className="w-60 h-60 object-cover"
+            className="w-64 h-64 object-cover"
           />
 
-          <View className="text-center justify-center items-center  p-2">
-            <View className="flex-row items-center justify-center space-x-2">
-              <Text
-                className="text-xl font-bold text-black"
-                style={[
-                  i18n.language === "si"
-                    ? { fontSize: 17 }
-                    : i18n.language === "ta"
-                      ? { fontSize: 15 }
-                      : { fontSize: 22 },
-                ]}
-              >
-                {t("Farms.UPGRADE")}
+          <View className="text-center justify-center items-center p-2">
+            <View className="flex-row items-center justify-center gap-2">
+              <Text className="text-xl font-bold text-black">
+                {t("Farms.Upgrade")}
               </Text>
-              <Text
-                className="text-base text-[#E2BE00] font-semibold bg-[#FFF5BD] p-1 px-6 rounded-md"
-                style={[
-                  i18n.language === "si"
-                    ? { fontSize: 13 }
-                    : i18n.language === "ta"
-                      ? { fontSize: 13 }
-                      : { fontSize: 14 },
-                ]}
-              >
-                {t("Farms.PRO")}
+              <Text className="text-base text-[#E2BE00] font-semibold bg-[#FFF5BD] p-1 px-6 rounded-md">
+                {t("Farms.Pro")}
               </Text>
             </View>
 
-            <Text
-              className="mt-6 text-lg text-black text-center  "
-              style={[
-                i18n.language === "si"
-                  ? { fontSize: 14 }
-                  : i18n.language === "ta"
-                    ? { fontSize: 13 }
-                    : { fontSize: 16 },
-              ]}
-            >
+            <Text className="mt-6 text-lg text-black text-center  ">
               {t(
-                "Farms.Please upgrade to PRO membership to access all the features",
+                "Farms.PleaseUpgradeToProMembershipToAccessAllTheFeatures",
               )}
             </Text>
 
             <View className="mt-8 justify-center items-center w-[90%]">
               <View className="">
-                <Text
-                  className="text-base text-black font-bold"
-                  style={[
-                    i18n.language === "si"
-                      ? { fontSize: 14 }
-                      : i18n.language === "ta"
-                        ? { fontSize: 13 }
-                        : { fontSize: 16 },
-                  ]}
-                >
-                  • {t("Farms.Create Unlimited Farms")}
+                <Text className="text-base text-black font-bold">
+                  • {t("Farms.CreateUnlimitedFarms")}
                 </Text>
-                <Text
-                  className="text-base text-black mt-1 ml-3"
-                  style={[
-                    i18n.language === "si"
-                      ? { fontSize: 14 }
-                      : i18n.language === "ta"
-                        ? { fontSize: 13 }
-                        : { fontSize: 16 },
-                  ]}
-                >
-                  {t("Farms.Manage as many farms as you need.")}
-                  <Text
-                    style={[
-                      i18n.language === "si"
-                        ? { fontSize: 14 }
-                        : i18n.language === "ta"
-                          ? { fontSize: 13 }
-                          : { fontSize: 16 },
-                    ]}
-                  >
+                <Text className="text-base text-black mt-1 ml-3">
+                  {t("Farms.ManageAsManyFarmsAsYouNeed")}
+                  <Text>
                     {"\n"}
-                    {t("Farms.No limits & No restrictions.")}
+                    {t("Farms.NoLimits&NoRestrictions")}
                   </Text>
                 </Text>
 
-                <Text
-                  className="text-base text-black font-bold mt-8"
-                  style={[
-                    i18n.language === "si"
-                      ? { fontSize: 14 }
-                      : i18n.language === "ta"
-                        ? { fontSize: 13 }
-                        : { fontSize: 16 },
-                  ]}
-                >
-                  • {t("Farms.Unlimited Crop Calendars")}
+                <Text className="text-base text-black font-bold mt-8">
+                  • {t("Farms.UnlimitedCropCalendars")}
                 </Text>
-                <Text
-                  className="text-base text-black mt-1 ml-3"
-                  style={[
-                    i18n.language === "si"
-                      ? { fontSize: 14 }
-                      : i18n.language === "ta"
-                        ? { fontSize: 13 }
-                        : { fontSize: 16 },
-                  ]}
-                >
+                <Text className="text-base text-black mt-1 ml-3">
                   {t(
-                    "Farms.Plan, track, and optimize all your crop cycles without boundaries.",
+                    "Farms.PlanTrackAndOptimizeAllYourCropCCyclesWithoutBoundaries",
                   )}
                 </Text>
               </View>
             </View>
           </View>
-          <LinearGradient
-            className="w-[80%] mt-10 py-3 rounded-full shadow-md shadow-black mb-10"
-            colors={["#FDCF3F", "#FEE969"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-          >
-            <TouchableOpacity
-              className="justify-center items-center py-2"
-              onPress={() => navigation.navigate("UnLockProRenew" as any)}
+          <View className="w-full px-6">
+            <LinearGradient
+              className="w-full rounded-3xl h-[50px] mt-10 shadow-lg elevation-6 mb-10 overflow-hidden"
+              colors={["#FDCF3F", "#FEE969"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
             >
-              <Text
-                className="text-[#7E5E00] text-lg font-semibold"
-                style={[
-                  i18n.language === "si"
-                    ? { fontSize: 16 }
-                    : i18n.language === "ta"
-                      ? { fontSize: 13 }
-                      : { fontSize: 17 },
-                ]}
+              <TouchableOpacity
+                className="w-full h-full justify-center items-center"
+                onPress={() => navigation.navigate("UnLockProRenew" as any)}
               >
-                {t("Farms.Unlock PRO")}
-              </Text>
-            </TouchableOpacity>
-          </LinearGradient>
+                <Text className="text-[#7E5E00] text-lg font-semibold">
+                  {t("Farms.UnlockPro")}
+                </Text>
+              </TouchableOpacity>
+            </LinearGradient>
+          </View>
 
           <TouchableOpacity
             className="absolute top-0 right-0 bg-gray-200 px-2  rounded-full shadow-lg"
@@ -183,9 +103,5 @@ const AddNewFarmUnloackPro: React.FC = () => {
     </View>
   );
 };
-const styles = StyleSheet.create({
-  button: {
-    alignItems: "center",
-  },
-});
+
 export default AddNewFarmUnloackPro;

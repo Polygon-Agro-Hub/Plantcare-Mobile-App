@@ -58,7 +58,7 @@ const PesticidePestCalculatorsMenuScreen: React.FC<
   return (
     <View className="flex-1 bg-white">
       <CustomHeader
-        title={t("PesticidePestCalculators.Title")}
+        title={t("PesticidePestCalculators.Pesticide&PestCalculators")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
@@ -66,7 +66,7 @@ const PesticidePestCalculatorsMenuScreen: React.FC<
       />
 
       <ScrollView
-        className="flex-1 px-4 pt-4"
+        className="flex-1 px-6 pt-4"
         contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >

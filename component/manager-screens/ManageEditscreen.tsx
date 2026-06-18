@@ -16,18 +16,14 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import { environment } from "@/environment/environment";
-import LottieView from "lottie-react-native";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import i18n from "i18next";
-import countryData from "../../assets/jsons/countryflag.json";
+import countryData from "@/assets/jsons/common/country-flag.json";
 import CustomHeader from "../common/CustomHeader";
 import GlobalSearchModal from "../common/GlobalSearchModal";
+import LoadingPage from "../common/LoadingPage";
 
 type RouteParams = {
   farmId: number;
@@ -58,7 +54,7 @@ interface StaffMemberData {
   nic: string;
 }
 
-interface FarmDetailsResponse extends StaffMemberData {}
+interface FarmDetailsResponse extends StaffMemberData { }
 
 interface CountryItem {
   label: string;
@@ -168,7 +164,7 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
       setPhoneError(null);
     } catch (error: any) {
       if (error?.response?.status === 409) {
-        setPhoneError(t("Farms.This phone number is already registered"));
+        setPhoneError(t("Farms.ThisPhoneNumberIsAlreadyRegistered"));
       } else if (error?.response) {
         setPhoneError(t("Farms.Error checking phone number"));
       } else {
@@ -203,10 +199,10 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
     } catch (error: any) {
       if (error?.response?.status === 409) {
         setNicDuplicateErrors(
-          t("Farms.This NIC is already used by another staff member"),
+          t("Farms.ThisNICIsAlreadyUsedByAnotherStaffMember"),
         );
       } else if (error?.response) {
-        setNicDuplicateErrors(t("Farms.Error checking NIC number"));
+        setNicDuplicateErrors(t("Farms.ErrorCheckingNICNumber"));
       } else {
         setNicDuplicateErrors(null);
       }
@@ -239,7 +235,7 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
     setValidationError(null);
 
     if (digitsOnly.length > 9) {
-      setValidationError(t("Farms.Phone number cannot exceed 9 digits"));
+      setValidationError(t("Farms.PhoneNumberCannotExceed9Digits"));
       const formattedText = formatPhoneInput(text);
       setPhoneNumber(formattedText);
       return;
@@ -250,9 +246,9 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
 
     if (formattedText.length > 0) {
       if (formattedText[0] !== "7") {
-        setValidationError(t("Farms.Phone number must start with 7"));
+        setValidationError(t("Farms.PhoneNumberMustStartWith7"));
       } else if (formattedText.length < 9) {
-        setValidationError(t("Farms.Phone number must be exactly 9 digits"));
+        setValidationError(t("Farms.PhoneNumberMustBeExactly9Digits"));
       } else if (!validateSriLankanPhoneNumber(formattedText)) {
         setValidationError(t("Farms.Please enter a valid phone number"));
       } else {
@@ -280,7 +276,7 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
     setNicDuplicateErrors(null);
 
     if (formattedNic && !validateSriLankanNic(formattedNic)) {
-      setNicErrors(t("Farms.Please enter a valid Sri Lankan NIC"));
+      setNicErrors(t("Farms.PleaseEnterAValidSriLankanNIC"));
     } else {
       setNicErrors(null);
     }
@@ -315,20 +311,20 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
 
   const validateForm = () => {
     if (!firstName.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter first name"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterFirstName"), [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!lastName.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter last name"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterLastName"), [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!phoneNumber.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter phone number"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterPhoneNumber"), [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
@@ -336,64 +332,64 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
     if (!validateSriLankanPhoneNumber(phoneNumber)) {
       if (phoneNumber.length !== 9) {
         Alert.alert(
-          t("Farms.Sorry"),
-          t("Farms.Phone number must be exactly 9 digits"),
-          [{ text: t("Farms.okButton") }],
+          t("Main.Sorry"),
+          t("Farms.PhoneNumberMustBeExactly9Digits"),
+          [{ text: t("Main.OK") }],
         );
       } else if (phoneNumber[0] !== "7") {
         Alert.alert(
-          t("Farms.Sorry"),
-          t("Farms.Phone number must start with 7"),
-          [{ text: t("Farms.okButton") }],
+          t("Main.Sorry"),
+          t("Farms.PhoneNumberMustStartWith7"),
+          [{ text: t("Main.OK") }],
         );
       } else {
         Alert.alert(
-          t("Farms.Sorry"),
+          t("Main.Sorry"),
           t("Farms.Please enter a valid phone number"),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
       }
       return false;
     }
 
     if (!selectedRole) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please select a role"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseSelectARole"), [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
 
     if (!nic.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter NIC"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterNIC"), [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
 
     if (!validateSriLankanNic(nic)) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter a valid NIC"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterAValidNIC"), [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
 
     if (phoneError) {
-      Alert.alert(t("Farms.Sorry"), phoneError, [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), phoneError, [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (validationError) {
-      Alert.alert(t("Farms.Sorry"), validationError, [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), validationError, [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (nicduplicateErrors) {
       Alert.alert(
-        t("Farms.Sorry"),
-        t("Farms.This NIC is already used by another staff member"),
-        [{ text: t("Farms.okButton") }],
+        t("Main.Sorry"),
+        t("Farms.ThisNICIsAlreadyUsedByAnotherStaffMember"),
+        [{ text: t("Main.OK") }],
       );
       return false;
     }
@@ -403,8 +399,8 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
 
   const fetchStaffMember = async () => {
     if (!staffMemberId) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Staff member ID is missing"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.StaffMemberIDIsMissing"), [
+        { text: t("Main.OK") },
       ]);
       setLoading(false);
       return;
@@ -421,9 +417,9 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
 
       if (!token) {
         Alert.alert(
-          t("Farms.Sorry"),
-          t("Farms.No authentication token found"),
-          [{ text: t("Farms.okButton") }],
+          t("Main.Sorry"),
+          t("Farms.NoAuthenticationTokenFound"),
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -452,9 +448,9 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
     } catch (err) {
       console.error("Error fetching staff member:", err);
       Alert.alert(
-        t("Farms.Sorry"),
-        t("Farms.Failed to fetch staff member data"),
-        [{ text: t("Farms.okButton") }],
+        t("Main.Sorry"),
+        t("Farms.FailedToFFetchStaffMemberData"),
+        [{ text: t("Main.OK") }],
       );
     } finally {
       setLoading(false);
@@ -498,7 +494,7 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
       );
 
       Alert.alert(
-        t("Farms.Success"),
+        t("Main.Success"),
         `${t("Farms.Staff member has been updated successfully")}`,
         [
           {
@@ -524,11 +520,11 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
       if (error.response) {
         errorMessage = error.response.data?.message || errorMessage;
       } else if (error.request) {
-        errorMessage = t("Farms.Network error. Please check your connection.");
+        errorMessage = t("Farms.NetworkErrorPleaseCheckYourConnection");
       }
 
-      Alert.alert(t("Farms.Sorry"), errorMessage, [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), errorMessage, [
+        { text: t("Main.OK") },
       ]);
     } finally {
       setIsSubmitting(false);
@@ -578,7 +574,7 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
   };
 
   const getSelectedRoleLabel = () => {
-    if (!selectedRole) return t("Farms.Select Role");
+    if (!selectedRole) return t("Farms.SelectRole");
     const role = roleItems.find((item) => item.value === selectedRole);
     return role ? role.label : selectedRole;
   };
@@ -621,9 +617,9 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
 
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
-          t("Farms.No authentication token found"),
-          [{ text: t("PublicForum.OK") }],
+          t("Main.Error"),
+          t("Farms.NoAuthenticationTokenFound"),
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -639,11 +635,11 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
 
       setLoading(false);
       Alert.alert(
-        t("Farms.Success"),
-        t("Farms.Farm member deleted successfully"),
+        t("Main.Success"),
+        t("Farms.FarmMemberDeletedSuccessfully"),
         [
           {
-            text: t("PublicForum.OK"),
+            text: t("Main.OK"),
             onPress: () => {
               navigation.navigate("ManageMembersManager", {
                 staffMemberId,
@@ -658,8 +654,8 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
       );
     } catch (err) {
       console.error("Error deleting staff member:", err);
-      Alert.alert(t("Farms.Sorry"), t("Farms.Failed to delete staff member"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.FailedToDeleteStaffMember"), [
+        { text: t("Main.OK") },
       ]);
       setLoading(false);
     } finally {
@@ -668,16 +664,7 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
   };
 
   if (loading) {
-    return (
-      <View className="flex-1 bg-white justify-center items-center">
-        <LottieView
-          source={require("../../assets/jsons/loader.json")}
-          autoPlay
-          loop
-          style={{ width: 300, height: 300 }}
-        />
-      </View>
-    );
+    return <LoadingPage fullScreen />;
   }
 
   return (
@@ -692,7 +679,7 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
         keyboardShouldPersistTaps="handled"
       >
         <CustomHeader
-          title={t("Farms.Edit Details", {
+          title={t("Farms.EditSelectedRoleDetails", {
             selectedRole: getRoleText(selectedRole),
           })}
           showBackButton={true}
@@ -714,7 +701,7 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
             <Text className="text-gray-900 text-base">{t("Farms.Role")}</Text>
             <TouchableOpacity
               onPress={() => setRoleModalVisible(true)}
-              className="bg-[#F4F4F4] rounded-full px-4 py-3 flex-row justify-between items-center"
+              className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] flex-row justify-between items-center"
               disabled={isSubmitting}
             >
               <Text
@@ -728,11 +715,11 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
 
           <View className="gap-2">
             <Text className="text-gray-900 text-base">
-              {t("Farms.First Name")}
+              {t("Inputs.FirstName")}
             </Text>
             <TextInput
-              className="bg-gray-100 px-4 py-3 rounded-full text-base text-gray-700"
-              placeholder={t("Farms.Enter First Name")}
+              className="bg-gray-100 px-4 h-[50px] rounded-3xl text-base text-gray-700"
+              placeholder={t("Farms.EnterFirstName")}
               placeholderTextColor="#9CA3AF"
               value={firstName}
               onChangeText={setFirstName}
@@ -743,11 +730,11 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
 
           <View className="gap-2">
             <Text className="text-gray-900 text-base">
-              {t("Farms.Last Name")}
+              {t("Inputs.LastName")}
             </Text>
             <TextInput
-              className="bg-gray-100 px-4 py-3 rounded-full text-base text-gray-700"
-              placeholder={t("Farms.Enter Last Name")}
+              className="bg-gray-100 px-4 h-[50px] rounded-3xl text-base text-gray-700"
+              placeholder={t("Farms.EnterLastName")}
               placeholderTextColor="#9CA3AF"
               value={lastName}
               onChangeText={setLastName}
@@ -758,14 +745,13 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
 
           <View className="gap-2">
             <Text className="text-gray-900 text-base">
-              {t("Farms.Phone Number")}
+              {t("Farms.PhoneNumber")}
             </Text>
-            <View className="flex-row items-center space-x-2">
+            <View className="flex-row items-center gap-2">
               {/* Country Code Selection */}
               <TouchableOpacity
                 onPress={() => setCountryCodeModalVisible(true)}
-                className="bg-[#F4F4F4] rounded-full px-3 justify-center items-center"
-                style={{ width: wp(33), height: hp(7) }}
+                className="bg-[#F4F4F4] rounded-3xl h-[50px] w-1/3 px-3 justify-center items-center"
                 disabled={isSubmitting}
               >
                 <Text className="text-base text-gray-900">
@@ -776,14 +762,13 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
               {/* Phone Number Input */}
               <View style={{ flex: 1 }}>
                 <TextInput
-                  className="bg-[#F4F4F4] rounded-full px-4"
+                  className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4"
                   placeholder="7X XXXXXXX"
                   value={phoneNumber}
                   onChangeText={handlePhoneChange}
                   keyboardType="phone-pad"
                   maxLength={9}
                   style={{
-                    height: hp(7),
                     fontSize: 14,
                     borderWidth: 0,
                   }}
@@ -798,7 +783,7 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
               <View className="flex-row items-center mt-1 ml-3">
                 <ActivityIndicator size="small" color="#2563EB" />
                 <Text className="text-blue-600 text-sm ml-2">
-                  {t("Farms.Checking number...")}
+                  {t("Farms.CheckingNumber...")}
                 </Text>
               </View>
             )}
@@ -819,9 +804,9 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
             <TextInput
               value={nic}
               onChangeText={(text: string) => handleNicChange(text)}
-              placeholder={t("Farms.Enter NIC")}
+              placeholder={t("Farms.EnterNIC")}
               placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
+              className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
               editable={!isSubmitting}
               autoCapitalize="characters"
               maxLength={12}
@@ -830,7 +815,7 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
               <View className="flex-row items-center mt-1 ml-3">
                 <ActivityIndicator size="small" color="#2563EB" />
                 <Text className="text-blue-600 text-sm ml-2">
-                  {t("Farms.Checking NIC...")}
+                  {t("Farms.CheckingNIC...")}
                 </Text>
               </View>
             )}
@@ -850,7 +835,7 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
         <View className="pt-10 pb-6 px-[15%]">
           <TouchableOpacity
             onPress={handleSave}
-            className={`${isSubmitting || checkingNumber || checkingNIC ? "bg-gray-400" : "bg-black"} rounded-full py-3 items-center justify-center`}
+            className={`${isSubmitting || checkingNumber || checkingNIC ? "bg-gray-400" : "bg-black"} rounded-3xl h-[50px] items-center justify-center`}
             activeOpacity={0.8}
             disabled={isSubmitting || checkingNumber || checkingNIC}
           >
@@ -863,7 +848,7 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
               </View>
             ) : (
               <Text className="text-white text-lg font-semibold">
-                {t("Farms.Save")}
+                {t("Main.Save")}
               </Text>
             )}
           </TouchableOpacity>
@@ -872,12 +857,12 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
         <View className="pb-32 left-0 right-0 px-[15%]">
           <TouchableOpacity
             onPress={() => setShowDeleteModal(true)}
-            className="rounded-full py-3 items-center justify-center bg-[#FF3030]"
+            className="rounded-3xl h-[50px] items-center justify-center bg-[#FF3030]"
             activeOpacity={0.8}
             disabled={isSubmitting}
           >
             <Text className="text-white text-lg font-semibold">
-              {t("Farms.Delete Member")}
+              {t("Farms.DeleteMember")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -897,23 +882,25 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
                 />
               </View>
               <Text className="text-lg font-bold text-center mb-2">
-                {t("Farms.Are you sure you want to delete this member?")}
+                {t("Farms.AreYouSureYouWantToDeleteThisMember")}
               </Text>
               <Text className="text-gray-600 text-center mb-6">
                 {t(
-                  "Farms.Deleting this member will permanently remove all data related to that member.",
+                  "Farms.DeletingThisMemberWillPermanentlyRemoveAllDataRelatedToThatMember",
                 )}
                 {"\n\n"}
-                {t("Farms.This action cannot be undone.")}
+                {t("Farms.ThisActionCannotBeUndone")}
               </Text>
 
               <View className="px-4">
                 <TouchableOpacity
                   onPress={handleDeleteStaff}
-                  className="px-6 py-2 bg-[#000000] rounded-full"
+                  className="px-6 h-[50px] justify-center bg-[#000000] rounded-3xl"
                 >
                   <View className="justify-center items-center">
-                    <Text className="text-white">{t("Farms.Yes, Delete")}</Text>
+                    <Text className="text-white text-lg">
+                      {t("Farms.YesDelete")}
+                    </Text>
                   </View>
                 </TouchableOpacity>
               </View>
@@ -921,11 +908,11 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
               <View className="px-4 mt-4">
                 <TouchableOpacity
                   onPress={() => setShowDeleteModal(false)}
-                  className="px-6 py-2 bg-[#D9D9D9] rounded-full"
+                  className="px-6 h-[50px] justify-center bg-[#D9D9D9] rounded-3xl "
                 >
                   <View className="justify-center items-center">
-                    <Text className="text-gray-700">
-                      {t("Farms.No, Go Back")}
+                    <Text className="text-gray-700 text-lg">
+                      {t("Main.GoBack")}
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -938,7 +925,7 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
         <GlobalSearchModal
           visible={roleModalVisible}
           onClose={() => setRoleModalVisible(false)}
-          title={t("Farms.Select Role")}
+          title={t("Farms.SelectRole")}
           data={roleItems}
           selectedItems={selectedRole ? [selectedRole] : []}
           onSelect={handleRoleSelect}

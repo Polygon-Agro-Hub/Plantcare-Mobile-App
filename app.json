@@ -13,53 +13,62 @@
       "backgroundColor": "#26D041"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.polygonagro.GoviCare",
+      "buildNumber": "2.0.0",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSCameraUsageDescription": "Camera access is required to scan documents and capture images.",
+        "NSMicrophoneUsageDescription": "Microphone access is required for in-app communication.",
+        "NSPhotoLibraryUsageDescription": "Photo library access is required to upload related images.",
+        "NSLocationWhenInUseUsageDescription": "Location access is required to track activity.",
+        "NSUserTrackingUsageDescription": "Tracking is used to improve app experience.",
+        "NSUserNotificationUsageDescription": "Notifications are used to send important updates.",
+        "NSPhoneUsageDescription": "Phone access is used to call directly."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/public/favicon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "pan",
       "package": "com.polygonagro.GoviCare",
-      "versionCode": 17,
-      "compileSdkVersion": 35,
-      "targetSdkVersion": 35,
-      "minSdkVersion": 24,
+      "versionCode": 18,
       "permissions": [
-        "INTERNET",
-        "CAMERA",
-        "RECORD_AUDIO",
-        "WRITE_EXTERNAL_STORAGE",
-        "ACCESS_COARSE_LOCATION",
-        "ACCESS_FINE_LOCATION",
-        "VIBRATE",
-        "WAKE_LOCK",
-        "RECEIVE_BOOT_COMPLETED",
-        "LOCATION",
-        "ACCESS_BACKGROUND_LOCATION",
-        "ACCESS_WIFI_STATE",
-        "CHANGE_WIFI_STATE",
-        "ACCESS_NETWORK_STATE",
-        "CHANGE_NETWORK_STATE",
-        "SYSTEM_ALERT_WINDOW",
-        "FOREGROUND_SERVICE",
-        "NOTIFICATIONS",
-        "CALL_PHONE",
+        "android.permission.INTERNET",
+        "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO",
-        "android.permission.MODIFY_AUDIO_SETTINGS"
-      ],
-      "androidStatusBar": {
-        "backgroundColor": "white",
-        "barStyle": "dark-content",
-        "translucent": false
-      }
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.VIBRATE",
+        "android.permission.WAKE_LOCK",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.LOCATION",
+        "android.permission.ACCESS_BACKGROUND_LOCATION",
+        "android.permission.ACCESS_WIFI_STATE",
+        "android.permission.CHANGE_WIFI_STATE",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.CHANGE_NETWORK_STATE",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.NOTIFICATIONS",
+        "android.permission.CALL_PHONE",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+        "android.permission.READ_MEDIA_VISUAL_USER_SELECTED",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.READ_MEDIA_VIDEO",
+        "android.permission.READ_MEDIA_AUDIO",
+        "android.permission.ACCESS_MEDIA_LOCATION"
+      ]
     },
     "web": {
       "bundler": "metro",
-      "output": "static",
+      "output": "single",
       "favicon": "./assets/images/public/favicon.png"
     },
     "plugins": [
@@ -77,10 +86,10 @@
       [
         "expo-build-properties",
         {
+          "ios": {
+            "deploymentTarget": "15.1"
+          },
           "android": {
-            "compileSdkVersion": 35,
-            "targetSdkVersion": 35,
-            "minSdkVersion": 24,
             "ndkVersion": "28.0.12433566",
             "enableProguardInReleaseBuilds": true,
             "packagingOptions": {
@@ -100,11 +109,29 @@
       ],
       "expo-video",
       "expo-audio",
-      "expo-web-browser"
+      "expo-web-browser",
+      "@react-native-community/datetimepicker",
+      "expo-asset",
+      "expo-sharing",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "recordAudioAndroid": true
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
+          "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
+          "isAccessMediaLocationEnabled": true
+        }
+      ],
+      "expo-image-picker",
+      "expo-location"
     ],
-    "experiments": {
-      "typedRoutes": true
-    },
     "extra": {
       "router": {
         "origin": false
@@ -112,11 +139,6 @@
       "eas": {
         "projectId": "0e03cacc-a139-45fd-9407-3936e86b20ea"
       }
-    },
-    "expo-camera": {
-      "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
-      "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
-      "recordAudioAndroid": true
     }
   }
 }

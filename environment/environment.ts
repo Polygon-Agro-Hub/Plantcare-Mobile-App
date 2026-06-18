@@ -2,10 +2,13 @@ export const environment = {
   production: true,
 
   // LOCAL --------------------
-  // API_BASE_URL: "http://192.168.1.16:3000/",
+  // API_BASE_URL: "http://192.168.8.180:3000/",
 
   // DEV --------------------
-  API_BASE_URL: "https://dev.polygonagro.com/plantcare-api/",
+  API_BASE_URL: "https://plantcare-api.polygonagro.com/",
+
+  // UAT --------------------
+  // API_BASE_URL: "https://plant-care-api-uat.vercel.app/",
 
   // PROD --------------------
   // API_BASE_URL: "https://polygonagro.com/plantcare-api/",

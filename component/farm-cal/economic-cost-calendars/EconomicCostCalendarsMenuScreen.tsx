@@ -30,7 +30,7 @@ const EconomicCostCalendarsMenuScreen: React.FC<EconomicCostCalendarsProps> = ({
   const calculatorItems: CalculatorItem[] = [
     {
       id: "farm_budget_profit",
-      label: t("EconomicCostCalendars.FarmBudgetProfit"),
+      label: t("EconomicCostCalendars.FarmBudget&Profit"),
       icon: require("@/assets/images/farm-cal/economic-cost-calculators/farm-budget-profit.webp"),
       screen: "FarmBudgetProfitCalculatorScreen",
     },
@@ -70,7 +70,7 @@ const EconomicCostCalendarsMenuScreen: React.FC<EconomicCostCalendarsProps> = ({
   return (
     <View className="flex-1 bg-white">
       <CustomHeader
-        title={t("EconomicCostCalendars.Title")}
+        title={t("EconomicCostCalendars.Economic&CostCalendars")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
@@ -78,7 +78,7 @@ const EconomicCostCalendarsMenuScreen: React.FC<EconomicCostCalendarsProps> = ({
       />
 
       <ScrollView
-        className="flex-1 px-4 pt-4"
+        className="flex-1 px-6 pt-4"
         contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >

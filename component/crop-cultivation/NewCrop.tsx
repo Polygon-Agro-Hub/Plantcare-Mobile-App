@@ -11,8 +11,8 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import axios from "axios";
-import EvilIcons from "react-native-vector-icons/EvilIcons";
-import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
+import EvilIcons from "@expo/vector-icons/EvilIcons";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Modal from "react-native-modal";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
@@ -28,7 +28,7 @@ import ContentLoader, { Rect } from "react-content-loader/native";
 import { useFocusEffect } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import CustomHeader from "../common/CustomHeader";
-import districtData from "../../assets/jsons/district.json";
+import districtData from "@/assets/jsons/common/district.json";
 
 type NewCropNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -87,7 +87,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
 
   const fetchCrop = async () => {
     try {
-      const selectedLanguage = t("NewCrop.LNG");
+      const selectedLanguage = t("Main.LNG");
       setLanguage(selectedLanguage);
 
       const res = await axios.get<CropData[]>(
@@ -258,7 +258,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
       if (!selectedCropId) return;
 
       try {
-        const selectedLanguage = t("NewCrop.LNG");
+        const selectedLanguage = t("Main.LNG");
         setLanguage(selectedLanguage);
 
         const varietyResponse = await axios.get<VarietyData[]>(
@@ -419,10 +419,8 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar style="dark" />
-
       <CustomHeader
-        title={t("NewCrop.NewCrop")}
+        title={t("NewCrop.SelectANewCrop")}
         navigation={navigation}
         onBackPress={() => navigation.navigate("Main", { screen: "Dashboard" })}
       />
@@ -437,7 +435,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
             <TextInput
               ref={inputRef}
               className="ml-2 mr-6 text-base flex-1"
-              placeholder={t("NewCrop.Search")}
+              placeholder={t("NewCrop.SearchCrop")}
               placeholderTextColor="gray"
               style={{ textAlignVertical: "center" }}
               value={searchQuery}
@@ -473,11 +471,11 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
             className="bg-slate-100"
             onPress={() => setShowDistricts(true)}
           >
-            <Text className="text-base mb-2">{t("NewCrop.District")}</Text>
+            <Text className="text-base mb-2">{t("NewCrop.ByDistrict")}</Text>
           </TouchableOpacity>
           <View className="border-t border-gray-400" />
           <TouchableOpacity className="bg-slate-100">
-            <Text className="text-base">{t("NewCrop.Price")}</Text>
+            <Text className="text-base">{t("NewCrop.ByPrice")}</Text>
           </TouchableOpacity>
 
           {showDistricts && (
@@ -515,6 +513,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
               style={{
                 width: wp("20%"),
                 height: wp("20%"),
+                ...({ outlineStyle: "none" } as any),
               }}
             >
               <Image
@@ -575,7 +574,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
                   }}
                 >
                   <LottieView
-                    source={require("../../assets/jsons/NoComplaints.json")}
+                    source={require("@/assets/jsons/common/no-data.json")}
                     autoPlay
                     loop
                     style={{ width: 150, height: 150 }}
@@ -590,7 +589,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
                     }}
                   >
                     {searchQuery
-                      ? t("NewCrop.No results found")
+                      ? t("NewCrop.NoResultsFound")
                       : "No crops available"}
                   </Text>
                   {searchQuery && (
@@ -643,7 +642,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
                       }}
                     >
                       <LottieView
-                        source={require("../../assets/jsons/NoComplaints.json")}
+                        source={require("@/assets/jsons/common/no-data.json")}
                         autoPlay
                         loop
                         style={{ width: 150, height: 150 }}
@@ -656,7 +655,7 @@ const NewCrop: React.FC<NewCropProps> = ({ navigation }) => {
                           marginTop: 20,
                         }}
                       >
-                        {t("NewCrop.No results found")}
+                        {t("NewCrop.NoResultsFound")}
                       </Text>
                       <Text
                         style={{

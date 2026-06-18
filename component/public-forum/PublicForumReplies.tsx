@@ -20,7 +20,7 @@ import { RootStackParamList } from "../types/types";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { RefreshControl } from "react-native";
-import Entypo from "react-native-vector-icons/Entypo";
+import Entypo from "@expo/vector-icons/Entypo";
 import CustomHeader from "../common/CustomHeader";
 
 type PublicForumRepliesNavigationProp = StackNavigationProp<
@@ -135,8 +135,8 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
       Alert.alert(
         t("PublicForum.sorry"),
         editingCommentId
-          ? t("PublicForum.updateFailed")
-          : t("PublicForum.commentFailed"),
+          ? t("PublicForum.FailedToUpdatePost")
+          : t("PublicForum.FailedToAddComment"),
       );
     } finally {
       setSubmitting(false);
@@ -194,15 +194,15 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
     setActiveMenuId(null);
 
     Alert.alert(
-      t("PublicForum.delete"),
-      t("PublicForum.Are you sure you want to delete this comment?"),
+      t("Main.Delete"),
+      t("PublicForum.AreYouSureYouWantToDeleteThisComment"),
       [
         {
-          text: t("PublicForum.cancel"),
+          text: t("Main.Cancel"),
           style: "cancel",
         },
         {
-          text: t("PublicForum.delete"),
+          text: t("Main.Delete"),
           style: "destructive",
           onPress: async () => {
             try {
@@ -220,9 +220,9 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
             } catch (error) {
               console.error("Error deleting comment:", error);
               Alert.alert(
-                t("Main.error"),
-                t("PublicForum.Failed to delete comment"),
-                [{ text: t("PublicForum.OK") }],
+                t("Main.Error"),
+                t("PublicForum.FailedToDDeletedComment"),
+                [{ text: t("Main.OK") }],
               );
             }
           },
@@ -257,7 +257,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
       enabled
       className="bg-[#F4F7FF]"
       style={{ flex: 1 }}
@@ -267,6 +267,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
+        transparent
       />
       <View className="flex-1 p-4 bg-[#F4F7FF]">
         <FlatList
@@ -279,20 +280,18 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
 
             return (
               <View
-                className={`bg-white mb-4 rounded-lg shadow-sm border border-gray-300 ${
-                  isOwnComment ? "self-end ml-12" : "self-start mr-12"
-                }`}
+                className={`bg-white mb-4 rounded-lg shadow-sm border border-gray-300 ${isOwnComment ? "self-end ml-12" : "self-start mr-12"
+                  }`}
                 style={{ width: "90%" }}
               >
                 <View className="flex-row justify-between p-4">
                   <View className="flex-1 max-w-4/5">
                     <View>
                       <Text
-                        className={`text-base overflow-hidden  ${
-                          isOwnComment || isPostOwner
-                            ? "font-bold"
-                            : "font-bold text-gray-600"
-                        }`}
+                        className={`text-base overflow-hidden  ${isOwnComment || isPostOwner
+                          ? "font-bold"
+                          : "font-bold text-gray-600"
+                          }`}
                         numberOfLines={1}
                       >
                         {item.userName || "GoviCare"}{" "}
@@ -300,7 +299,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                       </Text>
                     </View>
                   </View>
-                  <View className="flex-row items-center space-x-3">
+                  <View className="flex-row items-center gap-3">
                     <Text className="text-gray-500">
                       {formatDate(item.createdAt)}
                     </Text>
@@ -353,7 +352,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                       className="rounded-lg py-2 px-4"
                     >
                       <Text className="text-[16px] text-red-600">
-                        {t("PublicForum.delete")}
+                        {t("Main.Delete")}
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -366,13 +365,13 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
               <View className="flex-1 justify-center items-center py-8">
                 <ActivityIndicator size="large" color="#000" />
                 <Text className="text-gray-500 text-base mt-4">
-                  {t("PublicForum.loadingComments") || "Loading comments..."}
+                  {t("PublicForum.LoadingComments") || "Loading comments..."}
                 </Text>
               </View>
             ) : (
               <View className="flex-1 justify-center items-center py-8">
                 <Text className="text-gray-500 text-lg">
-                  {t("PublicForum.noComments")}
+                  {t("PublicForum.NotHaveAnyCommentYet")}
                 </Text>
               </View>
             )
@@ -389,14 +388,15 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
 
       <View className="absolute bottom-0 left-0 right-0 bg-[#F4F7FF] border-t border-gray-200">
         <View className="flex-row items-center p-4">
-          <View className="flex-row items-center w-full">
+          <View className="flex-row items-center w-full h-[50px]">
             <TextInput
               value={newComment}
               onChangeText={setNewComment}
+              placeholderTextColor="#000000"
               placeholder={
                 editingCommentId
-                  ? t("PublicForum.Edit your comment...")
-                  : t("PublicForum.writeacomment")
+                  ? t("PublicForum.EditYourComment...")
+                  : t("PublicForum.WriteAComment")
               }
               multiline={true}
               textAlignVertical="top"
@@ -410,20 +410,19 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                 borderColor: editingCommentId ? "#D1D5DB" : "#D1D5DB",
                 borderWidth: editingCommentId ? 2 : 1,
               }}
-              className={`flex-1 px-3 py-2 rounded-lg mr-2 ${editingCommentId ? "bg-gray-50" : "bg-gray-50"}`}
+              className={`flex-1 px-3 py-2 rounded-lg mr-2  ${editingCommentId ? "bg-gray-50" : "bg-gray-50"}`}
               scrollEnabled={inputHeight >= 120}
               autoFocus={editingCommentId ? true : false}
             />
 
             <TouchableOpacity
               onPress={handleAddComment}
-              className={`px-4 py-2 rounded-lg ${
-                newComment.trim() === "" || submitting
-                  ? "bg-gray-400"
-                  : editingCommentId
-                    ? "bg-green-500"
-                    : "bg-[#0075FF]"
-              }`}
+              className={`px-4 py-2 rounded-lg ${newComment.trim() === "" || submitting
+                ? "bg-gray-400"
+                : editingCommentId
+                  ? "bg-green-500"
+                  : "bg-[#0075FF]"
+                }`}
               disabled={newComment.trim() === "" || submitting}
               style={{
                 height: 40,
@@ -437,8 +436,8 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
               ) : (
                 <Text className="text-white">
                   {editingCommentId
-                    ? t("PublicForum.Update")
-                    : t("PublicForum.send")}
+                    ? t("Main.Update")
+                    : t("PublicForum.Send")}
                 </Text>
               )}
             </TouchableOpacity>

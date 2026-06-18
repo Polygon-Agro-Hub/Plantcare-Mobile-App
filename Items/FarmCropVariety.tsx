@@ -3,7 +3,6 @@ import React from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/component/types/types";
 import CropVarietySelectCard from "./FarmCropVarietySelectCard";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 
 interface VarietyData {
   cropGroupId: string;
@@ -32,37 +31,26 @@ const CropVariety: React.FC<FarmCropItemProps> = ({
   farmId,
   onNavigate,
 }) => {
-  const isLastRowWithTwoItems = data.length % 3 === 2;
-
   return (
-    <View style={{ paddingHorizontal: wp("5%"), paddingTop: wp("2%") }}>
+    <View style={{ flex: 1, paddingHorizontal: 18, paddingTop: 8 }}>
       <FlatList
         data={data}
         numColumns={3}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: wp("15%") }}
+        contentContainerStyle={{ paddingBottom: 60 }}
         columnWrapperStyle={{
-          justifyContent: isLastRowWithTwoItems
-            ? "flex-start"
-            : "space-between",
-          marginBottom: wp("3%"),
+          justifyContent: "flex-start",
+          marginBottom: 12,
         }}
         renderItem={({ item, index }) => {
-          const isLastRow =
-            Math.floor(index / 3) === Math.floor(data.length / 3);
-          const isSecondItemInLastRowWithTwoItems =
-            isLastRowWithTwoItems && index % 3 === 2 && isLastRow;
-
           return (
             <View
               style={{
-                width: wp("30%"),
-                aspectRatio: 1,
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: wp("3%"),
-                marginLeft: isSecondItemInLastRowWithTwoItems ? wp("3%") : 0,
+                width: "30.6%",
+                aspectRatio: 0.85,
+                marginHorizontal: "1.3%",
+                marginBottom: 6,
               }}
             >
               <CropVarietySelectCard

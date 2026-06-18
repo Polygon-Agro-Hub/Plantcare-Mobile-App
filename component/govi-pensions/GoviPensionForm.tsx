@@ -73,18 +73,18 @@ const CustomDatePicker = ({
   );
 
   const months = [
-    { label: t("GoviPensionForm.January") || "January", value: 0 },
-    { label: t("GoviPensionForm.February") || "February", value: 1 },
-    { label: t("GoviPensionForm.March") || "March", value: 2 },
-    { label: t("GoviPensionForm.April") || "April", value: 3 },
-    { label: t("GoviPensionForm.May") || "May", value: 4 },
-    { label: t("GoviPensionForm.June") || "June", value: 5 },
-    { label: t("GoviPensionForm.July") || "July", value: 6 },
-    { label: t("GoviPensionForm.August") || "August", value: 7 },
-    { label: t("GoviPensionForm.September") || "September", value: 8 },
-    { label: t("GoviPensionForm.October") || "October", value: 9 },
-    { label: t("GoviPensionForm.November") || "November", value: 10 },
-    { label: t("GoviPensionForm.December") || "December", value: 11 },
+    { label: t("Months.January"), value: 0 },
+    { label: t("Months.February"), value: 1 },
+    { label: t("Months.March"), value: 2 },
+    { label: t("Months.April"), value: 3 },
+    { label: t("Months.May"), value: 4 },
+    { label: t("Months.June"), value: 5 },
+    { label: t("Months.July"), value: 6 },
+    { label: t("Months.August"), value: 7 },
+    { label: t("Months.September"), value: 8 },
+    { label: t("Months.October"), value: 9 },
+    { label: t("Months.November"), value: 10 },
+    { label: t("Months.December"), value: 11 },
   ];
 
   const getDaysInMonth = (year: number, month: number) =>
@@ -118,7 +118,7 @@ const CustomDatePicker = ({
           <View className="px-5 py-4 border-b border-gray-200">
             <TouchableOpacity onPress={onClose}>
               <Text className="text-gray-500 text-base font-medium">
-                {t("GoviPensionForm.Cancel") || "Cancel"}
+                {t("Main.Cancel")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -204,9 +204,9 @@ const CustomDatePicker = ({
             </View>
 
             {/* Selected Date Preview */}
-            <View className="bg-[#F4F4F4] rounded-2xl p-4 mt-2">
+            <View className="bg-[#F4F4F4] h-[50px] rounded-3xl justify-center mt-2">
               <Text className="text-center text-[#070707] text-base font-medium">
-                {t("GoviPensionForm.Selected Date") || "Selected Date"}:{" "}
+                {t("GoviPensionForm.SelectedDate") || "Selected Date"}:{" "}
                 {`${selectedYear}-${String(selectedMonth + 1).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}`}
               </Text>
             </View>
@@ -215,10 +215,10 @@ const CustomDatePicker = ({
             <View className="mt-3">
               <TouchableOpacity
                 onPress={handleConfirm}
-                className="bg-[#00A896] rounded-2xl py-3 px-6"
+                className="bg-[#00A896] rounded-3xl h-[50px] px-6 justify-center"
               >
-                <Text className="text-white text-center font-semibold text-base">
-                  {t("GoviPensionForm.Save") || "Save"}
+                <Text className="text-white text-center font-semibold text-lg">
+                  {t("Main.Save")}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -330,7 +330,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     const nicRegex = /^(\d{12}|\d{9}[VvXx])$/;
     setNicError(
       final && !nicRegex.test(final)
-        ? t("Signup.Enteravalidenic") || "Enter a valid NIC number"
+        ? t("SignUp.PleaseEnterAValidNICNumber") || "Enter a valid NIC number"
         : "",
     );
 
@@ -346,7 +346,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     const nicRegex = /^(\d{12}|\d{9}[VvXx])$/;
     setSuccessorNicError(
       final && !nicRegex.test(final)
-        ? t("Signup.Enteravalidenic") || "Enter a valid NIC number"
+        ? t("SignUp.PleaseEnterAValidNICNumber") || "Enter a valid NIC number"
         : "",
     );
 
@@ -721,14 +721,14 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
 
   const renderSection1 = () => (
     <ScrollView
-      className="flex-1 px-4"
+      className="flex-1 px-6"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 20 }}
     >
       {/* Full Name */}
       <View className="mb-5 mt-4">
         <Text className="text-[#070707] mb-2">
-          {t("GoviPensionForm.Your Full Name")} *
+          {t("GoviPensionForm.YourFullName")} *
         </Text>
         <TextInput
           value={formData.fullName}
@@ -738,27 +738,27 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
               .replace(/[^a-zA-Z\u0080-\uFFFF.\s]/g, "");
             updateFormData("fullName", capitalizeFirstLetter(filtered));
           }}
-          placeholder={t("GoviPensionForm.--Type here--")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#585858"
-          className="bg-[#F4F4F4] rounded-2xl px-4 py-3 text-[#070707] text-sm"
+          className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-[#070707] text-sm"
         />
       </View>
 
       {/* Date of Birth */}
       <View className="mb-5">
         <Text className="text-[#070707] mb-2">
-          {t("GoviPensionForm.Your Date of Birth")} *
+          {t("GoviPensionForm.YourDateOfBirth")} *
         </Text>
         <TouchableOpacity
           onPress={() => setShowCustomDobPicker(true)}
-          className="bg-[#F4F4F4] rounded-2xl px-4 py-3 flex-row justify-between items-center border border-gray-100"
+          className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] flex-row justify-between items-center border border-gray-100"
         >
           <Text
             className={`text-sm ${formData.dateOfBirth ? "text-[#070707]" : "text-[#585858]"}`}
           >
             {formData.dateOfBirth
               ? formatDate(formData.dateOfBirth)
-              : t("GoviPensionForm.--Select Date--")}
+              : t("GoviPensionForm.SelectDate")}
           </Text>
           <FontAwesome6 name="calendar-days" size={20} color="black" />
         </TouchableOpacity>
@@ -767,14 +767,14 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
       {/* Applicant NIC */}
       <View className="mb-5">
         <Text className="text-[#070707] mb-2">
-          {t("GoviPensionForm.Your NIC Number")} *
+          {t("GoviPensionForm.YourNICNumber")} *
         </Text>
         <TextInput
           value={formData.nicNumber}
           onChangeText={handleApplicantNicChange}
-          placeholder={t("GoviPensionForm.--Type here--")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#585858"
-          className="bg-[#F4F4F4] rounded-2xl px-4 py-3 text-[#070707] text-sm"
+          className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-[#070707] text-sm"
           keyboardType="default"
           maxLength={12}
         />
@@ -786,17 +786,17 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
       {/* NIC Front */}
       <View className="mb-5">
         <Text className="text-[#070707] mb-2">
-          {t("GoviPensionForm.NIC Front Image")} *
+          {t("GoviPensionForm.NICFrontImage")} *
         </Text>
         <TouchableOpacity
           onPress={() => pickImageFromGallery("nicFront")}
-          className="bg-white border border-gray-300 rounded-2xl px-6 py-3 flex-row justify-center items-center mb-4"
+          className="bg-white border border-gray-300 rounded-3xl px-6 h-[50px] flex-row justify-center items-center mb-4"
         >
           <FontAwesome6 name="cloud-arrow-up" size={22} color="black" />
           <Text className="text-gray-900 ml-2 font-medium text-sm">
             {formData.nicFrontImage
-              ? t("GoviPensionForm.Re-upload image")
-              : t("GoviPensionForm.Upload Image")}
+              ? t("GoviPensionForm.ReUploadImage")
+              : t("GoviPensionForm.UploadImage")}
           </Text>
         </TouchableOpacity>
         {formData.nicFrontImage ? (
@@ -821,17 +821,17 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
       {/* NIC Back */}
       <View className="mb-8">
         <Text className="text-[#070707] mb-2">
-          {t("GoviPensionForm.NIC Back Image")} *
+          {t("GoviPensionForm.NICBackImage")} *
         </Text>
         <TouchableOpacity
           onPress={() => pickImageFromGallery("nicBack")}
-          className="bg-white border border-gray-300 rounded-2xl px-6 py-3 flex-row justify-center items-center mb-4"
+          className="bg-white border border-gray-300 rounded-3xl px-6 h-[50px] flex-row justify-center items-center mb-4"
         >
           <FontAwesome6 name="cloud-arrow-up" size={22} color="black" />
           <Text className="text-gray-900 ml-2 font-medium text-sm">
             {formData.nicBackImage
-              ? t("GoviPensionForm.Re-upload image")
-              : t("GoviPensionForm.Upload Image")}
+              ? t("GoviPensionForm.ReUploadImage")
+              : t("GoviPensionForm.UploadImage")}
           </Text>
         </TouchableOpacity>
         {formData.nicBackImage ? (
@@ -860,7 +860,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
 
     return (
       <ScrollView
-        className="flex-1 px-4"
+        className="flex-1 px-6"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 20 }}
       >
@@ -880,9 +880,9 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
                 capitalizeFirstLetter(filtered),
               );
             }}
-            placeholder={t("GoviPensionForm.--Type here--")}
+            placeholder={t("Main.TypeHere")}
             placeholderTextColor="#585858"
-            className="bg-[#F4F4F4] rounded-2xl px-4 py-3 text-[#070707] text-sm"
+            className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-[#070707] text-sm"
           />
         </View>
 
@@ -902,7 +902,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
                     }
                     className="flex-row items-center py-2"
                   >
-                    <View className="w-5 h-5 rounded-2xl border-2 border-gray-400 mr-3 justify-center items-center">
+                    <View className="w-5 h-5 rounded-3xl border-2 border-gray-400 mr-3 justify-center items-center">
                       {formData.successorRelationship === option.value && (
                         <View className="w-3 h-3 rounded-full bg-black" />
                       )}
@@ -936,18 +936,18 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
         {/* Successor Date of Birth */}
         <View className="mb-5">
           <Text className="text-[#070707] mb-2">
-            {t("GoviPensionForm.Successor's Date of Birth")} *
+            {t("GoviPensionForm.SuccessorsDateOfBirth")} *
           </Text>
           <TouchableOpacity
             onPress={() => setShowCustomSuccessorDobPicker(true)}
-            className="bg-[#F4F4F4] rounded-2xl px-4 py-3 flex-row justify-between items-center border border-gray-100"
+            className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] flex-row justify-between items-center border border-gray-100"
           >
             <Text
               className={`text-sm ${formData.successorDateOfBirth ? "text-[#070707]" : "text-[#585858]"}`}
             >
               {formData.successorDateOfBirth
                 ? formatDate(formData.successorDateOfBirth)
-                : t("GoviPensionForm.--Select Date--")}
+                : t("GoviPensionForm.SelectDate")}
             </Text>
             <FontAwesome6 name="calendar-days" size={20} color="black" />
           </TouchableOpacity>
@@ -959,14 +959,14 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
               {/* Successor NIC */}
               <View className="mb-5">
                 <Text className="text-[#070707] mb-2">
-                  {t("GoviPensionForm.Successor's NIC Number")} *
+                  {t("GoviPensionForm.SuccessorsNICNumber")} *
                 </Text>
                 <TextInput
                   value={formData.successorNicNumber}
                   onChangeText={handleSuccessorNicChange}
-                  placeholder={t("GoviPensionForm.--Type here--")}
+                  placeholder={t("Main.TypeHere")}
                   placeholderTextColor="#585858"
-                  className="bg-[#F4F4F4] rounded-2xl px-4 py-3 text-[#070707] text-sm"
+                  className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-[#070707] text-sm"
                   keyboardType="default"
                   maxLength={12}
                 />
@@ -980,17 +980,17 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
               {/* Successor NIC Front */}
               <View className="mb-5">
                 <Text className="text-[#070707] mb-2">
-                  {t("GoviPensionForm.Successor's NIC Front Image")} *
+                  {t("GoviPensionForm.SuccessorsNICFrontImage")} *
                 </Text>
                 <TouchableOpacity
                   onPress={() => pickImageFromGallery("successorNicFront")}
-                  className="bg-white border border-gray-300 rounded-2xl px-6 py-3 flex-row justify-center items-center mb-4"
+                  className="bg-white border border-gray-300 rounded-3xl px-6 h-[50px] flex-row justify-center items-center mb-4"
                 >
                   <FontAwesome6 name="cloud-arrow-up" size={22} color="black" />
                   <Text className="text-gray-900 ml-2 font-medium text-sm">
                     {formData.successorNicFrontImage
-                      ? t("GoviPensionForm.Re-upload image")
-                      : t("GoviPensionForm.Upload Image")}
+                      ? t("GoviPensionForm.ReUploadImage")
+                      : t("GoviPensionForm.UploadImage")}
                   </Text>
                 </TouchableOpacity>
                 {formData.successorNicFrontImage ? (
@@ -1017,17 +1017,17 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
               {/* Successor NIC Back */}
               <View className="mb-8">
                 <Text className="text-[#070707] mb-2">
-                  {t("GoviPensionForm.Successor's NIC Back Image")} *
+                  {t("GoviPensionForm.SuccessorsNICBackImage")} *
                 </Text>
                 <TouchableOpacity
                   onPress={() => pickImageFromGallery("successorNicBack")}
-                  className="bg-white border border-gray-300 rounded-2xl px-6 py-3 flex-row justify-center items-center mb-4"
+                  className="bg-white border border-gray-300 rounded-3xl px-6 h-[50px] flex-row justify-center items-center mb-4"
                 >
                   <FontAwesome6 name="cloud-arrow-up" size={22} color="black" />
                   <Text className="text-gray-900 ml-2 font-medium text-sm">
                     {formData.successorNicBackImage
-                      ? t("GoviPensionForm.Re-upload image")
-                      : t("GoviPensionForm.Upload Image")}
+                      ? t("GoviPensionForm.ReUploadImage")
+                      : t("GoviPensionForm.UploadImage")}
                   </Text>
                 </TouchableOpacity>
                 {formData.successorNicBackImage ? (
@@ -1056,19 +1056,19 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
               {/* Birth Certificate Front */}
               <View className="mb-5">
                 <Text className="text-[#070707] mb-2">
-                  {t("GoviPensionForm.Successor's Birth Certificate (Front)")} *
+                  {t("GoviPensionForm.SuccessorsBirthCertificateFront")} *
                 </Text>
                 <TouchableOpacity
                   onPress={() =>
                     pickImageFromGallery("successorBirthCertFront")
                   }
-                  className="bg-white border border-gray-300 rounded-2xl px-6 py-3 flex-row justify-center items-center mb-4"
+                  className="bg-white border border-gray-300 rounded-3xl px-6 h-[50px] flex-row justify-center items-center mb-4"
                 >
                   <FontAwesome6 name="cloud-arrow-up" size={22} color="black" />
                   <Text className="text-gray-900 ml-2 font-medium text-sm">
                     {formData.successorBirthCertFrontImage
-                      ? t("GoviPensionForm.Re-upload image")
-                      : t("GoviPensionForm.Upload Image")}
+                      ? t("GoviPensionForm.ReUploadImage")
+                      : t("GoviPensionForm.UploadImage")}
                   </Text>
                 </TouchableOpacity>
                 {formData.successorBirthCertFrontImage ? (
@@ -1095,17 +1095,17 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
               {/* Birth Certificate Back */}
               <View className="mb-8">
                 <Text className="text-[#070707] mb-2">
-                  {t("GoviPensionForm.Successor's Birth Certificate (Back)")} *
+                  {t("GoviPensionForm.SuccessorsBirthCertificateBack")} *
                 </Text>
                 <TouchableOpacity
                   onPress={() => pickImageFromGallery("successorBirthCertBack")}
-                  className="bg-white border border-gray-300 rounded-2xl px-6 py-3 flex-row justify-center items-center mb-4"
+                  className="bg-white border border-gray-300 rounded-3xl px-6 h-[50px] flex-row justify-center items-center mb-4"
                 >
                   <FontAwesome6 name="cloud-arrow-up" size={22} color="black" />
                   <Text className="text-gray-900 ml-2 font-medium text-sm">
                     {formData.successorBirthCertBackImage
-                      ? t("GoviPensionForm.Re-upload image")
-                      : t("GoviPensionForm.Upload Image")}
+                      ? t("GoviPensionForm.ReUploadImage")
+                      : t("GoviPensionForm.UploadImage")}
                   </Text>
                 </TouchableOpacity>
                 {formData.successorBirthCertBackImage ? (
@@ -1139,15 +1139,12 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
-
       <CustomHeader
         title={t("GoviPensionForm.GoViPension")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
       />
-
       <CustomDatePicker
         visible={showCustomDobPicker}
         onClose={() => setShowCustomDobPicker(false)}
@@ -1166,12 +1163,12 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
 
       {currentSection === 1 ? renderSection1() : renderSection2()}
 
-      <View className="px-5 pb-6 pt-4 bg-white">
+      <View className="px-6 pb-6 pt-4 bg-white">
         {currentSection === 1 ? (
-          <View className="flex-row space-x-3">
+          <View className="flex-row gap-3">
             <TouchableOpacity
               onPress={handleCancel}
-              className="flex-1 bg-[#ECECEC] rounded-full py-4"
+              className="flex-1 bg-[#ECECEC] rounded-3xl h-[50px] justify-center"
               disabled={isSubmitting}
               style={{
                 shadowColor: "#000",
@@ -1181,13 +1178,13 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
                 elevation: 4,
               }}
             >
-              <Text className="text-[#8E8E8E] text-center font-medium text-base">
-                {t("GoviPensionForm.Cancel")}
+              <Text className="text-[#8E8E8E] text-center font-medium text-lg">
+                {t("Main.Cancel")}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={handleNext}
-              className={`flex-1 rounded-full py-4 ${isSection1Valid() ? "bg-[#00A896]" : "bg-[#C6C6C6]"}`}
+              className={`flex-1 rounded-3xl h-[50px] justify-center ${isSection1Valid() ? "bg-[#00A896]" : "bg-[#C6C6C6]"}`}
               disabled={!isSection1Valid() || isSubmitting}
               style={{
                 shadowColor: "#000",
@@ -1197,16 +1194,16 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
                 elevation: 4,
               }}
             >
-              <Text className="text-white text-center font-medium text-base">
+              <Text className="text-white text-center font-medium text-lg">
                 {t("GoviPensionForm.Next")}
               </Text>
             </TouchableOpacity>
           </View>
         ) : (
-          <View className="flex-row space-x-3">
+          <View className="flex-row gap-3">
             <TouchableOpacity
               onPress={handlePrevious}
-              className="flex-1 bg-[#ECECEC] rounded-full py-4"
+              className="flex-1 bg-[#ECECEC] rounded-3xl h-[50px] justify-center"
               disabled={isSubmitting}
               style={{
                 shadowColor: "#000",
@@ -1216,13 +1213,13 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
                 elevation: 4,
               }}
             >
-              <Text className="text-[#8E8E8E] text-center font-medium text-base">
+              <Text className="text-[#8E8E8E] text-center font-medium text-lg">
                 {t("GoviPensionForm.Back")}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={handleSubmit}
-              className={`flex-1 rounded-full py-4 ${isSection2Valid() && !isSubmitting ? "bg-[#00A896]" : "bg-[#C6C6C6]"}`}
+              className={`flex-1 rounded-3xl h-[50px] justify-center ${isSection2Valid() && !isSubmitting ? "bg-[#00A896]" : "bg-[#C6C6C6]"}`}
               disabled={!isSection2Valid() || isSubmitting}
               style={{
                 shadowColor: isSection2Valid() ? "#000" : "#000",
@@ -1235,7 +1232,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
               {isSubmitting ? (
                 <ActivityIndicator color="white" />
               ) : (
-                <Text className="text-white text-center font-medium text-base">
+                <Text className="text-white text-center font-medium text-lg">
                   {t("GoviPensionForm.Submit")}
                 </Text>
               )}

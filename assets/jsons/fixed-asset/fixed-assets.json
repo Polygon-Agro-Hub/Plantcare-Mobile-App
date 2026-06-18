@@ -1,0 +1,484 @@
+{
+  "categoryOptions": [
+    {
+      "value": "Building and Infrastructures",
+      "translations": {
+        "en": "Building and Infrastructures",
+        "si": "ගොඩනැගිලි සහ යටිතල පහසුකම්",
+        "ta": "கட்டிடங்கள் மற்றும் உள்கட்டமைப்புகள்"
+      }
+    },
+    {
+      "value": "Machine and Vehicles",
+      "translations": {
+        "en": "Machine and Vehicles",
+        "si": "යන්ත්‍රෝපකරණ සහ වාහන",
+        "ta": "இயந்திரங்கள் மற்றும் வாகனங்கள்"
+      }
+    },
+    {
+      "value": "Land",
+      "translations": {
+        "en": "Land",
+        "si": "ඉඩම්",
+        "ta": "நிலங்கள்"
+      }
+    },
+    {
+      "value": "Tools",
+      "translations": {
+        "en": "Tools",
+        "si": "මෙවලම් සහ උපකරණ",
+        "ta": "கருவிகள் மற்றும் உபகரணங்கள்"
+      }
+    }
+  ],
+
+  "ownershipCategories": [
+    {
+      "labelKey": "FixedAssets.OwnBuildingWithTitleOwnership",
+      "value": "Own Building (with title ownership)"
+    },
+    { "labelKey": "FixedAssets.LeasedBuilding", "value": "Leased Building" },
+    { "labelKey": "FixedAssets.permitBuilding", "value": "Permitted Building" },
+    {
+      "labelKey": "FixedAssets.sharedOwnership",
+      "value": "Shared / No Ownership"
+    }
+  ],
+
+  "landOwnershipOptions": [
+    { "labelKey": "FixedAssets.OwnLand", "value": "Own" },
+    { "labelKey": "FixedAssets.LeaseLand", "value": "Lease" },
+    { "labelKey": "FixedAssets.PermittedLand", "value": "Permitted" },
+    { "labelKey": "FixedAssets.SharedOwnership", "value": "Shared" }
+  ],
+
+  "generalConditionOptions": [
+    { "labelKey": "FixedAssets.good", "value": "Good" },
+    { "labelKey": "FixedAssets.average", "value": "Average" },
+    { "labelKey": "FixedAssets.poor", "value": "Poor" }
+  ],
+
+  "buildingTypeOptions": [
+    { "labelKey": "FixedAssets.barn", "value": "Barn" },
+    { "labelKey": "FixedAssets.silo", "value": "Silo" },
+    {
+      "labelKey": "FixedAssets.greenhouseStructure",
+      "value": "Greenhouse structure"
+    },
+    { "labelKey": "FixedAssets.storageFacility", "value": "Storage facility" },
+    { "labelKey": "FixedAssets.storageShed", "value": "Storage shed" },
+    {
+      "labelKey": "FixedAssets.processingFacility",
+      "value": "Processing facility"
+    },
+    { "labelKey": "FixedAssets.packingShed", "value": "Packing shed" },
+    { "labelKey": "FixedAssets.dairyParlor", "value": "Dairy parlor" },
+    { "labelKey": "FixedAssets.poultryHouse", "value": "Poultry house" },
+    { "labelKey": "FixedAssets.livestockShelter", "value": "Livestock shelter" }
+  ],
+
+  "machineasset": [
+    { "labelKey": "FixedAssets.Tractors", "value": "Tractors" },
+    { "labelKey": "FixedAssets.Rotavator", "value": "Rotavator" },
+    {
+      "labelKey": "FixedAssets.CombineHarvesters",
+      "value": "Combine Harvesters"
+    },
+    { "labelKey": "FixedAssets.Transplanter", "value": "Transplanter" },
+    {
+      "labelKey": "FixedAssets.TillageEquipment",
+      "value": "Tillage Equipment"
+    },
+    { "labelKey": "FixedAssets.SowingEquipment", "value": "Sowing Equipment" },
+    {
+      "labelKey": "FixedAssets.HarvestingEquipment",
+      "value": "Harvesting Equipment"
+    },
+    {
+      "labelKey": "FixedAssets.ThreshersReaperBinders",
+      "value": "Threshers, Reaper, Binders"
+    },
+    {
+      "labelKey": "FixedAssets.CleaningGradingEquipment",
+      "value": "Cleaning, Grading and Weighing Equipment"
+    },
+    { "labelKey": "FixedAssets.Weeding", "value": "Weeding" },
+    { "labelKey": "FixedAssets.Sprayers", "value": "Sprayers" },
+    {
+      "labelKey": "FixedAssets.ShellingGrindingMachine",
+      "value": "Shelling and Grinding Machine"
+    },
+    { "labelKey": "FixedAssets.Sowing", "value": "Sowing" }
+  ],
+
+  "assetOptions": [
+    { "labelKey": "FixedAssets.handFork", "value": "Hand Fork" },
+    { "labelKey": "FixedAssets.cuttingKnife", "value": "Cutting knife" },
+    { "labelKey": "FixedAssets.ilukKaththa", "value": "Iluk kaththa" },
+    { "labelKey": "FixedAssets.kaththa", "value": "Kaththa" },
+    { "labelKey": "FixedAssets.karaDigaManna", "value": "Kara diga manna" },
+    {
+      "labelKey": "FixedAssets.coconutHarvestingKnife",
+      "value": "Coconut harvesting knife"
+    },
+    { "labelKey": "FixedAssets.tappingKnife", "value": "Tapping knife" },
+    { "labelKey": "FixedAssets.mamotie", "value": "Mamotie" },
+    { "labelKey": "FixedAssets.mannaKnife", "value": "Manna knife" },
+    { "labelKey": "FixedAssets.shovel", "value": "Shovel" },
+    { "labelKey": "FixedAssets.smallAxe", "value": "Small axe" },
+    { "labelKey": "FixedAssets.puningKnife", "value": "Puning knife" },
+    { "labelKey": "FixedAssets.hoeWithFork", "value": "Hoe with fork" },
+    { "labelKey": "FixedAssets.forkHoe", "value": "Fork hoe" },
+    { "labelKey": "FixedAssets.sicklePaddy", "value": "Sickle - paddy" },
+    { "labelKey": "FixedAssets.growBags", "value": "Grow bags" },
+    { "labelKey": "FixedAssets.seedlingTray", "value": "Seedling tray" },
+    { "labelKey": "FixedAssets.fogger", "value": "Fogger" },
+    {
+      "labelKey": "FixedAssets.dripIrrigationSystem",
+      "value": "Drip Irrigation system"
+    },
+    {
+      "labelKey": "FixedAssets.sprinklerIrrigationSystem",
+      "value": "Sprinkler Irrigation system"
+    },
+    { "labelKey": "FixedAssets.waterPump", "value": "Water pump" },
+    { "labelKey": "FixedAssets.waterTank", "value": "Water tank" },
+    { "labelKey": "FixedAssets.other", "value": "Other" }
+  ],
+
+  "toolBrandOptions": [
+    { "labelKey": "FixedAssets.Lakloha", "value": "Lakloha" },
+    { "labelKey": "FixedAssets.Crocodile", "value": "Crocodile" },
+    { "labelKey": "FixedAssets.Chillington", "value": "Chillington" },
+    { "labelKey": "FixedAssets.Lanlo", "value": "Lanlo" },
+    { "labelKey": "FixedAssets.DBL", "value": "DBL" },
+    { "labelKey": "FixedAssets.Browns", "value": "Browns" },
+    { "labelKey": "FixedAssets.Hayles", "value": "Hayles" },
+    { "labelKey": "FixedAssets.Janathasteel", "value": "Janatha steel" },
+    { "labelKey": "FixedAssets.Lakwa", "value": "Lakwa" },
+    { "labelKey": "FixedAssets.CSAgro", "value": "CS Agro" },
+    { "labelKey": "FixedAssets.Aswenna", "value": "Aswenna" },
+    { "labelKey": "FixedAssets.PiyadasaAgro", "value": "Piyadasa Agro" },
+    { "labelKey": "FixedAssets.Lakagro", "value": "Lak agro" },
+    {
+      "labelKey": "FixedAssets.JohnPiperInternational",
+      "value": "John Piper International"
+    },
+    { "labelKey": "FixedAssets.Dinapala", "value": "Dinapala" },
+    { "labelKey": "FixedAssets.ANTON", "value": "ANTON" },
+    { "labelKey": "FixedAssets.ARPICO", "value": "ARPICO" },
+    { "labelKey": "FixedAssets.Slon", "value": "S-lon" },
+    { "labelKey": "FixedAssets.Singer", "value": "Singer" },
+    { "labelKey": "FixedAssets.INGCO", "value": "INGCO" },
+    { "labelKey": "FixedAssets.Jinasena", "value": "Jinasena" },
+    { "labelKey": "FixedAssets.other", "value": "Other" }
+  ],
+
+  "assetTypesForAssets": {
+    "Tractors": [
+      { "labelKey": "FixedAssets.2WD", "value": "2WD" },
+      { "labelKey": "FixedAssets.4WD", "value": "4WD" },
+      { "labelKey": "FixedAssets.other", "value": "Other" }
+    ],
+    "Transplanter": [
+      {
+        "labelKey": "FixedAssets.Paddytransplanter",
+        "value": "Paddy transplanter"
+      },
+      { "labelKey": "FixedAssets.other", "value": "Other" }
+    ],
+    "Harvesting Equipment": [
+      {
+        "labelKey": "FixedAssets.Sugarcaneharvester",
+        "value": "Sugarcane harvester"
+      },
+      { "labelKey": "FixedAssets.Staticshedder", "value": "Static shedder" },
+      {
+        "labelKey": "FixedAssets.Minicombineharvester",
+        "value": "Mini combine harvester"
+      },
+      {
+        "labelKey": "FixedAssets.RiceCombineharvester",
+        "value": "Rice Combine harvester"
+      },
+      { "labelKey": "FixedAssets.Paddyharvester", "value": "Paddy harvester" },
+      { "labelKey": "FixedAssets.Maizeharvester", "value": "Maize harvester" },
+      { "labelKey": "FixedAssets.other", "value": "Other" }
+    ],
+    "Cleaning, Grading and Weighing Equipment": [
+      { "labelKey": "FixedAssets.Seperator", "value": "Seperator" },
+      {
+        "labelKey": "FixedAssets.CentrifugalStierMachine",
+        "value": "Centrifugal Stier Machine"
+      },
+      {
+        "labelKey": "FixedAssets.GrainClassifierSeperator",
+        "value": "Grain Classifier Seperator"
+      },
+      {
+        "labelKey": "FixedAssets.DestonerMachine",
+        "value": "Destoner Machine"
+      },
+      { "labelKey": "FixedAssets.other", "value": "Other" }
+    ],
+    "Sprayers": [
+      {
+        "labelKey": "FixedAssets.KnapsackSprayer",
+        "value": "Knapsack Sprayer"
+      },
+      {
+        "labelKey": "FixedAssets.ChemicalSprayer",
+        "value": "Chemical Sprayer"
+      },
+      { "labelKey": "FixedAssets.MistBlower", "value": "Mist Blower" },
+      {
+        "labelKey": "FixedAssets.Environmentalfriendlysprayer",
+        "value": "Environmental friendly sprayer"
+      },
+      { "labelKey": "FixedAssets.Dronesprayer", "value": "Drone sprayer" },
+      {
+        "labelKey": "FixedAssets.PressureSprayer",
+        "value": "Pressure Sprayer"
+      },
+      { "labelKey": "FixedAssets.other", "value": "Other" }
+    ]
+  },
+
+  "brandTypesForAssets": {
+    "Tractors": [
+      {
+        "labelKey": "FixedAssets.EKubota",
+        "value": "E Kubota EK3 - 471 Hayles"
+      },
+      {
+        "labelKey": "FixedAssets.KubotaL4508",
+        "value": "Kubota L4508 4wd Tractor Hayles"
+      },
+      {
+        "labelKey": "FixedAssets.KubotaL3408",
+        "value": "Kubota L3408 4wd Tractor - Hayles"
+      },
+      { "labelKey": "FixedAssets.Tafe", "value": "Tafe - Browns" },
+      {
+        "labelKey": "FixedAssets.MasseyFerguson",
+        "value": "Massey Ferguson - Browns"
+      },
+      { "labelKey": "FixedAssets.Yanmar", "value": "Yanmar - Browns" },
+      { "labelKey": "FixedAssets.Sumo", "value": "Sumo - Browns" },
+      { "labelKey": "FixedAssets.Sifang", "value": "Sifang - Browns" },
+      { "labelKey": "FixedAssets.Uikyno", "value": "Uikyno - Browns" },
+      {
+        "labelKey": "FixedAssets.ShakthimanBrowns",
+        "value": "Shakthiman - Browns"
+      },
+      { "labelKey": "FixedAssets.Fieldking", "value": "Fieldking - Browns" },
+      { "labelKey": "FixedAssets.National", "value": "National - Browns" },
+      { "labelKey": "FixedAssets.Gaspardo", "value": "Gaspardo - Browns" },
+      { "labelKey": "FixedAssets.AgroVision", "value": "Agro Vision - Browns" },
+      { "labelKey": "FixedAssets.HP50ME", "value": "50 HP - ME" },
+      { "labelKey": "FixedAssets.ME", "value": "ME" },
+      { "labelKey": "FixedAssets.MahindraDIMO", "value": "Mahindra - DIMO" },
+      { "labelKey": "FixedAssets.SwarajDIMO", "value": "Swaraj - DIMO" },
+      { "labelKey": "FixedAssets.ClaasDIMO", "value": "Claas - DIMO" },
+      { "labelKey": "FixedAssets.LOVOLDIMO", "value": "LOVOL - DIMO" },
+      { "labelKey": "FixedAssets.Kartar", "value": "Kartar" },
+      { "labelKey": "FixedAssets.Shakthiman", "value": "Shakthiman" },
+      { "labelKey": "FixedAssets.Ginhua", "value": "Ginhua" },
+      { "labelKey": "FixedAssets.other", "value": "Other" }
+    ],
+    "Rotavator": [
+      {
+        "labelKey": "FixedAssets.ShaktimanRotavator",
+        "value": "Shaktiman Fighter Rotavator"
+      },
+      { "labelKey": "FixedAssets.other", "value": "Other" }
+    ],
+    "Combine Harvesters": [
+      {
+        "labelKey": "FixedAssets.AgrotechKool",
+        "value": "Agrotech Kool Combine Harvester - Hayleys"
+      },
+      {
+        "labelKey": "FixedAssets.AgrotechEco",
+        "value": "Agrotech Eco Combine Harvester - Hayleys"
+      },
+      {
+        "labelKey": "FixedAssets.KubotaDC70G",
+        "value": "Kubota DC-70G Plus Combine Harvester - Hayleys"
+      },
+      { "labelKey": "FixedAssets.other", "value": "Other" }
+    ],
+    "Transplanter": [
+      {
+        "labelKey": "FixedAssets.KubotaNSP4W",
+        "value": "Kubota NSP - 4W Rice Transplanter - Hayleys"
+      },
+      {
+        "labelKey": "FixedAssets.TransplantersDimo",
+        "value": "Transplanters - Dimo"
+      },
+      { "labelKey": "FixedAssets.ARBOS", "value": "ARBOS" },
+      { "labelKey": "FixedAssets.NationalTransplanter", "value": "National" },
+      { "labelKey": "FixedAssets.other", "value": "Other" }
+    ],
+    "Tillage Equipment": [
+      {
+        "labelKey": "FixedAssets.TyneCultivator",
+        "value": "13 Tyne Cultivator Spring Loaded -  ME"
+      },
+      {
+        "labelKey": "FixedAssets.TerracerBlade",
+        "value": "Terracer Blade/Leveller  ME"
+      },
+      { "labelKey": "FixedAssets.RotaryTiller", "value": "Rotary Tiller - ME" },
+      { "labelKey": "FixedAssets.PowerHarrow", "value": "Power harrow -  ME" },
+      {
+        "labelKey": "FixedAssets.DiscRidger",
+        "value": "Mounted Disc Ridger -  ME"
+      },
+      {
+        "labelKey": "FixedAssets.DiscHarrow",
+        "value": "Disc Harrow Tractor Mounted -  ME"
+      },
+      { "labelKey": "FixedAssets.DiskPlough", "value": "Disk Plough-  ME" },
+      { "labelKey": "FixedAssets.MiniTiller", "value": "Mini Tiller" },
+      { "labelKey": "FixedAssets.HandPlough", "value": "Hand plough" },
+      { "labelKey": "FixedAssets.TineTiller", "value": "Tine tiller" },
+      { "labelKey": "FixedAssets.Browns", "value": "Browns" },
+      { "labelKey": "FixedAssets.Hayles", "value": "Hayles" },
+      { "labelKey": "FixedAssets.Dimo", "value": "Dimo" },
+      { "labelKey": "FixedAssets.other", "value": "Other" }
+    ],
+    "Sowing Equipment": [
+      { "labelKey": "FixedAssets.Dimo", "value": "Seed Sowing Machine - ME" },
+      { "labelKey": "FixedAssets.other", "value": "Other" }
+    ],
+    "Harvesting Equipment": [
+      {
+        "labelKey": "FixedAssets.SeedSowingMachine",
+        "value": "Combine harvester - ME"
+      },
+      {
+        "labelKey": "FixedAssets.AutomaticSeedSowingMachine",
+        "value": "4LZ 3.0 Batta Harvester"
+      },
+      {
+        "labelKey": "FixedAssets.CombineHarvesterME",
+        "value": "4LZ 6.0P Combine Harvester"
+      },
+      {
+        "labelKey": "FixedAssets.BattaHarvester",
+        "value": "4LZ 4.0E Combine Harvester"
+      },
+      { "labelKey": "FixedAssets.Browns", "value": "Browns" },
+      { "labelKey": "FixedAssets.Hayles", "value": "Hayles" },
+      { "labelKey": "FixedAssets.YanmarBrowns", "value": "Yanmar - Browns" },
+      { "labelKey": "FixedAssets.TAF360", "value": "360 TAF" },
+      { "labelKey": "FixedAssets.AGRIUNNION", "value": "AGRIUNNION" },
+      { "labelKey": "FixedAssets.Kartar", "value": "KARTAR" },
+      { "labelKey": "FixedAssets.other", "value": "Other" }
+    ],
+    "Threshers, Reaper, Binders": [
+      {
+        "labelKey": "FixedAssets.MiniCombineCutter",
+        "value": "Mini Combine Cutter Thresher - ME"
+      },
+      {
+        "labelKey": "FixedAssets.MultiCropCutter",
+        "value": "Multi Crop Cutter Thresher - ME"
+      },
+      { "labelKey": "FixedAssets.other", "value": "Other" }
+    ],
+    "Cleaning, Grading and Weighing Equipment": [
+      {
+        "labelKey": "FixedAssets.GrillMagneticSeparator",
+        "value": "Grill Type Magnetic Separator - ME"
+      },
+      {
+        "labelKey": "FixedAssets.VibrioSeparator",
+        "value": "Vibrio Separator Machine - ME"
+      },
+      {
+        "labelKey": "FixedAssets.CentrifugalStifer",
+        "value": "Centrifugal Stifer Machine - ME"
+      },
+      {
+        "labelKey": "FixedAssets.IntensiveScourer",
+        "value": "Intensive Scourer - ME"
+      },
+      {
+        "labelKey": "FixedAssets.GrainClassifier",
+        "value": "Grain Classifier Separator - ME"
+      },
+      {
+        "labelKey": "FixedAssets.GrainCleaningMachine",
+        "value": "Grain Cleaning Machine - ME"
+      },
+      {
+        "labelKey": "FixedAssets.DestonerMachineME",
+        "value": "Destoner Machine - ME"
+      },
+      { "labelKey": "FixedAssets.Browns", "value": "Browns" },
+      { "labelKey": "FixedAssets.Hayles", "value": "Hayles" },
+      { "labelKey": "FixedAssets.other", "value": "Other" }
+    ],
+    "Weeding": [
+      {
+        "labelKey": "FixedAssets.FarmWeedingDitching",
+        "value": "FarmWeeding Ditching - ME"
+      },
+      { "labelKey": "FixedAssets.Slasher", "value": "Slasher" },
+      { "labelKey": "FixedAssets.Browns", "value": "Browns" },
+      { "labelKey": "FixedAssets.Hayles", "value": "Hayles" },
+      { "labelKey": "FixedAssets.Dimo", "value": "Dimo" },
+      { "labelKey": "FixedAssets.other", "value": "Other" }
+    ],
+    "Sprayers": [
+      {
+        "labelKey": "FixedAssets.KnapsackPowerSprayer",
+        "value": "Knapsack Power Sprayer - ME"
+      },
+      { "labelKey": "FixedAssets.OregonSprayer", "value": "Oregon Sprayer" },
+      {
+        "labelKey": "FixedAssets.ChemicalSprayers",
+        "value": "Chemical Sprayer"
+      },
+      { "labelKey": "FixedAssets.MistBlowers", "value": "Mist Blower" },
+      { "labelKey": "FixedAssets.DBL", "value": "DBL" },
+      { "labelKey": "FixedAssets.Browns", "value": "Browns" },
+      { "labelKey": "FixedAssets.Hayles", "value": "Hayles" },
+      { "labelKey": "FixedAssets.NationalTransplanter", "value": "National" },
+      { "labelKey": "FixedAssets.ARBOS", "value": "ARBOS" },
+      { "labelKey": "FixedAssets.Gardena", "value": "Gardena" },
+      {
+        "labelKey": "FixedAssets.TractorMountedSprayer",
+        "value": "Tractor Mounted Sprayer - ME"
+      },
+      { "labelKey": "FixedAssets.other", "value": "Other" }
+    ],
+    "Shelling and Grinding Machine": [
+      {
+        "labelKey": "FixedAssets.MaizeProcessingMachine",
+        "value": "Maize Processing Machine - ME"
+      },
+      {
+        "labelKey": "FixedAssets.MaizeCoenThresher",
+        "value": "Maize Coen Thresher - ME"
+      },
+      { "labelKey": "FixedAssets.other", "value": "Other" }
+    ],
+    "Sowing": [
+      {
+        "labelKey": "FixedAssets.SteelSeedSowing",
+        "value": "Steel and Plastic Seed Sowing Machine"
+      },
+      {
+        "labelKey": "FixedAssets.TractorMountedSpray",
+        "value": "Tractor Mounted Sprayer"
+      },
+      { "labelKey": "FixedAssets.other", "value": "Other" }
+    ]
+  }
+}

@@ -22,7 +22,7 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
     language !== "en" ? size * 0.9 : size;
 
   useEffect(() => {
-    const selectedLanguage = t("Terms&Condisions.LNG");
+    const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
   }, [t]);
 
@@ -54,37 +54,37 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
         {t("Terms&Condisions.By")} 11/08/2024
       </Text>
 
-      <View className="py-2 px-4">
+      <View className="py-2 px-6">
         <Text
           className="text-sm text-gray-700 mt-2"
           style={{ fontSize: adjustFontSize(14) }}
         >
-          {t("Terms&Condisions.explain")}{" "}
+          {t("Terms&Condisions.GoviCareTerms&Condisions")}{" "}
         </Text>
 
         <Text
           className="text-lg font-bold mt-8"
           style={{ fontSize: adjustFontSize(16) }}
         >
-          1. {t("Terms&Condisions.UseoftheApp")}{" "}
+          1. {t("Terms&Condisions.UseOfTheApp")}{" "}
         </Text>
         <Text className="text-sm font-bold mt-8">
           {t("Terms&Condisions.Eligibility")}
         </Text>
         <Text className="text-sm text-gray-700 mt-1">
-          {t("Terms&Condisions.EligibilityTxt")}
+          {t("Terms&Condisions.EligibilityText")}
         </Text>
         <Text className="text-sm font-bold mt-2">
           {t("Terms&Condisions.LicenseGrant")}
         </Text>
         <Text className="text-sm text-gray-700 mt-1">
-          {t("Terms&Condisions.LicenseGrantTxt")}
+          {t("Terms&Condisions.LicenseGrantText")}
         </Text>
         <Text className="text-sm font-bold mt-2">
           {t("Terms&Condisions.ProhibitedUses")}
         </Text>
         <Text className="text-sm text-gray-700 mt-1">
-          {t("Terms&Condisions.ProhibitedUsesTxt")}
+          {t("Terms&Condisions.ProhibitedUsesText")}
         </Text>
         <View>
           <Text className="text-sm text-gray-700 mt-4">
@@ -111,7 +111,7 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
           2. {t("Terms&Condisions.UserRegistrationandAccountSecurity")}
         </Text>
         <Text className="text-sm text-gray-700 mt-4">
-          {t("Terms&Condisions.UserRegistrationandAccountSecurityTxt")}
+          {t("Terms&Condisions.UserRegistrationandAccountSecurityText")}
         </Text>
         <View>
           <Text className="text-sm text-gray-700 mt-4">
@@ -138,13 +138,13 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
           {t("Terms&Condisions.UserContent")}
         </Text>
         <Text className="text-sm text-gray-700">
-          {t("Terms&Condisions.UserContentTxt")}
+          {t("Terms&Condisions.UserContentText")}
         </Text>
         <Text className="text-sm font-bold mt-4">
-          {t("Terms&Condisions.CodeofConduct")}
+          {t("Terms&Condisions.CodeOfConduct")}
         </Text>
         <Text className="text-sm text-gray-700 mt-1">
-          {t("Terms&Condisions.CodeofConductTxt")}
+          {t("Terms&Condisions.CodeOfConductText")}
         </Text>
 
         <Text
@@ -154,36 +154,36 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
           4. {t("Terms&Condisions.Privacy")}
         </Text>
         <Text className="text-sm text-gray-700 mt-2">
-          {t("Terms&Condisions.PrivacyTxt")}
+          {t("Terms&Condisions.PrivacyText")}
         </Text>
 
         <Text
           className="text-lg font-bold mt-4"
           style={{ fontSize: adjustFontSize(16) }}
         >
-          5. {t("Terms&Condisions.DisclaimerofWarranties")}
+          5. {t("Terms&Condisions.DisclaimerOfWarranties")}
         </Text>
         <Text className="text-sm mt- text-gray-700 mt-2">
-          {t("Terms&Condisions.DisclaimerofWarrantiesTxt")}
+          {t("Terms&Condisions.DisclaimerOfWarrantiesText")}
         </Text>
         <Text
           className="text-lg font-bold mt-4"
           style={{ fontSize: adjustFontSize(16) }}
         >
-          6. {t("Terms&Condisions.LimitationofLiability")}
+          6. {t("Terms&Condisions.LimitationOfLiability")}
         </Text>
         <Text className="text-sm mt- text-gray-700 mt-2">
-          {t("Terms&Condisions.LimitationofLiabilityTxt")}
+          {t("Terms&Condisions.LimitationOfLiabilityText")}
         </Text>
 
         <Text
           className="text-lg font-bold mt-4"
           style={{ fontSize: adjustFontSize(16) }}
         >
-          7. {t("Terms&Condisions.ModificationstotheApp")}
+          7. {t("Terms&Condisions.ModificationsToTheApp")}
         </Text>
         <Text className="text-sm mt- text-gray-700 mt-2 ">
-          {t("Terms&Condisions.ModificationstotheAppTxt")}
+          {t("Terms&Condisions.ModificationsToTheAppText")}
         </Text>
 
         <Text
@@ -193,7 +193,7 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
           8. {t("Terms&Condisions.Termination")}
         </Text>
         <Text className="text-sm mt- text-gray-700 mt-2 ">
-          {t("Terms&Condisions.TerminationTxt")}
+          {t("Terms&Condisions.TerminationText")}
         </Text>
 
         <Text
@@ -203,7 +203,7 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
           9. {t("Terms&Condisions.GoverningLaw")}
         </Text>
         <Text className="text-sm mt- text-gray-700 mt-2 ">
-          {t("Terms&Condisions.GoverningLawTxt")}
+          {t("Terms&Condisions.GoverningLawText")}
         </Text>
         <Text
           className="text-lg font-bold mt-4"
@@ -212,7 +212,7 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
           10. {t("Terms&Condisions.ContactUs")}
         </Text>
         <Text className="text-sm text-gray-700 mt-2">
-          {t("Terms&Condisions.ContactUsTxt")}
+          {t("Terms&Condisions.ContactUsText")}
         </Text>
         <Text className="text-lg font-semibold mb-10  ">info@polygon.lk</Text>
       </View>

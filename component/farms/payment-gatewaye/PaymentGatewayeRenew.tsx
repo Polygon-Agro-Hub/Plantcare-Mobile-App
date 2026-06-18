@@ -230,21 +230,17 @@ const PaymentGatewayeRenew: React.FC<PaymentGatewayeRenewProps> = ({
       enabled
       style={{ flex: 1 }}
     >
+      <CustomHeader
+        title={t("Farms.CreditDebitCard")}
+        navigation={navigation}
+        onBackPress={() => navigation.navigate("UnLockProRenew" as any)}
+      />
       <ScrollView
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ flexGrow: 1 }}
-        className="bg-white"
+        className="bg-white px-6"
       >
-        <CustomHeader
-          title={t("Farms.Credit Debit Card")}
-          navigation={navigation}
-          onBackPress={() => navigation.navigate("UnLockProRenew" as any)}
-        />
-
-        <View
-          className="flex-row mb-6 mt-6 justify-between items-center"
-          style={{ paddingHorizontal: wp(8) }}
-        >
+        <View className="flex-row mb-6 mt-6 justify-between items-center">
           <Text className="text-lg">Total</Text>
           <Text className="text-lg font-bold">
             {t("Farms.Rs")}{" "}
@@ -254,7 +250,7 @@ const PaymentGatewayeRenew: React.FC<PaymentGatewayeRenewProps> = ({
 
         <View className="border-b border-[#F3F4F6] my-2 mb-4" />
 
-        <View style={{ paddingHorizontal: wp(8) }}>
+        <View className="">
           <View className="flex-row justify-center mb-6">
             <View className="flex-row items-center p-2 gap-3">
               <View className="flex-row items-center rounded-xl border border-[#3E206D] p-2 px-4">
@@ -296,7 +292,7 @@ const PaymentGatewayeRenew: React.FC<PaymentGatewayeRenewProps> = ({
           </View>
 
           <TextInput
-            className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
+            className="h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl p-3 mb-8 text-base"
             placeholder="Enter Card Number"
             keyboardType="numeric"
             maxLength={19}
@@ -305,14 +301,14 @@ const PaymentGatewayeRenew: React.FC<PaymentGatewayeRenewProps> = ({
           />
 
           <TextInput
-            className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
+            className="h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl p-3 mb-8 text-base"
             placeholder="Enter Name on Card"
             value={cardHolderName}
             onChangeText={setCardHolderName}
           />
 
           <View
-            className={`flex-row items-center h-12 border border-gray-300 bg-[#F6F6F6] rounded-full px-3 mb-8`}
+            className={`flex-row items-center h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl px-3 mb-8`}
           >
             <TextInput
               className="flex-1 h-full text-base"
@@ -326,7 +322,7 @@ const PaymentGatewayeRenew: React.FC<PaymentGatewayeRenewProps> = ({
           </View>
 
           <TextInput
-            className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-5 text-base"
+            className="h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl p-3 mb-5 text-base"
             placeholder="Enter CVV"
             keyboardType="numeric"
             maxLength={3}
@@ -336,12 +332,19 @@ const PaymentGatewayeRenew: React.FC<PaymentGatewayeRenewProps> = ({
           />
 
           <TouchableOpacity
-            className="bg-black py-3 rounded-full mt-5 mb-24"
+            className="bg-black py-3 rounded-3xl h-[50px] mt-5 mb-24"
             onPress={handlePayNow}
             disabled={isProcessing}
+            style={{
+              shadowColor: "#000000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.25,
+              shadowRadius: 4,
+              elevation: 4,
+            }}
           >
             <Text className="text-white text-lg font-semibold text-center">
-              {isProcessing ? t("Farms.Processing") : t("Farms.Pay Now")}
+              {isProcessing ? t("Farms.Processing...") : t("Farms.PayNow")}
             </Text>
           </TouchableOpacity>
         </View>

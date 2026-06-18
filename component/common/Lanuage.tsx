@@ -4,7 +4,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import { LanguageContext } from "@/context/LanguageContext";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
 
 const lg = require("../../assets/images/common/language1.webp");
@@ -19,7 +18,6 @@ interface LanuageProps {
 
 const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
   const { changeLanguage } = useContext(LanguageContext);
-  const screenWidth = wp(100);
 
   useEffect(() => {
     const checkLanguagePreference = async () => {
@@ -46,12 +44,6 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
     }
   };
 
-  const dynamicStyles = {
-    imageHeight: screenWidth < 400 ? wp(35) : wp(38),
-    fontSize: screenWidth < 400 ? wp(4) : wp(5),
-    paddingTopForLngBtns: screenWidth < 400 ? wp(5) : wp(0),
-  };
-
   useFocusEffect(
     React.useCallback(() => {
       const backAction = () => {
@@ -75,7 +67,7 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
         <Image
           source={lg}
           resizeMode="contain"
-          style={{ height: dynamicStyles.imageHeight, width: wp(80) }}
+          style={{ height: 140, width: "80%" }}
         />
 
         <Text className="text-3xl pt-[10%] font-semibold text-center">
@@ -90,42 +82,30 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
           කරුණාකර භාෂාව තෝරන්න
         </Text>
 
-        <View
-          className="w-2/3 px-2 mt-8"
-          style={{ paddingTop: dynamicStyles.paddingTopForLngBtns }}
-        >
+        <View className="w-full px-10 mt-8 pt-5">
           <TouchableOpacity
-            className="bg-[#353535] py-3 rounded-3xl mb-6"
+            className="bg-[#353535] rounded-3xl h-[50px] justify-center items-center mb-6 shadow-lg elevation-6"
             onPress={() => handleLanguageSelect("en")}
           >
-            <Text
-              className="text-white text-center"
-              style={{ fontSize: dynamicStyles.fontSize }}
-            >
+            <Text className="text-white text-center text-xl font-semibold">
               ENGLISH
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="bg-[#353535] py-3 rounded-3xl mb-6"
+            className="bg-[#353535] rounded-3xl h-[50px] justify-center items-center mb-6 shadow-lg elevation-6"
             onPress={() => handleLanguageSelect("si")}
           >
-            <Text
-              className="text-white text-center"
-              style={{ fontSize: dynamicStyles.fontSize }}
-            >
+            <Text className="text-white text-center text-xl font-semibold">
               සිංහල
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="bg-[#353535] py-3 rounded-3xl mb-12"
+            className="bg-[#353535] rounded-3xl h-[50px] justify-center items-center mb-12 shadow-lg elevation-6"
             onPress={() => handleLanguageSelect("ta")}
           >
-            <Text
-              className="text-white text-center"
-              style={{ fontSize: dynamicStyles.fontSize }}
-            >
+            <Text className="text-white text-center text-xl font-semibold">
               தமிழ்
             </Text>
           </TouchableOpacity>

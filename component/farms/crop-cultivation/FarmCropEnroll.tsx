@@ -18,15 +18,14 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
 import { useTranslation } from "react-i18next";
 import { environment } from "@/environment/environment";
-import Icon from "react-native-vector-icons/MaterialIcons";
-import { AntDesign } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import moment from "moment";
-import LottieView from "lottie-react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../../common/CustomHeader";
 import GlobalSearchModal from "@/component/common/GlobalSearchModal";
+import LoadingPage from "@/component/common/LoadingPage";
 
 type FarmCropEnrollRouteProp = RouteProp<RootStackParamList, "FarmCropEnroll">;
 
@@ -92,18 +91,19 @@ const DropdownButton = ({
       borderWidth: 1,
       borderColor: "#ccc",
       backgroundColor: "#FFFFFF",
-      borderRadius: 30,
+
       paddingHorizontal: 12,
       paddingVertical: 14,
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
     }}
+    className="h-[50px] rounded-3xl"
   >
     <Text style={{ color: value ? "#000000" : "#6B7280", fontSize: 14 }}>
       {value || placeholder}
     </Text>
-    <AntDesign name="caret-down" size={14} color="#555" />
+    <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
   </TouchableOpacity>
 );
 
@@ -165,7 +165,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
     const current = selectedDate || startDate;
     if (current > new Date()) {
       Alert.alert("Invalid Date", "The start date cannot be in the future.", [
-        { text: t("PublicForum.OK") },
+        { text: t("Main.OK") },
       ]);
       setShowDatePicker(false);
       return;
@@ -186,17 +186,17 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
     setSearch(false);
     if (!natureOfCultivation) {
       Alert.alert(
-        t("Cropenroll.sorry"),
-        t("Cropenroll.plzselectNatureOfCultivation"),
-        [{ text: t("PublicForum.OK") }],
+        t("Main.Sorry"),
+        t("Cropenroll.PleaseSelectNatureOfCultivation"),
+        [{ text: t("Main.OK") }],
       );
       return;
     }
     if (!cultivationMethod) {
       Alert.alert(
-        t("Cropenroll.sorry"),
-        t("Cropenroll.plzselectCultivationMethod"),
-        [{ text: t("PublicForum.OK") }],
+        t("Main.Sorry"),
+        t("Cropenroll.PleaseSelectCultivationMethod"),
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -210,14 +210,18 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         setCropCalender(res.data[0]);
         setSearch(true);
       } else {
-        Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"), [
-          { text: t("PublicForum.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Sorry"),
+          t("Cropenroll.NoCropsFoundForTheSelectedMethodPleaseTryAgain"),
+          [{ text: t("Main.OK") }],
+        );
       }
     } catch {
-      Alert.alert(t("Cropenroll.sorry"), t("Cropenroll.notfound"), [
-        { text: t("PublicForum.OK") },
-      ]);
+      Alert.alert(
+        t("Main.Sorry"),
+        t("Cropenroll.NoCropsFoundForTheSelectedMethodPleaseTryAgain"),
+        [{ text: t("Main.OK") }],
+      );
     } finally {
       setLoading(false);
     }
@@ -249,9 +253,9 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
   const validateExtent = (): boolean => {
     if (!farmExtent) {
       Alert.alert(
-        t("Main.error"),
+        t("Main.Error"),
         "Unable to verify farm extent. Please try again.",
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return false;
     }
@@ -268,11 +272,11 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         perches: cP,
       } = farmExtent.cultivatedExtent;
       Alert.alert(
-        t("Cropenroll.sorry"),
-        `${t("Cropenroll.cultivationExtentExceedsAvailable")}\n\n` +
-          `${t("Cropenroll.availableExtent")}: ${aHa} ${t("FixedAssets.ha")}, ${aAc} ${t("FixedAssets.ac")}, ${aP} ${t("FixedAssets.p")}\n` +
-          `${t("Cropenroll.alreadyCultivated")}: ${cHa} ${t("FixedAssets.ha")}, ${cAc} ${t("FixedAssets.ac")}, ${cP} ${t("FixedAssets.p")}`,
-        [{ text: t("PublicForum.OK") }],
+        t("Main.Sorry"),
+        `${t("Cropenroll.CultivationExtentExceedsAvailableFarmExtent")}\n\n` +
+          `${t("Cropenroll.AvailableExtent")}: ${aHa} ${t("FixedAssets.ha")}, ${aAc} ${t("FixedAssets.ac")}, ${aP} ${t("FixedAssets.p")}\n` +
+          `${t("Cropenroll.AlreadyCultivated")}: ${cHa} ${t("FixedAssets.ha")}, ${cAc} ${t("FixedAssets.ac")}, ${cP} ${t("FixedAssets.p")}`,
+        [{ text: t("Main.OK") }],
       );
       return false;
     }
@@ -321,24 +325,24 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
       if (certificateData?.status === "haveFarmCertificate") {
         createFarmQuestionnaire();
         Alert.alert(
-          t("Cropenroll.success"),
-          t("Cropenroll.EnrollSucess"),
-          [{ text: t("PublicForum.OK"), onPress: goToDashboard }],
+          t("Main.Success"),
+          t("Cropenroll.SuccessfullyEnrolledTheCrop"),
+          [{ text: t("Main.OK"), onPress: goToDashboard }],
           { cancelable: false },
         );
       } else if (certificateData?.status === "noFarmCertificate") {
         if (!farmId || farmId === 0) {
-          Alert.alert(t("Main.error"), "Farm information is missing.", [
-            { text: t("PublicForum.OK"), onPress: goToDashboard },
+          Alert.alert(t("Main.Error"), "Farm information is missing.", [
+            { text: t("Main.OK"), onPress: goToDashboard },
           ]);
           return;
         }
         Alert.alert(
-          t("Cropenroll.success"),
-          t("Cropenroll.EnrollSucess"),
+          t("Main.Success"),
+          t("Cropenroll.SuccessfullyEnrolledTheCrop"),
           [
             {
-              text: t("PublicForum.OK"),
+              text: t("Main.OK"),
               onPress: () =>
                 navigation.navigate("CropEarnCertificate", {
                   cropId: String(ongoingCropId),
@@ -351,19 +355,19 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         );
       } else {
         Alert.alert(
-          t("Cropenroll.success"),
-          t("Cropenroll.EnrollSucess"),
-          [{ text: t("PublicForum.OK"), onPress: goToDashboard }],
+          t("Main.Success"),
+          t("Cropenroll.SuccessfullyEnrolledTheCrop"),
+          [{ text: t("Main.OK"), onPress: goToDashboard }],
           { cancelable: false },
         );
       }
     } catch {
       Alert.alert(
-        t("Cropenroll.success"),
-        t("Cropenroll.EnrollSucess"),
+        t("Main.Success"),
+        t("Cropenroll.SuccessfullyEnrolledTheCrop"),
         [
           {
-            text: t("PublicForum.OK"),
+            text: t("Main.OK"),
             onPress: () =>
               navigation.navigate("Main", {
                 screen: "FarmDetailsScreen",
@@ -381,9 +385,9 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
   const HandleEnrollBtn = async () => {
     if (!extentha && !extentac && !extentp) {
       Alert.alert(
-        t("Cropenroll.sorry"),
-        t("Cropenroll.EnterAtLeastOneExtent"),
-        [{ text: t("PublicForum.OK") }],
+        t("Main.Sorry"),
+        t("Cropenroll.PleaseEnterAtLeastOneExtent"),
+        [{ text: t("Main.OK") }],
         { cancelable: false },
       );
       return;
@@ -396,8 +400,8 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Farms.No authentication token found"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"), [
+          { text: t("Main.OK") },
         ]);
         setIsLoading(false);
         return;
@@ -423,9 +427,11 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
       if (res.status === 200) {
         await checkCertificateAndNavigate(res.data.ongoingCultivationCropId);
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error"),
+          t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
         setIsLoading(false);
       }
     } catch (err) {
@@ -434,26 +440,30 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         const { status, data } = err.response;
         if (status === 400) {
           Alert.alert(
-            t("Main.error"),
+            t("Main.Error"),
             data.message === "You have already enrolled in 3 crops"
-              ? t("Cropenroll.enrollmentLimitReached")
-              : t("Cropenroll.alreadyEnrolled"),
-            [{ text: t("PublicForum.OK") }],
+              ? t("Cropenroll.YouHaveReachedTheLimitOf3CropEnrollments")
+              : t("Cropenroll.ThisCropIsAlreadyEnrolled"),
+            [{ text: t("Main.OK") }],
             { cancelable: false },
           );
         } else if (status === 401) {
-          Alert.alert(t("Main.error"), t("Main.unauthorized"), [
-            { text: t("PublicForum.OK") },
+          Alert.alert(t("Main.Error"), t("Main.unauthorized"), [
+            { text: t("Main.OK") },
           ]);
         } else {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-            { text: t("PublicForum.OK") },
-          ]);
+          Alert.alert(
+            t("Main.Error"),
+            t("Main.SomethingWentWrongPleaseTryAgainlater"),
+            [{ text: t("Main.OK") }],
+          );
         }
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error"),
+          t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
       }
     }
   };
@@ -496,32 +506,23 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
       } else {
         Alert.alert(
           t("Cropenroll.Failed"),
-          t("Cropenroll.FialedOngoinCultivationUpdate"),
-          [{ text: t("Farms.okButton") }],
+          t("Cropenroll.UnableToUpdateCultivationDetailsPleaseTryAgain"),
+          [{ text: t("Main.OK") }],
         );
         setIsLoading(false);
       }
     } catch {
       Alert.alert(
         t("Cropenroll.Failed"),
-        t("Cropenroll.FialedOngoinCultivationUpdate"),
-        [{ text: t("PublicForum.OK") }],
+        t("Cropenroll.UnableToUpdateCultivationDetailsPleaseTryAgain"),
+        [{ text: t("Main.OK") }],
       );
       setIsLoading(false);
     }
   };
 
   if (loading) {
-    return (
-      <View className="flex-1 bg-white justify-center items-center">
-        <LottieView
-          source={require("../../../assets/jsons/loader.json")}
-          autoPlay
-          loop
-          style={{ width: 300, height: 300 }}
-        />
-      </View>
-    );
+    return <LoadingPage fullScreen />;
   }
 
   const renderExtentInputs = () => (
@@ -531,11 +532,13 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         { label: t("FixedAssets.ac"), value: extentac, setter: setExtentac },
         { label: t("FixedAssets.p"), value: extentp, setter: setExtentp },
       ].map(({ label, value, setter }) => (
-        <View key={label} className="flex-row items-center space-x-1">
+        <View key={label} className="flex-row items-center gap-1">
           <Text className="text-right">{label}</Text>
           <TextInput
-            className="border border-gray-300 p-2 px-4 w-20 rounded-2xl bg-gray-100 text-left"
+            className="border border-gray-300 p-2 px-4 w-20 rounded-3xl h-[50px] bg-gray-100 text-left"
             value={value}
+            style={{ color: "#000000" }}
+            placeholderTextColor="#000000"
             onChangeText={(text) => setter(text.replace(/[-*#.]/g, ""))}
             keyboardType="numeric"
             placeholder="0"
@@ -582,8 +585,8 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         <CustomHeader
           title={
             formStatus === "newAdd"
-              ? t("Cropenroll.StartCultivaiton")
-              : t("Cropenroll.UpdateCultivation")
+              ? t("Cropenroll.StartYourCultivaiton")
+              : t("Cropenroll.UpdateYourCultivation")
           }
           navigation={navigation}
           onBackPress={() => navigation.goBack()}
@@ -594,118 +597,106 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         </View>
 
         {formStatus === "newAdd" ? (
-          <View className="px-4">
+          <View className="px-6">
             {/* Nature of Cultivation */}
-            <Text className="mb-2">{t("Farms.Nature of Cultivation")}</Text>
+            <Text className="mb-2">{t("Farms.NatureOfCultivation")}</Text>
             <DropdownButton
               value={getLabelFromOptions(
                 NatureOfCultivationOptions,
                 natureOfCultivation,
               )}
-              placeholder={t("Cropenroll.selectNaofCultivation")}
+              placeholder={t("Cropenroll.SelectNaOfCultivation")}
               onPress={() => openModal("natureOfCultivation")}
             />
 
             {/* Cultivation Method */}
-            <Text className="mt-6 mb-2">{t("Farms.Cultivation Method")}</Text>
+            <Text className="mt-6 mb-2">{t("Farms.CultivationMethod")}</Text>
             <DropdownButton
               value={getLabelFromOptions(
                 CultivationMethodOptions,
                 cultivationMethod,
               )}
-              placeholder={t("Cropenroll.selectCultivationMethod")}
+              placeholder={t("Cropenroll.SelectCultivationMethod")}
               onPress={() => openModal("cultivationMethod")}
             />
 
             {/* Search button */}
-            <TouchableOpacity
-              onPress={handleSearch}
-              className={`p-3 mx-5 mt-8 items-center rounded-full ${
-                isLoading ? "bg-gray-400" : "bg-gray-800"
-              }`}
-              disabled={isLoading}
-              style={{
-                shadowColor: "#000000",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.25,
-                shadowRadius: 4,
-                elevation: 4,
-              }}
-            >
-              <Text className="text-white text-base font-bold">
-                {t("Cropenroll.search")}
-              </Text>
-            </TouchableOpacity>
-
+            <View className="justify-center items-center px-6">
+              <TouchableOpacity
+                onPress={handleSearch}
+                className={`w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 mt-8 mb-6  ${
+                  isLoading ? "bg-gray-400" : "bg-gray-800"
+                }`}
+                disabled={isLoading}
+              >
+                <Text className="text-white text-lg font-bold">
+                  {t("Main.Search...")}
+                </Text>
+              </TouchableOpacity>
+            </View>
             {/* Results */}
             {search && (
               <>
-                <Text className="mt-8">{t("Cropenroll.selectExtent")}</Text>
+                <Text className="mt-8">{t("Farms.Extent")}</Text>
                 {renderExtentInputs()}
 
-                <Text className="mt-4">{t("Cropenroll.selectStartDate")}</Text>
+                <Text className="mt-4">{t("Cropenroll.SelectStartDate")}</Text>
                 <TouchableOpacity
                   onPress={() => setShowDatePicker((p) => !p)}
                   className="border-b border-gray-400 my-3 flex-row justify-between items-center p-3"
                 >
                   <Text>{startDate.toDateString()}</Text>
-                  <Icon name="arrow-drop-down" size={24} color="gray" />
+                  <MaterialIcons
+                    name="arrow-drop-down"
+                    size={24}
+                    color="#666"
+                  />
                 </TouchableOpacity>
                 {renderDatePicker()}
 
-                <TouchableOpacity
-                  onPress={HandleEnrollBtn}
-                  className={`rounded-full mb-4 p-3 mx-5 mt-8 items-center ${
-                    isLoading ? "bg-gray-500" : "bg-gray-900"
-                  }`}
-                  disabled={isLoading}
-                  style={{
-                    shadowColor: "#000000",
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 4,
-                    elevation: 4,
-                  }}
-                >
-                  {isLoading ? (
-                    <ActivityIndicator size="small" color="#fff" />
-                  ) : (
-                    <Text className="text-white text-base font-bold">
-                      {t("Cropenroll.enroll")}
-                    </Text>
-                  )}
-                </TouchableOpacity>
+                <View className="justify-center items-center px-6">
+                  <TouchableOpacity
+                    onPress={HandleEnrollBtn}
+                     className={`w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 mt-8 mb-6  ${
+                  isLoading ? "bg-gray-400" : "bg-gray-800"
+                }`}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <ActivityIndicator size="small" color="#fff" />
+                    ) : (
+                      <Text className="text-white text-lg font-bold">
+                        {t("Cropenroll.Enroll")}
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+                </View>
               </>
             )}
           </View>
         ) : (
-          <View className="p-4">
-            <Text className="mt-8">{t("Cropenroll.selectExtent")}</Text>
+          <View className="px-6">
+            <Text className="mt-8">{t("Main.Extent")}</Text>
             {renderExtentInputs()}
             {renderDatePicker()}
 
-            <TouchableOpacity
-              onPress={updateOngoingCultivation}
-              className={`rounded-lg mb-4 p-3 mt-8 items-center ${
-                isLoading ? "bg-gray-500" : "bg-gray-900"
-              }`}
-              disabled={isLoading}
-              style={{
-                shadowColor: "#000000",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.25,
-                shadowRadius: 4,
-                elevation: 4,
-              }}
-            >
-              {isLoading ? (
-                <ActivityIndicator size="small" color="#fff" />
-              ) : (
-                <Text className="text-white text-base font-bold">
-                  {t("Cropenroll.Update")}
-                </Text>
-              )}
-            </TouchableOpacity>
+            <View className="justify-center items-center px-6">
+              <TouchableOpacity
+                onPress={updateOngoingCultivation}
+                className={`w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 mt-8 mb-6 ${
+                  isLoading ? "bg-gray-500" : "bg-gray-900"
+                }`}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text className="text-white text-lg font-bold">
+                    {t("Main.Update")}
+                  </Text>
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
         )}
       </ScrollView>
@@ -713,7 +704,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
       <GlobalSearchModal
         visible={activeModal === "natureOfCultivation"}
         onClose={closeModal}
-        title={t("Farms.Nature of Cultivation")}
+        title={t("Farms.NatureOfCultivation")}
         data={NatureOfCultivationOptions}
         selectedItems={natureOfCultivation ? [natureOfCultivation] : []}
         onSelect={(items) => {
@@ -726,7 +717,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
       <GlobalSearchModal
         visible={activeModal === "cultivationMethod"}
         onClose={closeModal}
-        title={t("Farms.Cultivation Method")}
+        title={t("Farms.CultivationMethod")}
         data={CultivationMethodOptions}
         selectedItems={cultivationMethod ? [cultivationMethod] : []}
         onSelect={(items) => {

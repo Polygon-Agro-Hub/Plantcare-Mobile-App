@@ -14,8 +14,7 @@ const AddNewFarmFirst: React.FC = () => {
   const { t, i18n } = useTranslation();
   return (
     <View className="bg-[#093832] flex-1">
-      <View></View>
-      <View className="w-full h-[40%] bg-[#093832] overflow-hidden top-0 left-0 right-0">
+      <View className="w-full h-[50%] bg-[#093832] overflow-hidden top-0 left-0 right-0">
         <Image
           source={require("../../../assets/images/farms/farm-welcome.webp")}
           className="w-full h-full object-cover absolute"
@@ -28,44 +27,46 @@ const AddNewFarmFirst: React.FC = () => {
         className="bg-[#093832]"
         showsHorizontalScrollIndicator={false}
       >
-        <View className="text-center justify-center items-center p-8 mt-2">
-          <Text className="text-xl w-[80%] text-center text-white font-semibold">
-            {t("Farms.Create Your First Farm For Free!")}
+        <View className="text-center justify-center items-center p-6 mt-2">
+          <Text className="text-2xl w-[90%] text-center text-white font-bold mb-4">
+            {t("Farms.CreateYourFirstFarmForFree")}
           </Text>
-          <View className="w-[80%]">
+          <View className="w-[85%]">
             <Text className="text-sm text-center text-white mt-2">
-              {t("Farms.Simplify farm management like never before.")}
+              {t("Farms.SimplifyFarmManagementLikeNeverBefore")}
             </Text>
             <Text className="text-sm text-center text-white mt-2">
               {t(
-                "Farms.Add new farms, assign managers, and oversee operations from a single powerful platform.",
+                "Farms.AddNewFarmsAssignManagersAndOverseeOperationsFromASinglePowerfulPlatform",
               )}
             </Text>
             <Text className="text-sm text-center text-white mt-2">
               {t(
-                "Farms.Designed for farm owners who want efficiency, transparency, and growth all in one place.",
+                "Farms.DesignedForFarmOwnersWhoWantEfficiencyTransparencyAndGrowthAllInOnePlace",
               )}
             </Text>
           </View>
 
-          <TouchableOpacity
-            className="bg-white/25 py-3 px-[30%] mt-4 rounded-full items-center shadow-md shadow-black"
-            onPress={() => navigation.navigate("AddNewFarmBasicDetails" as any)}
-          >
-            <Text
-              className="text-white text-lg font-bold"
-              style={{
-                fontSize:
-                  i18n.language === "en"
-                    ? 18
-                    : i18n.language === "si"
-                      ? 14
-                      : 14,
-              }}
+          <View className="w-full px-6 mt-6">
+            <TouchableOpacity
+              className="w-full rounded-3xl h-[50px] justify-center items-center bg-white/25 shadow-lg elevation-6"
+              onPress={() => navigation.navigate("AddNewFarmBasicDetails" as any)}
             >
-              {t("Farms.Get Started")}
-            </Text>
-          </TouchableOpacity>
+              <Text
+                className="text-white text-lg font-bold text-center"
+                style={{
+                  fontSize:
+                    i18n.language === "en"
+                      ? 18
+                      : i18n.language === "si"
+                        ? 14
+                        : 14,
+                }}
+              >
+                {t("Farms.GetStarted")}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </View>

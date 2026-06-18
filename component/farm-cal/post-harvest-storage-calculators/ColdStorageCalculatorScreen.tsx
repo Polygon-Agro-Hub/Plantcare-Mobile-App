@@ -50,7 +50,7 @@ const ColdStorageCalculatorScreen: React.FC<ColdStorageProps> = ({
     if (!storageVolume || !coolingPowerPerUnit) {
       Alert.alert(
         t("PostHarvestStorageCalculators.InvalidInput"),
-        t("PostHarvestStorageCalculators.FillAllFields"),
+        t("Main.PleaseFillAllRequiredFields"),
       );
       return;
     }
@@ -61,14 +61,14 @@ const ColdStorageCalculatorScreen: React.FC<ColdStorageProps> = ({
     if (isNaN(volumeNum) || volumeNum <= 0) {
       Alert.alert(
         t("PostHarvestStorageCalculators.InvalidInput"),
-        t("PostHarvestStorageCalculators.VolumeError"),
+        t("PostHarvestStorageCalculators.StorageVolumeMustBeGreaterThan0"),
       );
       return;
     }
     if (isNaN(powerPerUnitNum) || powerPerUnitNum <= 0) {
       Alert.alert(
         t("PostHarvestStorageCalculators.InvalidInput"),
-        t("PostHarvestStorageCalculators.PowerError"),
+        t("PostHarvestStorageCalculators.CoolingPowerMustBeGreaterThan0"),
       );
       return;
     }
@@ -109,7 +109,7 @@ const ColdStorageCalculatorScreen: React.FC<ColdStorageProps> = ({
       />
 
       <ScrollView
-        className="flex-1 px-4"
+        className="flex-1 px-6"
         contentContainerStyle={{
           paddingBottom: 40,
         }}
@@ -118,45 +118,45 @@ const ColdStorageCalculatorScreen: React.FC<ColdStorageProps> = ({
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            {t("PostHarvestStorageCalculators.FillRequiredFields")}
+            {t("Main.PleaseFillAllRequiredFields")}
           </Text>
         )}
 
         {/* Storage Volume Input */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("PostHarvestStorageCalculators.StorageVolume")} *
+          {t("PostHarvestStorageCalculators.StorageVolumeM3")} *
         </Text>
         <TextInput
           value={storageVolume}
           onChangeText={(text) => handleNumberInput(text, setStorageVolume, 2)}
-          placeholder={t("PostHarvestStorageCalculators.TypeHere")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
-          className="bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900 mb-6"
+          className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"
         />
 
         {/* Cooling Power per Unit Input */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("PostHarvestStorageCalculators.CoolingPowerNeeded")} *
+          {t("PostHarvestStorageCalculators.CoolingPowerNeededWM3")} *
         </Text>
         <TextInput
           value={coolingPowerPerUnit}
           onChangeText={(text) =>
             handleNumberInput(text, setCoolingPowerPerUnit, 2)
           }
-          placeholder={t("PostHarvestStorageCalculators.TypeHere")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
-          className="bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900 mb-6"
+          className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"
         />
 
         {/* Calculate Button */}
         <TouchableOpacity
           onPress={handleCalculate}
-          className="bg-[#2D2D2D] rounded-full py-4 items-center mt-4"
+          className="bg-[#2D2D2D] rounded-3xl h-[50px] items-center justify-center mt-4"
           activeOpacity={0.8}
         >
-          <Text className="text-white text-base font-bold">
+          <Text className="text-white text-lg font-bold">
             {t("PostHarvestStorageCalculators.Calculate")}
           </Text>
         </TouchableOpacity>

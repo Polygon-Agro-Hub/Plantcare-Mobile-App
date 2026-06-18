@@ -1,0 +1,33 @@
+# fastlane/Matchfile
+# Match manages your signing certificates and provisioning profiles
+# by storing them encrypted in a private Git repository.
+#
+# HOW IT WORKS:
+# - First time (locally): Match GENERATES new certs and PUSHES to private repo
+# - Every CI build: Match DOWNLOADS and INSTALLS certs from private repo
+# - MATCH_PASSWORD encrypts/decrypts the certs in the private repo
+
+# The private GitHub repo where certs are stored (set via environment variable)
+git_url(ENV["MATCH_GIT_URL"])
+
+# Base64-encoded "username:github_personal_access_token" for repo access
+git_basic_authorization(ENV["MATCH_GIT_BASIC_AUTHORIZATION"])
+
+# Storage type — we use Git (most common and free)
+storage_mode("git")
+
+# Certificate type:
+# "appstore" = used for BOTH TestFlight AND App Store (distribution cert)
+# "development" = used for local device testing
+# "adhoc" = used for direct device distribution (we don't need this)
+type("appstore")
+
+# Your app's bundle identifier — MUST match app.json ios.bundleIdentifier
+app_identifier(["com.polygonagro.GoviCare"])
+
+# Apple ID (used for local setup; in CI, the API Key is used instead)
+username("polygonagro@icloud.com")
+
+# In CI, Match runs in read-only mode — it only DOWNLOADS, never generates
+# This is controlled automatically via the `is_ci` check in the Fastfile
+readonly(false)  # We override this to `true` in CI via Fastfile

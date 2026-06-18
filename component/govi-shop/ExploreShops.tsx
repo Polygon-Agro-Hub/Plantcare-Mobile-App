@@ -30,10 +30,15 @@ interface ExploreShopsProps {
 }
 
 interface Shop {
-  id: string;
+  shopId: string;
   shopName: string;
   logo: string;
-  productCount: number;
+  approvedStatus: string;
+  branchId: string;
+  branchName: string;
+  district: string;
+  province: string;
+  mobilePhone: string;
 }
 
 const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
@@ -45,48 +50,42 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [cartCount, setCartCount] = useState(3);
 
-  // Fetch shops
   const fetchShops = async (search = "") => {
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const token = await AsyncStorage.getItem("userToken");
+    const token = await AsyncStorage.getItem("userToken");
 
-      if (!token) {
-        Alert.alert(
-          "Error",
-          "Authentication token not found. Please login again.",
-        );
-        return;
-      }
-
-      // API call with token
-      const response = await axios.get(
-        `${environment.API_BASE_URL}api/govi-shop/shops`,
-        {
-          params: { search },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      setShops(response.data);
-    } catch (error) {
-      console.error("Error fetching shops:", error);
-      setShops([]);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
+    if (!token) {
+      Alert.alert("Error", "Authentication token not found. Please login again.");
+      return;
     }
-  };
 
-  // Initial load
+    const response = await axios.get(
+      `${environment.API_BASE_URL}api/govi-shop/shops`,
+      {
+        params: { search },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    setShops(Array.isArray(response.data) ? response.data : []);
+
+  } catch (error: any) {
+    
+    setShops([]);
+    console.error("Error fetching shops:", error?.response?.status, error?.message);
+  } finally {
+    setLoading(false);
+    setRefreshing(false);
+  }
+};
+
   useEffect(() => {
     fetchShops();
   }, []);
 
-  // Debounced search
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
       fetchShops(searchQuery);
@@ -95,7 +94,6 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
     return () => clearTimeout(delayDebounce);
   }, [searchQuery]);
 
-  // Pull to refresh
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchShops(searchQuery);
@@ -105,7 +103,11 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
     <TouchableOpacity
       onPress={() => {
         navigation.navigate("GoviShopProfileScreen" as any, {
-          shopId: item.id,
+          shopId: item.shopId,
+          branchId: item.branchId,
+          shopname: item.shopName,
+          logo: item.logo,
+          adress: item.district,
         });
       }}
       className="flex-row items-center bg-white rounded-xl p-4 mb-3 border border-gray-100"
@@ -119,7 +121,7 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
       activeOpacity={0.7}
     >
       {/* Logo */}
-      <View className="w-24 h-24 rounded-lg bg-gray-100 mr-4 overflow-hidden">
+      <View className="w-24 h-24  mr-4 overflow-hidden">
         <Image
           source={{ uri: item.logo }}
           className="w-full h-full"
@@ -134,9 +136,13 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
             {item.shopName}
           </Text>
 
-          <Text className="text-sm text-gray-500">
-            {item.productCount} {t("ExploreShops.Products") || "Products"}
-          </Text>
+          <Text className="text-sm text-gray-500">{item.branchName}</Text>
+
+          {item.district ? (
+            <Text className="text-xs text-gray-400 mt-0.5">
+              {item.district}
+            </Text>
+          ) : null}
         </View>
 
         <Ionicons name="chevron-forward" size={24} color="#9CA3AF" />
@@ -147,7 +153,7 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
   return (
     <View className="flex-1 bg-white">
       <CustomHeader
-        title={t("ExploreShops.Title") || "Explore Shops"}
+        title={t("ExploreShops.ExploreShops") || "Explore Shops"}
         showBackButton={true}
         navigation={navigation}
         rightComponent={
@@ -174,7 +180,7 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder={
-              t("ExploreShops.SearchPlaceholder") ||
+              t("ExploreShops.SearchShopsProducts") ||
               "Search Shops / Products..."
             }
             placeholderTextColor="#373737"
@@ -199,7 +205,9 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
           <FlatList
             data={shops}
             renderItem={renderShopItem}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item, index) =>
+              item?.branchId?.toString() ?? index.toString()
+            }
             showsVerticalScrollIndicator={false}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

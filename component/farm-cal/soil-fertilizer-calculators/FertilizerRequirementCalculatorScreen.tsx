@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   View,
   Text,
@@ -32,6 +32,8 @@ interface FertilizerRequirementProps {
 interface CropGroup {
   id: number;
   cropNameEnglish: string;
+  cropNameSinhala: string;
+  cropNameTamil: string;
   nitrogen: number;
   phosphorus: number;
   potassium: number;
@@ -41,6 +43,9 @@ interface CropGroup {
 interface CropItem {
   label: string;
   value: string;
+  nameEnglish: string;
+  nameSinhala: string;
+  nameTamil: string;
   nitrogen: number;
   phosphorus: number;
   potassium: number;
@@ -61,8 +66,8 @@ const AREA_UNITS = [
 const FertilizerRequirementCalculatorScreen: React.FC<
   FertilizerRequirementProps
 > = ({ navigation }) => {
-  const { t } = useTranslation();
-  const [crops, setCrops] = useState<CropItem[]>([]);
+  const { t, i18n } = useTranslation();
+  const [rawCrops, setRawCrops] = useState<CropItem[]>([]);
   const [cropsLoading, setCropsLoading] = useState(false);
 
   const [cropModalVisible, setCropModalVisible] = useState(false);
@@ -79,6 +84,19 @@ const FertilizerRequirementCalculatorScreen: React.FC<
     K: "",
   });
   const [showValidation, setShowValidation] = useState(false);
+
+  const crops = useMemo<CropItem[]>(() => {
+    const lang = i18n.language;
+    return rawCrops.map((c) => ({
+      ...c,
+      label:
+        lang === "si"
+          ? c.nameSinhala
+          : lang === "ta"
+            ? c.nameTamil
+            : c.nameEnglish,
+    }));
+  }, [rawCrops, i18n.language]);
 
   const selectedCrop = crops.find((c) => c.value === selectedCropValue) || null;
 
@@ -104,12 +122,15 @@ const FertilizerRequirementCalculatorScreen: React.FC<
             .map((item: CropGroup) => ({
               label: item.cropNameEnglish,
               value: item.cropNameEnglish,
+              nameEnglish: item.cropNameEnglish,
+              nameSinhala: item.cropNameSinhala || item.cropNameEnglish,
+              nameTamil: item.cropNameTamil || item.cropNameEnglish,
               nitrogen: Number(item.nitrogen),
               phosphorus: Number(item.phosphorus),
               potassium: Number(item.potassium),
               icon: item.image ?? null,
             }));
-          setCrops(mapped);
+          setRawCrops(mapped);
         }
       } catch (error) {
         console.error("Error fetching crop groups:", error);
@@ -202,7 +223,7 @@ const FertilizerRequirementCalculatorScreen: React.FC<
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            {t("Calculator.RequiredFields")}
+            {t("Main.PleaseFillAllRequiredFields")}
           </Text>
         )}
 
@@ -215,7 +236,7 @@ const FertilizerRequirementCalculatorScreen: React.FC<
             dismissKeyboard();
             setCropModalVisible(true);
           }}
-          className="bg-[#F4F4F4] rounded-full px-4 py-4 flex-row justify-between items-center"
+          className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] flex-row justify-between items-center"
           disabled={cropsLoading}
         >
           {cropsLoading ? (
@@ -223,9 +244,7 @@ const FertilizerRequirementCalculatorScreen: React.FC<
           ) : (
             <>
               <Text
-                className={`text-sm ${
-                  selectedCropValue ? "text-gray-900" : "text-gray-400"
-                }`}
+                className={`text-sm ${selectedCropValue ? "text-gray-900" : "text-gray-400"}`}
               >
                 {getSelectedCropLabel()}
               </Text>
@@ -242,10 +261,10 @@ const FertilizerRequirementCalculatorScreen: React.FC<
           <TextInput
             value={area}
             onChangeText={handleAreaChange}
-            placeholder={t("Calculator.TypeHere")}
+            placeholder={t("Main.TypeHere")}
             placeholderTextColor="#9CA3AF"
             keyboardType="decimal-pad"
-            className="flex-1 bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900"
+            className="flex-1 bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900"
           />
           <TouchableOpacity
             onPress={() => {
@@ -253,7 +272,7 @@ const FertilizerRequirementCalculatorScreen: React.FC<
               setUnitModalVisible(true);
             }}
             style={{ width: 140 }}
-            className="bg-[#F4F4F4] rounded-full px-4 py-4 flex-row justify-between items-center"
+            className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] flex-row justify-between items-center"
           >
             <Text className="text-sm text-gray-900">
               {getSelectedUnitLabel()}
@@ -266,7 +285,7 @@ const FertilizerRequirementCalculatorScreen: React.FC<
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
           {t("SoilFertilizerCalculators.RecommendedNPKRatio")}
         </Text>
-        <View className="bg-[#F4F4F4] rounded-2xl px-4 py-4">
+        <View className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] justify-center">
           {selectedCrop ? (
             <View>
               <Text
@@ -274,18 +293,18 @@ const FertilizerRequirementCalculatorScreen: React.FC<
                 className="text-sm text-[#287097]"
               >
                 {t("SoilFertilizerCalculators.N")}: {selectedCrop.nitrogen}
-                {t("SoilFertilizerCalculators.kgPerHa")}
+                {t("SoilFertilizerCalculators.KgHa")}
               </Text>
               <Text
                 style={{ marginBottom: 4 }}
                 className="text-sm text-[#287097]"
               >
                 {t("SoilFertilizerCalculators.P")}: {selectedCrop.phosphorus}
-                {t("SoilFertilizerCalculators.kgPerHa")}
+                {t("SoilFertilizerCalculators.KgHa")}
               </Text>
               <Text className="text-sm text-[#287097]">
                 {t("SoilFertilizerCalculators.K")}: {selectedCrop.potassium}
-                {t("SoilFertilizerCalculators.kgPerHa")}
+                {t("SoilFertilizerCalculators.KgHa")}
               </Text>
             </View>
           ) : (
@@ -298,10 +317,10 @@ const FertilizerRequirementCalculatorScreen: React.FC<
         {/* Calculate Button */}
         <TouchableOpacity
           onPress={handleCalculate}
-          className="bg-[#2D2D2D] rounded-full py-4 items-center mt-10"
+          className="bg-[#2D2D2D] rounded-3xl h-[50px] items-center justify-center mt-10"
           activeOpacity={0.8}
         >
-          <Text className="text-white text-base font-bold">
+          <Text className="text-white text-lg font-bold">
             {t("Calculator.Calculate")}
           </Text>
         </TouchableOpacity>
@@ -315,7 +334,7 @@ const FertilizerRequirementCalculatorScreen: React.FC<
         data={crops}
         selectedItems={selectedCropValue ? [selectedCropValue] : []}
         onSelect={handleCropSelect}
-        searchPlaceholder={t("SoilFertilizerCalculators.SearchCrops")}
+        searchPlaceholder={t("SoilFertilizerCalculators.SearchCrops...")}
         noResultsText={t("SoilFertilizerCalculators.NoCropsFound")}
         multiSelect={false}
         searchKeys={["label"]}
@@ -332,7 +351,7 @@ const FertilizerRequirementCalculatorScreen: React.FC<
         }))}
         selectedItems={[areaUnit]}
         onSelect={handleUnitSelect}
-        searchPlaceholder={t("SoilFertilizerCalculators.SearchUnits")}
+        searchPlaceholder={t("SoilFertilizerCalculators.SearchUnits...")}
         noResultsText={t("SoilFertilizerCalculators.NoUnitsFound")}
         multiSelect={false}
         searchKeys={["label"]}

@@ -64,7 +64,7 @@ const WeatherClimateCalculatorsMenuScreen: React.FC<
   return (
     <View className="flex-1 bg-white">
       <CustomHeader
-        title={t("WeatherClimateCalculators.Title")}
+        title={t("WeatherClimateCalculators.Weather&ClimateCalculators")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
@@ -72,7 +72,7 @@ const WeatherClimateCalculatorsMenuScreen: React.FC<
       />
 
       <ScrollView
-        className="flex-1 px-4 pt-4"
+        className="flex-1 px-6 pt-4"
         contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >

@@ -54,7 +54,7 @@ const ShelfLifeCalculatorScreen: React.FC<ShelfLifeProps> = ({
     if (!idealStorageLife || !temperature || !humidity) {
       Alert.alert(
         t("PostHarvestStorageCalculators.InvalidInput"),
-        t("PostHarvestStorageCalculators.FillAllFields"),
+        t("Main.PleaseFillAllRequiredFields"),
       );
       return;
     }
@@ -66,21 +66,21 @@ const ShelfLifeCalculatorScreen: React.FC<ShelfLifeProps> = ({
     if (isNaN(idealNum) || idealNum <= 0) {
       Alert.alert(
         t("PostHarvestStorageCalculators.InvalidInput"),
-        t("PostHarvestStorageCalculators.IdealLifeError"),
+        t("PostHarvestStorageCalculators.IdealStorageLifeDaysMustBeGreaterThan0"),
       );
       return;
     }
     if (isNaN(tempNum)) {
       Alert.alert(
         t("PostHarvestStorageCalculators.InvalidInput"),
-        t("PostHarvestStorageCalculators.TemperatureError"),
+        t("PostHarvestStorageCalculators.PleaseEnterAValidTemperature"),
       );
       return;
     }
     if (isNaN(humidityNum) || humidityNum < 0 || humidityNum > 100) {
       Alert.alert(
         t("PostHarvestStorageCalculators.InvalidInput"),
-        t("PostHarvestStorageCalculators.HumidityError"),
+        t("PostHarvestStorageCalculators.HumidityMustBeBetween0And100"),
       );
       return;
     }
@@ -90,7 +90,7 @@ const ShelfLifeCalculatorScreen: React.FC<ShelfLifeProps> = ({
     if (averageFactor === 0) {
       Alert.alert(
         t("PostHarvestStorageCalculators.InvalidInput"),
-        t("PostHarvestStorageCalculators.AverageFactorError"),
+        t("PostHarvestStorageCalculators.TemperatureAndHumidityCannotBothBeZero"),
       );
       return;
     }
@@ -121,7 +121,7 @@ const ShelfLifeCalculatorScreen: React.FC<ShelfLifeProps> = ({
       />
 
       <ScrollView
-        className="flex-1 px-4"
+        className="flex-1 px-6"
         contentContainerStyle={{
           paddingBottom: 40,
         }}
@@ -130,58 +130,58 @@ const ShelfLifeCalculatorScreen: React.FC<ShelfLifeProps> = ({
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            {t("PostHarvestStorageCalculators.FillRequiredFields")}
+            {t("Main.PleaseFillAllRequiredFields")}
           </Text>
         )}
 
         {/* Ideal Storage Life Input */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("PostHarvestStorageCalculators.IdealStorageLife")} *
+          {t("PostHarvestStorageCalculators.IdealStorageLifeDays")} *
         </Text>
         <TextInput
           value={idealStorageLife}
           onChangeText={(text) =>
             handleNumberInput(text, setIdealStorageLife, 1)
           }
-          placeholder={t("PostHarvestStorageCalculators.TypeHere")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
-          className="bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900 mb-6"
+          className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"
         />
 
         {/* Temperature Input */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("PostHarvestStorageCalculators.Temperature")} *
+          {t("PostHarvestStorageCalculators.TemperatureC")} *
         </Text>
         <TextInput
           value={temperature}
           onChangeText={(text) => handleNumberInput(text, setTemperature, 1)}
-          placeholder={t("PostHarvestStorageCalculators.TypeHere")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
-          className="bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900 mb-6"
+          className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"
         />
 
         {/* Humidity Input */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("PostHarvestStorageCalculators.Humidity")} *
+          {t("PostHarvestStorageCalculators.Humidity%")} *
         </Text>
         <TextInput
           value={humidity}
           onChangeText={(text) => handleNumberInput(text, setHumidity, 2)}
-          placeholder={t("PostHarvestStorageCalculators.TypeHere")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
-          className="bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900 mb-6"
+          className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"
         />
 
         {/* Calculate Button */}
         <TouchableOpacity
           onPress={handleCalculate}
-          className="bg-[#2D2D2D] rounded-full py-4 items-center mt-4"
+          className="bg-[#2D2D2D] rounded-3xl h-[50px] items-center justify-center mt-4"
           activeOpacity={0.8}
         >
-          <Text className="text-white text-base font-bold">
+          <Text className="text-white text-lg font-bold">
             {t("PostHarvestStorageCalculators.Calculate")}
           </Text>
         </TouchableOpacity>

@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import NewsSlideShow from "@/Items/NewsSlideShow";
 import MarketPriceSlideShow from "@/Items/MarketPriceSlideShow";
 import { RootStackParamList } from "../types/types";
@@ -132,14 +132,14 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   }, [navigation]);
 
   const fetchProfileData = async () => {
-    const selectedLanguage = t("Dashboard.LNG");
+    const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
     const netState = await NetInfo.fetch();
     if (!netState.isConnected) {
       Alert.alert(
-        t("Main.No Internet Connection"),
-        t("Main.Please turn on mobile data or Wi-Fi to continue."),
-        [{ text: t("PublicForum.OK") }],
+        t("Main.NoInternetConnection"),
+        t("Main.PleaseTurnOnMobileDataOrWiFiToContinue"),
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -157,8 +157,8 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       const data = await response.json();
 
       if (!data.user || !data.user.firstName) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
         navigation.navigate("Signin");
         return;
@@ -171,8 +171,8 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         setLoading(false);
       }, 100);
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
       navigation.navigate("Signin");
     }
@@ -227,7 +227,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   const actionItems = [
     {
       image: require("../../assets/images/dashboard/assets.webp"),
-      label: t("Dashboard.myassets"),
+      label: t("Dashboard.MyAssets"),
       action: () => {
         navigation.navigate("CurrentAssert");
         dispatch(setAssetData({ farmName: "My Assets", farmId: null }));
@@ -236,7 +236,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
     },
     {
       image: require("../../assets/images/dashboard/weather.webp"),
-      label: t("Dashboard.weather"),
+      label: t("Dashboard.Weather"),
       action: handleWeatherNavigation,
       bgColor: "#FFFFFF",
     },
@@ -246,7 +246,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       action: () => navigation.navigate("TransactionHistory" as any),
       bgColor: "#FFFFFF",
     },
-      {
+    {
       image: require("../../assets/images/dashboard/govi-shop.webp"),
       label: t("Dashboard.GoviShop"),
       action: () => navigation.navigate("GoviShopLoadingScreen" as any),
@@ -254,7 +254,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
     },
     {
       image: require("../../assets/images/farm-cal/menu/farmcal.webp"),
-      label: t("TransactionList.Farm Cal"),
+      label: t("TransactionList.FarmCal"),
       action: () => navigation.navigate("FarmCalMenu" as any),
       bgColor: "#FFFFFF",
     },
@@ -274,6 +274,12 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       image: require("../../assets/images/govi-pension/govi-pension.webp"),
       label: t("TransactionList.GoViPension"),
       action: handlePensionNavigation,
+      bgColor: "#FFFFFF",
+    },
+    {
+      image: require("../../assets/images/dashboard/soil-data.webp"),
+      label: t("Dashboard.SoilData"),
+      action: () => navigation.navigate("SoilGridsScreen" as any),
       bgColor: "#FFFFFF",
     },
   ];
@@ -328,13 +334,13 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         </TouchableOpacity>
         <View style={{ marginTop: 15, marginLeft: 15, flex: 1 }}>
           <Text style={{ fontSize: 15, fontWeight: "bold", flexWrap: "wrap" }}>
-            {t("Dashboard.hi")},{" "}
+            {t("Dashboard.Hello")},{" "}
             {user ? (
               <Text numberOfLines={1} ellipsizeMode="tail">
                 {user.firstName} ✋🏻
               </Text>
             ) : (
-              t("Dashboard.loading")
+              t("Main.Loading...")
             )}
           </Text>
         </View>
@@ -342,7 +348,8 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
           onPress={() => {
             navigation.navigate("PublicForum" as any);
           }}
-          className="ml-auto mr-4 mt-4 justify-center items-center bg-[#F6F7F7] rounded-full w-12 h-12 shadow-sm"
+          className="ml-auto mr-4 mt-4 justify-center items-center bg-[#F6F7F7] rounded-full w-12 h-12"
+          style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 }}
         >
           <MaterialCommunityIcons
             name="message-processing"
@@ -367,7 +374,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
               marginBottom: 5,
             }}
           >
-            {t("Dashboard.marketplace")}
+            {t("Dashboard.MarketPrice")}
           </Text>
           <View
             style={{
@@ -398,7 +405,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
               marginBottom: 5,
             }}
           >
-            {t("Dashboard.news")}
+            {t("Dashboard.News")}
           </Text>
           <View
             style={{
@@ -421,7 +428,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         </View>
 
         {/* Cards Grid Section */}
-        <View className="px-4 pt-4 pb-28">
+        <View className="px-6 pt-4 pb-28">
           {actionRows.map((row, rowIndex) => (
             <View key={rowIndex} className="flex-row justify-between mb-4 ">
               {row.map((action, index) => (

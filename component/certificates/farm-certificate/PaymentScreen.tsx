@@ -40,6 +40,8 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
     certificateValidity,
     certificateId,
     farmId,
+    processFee,
+    fullTotal,
   } = route.params;
 
   const { t } = useTranslation();
@@ -157,8 +159,8 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
   const saveCertificatePayment = async (numericPrice: string) => {
     try {
       if (!certificateId) {
-        Alert.alert(t("Main.error"), "Certificate ID is missing", [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), "Certificate ID is missing", [
+          { text: t("Main.OK") },
         ]);
         return false;
       }
@@ -167,9 +169,9 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
 
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
-          t("Farms.No authentication token found"),
-          [{ text: t("PublicForum.OK") }],
+          t("Main.Error"),
+          t("Farms.NoAuthenticationTokenFound"),
+          [{ text: t("Main.OK") }],
         );
         return false;
       }
@@ -180,6 +182,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
         certificateId: certificateId,
         amount: numericPrice,
         validityMonths: validityMonths,
+        processFee: processFee ?? 0,
       };
 
       const response = await axios.post(
@@ -204,13 +207,13 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
       if (error.response) {
         console.error("Error response:", error.response.data);
         Alert.alert(
-          t("Main.error"),
-          error.response.data.message || t("Main.somethingWentWrong"),
-          [{ text: t("PublicForum.OK") }],
+          t("Main.Error"),
+          error.response.data.message || t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
         );
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
 
@@ -221,18 +224,18 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
   const handlePayNow = async () => {
     if (!cardNumber || !cardHolderName || !cardExpiryDate || !cvv) {
       Alert.alert(
-        t("Main.error"),
-        t("EarnCertificate.Please fill all payment details"),
-        [{ text: t("PublicForum.OK") }],
+        t("Main.Error"),
+        t("EarnCertificate.PleaseFillAllPaymentDetails"),
+        [{ text: t("Main.OK") }],
       );
       return;
     }
 
     if (!isCardExpiryValid()) {
       Alert.alert(
-        t("Main.error"),
-        t("EarnCertificate.Please enter a valid card expiry date (MM/YY)"),
-        [{ text: t("PublicForum.OK") }],
+        t("Main.Error"),
+        t("EarnCertificate.PleaseEnterAValidCardExpiryDate"),
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -275,7 +278,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
     setCardType(type);
   };
 
-  const formattedPrice = formatCurrency(certificatePrice);
+  const formattedPrice = formatCurrency(fullTotal ?? certificatePrice);
 
   return (
     <KeyboardAvoidingView
@@ -283,26 +286,25 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
       enabled
       style={{ flex: 1 }}
     >
+      <CustomHeader
+        title={t("Farms.CreditDebitCard")}
+        navigation={navigation}
+        onBackPress={() => navigation.goBack()}
+      />
       <ScrollView
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ flexGrow: 1 }}
-        className="bg-white"
+        className="bg-white px-6"
       >
-        <CustomHeader
-          title={t("Farms.Credit Debit Card")}
-          navigation={navigation}
-          onBackPress={() => navigation.goBack()}
-        />
-
         {/* Total Amount */}
-        <View className="flex-row mb-6 justify-between items-center mt-2 px-8">
+        <View className="flex-row mb-6 justify-between items-center mt-2">
           <Text className="text-lg">{t("Farms.Total")}</Text>
           <Text className="text-lg font-bold">{formattedPrice}</Text>
         </View>
 
         <View className="border-b border-[#F3F4F6] my-2 mb-4" />
 
-        <View className="px-4">
+        <View className="">
           {/* Card Type Selection */}
           <View className="flex-row justify-center mb-6">
             <View className="flex-row items-center p-2 gap-3">
@@ -346,8 +348,10 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
 
           {/* Card Number Input */}
           <TextInput
-            className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
-            placeholder={t("Payment.Enter Card Number") ?? "Enter Card Number"}
+            className="h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl p-3 mb-8 text-base"
+            placeholder={t("Payment.EnterCardNumber") ?? "Enter Card Number"}
+            style={{ color: '#000000' }} 
+            placeholderTextColor="#000000"
             keyboardType="numeric"
             maxLength={19}
             value={cardNumber}
@@ -356,17 +360,21 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
 
           {/* Card Holder Name Input */}
           <TextInput
-            className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
-            placeholder={t("Payment.Enter Name on Card")}
+            className="h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl p-3 mb-8 text-base"
+            placeholder={t("Payment.EnterNameOnCard")}
+            style={{ color: '#000000' }} 
+            placeholderTextColor="#000000"
             value={cardHolderName}
             onChangeText={handleCardHolderNameChange}
           />
 
           {/* Card Expiry Date Input */}
-          <View className="flex-row items-center h-12 border border-gray-300 bg-[#F6F6F6] rounded-full px-3 mb-8">
+          <View className="flex-row items-center h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl px-3 mb-8">
             <TextInput
               className="flex-1 h-full text-base"
-              placeholder={t("Payment.Enter Expiration Date (MM/YY)")}
+              placeholder={t("Payment.EnterExpirationDate")}
+              style={{ color: '#000000' }} 
+              placeholderTextColor="#000000"
               keyboardType="numeric"
               maxLength={5}
               value={cardExpiryDate}
@@ -377,8 +385,10 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
 
           {/* CVV Input */}
           <TextInput
-            className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-5 text-base"
-            placeholder={t("Payment.Enter CVV")}
+            className="h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-3xl p-3 mb-5 text-base"
+            placeholder={t("Payment.EnterCVV")}
+            style={{ color: '#000000' }} 
+            placeholderTextColor="#000000"
             keyboardType="numeric"
             maxLength={3}
             value={cvv}
@@ -388,7 +398,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
 
           {/* Pay Now Button */}
           <TouchableOpacity
-            className="bg-black py-3 rounded-full mt-5 mb-24"
+            className="bg-black py-3 rounded-3xl h-[50px] mt-5 mb-24"
             onPress={handlePayNow}
             disabled={isProcessing}
             style={{
@@ -400,7 +410,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
             }}
           >
             <Text className="text-white text-lg font-semibold text-center">
-              {isProcessing ? t("Farms.Processing") : t("Farms.Pay Now")}
+              {isProcessing ? t("Farms.Processing...") : t("Farms.PayNow")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -430,10 +440,10 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
 
             {/* Success Text */}
             <Text className="text-2xl font-bold text-gray-800 mb-2">
-              {t("Farms.Success")}
+              {t("Main.Success")}
             </Text>
             <Text className="text-center text-gray-600 mb-2">
-              {t("Farms.Payment Success Message")}
+              {t("Farms.YouHaveSuccessfullyAppliedForYourCertificate")}
             </Text>
 
             {/* Continue Button */}
@@ -442,7 +452,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation, route }) => {
               onPress={handleModalClose}
             >
               <Text className="text-white text-base font-semibold">
-                {t("Farms.Continue")}
+                {t("Main.Continue")}
               </Text>
             </TouchableOpacity>
           </View>

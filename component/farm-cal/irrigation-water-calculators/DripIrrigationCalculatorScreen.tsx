@@ -70,21 +70,21 @@ const DripIrrigationCalculatorScreen: React.FC<DripIrrigationProps> = ({
     if (isNaN(NP) || NP <= 0) {
       Alert.alert(
         t("IrrigationWaterCalculators.InvalidInput"),
-        t("IrrigationWaterCalculators.NumberGreaterThanZero"),
+        t("IrrigationWaterCalculators.NumberOfPlantsGreaterThan0"),
       );
       return;
     }
     if (isNaN(FR) || FR <= 0) {
       Alert.alert(
         t("IrrigationWaterCalculators.InvalidInput"),
-        t("IrrigationWaterCalculators.FlowRateGreaterThanZero"),
+        t("IrrigationWaterCalculators.FlowRateMustBeGreaterThan0"),
       );
       return;
     }
     if (isNaN(T) || T <= 0) {
       Alert.alert(
         t("IrrigationWaterCalculators.InvalidInput"),
-        t("IrrigationWaterCalculators.TimeGreaterThanZero"),
+        t("IrrigationWaterCalculators.IrrigationTimeMustBeGreaterThan0"),
       );
       return;
     }
@@ -119,7 +119,7 @@ const DripIrrigationCalculatorScreen: React.FC<DripIrrigationProps> = ({
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            {t("IrrigationWaterCalculators.RequiredFields")}
+            {t("Main.PleaseFillAllRequiredFields")}
           </Text>
         )}
 
@@ -130,45 +130,45 @@ const DripIrrigationCalculatorScreen: React.FC<DripIrrigationProps> = ({
         <TextInput
           value={numberOfPlants}
           onChangeText={handleNumberOfPlantsChange}
-          placeholder={t("IrrigationWaterCalculators.TypeHere")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="numeric"
-          className="bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900"
+          className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900"
         />
 
         {/* Flow Rate Per Dripper */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          {t("IrrigationWaterCalculators.FlowRate")} *
+          {t("IrrigationWaterCalculators.FlowRatePerDripperLHr")} *
         </Text>
         <TextInput
           value={flowRate}
           onChangeText={handleFlowRateChange}
-          placeholder={t("IrrigationWaterCalculators.TypeHere")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
-          className="bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900"
+          className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900"
         />
 
         {/* Irrigation Time */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          {t("IrrigationWaterCalculators.IrrigationTimeHours")} *
+          {t("IrrigationWaterCalculators.IrrigationTimeInHours")} *
         </Text>
         <TextInput
           value={irrigationTime}
           onChangeText={handleIrrigationTimeChange}
-          placeholder={t("IrrigationWaterCalculators.TypeHere")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
-          className="bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900"
+          className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900"
         />
 
         {/* Calculate Button */}
         <TouchableOpacity
           onPress={handleCalculate}
-          className="bg-[#2D2D2D] rounded-full py-4 items-center mt-10"
+          className="bg-[#2D2D2D] rounded-3xl h-[50px] items-center justify-center mt-10"
           activeOpacity={0.8}
         >
-          <Text className="text-white text-base font-bold">
+          <Text className="text-white text-lg font-bold">
             {t("IrrigationWaterCalculators.Calculate")}
           </Text>
         </TouchableOpacity>

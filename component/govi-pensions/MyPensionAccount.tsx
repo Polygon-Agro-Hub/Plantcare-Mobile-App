@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { Video, ResizeMode } from "expo-av";
+import { useVideoPlayer, VideoView } from "expo-video";
 import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../common/CustomHeader";
 import { RootStackParamList } from "../types/types";
@@ -40,6 +40,13 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
   const { t } = useTranslation();
   const screenHeight = Dimensions.get("window").height;
   const whiteSectionHeight = screenHeight * 0.7;
+
+  const videoSource = require("../../assets/images/govi-pension/pension-background.mov");
+  const player = useVideoPlayer(videoSource, player => {
+    player.loop = true;
+    player.muted = true;
+    player.play();
+  });
 
   const [pensionData, setPensionData] = useState<PensionData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -324,13 +331,10 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
 
   return (
     <View className="flex-1 bg-black">
-      <Video
-        source={require("../../assets/images/govi-pension/pension-background.mov")}
+      <VideoView
+        player={player}
         className="absolute top-0 left-0 bottom-0 right-0 w-full h-full"
-        shouldPlay
-        isLooping
-        isMuted
-        resizeMode={ResizeMode.COVER}
+        contentFit="cover"
       />
 
       <CustomHeader
@@ -352,13 +356,13 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
         }
       >
         {eligible ? (
-          <View className="flex-1 items-center justify-center px-5 mt-[-15%] min-h-screen">
+          <View className="flex-1 items-center justify-center px-6 mt-[-15%] min-h-screen">
             <PensionAmount />
             <Text className="text-black text-lg my-6">Total Pension Value</Text>
           </View>
         ) : (
           <View className="flex-1 justify-end min-h-screen mt-[-10%]">
-            <View className="flex-1 items-center justify-center px-5">
+            <View className="flex-1 items-center justify-center px-6">
               <PensionAmount />
               <Text className="text-black text-lg my-6">
                 Total Pension Value
@@ -375,7 +379,7 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
 
               <View className="w-48 h-48 mb-6 items-center justify-center">
                 <LottieView
-                  source={require("../../assets/jsons/StayTuned.json")}
+                  source={require("@/assets/jsons/govi-capital/stay-tuned.json")}
                   style={{ width: 200, height: 200 }}
                   autoPlay
                   loop

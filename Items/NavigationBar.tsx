@@ -87,20 +87,6 @@ const NavigationBar = ({
     }
   }, [user]);
 
-  useEffect(() => {
-    const loadActiveTab = async () => {
-      const storedTab = await AsyncStorage.getItem("activeTab");
-      const currentRoute =
-        navigation.getState().routes[navigation.getState().index].name;
-
-      if (!storedTab || storedTab !== currentRoute) {
-        await AsyncStorage.setItem("activeTab", currentRoute);
-      } else {
-        console.error("Navigation Tab Error");
-      }
-    };
-    loadActiveTab();
-  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -176,7 +162,7 @@ const NavigationBar = ({
               onPress={() => handleTabPress(tab.name, index)}
               className={`${
                 isFocused
-                  ? "bg-green-500 p-4 rounded-full -mt-6 border-4 border-[#1A1920] shadow-md"
+                  ? "bg-green-500 p-4 rounded-full -mt-6 border-4 border-[#1A1920]"
                   : "items-center justify-center"
               }`}
               style={{

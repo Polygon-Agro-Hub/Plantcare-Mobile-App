@@ -33,10 +33,7 @@ import {
 } from "../../../store/farmSlice";
 import type { RootState, AppDispatch } from "../../../services/reducxStore";
 import { clearFarmSecondDetails } from "../../../store/farmSlice";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
+import CustomHeader from "../../common/CustomHeader";
 import { useTranslation } from "react-i18next";
 interface RouteParams {
   membership?: string;
@@ -113,7 +110,7 @@ const AddNewFarmSecondDetails = () => {
 
     if (credentialsCount > staffCount) {
       return t(
-        "Farms.Login credentials cannot exceed the total number of staff",
+        "Farms.LoginCredentialsCannotExceedTheTotalNumberOfStaff",
       );
     }
 
@@ -166,9 +163,9 @@ const AddNewFarmSecondDetails = () => {
 
   React.useEffect(() => {
     if (submitSuccess) {
-      Alert.alert(t("Farms.Success"), t("Farms.Farm saved successfully!"), [
+      Alert.alert(t("Main.Success"), t("Farms.FarmSavedSuccessfully"), [
         {
-          text: t("PublicForum.OK"),
+          text: t("Main.OK"),
           onPress: () => {
             dispatch(clearSubmitState());
             navigation.navigate("EarnCertificate", {
@@ -183,7 +180,7 @@ const AddNewFarmSecondDetails = () => {
     if (submitError) {
       Alert.alert("Error", submitError, [
         {
-          text: t("Farms.okButton"),
+          text: t("Main.OK"),
           onPress: () => dispatch(clearSubmitState()),
         },
       ]);
@@ -195,9 +192,9 @@ const AddNewFarmSecondDetails = () => {
 
     if (!farmBasicDetails) {
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t("Farms.Missing farm details. Please go back and complete all steps."),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -219,17 +216,17 @@ const AddNewFarmSecondDetails = () => {
   const handleAddStaff = () => {
     if (!numberOfStaff) {
       Alert.alert(
-        t("Farms.Sorry"),
-        t("Farms.Please enter the number of staff"),
-        [{ text: t("Farms.okButton") }],
+        t("Main.Sorry"),
+        t("Farms.PleaseEnterTheNNumberOfStaff"),
+        [{ text: t("Main.OK") }],
       );
       return;
     }
     if (!loginCredentialsNeeded) {
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t("Farms.Please enter the number of login credentials needed"),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -239,18 +236,18 @@ const AddNewFarmSecondDetails = () => {
 
     if (credentialsCount > staffCount) {
       Alert.alert(
-        t("Farms.Sorry"),
-        t("Farms.Login credentials cannot exceed the total number of staff"),
-        [{ text: t("Farms.okButton") }],
+        t("Main.Sorry"),
+        t("Farms.LoginCredentialsCannotExceedTheTotalNumberOfStaff"),
+        [{ text: t("Main.OK") }],
       );
       return;
     }
 
     if (staffCount < 0 || credentialsCount < 0) {
       Alert.alert(
-        t("Farms.Sorry"),
+        t("Main.Sorry"),
         t("Farms.Staff numbers cannot be negative"),
-        [{ text: t("Farms.okButton") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -264,17 +261,17 @@ const AddNewFarmSecondDetails = () => {
 
     if (staffCount === 0 && credentialsCount === 0) {
       Alert.alert(
-        t("Farms.No Staff Login Required"),
+        t("Farms.NoOfStaffLoginRequired"),
         t(
           "Farms.You have indicated that no staff members need login credentials. The farm will be saved directly.",
         ),
         [
           {
-            text: t("Farms.Cancel"),
+            text: t("Main.Cancel"),
             style: "cancel",
           },
           {
-            text: t("Farms.Save Farm"),
+            text: t("Farms.SaveFarm"),
             onPress: saveFarmDirectly,
           },
         ],
@@ -284,17 +281,17 @@ const AddNewFarmSecondDetails = () => {
 
     if (credentialsCount === 0) {
       Alert.alert(
-        t("Farms.No Login Credentials Required"),
+        t("Farms.NoLoginCredentialsRequired"),
         t(
           "Farms.You have indicated that no staff members need login credentials. The farm will be saved directly.",
         ),
         [
           {
-            text: t("Farms.Cancel"),
+            text: t("Main.Cancel"),
             style: "cancel",
           },
           {
-            text: t("Farms.Save Farm"),
+            text: t("Farms.SaveFarm"),
             onPress: saveFarmDirectly,
           },
         ],
@@ -384,80 +381,66 @@ const AddNewFarmSecondDetails = () => {
       behavior={Platform.OS === "ios" ? "padding" : "padding"}
     >
       <View className="flex-1 bg-white">
+        <CustomHeader
+          title={t("Farms.AddNewFarm")}
+          navigation={navigation as any}
+          showBackButton={false}
+          onBackPress={() => navigation.goBack()}
+          titleSize={i18n.language === "si" ? 14 : 20}
+          rightComponent={
+            <View className={`${membershipDisplay.bgColor} px-2 py-1 rounded-lg`}>
+              <Text className={`${membershipDisplay.textColor} text-xs font-medium`}>
+                {t(`Farms.${membershipDisplay.text}`)}
+              </Text>
+            </View>
+          }
+        />
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
-          className="px-4"
+          className="px-6"
           keyboardShouldPersistTaps="handled"
         >
-          <View
-            className=""
-            style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
-          >
-            <View className="flex-row items-center justify-center mb-6 relative">
-              <Text
-                className="font-semibold text-lg "
-                style={[
-                  i18n.language === "si"
-                    ? { fontSize: 16 }
-                    : i18n.language === "ta"
-                      ? { fontSize: 13 }
-                      : { fontSize: 18 },
-                ]}
-              >
-                {t("Farms.Add New Farm")}
-              </Text>
-              <View
-                className={`absolute right-[-5%] ${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}
-              >
-                <Text
-                  className={`${membershipDisplay.textColor} text-xs font-medium`}
-                >
-                  {t(`Farms.${membershipDisplay.text}`)}
-                </Text>
-              </View>
-            </View>
-
-            <View className="flex-row items-center justify-center mb-8">
-              <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-[#2AAD7A] rounded-full flex items-center justify-center">
-                <Image
-                  className="w-[10px] h-[13px]"
-                  source={require("../../../assets/images/farms/location-white.webp")}
-                />
-              </View>
-              <View className="w-24 h-0.5 bg-[#2AAD7A] mx-2" />
-              <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-[#2AAD7A] rounded-full flex items-center justify-center">
-                <Image
-                  className="w-[11px] h-[12px]"
-                  source={require("../../../assets/images/farms/userwhite.webp")}
-                />
-              </View>
-              <View className="w-24 h-0.5 bg-[#C6C6C6] mx-2" />
-              <View className="w-[29px] h-[29px] border border-[#C6C6C6] rounded-full flex items-center justify-center">
-                <Image
-                  className="w-[13.125px] h-[15px]"
-                  source={require("../../../assets/images/farms/checks.webp")}
-                />
-              </View>
-            </View>
-
-            <View className="flex-1 items-center justify-center mt-2">
+          <View className="flex-row items-center justify-center mb-8 mt-6">
+            <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-[#2AAD7A] rounded-full flex items-center justify-center">
               <Image
-                className="w-[259px] h-[161px]"
-                source={require("../../../assets/images/farms/groupFarmers.webp")}
+                className="w-[10px] h-[13px]"
+                source={require("../../../assets/images/farms/location-white.webp")}
               />
+            </View>
+            <View className="w-24 h-0.5 bg-[#2AAD7A] mx-2" />
+            <View className="w-[29px] h-[29px] border border-[#2AAD7A] bg-[#2AAD7A] rounded-full flex items-center justify-center">
+              <Image
+                className="w-[11px] h-[12px]"
+                source={require("../../../assets/images/farms/userwhite.webp")}
+              />
+            </View>
+            <View className="w-24 h-0.5 bg-[#C6C6C6] mx-2" />
+            <View className="w-[29px] h-[29px] border border-[#C6C6C6] rounded-full flex items-center justify-center">
+              <Image
+                className="w-[13.125px] h-[15px]"
+                source={require("../../../assets/images/farms/checks.webp")}
+              />
+            </View>
+          </View>
+
+          <View className="flex-1 items-center justify-center mt-2">
+            <Image
+              className="w-[259px] h-[161px]"
+              source={require("../../../assets/images/farms/groupFarmers.webp")}
+            />
               <View className="mt-5 w-full">
                 <View className="flex-1 items-center justify-center mt-2">
                   <Text className="font-semibold text-base">
-                    {t("Farms.Number of Staff")}
+                    {t("Farms.NumberOfStaff")}
                   </Text>
                 </View>
                 <TextInput
                   value={numberOfStaff}
                   onChangeText={handleNumberOfStaffChange}
-                  placeholder={t("Farms.Total number of staff working")}
+                  placeholder={t("Farms.TotalNumberOfStaffWorking")}
                   placeholderTextColor="#585858"
-                  className="bg-[#F4F4F4] p-3 rounded-full text-gray-800 mt-2"
+                  className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800 mt-2"
                   keyboardType="number-pad"
                   style={{
                     textAlign: "center",
@@ -471,22 +454,18 @@ const AddNewFarmSecondDetails = () => {
                   selectTextOnFocus={false}
                 />
 
-                <View className="flex-1 items-center justify-center mt-2">
-                  <Text className="font-semibold text-base mt-2">
-                    {t("Farms.How many staff will be")}
+                <View className="flex-1 items-center justify-center mt-2 ">
+                  <Text className="font-semibold text-center text-base mt-2">
+                    {t("Farms.HowManyStaffWillBe")}
                   </Text>
-                  <View className="flex-1 items-center justify-center">
-                    <Text className="font-semibold text-base">
-                      {t("Farms.using the app")}
-                    </Text>
-                  </View>
+                  
                 </View>
                 <TextInput
                   value={loginCredentialsNeeded}
                   onChangeText={handleLoginCredentialsChange}
-                  placeholder={t("Farms.Number of login credentials needed")}
+                  placeholder={t("Main.TypeHere")}
                   placeholderTextColor="#585858"
-                  className="bg-[#F4F4F4] p-3 rounded-full text-gray-800 mt-2"
+                  className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800 mt-2"
                   keyboardType="number-pad"
                   style={{
                     textAlign: "center",
@@ -509,64 +488,60 @@ const AddNewFarmSecondDetails = () => {
                 )}
               </View>
             </View>
-          </View>
 
-          <View className="mt-5 mb-2">
-            <TouchableOpacity
-              className="bg-[#F3F3F5] py-3 mx-6 rounded-full"
-              onPress={handleGoBack}
-              disabled={isSubmitting}
-            >
-              <Text
-                className="text-[#84868B] text-center font-semibold text-lg"
-                style={[
-                  i18n.language === "si"
-                    ? { fontSize: 16 }
-                    : i18n.language === "ta"
-                      ? { fontSize: 13 }
-                      : { fontSize: 15 },
-                ]}
+            <View className="w-full mt-6 px-6">
+              <TouchableOpacity
+                className="w-full bg-[#F3F3F5] h-[50px] rounded-3xl justify-center items-center"
+                onPress={handleGoBack}
+                disabled={isSubmitting}
               >
-                {t("Farms.Go Back")}
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View className="mt-2 mb-[40%]">
-            <TouchableOpacity
-              className={`py-3 mx-6 rounded-full ${isButtonDisabled ? "bg-gray-400" : "bg-black"}`}
-              onPress={handleAddStaff}
-              disabled={isButtonDisabled}
-              style={{
-                shadowColor: "#000000",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.25,
-                shadowRadius: 4,
-                elevation: 4,
-              }}
-            >
-              <View className="flex-row items-center justify-center">
-                {isSubmitting && (
-                  <ActivityIndicator
-                    size="small"
-                    color="white"
-                    style={{ marginRight: 8 }}
-                  />
-                )}
                 <Text
-                  className="text-white text-center font-semibold text-lg"
+                  className="text-[#84868B] text-center font-semibold text-lg"
                   style={[
                     i18n.language === "si"
-                      ? { fontSize: 15 }
+                      ? { fontSize: 16 }
                       : i18n.language === "ta"
                         ? { fontSize: 13 }
-                        : { fontSize: 15 },
+                        : { fontSize: 16 },
                   ]}
                 >
-                  {isSubmitting ? t("Farms.Saving...") : t("Farms.Add Staff")}
+                  {t("Main.GoBack")}
                 </Text>
-              </View>
-            </TouchableOpacity>
-          </View>
+              </TouchableOpacity>
+            </View>
+
+            <View className="w-full mt-3 mb-[20%] px-6">
+              <TouchableOpacity
+                activeOpacity={0.8}
+                className={`w-full h-[50px] rounded-3xl justify-center items-center shadow-lg elevation-6 ${
+                  isButtonDisabled ? "bg-[#9CA3AF]" : "bg-[#353535]"
+                }`}
+                onPress={handleAddStaff}
+                disabled={isButtonDisabled}
+              >
+                <View className="flex-row items-center justify-center">
+                  {isSubmitting && (
+                    <ActivityIndicator
+                      size="small"
+                      color="white"
+                      style={{ marginRight: 8 }}
+                    />
+                  )}
+                  <Text
+                    className="text-white text-center font-semibold text-lg"
+                    style={[
+                      i18n.language === "si"
+                        ? { fontSize: 15 }
+                        : i18n.language === "ta"
+                          ? { fontSize: 13 }
+                          : { fontSize: 16 },
+                    ]}
+                  >
+                    {isSubmitting ? t("Farms.Saving...") : t("Farms.AddStaff")}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
         </ScrollView>
       </View>
     </KeyboardAvoidingView>

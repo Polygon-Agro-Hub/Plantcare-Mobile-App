@@ -9,6 +9,7 @@ import {
   Platform,
 } from "react-native";
 import axios from "axios";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { environment } from "@/environment/environment";
@@ -21,6 +22,7 @@ import i18next from "i18next";
 import CustomHeader from "../common/CustomHeader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LottieView from "lottie-react-native";
+import LoadingPage from "../common/LoadingPage";
 
 const api = axios.create({
   baseURL: environment.API_BASE_URL,
@@ -185,9 +187,9 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
     } catch (error) {
       console.error("Error in fetchDetails:", error);
       Alert.alert(
-        t("TransactionList.Sorry"),
-        t("TransactionList.Failed to load details"),
-        [{ text: t("PublicForum.OK") }],
+        t("Main.Sorry"),
+        t("TransactionList.PDFWasNotGenerated"),
+        [{ text: t("Main.OK") }],
       );
       setCrops([]);
     } finally {
@@ -237,7 +239,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
       Alert.alert(
         t("Error.error"),
         t("Error.Details are missing for generating PDF"),
-        [{ text: t("PublicForum.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return "";
     }
@@ -285,12 +287,12 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         </style>
       </head>
       <body>
-        <h1>${t("TransactionList.Goods Received Note")}</h1>
+        <h1>${t("TransactionList.GoodsReceivedNote")}</h1>
         <div class="header-line"></div>
 
         <div class="header-row">
           <div class="header-item">
-            <strong>${t("TransactionList.GRN No")} :</strong>
+            <strong>${t("TransactionList.GRNNo")} :</strong>
             ${crops.length > 0 ? crops[0].invoiceNumber : "N/A"}
           </div>
           <div class="header-item">
@@ -301,7 +303,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
 
         <div class="supplier-section">
           <div>
-            <div class="section-title">${t("TransactionList.Supplier Details")} :</div>
+            <div class="section-title">${t("TransactionList.SupplierDetails")} :</div>
             <div>${t("TransactionList.Name")} : ${details.firstName} ${details.lastName}</div>
           </div>
           <div>
@@ -312,8 +314,8 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
 
         <div class="received-by-section">
           <div>
-            <div class="section-title">${t("TransactionList.Received By")} :</div>
-            <div>${t("TransactionList.Company Name")} : ${details.companyNameEnglish || ""}</div>
+            <div class="section-title">${t("TransactionList.ReceivedBy")} :</div>
+            <div>${t("TransactionList.CompanyName")} : ${details.companyNameEnglish || ""}</div>
           </div>
           <div>
             <div>&nbsp;</div>
@@ -321,16 +323,16 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
           </div>
         </div>
 
-        <div class="table-title">${t("TransactionList.Received Items")}</div>
+        <div class="table-title">${t("TransactionList.ReceivedItems")}</div>
         <table>
           <thead>
             <tr>
-              <th>${t("TransactionList.Crop Name")}</th>
+              <th>${t("TransactionList.CropName")}</th>
               <th>${t("TransactionList.Variety")}</th>
               <th>${t("TransactionList.Grade")}</th>
-              <th>${t("TransactionList.Unit Price(Rs.)")}</th>
-              <th>${t("TransactionList.Quantity(kg)")}</th>
-              <th>${t("TransactionList.Sub Total(Rs.)")}</th>
+              <th>${t("TransactionList.UnitPriceRs")}</th>
+              <th>${t("TransactionList.Quantitykg")}</th>
+              <th>${t("TransactionList.SubTotalRs")}</th>
             </tr>
           </thead>
           <tbody>
@@ -364,14 +366,14 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
 
         <div class="total-row">
           <div class="total-box">
-            <div class="total-label">${t("TransactionList.Full Total (Rs.)")} </div>
+            <div class="total-label">${t("TransactionList.FullTotalRs")} </div>
             <div class="total-value">: Rs. ${formatNumberWithCommas(total)}</div>
           </div>
         </div>
 
         <div class="note">
           <strong>${t("TransactionList.Note")}:</strong>
-          ${t("TransactionList.This Goods Receipt Note")}
+          ${t("TransactionList.ThisGoodsReceiptNoteServesAsAProvisionalAcknowledgmentBasedOnInitialMeasurementsTakenByFrontLineStaffFinalVerificationWillBeConductedAtTheCollectionCentreTheMeasurementRecordedAtTheCollectionCentreShallBeDeemedConclusiveAndBindingInAllCasesOfDiscrepancyTheOrganizationReservesTheRightToRectifyAnyRevenueImpactsArisingFromMeasurementVarianceAndShallNotBeLiableForLossesDueToInitialMiscalculations")}
         </div>
       </body>
     </html>`;
@@ -382,9 +384,9 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
     } catch (error) {
       console.error("Error generating PDF:", error);
       Alert.alert(
-        t("TransactionList.Sorry"),
-        t("TransactionList.PDF was not generated."),
-        [{ text: t("PublicForum.OK") }],
+        t("Main.Sorry"),
+        t("TransactionList.PDFWasNotGenerated"),
+        [{ text: t("Main.OK") }],
       );
       return "";
     }
@@ -395,9 +397,9 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
       const uri = await generatePDF();
       if (!uri) {
         Alert.alert(
-          t("TransactionList.Sorry"),
-          t("TransactionList.PDF was not generated."),
-          [{ text: t("PublicForum.OK") }],
+          t("Main.Sorry"),
+          t("TransactionList.PDFWasNotGenerated"),
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -417,9 +419,9 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
           });
         } else {
           Alert.alert(
-            t("TransactionList.Sorry"),
-            t("TransactionList.Sharing is not available on this device"),
-            [{ text: t("PublicForum.OK") }],
+            t("Main.Sorry"),
+            t("TransactionList.SharingIsNotAvailableOnThisDevice"),
+            [{ text: t("Main.OK") }],
           );
         }
       } else if (Platform.OS === "ios") {
@@ -434,22 +436,22 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
             t(
               'TransactionList.Use the "Save to Files" option to save to Downloads',
             ),
-            [{ text: t("PublicForum.OK") }],
+            [{ text: t("Main.OK") }],
           );
         } else {
           Alert.alert(
-            t("TransactionList.Sorry"),
-            t("TransactionList.Sharing is not available on this device"),
-            [{ text: t("PublicForum.OK") }],
+            t("Main.Sorry"),
+            t("TransactionList.SharingIsNotAvailableOnThisDevice"),
+            [{ text: t("Main.OK") }],
           );
         }
       }
     } catch (error) {
       console.error("Download error:", error);
       Alert.alert(
-        t("TransactionList.Sorry"),
-        t("TransactionList.Failed to save PDF to Downloads folder."),
-        [{ text: t("PublicForum.OK") }],
+        t("Main.Sorry"),
+        t("TransactionList.FailedToSavePDFToDownloadsFolder"),
+        [{ text: t("Main.OK") }],
       );
     }
   };
@@ -459,18 +461,18 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
       const uri = await generatePDF();
       if (!uri) {
         Alert.alert(
-          t("TransactionList.Sorry"),
-          t("TransactionList.PDF was not generated."),
-          [{ text: t("PublicForum.OK") }],
+          t("Main.Sorry"),
+          t("TransactionList.PDFWasNotGenerated"),
+          [{ text: t("Main.OK") }],
         );
         return;
       }
 
       if (!(await Sharing.isAvailableAsync())) {
         Alert.alert(
-          t("TransactionList.Sorry"),
-          t("TransactionList.Sharing is not available on this device"),
-          [{ text: t("PublicForum.OK") }],
+          t("Main.Sorry"),
+          t("TransactionList.SharingIsNotAvailableOnThisDevice"),
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -481,9 +483,9 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
       const fileInfo = await FileSystem.getInfoAsync(uri);
       if (!fileInfo.exists) {
         Alert.alert(
-          t("TransactionList.Sorry"),
-          t("TransactionList.Generated PDF file not found"),
-          [{ text: t("PublicForum.OK") }],
+          t("Main.Sorry"),
+          t("TransactionList.GeneratedPDFFileNotFound"),
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -508,9 +510,9 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
       } catch (fallbackError) {
         console.error("Fallback sharing also failed:", fallbackError);
         Alert.alert(
-          t("TransactionList.Sorry"),
+          t("Main.Sorry"),
           t("TransactionList.Failed to share PDF file"),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
       }
     }
@@ -527,18 +529,13 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
     return (
       <View className="flex-1 bg-white">
         <CustomHeader
-          title={t("TransactionList.Goods Received Note")}
+          title={t("TransactionList.GoodsReceivedNote")}
           showBackButton={true}
           navigation={navigation}
           onBackPress={() => navigation.goBack()}
         />
         <View className="flex-1 justify-center items-center mt-[45%]">
-          <LottieView
-            source={require("../../assets/jsons/loader.json")}
-            autoPlay
-            loop
-            style={{ width: 300, height: 300 }}
-          />
+          <LoadingPage fullScreen />
         </View>
       </View>
     );
@@ -547,20 +544,20 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
   return (
     <ScrollView className="flex-1 bg-white">
       <CustomHeader
-        title={t("TransactionList.Goods Received Note")}
+        title={t("TransactionList.GoodsReceivedNote")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
       />
 
-      <View className="p-6">
+      <View className="px-6 pt-4 pb-8">
         {/* GRN No & Date */}
         <View className="mb-4 -mt-2">
           <Text
             className="text-sm font-bold"
             style={getTextStyle(i18next.language)}
           >
-            {t("TransactionList.GRN No")}:{" "}
+            {t("TransactionList.GRNNo")}:{" "}
             {crops.length > 0 ? crops[0].invoiceNumber : "N/A"}
           </Text>
           <Text className="text-sm" style={getTextStyle(i18next.language)}>
@@ -577,7 +574,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
             className="font-bold text-sm mb-3"
             style={getTextStyle(i18next.language)}
           >
-            {t("TransactionList.Supplier Details")}:
+            {t("TransactionList.SupplierDetails")}:
           </Text>
           <View className="border border-gray-300 rounded-lg p-2">
             <Text>
@@ -601,12 +598,12 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
             className="font-bold text-sm mb-3"
             style={getTextStyle(i18next.language)}
           >
-            {t("TransactionList.Received By")}:
+            {t("TransactionList.ReceivedBy")}:
           </Text>
           <View className="border border-gray-300 rounded-lg p-2">
             <Text>
               <Text style={getTextStyle(i18next.language)}>
-                {t("TransactionList.Company Name")}:
+                {t("TransactionList.CompanyName")}:
               </Text>{" "}
               {details?.companyNameEnglish || ""}
             </Text>
@@ -625,19 +622,19 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
             className="font-bold text-sm mb-3"
             style={getTextStyle(i18next.language)}
           >
-            {t("TransactionList.Received Items")}:
+            {t("TransactionList.ReceivedItems")}:
           </Text>
           <ScrollView horizontal className="border border-gray-300 rounded-lg">
             <View>
               {/* Header Row */}
               <View className="flex-row bg-gray-200">
                 {[
-                  t("TransactionList.Crop Name"),
+                  t("TransactionList.CropName"),
                   t("TransactionList.Variety"),
                   t("TransactionList.Grade"),
-                  t("TransactionList.Unit Price(Rs.)"),
-                  t("TransactionList.Quantity(kg)"),
-                  t("TransactionList.Sub Total(Rs.)"),
+                  t("TransactionList.UnitPriceRs"),
+                  t("TransactionList.Quantitykg"),
+                  t("TransactionList.SubTotalRs"),
                 ].map((header, i, arr) => (
                   <Text
                     key={header}
@@ -690,7 +687,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         {/* Total */}
         <View className="mb-2 mt-2 items-end">
           <Text className="font-bold" style={getTextStyle(i18next.language)}>
-            {t("TransactionList.Full Total (Rs.)")} : Rs.{" "}
+            {t("TransactionList.FullTotalRs")} Rs.{" "}
             {formatNumberWithCommas(totalSum)}
           </Text>
         </View>
@@ -704,35 +701,43 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
             <Text className="font-bold">{t("TransactionList.Note")}:</Text>
             <Text className="italic">
               {" "}
-              {t("TransactionList.This Goods Receipt Note")}
+              {t("TransactionList.ThisGoodsReceiptNoteServesAsAProvisionalAcknowledgmentBasedOnInitialMeasurementsTakenByFrontLineStaffFinalVerificationWillBeConductedAtTheCollectionCentreTheMeasurementRecordedAtTheCollectionCentreShallBeDeemedConclusiveAndBindingInAllCasesOfDiscrepancyTheOrganizationReservesTheRightToRectifyAnyRevenueImpactsArisingFromMeasurementVarianceAndShallNotBeLiableForLossesDueToInitialMiscalculations")}
             </Text>
           </Text>
         </View>
 
         {/* Action Buttons */}
-        <View className="flex-row justify-around w-full mb-7">
+        <View className="flex-row justify-center items-center gap-6 mb-12 mt-4 px-4">
           <TouchableOpacity
-            className="bg-black p-4 h-[80px] w-[120px] rounded-lg items-center justify-center"
+            className="bg-[#1E1E1E] w-1/3 h-24 rounded-xl items-center justify-center"
             onPress={handleDownloadPDF}
+            style={{
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+              elevation: 3,
+            }}
           >
-            <Image
-              source={require("../../assets/images/transaction/download.webp")}
-              style={{ width: 24, height: 24 }}
-            />
-            <Text className="text-sm text-cyan-50 text-center">
+            <MaterialIcons name="download" size={28} color="white" />
+            <Text className="text-white text-sm mt-2 font-medium text-center">
               {t("TransactionList.Download")}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="bg-black p-4 h-[80px] w-[120px] rounded-lg items-center justify-center"
+            className="bg-[#1E1E1E] w-1/3 h-24 rounded-xl items-center justify-center"
             onPress={handleSharePDF}
+            style={{
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+              elevation: 3,
+            }}
           >
-            <Image
-              source={require("../../assets/images/transaction/share.webp")}
-              style={{ width: 24, height: 24 }}
-            />
-            <Text className="text-sm text-cyan-50">
+            <MaterialIcons name="share" size={28} color="white" />
+            <Text className="text-white text-sm mt-2 font-medium text-center">
               {t("TransactionList.Share")}
             </Text>
           </TouchableOpacity>

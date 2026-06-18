@@ -20,7 +20,7 @@ import { RootStackParamList } from "../types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../common/CustomHeader";
 
@@ -75,8 +75,8 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
     if (status !== "granted") {
       Alert.alert(
         t("PublicForum.sorry"),
-        t("PublicForum.permissionDeniedMessage"),
-        [{ text: t("PublicForum.OK") }],
+        t("PublicForum.WeNeedAccessToYourCameraToContinuePleaseEnablePermissions"),
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -155,19 +155,19 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
 
       if (response.status === 200) {
         Alert.alert(
-          t("PublicForum.success"),
-          t("PublicForum.Post updated successfully"),
+          t("Main.Success"),
+          t("PublicForum.PostUpdatedSuccessfully!"),
           [
             {
-              text: t("PublicForum.OK"),
+              text: t("Main.OK"),
             },
           ],
         );
         navigation.goBack();
       } else {
-        Alert.alert(t("PublicForum.error"), t("PublicForum.updateFailed"), [
+        Alert.alert(t("PublicForum.error"), t("PublicForum.FailedToUpdatePost"), [
           {
-            text: t("PublicForum.OK"),
+            text: t("Main.OK"),
             style: "default",
           },
         ]);
@@ -175,8 +175,8 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
     } catch (error) {
       console.error("Error updating post:", error);
 
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
     } finally {
       setLoading(false);
@@ -191,7 +191,7 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
       <Modal transparent={true} visible={loading} animationType="fade">
         <View className="flex-1 justify-center items-center bg-black/50">
           <ActivityIndicator size="large" color="#ffffff" />
-          <Text className="text-white mt-4">{t("CropCalender.Loading")}</Text>
+          <Text className="text-white mt-4">{t("Main.Loading...")}</Text>
         </View>
       </Modal>
     );
@@ -214,33 +214,35 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
         <ScrollView className="px-4 py-6 p-7 ">
           <View className="mb-4">
             <Text className="text-base font-semibold">
-              {t("PublicForum.title")}
+              {t("PublicForum.Title")}
             </Text>
             <TextInput
-              className=" border-gray-300  bg-[#F4F7FF] rounded-[25px] px-4 py-3 mt-2"
-              placeholder={t("PublicForum.addyourtitlehere")}
+              className=" border-gray-300  bg-[#F4F7FF] rounded-3xl px-4 h-[50px] mt-2"
+              placeholder={t("PublicForum.AddYourTitleHere")}
               value={heading}
               onChangeText={setHeading}
               maxLength={250}
+              placeholderTextColor="#000000"
             />
             {heading.length >= 250 && (
               <Text className="text-red-500 mt-1 text-sm">
-                {t("PublicForum.Maximum 250 characters allowed.")}
+                {t("PublicForum.Maximum250charactersAllowed")}
               </Text>
             )}
           </View>
 
           <View className="mb-4 mt-6">
             <Text className="text-base font-semibold ml-4">
-              {t("PublicForum.discussion")}
+              {t("PublicForum.Discussion")}
             </Text>
             <TextInput
-              className=" bg-[#F4F7FF] border-gray-300 rounded-[25px] px-4 py-2 mt-2 h-44  p-4 "
-              placeholder={t("PublicForum.addyourdiscussionhere")}
+              className=" bg-[#F4F7FF] border-gray-300 rounded-3xl px-4 py-2 mt-2 h-44  p-4 "
+              placeholder={t("PublicForum.AddYourDiscussionHere")}
               value={message}
               onChangeText={setMessage}
               multiline
               textAlignVertical="top"
+              placeholderTextColor="#000000"
             />
           </View>
 
@@ -258,7 +260,7 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
               onPress={handleImagePick}
             >
               <Text className="text-[#667BA5]">
-                {t("PublicForum.uploadImage")}
+                {t("PublicForum.UploadImage")}
               </Text>
             </TouchableOpacity>
             {postImageUri && (
@@ -282,7 +284,7 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
               }}
             >
               <Text className="text-white text-lg">
-                {t("PublicForum.update")}
+                {t("Main.Update")}
               </Text>
             </TouchableOpacity>
           </View>

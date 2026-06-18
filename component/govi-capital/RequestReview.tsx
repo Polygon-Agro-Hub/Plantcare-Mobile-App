@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StatusBar,
   ScrollView,
 } from "react-native";
 import LottieView from "lottie-react-native";
@@ -41,10 +40,10 @@ const RequestReview: React.FC<RequestReviewProps> = ({ navigation, route }) => {
           bgColor: "#FFF9E6",
           title: t("Govicapital.Congratulations"),
           message: t(
-            "Govicapital.Your project has been successfully published on the GoViCapital platform",
+            "Govicapital.YourProjectHasBeenSuccessfullyPublishedOnTheGoViCapitalPlatform",
           ),
           showSecondButton: true,
-          secondButtonText: t("Govicapital.View Project Status"),
+          secondButtonText: t("Govicapital.ViewProjectStatus"),
           animation: "stars",
         };
       case "rejected":
@@ -52,9 +51,9 @@ const RequestReview: React.FC<RequestReviewProps> = ({ navigation, route }) => {
           icon: "alert-circle",
           iconColor: "#FF6B6B",
           bgColor: "#FFE8E8",
-          title: t("Govicapital.Try Again"),
+          title: t("Govicapital.TryAgain"),
           message: t(
-            "Govicapital.We're sorry to inform you that your project request to GoViCapital has been declined",
+            "Govicapital.WereSorryToInformYouThatYourProjectRequestToGoViCapitalHasBeenDeclinedPleaseFeelFreeToTryAgainInTheFuture",
           ),
           showSecondButton: false,
           animation: "warning",
@@ -64,9 +63,9 @@ const RequestReview: React.FC<RequestReviewProps> = ({ navigation, route }) => {
           icon: "clock-outline",
           iconColor: "#FFA500",
           bgColor: "#FFF4E6",
-          title: t("Govicapital.Stay Tuned"),
+          title: t("Govicapital.StayTuned"),
           message: t(
-            "Govicapital.We're taking a closer look at your request and will update you soon",
+            "Govicapital.WereTakingACloserLookAtYourRequestAndWillUpdateYouSoonThisProcessMightTakeADayOrTwo",
           ),
           showSecondButton: false,
           animation: "hourglass",
@@ -89,14 +88,11 @@ const RequestReview: React.FC<RequestReviewProps> = ({ navigation, route }) => {
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-
       <CustomHeader
-        title={`#${request?.jobId || t("Govicapital.Request Review")}`}
+        title={`#${request?.jobId || t("Govicapital.RequestReview")}`}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
       />
-
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ flexGrow: 1 }}
@@ -110,7 +106,7 @@ const RequestReview: React.FC<RequestReviewProps> = ({ navigation, route }) => {
             {requestStatus === "approved" && (
               <View className="items-center justify-center">
                 <LottieView
-                  source={require("../../assets/jsons/Congratulations.json")}
+                  source={require("@/assets/jsons/govi-capital/congratulation.json")}
                   style={{ width: 200, height: 200 }}
                   autoPlay
                   loop
@@ -121,7 +117,7 @@ const RequestReview: React.FC<RequestReviewProps> = ({ navigation, route }) => {
             {requestStatus === "rejected" && (
               <View className=" items-center justify-center">
                 <LottieView
-                  source={require("../../assets/jsons/RequestRejected.json")}
+                  source={require("@/assets/jsons/govi-capital/request-rejected.json")}
                   style={{ width: 200, height: 200 }}
                   autoPlay
                   loop
@@ -132,7 +128,7 @@ const RequestReview: React.FC<RequestReviewProps> = ({ navigation, route }) => {
             {(requestStatus === "pending" ||
               requestStatus === "under_review") && (
               <LottieView
-                source={require("../../assets/jsons/StayTuned.json")}
+                source={require("@/assets/jsons/govi-capital/stay-tuned.json")}
                 style={{ width: 200, height: 200 }}
                 autoPlay
                 loop
@@ -158,7 +154,7 @@ const RequestReview: React.FC<RequestReviewProps> = ({ navigation, route }) => {
               className="w-full bg-[#ECECEC] rounded-full py-4 mb-3"
             >
               <Text className="text-center text-[#8E8E8E] font-semibold text-base">
-                {t("Govicapital.View Full Details")}
+                {t("Govicapital.ViewFullDetails")}
               </Text>
             </TouchableOpacity>
 

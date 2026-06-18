@@ -9,7 +9,6 @@ import {
   Modal,
   Image,
   RefreshControl,
-  StatusBar,
   BackHandler,
 } from "react-native";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
@@ -28,6 +27,7 @@ import moment from "moment";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import CustomHeader from "../../common/CustomHeader";
+import LoadingPage from "@/component/common/LoadingPage";
 
 interface QuestionnaireItem {
   id: number;
@@ -99,12 +99,13 @@ function CameraScreen({
   };
 
   return (
-    <CameraView
-      className="flex-1"
-      facing={facing}
-      ref={(ref) => setCamera(ref)}
-      onCameraReady={() => setIsCameraReady(true)}
-    >
+    <View style={{ flex: 1, backgroundColor: "black" }}>
+      <CameraView
+        style={{ flex: 1 }}
+        facing={facing}
+        ref={(ref) => setCamera(ref)}
+        onCameraReady={() => setIsCameraReady(true)}
+      />
       <View
         style={{
           position: "absolute",
@@ -121,30 +122,36 @@ function CameraScreen({
         <TouchableOpacity
           onPress={toggleCameraFacing}
           style={{
-            backgroundColor: "#26D041",
+            backgroundColor: "#2AAD7A",
             padding: 16,
             borderRadius: 50,
             marginBottom: 12,
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <Text style={{ color: "black" }}>{t("CropCalender.FlipCamera")}</Text>
+          <Text style={{ color: "black", textAlign: "center" }}>{t("CropCalender.FlipCamera")}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           onPress={captureImage}
           style={{
-            backgroundColor: "#26D041",
+            backgroundColor: "#2AAD7A",
             padding: 16,
             borderRadius: 50,
             marginBottom: 12,
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <Text style={{ color: "black", fontWeight: "600" }}>
+          <Text style={{ color: "black", fontWeight: "600", textAlign: "center" }}>
             {t("CropCalender.Capture")}
           </Text>
         </TouchableOpacity>
       </View>
-    </CameraView>
+    </View>
   );
 }
 
@@ -206,11 +213,11 @@ const FarmCertificateTask: React.FC = () => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+        Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"));
         return;
       }
 
-      const currentLanguage = t("MyCrop.LNG");
+      const currentLanguage = t("Main.LNG");
       setLanguage(currentLanguage);
 
       const response = await axios.get(
@@ -232,7 +239,7 @@ const FarmCertificateTask: React.FC = () => {
             "Certificate not found with slaveQuestionnaireId:",
             slaveQuestionnaireId,
           );
-          Alert.alert(t("Farms.Error"), t("Farms.Certificate not found"));
+          Alert.alert(t("Main.Error"), t("Farms.Certificate not found"));
           setCertificateStatus(null);
           return;
         }
@@ -268,8 +275,8 @@ const FarmCertificateTask: React.FC = () => {
     } catch (err) {
       console.error("Error fetching certificate status:", err);
       Alert.alert(
-        t("Farms.Error"),
-        t("Farms.Failed to fetch certificate tasks"),
+        t("Main.Error"),
+        t("Farms.FailedToFetchCertificateTasks"),
       );
     } finally {
       setLoading(false);
@@ -282,7 +289,7 @@ const FarmCertificateTask: React.FC = () => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+        Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"));
         return;
       }
 
@@ -311,23 +318,23 @@ const FarmCertificateTask: React.FC = () => {
 
           if (timeDifference > oneHourInMs) {
             Alert.alert(
-              t("Farms.Cannot Remove"),
-              t("Farms.Completion cannot be removed after 1 hour."),
-              [{ text: t("Farms.OK") }],
+              t("Farms.CannotRemove"),
+              t("Farms.CompletionCannotBeRemovedAfter1Hour"),
+              [{ text: t("Main.OK") }],
             );
             return;
           }
         }
 
         Alert.alert(
-          t("Farms.Confirm Remove"),
+          t("Farms.ConfirmRemove"),
           t(
-            "Farms.This will remove the completion for this task. Are you sure you want to continue?",
+            "Farms.ThisWillRemoveTheCompletionForThisTaskAreYouSureYouWantToContinue",
           ),
           [
-            { text: t("Farms.Cancel"), style: "cancel" },
+            { text: t("Main.Cancel"), style: "cancel" },
             {
-              text: t("Farms.OK"),
+              text: t("Main.OK"),
               onPress: async () => {
                 await handleRemoveCompletion(item);
               },
@@ -364,10 +371,10 @@ const FarmCertificateTask: React.FC = () => {
             (prevItem) =>
               prevItem.id === item.id
                 ? {
-                    ...prevItem,
-                    tickResult: 1,
-                    doneDate: new Date().toISOString(),
-                  }
+                  ...prevItem,
+                  tickResult: 1,
+                  doneDate: new Date().toISOString(),
+                }
                 : prevItem,
           );
 
@@ -389,13 +396,13 @@ const FarmCertificateTask: React.FC = () => {
           });
         }
 
-        Alert.alert(t("Farms.Success"), t("Farms.Task complete successfully!"));
+        Alert.alert(t("Main.Success"), t("Farms.TaskCompleteSuccessfully"));
 
         setUploadingImageForItem(null);
       }
     } catch (error) {
       console.error("Error updating questionnaire item:", error);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"));
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"));
       setUploadingImageForItem(null);
     }
   };
@@ -407,7 +414,7 @@ const FarmCertificateTask: React.FC = () => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+        Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"));
         setUploadingImageForItem(null);
         return;
       }
@@ -427,11 +434,11 @@ const FarmCertificateTask: React.FC = () => {
             (prevItem) =>
               prevItem.id === item.id
                 ? {
-                    ...prevItem,
-                    uploadImage: null,
-                    tickResult: null,
-                    doneDate: null,
-                  }
+                  ...prevItem,
+                  uploadImage: null,
+                  tickResult: null,
+                  doneDate: null,
+                }
                 : prevItem,
           );
 
@@ -454,7 +461,7 @@ const FarmCertificateTask: React.FC = () => {
         }
 
         Alert.alert(
-          t("Farms.Success"),
+          t("Main.Success"),
           t("Farms.Completion removed successfully"),
         );
       } else {
@@ -464,16 +471,16 @@ const FarmCertificateTask: React.FC = () => {
       console.error("Error removing completion:", error);
       console.error("Error response:", error.response?.data);
 
-      let errorMessage = t("Main.somethingWentWrong");
+      let errorMessage = t("Main.SomethingWentWrongPleaseTryAgainlater");
       if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error.response?.status === 403) {
-        errorMessage = t("Farms.Completion cannot be removed after 1 hour.");
+        errorMessage = t("Farms.CompletionCannotBeRemovedAfter1Hour");
       } else if (error.response?.status === 404) {
         errorMessage = t("Farms.Item not found");
       }
 
-      Alert.alert(t("Main.error"), errorMessage);
+      Alert.alert(t("Main.Error"), errorMessage);
     } finally {
       setUploadingImageForItem(null);
     }
@@ -487,7 +494,7 @@ const FarmCertificateTask: React.FC = () => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(t("Farms.Error"), t("Farms.No authentication token found"));
+        Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"));
         setUploadingImageForItem(null);
         return;
       }
@@ -540,10 +547,10 @@ const FarmCertificateTask: React.FC = () => {
             (prevItem) =>
               prevItem.id === selectedQuestion.id
                 ? {
-                    ...prevItem,
-                    uploadImage: response.data.imageUrl,
-                    doneDate: new Date().toISOString(),
-                  }
+                  ...prevItem,
+                  uploadImage: response.data.imageUrl,
+                  doneDate: new Date().toISOString(),
+                }
                 : prevItem,
           );
 
@@ -565,7 +572,7 @@ const FarmCertificateTask: React.FC = () => {
           });
         }
 
-        Alert.alert(t("Farms.Success"), t("Farms.Task complete successfully!"));
+        Alert.alert(t("Main.Success"), t("Farms.TaskCompleteSuccessfully"));
 
         setShowCameraModal(false);
         setCapturedImage(null);
@@ -574,7 +581,7 @@ const FarmCertificateTask: React.FC = () => {
     } catch (error: any) {
       console.error("Error uploading questionnaire image:", error);
 
-      let errorMessage = t("Main.somethingWentWrong");
+      let errorMessage = t("Main.SomethingWentWrongPleaseTryAgainlater");
       if (error.response?.status === 413) {
         errorMessage = t(
           "Farms.Image file is too large. Please try with a smaller image.",
@@ -585,7 +592,7 @@ const FarmCertificateTask: React.FC = () => {
         errorMessage = t("Farms.Upload timeout. Please try again.");
       }
 
-      Alert.alert(t("Main.error"), errorMessage);
+      Alert.alert(t("Main.Error"), errorMessage);
     } finally {
       setUploadingImageForItem(null);
     }
@@ -640,7 +647,7 @@ const FarmCertificateTask: React.FC = () => {
   useFocusEffect(
     useCallback(() => {
       fetchCertificateStatus();
-      const currentLanguage = t("MyCrop.LNG");
+      const currentLanguage = t("Main.LNG");
       setLanguage(currentLanguage);
     }, [farmId, slaveQuestionnaireId]),
   );
@@ -663,21 +670,12 @@ const FarmCertificateTask: React.FC = () => {
   );
 
   if (loading) {
-    return (
-      <View className="flex-1 bg-white justify-center items-center">
-        <ActivityIndicator size="large" color="#000" />
-        <Text className="text-gray-500 mt-2">
-          {t("Farms.Loading certificate tasks")}
-        </Text>
-      </View>
-    );
+    return <LoadingPage fullScreen />;
   }
 
   if (!certificateStatus) {
     return (
       <View className="flex-1 bg-white">
-        <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-
         <CustomHeader
           title={t("Farms.Certificate Tasks")}
           navigation={navigation as any}
@@ -699,8 +697,6 @@ const FarmCertificateTask: React.FC = () => {
 
   return (
     <View className="flex-1 bg-[#F7F7F7]">
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-
       {/* Header */}
       <View className="bg-white">
         <CustomHeader
@@ -710,12 +706,12 @@ const FarmCertificateTask: React.FC = () => {
         />
 
         {/* Certificate Info Card */}
-        <View className="pb-3 mt-[-3%] px-4">
-          <View className="bg-white rounded-2xl pb-3 pl-[12%] shadow-sm">
-            <View className="flex-row items-center mb-3">
+        <View className="pb-3 mt-[-3%] px-6">
+          <View className="bg-white rounded-2xl p-4">
+            <View className="flex-row items-center">
               <Image
                 source={require("../../../assets/images/farms/star-certificate.webp")}
-                className="w-12 h-14"
+                className="w-16 h-20"
                 resizeMode="contain"
               />
               <View className="ml-3 flex-1">
@@ -734,25 +730,23 @@ const FarmCertificateTask: React.FC = () => {
                   if (time.months === 0 && time.days === 0) {
                     return (
                       <Text className="text-red-600 text-sm mt-1 font-medium">
-                        {t("Farms.Certificate has expired")}
+                        {t("Farms.CertificateHasExpired")}
                       </Text>
                     );
                   } else {
-                    let validityText = t("Farms.Valid for next") + " ";
+                    let validityText = t("Farms.ValidFor") + " ";
 
                     if (time.months > 0) {
-                      validityText += `${time.months} ${
-                        time.months === 1 ? t("Farms.month") : t("Farms.months")
-                      }`;
+                      validityText += `${time.months} ${time.months === 1 ? t("Farms.Month") : t("Farms.Months")
+                        }`;
                     }
 
                     if (time.days > 0) {
                       if (time.months > 0) {
                         validityText += " ";
                       }
-                      validityText += `${time.days} ${
-                        time.days === 1 ? t("Farms.day") : t("Farms.days")
-                      }`;
+                      validityText += `${time.days} ${time.days === 1 ? t("Farms.Day") : t("Farms.Days")
+                        }`;
                     }
 
                     return (
@@ -762,26 +756,25 @@ const FarmCertificateTask: React.FC = () => {
                     );
                   }
                 })()}
+                <Text
+                  className={`mt-1 font-medium ${certificateStatus.isAllCompleted
+                    ? "text-green-700"
+                    : "text-[#FF0000]"
+                    }`}
+                >
+                  {certificateStatus.isAllCompleted
+                    ? t("Farms.AllCompleted")
+                    : t("Farms.Pending")}
+                </Text>
               </View>
             </View>
-            <Text
-              className={`mt-[-4] font-medium ml-[22%] ${
-                certificateStatus.isAllCompleted
-                  ? "text-green-700"
-                  : "text-[#FF0000]"
-              }`}
-            >
-              {certificateStatus.isAllCompleted
-                ? t("Farms.All Completed")
-                : t("Farms.Pending")}
-            </Text>
           </View>
         </View>
       </View>
       {/* Tasks List */}
       <ScrollView
-        className="flex-1 mt-5"
-        contentContainerStyle={{ padding: 16, paddingTop: 0 }}
+        className="flex-1 mt-5 px-6"
+        contentContainerStyle={{ paddingBottom: 32 }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -797,27 +790,24 @@ const FarmCertificateTask: React.FC = () => {
           return (
             <View
               key={item.id}
-              className={`rounded-2xl p-4 mb-3 border shadow-sm ${
-                isPhotoProof && isCompleted && item.uploadImage
-                  ? "bg-[#4B5563CC] border-[#4B5563CC]"
-                  : "bg-white border-[#EFEFEF]"
-              }`}
+              className={`rounded-2xl p-4 mb-3 border shadow-sm ${isPhotoProof && isCompleted && item.uploadImage
+                ? "bg-[#4B5563CC] border-[#4B5563CC]"
+                : "bg-white border-[#EFEFEF]"
+                }`}
               style={{
                 shadowColor: "#000000",
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.25,
-                shadowRadius: 4,
-                elevation: 4,
+                shadowRadius: 4
               }}
             >
               <View className="flex-row justify-between items-start mb-3">
                 <View className="flex-1 mr-3">
                   <Text
-                    className={`font-medium text-sm mb-1 ${
-                      isPhotoProof && isCompleted && item.uploadImage
-                        ? "text-gray-900"
-                        : "text-gray-900"
-                    }`}
+                    className={`font-medium text-sm mb-1 ${isPhotoProof && isCompleted && item.uploadImage
+                      ? "text-gray-900"
+                      : "text-gray-900"
+                      }`}
                   >
                     {language === "si"
                       ? item.qSinhala
@@ -832,11 +822,10 @@ const FarmCertificateTask: React.FC = () => {
                   <TouchableOpacity
                     onPress={() => handleQuestionnaireCheck(item)}
                     disabled={uploadingImageForItem === item.id}
-                    className={`w-8 h-8 rounded-full items-center justify-center ${
-                      isCompleted
-                        ? "bg-[#00A896] border-2 border-[#00A896]"
-                        : "bg-white border-2 border-[#00A896]"
-                    }`}
+                    className={`w-8 h-8 rounded-full items-center justify-center ${isCompleted
+                      ? "bg-[#00A896] border-2 border-[#00A896]"
+                      : "bg-white border-2 border-[#00A896]"
+                      }`}
                   >
                     {uploadingImageForItem === item.id ? (
                       <ActivityIndicator
@@ -904,20 +893,20 @@ const FarmCertificateTask: React.FC = () => {
             </View>
 
             <Text className="text-lg font-semibold mt-2 text-center">
-              {t("Farms.Click a Photo")}
+              {t("Farms.ClickAPhoto")}
             </Text>
 
             <Text className="text-gray-500 text-center mt-2 mb-6">
               {t(
-                "Farms.Please take a photo of the completed work in the field.",
+                "Farms.PleaseTakeAPhotoOfTheCompletedWorkInTheField.",
               )}
             </Text>
 
             <TouchableOpacity
               onPress={() => setShowCamera(true)}
-              className="bg-black rounded-3xl w-full py-3 items-center justify-center"
+              className="bg-black py-2 px-6 rounded-full h-[50px] items-center justify-center w-full"
             >
-              <Text className="text-white font-semibold text-base">
+              <Text className="text-white text-base">
                 {t("CropCalender.OpenCamera")}
               </Text>
             </TouchableOpacity>
@@ -955,9 +944,9 @@ const FarmCertificateTask: React.FC = () => {
           }}
         >
           <View className="flex-1 bg-black/50 justify-center items-center px-6">
-            <View className="bg-white rounded-2xl p-8 items-center w-full">
-              <Text className="text-lg font-semibold mt-2 text-center">
-                {t("Farms.Click a Photo")}
+            <View className="bg-white rounded-2xl p-6 shadow-lg items-center w-full">
+              <Text className="text-lg font-semibold mb-2">
+                {t("CropCalender.ImagePreview")}
               </Text>
 
               <Image
@@ -967,29 +956,22 @@ const FarmCertificateTask: React.FC = () => {
                 className="mt-2"
               />
 
-              <View className="flex justify-center w-full -mt-2">
+              <View className="gap-4 w-full">
                 {isButtonEnabled ? (
-                  <Text className="text-center font-semibold mb-2">
-                    {t("Farms.Ready To Submit")}
+                  <Text className="text-center font-semibold">
+                    {t("Farms.ReadyToSubmit")}
                   </Text>
                 ) : (
-                  <Text className="text-gray-600 text-center mb-2">
+                  <Text className="text-gray-600 text-center text-lg">
                     {countdown} {t("Farms.Seconds")}
                   </Text>
                 )}
 
                 <TouchableOpacity
-                  onPress={() => setShowCamera(true)}
-                  className="border border-black rounded-3xl py-3 items-center"
-                >
-                  <Text className="text-black font-semibold text-base">
-                    {t("Farms.Retake Previous Photo")}
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
                   onPress={handleSubmitPhoto}
-                  className="bg-[#353535] rounded-3xl py-3 items-center mt-4"
+                  className={`py-2 px-6 rounded-full h-[50px] items-center justify-center ${
+                    isButtonEnabled ? "bg-[#353535]" : "bg-gray-400"
+                  }`}
                   disabled={
                     uploadingImageForItem === selectedQuestion?.id ||
                     !isButtonEnabled
@@ -998,25 +980,34 @@ const FarmCertificateTask: React.FC = () => {
                   {uploadingImageForItem === selectedQuestion?.id ? (
                     <ActivityIndicator size="small" color="#fff" />
                   ) : (
-                    <Text className="text-white font-semibold text-base">
+                    <Text className="text-white text-base text-center">
                       {t("Farms.Submit")}
                     </Text>
                   )}
                 </TouchableOpacity>
-              </View>
 
-              <TouchableOpacity
-                onPress={() => {
-                  setCapturedImage(null);
-                  setShowCameraModal(false);
-                  setSelectedQuestion(null);
-                }}
-                className="mt-4"
-              >
-                <Text className="text-gray-400 text-sm">
-                  {t("Farms.Cancel")}
-                </Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setShowCamera(true)}
+                  className="border-2 border-black bg-white py-2 px-6 rounded-full h-[50px] items-center justify-center"
+                >
+                  <Text className="text-black text-base text-center">
+                    {t("Farms.RetakePreviousPhoto")}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    setCapturedImage(null);
+                    setShowCameraModal(false);
+                    setSelectedQuestion(null);
+                  }}
+                  className="items-center mt-2"
+                >
+                  <Text className="text-gray-400 text-sm">
+                    {t("Main.Cancel")}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </Modal>
@@ -1038,7 +1029,7 @@ const FarmCertificateTask: React.FC = () => {
           </TouchableOpacity>
 
           <Text className="text-black text-center px-4 py-2 rounded-lg">
-            {t("Farms.Uploaded")}
+            {t("Farms.UploadedByYou")}
           </Text>
 
           {selectedImage && (

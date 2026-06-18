@@ -64,8 +64,8 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
     if (!totalExpenses || !expectedRevenue) {
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("EconomicCostCalendars.FillAllFields") ||
-          "Please fill all required fields.",
+        t("Main.PleaseFillAllRequiredFields") ||
+        "Please fill all required fields.",
       );
       return;
     }
@@ -76,16 +76,16 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
     if (isNaN(expensesNum) || expensesNum <= 0) {
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("EconomicCostCalendars.ExpensesError") ||
-          "Total farm expenses must be greater than 0.",
+        t("EconomicCostCalendars.TotalFarmExpensesMustBeGreaterThan0") ||
+        "Total farm expenses must be greater than 0.",
       );
       return;
     }
     if (isNaN(revenueNum) || revenueNum <= 0) {
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("EconomicCostCalendars.RevenueError") ||
-          "Expected revenue must be greater than 0.",
+        t("EconomicCostCalendars.ExpectedRevenueMustBeGreaterThan0") ||
+        "Expected revenue must be greater than 0.",
       );
       return;
     }
@@ -106,42 +106,42 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
-        title={t("EconomicCostCalendars.FarmBudgetProfit")}
+        title={t("EconomicCostCalendars.FarmBudget&Profit")}
         icon={require("@/assets/images/farm-cal/economic-cost-calculators/farm-budget-profit-icon.webp")}
         onBack={() => navigation.goBack()}
       />
 
       <ScrollView
-        className="flex-1 px-4"
+        className="flex-1 px-6"
         contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            {t("EconomicCostCalendars.FillRequiredFields") ||
+            {t("Main.PleaseFillAllRequiredFields") ||
               "Please fill all required fields!"}
           </Text>
         )}
 
         {/* Total Farm Expenses */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("EconomicCostCalendars.TotalFarmExpenses") ||
+          {t("EconomicCostCalendars.TotalFarmExpensesRs") ||
             "Total Farm Expenses (Rs.)"}{" "}
           *
         </Text>
         <TextInput
           value={formatWithCommas(totalExpenses)}
           onChangeText={(text) => handleNumberInput(text, setTotalExpenses, 2)}
-          placeholder={t("EconomicCostCalendars.TypeHere") || "--Type Here--"}
+          placeholder={t("Main.TypeHere") || "--Type Here--"}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
-          className="bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900 mb-6"
+          className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"
         />
 
         {/* Expected Revenue */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("EconomicCostCalendars.ExpectedRevenue") ||
+          {t("EconomicCostCalendars.ExpectedRevenueRs") ||
             "Expected Revenue (Rs.)"}{" "}
           *
         </Text>
@@ -150,19 +150,19 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
           onChangeText={(text) =>
             handleNumberInput(text, setExpectedRevenue, 2)
           }
-          placeholder={t("EconomicCostCalendars.TypeHere") || "--Type Here--"}
+          placeholder={t("Main.TypeHere") || "--Type Here--"}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
-          className="bg-[#F4F4F4] rounded-full px-4 py-4 text-sm text-gray-900 mb-6"
+          className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"
         />
 
         {/* Calculate Button */}
         <TouchableOpacity
           onPress={handleCalculate}
-          className="bg-[#2D2D2D] rounded-full py-4 items-center mt-4"
+          className="bg-[#2D2D2D] rounded-3xl h-[50px] items-center justify-center mt-4"
           activeOpacity={0.8}
         >
-          <Text className="text-white text-base font-bold">
+          <Text className="text-white text-lg font-bold">
             {t("EconomicCostCalendars.Calculate") || "Calculate"}
           </Text>
         </TouchableOpacity>

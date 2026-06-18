@@ -53,6 +53,8 @@ const CropPaymentScreenAfterEnroll: React.FC<
     certificateId,
     cropId,
     farmId,
+    processFee,
+    fullTotal,
   } = route.params;
 
   const { t } = useTranslation();
@@ -249,9 +251,9 @@ const CropPaymentScreenAfterEnroll: React.FC<
     try {
       if (!certificateId) {
         Alert.alert(
-          t("Main.error"),
-          t("EarnCertificate.Certificate ID is missing"),
-          [{ text: t("PublicForum.OK") }],
+          t("Main.Error"),
+          t("EarnCertificate.CertificateIDIsMissing"),
+          [{ text: t("Main.OK") }],
         );
         return false;
       }
@@ -260,9 +262,9 @@ const CropPaymentScreenAfterEnroll: React.FC<
 
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
-          t("Farms.No authentication token found"),
-          [{ text: t("PublicForum.OK") }],
+          t("Main.Error"),
+          t("Farms.NoAuthenticationTokenFound"),
+          [{ text: t("Main.OK") }],
         );
         return false;
       }
@@ -273,6 +275,7 @@ const CropPaymentScreenAfterEnroll: React.FC<
         certificateId: certificateId,
         amount: numericPrice,
         validityMonths: validityMonths,
+        processFee: processFee ?? 0,
       };
 
       const response = await axios.post(
@@ -297,13 +300,13 @@ const CropPaymentScreenAfterEnroll: React.FC<
       if (error.response) {
         console.error("Error response:", error.response.data);
         Alert.alert(
-          t("Main.error"),
-          error.response.data.message || t("Main.somethingWentWrong"),
-          [{ text: t("PublicForum.OK") }],
+          t("Main.Error"),
+          error.response.data.message || t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
         );
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
 
@@ -314,17 +317,17 @@ const CropPaymentScreenAfterEnroll: React.FC<
   const handlePayNow = async () => {
     if (!cardNumber || !cardHolderName || !cardExpiryDate || !cvv) {
       Alert.alert(
-        t("Main.error"),
-        t("EarnCertificate.Please fill all payment details"),
+        t("Main.Error"),
+        t("EarnCertificate.PleaseFillAllPaymentDetails"),
       );
       return;
     }
 
     if (!isCardExpiryValid()) {
       Alert.alert(
-        t("Main.error"),
-        t("EarnCertificate.Please enter a valid card expiry date (MM/YY)"),
-        [{ text: t("PublicForum.OK") }],
+        t("Main.Error"),
+        t("EarnCertificate.PleaseEnterAValidCardExpiryDate"),
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -382,7 +385,7 @@ const CropPaymentScreenAfterEnroll: React.FC<
     setCardType(type);
   };
 
-  const formattedCertificatePrice = formatAmount(certificatePrice || "0");
+  const formattedCertificatePrice = formatAmount((fullTotal ?? certificatePrice ?? "0").toString());
 
   return (
     <KeyboardAvoidingView
@@ -390,28 +393,24 @@ const CropPaymentScreenAfterEnroll: React.FC<
       enabled
       style={{ flex: 1 }}
     >
+      <CustomHeader
+        title={t("Farms.CreditDebitCard")}
+        navigation={navigation}
+        onBackPress={() => navigation.goBack()}
+      />
       <ScrollView
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ flexGrow: 1 }}
-        className="bg-white"
+        className="bg-white px-6"
       >
-        <CustomHeader
-          title={t("Farms.Credit Debit Card")}
-          navigation={navigation}
-          onBackPress={() => navigation.goBack()}
-        />
-
-        <View
-          className="flex-row mb-6 justify-between items-center"
-          style={{ paddingHorizontal: wp(8) }}
-        >
+        <View className="flex-row mb-6 justify-between items-center">
           <Text className="text-lg">{t("Farms.Total")}</Text>
           <Text className="text-lg font-bold">{formattedCertificatePrice}</Text>
         </View>
 
         <View className="border-b border-[#F3F4F6] my-2 mb-4" />
 
-        <View style={{ paddingHorizontal: wp(4) }}>
+        <View className="">
           <View className="flex-row justify-center mb-6">
             <View className="flex-row items-center p-2 gap-3">
               <View className="flex-row items-center rounded-xl border border-[#3E206D] p-2 px-4">
@@ -453,8 +452,10 @@ const CropPaymentScreenAfterEnroll: React.FC<
           </View>
 
           <TextInput
-            className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
-            placeholder={t("Payment.Enter Card Number") ?? "Enter Card Number"}
+            className="rounded-3xl h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
+            placeholder={t("Payment.EnterCardNumber") ?? "Enter Card Number"}
+            style={{ color: '#000000' }} 
+            placeholderTextColor="#000000"
             keyboardType="numeric"
             maxLength={19}
             value={cardNumber}
@@ -462,16 +463,20 @@ const CropPaymentScreenAfterEnroll: React.FC<
           />
 
           <TextInput
-            className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
-            placeholder={t("Payment.Enter Name on Card")}
+            className="rounded-3xl h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-8 text-base"
+            placeholder={t("Payment.EnterNameOnCard")}
+            style={{ color: '#000000' }} 
+            placeholderTextColor="#000000"
             value={cardHolderName}
             onChangeText={handleCardHolderNameChange}
           />
 
-          <View className="flex-row items-center h-12 border border-gray-300 bg-[#F6F6F6] rounded-full px-3 mb-8">
+          <View className="flex-row items-center rounded-3xl h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-full px-3 mb-8">
             <TextInput
               className="flex-1 h-full text-base"
-              placeholder={t("Payment.Enter Expiration Date (MM/YY)")}
+              placeholder={t("Payment.EnterExpirationDate")}
+              style={{ color: '#000000' }} 
+              placeholderTextColor="#000000"
               keyboardType="numeric"
               maxLength={5}
               value={cardExpiryDate}
@@ -481,8 +486,10 @@ const CropPaymentScreenAfterEnroll: React.FC<
           </View>
 
           <TextInput
-            className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-5 text-base"
-            placeholder={t("Payment.Enter CVV")}
+            className="rounded-3xl h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-5 text-base"
+            placeholder={t("Payment.EnterCVV")}
+            style={{ color: '#000000' }} 
+            placeholderTextColor="#000000"
             keyboardType="numeric"
             maxLength={3}
             value={cvv}
@@ -491,7 +498,7 @@ const CropPaymentScreenAfterEnroll: React.FC<
           />
 
           <TouchableOpacity
-            className="bg-black py-3 rounded-full mt-5 mb-24"
+            className="bg-black py-3 rounded-3xl h-[50px] mt-5 mb-24"
             onPress={handlePayNow}
             disabled={isProcessing}
             style={{
@@ -503,7 +510,7 @@ const CropPaymentScreenAfterEnroll: React.FC<
             }}
           >
             <Text className="text-white text-lg font-semibold text-center">
-              {isProcessing ? t("Farms.Processing") : t("Farms.Pay Now")}
+              {isProcessing ? t("Farms.Processing...") : t("Farms.PayNow")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -530,10 +537,10 @@ const CropPaymentScreenAfterEnroll: React.FC<
             </View>
 
             <Text className="text-2xl font-bold text-gray-800 mb-2">
-              {t("Farms.Success")}
+              {t("Main.Success")}
             </Text>
             <Text className="text-center text-gray-600 mb-2">
-              {t("Farms.Payment Success Message")}
+              {t("Farms.YouHaveSuccessfullyAppliedForYourCertificate")}
             </Text>
 
             <TouchableOpacity
@@ -541,7 +548,7 @@ const CropPaymentScreenAfterEnroll: React.FC<
               onPress={handleModalClose}
             >
               <Text className="text-white text-base font-semibold">
-                {t("Farms.Continue")}
+                {t("Main.Continue")}
               </Text>
             </TouchableOpacity>
           </View>

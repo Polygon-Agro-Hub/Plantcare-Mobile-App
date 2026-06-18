@@ -21,6 +21,7 @@ import {
 } from "react-native-responsive-screen";
 import LottieView from "lottie-react-native";
 import CustomHeader from "../common/CustomHeader";
+import LoadingPage from "../common/LoadingPage";
 
 type TransactionHistoryNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -177,122 +178,113 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
   return (
     <View className="flex-1 bg-white">
       <CustomHeader
-        title={t("TransactionList.Transaction History")}
+        title={t("TransactionList.TransactionHistory")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
       />
 
-      <View className="mb-[30%] p-2 -mt-4">
-        <View className="px-4 ">
-          <Text className="font-medium text-base text-gray-600">
+      {loading ? (
+        <View className="flex-1 justify-center items-center bg-white">
+          <LoadingPage fullScreen />
+        </View>
+      ) : (
+        <View className="flex-1 px-6">
+          <Text className="font-medium text-base text-gray-600 mb-2">
             {t("TransactionList.All")} ({transactions.length})
           </Text>
-        </View>
-        <FlatList
-          data={transactions}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 8 }}
-          className="mb-[12%]"
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              colors={["#0000ff"]}
-              tintColor="#0000ff"
-            />
-          }
-          onEndReached={loadMore}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={renderFooter}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              className="flex-row justify-between items-center p-4 border-b border-gray-100 mt-2"
-              style={{
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.12,
-                shadowRadius: 4,
-                elevation: 4,
-                backgroundColor: "#fff",
-                borderRadius: 8,
-                marginBottom: 8,
-              }}
-              onPress={() => {
-                navigation.navigate("TransactionReport" as any, {
-                  registeredFarmerId: item.registeredFarmerId,
-                  userId: item.userId,
-                  centerId: item.centerId,
-                  companyId: item.companyId,
-                  transactionDate: item.transactionDate,
-                });
-              }}
-            >
-              <View>
-                <View className="flex-row mb-1">
-                  <Text className="text-gray-800 font-medium">
-                    {t("TransactionList.GRN No")}
-                  </Text>
-                  <Text className="text-gray-800 ml-2 font-medium">
-                    : {item.grnNo}
-                  </Text>
-                </View>
-                <View className="flex-row mb-1">
-                  <Text className="text-gray-800 ">
-                    {t("TransactionList.Amount")}
-                  </Text>
-                  <Text className="text-gray-800 ml-2">: {item.amount}</Text>
-                </View>
-                <View className="flex-row mb-1">
-                  <Text className="text-gray-800 ">
-                    # {t("TransactionList.of Items")}
-                  </Text>
-                  <Text className="text-gray-800 ml-2">: {item.itemCount}</Text>
-                </View>
-                <View className="flex-row">
-                  <Text className="text-gray-800 ">
-                    {t("TransactionList.Delivered on")}
-                  </Text>
-                  <Text className="text-gray-800 ml-2">
-                    : {item.deliveryDate}
-                  </Text>
-                </View>
-              </View>
-              <Ionicons
-                name="chevron-forward"
-                size={scale(20)}
-                color="#9CA3AF"
+          <FlatList
+            data={transactions}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={{ paddingVertical: 8, paddingBottom: 40 }}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                colors={["#0000ff"]}
+                tintColor="#0000ff"
               />
-            </TouchableOpacity>
-          )}
-          ListEmptyComponent={
-            <View className="items-center justify-center mt-8">
-              {loading ? (
-                <View className="flex-1 justify-center items-center mt-[45%]">
-                  <LottieView
-                    source={require("../../assets/jsons/loader.json")}
-                    autoPlay
-                    loop
-                    style={{ width: 300, height: 300 }}
-                  />
+            }
+            onEndReached={loadMore}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={renderFooter}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                className="flex-row justify-between items-center p-4 bg-white border border-gray-200 mt-2"
+                style={{
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.12,
+                  shadowRadius: 4,
+                  elevation: 4,
+                  borderRadius: 8,
+                  marginBottom: 8,
+                  borderWidth: 1,
+                  borderColor: "#E5E7EB",
+                }}
+                onPress={() => {
+                  navigation.navigate("TransactionReport" as any, {
+                    registeredFarmerId: item.registeredFarmerId,
+                    userId: item.userId,
+                    centerId: item.centerId,
+                    companyId: item.companyId,
+                    transactionDate: item.transactionDate,
+                  });
+                }}
+              >
+                <View>
+                  <View className="flex-row mb-1">
+                    <Text className="text-gray-800 font-medium">
+                      {t("TransactionList.GRNNo")}
+                    </Text>
+                    <Text className="text-gray-800 ml-2 font-medium">
+                      : {item.grnNo}
+                    </Text>
+                  </View>
+                  <View className="flex-row mb-1">
+                    <Text className="text-gray-800 ">
+                      {t("TransactionList.Amount")}
+                    </Text>
+                    <Text className="text-gray-800 ml-2">: {item.amount}</Text>
+                  </View>
+                  <View className="flex-row mb-1">
+                    <Text className="text-gray-800 ">
+                      # {t("TransactionList.of Items")}
+                    </Text>
+                    <Text className="text-gray-800 ml-2">: {item.itemCount}</Text>
+                  </View>
+                  <View className="flex-row">
+                    <Text className="text-gray-800 ">
+                      {t("TransactionList.Delivered on")}
+                    </Text>
+                    <Text className="text-gray-800 ml-2">
+                      : {item.deliveryDate}
+                    </Text>
+                  </View>
                 </View>
-              ) : (
-                <View className="flex-1 items-center justify-center">
-                  <LottieView
-                    source={require("../../assets/jsons/NoComplaints.json")}
-                    style={{ width: wp(50), height: hp(50) }}
-                    autoPlay
-                    loop
-                  />
-                  <Text className="text-center text-gray-600 mt-[-30%]">
-                    --{t("TransactionList.No transactions found")}--
-                  </Text>
-                </View>
-              )}
-            </View>
-          }
-        />
-      </View>
+                <Ionicons
+                  name="chevron-forward"
+                  size={scale(20)}
+                  color="#9CA3AF"
+                />
+              </TouchableOpacity>
+            )}
+            ListEmptyComponent={
+              <View className="flex-1 items-center justify-center">
+                <LottieView
+                  source={require("@/assets/jsons/common/no-data.json")}
+                  style={{ width: wp(50), height: hp(50) }}
+                  autoPlay
+                  loop
+                />
+                <Text className="text-center text-gray-600 mt-[-30%]">
+                  --{t("TransactionList.NoTransactionsFound")}--
+                </Text>
+              </View>
+            }
+          />
+        </View>
+      )}
       {renderLoadMoreButton()}
     </View>
   );

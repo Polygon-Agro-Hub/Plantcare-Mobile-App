@@ -42,7 +42,7 @@ export type RootStackParamList = {
   TamilDashbord: undefined;
   TamilNewCrop: undefined;
   EngProfile: undefined;
-  EngQRcode: undefined;
+  QRcode: undefined;
   WeatherForecast: undefined;
   FiveDayForecast: undefined;
   SinProfile: undefined;
@@ -51,19 +51,19 @@ export type RootStackParamList = {
   TamilEditProfile: undefined;
   SinQRcode: undefined;
   TamilQRcode: undefined;
-  CurrentAssert: undefined;
-  AddAsset: undefined;
+  CurrentAssert: { farmId?: Number | number; farmName?: string } | undefined;
+  AddAsset: { farmId?: Number | number; farmName?: string } | undefined;
   RemoveAsset: undefined;
-  AssertsFixedView: { category: string; toolId: any };
-  AddFixedAsset: undefined;
-  fixedDashboard: undefined;
+  AssertsFixedView: { category: string; toolId?: any; farmId?: Number | number; farmName?: string };
+  AddFixedAsset: { farmId?: Number | number; farmName?: string } | undefined;
+  fixedDashboard: { farmId?: Number | number; farmName?: string } | undefined;
   News: { newsId: number };
   NewsSinhala: { newsId: number };
   NewsTamil: { newsId: number };
   MyCrop: undefined;
   SinhalaMyCrop: undefined;
   TamilMyCrop: undefined;
-
+  SoilGridsScreen: undefined;
   PublicForum: { postId: string; userId: number };
   PublicForumReplies: { postId: string; own: string; userId: number };
   PublicForumPost: undefined;
@@ -99,7 +99,7 @@ export type RootStackParamList = {
   TermsConditions: undefined;
   LocationDetailsScreen: undefined;
   Main: { screen: keyof RootStackParamList; params?: any };
-  EngEditProfile: undefined;
+  EditProfile: undefined;
   ManagerDashbord: undefined;
   DeleteFarmer: undefined;
   UserFeedback: undefined;
@@ -148,7 +148,12 @@ export type RootStackParamList = {
     farmId: Number;
   };
   FarmDetailsScreen: { farmId: Number; farmName: string };
-  EditManagersScreen: { farmId: number; membership: string; renew: string ,regCode:string};
+  EditManagersScreen: {
+    farmId: number;
+    membership: string;
+    renew: string;
+    regCode: string;
+  };
   ManageMembersManager: {
     farmId?: Number;
     farmName?: string;
@@ -161,16 +166,16 @@ export type RootStackParamList = {
   };
   FarmCropItem: undefined;
   FarmCropVariety: undefined;
-  EditFarm: { farmId: number };
-  FromFramEditFarm: { farmId: number };
-  AddnewStaff: { farmId: number ,regCode:string};
+  EditFarm: { farmId: number; from?: string };
+  FromFramEditFarm: { farmId: number; from?: string };
+  AddnewStaff: { farmId: number; regCode: string };
   ManagerAddStaff: { farmId: number };
   EditStaffMember: {
     staffMemberId: number;
     farmId: number;
     membership: string;
     renew: string;
-    regCode:string;
+    regCode: string;
   };
   SupervisorAddStaff: { farmId: number };
   ManageEditscreen: { staffMemberId: number; farmId: number; farmName: string };
@@ -202,14 +207,7 @@ export type RootStackParamList = {
     selectedVariety: string;
     farmId: number;
   };
-  FarmCurrectAssets: { farmId: Number; farmName: string };
-  FarmFixDashBoard: { farmId: Number; farmName: string };
-  FarmAssertsFixedView: {
-    category: string;
-    toolId: any;
-    farmId: number;
-    farmName: string;
-  };
+
   FarmCropCalander: {
     cropId: string;
     cropName: string;
@@ -220,9 +218,7 @@ export type RootStackParamList = {
     ongoingCropId: string;
     hasCertificate: boolean;
   };
-  FarmAddFixAssert: { farmId: Number; farmName: string };
   FarmCertificateTask: { farmId: Number; farmName: string };
-  FarmAddCurrentAsset: { farmId: Number; farmName: string };
   FarmCurrectAssetRemove: { farmId: Number; farmName: string };
   EarnCertificate: {
     farmId: number;
@@ -240,7 +236,28 @@ export type RootStackParamList = {
     certificateId: number;
     farmId?: number;
     registrationCode?: string;
+    processFee?: number;
+    fullTotal?: number;
   };
+  PaymentSummary: {
+    subTotal?: number;
+    processingFeePercentage?: number;
+    processingFee?: number;
+    fullTotal?: number;
+    title?: string;
+    isRequestInspection?: boolean;
+    requestItems?: any[];
+    nextScreen?: string;
+    nextScreenParams?: any;
+    isCertificatePayment?: boolean;
+    certificateType?: "Farm" | "Cultivation" | "Crop" | "CropAfterEnroll";
+    certificateId?: number;
+    cropId?: string;
+    farmId?: number;
+    farmName?: string;
+    certificateName?: string;
+    validityMonths?: number;
+  } | undefined;
   CropEarnCertificate: {
     cropId: string;
     farmId: Number;
@@ -257,6 +274,8 @@ export type RootStackParamList = {
     certificateId: number;
     cropId?: string;
     farmId: Number;
+    processFee?: number;
+    fullTotal?: number;
   };
   CropPaymentScreenAfterEnroll: {
     certificateName: string;
@@ -265,6 +284,8 @@ export type RootStackParamList = {
     certificateId: number;
     cropId?: string;
     farmId: Number;
+    processFee?: number;
+    fullTotal?: number;
   };
   CultivationPaymentScreen: {
     certificateName: string;
@@ -274,14 +295,10 @@ export type RootStackParamList = {
     farmId?: number;
     registrationCode?: string;
     farmName?: string;
+    processFee?: number;
+    fullTotal?: number;
   };
   RequestInspectionForm: undefined;
-  RequestInspectionPayment: {
-    requestItems: any[];
-    addedItems: any[];
-    totalAmount: number;
-    itemsCount: number;
-  };
   RequestHistory: undefined;
   InvestmentAndLoan: undefined;
   InvestmentRequestForm: undefined;
@@ -331,10 +348,15 @@ export type RootStackParamList = {
     ongoingCropId: string;
   };
   GoviPensionInformation: undefined;
+  // In your RootStackParamList, update CartScreen entry:
+CartScreen: {
+  shopname: string;
+  branchId: number;  // ← add this line
+};
   GoviPensionForm: undefined;
   GoviPensionStatus: undefined;
   MyPensionAccount: undefined;
-  ProjectStatus: {jobid:string , id:string};
+  ProjectStatus: { jobid: string; id: string };
   FarmCalMenu: undefined;
   CropPlanningCalculatorsMenu: undefined;
   IrrigationWaterCalculatorsMenu: undefined;
@@ -361,8 +383,41 @@ export type RootStackParamList = {
   GoviShopLoadingScreen: undefined;
   ExploreShopsScreen: undefined;
   GoviShopCartScreen: undefined;
-  GoviShopProfileScreen: undefined;
+  GoviShopProfileScreen: {
+    shopId: number;
+    branchId: number;
+    shopname: string;
+    logo: string;
+    adress: string;
+  };
   LocationAccess: undefined;
+  CheckoutScreen: {
+    cartItems: CartItem[];
+    branchId: number;
+    subtotal: number;
+    serviceCharge: number;
+    total: number;
+    cartCount: number;
+    shopName: string;
+  };
+  ViewProduct: {
+    product: {
+      id: string;
+      name: string;
+      level: string;
+      unit: string;
+      discountPrice?: number;
+      normalPrice: number;
+      image: string;
+      categoryId: string;
+      availableQty?: number;
+      description?: string;
+    };
+    LoadingPage: {
+      messageStyle: string;
+    };
+  
+  };
 };
 
 export interface RequestItem {
@@ -389,4 +444,31 @@ export interface RequestItem {
   cropNameEnglish: string;
   cropNameSinhala: string;
   cropNameTamil: string;
+}
+
+export type ProductType =
+  | "BOTTLE"
+  | "ROLL"
+  | "PACK"
+  | "LOOSE_WEIGHT"
+  | "LOOSE_VOLUME"
+  | "PIECES"
+  | "EQUIPMENT";
+
+export interface CartItem {
+  id: string;
+  productId: string;
+  productName: string;
+  subProductId: string;
+  subProdColorId?: string;
+  equipColorId?: string;
+  variantLabel: string;
+  pricePerUnit: number;
+  originalPrice?: number;
+  quantity: number;
+  image: string;
+  type: ProductType;
+  colorCode?: string;
+  availableQty?: number;
+  isOutOfStock?: boolean;
 }
