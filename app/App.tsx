@@ -182,7 +182,7 @@ function MainTabNavigator() {
   useEffect(() => {
     if (!user) return;
 
-    if (user.role === "Laborer") {
+    if (user.role === "Laborer" || user.role === "Laboror") {
       setInitialTab("LabororDashbord");
     } else if (user.role === "Manager") {
       setInitialTab("ManagerDashbord");
