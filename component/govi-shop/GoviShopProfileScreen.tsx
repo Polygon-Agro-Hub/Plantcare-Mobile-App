@@ -262,12 +262,13 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
   >({});
 
   const [boundaryModal, setBoundaryModal] = useState<{
-    visible: boolean;
-    product: Product | null;
-    sub: SubProduct | null;
-    currentBatchPrice: number;
-    nextBatchPrice: number;
-  } | null>(null);
+  visible: boolean;
+  product: Product | null;
+  sub: SubProduct | null;
+  colorDetail?: ColorDetail;
+  currentBatchPrice: number;
+  nextBatchPrice: number;
+} | null>(null);
 
   const cartRef = useRef(cart);
   useEffect(() => {
@@ -341,46 +342,64 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
       (c) => c.productId === productId && c.subProductId === subProductId,
     )?.quantity ?? 0;
 
-  const addLocalCart = (product: Product, sub: SubProduct) => {
-    setCart((prev) => {
-      const exists = prev.find(
-        (c) => c.productId === product.id && c.subProductId === sub.id,
-      );
-      if (exists) {
-        return prev.map((c) =>
-          c.productId === product.id && c.subProductId === sub.id
-            ? { ...c, quantity: c.quantity + 1 }
-            : c,
-        );
-      }
-      return [
-        ...prev,
-        {
-          productId: product.id,
-          productName: product.name,
-          subProductId: sub.id,
-          subProductLabel: sub.label,
-          price: sub.discountPrice ?? sub.price,
-          quantity: 1,
-          image: product.image,
-        },
-      ];
-    });
-  };
+  const addLocalCart = (product: Product, sub: SubProduct, colorDetail?: ColorDetail) => {
+  const variantId = getVariantId(product.baseUom, sub, colorDetail);
+  const price = colorDetail
+    ? colorDetail.discountPrice ?? colorDetail.normalPrice
+    : sub.discountPrice ?? sub.price;
 
-  const removeLocalCart = (product: Product, sub: SubProduct) => {
-    setCart((prev) => {
-      const updated = prev
-        .map((c) =>
-          c.productId === product.id && c.subProductId === sub.id
-            ? { ...c, quantity: c.quantity - 1 }
-            : c,
-        )
-        .filter((c) => c.quantity > 0);
-      if (updated.length === 0) setShowViewCart(false);
-      return updated;
-    });
-  };
+  setCart((prev) => {
+    const exists = prev.find(
+      (c) => c.productId === product.id && c.subProductId === variantId,
+    );
+    if (exists) {
+      return prev.map((c) =>
+        c.productId === product.id && c.subProductId === variantId
+          ? { ...c, quantity: c.quantity + 1 }
+          : c,
+      );
+    }
+    return [
+      ...prev,
+      {
+        productId: product.id,
+        productName: product.name,
+        subProductId: variantId,
+        subProductLabel: sub.label,
+        price,
+        quantity: 1,
+        image: product.image,
+      },
+    ];
+  });
+};
+
+const removeLocalCart = (product: Product, sub: SubProduct, colorDetail?: ColorDetail) => {
+  const variantId = getVariantId(product.baseUom, sub, colorDetail);
+  setCart((prev) => {
+    const updated = prev
+      .map((c) =>
+        c.productId === product.id && c.subProductId === variantId
+          ? { ...c, quantity: c.quantity - 1 }
+          : c,
+      )
+      .filter((c) => c.quantity > 0);
+    if (updated.length === 0) setShowViewCart(false);
+    return updated;
+  });
+};
+
+
+
+  const getVariantId = (
+  baseUom: string,
+  sub: SubProduct,
+  colorDetail?: ColorDetail,
+): string => {
+  const mode = getDisplayMode(baseUom);
+  if (mode === "COLOR" && colorDetail) return String(colorDetail.colorId);
+  return sub.id;
+};
 
   const callUpsertAPI = async (
     product: Product,
@@ -451,105 +470,115 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
     }
   };
 
-  const handleCartIconPress = async (product: Product, sub: SubProduct) => {
-    const key = cartItemKey(product.id, sub.id);
-    const qty = getCartQty(product.id, sub.id);
-    if (qty === 0) return;
+const handleCartIconPress = async (
+  product: Product,
+  sub: SubProduct,
+  colorDetail?: ColorDetail,
+) => {
+  const variantId = getVariantId(product.baseUom, sub, colorDetail);
+  const key = cartItemKey(product.id, variantId);
+  const qty = getCartQty(product.id, variantId);
+  if (qty === 0) return;
 
-    setCartIconLoading((prev) => ({ ...prev, [key]: true }));
-    const ok = await callUpsertAPI(product, sub, qty);
-    setCartIconLoading((prev) => ({ ...prev, [key]: false }));
+  setCartIconLoading((prev) => ({ ...prev, [key]: true }));
+  const ok = await callUpsertAPI(product, sub, qty, colorDetail);
+  setCartIconLoading((prev) => ({ ...prev, [key]: false }));
 
-    if (ok) {
-      setSavedToDb((prev) => new Set(prev).add(key));
-      setShowViewCart(true);
-    }
-  };
+  if (ok) {
+    setSavedToDb((prev) => new Set(prev).add(key));
+    setShowViewCart(true);
+  }
+};
 
-  const tryAddToCart = (product: Product, sub: SubProduct) => {
-    const currentQty = getCartQty(product.id, sub.id);
-    const totalCap = getTotalCap(sub);
-    if (totalCap !== undefined && currentQty >= totalCap) return;
+  const tryAddToCart = (product: Product, sub: SubProduct, colorDetail?: ColorDetail) => {
+  const variantId = getVariantId(product.baseUom, sub, colorDetail);
+  const currentQty = getCartQty(product.id, variantId);
+  const totalCap = colorDetail ? colorDetail.availableQty : getTotalCap(sub);
+  if (totalCap !== undefined && currentQty >= totalCap) return;
 
-    if (sub.isMRP === 1 && sub.batches && sub.batches.length > 1) {
-      let cumulative = 0;
-      for (let i = 0; i < sub.batches.length - 1; i++) {
-        cumulative += sub.batches[i].qty;
-        if (currentQty === cumulative) {
-          const currentBatchPrice = sub.batches[i].salePrice;
-          const nextBatchPrice = sub.batches[i + 1].salePrice;
-          if (nextBatchPrice !== currentBatchPrice) {
-            setBoundaryModal({
-              visible: true,
-              product,
-              sub,
-              currentBatchPrice,
-              nextBatchPrice,
-            });
-            return;
-          }
-          break;
+  const batches = colorDetail ? colorDetail.batches : sub.batches;
+
+  if (sub.isMRP === 1 && batches && batches.length > 1) {
+    let cumulative = 0;
+    for (let i = 0; i < batches.length - 1; i++) {
+      cumulative += batches[i].qty;
+      if (currentQty === cumulative) {
+        const currentBatchPrice = batches[i].salePrice;
+        const nextBatchPrice = batches[i + 1].salePrice;
+        if (nextBatchPrice !== currentBatchPrice) {
+          setBoundaryModal({
+            visible: true,
+            product,
+            sub,
+            colorDetail,
+            currentBatchPrice,
+            nextBatchPrice,
+          });
+          return;
         }
+        break;
       }
     }
+  }
 
-    const key = cartItemKey(product.id, sub.id);
-    const newQty = currentQty + 1;
+  const key = cartItemKey(product.id, variantId);
+  const newQty = currentQty + 1;
 
-    if (savedToDb.has(key)) {
-      addLocalCart(product, sub);
+  if (savedToDb.has(key)) {
+    addLocalCart(product, sub, colorDetail);
+    setDbUpdateLoading((prev) => ({ ...prev, [key]: true }));
+    callUpsertAPI(product, sub, newQty, colorDetail).then((ok) => {
+      if (!ok) removeLocalCart(product, sub, colorDetail);
+      setDbUpdateLoading((prev) => ({ ...prev, [key]: false }));
+    });
+  } else {
+    addLocalCart(product, sub, colorDetail);
+  }
+};
+
+  const handleRemove = (product: Product, sub: SubProduct, colorDetail?: ColorDetail) => {
+  const variantId = getVariantId(product.baseUom, sub, colorDetail);
+  const qty = getCartQty(product.id, variantId);
+  const key = cartItemKey(product.id, variantId);
+
+  if (qty === 1) {
+    setLooseStateMap((prev) => ({ ...prev, [product.id]: "preview" }));
+  }
+
+  if (savedToDb.has(key)) {
+    const newQty = qty - 1;
+
+    if (newQty === 0) {
+      setCart((prev) => {
+        const updated = prev.filter(
+          (c) => !(c.productId === product.id && c.subProductId === variantId),
+        );
+        if (updated.length === 0) setShowViewCart(false);
+        return updated;
+      });
+      setSavedToDb((prev) => {
+        const next = new Set(prev);
+        next.delete(key);
+        return next;
+      });
+      const snapshot = [...cartRef.current];
       setDbUpdateLoading((prev) => ({ ...prev, [key]: true }));
-      callUpsertAPI(product, sub, newQty).then((ok) => {
-        if (!ok) removeLocalCart(product, sub);
+      callDeleteAPI(product, sub, colorDetail).then((ok) => {
+        if (!ok) setCart(snapshot);
         setDbUpdateLoading((prev) => ({ ...prev, [key]: false }));
       });
     } else {
-      addLocalCart(product, sub);
+      removeLocalCart(product, sub, colorDetail);
+      setDbUpdateLoading((prev) => ({ ...prev, [key]: true }));
+      callUpsertAPI(product, sub, newQty, colorDetail).then((ok) => {
+        if (!ok) addLocalCart(product, sub, colorDetail);
+        setDbUpdateLoading((prev) => ({ ...prev, [key]: false }));
+      });
     }
-  };
-
-  const handleRemove = (product: Product, sub: SubProduct) => {
-    const qty = getCartQty(product.id, sub.id);
-    const key = cartItemKey(product.id, sub.id);
-
-    if (qty === 1) {
-      setLooseStateMap((prev) => ({ ...prev, [product.id]: "preview" }));
-    }
-
-    if (savedToDb.has(key)) {
-      const newQty = qty - 1;
-
-      if (newQty === 0) {
-        setCart((prev) => {
-          const updated = prev.filter(
-            (c) => !(c.productId === product.id && c.subProductId === sub.id),
-          );
-          if (updated.length === 0) setShowViewCart(false);
-          return updated;
-        });
-        setSavedToDb((prev) => {
-          const next = new Set(prev);
-          next.delete(key);
-          return next;
-        });
-        const snapshot = [...cartRef.current];
-        setDbUpdateLoading((prev) => ({ ...prev, [key]: true }));
-        callDeleteAPI(product, sub).then((ok) => {
-          if (!ok) setCart(snapshot);
-          setDbUpdateLoading((prev) => ({ ...prev, [key]: false }));
-        });
-      } else {
-        removeLocalCart(product, sub);
-        setDbUpdateLoading((prev) => ({ ...prev, [key]: true }));
-        callUpsertAPI(product, sub, newQty).then((ok) => {
-          if (!ok) addLocalCart(product, sub);
-          setDbUpdateLoading((prev) => ({ ...prev, [key]: false }));
-        });
-      }
-    } else {
-      removeLocalCart(product, sub);
-    }
-  };
+  } else {
+    removeLocalCart(product, sub, colorDetail);
+  }
+};
 
   const fetchCategories = async () => {
     try {
@@ -1402,20 +1431,23 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
     );
   };
 
-  const renderPriceActionRow = (
-    item: Product,
-    activeSub: SubProduct,
-    cartQty: number,
-  ) => {
-    const displayPrice = activeSub.discountPrice ?? activeSub.price;
-    const totalCap = getTotalCap(activeSub);
-    const isPlusDisabled = totalCap !== undefined && cartQty >= totalCap;
-    const key = cartItemKey(item.id, activeSub.id);
-    const isSaved = savedToDb.has(key);
-    const isCartIconSpinning = cartIconLoading[key] ?? false;
-    const isDbUpdating = dbUpdateLoading[key] ?? false;
-
-    const showCartIcon = cartQty > 0 && !isSaved;
+ const renderPriceActionRow = (
+  item: Product,
+  activeSub: SubProduct,
+  cartQty: number,
+  colorDetail?: ColorDetail,
+) => {
+  const displayPrice = colorDetail
+    ? colorDetail.discountPrice ?? colorDetail.normalPrice
+    : activeSub.discountPrice ?? activeSub.price;
+  const totalCap = colorDetail ? colorDetail.availableQty : getTotalCap(activeSub);
+  const isPlusDisabled = totalCap !== undefined && cartQty >= totalCap;
+  const variantId = getVariantId(item.baseUom, activeSub, colorDetail);
+  const key = cartItemKey(item.id, variantId);
+  const isSaved = savedToDb.has(key);
+  const isCartIconSpinning = cartIconLoading[key] ?? false;
+  const isDbUpdating = dbUpdateLoading[key] ?? false;
+  const showCartIcon = cartQty > 0 && !isSaved;
 
     return (
       <View
@@ -1465,7 +1497,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
           {cartQty === 0 ? (
             <TouchableOpacity
-              onPress={() => tryAddToCart(item, activeSub)}
+              onPress={() => tryAddToCart(item, activeSub, colorDetail)}
               activeOpacity={0.85}
               style={{
                 backgroundColor: "#3F3C57",
@@ -1495,7 +1527,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                 }}
               >
                 <TouchableOpacity
-                  onPress={() => handleRemove(item, activeSub)}
+                  onPress={() => handleRemove(item, activeSub, colorDetail)}
                   disabled={isDbUpdating}
                   style={{
                     backgroundColor: isDbUpdating ? "#CCCCCC" : "#FF8000",
@@ -1527,7 +1559,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                   {cartQty}
                 </Text>
                 <TouchableOpacity
-                  onPress={() => tryAddToCart(item, activeSub)}
+                  onPress={() => tryAddToCart(item, activeSub, colorDetail)}
                   activeOpacity={isPlusDisabled || isDbUpdating ? 1 : 0.85}
                   disabled={isPlusDisabled || isDbUpdating}
                   style={{
@@ -1559,7 +1591,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                     alignItems: "center",
                     justifyContent: "center",
                   }}
-                  onPress={() => handleCartIconPress(item, activeSub)}
+                  onPress={() => handleCartIconPress(item, activeSub, colorDetail)}
                   disabled={isCartIconSpinning}
                   activeOpacity={0.85}
                 >
@@ -1579,25 +1611,26 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
 
   const BoundaryConfirmModal = () => {
     if (!boundaryModal?.visible) return null;
-    const { product, sub, currentBatchPrice, nextBatchPrice } = boundaryModal;
+    const { product, sub, colorDetail, currentBatchPrice, nextBatchPrice } = boundaryModal;
     if (!product || !sub) return null;
 
     const handleIDontWant = () => setBoundaryModal(null);
     const handleAddToCart = () => {
-      setBoundaryModal(null);
-      const key = cartItemKey(product.id, sub.id);
-      const newQty = getCartQty(product.id, sub.id) + 1;
-      if (savedToDb.has(key)) {
-        addLocalCart(product, sub);
-        setDbUpdateLoading((prev) => ({ ...prev, [key]: true }));
-        callUpsertAPI(product, sub, newQty).then((ok) => {
-          if (!ok) removeLocalCart(product, sub);
-          setDbUpdateLoading((prev) => ({ ...prev, [key]: false }));
-        });
-      } else {
-        addLocalCart(product, sub);
-      }
-    };
+  setBoundaryModal(null);
+  const variantId = getVariantId(product.baseUom, sub, colorDetail);
+  const key = cartItemKey(product.id, variantId);
+  const newQty = getCartQty(product.id, variantId) + 1;
+  if (savedToDb.has(key)) {
+    addLocalCart(product, sub, colorDetail);
+    setDbUpdateLoading((prev) => ({ ...prev, [key]: true }));
+    callUpsertAPI(product, sub, newQty, colorDetail).then((ok) => {
+      if (!ok) removeLocalCart(product, sub, colorDetail);
+      setDbUpdateLoading((prev) => ({ ...prev, [key]: false }));
+    });
+  } else {
+    addLocalCart(product, sub, colorDetail);
+  }
+};
 
     return (
       <Modal
@@ -1744,14 +1777,20 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
     const subs = subProducts[item.id] ?? [];
     const isLoadingSubs = subProductsLoading[item.id] ?? false;
     const activeSubId = selectedSubProductId[item.id];
-    const activeSub =
-      displayMode === "EQUIPMENT"
-        ? (subs
-            .filter((s) => s.colorCode && s.colorCode.trim())
-            .find((s) => s.id === activeSubId) ??
-          subs.find((s) => s.id === activeSubId))
-        : subs.find((s) => s.id === activeSubId);
-    const cartQty = activeSub ? getCartQty(item.id, activeSub.id) : 0;
+  const activeSub =
+  displayMode === "EQUIPMENT"
+    ? subs.filter((s) => s.colorCode && s.colorCode.trim()).find((s) => s.id === activeSubId) ??
+      subs.find((s) => s.id === activeSubId)
+    : subs.find((s) => s.id === activeSubId);
+
+const activeColorDetail =
+  displayMode === "COLOR" && activeSub
+    ? getActiveColorDetail(activeSub, selectedColorIndexMap[item.id] ?? 0)
+    : undefined;
+
+const variantId = activeSub ? getVariantId(item.baseUom, activeSub, activeColorDetail) : undefined;
+
+    const cartQty = activeSub && variantId ? getCartQty(item.id, variantId) : 0;
 
     const previewPrice = item.discountPrice ?? item.normalPrice;
     const previewOriginalPrice = item.discountPrice ? item.normalPrice : null;
@@ -2239,7 +2278,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                           availableQty: cd.availableQty,
                           batches: cd.batches,
                         };
-                        return renderPriceActionRow(item, patchedSub, cartQty);
+                        return renderPriceActionRow(item, patchedSub, cartQty, cd);
                       }
                     }
                     return renderPriceActionRow(item, activeSub, cartQty);

@@ -59,7 +59,8 @@ const SuccessModal: React.FC<{
   invNo: string;
   onViewInvoice: () => void;
   onClose: () => void;
-}> = ({ visible, shopAddress, invNo, onViewInvoice, onClose }) => {
+  navigation: CheckoutNavigationProp;
+}> = ({ visible, shopAddress, invNo, onViewInvoice, onClose, navigation }) => {
   const { t } = useTranslation();
   return (
     <Modal
@@ -72,7 +73,7 @@ const SuccessModal: React.FC<{
         {/* Header */}
         <View className="flex-row items-center justify-between px-5 mt-4 pb-4">
           <TouchableOpacity
-            onPress={onClose}
+            onPress={() => navigation.replace("ExploreShopsScreen")}
             className="w-8 h-8 rounded-full bg-gray-200 items-center justify-center"
           >
             <Text className="text-gray-600 text-sm font-bold">✕</Text>
@@ -202,6 +203,8 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
   const [cvv, setCvv] = useState("");
   const [placing, setPlacing] = useState(false);
   const [invNo, setInvNo] = useState("");
+  const [orderId, setOrderId] = useState<number | null>(null);
+  const [shopAddress, setShopAddress] = useState("");
 
   const [showSuccess, setShowSuccess] = useState(false);
   const [showFailed, setShowFailed] = useState(false);
@@ -226,6 +229,8 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
       );
 
       setInvNo(data.invNo ?? "");
+      setOrderId(data.orderId ?? data.id ?? null);
+      setShopAddress(data.shopAddress ?? "");
       setShowSuccess(true);
     } catch (err: any) {
       console.error("Place order error:", err?.response?.data ?? err.message);
@@ -238,7 +243,12 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
   const handleViewInvoice = () => {
     setShowSuccess(false);
 
-    navigation.popToTop();
+    if (orderId) {
+      console.log("oredrid", orderId);
+      navigation.navigate("InvoiceScreen", { orderId });
+    } else {
+      navigation.popToTop();
+    }
   };
 
   const handleTryAgain = () => setShowFailed(false);
@@ -355,9 +365,9 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
               placeholder="- - -"
               placeholderTextColor="#585858"
               value={cvv}
-              onChangeText={(v) => setCvv(v.replace(/\D/g, "").slice(0, 4))}
+              onChangeText={(v) => setCvv(v.replace(/\D/g, "").slice(0, 3))}
               keyboardType="numeric"
-              maxLength={4}
+              maxLength={3}
               secureTextEntry
               returnKeyType="done"
             />
@@ -389,10 +399,11 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
       {/* Modals */}
       <SuccessModal
         visible={showSuccess}
-        shopAddress="1/A, Galle Road, Dehiwala."
+        shopAddress={shopAddress}
         invNo={invNo}
         onViewInvoice={handleViewInvoice}
         onClose={() => setShowSuccess(false)}
+        navigation={navigation}
       />
       <FailedModal
         visible={showFailed}

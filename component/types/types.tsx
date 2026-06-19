@@ -391,6 +391,9 @@ CartScreen: {
     adress: string;
   };
   LocationAccess: undefined;
+  InvoiceScreen:{
+    orderId:Number
+  };
   CheckoutScreen: {
     cartItems: CartItem[];
     branchId: number;
