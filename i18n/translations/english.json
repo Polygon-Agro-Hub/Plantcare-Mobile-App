@@ -1513,5 +1513,10 @@
     "OrderSuccessful": "Order Successful!",
     "ViewMyInvoice": "View My Invoice",
     "Payment Failed": "Payment Failed!"
+  },
+  "OrderHistory":{
+    "My Orders":"My Orders",
+    "All":"All",
+    "No Previous Orders":"No Previous Orders"
   }
 }

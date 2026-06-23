@@ -1511,5 +1511,10 @@
     "OrderSuccessful": "Order Successful!",
     "ViewMyInvoice": "View My Invoice",
     "Payment Failed": "Payment Failed!"
+  },
+   "OrderHistory":{
+    "My Orders":"எனது ஆர்டர்கள்",
+    "All":"அனைத்தும்",
+    "No Previous Orders":"முந்தைய ஆர்டர்கள் இல்லை"
   }
 }

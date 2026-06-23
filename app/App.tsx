@@ -159,6 +159,7 @@ import SoilGridsScreen from "@/component/soil-grids/SoilGridsScreen";
 import CartScreen from "@/component/govi-shop/CartScreen";
 import CheckoutScreen from "@/component/govi-shop/CheckoutScreen";
 import InvoiceScreen from "@/component/govi-shop/Invoicescreen";
+import OrderHistory from "@/component/govi-shop/OrderHistory";
 
 LogBox.ignoreAllLogs(true);
 
@@ -716,6 +717,7 @@ function AppContent() {
             <Stack.Screen name="ViewProduct" component={ViewProduct as any} />
             <Stack.Screen name="InvoiceScreen" component={InvoiceScreen as any} />
             <Stack.Screen name="SoilGridsScreen" component={SoilGridsScreen} />
+            <Stack.Screen name="OrderHistory" component={OrderHistory} />
           </Stack.Navigator>
         </NavigationContainer>
         <AlertModal

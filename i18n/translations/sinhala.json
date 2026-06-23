@@ -1511,5 +1511,10 @@
     "OrderSuccessful": "ඇණවුම සාර්ථකයි!",
     "ViewMyInvoice": "මගේ ඉන්වොයිසිය බලන්න",
     "Payment Failed": "ගෙවීම අසාර්ථකයි!"
+  },
+  "OrderHistory":{
+    "My Orders":"මගේ ඇණවුම්",
+    "All":"සියල්ල",
+    "No Previous Orders":"පෙර ඇණවුම් නැත"
   }
 }

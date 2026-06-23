@@ -391,6 +391,7 @@ CartScreen: {
     adress: string;
   };
   LocationAccess: undefined;
+  OrderHistory:undefined;
   InvoiceScreen:{
     orderId:Number
   };

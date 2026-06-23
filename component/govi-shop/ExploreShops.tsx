@@ -14,7 +14,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { RootStackParamList } from "../types/types";
 import CustomHeader from "../common/CustomHeader";
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
 import axios from "axios";
 import { environment } from "@/environment/environment";
@@ -158,16 +158,12 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
         navigation={navigation}
         rightComponent={
           <TouchableOpacity
-            onPress={() => navigation.navigate("GoviShopCartScreen" as any)}
+            onPress={() => navigation.navigate("OrderHistory" as any)}
             className="bg-[#3F3C57] rounded-full p-2"
           >
-            <View className="flex-row items-center gap-2 px-3 py-1">
-              <Ionicons name="bag-handle" size={20} color="white" />
-              {cartCount > 0 && (
-                <Text className="text-white text-xs font-bold">
-                  {cartCount}
-                </Text>
-              )}
+            <View className="flex-row items-center gap-2 px-2 py-2">
+              <FontAwesome6 name="clock-rotate-left" size={16} color="white" />
+           
             </View>
           </TouchableOpacity>
         }
