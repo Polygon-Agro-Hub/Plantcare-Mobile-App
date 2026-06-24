@@ -19,6 +19,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../types/types";
 import CustomHeader from "../common/CustomHeader";
+import NoData from "../common/NoData";
 import LoadingPage from "../common/LoadingPage";
 
 type GoViCapitalRequestsNavigationProp = StackNavigationProp<
@@ -260,17 +261,7 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
             />
           }
         >
-          <View className="flex-1 items-center justify-center mt-[-40%]">
-            <LottieView
-              source={require("@/assets/jsons/common/no-data.json")}
-              style={{ width: 200, height: 200 }}
-              autoPlay
-              loop
-            />
-            <Text className=" text-[#393939]">
-              --{t("Govicapital.NoRequestsYet")}--
-            </Text>
-          </View>
+          <NoData text={t("Govicapital.NoRequestsYet") || "No requests yet"} />
         </ScrollView>
       ) : (
         <ScrollView

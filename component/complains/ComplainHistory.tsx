@@ -18,6 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import LottieView from "lottie-react-native";
+import NoData from "../common/NoData";
 import { useSelector } from "react-redux";
 import { selectUserPersonal } from "@/store/userSlice";
 import { useFocusEffect } from "@react-navigation/native";
@@ -166,19 +167,7 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
         {loading ? (
           <LoadingPage fullScreen />
         ) : complains.length === 0 ? (
-          <View className="flex-1 items-center justify-center">
-            <View className="items-center justify-center">
-              <LottieView
-                source={require("@/assets/jsons/common/no-data.json")}
-                style={{ width: 200, height: 200 }}
-                autoPlay
-                loop
-              />
-              <Text className="text-center text-gray-600 mt-4">
-                {t("ReportHistory.NoComplaintsFound") || "No complaints found"}
-              </Text>
-            </View>
-          </View>
+            <NoData text={t("ReportHistory.NoComplaintsFound") || "No complaints found"} />
         ) : (
           <ScrollView
             className="flex-1 px-6"

@@ -1493,12 +1493,18 @@
     "TemperatureAndHumidityCannotBothBeZero": "Temperature and Humidity cannot both be zero."
   },
   "GoviShop": {
-    "WelcomeToGoviShop": "Welcome to GoViShop"
+    "WelcomeToGoviShop": "Welcome to GoViShop",
+    "LoadingShops": "Loading shops...",
+    "LoadingOrders": "Loading orders...",
+    "LoadingProducts": "Loading products...",
+    "LoadingCart": "Loading cart...",
+    "LoadingInvoice": "Loading invoice..."
   },
   "ExploreShops": {
     "ExploreShops": "Explore Shops",
     "NoShopsFound": "No shops found",
-    "SearchShopsProducts": "Search Shops / Products..."
+    "SearchShopsProducts": "Search Shops / Products...",
+    "LoadingShops...": "Loading shops..."
   },
   "CheckoutScreen": {
     "Checkout": "Checkout",

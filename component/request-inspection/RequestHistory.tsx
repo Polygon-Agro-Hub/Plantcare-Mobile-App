@@ -27,6 +27,7 @@ import LottieView from "lottie-react-native";
 import { useSelector } from "react-redux";
 import { selectUserFarmCount } from "../../store/userSlice";
 import CustomHeader from "../common/CustomHeader";
+import NoData from "../common/NoData";
 import LoadingPage from "../common/LoadingPage";
 
 type RequestHistoryNavigationProp = StackNavigationProp<
@@ -242,20 +243,14 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
   };
 
   const EmptyState = () => (
-    <View className="flex-1 items-center justify-center -mt-[70%]">
-      <LottieView
-        source={require("@/assets/jsons/common/no-data.json")}
-        style={{ width: wp(50), height: hp(50) }}
-        autoPlay
-        loop
-      />
-      <Text className="text-center text-gray-600 px-8 -mt-[30%]">
-        {farmCount === 0
+    <NoData
+      text={
+        farmCount === 0
           ? t("RequestHistory.YouMustCreateAFarmAndEnrollInAtLeastOneCropVarietyBeforeYouCanContinue") ||
             "You must create a farm and enroll in at least one crop variety before you can continue."
-          : t("RequestHistory.YouHaveNoRequestsAddedYet") || "You have no requests added yet"}
-      </Text>
-    </View>
+          : t("RequestHistory.YouHaveNoRequestsAddedYet") || "You have no requests added yet"
+      }
+    />
   );
 
   const RequestCard = ({ request }: { request: ServiceRequest }) => (

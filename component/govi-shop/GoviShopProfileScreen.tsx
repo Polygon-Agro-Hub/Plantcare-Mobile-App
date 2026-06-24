@@ -17,8 +17,9 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { RootStackParamList } from "../types/types";
 import CustomHeader from "../common/CustomHeader";
+import ShopLoading from "./ShopLoading";
+import NoData from "../common/NoData";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
-import LottieView from "lottie-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { environment } from "@/environment/environment";
@@ -262,13 +263,13 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
   >({});
 
   const [boundaryModal, setBoundaryModal] = useState<{
-  visible: boolean;
-  product: Product | null;
-  sub: SubProduct | null;
-  colorDetail?: ColorDetail;
-  currentBatchPrice: number;
-  nextBatchPrice: number;
-} | null>(null);
+    visible: boolean;
+    product: Product | null;
+    sub: SubProduct | null;
+    colorDetail?: ColorDetail;
+    currentBatchPrice: number;
+    nextBatchPrice: number;
+  } | null>(null);
 
   const cartRef = useRef(cart);
   useEffect(() => {
@@ -342,64 +343,70 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
       (c) => c.productId === productId && c.subProductId === subProductId,
     )?.quantity ?? 0;
 
-  const addLocalCart = (product: Product, sub: SubProduct, colorDetail?: ColorDetail) => {
-  const variantId = getVariantId(product.baseUom, sub, colorDetail);
-  const price = colorDetail
-    ? colorDetail.discountPrice ?? colorDetail.normalPrice
-    : sub.discountPrice ?? sub.price;
+  const addLocalCart = (
+    product: Product,
+    sub: SubProduct,
+    colorDetail?: ColorDetail,
+  ) => {
+    const variantId = getVariantId(product.baseUom, sub, colorDetail);
+    const price = colorDetail
+      ? (colorDetail.discountPrice ?? colorDetail.normalPrice)
+      : (sub.discountPrice ?? sub.price);
 
-  setCart((prev) => {
-    const exists = prev.find(
-      (c) => c.productId === product.id && c.subProductId === variantId,
-    );
-    if (exists) {
-      return prev.map((c) =>
-        c.productId === product.id && c.subProductId === variantId
-          ? { ...c, quantity: c.quantity + 1 }
-          : c,
+    setCart((prev) => {
+      const exists = prev.find(
+        (c) => c.productId === product.id && c.subProductId === variantId,
       );
-    }
-    return [
-      ...prev,
-      {
-        productId: product.id,
-        productName: product.name,
-        subProductId: variantId,
-        subProductLabel: sub.label,
-        price,
-        quantity: 1,
-        image: product.image,
-      },
-    ];
-  });
-};
+      if (exists) {
+        return prev.map((c) =>
+          c.productId === product.id && c.subProductId === variantId
+            ? { ...c, quantity: c.quantity + 1 }
+            : c,
+        );
+      }
+      return [
+        ...prev,
+        {
+          productId: product.id,
+          productName: product.name,
+          subProductId: variantId,
+          subProductLabel: sub.label,
+          price,
+          quantity: 1,
+          image: product.image,
+        },
+      ];
+    });
+  };
 
-const removeLocalCart = (product: Product, sub: SubProduct, colorDetail?: ColorDetail) => {
-  const variantId = getVariantId(product.baseUom, sub, colorDetail);
-  setCart((prev) => {
-    const updated = prev
-      .map((c) =>
-        c.productId === product.id && c.subProductId === variantId
-          ? { ...c, quantity: c.quantity - 1 }
-          : c,
-      )
-      .filter((c) => c.quantity > 0);
-    if (updated.length === 0) setShowViewCart(false);
-    return updated;
-  });
-};
-
-
+  const removeLocalCart = (
+    product: Product,
+    sub: SubProduct,
+    colorDetail?: ColorDetail,
+  ) => {
+    const variantId = getVariantId(product.baseUom, sub, colorDetail);
+    setCart((prev) => {
+      const updated = prev
+        .map((c) =>
+          c.productId === product.id && c.subProductId === variantId
+            ? { ...c, quantity: c.quantity - 1 }
+            : c,
+        )
+        .filter((c) => c.quantity > 0);
+      if (updated.length === 0) setShowViewCart(false);
+      return updated;
+    });
+  };
 
   const getVariantId = (
-  baseUom: string,
-  sub: SubProduct,
-  colorDetail?: ColorDetail,
-): string => {
-  const mode = getDisplayMode(baseUom);
-  if (mode === "COLOR" && colorDetail) return String(colorDetail.colorId);
-  return sub.id;
-};
+    baseUom: string,
+    sub: SubProduct,
+    colorDetail?: ColorDetail,
+  ): string => {
+    const mode = getDisplayMode(baseUom);
+    if (mode === "COLOR" && colorDetail) return String(colorDetail.colorId);
+    return sub.id;
+  };
 
   const callUpsertAPI = async (
     product: Product,
@@ -470,115 +477,124 @@ const removeLocalCart = (product: Product, sub: SubProduct, colorDetail?: ColorD
     }
   };
 
-const handleCartIconPress = async (
-  product: Product,
-  sub: SubProduct,
-  colorDetail?: ColorDetail,
-) => {
-  const variantId = getVariantId(product.baseUom, sub, colorDetail);
-  const key = cartItemKey(product.id, variantId);
-  const qty = getCartQty(product.id, variantId);
-  if (qty === 0) return;
+  const handleCartIconPress = async (
+    product: Product,
+    sub: SubProduct,
+    colorDetail?: ColorDetail,
+  ) => {
+    const variantId = getVariantId(product.baseUom, sub, colorDetail);
+    const key = cartItemKey(product.id, variantId);
+    const qty = getCartQty(product.id, variantId);
+    if (qty === 0) return;
 
-  setCartIconLoading((prev) => ({ ...prev, [key]: true }));
-  const ok = await callUpsertAPI(product, sub, qty, colorDetail);
-  setCartIconLoading((prev) => ({ ...prev, [key]: false }));
+    setCartIconLoading((prev) => ({ ...prev, [key]: true }));
+    const ok = await callUpsertAPI(product, sub, qty, colorDetail);
+    setCartIconLoading((prev) => ({ ...prev, [key]: false }));
 
-  if (ok) {
-    setSavedToDb((prev) => new Set(prev).add(key));
-    setShowViewCart(true);
-  }
-};
+    if (ok) {
+      setSavedToDb((prev) => new Set(prev).add(key));
+      setShowViewCart(true);
+    }
+  };
 
-  const tryAddToCart = (product: Product, sub: SubProduct, colorDetail?: ColorDetail) => {
-  const variantId = getVariantId(product.baseUom, sub, colorDetail);
-  const currentQty = getCartQty(product.id, variantId);
-  const totalCap = colorDetail ? colorDetail.availableQty : getTotalCap(sub);
-  if (totalCap !== undefined && currentQty >= totalCap) return;
+  const tryAddToCart = (
+    product: Product,
+    sub: SubProduct,
+    colorDetail?: ColorDetail,
+  ) => {
+    const variantId = getVariantId(product.baseUom, sub, colorDetail);
+    const currentQty = getCartQty(product.id, variantId);
+    const totalCap = colorDetail ? colorDetail.availableQty : getTotalCap(sub);
+    if (totalCap !== undefined && currentQty >= totalCap) return;
 
-  const batches = colorDetail ? colorDetail.batches : sub.batches;
+    const batches = colorDetail ? colorDetail.batches : sub.batches;
 
-  if (sub.isMRP === 1 && batches && batches.length > 1) {
-    let cumulative = 0;
-    for (let i = 0; i < batches.length - 1; i++) {
-      cumulative += batches[i].qty;
-      if (currentQty === cumulative) {
-        const currentBatchPrice = batches[i].salePrice;
-        const nextBatchPrice = batches[i + 1].salePrice;
-        if (nextBatchPrice !== currentBatchPrice) {
-          setBoundaryModal({
-            visible: true,
-            product,
-            sub,
-            colorDetail,
-            currentBatchPrice,
-            nextBatchPrice,
-          });
-          return;
+    if (sub.isMRP === 1 && batches && batches.length > 1) {
+      let cumulative = 0;
+      for (let i = 0; i < batches.length - 1; i++) {
+        cumulative += batches[i].qty;
+        if (currentQty === cumulative) {
+          const currentBatchPrice = batches[i].salePrice;
+          const nextBatchPrice = batches[i + 1].salePrice;
+          if (nextBatchPrice !== currentBatchPrice) {
+            setBoundaryModal({
+              visible: true,
+              product,
+              sub,
+              colorDetail,
+              currentBatchPrice,
+              nextBatchPrice,
+            });
+            return;
+          }
+          break;
         }
-        break;
       }
     }
-  }
 
-  const key = cartItemKey(product.id, variantId);
-  const newQty = currentQty + 1;
+    const key = cartItemKey(product.id, variantId);
+    const newQty = currentQty + 1;
 
-  if (savedToDb.has(key)) {
-    addLocalCart(product, sub, colorDetail);
-    setDbUpdateLoading((prev) => ({ ...prev, [key]: true }));
-    callUpsertAPI(product, sub, newQty, colorDetail).then((ok) => {
-      if (!ok) removeLocalCart(product, sub, colorDetail);
-      setDbUpdateLoading((prev) => ({ ...prev, [key]: false }));
-    });
-  } else {
-    addLocalCart(product, sub, colorDetail);
-  }
-};
-
-  const handleRemove = (product: Product, sub: SubProduct, colorDetail?: ColorDetail) => {
-  const variantId = getVariantId(product.baseUom, sub, colorDetail);
-  const qty = getCartQty(product.id, variantId);
-  const key = cartItemKey(product.id, variantId);
-
-  if (qty === 1) {
-    setLooseStateMap((prev) => ({ ...prev, [product.id]: "preview" }));
-  }
-
-  if (savedToDb.has(key)) {
-    const newQty = qty - 1;
-
-    if (newQty === 0) {
-      setCart((prev) => {
-        const updated = prev.filter(
-          (c) => !(c.productId === product.id && c.subProductId === variantId),
-        );
-        if (updated.length === 0) setShowViewCart(false);
-        return updated;
-      });
-      setSavedToDb((prev) => {
-        const next = new Set(prev);
-        next.delete(key);
-        return next;
-      });
-      const snapshot = [...cartRef.current];
+    if (savedToDb.has(key)) {
+      addLocalCart(product, sub, colorDetail);
       setDbUpdateLoading((prev) => ({ ...prev, [key]: true }));
-      callDeleteAPI(product, sub, colorDetail).then((ok) => {
-        if (!ok) setCart(snapshot);
+      callUpsertAPI(product, sub, newQty, colorDetail).then((ok) => {
+        if (!ok) removeLocalCart(product, sub, colorDetail);
         setDbUpdateLoading((prev) => ({ ...prev, [key]: false }));
       });
     } else {
-      removeLocalCart(product, sub, colorDetail);
-      setDbUpdateLoading((prev) => ({ ...prev, [key]: true }));
-      callUpsertAPI(product, sub, newQty, colorDetail).then((ok) => {
-        if (!ok) addLocalCart(product, sub, colorDetail);
-        setDbUpdateLoading((prev) => ({ ...prev, [key]: false }));
-      });
+      addLocalCart(product, sub, colorDetail);
     }
-  } else {
-    removeLocalCart(product, sub, colorDetail);
-  }
-};
+  };
+
+  const handleRemove = (
+    product: Product,
+    sub: SubProduct,
+    colorDetail?: ColorDetail,
+  ) => {
+    const variantId = getVariantId(product.baseUom, sub, colorDetail);
+    const qty = getCartQty(product.id, variantId);
+    const key = cartItemKey(product.id, variantId);
+
+    if (qty === 1) {
+      setLooseStateMap((prev) => ({ ...prev, [product.id]: "preview" }));
+    }
+
+    if (savedToDb.has(key)) {
+      const newQty = qty - 1;
+
+      if (newQty === 0) {
+        setCart((prev) => {
+          const updated = prev.filter(
+            (c) =>
+              !(c.productId === product.id && c.subProductId === variantId),
+          );
+          if (updated.length === 0) setShowViewCart(false);
+          return updated;
+        });
+        setSavedToDb((prev) => {
+          const next = new Set(prev);
+          next.delete(key);
+          return next;
+        });
+        const snapshot = [...cartRef.current];
+        setDbUpdateLoading((prev) => ({ ...prev, [key]: true }));
+        callDeleteAPI(product, sub, colorDetail).then((ok) => {
+          if (!ok) setCart(snapshot);
+          setDbUpdateLoading((prev) => ({ ...prev, [key]: false }));
+        });
+      } else {
+        removeLocalCart(product, sub, colorDetail);
+        setDbUpdateLoading((prev) => ({ ...prev, [key]: true }));
+        callUpsertAPI(product, sub, newQty, colorDetail).then((ok) => {
+          if (!ok) addLocalCart(product, sub, colorDetail);
+          setDbUpdateLoading((prev) => ({ ...prev, [key]: false }));
+        });
+      }
+    } else {
+      removeLocalCart(product, sub, colorDetail);
+    }
+  };
 
   const fetchCategories = async () => {
     try {
@@ -1038,21 +1054,16 @@ const handleCartIconPress = async (
         setSelectedFilter(item.name);
         setSearchQuery("");
       }}
+      className="px-5 py-2 rounded-[20px] mr-2.5 border"
       style={{
-        paddingHorizontal: 20,
-        paddingVertical: 8,
-        borderRadius: 20,
-        marginRight: 10,
         backgroundColor: selectedFilter === item.name ? "#FF8000" : "#FFFFFF",
-        borderWidth: 1,
         borderColor: selectedFilter === item.name ? "#FF8000" : "#7A9BC9",
       }}
       activeOpacity={0.8}
     >
       <Text
+        className="font-semibold text-[13px]"
         style={{
-          fontWeight: "600",
-          fontSize: 13,
           color: selectedFilter === item.name ? "#FFFFFF" : "#7A9BC9",
         }}
       >
@@ -1082,11 +1093,9 @@ const handleCartIconPress = async (
         if (coloredSubs.length > 0) {
           return (
             <View
+              className="flex-row flex-wrap mb-3"
               style={{
-                flexDirection: "row",
-                flexWrap: "wrap",
                 gap: COLOR_DOT_GAP,
-                marginBottom: 12,
               }}
             >
               {coloredSubs.map((sub) => {
@@ -1133,11 +1142,9 @@ const handleCartIconPress = async (
       if (subs.length <= 1) return null;
       return (
         <View
+          className="flex-row flex-wrap mb-3"
           style={{
-            flexDirection: "row",
-            flexWrap: "wrap",
             gap: CHIP_GAP,
-            marginBottom: 12,
           }}
         >
           {subs.map((sub) => {
@@ -1153,21 +1160,14 @@ const handleCartIconPress = async (
                   }))
                 }
                 activeOpacity={0.7}
+                className="px-4 py-[7px] rounded-[20px] border-[1.5px] bg-white items-center justify-center"
                 style={{
-                  paddingHorizontal: 16,
-                  paddingVertical: 7,
-                  borderRadius: 20,
-                  borderWidth: 1.5,
                   borderColor: isSelected ? "#FF8000" : "#E0E0E0",
-                  backgroundColor: "#FFFFFF",
-                  alignItems: "center",
-                  justifyContent: "center",
                 }}
               >
                 <Text
+                  className="text-[13px] font-semibold"
                   style={{
-                    fontSize: 13,
-                    fontWeight: "600",
                     color: isSelected ? "#FF8000" : "#888888",
                   }}
                 >
@@ -1199,9 +1199,8 @@ const handleCartIconPress = async (
         <>
           {/* ── Quantity chips ── */}
           <View
+            className="flex-row flex-wrap"
             style={{
-              flexDirection: "row",
-              flexWrap: "wrap",
               gap: CHIP_GAP,
               marginBottom: colorDetails.length > 0 ? 10 : 4,
             }}
@@ -1223,21 +1222,14 @@ const handleCartIconPress = async (
                     }));
                   }}
                   activeOpacity={0.7}
+                  className="px-[18px] py-[7px] rounded-[20px] border-[1.5px] bg-white items-center justify-center"
                   style={{
-                    paddingHorizontal: 18,
-                    paddingVertical: 7,
-                    borderRadius: 20,
-                    borderWidth: 1.5,
                     borderColor: isSelected ? "#FF8000" : "#E0E0E0",
-                    backgroundColor: "#FFFFFF",
-                    alignItems: "center",
-                    justifyContent: "center",
                   }}
                 >
                   <Text
+                    className="text-[13px] font-semibold"
                     style={{
-                      fontSize: 13,
-                      fontWeight: "600",
                       color: isSelected ? "#FF8000" : "#888888",
                     }}
                   >
@@ -1251,11 +1243,9 @@ const handleCartIconPress = async (
           {/* ── Color dots — each with its own price ── */}
           {colorDetails.length > 0 && (
             <View
+              className="flex-row flex-wrap mb-2"
               style={{
-                flexDirection: "row",
-                flexWrap: "wrap",
                 gap: COLOR_DOT_GAP,
-                marginBottom: 8,
               }}
             >
               {colorDetails.map((cd, index) => {
@@ -1306,11 +1296,7 @@ const handleCartIconPress = async (
       return (
         <>
           <View
-            style={{
-              flexDirection: "row",
-              flexWrap: "wrap",
-              marginBottom: 4,
-            }}
+            className="flex-row flex-wrap mb-1"
           >
             {visibleSubs.map((sub, index) => {
               const isSelected = activeSubId === sub.id;
@@ -1325,23 +1311,16 @@ const handleCartIconPress = async (
                     }))
                   }
                   activeOpacity={0.7}
+                  className="w-[48%] py-[9px] rounded-[20px] border-[1.5px] bg-white items-center justify-center"
                   style={{
-                    width: "48%",
                     marginRight: isLeftChip ? "4%" : 0,
                     marginBottom: ROLL_GAP,
-                    paddingVertical: 9,
-                    borderRadius: 20,
-                    borderWidth: 1.5,
                     borderColor: isSelected ? "#FF8000" : "#E0E0E0",
-                    backgroundColor: "#FFFFFF",
-                    alignItems: "center",
-                    justifyContent: "center",
                   }}
                 >
                   <Text
+                    className="text-[13px] font-semibold"
                     style={{
-                      fontSize: 13,
-                      fontWeight: "600",
                       color: isSelected ? "#FF8000" : "#888888",
                     }}
                     numberOfLines={1}
@@ -1358,7 +1337,7 @@ const handleCartIconPress = async (
                 setShowAllChips((prev) => ({ ...prev, [item.id]: true }))
               }
             >
-              <Text style={{ color: "#FF8000", fontSize: 12, marginBottom: 6 }}>
+              <Text className="text-[#FF8000] text-[12px] mb-1.5">
                 +{subs.length - MAX_CHIPS_VISIBLE} more
               </Text>
             </TouchableOpacity>
@@ -1370,11 +1349,9 @@ const handleCartIconPress = async (
     return (
       <>
         <View
+          className="flex-row flex-wrap mb-1"
           style={{
-            flexDirection: "row",
-            flexWrap: "wrap",
             marginRight: -CHIP_GAP,
-            marginBottom: 4,
           }}
         >
           {visibleSubs.map((sub) => {
@@ -1389,23 +1366,17 @@ const handleCartIconPress = async (
                   }))
                 }
                 activeOpacity={0.7}
+                className="py-[7px] rounded-[20px] border-[1.5px] bg-white items-center justify-center"
                 style={{
                   width: CHIP_WIDTH,
                   marginRight: CHIP_GAP,
                   marginBottom: CHIP_GAP,
-                  paddingVertical: 7,
-                  borderRadius: 20,
-                  borderWidth: 1.5,
                   borderColor: isSelected ? "#FF8000" : "#E0E0E0",
-                  backgroundColor: "#FFFFFF",
-                  alignItems: "center",
-                  justifyContent: "center",
                 }}
               >
                 <Text
+                  className="text-[12px] font-semibold"
                   style={{
-                    fontSize: 12,
-                    fontWeight: "600",
                     color: isSelected ? "#FF8000" : "#888888",
                   }}
                   numberOfLines={1}
@@ -1422,7 +1393,7 @@ const handleCartIconPress = async (
               setShowAllChips((prev) => ({ ...prev, [item.id]: true }))
             }
           >
-            <Text style={{ color: "#FF8000", fontSize: 12, marginBottom: 6 }}>
+            <Text className="text-[#FF8000] text-[12px] mb-1.5">
               +{subs.length - MAX_CHIPS_VISIBLE} more
             </Text>
           </TouchableOpacity>
@@ -1431,44 +1402,36 @@ const handleCartIconPress = async (
     );
   };
 
- const renderPriceActionRow = (
-  item: Product,
-  activeSub: SubProduct,
-  cartQty: number,
-  colorDetail?: ColorDetail,
-) => {
-  const displayPrice = colorDetail
-    ? colorDetail.discountPrice ?? colorDetail.normalPrice
-    : activeSub.discountPrice ?? activeSub.price;
-  const totalCap = colorDetail ? colorDetail.availableQty : getTotalCap(activeSub);
-  const isPlusDisabled = totalCap !== undefined && cartQty >= totalCap;
-  const variantId = getVariantId(item.baseUom, activeSub, colorDetail);
-  const key = cartItemKey(item.id, variantId);
-  const isSaved = savedToDb.has(key);
-  const isCartIconSpinning = cartIconLoading[key] ?? false;
-  const isDbUpdating = dbUpdateLoading[key] ?? false;
-  const showCartIcon = cartQty > 0 && !isSaved;
+  const renderPriceActionRow = (
+    item: Product,
+    activeSub: SubProduct,
+    cartQty: number,
+    colorDetail?: ColorDetail,
+  ) => {
+    const displayPrice = colorDetail
+      ? (colorDetail.discountPrice ?? colorDetail.normalPrice)
+      : (activeSub.discountPrice ?? activeSub.price);
+    const totalCap = colorDetail
+      ? colorDetail.availableQty
+      : getTotalCap(activeSub);
+    const isPlusDisabled = totalCap !== undefined && cartQty >= totalCap;
+    const variantId = getVariantId(item.baseUom, activeSub, colorDetail);
+    const key = cartItemKey(item.id, variantId);
+    const isSaved = savedToDb.has(key);
+    const isCartIconSpinning = cartIconLoading[key] ?? false;
+    const isDbUpdating = dbUpdateLoading[key] ?? false;
+    const showCartIcon = cartQty > 0 && !isSaved;
 
     return (
       <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginTop: 4,
-        }}
+        className="flex-row items-center justify-between mt-1"
       >
         {/* Price */}
-        <View style={{ gap: 2 }}>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+        <View className="gap-[2px]">
+          <View className="flex-row items-center gap-1">
             <FontAwesome5 name="coins" size={14} color="black" />
             <Text
-              style={{
-                color: "#FF8000",
-                fontWeight: "800",
-                fontSize: 16,
-                marginLeft: 5,
-              }}
+              className="text-[#FF8000] font-[800] text-[16px] ml-[5px]"
             >
               Rs.{" "}
               {displayPrice.toLocaleString("en-LK", {
@@ -1479,14 +1442,14 @@ const handleCartIconPress = async (
           </View>
           {totalCap !== undefined && (
             <View
-              style={{ flexDirection: "row", alignItems: "center", gap: 3 }}
+              className="flex-row items-center gap-[3px]"
             >
               <Ionicons
                 name="information-circle-outline"
                 size={12}
                 color="#AAAAAA"
               />
-              <Text style={{ color: "#AAAAAA", fontSize: 11 }}>
+              <Text className="text-[#AAAAAA] text-[11px]">
                 {totalCap} Left
               </Text>
             </View>
@@ -1494,15 +1457,13 @@ const handleCartIconPress = async (
         </View>
 
         {/* Buttons */}
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+        <View className="flex-row items-center gap-2">
           {cartQty === 0 ? (
             <TouchableOpacity
               onPress={() => tryAddToCart(item, activeSub, colorDetail)}
               activeOpacity={0.85}
+              className="bg-[#3F3C57] rounded-[20px] p-2"
               style={{
-                backgroundColor: "#3F3C57",
-                borderRadius: 20,
-                padding: 8,
                 shadowColor: "#3F3C57",
                 shadowOffset: { width: 0, height: 3 },
                 shadowOpacity: 0.3,
@@ -1516,26 +1477,14 @@ const handleCartIconPress = async (
             <>
               {/* Stepper */}
               <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  backgroundColor: "#FF80001A",
-                  borderRadius: 20,
-                  borderWidth: 1,
-                  borderColor: "#E8E8E8",
-                  overflow: "hidden",
-                }}
+                className="flex-row items-center bg-[#FF80001A] rounded-[20px] border border-[#E8E8E8] overflow-hidden"
               >
                 <TouchableOpacity
                   onPress={() => handleRemove(item, activeSub, colorDetail)}
                   disabled={isDbUpdating}
+                  className="w-[34px] h-[34px] items-center justify-center rounded-[17px]"
                   style={{
                     backgroundColor: isDbUpdating ? "#CCCCCC" : "#FF8000",
-                    width: 34,
-                    height: 34,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: 17,
                   }}
                 >
                   {isDbUpdating ? (
@@ -1547,14 +1496,7 @@ const handleCartIconPress = async (
                   )}
                 </TouchableOpacity>
                 <Text
-                  style={{
-                    paddingHorizontal: 12,
-                    fontWeight: "700",
-                    fontSize: 15,
-                    color: "#3F3C57",
-                    minWidth: 28,
-                    textAlign: "center",
-                  }}
+                  className="px-3 font-bold text-[15px] text-[#3F3C57] min-w-[28px] text-center"
                 >
                   {cartQty}
                 </Text>
@@ -1562,14 +1504,10 @@ const handleCartIconPress = async (
                   onPress={() => tryAddToCart(item, activeSub, colorDetail)}
                   activeOpacity={isPlusDisabled || isDbUpdating ? 1 : 0.85}
                   disabled={isPlusDisabled || isDbUpdating}
+                  className="w-[34px] h-[34px] items-center justify-center rounded-[17px]"
                   style={{
                     backgroundColor:
                       isPlusDisabled || isDbUpdating ? "#CCCCCC" : "#FF8000",
-                    width: 34,
-                    height: 34,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: 17,
                   }}
                 >
                   {isDbUpdating ? (
@@ -1583,15 +1521,10 @@ const handleCartIconPress = async (
               {/* Cart icon */}
               {showCartIcon && (
                 <TouchableOpacity
-                  style={{
-                    backgroundColor: "#3F3C57",
-                    width: 36,
-                    height: 36,
-                    borderRadius: 18,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                  onPress={() => handleCartIconPress(item, activeSub, colorDetail)}
+                  className="bg-[#3F3C57] w-[36px] h-[36px] rounded-[18px] items-center justify-center"
+                  onPress={() =>
+                    handleCartIconPress(item, activeSub, colorDetail)
+                  }
                   disabled={isCartIconSpinning}
                   activeOpacity={0.85}
                 >
@@ -1611,26 +1544,27 @@ const handleCartIconPress = async (
 
   const BoundaryConfirmModal = () => {
     if (!boundaryModal?.visible) return null;
-    const { product, sub, colorDetail, currentBatchPrice, nextBatchPrice } = boundaryModal;
+    const { product, sub, colorDetail, currentBatchPrice, nextBatchPrice } =
+      boundaryModal;
     if (!product || !sub) return null;
 
     const handleIDontWant = () => setBoundaryModal(null);
     const handleAddToCart = () => {
-  setBoundaryModal(null);
-  const variantId = getVariantId(product.baseUom, sub, colorDetail);
-  const key = cartItemKey(product.id, variantId);
-  const newQty = getCartQty(product.id, variantId) + 1;
-  if (savedToDb.has(key)) {
-    addLocalCart(product, sub, colorDetail);
-    setDbUpdateLoading((prev) => ({ ...prev, [key]: true }));
-    callUpsertAPI(product, sub, newQty, colorDetail).then((ok) => {
-      if (!ok) removeLocalCart(product, sub, colorDetail);
-      setDbUpdateLoading((prev) => ({ ...prev, [key]: false }));
-    });
-  } else {
-    addLocalCart(product, sub, colorDetail);
-  }
-};
+      setBoundaryModal(null);
+      const variantId = getVariantId(product.baseUom, sub, colorDetail);
+      const key = cartItemKey(product.id, variantId);
+      const newQty = getCartQty(product.id, variantId) + 1;
+      if (savedToDb.has(key)) {
+        addLocalCart(product, sub, colorDetail);
+        setDbUpdateLoading((prev) => ({ ...prev, [key]: true }));
+        callUpsertAPI(product, sub, newQty, colorDetail).then((ok) => {
+          if (!ok) removeLocalCart(product, sub, colorDetail);
+          setDbUpdateLoading((prev) => ({ ...prev, [key]: false }));
+        });
+      } else {
+        addLocalCart(product, sub, colorDetail);
+      }
+    };
 
     return (
       <Modal
@@ -1640,22 +1574,11 @@ const handleCartIconPress = async (
         onRequestClose={handleIDontWant}
       >
         <View
-          style={{
-            flex: 1,
-            backgroundColor: "rgba(0,0,0,0.55)",
-            justifyContent: "center",
-            alignItems: "center",
-            paddingHorizontal: 20,
-          }}
+          className="flex-1 bg-[rgba(0,0,0,0.55)] justify-center items-center px-5"
         >
           <View
+            className="bg-white rounded-[22px] w-full px-6 pt-7 pb-6"
             style={{
-              backgroundColor: "#FFFFFF",
-              borderRadius: 22,
-              width: "100%",
-              paddingHorizontal: 24,
-              paddingTop: 28,
-              paddingBottom: 24,
               shadowColor: "#000",
               shadowOffset: { width: 0, height: 10 },
               shadowOpacity: 0.45,
@@ -1666,44 +1589,23 @@ const handleCartIconPress = async (
             <TouchableOpacity
               onPress={handleIDontWant}
               activeOpacity={0.8}
-              style={{
-                position: "absolute",
-                top: 14,
-                right: 14,
-                width: 30,
-                height: 30,
-                borderRadius: 15,
-                backgroundColor: "#2A2840",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+              className="absolute top-3.5 right-3.5 w-[30px] h-[30px] rounded-[15px] bg-[#2A2840] items-center justify-center"
             >
               <Ionicons name="close" size={16} color="#AAAAAA" />
             </TouchableOpacity>
             <Text
-              style={{
-                color: "#000",
-                fontWeight: "800",
-                fontSize: 18,
-                marginBottom: 20,
-              }}
+              className="text-black font-[800] text-[18px] mb-5"
             >
               Please Confirm Action!
             </Text>
             <View
-              style={{
-                borderWidth: 1.5,
-                borderColor: "#8F95BD",
-                borderRadius: 12,
-                padding: 16,
-                marginBottom: 24,
-              }}
+              className="border-[1.5px] border-[#8F95BD] rounded-xl p-4 mb-6"
             >
               <Text
-                style={{ color: "#484848", fontSize: 13.5, lineHeight: 22 }}
+                className="text-[#484848] text-[13.5px] leading-[22px]"
               >
                 {"Last batch priced at "}
-                <Text style={{ color: "#000", fontWeight: "700" }}>
+                <Text className="text-black font-bold">
                   Rs.{" "}
                   {currentBatchPrice.toLocaleString("en-LK", {
                     minimumFractionDigits: 2,
@@ -1711,7 +1613,7 @@ const handleCartIconPress = async (
                   })}
                 </Text>
                 {" has been sold.\n\nThe next batch will be available at "}
-                <Text style={{ color: "#FF8000", fontWeight: "700" }}>
+                <Text className="text-[#FF8000] font-bold">
                   Rs.{" "}
                   {nextBatchPrice.toLocaleString("en-LK", {
                     minimumFractionDigits: 2,
@@ -1725,39 +1627,20 @@ const handleCartIconPress = async (
             <TouchableOpacity
               onPress={handleIDontWant}
               activeOpacity={0.85}
-              style={{
-                backgroundColor: "#CCCCCC",
-                borderRadius: 50,
-                paddingVertical: 15,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 10,
-                marginBottom: 12,
-              }}
+              className="bg-[#CCCCCC] rounded-[50px] py-[15px] flex-row items-center justify-center gap-2.5 mb-3"
             >
               <Ionicons name="arrow-back" size={18} color="#555" />
-              <Text style={{ color: "#555", fontWeight: "700", fontSize: 15 }}>
+              <Text className="text-[#555] font-bold text-[15px]">
                 I don't want
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={handleAddToCart}
               activeOpacity={0.88}
-              style={{
-                backgroundColor: "#2A2840",
-                borderRadius: 50,
-                paddingVertical: 15,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 10,
-                borderWidth: 1.5,
-                borderColor: "#3A3858",
-              }}
+              className="bg-[#2A2840] rounded-[50px] py-[15px] flex-row items-center justify-center gap-2.5 border-[1.5px] border-[#3A3858]"
             >
               <Text
-                style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}
+                className="text-white font-bold text-[15px]"
               >
                 Add to Cart
               </Text>
@@ -1777,18 +1660,22 @@ const handleCartIconPress = async (
     const subs = subProducts[item.id] ?? [];
     const isLoadingSubs = subProductsLoading[item.id] ?? false;
     const activeSubId = selectedSubProductId[item.id];
-  const activeSub =
-  displayMode === "EQUIPMENT"
-    ? subs.filter((s) => s.colorCode && s.colorCode.trim()).find((s) => s.id === activeSubId) ??
-      subs.find((s) => s.id === activeSubId)
-    : subs.find((s) => s.id === activeSubId);
+    const activeSub =
+      displayMode === "EQUIPMENT"
+        ? (subs
+            .filter((s) => s.colorCode && s.colorCode.trim())
+            .find((s) => s.id === activeSubId) ??
+          subs.find((s) => s.id === activeSubId))
+        : subs.find((s) => s.id === activeSubId);
 
-const activeColorDetail =
-  displayMode === "COLOR" && activeSub
-    ? getActiveColorDetail(activeSub, selectedColorIndexMap[item.id] ?? 0)
-    : undefined;
+    const activeColorDetail =
+      displayMode === "COLOR" && activeSub
+        ? getActiveColorDetail(activeSub, selectedColorIndexMap[item.id] ?? 0)
+        : undefined;
 
-const variantId = activeSub ? getVariantId(item.baseUom, activeSub, activeColorDetail) : undefined;
+    const variantId = activeSub
+      ? getVariantId(item.baseUom, activeSub, activeColorDetail)
+      : undefined;
 
     const cartQty = activeSub && variantId ? getCartQty(item.id, variantId) : 0;
 
@@ -1818,13 +1705,8 @@ const variantId = activeSub ? getVariantId(item.baseUom, activeSub, activeColorD
 
     return (
       <View
+        className="bg-white rounded-2xl mb-3.5 overflow-hidden border border-[#F0F0F0]"
         style={{
-          backgroundColor: "#FFFFFF",
-          borderRadius: 16,
-          marginBottom: 14,
-          overflow: "hidden",
-          borderWidth: 1,
-          borderColor: "#F0F0F0",
           shadowColor: "#000",
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.08,
@@ -1849,40 +1731,25 @@ const variantId = activeSub ? getVariantId(item.baseUom, activeSub, activeColorD
           }}
         >
           <View
+            className="flex-row items-center"
             style={{
-              flexDirection: "row",
               padding: CARD_H_PADDING,
-              alignItems: "center",
             }}
           >
             {showImageInHeader && (
               <View
-                style={{
-                  width: 72,
-                  height: 72,
-                  borderRadius: 12,
-                  backgroundColor: "#F3F4F6",
-                  marginRight: 12,
-                  overflow: "hidden",
-                  borderWidth: 1,
-                  borderColor: "#F0F0F0",
-                }}
+                className="w-[72px] h-[72px] rounded-xl bg-[#F3F4F6] mr-3 overflow-hidden border border-[#F0F0F0]"
               >
                 <Image
                   source={{ uri: item.image }}
-                  style={{ width: "100%", height: "100%" }}
+                  className="w-full h-full"
                   resizeMode="cover"
                 />
               </View>
             )}
-            <View style={{ flex: 1 }}>
+            <View className="flex-1">
               <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: "700",
-                  color: "#111827",
-                  lineHeight: 20,
-                }}
+                className="text-[14px] font-bold text-[#111827] leading-5"
                 numberOfLines={2}
               >
                 {item.name}
@@ -1897,11 +1764,8 @@ const variantId = activeSub ? getVariantId(item.baseUom, activeSub, activeColorD
                     : handleNonLoosePlusPress(item.id);
                 }}
                 activeOpacity={0.8}
+                className="bg-[#3F3C57] rounded-[20px] p-[5px] ml-2.5"
                 style={{
-                  backgroundColor: "#3F3C57",
-                  borderRadius: 20,
-                  padding: 5,
-                  marginLeft: 10,
                   shadowColor: "#3F3C57",
                   shadowOffset: { width: 0, height: 3 },
                   shadowOpacity: 0.3,
@@ -1925,12 +1789,7 @@ const variantId = activeSub ? getVariantId(item.baseUom, activeSub, activeColorD
           >
             {(loosePillLabel || item.baseUom) && (
               <Text
-                style={{
-                  fontSize: 13,
-                  color: "#8A94A6",
-                  fontWeight: "500",
-                  marginBottom: 10,
-                }}
+                className="text-[13px] text-[#8A94A6] font-medium mb-2.5"
               >
                 {loosePillLabel
                   ? `${loosePillLabel} - By ${item.baseUom}`
@@ -1939,31 +1798,18 @@ const variantId = activeSub ? getVariantId(item.baseUom, activeSub, activeColorD
             )}
 
             <View
-              style={{
-                height: 1,
-                backgroundColor: "#F0F0F0",
-                marginBottom: 12,
-              }}
+              className="h-[1px] bg-[#F0F0F0] mb-3"
             />
 
             <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
+              className="flex-row items-center justify-between"
             >
               <View
-                style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
+                className="flex-row items-center gap-1"
               >
                 <FontAwesome5 name="coins" size={14} color="black" />
                 <Text
-                  style={{
-                    color: "#FF8000",
-                    fontWeight: "800",
-                    fontSize: 16,
-                    marginLeft: 5,
-                  }}
+                  className="text-[#FF8000] font-[800] text-[16px] ml-[5px]"
                 >
                   Rs.{" "}
                   {previewPrice.toLocaleString("en-LK", {
@@ -1975,10 +1821,8 @@ const variantId = activeSub ? getVariantId(item.baseUom, activeSub, activeColorD
               <TouchableOpacity
                 onPress={() => handleLoosePlusPress(item.id)}
                 activeOpacity={0.8}
+                className="bg-[#3F3C57] rounded-[20px] p-[5px]"
                 style={{
-                  backgroundColor: "#3F3C57",
-                  borderRadius: 20,
-                  padding: 5,
                   shadowColor: "#3F3C57",
                   shadowOffset: { width: 0, height: 3 },
                   shadowOpacity: 0.3,
@@ -2001,38 +1845,23 @@ const variantId = activeSub ? getVariantId(item.baseUom, activeSub, activeColorD
             }}
           >
             <View
-              style={{
-                height: 1,
-                backgroundColor: "#F0F0F0",
-                marginBottom: 12,
-              }}
+              className="h-[1px] bg-[#F0F0F0] mb-3"
             />
             {isLoadingSubs ? (
               <ActivityIndicator
                 size="small"
                 color="#FF8000"
-                style={{ marginVertical: 10 }}
+                className="my-2.5"
               />
             ) : (
               <>
                 {activeSub && (
-                  <View style={{ marginBottom: 10 }}>
+                  <View className="mb-2.5">
                     <View
-                      style={{
-                        alignSelf: "flex-start",
-                        paddingHorizontal: 14,
-                        paddingVertical: 6,
-                        borderRadius: 20,
-                        borderWidth: 1.5,
-                        borderColor: "#FF8000",
-                      }}
+                      className="self-start px-3.5 py-1.5 rounded-[20px] border-[1.5px] border-[#FF8000]"
                     >
                       <Text
-                        style={{
-                          color: "#FF8000",
-                          fontWeight: "700",
-                          fontSize: 13,
-                        }}
+                        className="text-[#FF8000] font-bold text-[13px]"
                       >
                         {activeSub.label}
                         {cartQty > 0 ? ` X ${cartQty}` : ""}
@@ -2047,19 +1876,11 @@ const variantId = activeSub ? getVariantId(item.baseUom, activeSub, activeColorD
                       totalCap !== undefined && cartQty >= totalCap;
                     return (
                       <View
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                        }}
+                        className="flex-row items-center justify-between"
                       >
-                        <View style={{ gap: 2 }}>
+                        <View className="gap-[2px]">
                           <View
-                            style={{
-                              flexDirection: "row",
-                              alignItems: "center",
-                              gap: 4,
-                            }}
+                            className="flex-row items-center gap-1"
                           >
                             <FontAwesome5
                               name="coins"
@@ -2067,12 +1888,7 @@ const variantId = activeSub ? getVariantId(item.baseUom, activeSub, activeColorD
                               color="black"
                             />
                             <Text
-                              style={{
-                                color: "#FF8000",
-                                fontWeight: "800",
-                                fontSize: 16,
-                                marginLeft: 5,
-                              }}
+                              className="text-[#FF8000] font-[800] text-[16px] ml-[5px]"
                             >
                               Rs.{" "}
                               {(
@@ -2089,53 +1905,33 @@ const variantId = activeSub ? getVariantId(item.baseUom, activeSub, activeColorD
 
                           {totalCap !== undefined && (
                             <View
-                              style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                gap: 3,
-                              }}
+                              className="flex-row items-center gap-[3px]"
                             >
                               <Ionicons
                                 name="information-circle-outline"
                                 size={12}
                                 color="#AAAAAA"
                               />
-                              <Text style={{ color: "#AAAAAA", fontSize: 11 }}>
+                              <Text className="text-[#AAAAAA] text-[11px]">
                                 {totalCap} Left
                               </Text>
                             </View>
                           )}
                         </View>
                         <View
-                          style={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            gap: 8,
-                          }}
+                          className="flex-row items-center gap-2"
                         >
                           <View
-                            style={{
-                              flexDirection: "row",
-                              alignItems: "center",
-                              backgroundColor: "#FF80001A",
-                              borderRadius: 20,
-                              borderWidth: 1,
-                              borderColor: "#E8E8E8",
-                              overflow: "hidden",
-                            }}
+                            className="flex-row items-center bg-[#FF80001A] rounded-[20px] border border-[#E8E8E8] overflow-hidden"
                           >
                             <TouchableOpacity
                               onPress={() => handleRemove(item, activeSub)}
                               disabled={isLooseDbUpdating}
+                              className="w-[34px] h-[34px] items-center justify-center rounded-[17px]"
                               style={{
                                 backgroundColor: isLooseDbUpdating
                                   ? "#CCCCCC"
                                   : "#FF8000",
-                                width: 34,
-                                height: 34,
-                                alignItems: "center",
-                                justifyContent: "center",
-                                borderRadius: 17,
                               }}
                             >
                               {isLooseDbUpdating ? (
@@ -2155,14 +1951,7 @@ const variantId = activeSub ? getVariantId(item.baseUom, activeSub, activeColorD
                               )}
                             </TouchableOpacity>
                             <Text
-                              style={{
-                                paddingHorizontal: 12,
-                                fontWeight: "700",
-                                fontSize: 15,
-                                color: "#3F3C57",
-                                minWidth: 28,
-                                textAlign: "center",
-                              }}
+                              className="px-3 font-bold text-[15px] text-[#3F3C57] min-w-[28px] text-center"
                             >
                               {cartQty}
                             </Text>
@@ -2172,16 +1961,12 @@ const variantId = activeSub ? getVariantId(item.baseUom, activeSub, activeColorD
                                 isPlusDisabled || isLooseDbUpdating ? 1 : 0.85
                               }
                               disabled={isPlusDisabled || isLooseDbUpdating}
+                              className="w-[34px] h-[34px] items-center justify-center rounded-[17px]"
                               style={{
                                 backgroundColor:
                                   isPlusDisabled || isLooseDbUpdating
                                     ? "#CCCCCC"
                                     : "#FF8000",
-                                width: 34,
-                                height: 34,
-                                alignItems: "center",
-                                justifyContent: "center",
-                                borderRadius: 17,
                               }}
                             >
                               {isLooseDbUpdating ? (
@@ -2193,14 +1978,7 @@ const variantId = activeSub ? getVariantId(item.baseUom, activeSub, activeColorD
                           </View>
                           {looseShowCartIcon && (
                             <TouchableOpacity
-                              style={{
-                                backgroundColor: "#3F3C57",
-                                width: 36,
-                                height: 36,
-                                borderRadius: 18,
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}
+                              className="bg-[#3F3C57] w-[36px] h-[36px] rounded-[18px] items-center justify-center"
                               onPress={() =>
                                 handleCartIconPress(item, activeSub)
                               }
@@ -2236,26 +2014,17 @@ const variantId = activeSub ? getVariantId(item.baseUom, activeSub, activeColorD
             }}
           >
             <View
-              style={{
-                height: 1,
-                backgroundColor: "#F0F0F0",
-                marginBottom: 12,
-              }}
+              className="h-[1px] bg-[#F0F0F0] mb-3"
             />
             {isLoadingSubs ? (
               <ActivityIndicator
                 size="small"
                 color="#FF8000"
-                style={{ marginVertical: 10 }}
+                className="my-2.5"
               />
             ) : subs.length === 0 ? (
               <Text
-                style={{
-                  color: "#AAA",
-                  fontSize: 13,
-                  textAlign: "center",
-                  paddingVertical: 8,
-                }}
+                className="text-[#AAA] text-[13px] text-center py-2"
               >
                 No variants available
               </Text>
@@ -2278,7 +2047,12 @@ const variantId = activeSub ? getVariantId(item.baseUom, activeSub, activeColorD
                           availableQty: cd.availableQty,
                           batches: cd.batches,
                         };
-                        return renderPriceActionRow(item, patchedSub, cartQty, cd);
+                        return renderPriceActionRow(
+                          item,
+                          patchedSub,
+                          cartQty,
+                          cd,
+                        );
                       }
                     }
                     return renderPriceActionRow(item, activeSub, cartQty);
@@ -2292,35 +2066,28 @@ const variantId = activeSub ? getVariantId(item.baseUom, activeSub, activeColorD
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+    <View className="flex-1 bg-white">
       <View
-        style={{ position: "absolute", top: 0, left: 0, right: 0, zIndex: 0 }}
+        className="absolute top-0 left-0 right-0 z-0"
       >
         <Image
           source={require("@/assets/images/govi-shop/shop-profile-header.webp")}
-          style={{ width: screenWidth, height: 100 }}
+          className="h-[100px]"
+          style={{ width: screenWidth }}
           resizeMode="cover"
         />
         <View
+          className="absolute -bottom-20 self-center z-10"
           style={{
-            position: "absolute",
-            bottom: -80,
-            alignSelf: "center",
-            zIndex: 10,
             elevation: 10,
           }}
         >
           <View
-            style={{
-              width: 128,
-              height: 128,
-              backgroundColor: "#F3F4F6",
-              overflow: "hidden",
-            }}
+            className="w-32 h-32 bg-[#F3F4F6] overflow-hidden"
           >
             <Image
               source={{ uri: logo }}
-              style={{ width: "100%", height: "100%" }}
+              className="w-full h-full"
               resizeMode="cover"
             />
           </View>
@@ -2335,7 +2102,7 @@ const variantId = activeSub ? getVariantId(item.baseUom, activeSub, activeColorD
       />
 
       <ScrollView
-        style={{ flex: 1, marginTop: 130 }}
+        className="flex-1 mt-[130px]"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: showViewCart ? 100 : 40 }}
         refreshControl={
@@ -2343,28 +2110,17 @@ const variantId = activeSub ? getVariantId(item.baseUom, activeSub, activeColorD
         }
       >
         <View
-          style={{
-            alignItems: "center",
-            paddingBottom: 16,
-            paddingHorizontal: 16,
-            backgroundColor: "#FFFFFF",
-          }}
+          className="items-center pb-4 px-4 bg-white"
         >
           <Text
-            style={{
-              fontSize: 20,
-              fontWeight: "700",
-              color: "#000000",
-              marginBottom: 6,
-              textAlign: "center",
-            }}
+            className="text-[20px] font-bold text-black mb-1.5 text-center"
           >
             {shopname}
           </Text>
           {adress ? (
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View className="flex-row items-center">
               <Ionicons name="location" size={16} color="#FF0000" />
-              <Text style={{ fontSize: 13, color: "#626786", marginLeft: 4 }}>
+              <Text className="text-[13px] text-[#626786] ml-1">
                 {adress}
               </Text>
             </View>
@@ -2372,144 +2128,83 @@ const variantId = activeSub ? getVariantId(item.baseUom, activeSub, activeColorD
         </View>
 
         <View
-          style={{
-            paddingHorizontal: 16,
-            paddingBottom: 8,
-            backgroundColor: "#FFFFFF",
-          }}
+          className="mx-6 pb-2 bg-white"
         >
           <View
-            style={{
-              backgroundColor: "#E8E9EDCC",
-              borderRadius: 28,
-              paddingHorizontal: 16,
-              paddingVertical: 4,
-              flexDirection: "row",
-              alignItems: "center",
-            }}
+            className="bg-[#E8E9EDCC] rounded-[28px] px-4 py-1 flex-row items-center"
           >
             <TextInput
               value={searchQuery}
               onChangeText={setSearchQuery}
               placeholder={`Search ${selectedFilter === "All" ? "" : selectedFilter + " "}Products...`}
               placeholderTextColor="#373737"
-              style={{
-                flex: 1,
-                marginLeft: 8,
-                fontSize: 15,
-                color: "#1F2937",
-                paddingVertical: 8,
-                height: 48,
-              }}
+              className="flex-1 ml-2 text-base text-gray-800 h-[50px]"
             />
             {searchQuery.length === 0 ? (
-              <Ionicons name="search-outline" size={20} color="#373737" />
+              <Ionicons name="search-outline" size={28} color="#373737" />
             ) : (
               <TouchableOpacity onPress={() => setSearchQuery("")}>
-                <Ionicons name="close-circle" size={20} color="#373737" />
+                <Ionicons name="close-sharp" size={28} color="#373737" />
               </TouchableOpacity>
             )}
           </View>
         </View>
 
-        <View
-          style={{
-            paddingHorizontal: 16,
-            paddingTop: 14,
-            paddingBottom: 8,
-            backgroundColor: "#FFFFFF",
-          }}
-        >
-          {categoriesLoading ? (
-            <ActivityIndicator size="small" color="#FF8000" />
-          ) : (
-            <FlatList
-              data={filterButtons}
-              renderItem={renderFilterButton}
-              keyExtractor={(item) => item.id}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingRight: 20 }}
-            />
-          )}
-        </View>
-
-        <View
-          style={{
-            paddingHorizontal: 16,
-            paddingTop: 8,
-            backgroundColor: "#FFFFFF",
-          }}
-        >
-          {productsLoading ? (
-            <View style={{ paddingVertical: 40, alignItems: "center" }}>
-              <ActivityIndicator size="large" color="#FF8000" />
+        {categoriesLoading || productsLoading ? (
+          <ShopLoading
+            text={t("GoviShop.LoadingProducts") || "Loading products..."}
+          />
+        ) : (
+          <>
+            <View
+              className="mx-6 pt-3.5 pb-2 bg-white"
+            >
+              <FlatList
+                data={filterButtons}
+                renderItem={renderFilterButton}
+                keyExtractor={(item) => item.id}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ paddingRight: 20 }}
+              />
             </View>
-          ) : (
-            <FlatList
-              data={products}
-              renderItem={renderProductItem}
-              keyExtractor={(item, index) =>
-                item?.id?.toString() ?? index.toString()
-              }
-              scrollEnabled={false}
-              ListEmptyComponent={
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    paddingVertical: 40,
-                  }}
-                >
-                  <LottieView
-                    source={require("@/assets/jsons/common/no-data.json")}
-                    autoPlay
-                    loop
-                    style={{ width: 250, height: 250 }}
+
+            <View
+              className="mx-6 pt-2 bg-white"
+            >
+              <FlatList
+                data={products}
+                renderItem={renderProductItem}
+                keyExtractor={(item, index) =>
+                  item?.id?.toString() ?? index.toString()
+                }
+                scrollEnabled={false}
+                ListEmptyComponent={
+                  <NoData
+                    text={
+                      searchQuery
+                        ? `No results for "${searchQuery}"`
+                        : `No ${selectedFilter === "All" ? "" : selectedFilter + " "}products available`
+                    }
                   />
-                  <Text
-                    style={{
-                      color: "#7A9BC9",
-                      fontSize: 15,
-                      marginTop: 16,
-                      textAlign: "center",
-                    }}
-                  >
-                    {searchQuery
-                      ? `No results for "${searchQuery}"`
-                      : `No ${selectedFilter === "All" ? "" : selectedFilter + " "}products available`}
-                  </Text>
-                </View>
-              }
-            />
-          )}
-        </View>
+                }
+              />
+            </View>
+          </>
+        )}
       </ScrollView>
 
       {showViewCart && cartCount > 0 && (
         <View
-          style={{
-            position: "absolute",
-            bottom: 100,
-            left: "25%",
-            right: "25%",
-            zIndex: 999,
-          }}
+          className="absolute bottom-[100px] left-[25%] right-[25%] z-[999]"
         >
           <TouchableOpacity
             onPress={() =>
               navigation.navigate("CartScreen" as any, { shopname, branchId })
             }
             activeOpacity={0.9}
+            className="bg-[#FF8000CC] rounded-[50px] flex-row items-center justify-between py-3.5 px-5"
             style={{
-              backgroundColor: "#FF8000CC",
-              borderRadius: 50,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingVertical: 14,
-              paddingHorizontal: 20,
               shadowColor: "#3F3C57",
               shadowOffset: { width: 0, height: 6 },
               shadowOpacity: 0.4,
@@ -2517,30 +2212,18 @@ const variantId = activeSub ? getVariantId(item.baseUom, activeSub, activeColorD
               elevation: 10,
             }}
           >
-            <View style={{ flexDirection: "column" }}>
+            <View className="flex-col">
               <Text
-                style={{
-                  color: "white",
-                  fontWeight: "700",
-                  fontSize: 15,
-                  letterSpacing: 0.3,
-                }}
+                className="text-white font-bold text-[15px] tracking-[0.3px]"
               >
                 View Cart
               </Text>
-              <Text style={{ color: "white", fontSize: 12, opacity: 0.85 }}>
+              <Text className="text-white text-[12px] opacity-85">
                 {cartCount} {cartCount === 1 ? "item" : "items"}
               </Text>
             </View>
             <View
-              style={{
-                height: 40,
-                width: 40,
-                backgroundColor: "white",
-                borderRadius: 20,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+              className="h-10 w-10 bg-white rounded-[20px] items-center justify-center"
             >
               <Ionicons name="chevron-forward" size={20} color="#FF8000" />
             </View>

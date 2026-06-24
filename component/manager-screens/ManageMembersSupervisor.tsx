@@ -32,6 +32,7 @@ import ContentLoader, {
 } from "react-content-loader/native";
 import { encode } from "base64-arraybuffer";
 import LottieView from "lottie-react-native";
+import NoData from "../common/NoData";
 
 type ManageMembersSupervisorNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -336,21 +337,7 @@ const ManageMembersSupervisor = () => {
             <SkeletonLoader />
           ) : staff.filter((member) => member.role === "Laborer").length ===
             0 ? (
-            <View className="items-center justify-center py-10">
-              <View className="items-center justify-center mt-[-25%]">
-                <LottieView
-                  source={require("@/assets/jsons/common/no-data.json")}
-                  style={{ width: wp(50), height: hp(50) }}
-                  autoPlay
-                  loop
-                />
-                <View className="items-center justify-center mt-[-30%]">
-                  <Text className="text-gray-500 text-base text-center">
-                    {t("Farms.NoLaborersFoundForThisFarm")}
-                  </Text>
-                </View>
-              </View>
-            </View>
+              <NoData text={t("Farms.NoLaborersFoundForThisFarm") || "No laborers found for this farm"} />
           ) : (
             staff
               .filter((member) => member.role === "Laborer")

@@ -23,6 +23,7 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
 import CustomHeader from "../common/CustomHeader";
+import NoData from "../common/NoData";
 import districtData from "@/assets/jsons/common/district.json";
 import assetData from "@/assets/jsons/fixed-asset/fixed-assets.json";
 import LoadingPage from "../common/LoadingPage";
@@ -552,17 +553,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
                 </View>
               ))
             ) : (
-              <View className="flex-1 justify-center items-center">
-                <LottieView
-                  source={require("@/assets/jsons/common/no-data.json")}
-                  style={{ width: wp(50), height: hp(50) }}
-                  autoPlay
-                  loop
-                />
-                <Text className="text-center text-gray-600 -mt-[30%]">
-                  {t("FixedAssets.NoAssetsAvailableForThisCategory")}
-                </Text>
-              </View>
+              <NoData text={t("FixedAssets.NoAssetsAvailableForThisCategory") || "No assets available for this category"} />
             )}
           </ScrollView>
         </>

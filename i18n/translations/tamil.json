@@ -1491,7 +1491,12 @@
     "TemperatureAndHumidityCannotBothBeZero": "Temperature and Humidity cannot both be zero."
   },
   "GoviShop": {
-    "WelcomeToGoviShop": "Welcome to GoViShop"
+    "WelcomeToGoviShop": "Welcome to GoViShop",
+    "LoadingShops": "கடைகளை ஏற்றுகிறது...",
+    "LoadingOrders": "ஆர்டர்களை ஏற்றுகிறது...",
+    "LoadingProducts": "தயாரிப்புகளை ஏற்றுகிறது...",
+    "LoadingCart": "வண்டியை ஏற்றுகிறது...",
+    "LoadingInvoice": "விலைப்பட்டியலை ஏற்றுகிறது..."
   },
   "ExploreShops": {
     "ExploreShops": "Explore Shops",

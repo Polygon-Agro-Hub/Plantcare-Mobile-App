@@ -11,8 +11,9 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { RootStackParamList } from "../types/types";
 import CustomHeader from "../common/CustomHeader";
+import ShopLoading from "./ShopLoading";
+import NoData from "../common/NoData";
 import { Entypo, FontAwesome5, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import LottieView from "lottie-react-native";
 import axios from "axios";
 import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -204,24 +205,9 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ navigation }) => {
 
       {/* List */}
       {loading ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#F97316" />
-        </View>
+        <ShopLoading text={t("GoviShop.LoadingOrders") || "Loading orders..."} />
       ) : orders.length === 0 ? (
-        <View className="flex-1 items-center justify-center">
-          <View className="items-center justify-center">
-            <LottieView
-              source={require("@/assets/jsons/common/no-data.json")}
-              style={{ width: 200, height: 200 }}
-              autoPlay
-              loop
-            />
-            <Text className="text-center text-gray-600">
-              --{t("OrderHistory.No Previous Orders") || "No Previous Orders"}
-              --
-            </Text>
-          </View>
-        </View>
+            <NoData text={t("OrderHistory.No Previous Orders") || "No Previous Orders"} />
       ) : (
         <>
           <FlatList

@@ -21,6 +21,7 @@ import {
 } from "react-native-responsive-screen";
 import LottieView from "lottie-react-native";
 import CustomHeader from "../common/CustomHeader";
+import NoData from "../common/NoData";
 import LoadingPage from "../common/LoadingPage";
 
 type TransactionHistoryNavigationProp = StackNavigationProp<
@@ -270,17 +271,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
               </TouchableOpacity>
             )}
             ListEmptyComponent={
-              <View className="flex-1 items-center justify-center">
-                <LottieView
-                  source={require("@/assets/jsons/common/no-data.json")}
-                  style={{ width: wp(50), height: hp(50) }}
-                  autoPlay
-                  loop
-                />
-                <Text className="text-center text-gray-600 mt-[-30%]">
-                  --{t("TransactionList.NoTransactionsFound")}--
-                </Text>
-              </View>
+              <NoData text={t("TransactionList.NoTransactionsFound") || "No transactions found"} />
             }
           />
         </View>

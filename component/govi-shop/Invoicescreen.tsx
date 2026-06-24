@@ -16,6 +16,8 @@ import axios from "axios";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { environment } from "@/environment/environment";
 import { RootStackParamList } from "../types/types";
+import ShopLoading from "./ShopLoading";
+import { useTranslation } from "react-i18next";
 
 type InvoiceNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -395,6 +397,7 @@ const generateInvoiceHtml = (
 };
 
 const InvoiceScreen: React.FC<InvoiceScreenProps> = ({ navigation, route }) => {
+  const { t } = useTranslation();
   const { orderId } = route.params;
 
   const [invoice, setInvoice] = useState<InvoiceData | null>(null);
@@ -483,11 +486,8 @@ const InvoiceScreen: React.FC<InvoiceScreenProps> = ({ navigation, route }) => {
         </TouchableOpacity>
       </View>
 
-      {/* Body */}
       {loading ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#FF8000" />
-        </View>
+        <ShopLoading text={t("GoviShop.LoadingInvoice") || "Loading invoice..."} />
       ) : error ? (
         <View className="flex-1 items-center justify-center px-8">
           <Text className="text-gray-600 text-center mb-4">{error}</Text>

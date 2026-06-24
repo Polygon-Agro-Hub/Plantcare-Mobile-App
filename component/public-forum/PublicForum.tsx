@@ -27,6 +27,7 @@ import {
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import ContentLoader, { Rect } from "react-content-loader/native";
 import LottieView from "lottie-react-native";
+import NoData from "../common/NoData";
 import { useFocusEffect } from "@react-navigation/native";
 import Entypo from "@expo/vector-icons/Entypo";
 import NetInfo from "@react-native-community/netinfo";
@@ -670,20 +671,13 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
             .toLowerCase()
             .includes(searchText.trim().toLowerCase()),
       ).length === 0 && !loading ? (
-        <View className="flex-1 items-center justify-center">
-          <LottieView
-            source={require("@/assets/jsons/common/no-data.json")}
-            autoPlay
-            loop
-            style={{ width: 150, height: 150 }}
+          <NoData
+            text={
+              searchText.trim() !== ""
+                ? t("PublicForum.NoResultsFoundForYourSearch") || "No results found for your search"
+                : t("PublicForum.NoDiscussionsAvailable") || "No discussions available"
+            }
           />
-          <Text className="text-gray-500 text-center mt-4 px-6">
-            {searchText.trim() !== ""
-              ? t("PublicForum.NoResultsFoundForYourSearch") ||
-              "No results found for your search"
-              : t("PublicForum.NoDiscussionsAvailable") || "No discussions available"}
-          </Text>
-        </View>
       ) : (
         <FlatList
           showsVerticalScrollIndicator={false}

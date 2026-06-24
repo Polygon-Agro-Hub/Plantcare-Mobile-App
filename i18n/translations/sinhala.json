@@ -1491,7 +1491,12 @@
     "TemperatureAndHumidityCannotBothBeZero": "උෂ්ණත්වය සහ ආර්ද්‍රතාවය දෙකම ශුන්‍ය විය නොහැක."
   },
   "GoviShop": {
-    "WelcomeToGoviShop": "GoViShop වෙත සාදරයෙන් පිළිගනිමු"
+    "WelcomeToGoviShop": "GoViShop වෙත සාදරයෙන් පිළිගනිමු",
+    "LoadingShops": "සාප්පු පූරණය වෙමින් පවතී...",
+    "LoadingOrders": "ඇණවුම් පූරණය වෙමින් පවතී...",
+    "LoadingProducts": "නිෂ්පාදන පූරණය වෙමින් පවතී...",
+    "LoadingCart": "කරත්තය පූරණය වෙමින් පවතී...",
+    "LoadingInvoice": "ඉන්වොයිසිය පූරණය වෙමින් පවතී..."
   },
   "ExploreShops": {
     "ExploreShops": "ළඟම ඇති සාප්පු",
