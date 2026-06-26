@@ -6,14 +6,12 @@ import {
   Image,
   ScrollView,
   Dimensions,
-  StatusBar,
   Platform,
   ActivityIndicator,
   Modal,
   Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { FontAwesome5 } from "@expo/vector-icons";
 import { RootStackParamList } from "../types/types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/core";
