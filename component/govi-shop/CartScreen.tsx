@@ -8,7 +8,7 @@ import {
   Alert,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons,MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import CustomHeader from "../common/CustomHeader";
@@ -220,9 +220,9 @@ const CartCard: React.FC<CartCardProps> = ({
           <TouchableOpacity
             onPress={() => onRemove(item.id)}
             activeOpacity={0.7}
-            className="w-7 h-7 rounded-full bg-red-50 items-center justify-center"
+            className="w-7 h-7 rounded-full items-center justify-center"
           >
-            <Ionicons name="trash-outline" size={13} color="#EF4444" />
+            <MaterialIcons name="delete" size={20} color="#EF4444" />
           </TouchableOpacity>
 
           {/* Qty Stepper */}
@@ -273,11 +273,11 @@ const SummaryRow: React.FC<{
   highlight?: boolean;
 }> = ({ label, value, highlight }) => (
   <View className="flex-row justify-between items-center mb-2">
-    <Text className="text-sm text-[#415479] font-bold">{label}</Text>
+    <Text className=" text-[#415479] font-medium">{label}</Text>
     <Text
-      className={`text-sm ${
+      className={`${
         highlight
-          ? "text-[#FF8000] font-bold text-base"
+          ? "text-[#FF8000] font-medium text-base"
           : "text-[#2E2E2E] font-bold"
       }`}
     >

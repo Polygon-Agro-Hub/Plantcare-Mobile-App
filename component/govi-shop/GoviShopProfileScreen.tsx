@@ -218,7 +218,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
   route,
 }) => {
   const { t } = useTranslation();
-  const { shopId, branchId, shopname, logo, adress } = route.params;
+  const { shopId, branchId, shopname, logo, adress ,adressLoaction} = route.params;
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("All");
@@ -686,7 +686,12 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
         const variants = result.value.data;
         if (!Array.isArray(variants) || variants.length === 0) return;
 
-        const mode = getDisplayMode(p.baseUom);
+        let mode = getDisplayMode(p.baseUom);
+        if (mode === "DEFAULT" && variants.some((v: any) => v.width != null && v.height != null)) {
+          mode = "ROLL";
+          p.baseUom = "roll"; 
+        }
+
         const mapped: SubProduct[] = variants.map((v: any) => {
           const basePrice = Number(v.normalPrice ?? 0);
           const salePrice =
@@ -828,7 +833,12 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
         `${environment.API_BASE_URL}api/govi-shop/products/${productId}/variants`,
         { params: { branchId }, headers: { Authorization: `Bearer ${token}` } },
       );
-      const mode = getDisplayMode(baseUom);
+      let mode = getDisplayMode(baseUom);
+      if (mode === "DEFAULT" && response.data.some((v: any) => v.width != null && v.height != null)) {
+        mode = "ROLL";
+        setProducts(prev => prev.map(p => p.id === productId ? { ...p, baseUom: "roll" } : p));
+      }
+
       const mapped: SubProduct[] = response.data.map((v: any) => {
         const basePrice = Number(v.normalPrice ?? 0);
         const salePrice =
@@ -1346,6 +1356,10 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
       );
     }
 
+    if (visibleSubs.length === 1 && visibleSubs[0].label === "Variant") {
+      return null;
+    }
+
     return (
       <>
         <View
@@ -1681,12 +1695,8 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
 
     const previewPrice = item.discountPrice ?? item.normalPrice;
     const previewOriginalPrice = item.discountPrice ? item.normalPrice : null;
-    const showImageInHeader = isLoose
-      ? looseState === "collapsed"
-      : !isExpanded;
-    const showTopRightPlus = isLoose
-      ? looseState === "collapsed" || looseState === "preview"
-      : !isExpanded;
+    const showImageInHeader = !isExpanded;
+    const showTopRightPlus = isLoose ? true : !isExpanded;
 
     const looseKey = activeSub ? cartItemKey(item.id, activeSub.id) : "";
     const isLooseSaved = activeSub ? savedToDb.has(looseKey) : false;
@@ -1715,14 +1725,15 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
         }}
       >
         <TouchableOpacity
-          activeOpacity={isLoose || isExpanded ? 1 : 0.97}
+          activeOpacity={isExpanded ? 1 : 0.97}
           onPress={() => {
-            if (!isLoose && !isExpanded) {
+            if (!isExpanded) {
               navigation.navigate("ViewProduct" as any, {
                 productId: item.id,
                 productName: item.name,
                 image: item.image,
                 categoryId: item.categoryId,
+                baseUom: item.baseUom,
                 branchId,
                 shopId,
                 shopname,
@@ -2125,6 +2136,10 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
               </Text>
             </View>
           ) : null}
+          <Text
+            className=" text-[#626786] mb-1.5 text-center"
+          >{adressLoaction}</Text>
+          
         </View>
 
         <View

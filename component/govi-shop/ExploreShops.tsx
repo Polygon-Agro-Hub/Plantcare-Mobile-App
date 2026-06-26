@@ -38,6 +38,7 @@ interface Shop {
   branchName: string;
   district: string;
   province: string;
+  address:string;
   mobilePhone: string;
 }
 
@@ -112,6 +113,7 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
           shopname: item.shopName,
           logo: item.logo,
           adress: item.district,
+          adressLoaction: item.address,
         });
       }}
       className="flex-row items-center bg-white rounded-xl p-4 mb-3 border border-gray-100"
