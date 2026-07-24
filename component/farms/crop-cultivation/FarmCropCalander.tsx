@@ -873,7 +873,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
       if (!location) {
         Alert.alert(
           t("Main.Error"),
-          t("Farms.UnableToFetchLocationAAfterMultipleAttemptsPleaseTryAgainLater"),
+          t("Farms.UnableToFetchLocationAfterMultipleAttemptsPleaseTryAgainLater"),
           [{ text: t("Main.OK") }],
         );
         setLoading(false);

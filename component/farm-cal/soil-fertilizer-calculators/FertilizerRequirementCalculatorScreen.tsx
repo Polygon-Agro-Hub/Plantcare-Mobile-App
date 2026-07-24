@@ -210,7 +210,7 @@ const FertilizerRequirementCalculatorScreen: React.FC<
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
-        title={`${t("SoilFertilizerCalculators.Fertilizer")} ${t("Calculator.calculator")}`}
+        title={`${t("SoilFertilizerCalculators.Fertilizer")} ${t("Calculator.Calculator")}`}
         icon={require("@/assets/images/farm-cal/soil-fertilizer-calculators/fertilizer-icon.webp")}
         onBack={() => navigation.goBack()}
       />

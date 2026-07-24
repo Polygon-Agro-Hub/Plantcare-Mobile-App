@@ -400,7 +400,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
               >
                 {category
                   ? getLabel(categoryItems, category)
-                  : t("CurrentAssets.Selectcategory")}
+                  : t("CurrentAssets.SelectCategory")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -603,7 +603,7 @@ const RemoveAsset: React.FC<RemoveAssetProps> = ({ navigation }) => {
         onSelect={(selected) => {
           if (selected.length > 0) setCategory(selected[0]);
         }}
-        searchPlaceholder={t("CurrentAssets.Selectcategory")}
+        searchPlaceholder={t("CurrentAssets.SelectCategory")}
         multiSelect={false}
         showSearch={false}
       />

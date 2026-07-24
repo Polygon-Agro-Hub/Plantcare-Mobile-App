@@ -916,7 +916,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     </Text>
                     <SelectorButton
                       label={getLabel(assetTypesForAssets[asset], assetType)}
-                      placeholder={t("FixedAssets.AssetTypeselect")}
+                      placeholder={t("FixedAssets.AssetTypeSelect")}
                       onPress={() => {
                         Keyboard.dismiss();
                         setModalAssetType(true);
@@ -1904,7 +1904,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 </Text>
                 <SelectorButton
                   label={getLabel(buildingTypeOptions, type)}
-                  placeholder={t("FixedAssets.AssetTypeselect")}
+                  placeholder={t("FixedAssets.AssetTypeSelect")}
                   onPress={() => {
                     Keyboard.dismiss();
                     setModalType(true);

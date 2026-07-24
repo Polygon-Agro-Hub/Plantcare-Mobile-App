@@ -442,7 +442,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                     NatureOfCultivationCategories,
                     natureOfCultivation,
                   )
-                  : t("Cropenroll.SelectNaOfCultivation")}
+                  : t("Cropenroll.SelectNatureOfCultivation")}
               </Text>
               <Icon name="arrow-drop-down" size={24} color="gray" />
             </TouchableOpacity>
@@ -679,7 +679,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       <GlobalSearchModal
         visible={showNatureModal}
         onClose={() => setShowNatureModal(false)}
-        title={t("Cropenroll.SelectNaOfCultivation")}
+        title={t("Cropenroll.SelectNatureOfCultivation")}
         data={NatureOfCultivationCategories}
         selectedItems={natureOfCultivation ? [natureOfCultivation] : []}
         onSelect={(items) => {

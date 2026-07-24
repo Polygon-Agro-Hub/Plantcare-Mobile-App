@@ -193,7 +193,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({
                   className="font-bold text-gray-900 text-center mb-2"
                   style={{ fontSize: adjustFontSize(14) }}
                 >
-                  {t("Membership.QrCodeAcess")}
+                  {t("Membership.QrCodeAccess")}
                 </Text>
                 <Text
                   className="text-gray-600 text-center"
