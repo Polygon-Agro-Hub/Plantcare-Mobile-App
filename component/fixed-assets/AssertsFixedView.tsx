@@ -384,7 +384,7 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
               console.error("Error deleting tools:", error);
               Alert.alert(
                 t("FixedAssets.SomethingWentWrongPleaseTryAgain"),
-                t("FixedAssets.ThereWasAnEErrorDeletingTheSelectedTools"),
+                t("FixedAssets.ThereWasAnErrorDeletingTheSelectedTools"),
                 [{ text: t("Main.OK") }],
               );
             }
