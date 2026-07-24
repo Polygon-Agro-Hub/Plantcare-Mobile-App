@@ -52,6 +52,20 @@ const formatDate = (dateString: string) => {
   return `${year}-${month}-${day}`;
 };
 
+const titleBaseStyle = {
+  fontWeight: "bold" as const,
+  fontSize: 18,
+  color: "#000",
+  textAlign: "center" as const,
+};
+
+const titleTagsStyles = {
+  p: { textAlign: "center" as const },
+  div: { textAlign: "center" as const },
+  span: { textAlign: "center" as const },
+  body: { textAlign: "center" as const },
+};
+
 const News: React.FC<NewsProps> = ({ navigation, route }) => {
   const { newsId } = route.params;
   const [news, setNews] = useState<NewsItem | null>(null);
@@ -132,33 +146,24 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
                     <RenderHtml
                       contentWidth={screenWidth}
                       source={{ html: news.titleEnglish }}
-                      baseStyle={{
-                        fontWeight: "bold",
-                        fontSize: 18,
-                        color: "#000",
-                      }}
+                      baseStyle={titleBaseStyle}
+                      tagsStyles={titleTagsStyles}
                     />
                   )}
                   {language === "si" && news?.titleSinhala && (
                     <RenderHtml
                       contentWidth={screenWidth}
                       source={{ html: news.titleSinhala }}
-                      baseStyle={{
-                        fontWeight: "bold",
-                        fontSize: 18,
-                        color: "#000",
-                      }}
+                      baseStyle={titleBaseStyle}
+                      tagsStyles={titleTagsStyles}
                     />
                   )}
                   {language === "ta" && news?.titleTamil && (
                     <RenderHtml
                       contentWidth={screenWidth}
                       source={{ html: news.titleTamil }}
-                      baseStyle={{
-                        fontWeight: "bold",
-                        fontSize: 18,
-                        color: "#000",
-                      }}
+                      baseStyle={titleBaseStyle}
+                      tagsStyles={titleTagsStyles}
                     />
                   )}
                 </View>

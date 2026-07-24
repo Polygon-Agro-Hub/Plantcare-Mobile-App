@@ -412,6 +412,7 @@
     "SelectCountryCode": "රටේ කේතය තෝරන්න",
     "EnterFarmNameHere": "ගොවිපල නම මෙතැන ඇතුළත් කරන්න",
     "SearchDistrict": "දිස්ත්‍රික්කය සොයන්න",
+    "SearchCountry":"රට සොයන්න...",
     "EnterPlotNumberHere": "භූමි අංකය මෙතැන ඇතුළත් කරන්න",
     "EnterStreetName": "වීදි නම ඇතුළත් කරන්න",
     "EnterCityName": "නගරයේ නම ඇතුළත් කරන්න",
@@ -527,7 +528,9 @@
     "ValidityPeriod": "වලංගු කාලය",
     "BASIC": "මූලික",
     "RENEW": "අලුත් කිරීම",
-    "PRO": "PRO"
+    "PRO": "PRO",
+    "ID":"හැඳුනුම්පත",
+    "StaffMemberHasBeenUpdatedSuccessfully":"කාර්ය මණ්ඩල සාමාජිකයා සාර්ථකව යාවත්කාලීන කර ඇත."
   },
   "SelectCrop": {
     "Description": "විස්තරය",
@@ -1082,6 +1085,7 @@
   "PublicForum": {
     "StartANewDiscussion": "නව සාකච්ඡාවක් ආරම්භ කරන්න",
     "LoadingComments": "අදහස් පූරණය වෙමින්...",
+    "Reply":"පිළිතුර",
     "Replies": "පිළිතුරු",
     "PublicForum": "පොදු සංසදය",
     "WriteAComment": "අදහසක් ලියන්න...",
@@ -1109,6 +1113,8 @@
     "DeletePost": "පළ කිරීම මකන්න",
     "AreYouSureYouWantToDeleteThisPost": "ඔබට මෙම පළ කිරීම මැකීමට අවශ්‍ය බව ඔබට විශ්වාසද?",
     "PostDeleteSuccessful": "පළ කිරීම මැකීම සාර්ථකයි!",
+    "error": "දෝෂයකි",
+    "failedToDelete": "පළ කිරීම මැකීමට අසමත් විය",
     "AreYouSureYouWantToDeleteThisComment": "ඔබට මෙම අදහස මැකීමට අවශ්‍ය බව ඔබට විශ්වාසද?",
     "FailedToDDeletedComment": "අදහස මැකීමට අසමත් විය",
     "(You)": "(ඔබ)",

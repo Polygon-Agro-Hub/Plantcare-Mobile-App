@@ -412,6 +412,7 @@
     "SelectCountryCode": "நாட்டுக் குறியீட்டைத் தேர்ந்தெடுக்கவும்",
     "EnterFarmNameHere": "பண்ணை பெயரை இங்கே உள்ளிடவும்",
     "SearchDistrict": "மாவட்டத்தைத் தேடுங்கள்",
+    "SearchCountry":"நாட்டைத் தேடு...",
     "EnterPlotNumberHere": "மனை எண்ணை இங்கே உள்ளிடவும்",
     "EnterStreetName": "தெரு பெயரை உள்ளிடவும்",
     "EnterCityName": "நகரத்தின் பெயரை உள்ளிடவும்",
@@ -527,7 +528,9 @@
     "ValidityPeriod": "செல்லுபடியாகும் காலம்",
     "BASIC": "அடிப்படை",
     "RENEW": "புதுப்பி",
-    "PRO": "புரோ"
+    "PRO": "புரோ",
+    "ID":"ஐடி",
+    "StaffMemberHasBeenUpdatedSuccessfully":"பணியாளர் வெற்றிகரமாகப் புதுப்பிக்கப்பட்டார்."
   },
   "SelectCrop": {
     "Description": "விளக்கம்",
@@ -1082,6 +1085,7 @@
   "PublicForum": {
     "StartANewDiscussion": "புதிய விவாதத்தைத் தொடங்குங்கள்",
     "LoadingComments": "கருத்துகளை ஏற்றுகிறது...",
+    "Reply":"பதில்கள்",
     "Replies": "பதில்கள்",
     "PublicForum": "பொது மன்றம்",
     "WriteAComment": "கருத்தை எழுதுங்கள்...",
@@ -1109,6 +1113,8 @@
     "DeletePost": "பதிவை நீக்கவும்",
     "AreYouSureYouWantToDeleteThisPost": "இந்தப் பதிவை நீக்க விரும்புகிறீர்களா?",
     "PostDeleteSuccessful": "பதிவு நீக்கம் வெற்றிகரமானது!",
+    "error": "பிழை",
+    "failedToDelete": "பதிவை நீக்கத் தவறியது",
     "AreYouSureYouWantToDeleteThisComment": "இந்தக் கருத்தை நீக்க விரும்புகிறீர்களா?",
     "FailedToDDeletedComment": "கருத்தை நீக்கத் தவறியது",
     "(You)": "(நீங்கள்)",

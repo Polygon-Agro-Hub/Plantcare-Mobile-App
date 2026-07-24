@@ -144,7 +144,7 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
       setSelectedComplain(complain);
       setModalVisible(true);
     } else {
-      Alert.alert(t("ReportHistory.sorry"), t("ReportHistory.NoResponseYetForThisComplaint"), [
+      Alert.alert(t("Main.Sorry"), t("ReportHistory.NoResponseYetForThisComplaint"), [
         { text: t("Main.OK") },
       ]);
     }
@@ -221,36 +221,50 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
           </ScrollView>
         )}
 
+        {/* Full-screen reply modal */}
         <Modal
-          animationType="fade"
-          transparent={true}
+          animationType="slide"
+          transparent={false}
           visible={modalVisible}
           onRequestClose={() => setModalVisible(false)}
           statusBarTranslucent={false}
         >
-          <View className="flex-1 justify-center items-center bg-black/50">
+          <View style={{ flex: 1, backgroundColor: "white" }}>
+            {/* Close button — fixed outside ScrollView so it never scrolls away */}
+            <TouchableOpacity
+              style={{
+                position: "absolute",
+                top: Platform.OS === "ios" ? 50 : 40,
+                right: 16,
+                zIndex: 10,
+                backgroundColor: "#2D2D2D",
+                borderRadius: 999,
+                padding: 8,
+              }}
+              onPress={() => setModalVisible(false)}
+            >
+              <AntDesign name="close" size={18} color="white" />
+            </TouchableOpacity>
+
             <ScrollView
-              className="bg-white rounded-lg w-11/12 max-w-md mx-4"
-              contentContainerStyle={{ padding: 24, paddingBottom: 70 }}
+              contentContainerStyle={{
+                padding: 24,
+                paddingTop: Platform.OS === "ios" ? 100 : 70,
+                paddingBottom: 32,
+                flexGrow: 1,
+              }}
               showsVerticalScrollIndicator={false}
             >
-              <TouchableOpacity
-                className="absolute top-3 right-3 z-10 bg-gray-200 p-1 rounded-full"
-                onPress={() => setModalVisible(false)}
-              >
-                <AntDesign name="close" size={18} color="gray" />
-              </TouchableOpacity>
-
-              <View className="mt-4">
-                <Text className="text-gray-800 text-base leading-relaxed text-left">
+              <View>
+                <Text className="text-[#2D2D2D] text-base leading-relaxed text-left">
                   {language === "si"
-                    ? `හිතවත් ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nඅපි ඔබට කාරුණිකව දැනුම් දෙන්න කැමතියි ඔබගේ පැමිණිල්ල විසඳා ගෙන ඇත.\n\n${complainReply || "Loading..."}\n\nඔබට තවත් ගැටළු හෝ ප්‍රශ්න තිබේ නම්, කරුණාකර අප හා සම්බන්ධ වන්න. ඔබේ ඉවසීම සහ අවබෝධය වෙනුවෙන් ස්තූතියි.\n\nමෙයට,\nPolygon Agro Customer Support Team`
+                    ? `හිතවත් ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nඅපි ඔබට කාරුණිකව දැනුම් දෙන්න කැමතියි ඔබගේ පැමිණිල්ල විසඳා ගෙන ඇත.\n\n${complainReply || "Loading..."}\n\nඔබට තවත් ගැටළු හෝ ප්‍රශ්න තිබේ නම්, කරුණාකර අප හා සම්බන්ධ වන්න. ඔබේ ඉවසීම සහ අවබෝධය වෙනුවෙන් ස්තූතියි.\n\nමෙයට,\nPolygon Customer Support Team`
                     : language === "ta"
                       ? `அன்புள்ள ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nநாங்கள் உங்கள் புகாரை தீர்க்கப்பட்டதாக தெரிவித்ததில் மகிழ்ச்சி அடைகிறோம்\n\n${complainReply || "Loading..."}\n\nஉங்களுக்கு மேலும் ஏதேனும் சிக்கல்கள் அல்லது கேள்விகள் இருந்தால், தயவுசெய்து எங்களைத் தொடர்பு கொள்ளவும். உங்கள் பொறுமைக்கும் புரிதலுக்கும் நன்றி.\n\nஇதற்கு,\nPolygon Agro Customer Support Team`
-                      : `Dear ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nWe are pleased to inform you that your complaint has been resolved\n\n${complainReply || "Loading..."}\n\nIf you have any further concerns or questions, feel free to reach out.\nThank you for your patience and understanding.\n\nSincerely,\nPolygon Agro Customer Support Team`}
+                      : `Dear ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nWe are pleased to inform you that your complaint has been resolved\n\n${complainReply || "Loading..."}\n\nIf you have any further concerns or questions, feel free to reach out.\nThank you for your patience and understanding.\n\nSincerely,\nPolygon Customer Support Team`}
                 </Text>
                 {selectedComplain?.replyTime && (
-                  <Text className="mb-3 mt-1 text-gray-500 text-xs">
+                  <Text className="mb-3 text-[#2D2D2D] text-base mt-1">
                     {formatDate(selectedComplain.replyTime)}
                   </Text>
                 )}

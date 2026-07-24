@@ -381,6 +381,7 @@ const AddNewFarmBasicDetails: React.FC = () => {
                 onSelect={(values) => setDistrict(values[0] ?? "")}
                 searchPlaceholder={t("Farms.SearchDistrict")}
                 multiSelect={false}
+                noResultsText="No district found"
               />
             </View>
 

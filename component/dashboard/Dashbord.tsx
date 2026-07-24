@@ -157,9 +157,11 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       const data = await response.json();
 
       if (!data.user || !data.user.firstName) {
-        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error"),
+          t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
         navigation.navigate("Signin");
         return;
       }
@@ -171,9 +173,11 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         setLoading(false);
       }, 100);
     } catch (error) {
-      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(
+        t("Main.Error"),
+        t("Main.SomethingWentWrongPleaseTryAgainlater"),
+        [{ text: t("Main.OK") }],
+      );
       navigation.navigate("Signin");
     }
   };
@@ -332,7 +336,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
             />
           </View>
         </TouchableOpacity>
-        <View style={{ marginTop: 15, marginLeft: 15, flex: 1 }}>
+        <View style={{ marginTop: 25, marginLeft: 15, flex: 1 }}>
           <Text style={{ fontSize: 15, fontWeight: "bold", flexWrap: "wrap" }}>
             {t("Dashboard.Hello")},{" "}
             {user ? (
@@ -349,7 +353,13 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
             navigation.navigate("PublicForum" as any);
           }}
           className="ml-auto mr-4 mt-4 justify-center items-center bg-[#F6F7F7] rounded-full w-12 h-12"
-          style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 }}
+          style={{
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.1,
+            shadowRadius: 2,
+            elevation: 2,
+          }}
         >
           <MaterialCommunityIcons
             name="message-processing"

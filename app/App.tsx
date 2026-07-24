@@ -170,6 +170,13 @@ LogBox.ignoreAllLogs(true);
 (TextInput as any).defaultProps = {
   ...(TextInput as any).defaultProps,
   allowFontScaling: false,
+  style: [
+    {
+      paddingVertical: Platform.OS === "ios" ? 0 : undefined,
+      includeFontPadding: false,
+    },
+    (TextInput as any).defaultProps?.style,
+  ],
 };
 
 const Stack = createStackNavigator();
@@ -442,7 +449,7 @@ function AppContent() {
             <Stack.Screen
               name="Main"
               component={MainTabNavigator}
-              options={{ headerShown: false }}
+              options={{ headerShown: false, gestureEnabled: false }}
             />
 
             <Stack.Screen name="FirstLoginProView" component={FirstLoginView} />

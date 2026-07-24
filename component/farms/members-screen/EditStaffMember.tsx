@@ -139,6 +139,14 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
   const formatPhoneInput = (text: string): string =>
     text.replace(/\D/g, "").slice(0, 9);
 
+  const handleFirstNameChange = (text: string) => {
+  setFirstName(text.replace(/^\s+/, ""));
+};
+
+const handleLastNameChange = (text: string) => {
+  setLastName(text.replace(/^\s+/, ""));
+};
+
   const checkPhoneNumber = async (fullNumber: string) => {
     if (!fullNumber || fullNumber.length < 10) {
       setPhoneError(null);
@@ -301,15 +309,11 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
       return false;
     }
     if (phoneError) {
-      Alert.alert(t("Main.Sorry"), phoneError, [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(t("Main.Sorry"), phoneError, [{ text: t("Main.OK") }]);
       return false;
     }
     if (validationError) {
-      Alert.alert(t("Main.Sorry"), validationError, [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(t("Main.Sorry"), validationError, [{ text: t("Main.OK") }]);
       return false;
     }
     if (nicDuplicateErrors) {
@@ -340,11 +344,9 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
 
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(
-          t("Main.Sorry"),
-          t("Farms.NoAuthenticationTokenFound"),
-          [{ text: t("Main.OK") }],
-        );
+        Alert.alert(t("Main.Sorry"), t("Farms.NoAuthenticationTokenFound"), [
+          { text: t("Main.OK") },
+        ]);
         return;
       }
 
@@ -361,11 +363,9 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
       setSelectedRole(res.data.role || "");
       setNic(res.data.nic || "");
     } catch {
-      Alert.alert(
-        t("Main.Sorry"),
-        t("Farms.FailedToFFetchStaffMemberData"),
-        [{ text: t("Main.OK") }],
-      );
+      Alert.alert(t("Main.Sorry"), t("Farms.FailedToFFetchStaffMemberData"), [
+        { text: t("Main.OK") },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -428,7 +428,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
       );
       Alert.alert(
         t("Main.Success"),
-        t("Farms.Staff member has been updated successfully"),
+        t("Farms.StaffMemberHasBeenUpdatedSuccessfully"),
         [
           {
             text: t("Main.OK"),
@@ -452,9 +452,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
       } else if (error.request) {
         errorMessage = t("Farms.NetworkErrorPleaseCheckYourConnection");
       }
-      Alert.alert(t("Main.Sorry"), errorMessage, [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(t("Main.Sorry"), errorMessage, [{ text: t("Main.OK") }]);
     } finally {
       setIsSubmitting(false);
     }
@@ -466,34 +464,28 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(
-          t("Main.Error"),
-          t("Farms.NoAuthenticationTokenFound"),
-          [{ text: t("Main.OK") }],
-        );
+        Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"), [
+          { text: t("Main.OK") },
+        ]);
         return;
       }
       await axios.delete(
         `${environment.API_BASE_URL}api/farm/delete-staffmember/${staffMemberId}/${farmId}`,
         { headers: { Authorization: `Bearer ${token}` } },
       );
-      Alert.alert(
-        t("Main.Success"),
-        t("Farms.FarmMemberDeletedSuccessfully"),
-        [
-          {
-            text: t("Main.OK"),
-            onPress: () =>
-              navigation.navigate("EditManagersScreen", {
-                staffMemberId,
-                farmId,
-                membership,
-                renew,
-                regCode,
-              }),
-          },
-        ],
-      );
+      Alert.alert(t("Main.Success"), t("Farms.FarmMemberDeletedSuccessfully"), [
+        {
+          text: t("Main.OK"),
+          onPress: () =>
+            navigation.navigate("EditManagersScreen", {
+              staffMemberId,
+              farmId,
+              membership,
+              renew,
+              regCode,
+            }),
+        },
+      ]);
     } catch {
       Alert.alert(t("Main.Sorry"), t("Farms.FailedToDeleteStaffMember"), [
         { text: t("Main.OK") },
@@ -502,6 +494,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
       setLoading(false);
     }
   };
+  
 
   if (loading) {
     return <LoadingPage fullScreen />;
@@ -574,15 +567,24 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
             <Text className="text-gray-900 text-base">
               {t("Inputs.FirstName")}
             </Text>
-            <TextInput
-              className="bg-gray-100 px-4 h-[50px] rounded-3xl text-base text-gray-700"
-              placeholder={t("Farms.EnterFirstName")}
-              placeholderTextColor="#9CA3AF"
-              value={firstName}
-              onChangeText={setFirstName}
-              autoCapitalize="words"
-              editable={!isSubmitting}
-            />
+            <View className="bg-gray-100 px-4 rounded-3xl h-[50px] justify-center">
+              <TextInput
+                style={{
+                  flex: 1,
+                  marginLeft: 8,
+                  fontSize: 16,
+                  height: 50,
+                  paddingVertical: 0,
+                  includeFontPadding: false,
+                }}
+                placeholder={t("Farms.EnterFirstName")}
+                placeholderTextColor="#9CA3AF"
+                value={firstName}
+                onChangeText={handleFirstNameChange}
+                autoCapitalize="words"
+                editable={!isSubmitting}
+              />
+            </View>
           </View>
 
           {/* Last Name */}
@@ -590,15 +592,24 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
             <Text className="text-gray-900 text-base">
               {t("Inputs.LastName")}
             </Text>
-            <TextInput
-              className="bg-gray-100 px-4 rounded-3xl h-[50px] text-base text-gray-700"
-              placeholder={t("Farms.EnterLastName")}
-              placeholderTextColor="#9CA3AF"
-              value={lastName}
-              onChangeText={setLastName}
-              autoCapitalize="words"
-              editable={!isSubmitting}
-            />
+            <View className="bg-gray-100 px-4 rounded-3xl h-[50px] justify-center">
+              <TextInput
+                style={{
+                  flex: 1,
+                  marginLeft: 8,
+                  fontSize: 16,
+                  height: 50,
+                  paddingVertical: 0,
+                  includeFontPadding: false,
+                }}
+                placeholder={t("Farms.EnterLastName")}
+                placeholderTextColor="#9CA3AF"
+                value={lastName}
+                onChangeText={handleLastNameChange}
+                autoCapitalize="words"
+                editable={!isSubmitting}
+              />
+            </View>
           </View>
 
           {/* Phone Number */}
@@ -618,12 +629,20 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
                 <Text className="text-[#333] text-center text-[13px] ml-1">
                   {countryCode}
                 </Text>
+                <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
               </TouchableOpacity>
 
               {/* Phone Input */}
-              <View style={{ flex: 1 }}>
+              <View className="flex-1 bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
                 <TextInput
-                  className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4 text-base text-gray-700"
+                  style={{
+                    flex: 1,
+                    marginLeft: 8,
+                    fontSize: 16,
+                    height: 50,
+                    paddingVertical: 0,
+                    includeFontPadding: false,
+                  }}
                   placeholder="7X XXXXXXX"
                   value={phoneNumber}
                   onChangeText={handlePhoneChange}
@@ -663,26 +682,36 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
               data={countryModalData}
               selectedItems={[countryCode]}
               onSelect={(items) => setCountryCode(items[0] ?? "+94")}
-              searchPlaceholder={t("Farms.Search country...")}
+              searchPlaceholder={t("Farms.SearchCountry")}
               searchKeys={["label"]}
               showSearch={true}
               multiSelect={false}
+              noResultsText="No country found"
             />
           </View>
 
           {/* NIC */}
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.NIC")}</Text>
-            <TextInput
-              value={nic}
-              onChangeText={handleNicChange}
-              placeholder={t("Farms.EnterNIC")}
-              placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] text-gray-800 text-base"
-              editable={!isSubmitting}
-              autoCapitalize="characters"
-              maxLength={12}
-            />
+            <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center">
+              <TextInput
+                value={nic}
+                onChangeText={handleNicChange}
+                placeholder={t("Farms.EnterNIC")}
+                placeholderTextColor="#9CA3AF"
+                style={{
+                  flex: 1,
+                  marginLeft: 8,
+                  fontSize: 16,
+                  height: 50,
+                  paddingVertical: 0,
+                  includeFontPadding: false,
+                }}
+                editable={!isSubmitting}
+                autoCapitalize="characters"
+                maxLength={12}
+              />
+            </View>
             {checkingNIC && (
               <View className="flex-row items-center mt-1 ml-3">
                 <ActivityIndicator size="small" color="#2563EB" />
@@ -772,7 +801,9 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
                   className="px-6 h-[50px] justify-center bg-black rounded-3xl"
                 >
                   <View className="justify-center items-center">
-                    <Text className="text-white text-lg">{t("Farms.YesDelete")}</Text>
+                    <Text className="text-white text-lg">
+                      {t("Farms.YesDelete")}
+                    </Text>
                   </View>
                 </TouchableOpacity>
               </View>
