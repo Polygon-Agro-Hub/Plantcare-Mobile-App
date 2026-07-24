@@ -431,15 +431,18 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
             <Text className="text-gray-900 text-base">
               {t("Inputs.FirstName")}
             </Text>
-            <TextInput
-              className="bg-gray-100 px-4 py-3 rounded-full text-base text-gray-700"
-              placeholder={t("Farms.EnterFirstName")}
-              placeholderTextColor="#9CA3AF"
-              value={firstName}
-              onChangeText={setFirstName}
-              autoCapitalize="words"
-              editable={!isSubmitting}
-            />
+            <View className="bg-gray-100 px-4 rounded-3xl h-[50px] justify-center">
+              <TextInput
+                className="text-base text-gray-700 w-full"
+                style={{ paddingVertical: 0 }}
+                placeholder={t("Farms.EnterFirstName")}
+                placeholderTextColor="#9CA3AF"
+                value={firstName}
+                onChangeText={setFirstName}
+                autoCapitalize="words"
+                editable={!isSubmitting}
+              />
+            </View>
           </View>
 
           {/* Last Name */}
@@ -447,15 +450,18 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
             <Text className="text-gray-900 text-base">
               {t("Inputs.LastName")}
             </Text>
-            <TextInput
-              className="bg-gray-100 px-4 py-3 rounded-full text-base text-gray-700"
-              placeholder={t("Farms.EnterLastName")}
-              placeholderTextColor="#9CA3AF"
-              value={lastName}
-              onChangeText={setLastName}
-              autoCapitalize="words"
-              editable={!isSubmitting}
-            />
+            <View className="bg-gray-100 px-4 rounded-3xl h-[50px] justify-center">
+              <TextInput
+                className="text-base text-gray-700 w-full"
+                style={{ paddingVertical: 0 }}
+                placeholder={t("Farms.EnterLastName")}
+                placeholderTextColor="#9CA3AF"
+                value={lastName}
+                onChangeText={setLastName}
+                autoCapitalize="words"
+                editable={!isSubmitting}
+              />
+            </View>
           </View>
 
           {/* Phone Number */}
@@ -467,7 +473,7 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
               <TouchableOpacity
                 onPress={() => !isSubmitting && setCountryModalVisible(true)}
                 style={{ height: hp(7) }}
-                className="bg-[#F4F4F4] rounded-full px-4 flex-row items-center justify-center"
+                className="bg-[#F4F4F4] rounded-3xl px-4 flex-row items-center justify-center min-w-[100px]"
                 disabled={isSubmitting}
               >
                 <Text className="text-base">
@@ -476,15 +482,15 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
               </TouchableOpacity>
 
               {/* Phone Input */}
-              <View style={{ flex: 1 }}>
+              <View className="flex-1 bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
                 <TextInput
-                  className="bg-[#F4F4F4] rounded-full px-4"
+                  className="text-base text-gray-700 w-full"
                   placeholder="7X XXXXXXX"
                   value={phoneNumber}
                   onChangeText={handlePhoneChange}
                   keyboardType="phone-pad"
                   maxLength={9}
-                  style={{ height: hp(7), fontSize: 14 }}
+                  style={{ fontSize: 14, paddingVertical: 0 }}
                   underlineColorAndroid="transparent"
                   cursorColor="#141415ff"
                   editable={!isSubmitting}
@@ -515,16 +521,19 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
           {/* NIC */}
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.NIC")}</Text>
-            <TextInput
-              value={nic}
-              onChangeText={handleNicChange}
-              placeholder={t("Farms.EnterNIC")}
-              placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] p-3 rounded-full text-gray-800"
-              editable={!isSubmitting}
-              autoCapitalize="characters"
-              maxLength={12}
-            />
+            <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center">
+              <TextInput
+                value={nic}
+                onChangeText={handleNicChange}
+                placeholder={t("Farms.EnterNIC")}
+                placeholderTextColor="#9CA3AF"
+                className="text-gray-800 text-base w-full"
+                style={{ paddingVertical: 0 }}
+                editable={!isSubmitting}
+                autoCapitalize="characters"
+                maxLength={12}
+              />
+            </View>
             {checkingNIC && (
               <View className="flex-row items-center mt-1 ml-3">
                 <ActivityIndicator size="small" color="#2563EB" />

@@ -536,30 +536,36 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
             <Text className="text-gray-900 text-base">
               {t("Inputs.FirstName")}
             </Text>
-            <TextInput
-              className="bg-gray-100 px-4 h-[50px] rounded-3xl text-base text-gray-700"
-              placeholder={t("Farms.EnterFirstName")}
-              placeholderTextColor="#9CA3AF"
-              value={firstName}
-              onChangeText={setFirstName}
-              autoCapitalize="words"
-              editable={!isSubmitting}
-            />
+            <View className="bg-gray-100 px-4 rounded-3xl h-[50px] justify-center">
+              <TextInput
+                className="text-base text-gray-700 w-full"
+                style={{ paddingVertical: 0 }}
+                placeholder={t("Farms.EnterFirstName")}
+                placeholderTextColor="#9CA3AF"
+                value={firstName}
+                onChangeText={setFirstName}
+                autoCapitalize="words"
+                editable={!isSubmitting}
+              />
+            </View>
           </View>
 
           <View className="gap-2">
             <Text className="text-gray-900 text-base">
               {t("Inputs.LastName")}
             </Text>
-            <TextInput
-              className="bg-gray-100 px-4 h-[50px] rounded-3xl text-base text-gray-700"
-              placeholder={t("Farms.EnterLastName")}
-              placeholderTextColor="#9CA3AF"
-              value={lastName}
-              onChangeText={setLastName}
-              autoCapitalize="words"
-              editable={!isSubmitting}
-            />
+            <View className="bg-gray-100 px-4 rounded-3xl h-[50px] justify-center">
+              <TextInput
+                className="text-base text-gray-700 w-full"
+                style={{ paddingVertical: 0 }}
+                placeholder={t("Farms.EnterLastName")}
+                placeholderTextColor="#9CA3AF"
+                value={lastName}
+                onChangeText={setLastName}
+                autoCapitalize="words"
+                editable={!isSubmitting}
+              />
+            </View>
           </View>
 
           <View className="gap-2">
@@ -577,9 +583,9 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
                 </Text>
               </TouchableOpacity>
 
-              <View style={{ flex: 1 }}>
+              <View className="flex-1 bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
                 <TextInput
-                  className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4"
+                  className="text-base text-gray-700 w-full"
                   placeholder="7X XXXXXXX"
                   value={phoneNumber}
                   onChangeText={handlePhoneChange}
@@ -588,6 +594,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
                   style={{
                     fontSize: 14,
                     borderWidth: 0,
+                    paddingVertical: 0,
                   }}
                   underlineColorAndroid="transparent"
                   cursorColor="#141415ff"
@@ -618,16 +625,19 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
 
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.NIC")}</Text>
-            <TextInput
-              value={nic}
-              onChangeText={(text: string) => handleNicChange(text)}
-              placeholder={t("Farms.EnterNIC")}
-              placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
-              editable={!isSubmitting}
-              autoCapitalize="characters"
-              maxLength={12}
-            />
+            <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center">
+              <TextInput
+                value={nic}
+                onChangeText={(text: string) => handleNicChange(text)}
+                placeholder={t("Farms.EnterNIC")}
+                placeholderTextColor="#9CA3AF"
+                className="text-gray-800 text-base w-full"
+                style={{ paddingVertical: 0 }}
+                editable={!isSubmitting}
+                autoCapitalize="characters"
+                maxLength={12}
+              />
+            </View>
             {checkingNIC && (
               <View className="flex-row items-center mt-1 ml-3">
                 <ActivityIndicator size="small" color="#2563EB" />

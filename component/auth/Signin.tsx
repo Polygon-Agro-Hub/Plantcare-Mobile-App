@@ -49,6 +49,8 @@ const countryItems = countryData.map((country) => ({
   dialCode: country.dial_code,
 }));
 
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+
 const Signin: React.FC<SigninProps> = ({ navigation }) => {
   const [phonenumber, setPhonenumber] = useState("");
   const [selectedCountryCode, setSelectedCountryCode] = useState("+94");
@@ -66,7 +68,9 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
     const regex = /^[1-9][0-9]{8}$/;
 
     if (!regex.test(localNumber)) {
-      setError(t("SignUp.PleaseEnterAValid9DigitMobileNumberExcludeTheLeadingZero"));
+      setError(
+        t("SignUp.PleaseEnterAValid9DigitMobileNumberExcludeTheLeadingZero"),
+      );
       setIsButtonDisabled(true);
       setIsValid(false);
     } else {
@@ -111,7 +115,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
 
   const handleLogin = async () => {
     if (!phonenumber) {
-      Alert.alert(t("SignIn.sorry"), t("SignIn.PhoneNumberIsRequired"), [
+      Alert.alert(t("Main.Sorry"), t("SignIn.PhoneNumberIsRequired"), [
         {
           text: t("Main.OK"),
           onPress: () => navigation.navigate("Signin"),
@@ -181,23 +185,31 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
             setIsButtonDisabled(false);
             setIsLoading(false);
           } catch (error) {
-            Alert.alert(t("Main.Error"), t("SignUp.FailedToSendOTPPleaseCheckYourNumberAndTryAgain"), [
-              {
-                text: t("Main.OK"),
-                onPress: () => navigation.navigate("Signin"),
-              },
-            ]);
+            Alert.alert(
+              t("Main.Error"),
+              t("SignUp.FailedToSendOTPPleaseCheckYourNumberAndTryAgain"),
+              [
+                {
+                  text: t("Main.OK"),
+                  onPress: () => navigation.navigate("Signin"),
+                },
+              ],
+            );
           }
         } else {
           setIsLoading(false);
           setIsButtonDisabled(false);
           if (data.message === "User is blocked") {
-            Alert.alert(t("Main.Error"), t("Main.TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes"), [
-              {
-                text: t("Main.OK"),
-                onPress: () => navigation.navigate("Signin"),
-              },
-            ]);
+            Alert.alert(
+              t("Main.Error"),
+              t("Main.TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes"),
+              [
+                {
+                  text: t("Main.OK"),
+                  onPress: () => navigation.navigate("Signin"),
+                },
+              ],
+            );
             return;
           }
           Alert.alert(
@@ -214,22 +226,30 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
       } else {
         setIsLoading(false);
         setIsButtonDisabled(false);
-        Alert.alert(t("Main.Sorry"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          {
-            text: t("Main.OK"),
-            onPress: () => navigation.navigate("Signin"),
-          },
-        ]);
+        Alert.alert(
+          t("Main.Sorry"),
+          t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [
+            {
+              text: t("Main.OK"),
+              onPress: () => navigation.navigate("Signin"),
+            },
+          ],
+        );
       }
     } catch (error) {
       setIsButtonDisabled(false);
       setIsLoading(false);
-      Alert.alert(t("SignIn.LoginFailed"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        {
-          text: t("Main.OK"),
-          onPress: () => navigation.navigate("Signin"),
-        },
-      ]);
+      Alert.alert(
+        t("SignIn.LoginFailed"),
+        t("Main.SomethingWentWrongPleaseTryAgainlater"),
+        [
+          {
+            text: t("Main.OK"),
+            onPress: () => navigation.navigate("Signin"),
+          },
+        ],
+      );
       console.error("Login error:", error);
     }
   };
@@ -241,9 +261,9 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      enabled
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
       style={{ flex: 1, backgroundColor: "white" }}
+      enabled
     >
       <CustomHeader
         title=""
@@ -363,26 +383,45 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                 className="w-full rounded-3xl h-[50px] overflow-hidden shadow-lg elevation-6"
               >
                 {isButtonDisabled ? (
-                  <View className="w-full h-full bg-[#9CA3AF] justify-center items-center">
+                  <View className="items-center">
+                  <View className=" h-full bg-[#9CA3AF] justify-center items-center"
+                     style={{
+                        borderRadius: 999,
+                        height: 50,
+                        width: SCREEN_HEIGHT > 900 ? 260 : 220,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                  >
                     <Text className="text-white font-semibold text-center text-lg">
                       {t("SignIn.SignIn")}
                     </Text>
                   </View>
+                  </View>
                 ) : (
-                  <LinearGradient
-                    colors={["#0FC7B2", "#10A37D"]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    className="w-full h-full justify-center items-center"
-                  >
-                    {isLoading ? (
-                      <ActivityIndicator size="small" color="#fff" />
-                    ) : (
-                      <Text className="text-white font-semibold text-center text-lg">
-                        {t("SignIn.SignIn")}
-                      </Text>
-                    )}
-                  </LinearGradient>
+                  <View className="items-center">
+                    <LinearGradient
+                      colors={["#0FC7B2", "#10A37D"]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                      className="w-full h-full justify-center items-center"
+                      style={{
+                        borderRadius: 999,
+                        height: 50,
+                        width: SCREEN_HEIGHT > 900 ? 260 : 220,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {isLoading ? (
+                        <ActivityIndicator size="small" color="#fff" />
+                      ) : (
+                        <Text className="text-white font-semibold text-center text-lg">
+                          {t("SignIn.SignIn")}
+                        </Text>
+                      )}
+                    </LinearGradient>
+                  </View>
                 )}
               </TouchableOpacity>
 

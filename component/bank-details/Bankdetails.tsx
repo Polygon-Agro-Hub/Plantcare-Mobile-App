@@ -151,7 +151,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
 
     if (trimmedAccountNumber !== trimmedConfirmAccountNumber) {
       Alert.alert(
-        t("BankDetails.sorry"),
+        t("Main.Sorry"),
         t("BankDetails.AccountNumbersDoNotMatch"),
         [{ text: t("Main.OK") }],
       );
@@ -348,6 +348,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
         }}
         searchPlaceholder={t("Main.Search...")}
         multiSelect={false}
+        noResultsText="No bank found"
       />
 
       <GlobalSearchModal
@@ -362,6 +363,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
         searchPlaceholder={t("Main.Search...")}
         multiSelect={false}
         isLoading={loading && !!bankName}
+        noResultsText="No branch found"
       />
 
       <CustomHeader
@@ -514,7 +516,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
                   setBranchModalVisible(true);
                 } else {
                   Alert.alert(
-                    t("BankDetails.sorry"),
+                    t("Main.Sorry"),
                     t("BankDetails.SelectBankFirst") ||
                       "Please select a bank first.",
                     [{ text: t("Main.OK") }],

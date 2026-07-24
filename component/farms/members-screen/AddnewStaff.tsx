@@ -235,11 +235,9 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
           [{ text: t("Main.OK") }],
         );
       } else if (phoneNumber[0] !== "7") {
-        Alert.alert(
-          t("Main.Sorry"),
-          t("Farms.PhoneNumberMustStartWith7"),
-          [{ text: t("Main.OK") }],
-        );
+        Alert.alert(t("Main.Sorry"), t("Farms.PhoneNumberMustStartWith7"), [
+          { text: t("Main.OK") },
+        ]);
       } else if (phoneNumber.length > 9) {
         Alert.alert(
           t("Main.Sorry"),
@@ -263,23 +261,17 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
       return false;
     }
     if (phoneError) {
-      Alert.alert(t("Main.Sorry"), phoneError, [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(t("Main.Sorry"), phoneError, [{ text: t("Main.OK") }]);
       return false;
     }
     if (validationError) {
-      Alert.alert(t("Main.Sorry"), validationError, [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(t("Main.Sorry"), validationError, [{ text: t("Main.OK") }]);
       return false;
     }
     if (nicErrors) {
-      Alert.alert(
-        t("Main.Sorry"),
-        t("Farms.PleaseEnterAValidSriLankanNIC"),
-        [{ text: t("Main.OK") }],
-      );
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterAValidSriLankanNIC"), [
+        { text: t("Main.OK") },
+      ]);
       return false;
     }
     if (nicDuplicateErrors) {
@@ -341,9 +333,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
       );
     } catch (error: any) {
       console.error("Error in handleSave:", error);
-      let errorMessage = t(
-        "Farms.FailedToAddStaffMemberPleaseTryAgain",
-      );
+      let errorMessage = t("Farms.FailedToAddStaffMemberPleaseTryAgain");
 
       if (error.response) {
         errorMessage = error.response.data?.message || errorMessage;
@@ -440,6 +430,18 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
 
   const selectedCountry = countryData.find((c) => c.dial_code === countryCode);
 
+  const stripLeadingSpaces = (text: string): string => {
+    return text.replace(/^\s+/, "").replace(/\s{2,}/g, " ");
+  };
+
+  const handleFirstNameChange = (text: string) => {
+    setFirstName(stripLeadingSpaces(text));
+  };
+
+  const handleLastNameChange = (text: string) => {
+    setLastName(stripLeadingSpaces(text));
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -482,11 +484,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
                   ? roleItems.find((r) => r.value === selectedRole)?.label
                   : t("Farms.SelectRole")}
               </Text>
-              <MaterialIcons
-                name="arrow-drop-down"
-                size={24}
-                color="#666"
-              />
+              <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
             </TouchableOpacity>
 
             <GlobalSearchModal
@@ -507,15 +505,24 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
             <Text className="text-gray-900 text-base">
               {t("Inputs.FirstName")}
             </Text>
-            <TextInput
-              className="bg-gray-100 px-4 rounded-3xl h-[50px] text-base text-gray-700"
-              placeholder={t("Farms.EnterFirstName")}
-              placeholderTextColor="#9CA3AF"
-              value={firstName}
-              onChangeText={setFirstName}
-              autoCapitalize="words"
-              editable={!isSubmitting}
-            />
+            <View className="bg-gray-100 px-4 rounded-3xl h-[50px] justify-center">
+              <TextInput
+                placeholder={t("Farms.EnterFirstName")}
+                placeholderTextColor="#9CA3AF"
+                value={firstName}
+                onChangeText={handleFirstNameChange}
+                autoCapitalize="words"
+                editable={!isSubmitting}
+                style={{
+                  flex: 1,
+                  marginLeft: 8,
+                  fontSize: 16,
+                  height: 50,
+                  paddingVertical: 0,
+                  includeFontPadding: false,
+                }}
+              />
+            </View>
           </View>
 
           {/* Last Name */}
@@ -523,15 +530,24 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
             <Text className="text-gray-900 text-base">
               {t("Inputs.LastName")}
             </Text>
-            <TextInput
-              className="bg-gray-100 px-4 rounded-3xl h-[50px] text-base text-gray-700"
-              placeholder={t("Farms.EnterLastName")}
-              placeholderTextColor="#9CA3AF"
-              value={lastName}
-              onChangeText={setLastName}
-              autoCapitalize="words"
-              editable={!isSubmitting}
-            />
+            <View className="bg-gray-100 px-4 rounded-3xl h-[50px] justify-center">
+              <TextInput
+                placeholder={t("Farms.EnterLastName")}
+                placeholderTextColor="#9CA3AF"
+                value={lastName}
+                onChangeText={handleLastNameChange}
+                autoCapitalize="words"
+                editable={!isSubmitting}
+                style={{
+                  flex: 1,
+                  marginLeft: 8,
+                  fontSize: 16,
+                  height: 50,
+                  paddingVertical: 0,
+                  includeFontPadding: false,
+                }}
+              />
+            </View>
           </View>
 
           {/* Phone Number */}
@@ -552,12 +568,20 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
                 <Text className="text-[#333] text-center text-[13px] ml-1">
                   {countryCode}
                 </Text>
+                <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
               </TouchableOpacity>
 
               {/* Phone Input */}
-              <View style={{ flex: 1 }}>
+              <View className="flex-1 bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
                 <TextInput
-                  className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4 text-base text-gray-700"
+                  style={{
+                    flex: 1,
+                    marginLeft: 8,
+                    fontSize: 16,
+                    height: 50,
+                    paddingVertical: 0,
+                    includeFontPadding: false,
+                  }}
                   placeholder="7X XXXXXXX"
                   value={phoneNumber}
                   onChangeText={handlePhoneChange}
@@ -593,30 +617,41 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
             <GlobalSearchModal
               visible={countryModalVisible}
               onClose={() => setCountryModalVisible(false)}
-              title={t("Farms.Select Country Code")}
+              title={t("Farms.SelectCountryCode")}
               data={countryModalData}
               selectedItems={[countryCode]}
               onSelect={(items) => setCountryCode(items[0] ?? "+94")}
-              searchPlaceholder={t("Farms.Search country...")}
+              searchPlaceholder={t("Farms.SearchCountry")}
               searchKeys={["label"]}
               showSearch={true}
               multiSelect={false}
+              noResultsText="No country found"
             />
           </View>
 
           {/* NIC */}
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.NIC")}</Text>
-            <TextInput
-              value={nic}
-              onChangeText={(text: string) => handleNicChange(text)}
-              placeholder={t("Farms.EnterNIC")}
-              placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] text-gray-800 text-base"
-              editable={!isSubmitting}
-              autoCapitalize="characters"
-              maxLength={12}
-            />
+            <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center">
+              <TextInput
+                value={nic}
+                onChangeText={(text: string) => handleNicChange(text)}
+                placeholder={t("Farms.EnterNIC")}
+                placeholderTextColor="#9CA3AF"
+                className="text-gray-800 text-base w-full"
+                style={{
+                  flex: 1,
+                  marginLeft: 8,
+                  fontSize: 16,
+                  height: 50,
+                  paddingVertical: 0,
+                  includeFontPadding: false,
+                }}
+                editable={!isSubmitting}
+                autoCapitalize="characters"
+                maxLength={12}
+              />
+            </View>
             {checkingNIC && (
               <View className="flex-row items-center mt-1 ml-3">
                 <ActivityIndicator size="small" color="#2563EB" />
@@ -642,10 +677,11 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
         <View className="pt-10 pb-32 px-12 items-center w-full">
           <TouchableOpacity
             onPress={handleSave}
-            className={`${isSubmitting || checkingNumber || checkingNIC
-              ? "bg-gray-400"
-              : "bg-black"
-              } rounded-3xl h-[50px] items-center justify-center w-full shadow-lg elevation-6`}
+            className={`${
+              isSubmitting || checkingNumber || checkingNIC
+                ? "bg-gray-400"
+                : "bg-black"
+            } rounded-3xl h-[50px] items-center justify-center w-full shadow-lg elevation-6`}
             activeOpacity={0.8}
             disabled={isSubmitting || checkingNumber || checkingNIC}
           >

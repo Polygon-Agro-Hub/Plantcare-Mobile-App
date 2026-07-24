@@ -382,7 +382,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
                 {t("EarnCertificate.Rs")}.
                 {formatPrice(selectedCertificate?.price || "0")}
               </Text>{" "}
-              {t("EarnCertificate.and is valid for")}
+              {t("EarnCertificate.AndIsValidFor")}
             </Text>
             <Text
               className="text-center text-gray-800"

@@ -80,7 +80,10 @@ interface UserData {
 
 const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const route = useRoute();
-  const { farmId, farmName } = (route.params || {}) as { farmId?: number; farmName?: string };
+  const { farmId, farmName } = (route.params || {}) as {
+    farmId?: number;
+    farmName?: string;
+  };
   const user = useSelector(
     (state: RootState) => state.user.userData,
   ) as UserData | null;
@@ -196,8 +199,6 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     });
     return unsubscribe;
   }, [navigation]);
-
-
 
   useEffect(() => {
     if (numberOfUnits && unitPrice) {
@@ -331,7 +332,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     if (type === "purchase") {
       if (new Date(dateString) > new Date()) {
         Alert.alert(
-          t("CurrentAssets.sorry"),
+          t("Main.Sorry"),
           t("CurrentAssets.PurchaseDateMustNotBeInTheFuture"),
           [{ text: t("Main.OK") }],
         );
@@ -342,7 +343,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
       if (expireDate && new Date(dateString) > new Date(expireDate)) {
         Alert.alert(
-          t("CurrentAssets.sorry"),
+          t("Main.Sorry"),
           t("CurrentAssets.ExpirationDateMustBeAfterPurchaseDate"),
           [{ text: t("Main.OK") }],
         );
@@ -360,7 +361,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     } else {
       if (new Date(dateString) < new Date(purchaseDate)) {
         Alert.alert(
-          t("CurrentAssets.sorry"),
+          t("Main.Sorry"),
           t("CurrentAssets.ExpirationDateMustBeAfterPurchaseDate"),
           [{ text: t("Main.OK") }],
         );
@@ -431,7 +432,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       checkDuplicate(selectedCategory, assetToCheck, brandToCheck, batchNum)
     ) {
       Alert.alert(
-        t("CurrentAssets.sorry"),
+        t("Main.Sorry"),
         t("CurrentAssets.ThisExactAssetAlreadyExists"),
         [{ text: t("Main.OK") }],
       );
@@ -441,52 +442,47 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     const errors = { ...INITIAL_ERRORS };
     let hasError = false;
 
-    const requiredFields: Array<[any, keyof typeof INITIAL_ERRORS, string]> =
+    const requiredFields: Array<[any, keyof typeof INITIAL_ERRORS, string]> = [
       [
-        [
-          farmId || selectedFarm,
-          "selectedFarm",
-          `${t("CurrentAssets.SelectFarm")} is required`,
-        ],
-        [
-          selectedCategory,
-          "selectedCategory",
-          `${t("CurrentAssets.SelectCategory")} is required`,
-        ],
-        [
-          selectedAsset,
-          "selectedAsset",
-          `${t("CurrentAssets.Asset")} is required`,
-        ],
-        [batchNum, "batchNum", `${t("CurrentAssets.BatchNumber")} is required`],
-        [
-          volume,
-          "volume",
-          `${t("CurrentAssets.UnitVolumeWeight")} is required`,
-        ],
-        [
-          numberOfUnits,
-          "numberOfUnits",
-          `${t("CurrentAssets.NumberOfUnits")} is required`,
-        ],
-        [unitPrice, "unitPrice", `${t("CurrentAssets.UnitPrice")} is required`],
-        [
-          purchaseDate,
-          "purchaseDate",
-          `${t("CurrentAssets.PurchaseDate")} is required`,
-        ],
-        [
-          expireDate,
-          "expireDate",
-          `${t("CurrentAssets.ExpireDate")} is required`,
-        ],
-        [
-          warranty,
-          "warranty",
-          `${t("CurrentAssets.WarrentyInMonths")} is required`,
-        ],
-        [status, "status", `${t("CurrentAssets.Status")} is required`],
-      ];
+        farmId || selectedFarm,
+        "selectedFarm",
+        `${t("CurrentAssets.SelectFarm")} is required`,
+      ],
+      [
+        selectedCategory,
+        "selectedCategory",
+        `${t("CurrentAssets.SelectCategory")} is required`,
+      ],
+      [
+        selectedAsset,
+        "selectedAsset",
+        `${t("CurrentAssets.Asset")} is required`,
+      ],
+      [batchNum, "batchNum", `${t("CurrentAssets.BatchNumber")} is required`],
+      [volume, "volume", `${t("CurrentAssets.UnitVolumeWeight")} is required`],
+      [
+        numberOfUnits,
+        "numberOfUnits",
+        `${t("CurrentAssets.NumberOfUnits")} is required`,
+      ],
+      [unitPrice, "unitPrice", `${t("CurrentAssets.UnitPrice")} is required`],
+      [
+        purchaseDate,
+        "purchaseDate",
+        `${t("CurrentAssets.PurchaseDate")} is required`,
+      ],
+      [
+        expireDate,
+        "expireDate",
+        `${t("CurrentAssets.ExpireDate")} is required`,
+      ],
+      [
+        warranty,
+        "warranty",
+        `${t("CurrentAssets.WarrentyInMonths")} is required`,
+      ],
+      [status, "status", `${t("CurrentAssets.Status")} is required`],
+    ];
 
     requiredFields.forEach(([val, key, message]) => {
       if (!val) {
@@ -502,7 +498,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
     if (status === t("CurrentAssets.Expired")) {
       Alert.alert(
-        t("CurrentAssets.sorry"),
+        t("Main.Sorry"),
         t("CurrentAssets.CannotAddAnAssetThatHasAlreadyExpired"),
         [{ text: t("Main.OK") }],
       );
@@ -519,9 +515,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error"),
+          t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
         return;
       }
 
@@ -550,16 +548,12 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         ? `${environment.API_BASE_URL}api/farm/currentAsset/${farmId}`
         : `${environment.API_BASE_URL}api/auth/currentAsset`;
 
-      await axios.post(
-        url,
-        assetData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+      await axios.post(url, assetData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
       Alert.alert(
         t("Main.Success"),
@@ -578,7 +572,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     } catch (error: any) {
       if (error?.response?.status === 409) {
         Alert.alert(
-          t("CurrentAssets.sorry"),
+          t("Main.Sorry"),
           t(
             "CurrentAssets.ThisExactAssetAlreadyExists You cannot add the same asset with the same brand, batch number, volume, and unit.",
           ),
@@ -589,9 +583,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       }
 
       console.error("Error adding asset:", error);
-      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(
+        t("Main.Error"),
+        t("Main.SomethingWentWrongPleaseTryAgainlater"),
+        [{ text: t("Main.OK") }],
+      );
       scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
     }
   };
@@ -621,15 +617,27 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
   const getCategoryLabel = (val: string) => {
     const item = categoryData.find((c: any) => c.value === val);
-    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
-    return item ? (item.translations[lang] || item.translations["en"]) : val;
+    const lang = i18n.language
+      ? i18n.language.startsWith("si")
+        ? "si"
+        : i18n.language.startsWith("ta")
+          ? "ta"
+          : "en"
+      : "en";
+    return item ? item.translations[lang] || item.translations["en"] : val;
   };
 
   const getAssetLabel = (val: string) => {
     if (val === "Other") return t("CurrentAssets.Other");
     const item = assetTranslationData.find((a: any) => a.value === val);
-    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
-    return item ? (item.translations[lang] || item.translations["en"]) : val;
+    const lang = i18n.language
+      ? i18n.language.startsWith("si")
+        ? "si"
+        : i18n.language.startsWith("ta")
+          ? "ta"
+          : "en"
+      : "en";
+    return item ? item.translations[lang] || item.translations["en"] : val;
   };
 
   const categoryItems = categoryData.map((item: any) => ({
@@ -661,18 +669,17 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           Keyboard.dismiss();
           onPress();
         }}
-        className="bg-[#F4F4F4] rounded-3xl h-[50px] flex-row items-center px-4 justify-between"
+        className="bg-[#F4F4F4] rounded-3xl min-h-[50px] flex-row items-center px-4 justify-between py-2"
       >
         <Text
-          className={label ? "text-black text-sm" : "text-[#6B7280] text-sm"}
+          className={`flex-1 text-sm mr-2 ${
+            label ? "text-black" : "text-[#6B7280]"
+          }`}
+          style={{ fontSize: 14, color: label ? "#000000" : "#6B7280" }}
         >
           {label || placeholder}
         </Text>
-        <MaterialIcons
-          name="arrow-drop-down"
-          size={24}
-          color="#666"
-        />
+        <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
       </TouchableOpacity>
       {error ? (
         <Text className="text-red-500 text-xs mt-1 ml-2">{error}</Text>
@@ -690,8 +697,6 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         className="flex-1 bg-white"
         keyboardShouldPersistTaps="handled"
       >
-        
-
         <CustomHeader
           title={farmId && farmName ? farmName : t("FixedAssets.MyAssets")}
           navigation={navigation}
@@ -745,8 +750,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               </Text>
               <PickerTrigger
                 label={
-                  farms.find((f) => f.id.toString() === selectedFarm)?.farmName ??
-                  ""
+                  farms.find((f) => f.id.toString() === selectedFarm)
+                    ?.farmName ?? ""
                 }
                 placeholder={t("FixedAssets.SelectAFarm")}
                 onPress={() => openModal("farm")}
@@ -760,9 +765,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             {t("CurrentAssets.SelectCategory")} *
           </Text>
           <PickerTrigger
-            label={
-              selectedCategory ? getCategoryLabel(selectedCategory) : ""
-            }
+            label={selectedCategory ? getCategoryLabel(selectedCategory) : ""}
             placeholder={t("CurrentAssets.SelectCategory")}
             onPress={() => openModal("category")}
             error={fieldErrors.selectedCategory}
@@ -771,33 +774,45 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           {selectedCategory === "Other consumables" ? (
             <>
               <Text className="text-[#070707] text-sm mt-2">
-                {t("CurrentAssets.Asset")}
+                {t("CurrentAssets.Asset")} *
               </Text>
               <TextInput
                 placeholder={t("CurrentAssets.EnterAsset")}
-                placeholderTextColor="#585858"
+                placeholderTextColor="#6B7280"
                 value={selectedAsset}
                 onChangeText={(text) => {
                   clearError("selectedAsset");
                   setSelectedAsset(preventLeadingSpace(text));
                 }}
-                className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2"
+                className="bg-[#F4F4F4] px-4 text-black text-sm rounded-3xl h-[50px] mt-2 mb-2"
+                style={{ fontSize: 14, color: "#000000" }}
               />
+              {fieldErrors.selectedAsset ? (
+                <Text className="text-red-500 text-xs mt-1 ml-2">
+                  {fieldErrors.selectedAsset}
+                </Text>
+              ) : null}
               {shouldShowBrandField && (
                 <>
                   <Text className="text-[#070707] text-sm mt-2">
-                    {t("CurrentAssets.Brand")}
+                    {t("CurrentAssets.Brand")} *
                   </Text>
                   <TextInput
                     placeholder={t("CurrentAssets.EnterBrand")}
-                    placeholderTextColor="#585858"
+                    placeholderTextColor="#6B7280"
                     value={brand}
                     onChangeText={(text) => {
                       clearError("brand");
                       setBrand(preventLeadingSpace(text));
                     }}
-                    className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2"
+                    className="bg-[#F4F4F4] px-4 text-black text-sm rounded-3xl h-[50px] mt-2 mb-2"
+                    style={{ fontSize: 14, color: "#000000" }}
                   />
+                  {fieldErrors.brand ? (
+                    <Text className="text-red-500 text-xs mt-1 ml-2">
+                      {fieldErrors.brand}
+                    </Text>
+                  ) : null}
                 </>
               )}
             </>
@@ -820,28 +835,30 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   </Text>
                   <TextInput
                     placeholder={t("CurrentAssets.Other")}
-                    placeholderTextColor="#585858"
+                    placeholderTextColor="#6B7280"
                     value={customAsset}
                     onChangeText={(text) => {
                       clearError("selectedAsset");
                       setCustomAsset(preventLeadingSpace(text));
                     }}
-                    className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2"
+                    className="bg-[#F4F4F4] px-4 text-black text-sm rounded-3xl h-[50px] mt-2 mb-2"
+                    style={{ fontSize: 14, color: "#000000" }}
                   />
                   {shouldShowBrandField && (
                     <>
                       <Text className="text-[#070707] text-sm mt-2">
-                        {t("CurrentAssets.Brand")}
+                        {t("CurrentAssets.Brand")} *
                       </Text>
                       <TextInput
                         placeholder={t("CurrentAssets.SelectBrand")}
-                        placeholderTextColor="#585858"
+                        placeholderTextColor="#6B7280"
                         value={brand}
                         onChangeText={(text) => {
                           clearError("brand");
                           setBrand(preventLeadingSpace(text));
                         }}
-                        className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2"
+                        className="bg-[#F4F4F4] px-4 text-black text-sm rounded-3xl h-[50px] mt-2 mb-2"
+                        style={{ fontSize: 14, color: "#000000" }}
                       />
                     </>
                   )}
@@ -871,10 +888,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             </Text>
             <TextInput
               placeholder={t("CurrentAssets.BatchNumber")}
-              placeholderTextColor="#585858"
+              placeholderTextColor="#6B7280"
               value={batchNum}
               onChangeText={handleBatchNumChange}
-              className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2"
+              className="bg-[#F4F4F4] text-black text-sm px-4 rounded-3xl h-[50px] mt-2"
+              style={{ fontSize: 14, color: "#000000" }}
               keyboardType="numeric"
             />
             {fieldErrors.batchNum ? (
@@ -891,11 +909,12 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             <View className="flex-row items-center justify-between mt-2">
               <TextInput
                 placeholder={t("CurrentAssets.UnitVolumeWeight")}
-                placeholderTextColor="#585858"
+                placeholderTextColor="#6B7280"
                 value={volume}
                 onChangeText={handleVolumeChange}
                 keyboardType="decimal-pad"
-                className="flex-1 mr-2 px-4 bg-[#F4F4F4] h-[50px] rounded-3xl"
+                className="flex-1 mr-2 px-4 text-black text-sm bg-[#F4F4F4] h-[50px] rounded-3xl"
+                style={{ fontSize: 14, color: "#000000" }}
               />
               <TouchableOpacity
                 onPress={() => {
@@ -904,12 +923,13 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 }}
                 className="bg-[#F4F4F4] rounded-3xl h-[50px] w-28 flex-row items-center justify-between px-3"
               >
-                <Text className="text-sm text-black">{t(`CurrentAssets.${unit}`, unit)}</Text>
-                <MaterialIcons
-                  name="arrow-drop-down"
-                  size={24}
-                  color="#666"
-                />
+                <Text
+                  className="text-sm text-black"
+                  style={{ fontSize: 14, color: "#000000" }}
+                >
+                  {t(`CurrentAssets.${unit}`, unit)}
+                </Text>
+                <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
               </TouchableOpacity>
             </View>
             {fieldErrors.volume ? (
@@ -925,13 +945,14 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             </Text>
             <TextInput
               placeholder={t("CurrentAssets.NumberOfUnits")}
-              placeholderTextColor="#585858"
+              placeholderTextColor="#6B7280"
               keyboardType="numeric"
               value={numberOfUnits}
               onChangeText={(text) =>
                 handleNumOfUnitsChange(text.replace(/[^0-9]/g, ""))
               }
-              className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2"
+              className="bg-[#F4F4F4] px-4 text-black text-sm rounded-3xl h-[50px] mt-2"
+              style={{ fontSize: 14, color: "#000000" }}
             />
             {fieldErrors.numberOfUnits ? (
               <Text className="text-red-500 text-xs mt-1 ml-2">
@@ -946,11 +967,12 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             </Text>
             <TextInput
               placeholder={t("CurrentAssets.UnitPrice")}
-              placeholderTextColor="#585858"
+              placeholderTextColor="#6B7280"
               keyboardType="decimal-pad"
               value={unitPrice}
               onChangeText={handleUnitPriceChange}
-              className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2"
+              className="bg-[#F4F4F4] px-4 text-black text-sm rounded-3xl h-[50px] mt-2"
+              style={{ fontSize: 14, color: "#000000" }}
             />
             {fieldErrors.unitPrice ? (
               <Text className="text-red-500 text-xs mt-1 ml-2">
@@ -961,20 +983,23 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
           {/* Total Price  */}
           <View className="mt-2 mb-2">
-            <Text className="text-[#070707] text-sm">{t("CurrentAssets.TotalPrice")}</Text>
+            <Text className="text-[#070707] text-sm">
+              {t("CurrentAssets.TotalPrice")}
+            </Text>
             <TextInput
               placeholder={t("CurrentAssets.TotalPrice")}
-              placeholderTextColor="#585858"
+              placeholderTextColor="#6B7280"
               value={
                 totalPrice
                   ? parseFloat(totalPrice).toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })
                   : ""
               }
               editable={false}
-              className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 text-gray-500"
+              className="bg-[#F4F4F4] px-4 rounded-3xl text-sm h-[50px] mt-2 text-gray-500"
+              style={{ fontSize: 14 }}
             />
           </View>
 
@@ -991,7 +1016,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2"
             >
               <Text
-                className={`flex-1 ${!purchaseDate ? "text-[#6B7280]" : "text-black"}`}
+                className={`flex-1 text-sm ${!purchaseDate ? "text-[#6B7280]" : "text-black"}`}
+                style={{
+                  fontSize: 14,
+                  color: !purchaseDate ? "#6B7280" : "#000000",
+                }}
               >
                 {purchaseDate || t("CurrentAssets.PurchaseDate")}
               </Text>
@@ -1039,7 +1068,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2"
             >
               <Text
-                className={`flex-1 ${!expireDate ? "text-[#6B7280]" : "text-black"}`}
+                className={`flex-1 text-sm ${!expireDate ? "text-[#6B7280]" : "text-black"}`}
+                style={{
+                  fontSize: 14,
+                  color: !expireDate ? "#6B7280" : "#000000",
+                }}
               >
                 {expireDate || t("CurrentAssets.ExpireDate")}
               </Text>
@@ -1091,31 +1124,40 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             </Text>
             <TextInput
               placeholder={t("CurrentAssets.WarrentyInMonths")}
-              placeholderTextColor="#585858"
+              placeholderTextColor="#6B7280"
               value={warranty}
               keyboardType="numeric"
-              className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 text-gray-500"
+              className="bg-[#F4F4F4] px-4 rounded-3xl text-sm h-[50px] mt-2 text-gray-500"
+              style={{ fontSize: 14 }}
               editable={false}
             />
           </View>
 
           {/* Status  */}
           <View className="mt-2 mb-2">
-            <Text className="text-[#070707] text-sm">{t("CurrentAssets.Status")}</Text>
+            <Text className="text-[#070707] text-sm">
+              {t("CurrentAssets.Status")}
+            </Text>
             <View className="bg-[#F4F4F4] rounded-3xl h-[50px] justify-center items-center mt-2">
               {status ? (
                 <Text
-                  className={`font-bold ${status === t("CurrentAssets.Expired")
-                    ? "text-red-500"
-                    : "text-green-500"
-                    }`}
+                  className={`font-bold ${
+                    status === t("CurrentAssets.Expired")
+                      ? "text-red-500"
+                      : "text-green-500"
+                  }`}
                 >
                   {status === t("CurrentAssets.Expired")
                     ? t("CurrentAssets.Expired")
                     : t("CurrentAssets.Valid")}
                 </Text>
               ) : (
-                <Text className="text-gray-400 text-lg">{t("CurrentAssets.Status")}</Text>
+                <Text
+                  className="text-[#6B7280] text-sm"
+                  style={{ fontSize: 14, color: "#6B7280" }}
+                >
+                  {t("CurrentAssets.Status")}
+                </Text>
               )}
             </View>
           </View>
@@ -1165,6 +1207,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           clearError("selectedCategory");
         }}
         searchPlaceholder={t("Main.Search...")}
+        noResultsText="No category found"
       />
 
       <GlobalSearchModal
@@ -1179,6 +1222,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           clearError("selectedAsset");
         }}
         searchPlaceholder={t("Main.Search...")}
+        noResultsText="No asset found"
       />
 
       <GlobalSearchModal
@@ -1192,6 +1236,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           clearError("brand");
         }}
         searchPlaceholder={t("Main.Search...")}
+        noResultsText="No brand found"
       />
 
       <GlobalSearchModal

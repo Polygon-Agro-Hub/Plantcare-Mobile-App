@@ -202,7 +202,6 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
         title={t("Feedback.Feedback")}
         navigation={navigation}
         onBackPress={handleGoBack}
-        showBackButton={false}
       />
       {isLoading ? (
         <View className="flex-1 justify-center items-center">
