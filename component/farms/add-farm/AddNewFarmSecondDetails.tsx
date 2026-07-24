@@ -217,7 +217,7 @@ const AddNewFarmSecondDetails = () => {
     if (!numberOfStaff) {
       Alert.alert(
         t("Main.Sorry"),
-        t("Farms.PleaseEnterTheNNumberOfStaff"),
+        t("Farms.PleaseEnterTheNumberOfStaff"),
         [{ text: t("Main.OK") }],
       );
       return;

@@ -182,7 +182,7 @@ const SeedRateCalculatorScreen: React.FC<SeedRateProps> = ({ navigation }) => {
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
-        title={`${t("CropPlanningCalculators.SeedRate")} ${t("Calculator.calculator")}`}
+        title={`${t("CropPlanningCalculators.SeedRate")} ${t("Calculator.Calculator")}`}
         icon={require("@/assets/images/farm-cal/crop-planning-calculators/seed-rate-icon.webp")}
         onBack={() => navigation.goBack()}
       />

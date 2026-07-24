@@ -30,6 +30,7 @@ import ContentLoader, { Rect } from "react-content-loader/native";
 import { StatusBar } from "expo-status-bar";
 import LottieView from "lottie-react-native";
 import CustomHeader from "../common/CustomHeader";
+import NoData from "../common/NoData";
 
 interface CropCardProps {
   id: number;
@@ -339,23 +340,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
       {loading ? (
         <SkeletonLoader />
       ) : crops.length === 0 ? (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <LottieView
-            source={require("@/assets/jsons/common/no-data.json")}
-            style={{ width: wp(50), height: hp(25) }}
-            autoPlay
-            loop
-          />
-          <Text className="text-center text-gray-600 ">
-            --{t("MyCrop.YouHaveNotEnrolledAnyCropsYet")}--
-          </Text>
-        </View>
+          <NoData text={t("MyCrop.YouHaveNotEnrolledAnyCropsYet") || "You have not enrolled any crops yet"} />
       ) : (
         <ScrollView
           contentContainerStyle={{ padding: 16 }}

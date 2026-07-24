@@ -435,7 +435,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
               >
                 {category
                   ? getLabel(categoryItems, category)
-                  : t("CurrentAssets.Selectcategory")}
+                  : t("CurrentAssets.SelectCategory")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -639,7 +639,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
         onSelect={(selected) => {
           if (selected.length > 0) setCategory(selected[0]);
         }}
-        searchPlaceholder={t("CurrentAssets.Selectcategory")}
+        searchPlaceholder={t("CurrentAssets.SelectCategory")}
         multiSelect={false}
         showSearch={false}
       />

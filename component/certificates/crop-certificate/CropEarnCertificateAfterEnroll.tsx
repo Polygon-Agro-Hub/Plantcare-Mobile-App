@@ -24,8 +24,8 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
-import LottieView from "lottie-react-native";
 import CustomHeader from "@/component/common/CustomHeader";
+import NoData from "@/component/common/NoData";
 
 type CropEarnCertificateAfterEnrollNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -308,33 +308,13 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
               </TouchableOpacity>
             ))
           ) : (
-            <View
-              className="justify-center items-center py-2"
-              style={{ height: hp(50) }}
-            >
-              <View
-                style={{
-                  height: hp(30),
-                  width: wp(50),
-                  marginBottom: hp(-6),
-                }}
-              >
-                <LottieView
-                  source={require("@/assets/jsons/common/no-data.json")}
-                  style={{ width: "100%", height: "100%" }}
-                  autoPlay
-                  loop
-                />
-              </View>
-              <Text
-                className="text-gray-500 text-center mt-2"
-                style={{ fontSize: wp(4) }}
-              >
-                {searchQuery
-                  ? "No certificates found matching your search"
-                  : "No certificates available"}
-              </Text>
-            </View>
+              <NoData
+                text={
+                  searchQuery
+                    ? "No certificates found matching your search"
+                    : "No certificates available"
+                }
+              />
           )}
 
           {filteredCertificates.length > 0 && (

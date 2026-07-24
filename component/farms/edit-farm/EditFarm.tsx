@@ -10,7 +10,6 @@ import {
   Alert,
   BackHandler,
 } from "react-native";
-import { StatusBar } from "react-native";
 import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import ImageData from "@/assets/jsons/farm/farm-image.json";
 import districtData from "@/assets/jsons/common/district.json";
@@ -264,7 +263,7 @@ const EditFarm: React.FC<EditFarmProps> = ({
     if (!numberOfStaff || numberOfStaff.trim() === "") {
       Alert.alert(
         t("Main.Sorry"),
-        t("Farms.PleaseEnterTheNNumberOfStaff"),
+        t("Farms.PleaseEnterTheNumberOfStaff"),
         [{ text: t("Main.OK") }],
       );
       return false;

@@ -114,10 +114,10 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ navigation }) => {
           className="text-sm font-bold mt-2"
           style={{ fontSize: adjustFontSize(14) }}
         >
-          {t("PrivacyPolicy.WeatherandLocationServices")}
+          {t("PrivacyPolicy.WeatherAndLocationServices")}
         </Text>
         <Text className="text-sm text-gray-700 mt-1">
-          {t("PrivacyPolicy.WeatherandLocationServicesText")}
+          {t("PrivacyPolicy.WeatherAndLocationServicesText")}
         </Text>
         <Text
           className="text-sm font-bold mt-2"
@@ -141,10 +141,10 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ navigation }) => {
           className="text-sm font-bold mt-2"
           style={{ fontSize: adjustFontSize(14) }}
         >
-          {t("PrivacyPolicy.ResearchandDevelopment")}
+          {t("PrivacyPolicy.ResearchAndDevelopment")}
         </Text>
         <Text className="text-sm text-gray-700 mt-1">
-          {t("PrivacyPolicy.ResearchandDevelopmentText")}
+          {t("PrivacyPolicy.ResearchAndDevelopmentText")}
         </Text>
 
         <Text
@@ -188,10 +188,10 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ navigation }) => {
           className="text-lg font-bold mt-4"
           style={{ fontSize: adjustFontSize(16) }}
         >
-          4. {t("PrivacyPolicy.SecurityofYourInformation")}
+          4. {t("PrivacyPolicy.SecurityOfYourInformation")}
         </Text>
         <Text className="text-sm mt-6 text-gray-700">
-          {t("PrivacyPolicy.SecurityofYourInformationText")}
+          {t("PrivacyPolicy.SecurityOfYourInformationText")}
         </Text>
         <Text
           className="text-lg font-bold mt-4"

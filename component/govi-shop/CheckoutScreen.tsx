@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   KeyboardAvoidingView,
@@ -10,13 +9,14 @@ import {
   Image,
   Modal,
   ActivityIndicator,
+  StyleSheet,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/core";
 import { useTranslation } from "react-i18next";
 import { RootStackParamList } from "../types/types";
 import CustomHeader from "../common/CustomHeader";
-import { FontAwesome6 } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -33,23 +33,12 @@ interface CheckoutScreenProps {
   route: CheckoutRouteProp;
 }
 
-const formatPrice = (n: number) =>
-  n.toLocaleString("en-LK", {
+const formatCurrency = (amount: number, prefix: string = "") => {
+  const formatted = amount.toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
-
-const formatCardNumber = (value: string) => {
-  const cleaned = value.replace(/\D/g, "").slice(0, 16);
-  const groups = cleaned.match(/.{1,4}/g);
-  return groups ? groups.join("  ") : cleaned;
-};
-
-const formatExpiry = (value: string) => {
-  const cleaned = value.replace(/\D/g, "").slice(0, 4);
-  if (cleaned.length >= 3)
-    return `${cleaned.slice(0, 2)} / ${cleaned.slice(2)}`;
-  return cleaned;
+  return `${prefix}Rs.${formatted}`;
 };
 
 // Success Modal
@@ -59,7 +48,8 @@ const SuccessModal: React.FC<{
   invNo: string;
   onViewInvoice: () => void;
   onClose: () => void;
-}> = ({ visible, shopAddress, invNo, onViewInvoice, onClose }) => {
+  navigation: CheckoutNavigationProp;
+}> = ({ visible, shopAddress, invNo, onViewInvoice, onClose, navigation }) => {
   const { t } = useTranslation();
   return (
     <Modal
@@ -72,7 +62,7 @@ const SuccessModal: React.FC<{
         {/* Header */}
         <View className="flex-row items-center justify-between px-5 mt-4 pb-4">
           <TouchableOpacity
-            onPress={onClose}
+            onPress={() => navigation.replace("ExploreShopsScreen")}
             className="w-8 h-8 rounded-full bg-gray-200 items-center justify-center"
           >
             <Text className="text-gray-600 text-sm font-bold">✕</Text>
@@ -196,24 +186,18 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
 
   const branchId = (route.params as any).branchId as number;
 
-  const [cardHolderName, setCardHolderName] = useState("");
-  const [cardNumber, setCardNumber] = useState("");
-  const [expiryDate, setExpiryDate] = useState("");
-  const [cvv, setCvv] = useState("");
   const [placing, setPlacing] = useState(false);
   const [invNo, setInvNo] = useState("");
+  const [orderId, setOrderId] = useState<number | null>(null);
+  const [shopAddress, setShopAddress] = useState("");
 
   const [showSuccess, setShowSuccess] = useState(false);
   const [showFailed, setShowFailed] = useState(false);
 
-  const isFormValid =
-    cardHolderName.trim().length > 0 &&
-    cardNumber.replace(/\s/g, "").length === 16 &&
-    expiryDate.replace(/\s/g, "").length >= 4 &&
-    cvv.length >= 3;
+  const feePercent = subtotal > 0 ? Math.round((serviceCharge / subtotal) * 100) : 5;
 
   const handlePayNow = async () => {
-    if (!isFormValid || placing) return;
+    if (placing) return;
     try {
       setPlacing(true);
       const token = await AsyncStorage.getItem("userToken");
@@ -226,6 +210,8 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
       );
 
       setInvNo(data.invNo ?? "");
+      setOrderId(data.orderId ?? data.id ?? null);
+      setShopAddress(data.shopAddress ?? "");
       setShowSuccess(true);
     } catch (err: any) {
       console.error("Place order error:", err?.response?.data ?? err.message);
@@ -238,16 +224,18 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
   const handleViewInvoice = () => {
     setShowSuccess(false);
 
-    navigation.popToTop();
+    if (orderId) {
+      console.log("oredrid", orderId);
+      navigation.navigate("InvoiceScreen", { orderId });
+    } else {
+      navigation.popToTop();
+    }
   };
 
   const handleTryAgain = () => setShowFailed(false);
 
   return (
-    <KeyboardAvoidingView
-      className="flex-1 bg-white"
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
+    <View className="flex-1 bg-white">
       <CustomHeader
         title={t("CheckoutScreen.Checkout")}
         showBackButton={true}
@@ -255,133 +243,109 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
       />
 
       <ScrollView
-        className="flex-1 px-5"
-        contentContainerStyle={{ paddingBottom: 36 }}
-        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: "center",
+          paddingBottom: 40,
+        }}
+        className="bg-white px-5"
         showsVerticalScrollIndicator={false}
       >
-        {/* Total Amount Card */}
-        <View className="mx-8 mt-5">
-          <View className="border border-[#FF8000] rounded-xl py-4 px-5 items-center">
-            <Text className="text-[#FF8000] text-sm font-medium mb-1">
-              {t("CheckoutScreen.YourTotalAmount")} :
-            </Text>
-            <Text className="text-black text-2xl font-bold">
-              Rs. {formatPrice(total)}
-            </Text>
-          </View>
-        </View>
-
-        {/* Card brand logos */}
-        <View className="flex-row items-center mt-6 mb-5">
-          <Text className="text-black text-sm font-semibold mr-3">
-            ** {t("CheckoutScreen.CreditDebitCards")}
-          </Text>
-          <View className="flex-row items-center">
-            <Image
-              source={require("@/assets/images/govi-shop/visa-card.webp")}
-              style={{
-                width: 48,
-                height: 30,
-                resizeMode: "contain",
-                marginRight: 8,
-              }}
-            />
-            <Image
-              source={require("@/assets/images/govi-shop/mastercard-card.webp")}
-              style={{ width: 48, height: 30, resizeMode: "contain" }}
-            />
-          </View>
-        </View>
-
-        <View className="h-px bg-gray-200 mb-5" />
-
-        {/* Card Holder Name */}
-        <View className="mb-4">
-          <Text className="text-gray-800 text-sm font-medium mb-1.5">
-            {t("CheckoutScreen.CardHolderName")} <Text>*</Text>
-          </Text>
-          <TextInput
-            className="bg-[#F4F4F4] rounded-full px-4 h-[50px] text-gray-800 text-sm"
-            placeholder="--Please enter name--"
-            placeholderTextColor="#585858"
-            value={cardHolderName}
-            onChangeText={setCardHolderName}
-            autoCapitalize="words"
-            returnKeyType="next"
+        {/* Verification Image */}
+        <View className="flex justify-center items-center my-4">
+          <Image
+            source={require("../../assets/images/payments/payment-summery.webp")}
+            style={{ width: "100%", height: 280 }}
+            resizeMode="contain"
           />
         </View>
 
-        {/* Card Number */}
-        <View className="mb-4">
-          <Text className="text-gray-800 text-sm font-medium mb-1.5">
-            {t("CheckoutScreen.CardNumber")} <Text>*</Text>
-          </Text>
-          <TextInput
-            className="bg-[#F4F4F4] rounded-full px-4 h-[50px] text-gray-800 text-sm tracking-widest"
-            placeholder="---- ---- ---- ----"
-            placeholderTextColor="#585858"
-            value={cardNumber}
-            onChangeText={(v) => setCardNumber(formatCardNumber(v))}
-            keyboardType="numeric"
-            maxLength={22}
-            returnKeyType="next"
-          />
+        {/* Pricing Summary Box */}
+        <View style={styles.shadowBox} className="bg-white p-5 mb-6">
+          <View className="flex-row justify-between items-center mb-4">
+            <Text
+              style={{ color: "#414347", fontWeight: "normal" }}
+              className="text-base"
+            >
+              {t("Payment.SubTotal", "Sub Total")}
+            </Text>
+            <Text
+              style={{ color: "#212121", fontWeight: "bold" }}
+              className="text-base"
+            >
+              {formatCurrency(subtotal)}
+            </Text>
+          </View>
+
+          <View className="flex-row justify-between items-center mb-4">
+            <Text
+              style={{ color: "#414347", fontWeight: "normal" }}
+              className="text-base"
+            >
+              {t("Payment.ProcessingFee", "Processing Fee")} ({feePercent}%)
+            </Text>
+            <Text
+              style={{ color: "#212121", fontWeight: "bold" }}
+              className="text-base"
+            >
+              {formatCurrency(serviceCharge, "+ ")}
+            </Text>
+          </View>
+
+          {/* Border Line */}
+          <View className="border-b border-[#D1D7E4] my-2" />
+
+          <View className="flex-row justify-between items-center mt-4">
+            <Text
+              style={{ color: "#414347", fontWeight: "normal", fontSize: 18 }}
+            >
+              {t("Payment.FullTotal", "Full Total")}
+            </Text>
+            <Text
+              style={{ color: "#A07700", fontWeight: "bold", fontSize: 20 }}
+            >
+              {formatCurrency(total)}
+            </Text>
+          </View>
         </View>
 
-        {/* Expiry + CVV */}
-        <View className="flex-row gap-3 mb-8">
-          <View className="flex-1">
-            <Text className="text-gray-800 text-sm font-medium mb-1.5">
-              {t("CheckoutScreen.ExpiryDate")} <Text>*</Text>
-            </Text>
-            <TextInput
-              className="bg-[#F4F4F4] rounded-full px-4 h-[50px] text-gray-800 text-sm"
-              placeholder="MM / YY"
-              placeholderTextColor="#585858"
-              value={expiryDate}
-              onChangeText={(v) => setExpiryDate(formatExpiry(v))}
-              keyboardType="numeric"
-              maxLength={7}
-              returnKeyType="next"
-            />
+        {/* Secure Info Alert Box */}
+        <View
+          style={styles.secureBox}
+          className="flex-row items-center p-4 mb-8"
+        >
+          {/* Rounded Shield Icon Background */}
+          <View
+            style={styles.iconContainer}
+            className="justify-center items-center mr-4"
+          >
+            <MaterialIcons name="security" size={24} color="#0F5132" />
           </View>
-          <View className="flex-1">
-            <Text className="text-gray-800 text-sm font-medium mb-1.5">
-              {t("CheckoutScreen.Cvv")} <Text>*</Text>
-            </Text>
-            <TextInput
-              className="bg-[#F4F4F4] rounded-full px-4 h-[50px] text-gray-800 text-sm"
-              placeholder="- - -"
-              placeholderTextColor="#585858"
-              value={cvv}
-              onChangeText={(v) => setCvv(v.replace(/\D/g, "").slice(0, 4))}
-              keyboardType="numeric"
-              maxLength={4}
-              secureTextEntry
-              returnKeyType="done"
-            />
-          </View>
+          <Text
+            style={styles.secureText}
+            className="flex-1 font-medium text-sm leading-5"
+          >
+            {t(
+              "Payment.SecureInfo",
+              "Your payment information is secure and encrypted.",
+            )}
+          </Text>
         </View>
 
         {/* Pay Now Button */}
         <TouchableOpacity
+          activeOpacity={0.8}
           onPress={handlePayNow}
-          disabled={!isFormValid || placing}
-          activeOpacity={0.85}
-          className={`rounded-full h-[50px] flex-row items-center justify-center ${
-            isFormValid && !placing ? "bg-gray-900" : "bg-gray-400"
-          }`}
+          disabled={placing}
+          className="rounded-3xl h-[50px] justify-center items-center bg-[#000000] shadow-md mx-6"
+          style={styles.buttonShadow}
         >
           {placing ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator size="small" color="#FFFFFF" />
           ) : (
-            <>
-              <Text className="text-white text-base font-semibold mr-2">
-                {t("CheckoutScreen.PayNow")}
-              </Text>
-              <FontAwesome6 name="arrow-right-long" size={24} color="#ffffff" />
-            </>
+            <Text className="text-white font-bold text-center text-base">
+              {t("CheckoutScreen.PayNow", "Pay Now")}
+            </Text>
           )}
         </TouchableOpacity>
       </ScrollView>
@@ -389,18 +353,66 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
       {/* Modals */}
       <SuccessModal
         visible={showSuccess}
-        shopAddress="1/A, Galle Road, Dehiwala."
+        shopAddress={shopAddress}
         invNo={invNo}
         onViewInvoice={handleViewInvoice}
         onClose={() => setShowSuccess(false)}
+        navigation={navigation}
       />
       <FailedModal
         visible={showFailed}
         onTryAgain={handleTryAgain}
         onClose={() => setShowFailed(false)}
       />
-    </KeyboardAvoidingView>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  shadowBox: {
+    borderColor: "#D1D7E4",
+    borderWidth: 1,
+    borderRadius: 16,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
+  },
+  secureBox: {
+    backgroundColor: "#E8FFF4",
+    borderColor: "#E8FFF4",
+    borderWidth: 1,
+    borderRadius: 12,
+  },
+  iconContainer: {
+    backgroundColor: "#B5FFDB",
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+  },
+  secureText: {
+    color: "#0F5132",
+  },
+  buttonShadow: {
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
+  },
+});
 
 export default CheckoutScreen;

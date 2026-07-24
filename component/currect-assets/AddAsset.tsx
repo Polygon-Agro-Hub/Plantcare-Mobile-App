@@ -451,7 +451,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         [
           selectedCategory,
           "selectedCategory",
-          `${t("CurrentAssets.Selectcategory")} is required`,
+          `${t("CurrentAssets.SelectCategory")} is required`,
         ],
         [
           selectedAsset,
@@ -757,13 +757,13 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
           {/* Category */}
           <Text className="text-[#070707] text-sm mt-2">
-            {t("CurrentAssets.Selectcategory")} *
+            {t("CurrentAssets.SelectCategory")} *
           </Text>
           <PickerTrigger
             label={
               selectedCategory ? getCategoryLabel(selectedCategory) : ""
             }
-            placeholder={t("CurrentAssets.Selectcategory")}
+            placeholder={t("CurrentAssets.SelectCategory")}
             onPress={() => openModal("category")}
             error={fieldErrors.selectedCategory}
           />
@@ -1156,7 +1156,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       <GlobalSearchModal
         visible={modals.category}
         onClose={() => closeModal("category")}
-        title={t("CurrentAssets.Selectcategory")}
+        title={t("CurrentAssets.SelectCategory")}
         data={categoryItems}
         selectedItems={selectedCategory ? [selectedCategory] : []}
         onSelect={(items) => {

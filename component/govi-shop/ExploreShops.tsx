@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Image,
   FlatList,
-  ActivityIndicator,
   RefreshControl,
   Alert,
 } from "react-native";
@@ -14,8 +13,9 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { RootStackParamList } from "../types/types";
 import CustomHeader from "../common/CustomHeader";
-import { Ionicons } from "@expo/vector-icons";
-import LottieView from "lottie-react-native";
+import ShopLoading from "./ShopLoading";
+import NoData from "../common/NoData";
+import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -38,6 +38,7 @@ interface Shop {
   branchName: string;
   district: string;
   province: string;
+  address:string;
   mobilePhone: string;
 }
 
@@ -48,39 +49,43 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
   const [shops, setShops] = useState<Shop[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [cartCount, setCartCount] = useState(3);
 
   const fetchShops = async (search = "") => {
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const token = await AsyncStorage.getItem("userToken");
+      const token = await AsyncStorage.getItem("userToken");
 
-    if (!token) {
-      Alert.alert("Error", "Authentication token not found. Please login again.");
-      return;
-    }
+      if (!token) {
+        Alert.alert(
+          "Error",
+          "Authentication token not found. Please login again.",
+        );
+        return;
+      }
 
-    const response = await axios.get(
-      `${environment.API_BASE_URL}api/govi-shop/shops`,
-      {
-        params: { search },
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/govi-shop/shops`,
+        {
+          params: { search },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      },
-    );
-    setShops(Array.isArray(response.data) ? response.data : []);
-
-  } catch (error: any) {
-    
-    setShops([]);
-    console.error("Error fetching shops:", error?.response?.status, error?.message);
-  } finally {
-    setLoading(false);
-    setRefreshing(false);
-  }
-};
+      );
+      setShops(Array.isArray(response.data) ? response.data : []);
+    } catch (error: any) {
+      setShops([]);
+      console.error(
+        "Error fetching shops:",
+        error?.response?.status,
+        error?.message,
+      );
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
   useEffect(() => {
     fetchShops();
@@ -108,6 +113,7 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
           shopname: item.shopName,
           logo: item.logo,
           adress: item.district,
+          adressLoaction: item.address,
         });
       }}
       className="flex-row items-center bg-white rounded-xl p-4 mb-3 border border-gray-100"
@@ -158,22 +164,24 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
         navigation={navigation}
         rightComponent={
           <TouchableOpacity
-            onPress={() => navigation.navigate("GoviShopCartScreen" as any)}
+            onPress={() => navigation.navigate("OrderHistory" as any)}
             className="bg-[#3F3C57] rounded-full p-2"
+            style={{
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.3,
+              shadowRadius: 8,
+              elevation: 8,
+            }}
           >
-            <View className="flex-row items-center gap-2 px-3 py-1">
-              <Ionicons name="bag-handle" size={20} color="white" />
-              {cartCount > 0 && (
-                <Text className="text-white text-xs font-bold">
-                  {cartCount}
-                </Text>
-              )}
+            <View className="flex-row items-center gap-2 px-2 py-2">
+              <FontAwesome6 name="clock-rotate-left" size={16} color="white" />
             </View>
           </TouchableOpacity>
         }
       />
 
-      <View className="flex-1 px-4 pt-4">
+      <View className="flex-1 px-6 pt-4">
         {/* Search */}
         <View className="bg-[#E8E9EDCC] rounded-full px-4 py-1 mb-4 flex-row items-center shadow-sm">
           <TextInput
@@ -184,23 +192,22 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
               "Search Shops / Products..."
             }
             placeholderTextColor="#373737"
-            className="flex-1 ml-2 text-base text-gray-800"
+            className="flex-1 ml-2 text-base text-gray-800 h-[50px]"
           />
 
           {searchQuery.length === 0 ? (
-            <Ionicons name="search-outline" size={20} color="#373737" />
+            <Ionicons name="search-outline" size={28} color="#373737" />
           ) : (
             <TouchableOpacity onPress={() => setSearchQuery("")}>
-              <Ionicons name="close-circle" size={20} color="#373737" />
+              <Ionicons name="close-sharp" size={28} color="#373737" />
             </TouchableOpacity>
           )}
         </View>
 
-        {/* Loading */}
         {loading && !refreshing ? (
-          <View className="flex-1 justify-center items-center">
-            <ActivityIndicator size="large" color="#6C63FF" />
-          </View>
+          <ShopLoading text={t("GoviShop.LoadingShops") || "Loading shops..."} />
+        ) : shops.length === 0 ? (
+          <NoData text={t("ExploreShops.NoShopsFound") || "No shops found"} />
         ) : (
           <FlatList
             data={shops}
@@ -213,19 +220,6 @@ const ExploreShopsScreen: React.FC<ExploreShopsProps> = ({ navigation }) => {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
             contentContainerStyle={{ paddingBottom: 20 }}
-            ListEmptyComponent={
-              <View className="flex-1 justify-center items-center py-10">
-                <LottieView
-                  source={require("@/assets/jsons/common/no-data.json")}
-                  autoPlay
-                  loop
-                  style={{ width: 250, height: 250 }}
-                />
-                <Text className="text-[#7A9BC9] text-base mt-4 text-center">
-                  {t("ExploreShops.NoShopsFound") || "No shops found"}
-                </Text>
-              </View>
-            }
           />
         )}
       </View>

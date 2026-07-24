@@ -30,6 +30,7 @@ import ContentLoader, { Rect } from "react-content-loader/native";
 import { useSelector } from "react-redux";
 import { RootState } from "@/services/reducxStore";
 import LottieView from "lottie-react-native";
+import NoData from "../common/NoData";
 
 type ManagerFarmDetailsNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -377,23 +378,7 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
           {loading ? (
             <SkeletonLoader />
           ) : crops.length === 0 ? (
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <LottieView
-                source={require("@/assets/jsons/common/no-data.json")}
-                style={{ width: wp(50), height: hp(25) }}
-                autoPlay
-                loop
-              />
-              <Text className="text-center text-gray-600 ">
-                --{t("Manager.NoOngoingCultivationsFound")}--
-              </Text>
-            </View>
+              <NoData text={t("Manager.NoOngoingCultivationsFound") || "No ongoing cultivations found"} />
           ) : (
             crops.map((crop) => (
               <View key={crop.id} style={{ position: "relative" }}>

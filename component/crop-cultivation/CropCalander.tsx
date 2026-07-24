@@ -11,7 +11,6 @@ import {
   Image,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { StatusBar } from "expo-status-bar";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import axios from "axios";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -824,7 +823,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       if (!location) {
         Alert.alert(
           t("Main.Error"),
-          t("Farms.UnableToFetchLocationAAfterMultipleAttemptsPleaseTryAgainLater"),
+          t("Farms.UnableToFetchLocationAfterMultipleAttemptsPleaseTryAgainLater"),
           [{ text: t("Main.OK") }],
         );
         setLoading(false);

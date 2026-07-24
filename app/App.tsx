@@ -150,13 +150,14 @@ import FarmBudgetProfitCalculatorScreen from "@/component/farm-cal/economic-cost
 import DripIrrigationCalculatorScreen from "@/component/farm-cal/irrigation-water-calculators/DripIrrigationCalculatorScreen";
 import GoviShopLoadingScreen from "@/component/govi-shop/GoviShopLoading";
 import ExploreShopsScreen from "@/component/govi-shop/ExploreShops";
-import GoviShopCartScreen from "@/component/govi-shop/GoviShopCartScreen";
 import GoviShopProfileScreen from "@/component/govi-shop/GoviShopProfileScreen";
 import LocationAccess from "@/component/permission/LocationAccess";
 import ViewProduct from "@/component/govi-shop/ViewProduct";
 import SoilGridsScreen from "@/component/soil-grids/SoilGridsScreen";
 import CartScreen from "@/component/govi-shop/CartScreen";
 import CheckoutScreen from "@/component/govi-shop/CheckoutScreen";
+import InvoiceScreen from "@/component/govi-shop/Invoicescreen";
+import OrderHistory from "@/component/govi-shop/OrderHistory";
 
 LogBox.ignoreAllLogs(true);
 
@@ -696,10 +697,6 @@ function AppContent() {
               name="ExploreShopsScreen"
               component={ExploreShopsScreen}
             />
-            <Stack.Screen
-              name="GoviShopCartScreen"
-              component={GoviShopCartScreen as any}
-            />
             <Stack.Screen name="CartScreen" component={CartScreen as any} />
             <Stack.Screen
               name="GoviShopProfileScreen"
@@ -712,7 +709,9 @@ function AppContent() {
             />
             <Stack.Screen name="CheckoutScreen" component={CheckoutScreen as any} />
             <Stack.Screen name="ViewProduct" component={ViewProduct as any} />
+            <Stack.Screen name="InvoiceScreen" component={InvoiceScreen as any} />
             <Stack.Screen name="SoilGridsScreen" component={SoilGridsScreen} />
+            <Stack.Screen name="OrderHistory" component={OrderHistory} />
           </Stack.Navigator>
         </NavigationContainer>
         <AlertModal

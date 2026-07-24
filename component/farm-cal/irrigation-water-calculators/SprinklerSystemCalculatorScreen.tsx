@@ -109,7 +109,7 @@ const SprinklerSystemCalculatorScreen: React.FC<SprinklerSystemProps> = ({
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
-        title={`${t("IrrigationWaterCalculators.SprinklerSystem")} ${t("Calculator.calculator")}`}
+        title={`${t("IrrigationWaterCalculators.SprinklerSystem")} ${t("Calculator.Calculator")}`}
         icon={require("@/assets/images/farm-cal/irrigation-water-calculators/sprinkler-system-icon.webp")}
         onBack={() => navigation.goBack()}
       />

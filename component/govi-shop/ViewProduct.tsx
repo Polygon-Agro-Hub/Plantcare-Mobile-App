@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -6,17 +6,16 @@ import {
   Image,
   ScrollView,
   Dimensions,
-  StatusBar,
   Platform,
   ActivityIndicator,
   Modal,
   Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { FontAwesome5 } from "@expo/vector-icons";
 import { RootStackParamList } from "../types/types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/core";
+import { useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { environment } from "@/environment/environment";
@@ -38,6 +37,15 @@ interface Batch {
   originalPrice: number | null;
 }
 
+interface ColorDetail {
+  colorId: number;
+  color: string;
+  normalPrice: number;
+  discountPrice?: number;
+  availableQty: number;
+  batches?: Batch[];
+}
+
 interface SubProduct {
   id: string;
   label: string;
@@ -48,6 +56,7 @@ interface SubProduct {
   availableQty?: number;
   isMRP?: number;
   batches?: Batch[];
+  colorDetails?: ColorDetail[];
 }
 
 type UomDisplayMode = "DEFAULT" | "LOOSE" | "ROLL" | "COLOR" | "EQUIPMENT";
@@ -63,7 +72,6 @@ const CHIP_WIDTH =
 const MAX_CHIPS_VISIBLE = CHIP_COLUMNS * 3;
 
 const ROLL_GAP = 8;
-const ROLL_CHIP_WIDTH = (SCREEN_WIDTH - H_PAD * 2 - ROLL_GAP) / 2;
 
 const COLOR_DOT_SIZE = 34;
 const COLOR_DOT_GAP = 8;
@@ -100,10 +108,18 @@ const getDisplayMode = (baseUom: string): UomDisplayMode => {
 const resolveColor = (raw: string): string => {
   if (!raw) return "#CCCCCC";
   const t = raw.trim();
-  return t.startsWith("#") ? t : `#${t}`;
+  if (t.startsWith("#")) return t;
+  const hexRegex =
+    /^([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/;
+  if (hexRegex.test(t)) return `#${t}`;
+  return t.toLowerCase();
 };
 
-function resolveVariantIds(baseUom: string, sub: SubProduct) {
+function resolveVariantIds(
+  baseUom: string,
+  sub: SubProduct,
+  colorDetail?: ColorDetail,
+) {
   const mode = getDisplayMode(baseUom);
   if (mode === "EQUIPMENT") {
     if (sub.colorCode && sub.colorCode.trim()) {
@@ -111,6 +127,15 @@ function resolveVariantIds(baseUom: string, sub: SubProduct) {
         subProdId: null,
         subProdColorId: null,
         equipColorId: Number(sub.id),
+      };
+    }
+  }
+  if (mode === "COLOR") {
+    if (colorDetail) {
+      return {
+        subProdId: null,
+        subProdColorId: Number(colorDetail.colorId),
+        equipColorId: null,
       };
     }
   }
@@ -132,14 +157,18 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
     shopname = "Cart",
   } = route.params as any;
 
-  const displayMode = getDisplayMode(baseUom);
+  const [displayMode, setDisplayMode] = useState<UomDisplayMode>(
+    getDisplayMode(baseUom),
+  );
 
   const [subProducts, setSubProducts] = useState<SubProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSubId, setSelectedSubId] = useState<string>("");
+  const [selectedColorIndex, setSelectedColorIndex] = useState(0);
   const [showAllChips, setShowAllChips] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [showViewCart, setShowViewCart] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
   const [description, setDescription] = useState<string>(routeDescription);
 
   const [savedToDb, setSavedToDb] = useState(false);
@@ -150,9 +179,42 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
   const [boundaryModal, setBoundaryModal] = useState<{
     visible: boolean;
     sub: SubProduct | null;
+    colorDetail?: ColorDetail;
     currentBatchPrice: number;
     nextBatchPrice: number;
   } | null>(null);
+
+  const fetchCart = useCallback(async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) return;
+
+      const { data } = await axios.get(
+        `${environment.API_BASE_URL}api/govi-shop/cart`,
+        {
+          params: { branchId },
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      const items = data.items ?? [];
+      const totalQty = items.reduce(
+        (sum: number, r: any) => sum + Number(r.qty ?? 0),
+        0,
+      );
+
+      setCartCount(totalQty);
+      setShowViewCart(totalQty > 0);
+    } catch (error) {
+      console.error("Error fetching cart on ViewProduct:", error);
+    }
+  }, [branchId]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchCart();
+    }, [fetchCart]),
+  );
 
   useEffect(() => {
     (async () => {
@@ -173,9 +235,18 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
           setDescription(data[0].description);
         }
 
+        let currentMode = getDisplayMode(baseUom);
+        if (
+          currentMode === "DEFAULT" &&
+          data.some((v: any) => v.width != null && v.height != null)
+        ) {
+          currentMode = "ROLL";
+          setDisplayMode("ROLL");
+        }
+
         const mapped: SubProduct[] = data.map((v: any) => {
           let label = "";
-          if (displayMode === "ROLL") {
+          if (currentMode === "ROLL") {
             const w = v.width != null ? parseFloat(String(v.width)) : "";
             const h = v.height != null ? parseFloat(String(v.height)) : "";
             const uom = v.uom ?? "m";
@@ -183,14 +254,22 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
               w !== "" && h !== ""
                 ? `${w} x ${h} ${uom}`.trim()
                 : `${w || h} ${uom}`.trim();
-          } else if (displayMode === "COLOR") {
+          } else if (currentMode === "COLOR") {
             const q = v.qty ?? 1;
             label = `${q} ${q === 1 ? "pc" : "pcs"}`;
-          } else if (displayMode === "EQUIPMENT") {
-            label = v.color ?? "";
+          } else if (currentMode === "EQUIPMENT") {
+            label = v.color ?? v.label ?? "Equipment";
           } else {
-            const qty = v.qty != null ? parseFloat(String(v.qty)) : "";
-            label = `${qty} ${v.uom ?? ""}`.trim();
+            const qty =
+              v.qty != null && String(v.qty).trim() !== ""
+                ? parseFloat(String(v.qty))
+                : "";
+            const uomStr = (v.uom ?? "").trim();
+            if (qty !== "" || uomStr !== "") {
+              label = `${qty} ${uomStr}`.trim();
+            } else {
+              label = v.color ?? v.label ?? "Variant";
+            }
           }
           return {
             id: String(v.variantId),
@@ -199,7 +278,33 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
             discountPrice:
               v.discountPrice != null ? Number(v.discountPrice) : undefined,
             colorCode: v.color ?? undefined,
-            colors: Array.isArray(v.colors) ? v.colors : undefined,
+            colors: Array.isArray(v.colorDetails)
+              ? v.colorDetails.map((c: any) => c.color)
+              : Array.isArray(v.colors)
+                ? v.colors
+                : undefined,
+            colorDetails: Array.isArray(v.colorDetails)
+              ? v.colorDetails.map((c: any) => ({
+                  colorId: c.colorId,
+                  color: c.color,
+                  normalPrice: Number(c.normalPrice ?? 0),
+                  discountPrice:
+                    c.discountPrice != null
+                      ? Number(c.discountPrice)
+                      : undefined,
+                  availableQty: Number(c.availableQty ?? 0),
+                  batches: Array.isArray(c.batches)
+                    ? c.batches.map((b: any) => ({
+                        qty: Number(b.qty),
+                        salePrice: Number(b.salePrice),
+                        originalPrice:
+                          b.originalPrice != null
+                            ? Number(b.originalPrice)
+                            : null,
+                      }))
+                    : undefined,
+                }))
+              : undefined,
             availableQty: Number(v.availableQty ?? 0),
             isMRP: v.isMRP ?? 0,
             batches: Array.isArray(v.batches)
@@ -220,9 +325,11 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
             ? (final.find((s) => s.colorCode && s.colorCode.trim()) ?? final[0])
             : final[0];
         setSelectedSubId(first.id);
+        setSelectedColorIndex(0);
       } catch {
         setSubProducts(DEFAULT_SUB_PRODUCTS);
         setSelectedSubId(DEFAULT_SUB_PRODUCTS[0].id);
+        setSelectedColorIndex(0);
       } finally {
         setLoading(false);
       }
@@ -234,31 +341,58 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
       ? (subProducts
           .filter((s) => s.colorCode?.trim())
           .find((s) => s.id === selectedSubId) ??
-         subProducts.find((s) => s.id === selectedSubId))
+        subProducts.find((s) => s.id === selectedSubId))
       : subProducts.find((s) => s.id === selectedSubId);
 
-  const activePrice = activeSub
-    ? (activeSub.discountPrice ?? activeSub.price)
-    : 0;
-  const originalPrice = activeSub?.price ?? 0;
-  const hasDiscount =
-    !!activeSub?.discountPrice && activeSub.discountPrice < activeSub.price;
-  const availableQty =
-    activeSub?.availableQty && activeSub.availableQty > 0
+  const getActiveColorDetail = (
+    sub: SubProduct | undefined,
+    colorIdx: number,
+  ): ColorDetail | undefined => {
+    if (!sub?.colorDetails || sub.colorDetails.length === 0) return undefined;
+    return sub.colorDetails[colorIdx] ?? sub.colorDetails[0];
+  };
+
+  const activeColorDetail =
+    displayMode === "COLOR"
+      ? getActiveColorDetail(activeSub, selectedColorIndex)
+      : undefined;
+
+  const activePrice = activeColorDetail
+    ? (activeColorDetail.discountPrice ?? activeColorDetail.normalPrice)
+    : activeSub
+      ? (activeSub.discountPrice ?? activeSub.price)
+      : 0;
+  const originalPrice = activeColorDetail
+    ? activeColorDetail.normalPrice
+    : (activeSub?.price ?? 0);
+  const hasDiscount = activeColorDetail
+    ? !!activeColorDetail.discountPrice &&
+      activeColorDetail.discountPrice < activeColorDetail.normalPrice
+    : !!activeSub?.discountPrice && activeSub.discountPrice < activeSub.price;
+  const availableQty = activeColorDetail
+    ? activeColorDetail.availableQty > 0
+      ? activeColorDetail.availableQty
+      : undefined
+    : activeSub?.availableQty && activeSub.availableQty > 0
       ? activeSub.availableQty
       : undefined;
   const subtotal = activePrice * quantity;
   const isPlusDisabled = availableQty !== undefined && quantity >= availableQty;
 
+  const stockUnitLabel =
+    displayMode === "ROLL" ? (availableQty === 1 ? "Roll" : "Rolls") : "";
+
   const callUpsertAPI = async (
     sub: SubProduct,
     qty: number,
+    colorDetail?: ColorDetail,
   ): Promise<boolean> => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       const { subProdId, subProdColorId, equipColorId } = resolveVariantIds(
         baseUom,
         sub,
+        colorDetail,
       );
       await axios.post(
         `${environment.API_BASE_URL}api/govi-shop/cart/item`,
@@ -283,12 +417,16 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
     }
   };
 
-  const callDeleteAPI = async (sub: SubProduct): Promise<boolean> => {
+  const callDeleteAPI = async (
+    sub: SubProduct,
+    colorDetail?: ColorDetail,
+  ): Promise<boolean> => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       const { subProdId, subProdColorId, equipColorId } = resolveVariantIds(
         baseUom,
         sub,
+        colorDetail,
       );
       await axios.delete(`${environment.API_BASE_URL}api/govi-shop/cart/item`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -313,25 +451,37 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
 
   const handleSelectSub = (id: string) => {
     setSelectedSubId(id);
+    setSelectedColorIndex(0);
     setQuantity(1);
 
     setSavedToDb(false);
-    setShowViewCart(false);
   };
 
-  const checkBatchBoundary = (sub: SubProduct, qty: number): boolean => {
-    if (sub.isMRP !== 1 || !sub.batches || sub.batches.length <= 1)
-      return false;
+  const handleSelectColor = (index: number) => {
+    setSelectedColorIndex(index);
+    setQuantity(1);
+
+    setSavedToDb(false);
+  };
+
+  const checkBatchBoundary = (
+    sub: SubProduct,
+    qty: number,
+    colorDetail?: ColorDetail,
+  ): boolean => {
+    const batches = colorDetail ? colorDetail.batches : sub.batches;
+    if (sub.isMRP !== 1 || !batches || batches.length <= 1) return false;
     let cum = 0;
-    for (let i = 0; i < sub.batches.length - 1; i++) {
-      cum += sub.batches[i].qty;
+    for (let i = 0; i < batches.length - 1; i++) {
+      cum += batches[i].qty;
       if (qty === cum) {
-        const cur = sub.batches[i].salePrice;
-        const next = sub.batches[i + 1].salePrice;
+        const cur = batches[i].salePrice;
+        const next = batches[i + 1].salePrice;
         if (next !== cur) {
           setBoundaryModal({
             visible: true,
             sub,
+            colorDetail,
             currentBatchPrice: cur,
             nextBatchPrice: next,
           });
@@ -344,15 +494,15 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
 
   const handleCartPress = async () => {
     if (!activeSub) return;
-    if (checkBatchBoundary(activeSub, quantity)) return;
+    if (checkBatchBoundary(activeSub, quantity, activeColorDetail)) return;
 
     setCartIconLoading(true);
-    const ok = await callUpsertAPI(activeSub, quantity);
+    const ok = await callUpsertAPI(activeSub, quantity, activeColorDetail);
     setCartIconLoading(false);
 
     if (ok) {
       setSavedToDb(true);
-      setShowViewCart(true);
+      fetchCart();
     }
   };
 
@@ -361,15 +511,16 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
     const nextQty = quantity + 1;
 
     if (savedToDb) {
-      if (checkBatchBoundary(activeSub, quantity)) return;
+      if (checkBatchBoundary(activeSub, quantity, activeColorDetail)) return;
       setQuantity(nextQty);
       setDbUpdateLoading(true);
-      callUpsertAPI(activeSub, nextQty).then((ok) => {
+      callUpsertAPI(activeSub, nextQty, activeColorDetail).then((ok) => {
         if (!ok) setQuantity(quantity);
+        else fetchCart();
         setDbUpdateLoading(false);
       });
     } else {
-      if (checkBatchBoundary(activeSub, quantity)) return;
+      if (checkBatchBoundary(activeSub, quantity, activeColorDetail)) return;
       setQuantity(nextQty);
     }
   };
@@ -381,14 +532,14 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
       if (quantity <= 1) {
         const prevQty = quantity;
         setQuantity(1);
-        setShowViewCart(false);
         setSavedToDb(false);
         setDbUpdateLoading(true);
-        callDeleteAPI(activeSub).then((ok) => {
+        callDeleteAPI(activeSub, activeColorDetail).then((ok) => {
           if (!ok) {
             setQuantity(prevQty);
             setSavedToDb(true);
-            setShowViewCart(true);
+          } else {
+            fetchCart();
           }
           setDbUpdateLoading(false);
         });
@@ -396,15 +547,15 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
         const newQty = quantity - 1;
         setQuantity(newQty);
         setDbUpdateLoading(true);
-        callUpsertAPI(activeSub, newQty).then((ok) => {
+        callUpsertAPI(activeSub, newQty, activeColorDetail).then((ok) => {
           if (!ok) setQuantity(quantity);
+          else fetchCart();
           setDbUpdateLoading(false);
         });
       }
     } else {
       if (quantity <= 1) {
         setQuantity(1);
-        setShowViewCart(false);
       } else {
         setQuantity((q) => q - 1);
       }
@@ -417,61 +568,97 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
       : subProducts.slice(0, MAX_CHIPS_VISIBLE);
     const hasMore = subProducts.length > MAX_CHIPS_VISIBLE;
 
-    if (displayMode === "EQUIPMENT") {
-      const dots = subProducts.filter((s) => s.colorCode?.trim());
-      if (!dots.length) return null;
+    if (displayMode === "LOOSE") {
+      const label = activeSub?.label ?? "";
+      if (!label) return null;
+      const pillText = quantity > 0 ? `${label} X ${quantity}` : label;
       return (
-        <View
-          style={{
-            flexDirection: "row",
-            flexWrap: "wrap",
-            gap: COLOR_DOT_GAP,
-            marginBottom: 14,
-          }}
-        >
-          {dots.map((sub) => {
-            const hex = resolveColor(sub.colorCode!);
-            const isWhite = hex.toLowerCase() === "#ffffff";
-            const sel = selectedSubId === sub.id;
-            return (
-              <TouchableOpacity
-                key={sub.id}
-                onPress={() => handleSelectSub(sub.id)}
-                activeOpacity={0.7}
-                style={{
-                  width: COLOR_DOT_SIZE,
-                  height: COLOR_DOT_SIZE,
-                  borderRadius: COLOR_DOT_SIZE / 2,
-                  backgroundColor: hex,
-                  borderWidth: sel ? 3 : 1.5,
-                  borderColor: sel
-                    ? "#FF8000"
-                    : isWhite
-                      ? "#E0E0E0"
-                      : "transparent",
-                  elevation: sel ? 4 : 0,
-                }}
-              />
-            );
-          })}
+        <View style={{ marginBottom: 10 }}>
+          <View
+            style={{
+              alignSelf: "flex-start",
+              paddingHorizontal: 14,
+              paddingVertical: 7,
+              borderRadius: 20,
+              borderWidth: 1.5,
+              borderColor: "#FF8000",
+              backgroundColor: "#FFF",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: "700",
+                color: "#FF8000",
+              }}
+            >
+              {pillText}
+            </Text>
+          </View>
         </View>
       );
     }
 
+    const hasColorDotsOnly =
+      subProducts.every(
+        (s) => !s.label || s.label === "Variant" || s.label === s.colorCode,
+      ) && subProducts.some((s) => s.colorCode?.trim());
+
+    if (displayMode === "EQUIPMENT" || hasColorDotsOnly) {
+      const dots = subProducts.filter((s) => s.colorCode?.trim());
+      if (dots.length > 0) {
+        return (
+          <View
+            style={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+              gap: COLOR_DOT_GAP,
+              marginBottom: 14,
+            }}
+          >
+            {dots.map((sub) => {
+              const hex = resolveColor(sub.colorCode!);
+              const isWhite = hex.toLowerCase() === "#ffffff";
+              const sel = selectedSubId === sub.id;
+              return (
+                <TouchableOpacity
+                  key={sub.id}
+                  onPress={() => handleSelectSub(sub.id)}
+                  activeOpacity={0.7}
+                  style={{
+                    width: COLOR_DOT_SIZE,
+                    height: COLOR_DOT_SIZE,
+                    borderRadius: COLOR_DOT_SIZE / 2,
+                    backgroundColor: hex,
+                    borderWidth: sel ? 3 : 1.5,
+                    borderColor: sel
+                      ? "#FF8000"
+                      : isWhite
+                        ? "#E0E0E0"
+                        : "transparent",
+                    elevation: sel ? 4 : 0,
+                  }}
+                />
+              );
+            })}
+          </View>
+        );
+      }
+      if (displayMode === "EQUIPMENT") return null;
+    }
+
     if (displayMode === "COLOR") {
-      const dotColors: string[] = activeSub?.colors?.length
-        ? activeSub.colors
-        : activeSub?.colorCode
-          ? [activeSub.colorCode]
-          : [];
+      const colorDetails: ColorDetail[] = activeSub?.colorDetails ?? [];
+
       return (
         <>
+          {/* Quantity / pieces chips */}
           <View
             style={{
               flexDirection: "row",
               flexWrap: "wrap",
               gap: CHIP_GAP,
-              marginBottom: dotColors.length ? 10 : 4,
+              marginBottom: colorDetails.length ? 10 : 4,
             }}
           >
             {subProducts.map((sub) => {
@@ -503,7 +690,9 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
               );
             })}
           </View>
-          {dotColors.length > 0 && (
+
+          {/* Color dots — each with its own price / stock, selectable */}
+          {colorDetails.length > 0 && (
             <View
               style={{
                 flexDirection: "row",
@@ -512,21 +701,32 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
                 marginBottom: 8,
               }}
             >
-              {dotColors.map((raw, i) => {
-                const hex = resolveColor(raw);
+              {colorDetails.map((cd, index) => {
+                const hex = resolveColor(cd.color);
+                const isWhite =
+                  hex.toLowerCase() === "#ffffff" ||
+                  hex.toLowerCase() === "white";
+                const sel = selectedColorIndex === index;
+                const outOfStock = cd.availableQty <= 0;
                 return (
-                  <View
-                    key={i}
+                  <TouchableOpacity
+                    key={cd.colorId}
+                    activeOpacity={outOfStock ? 1 : 0.7}
+                    disabled={outOfStock}
+                    onPress={() => handleSelectColor(index)}
                     style={{
                       width: COLOR_DOT_SIZE,
                       height: COLOR_DOT_SIZE,
                       borderRadius: COLOR_DOT_SIZE / 2,
                       backgroundColor: hex,
-                      borderWidth: 1.5,
-                      borderColor:
-                        hex.toLowerCase() === "#ffffff"
+                      opacity: outOfStock ? 0.3 : 1,
+                      borderWidth: sel ? 3 : 1.5,
+                      borderColor: sel
+                        ? "#FF8000"
+                        : isWhite
                           ? "#E0E0E0"
                           : "transparent",
+                      elevation: sel ? 4 : 0,
                     }}
                   />
                 );
@@ -537,6 +737,8 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
       );
     }
 
+    const defaultColorDetails = activeSub?.colorDetails ?? [];
+
     if (displayMode === "ROLL") {
       return (
         <>
@@ -544,23 +746,25 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
             style={{
               flexDirection: "row",
               flexWrap: "wrap",
-              gap: ROLL_GAP,
               marginBottom: 4,
             }}
           >
-            {visible.map((sub) => {
+            {visible.map((sub, index) => {
               const sel = selectedSubId === sub.id;
+              const isLeftChip = index % 2 === 0;
               return (
                 <TouchableOpacity
                   key={sub.id}
                   onPress={() => handleSelectSub(sub.id)}
                   activeOpacity={0.7}
                   style={{
-                    width: ROLL_CHIP_WIDTH,
+                    width: "48%",
+                    marginRight: isLeftChip ? "4%" : 0,
+                    marginBottom: ROLL_GAP,
                     paddingVertical: 9,
                     borderRadius: 20,
                     borderWidth: 1.5,
-                    borderColor: sel ? "#FF8000" : "#E0E0E0",
+                    borderColor: sel ? "#FF8000" : "#C4CEDB",
                     backgroundColor: "#FFF",
                     alignItems: "center",
                   }}
@@ -568,8 +772,8 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
                   <Text
                     style={{
                       fontSize: 13,
-                      fontWeight: "600",
-                      color: sel ? "#FF8000" : "#888",
+                      fontWeight: "700",
+                      color: sel ? "#FF8000" : "#111827",
                     }}
                     numberOfLines={1}
                   >
@@ -588,6 +792,14 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
           )}
         </>
       );
+    }
+
+    if (
+      visible.length === 1 &&
+      visible[0].label === "Variant" &&
+      defaultColorDetails.length === 0
+    ) {
+      return null;
     }
 
     return (
@@ -634,6 +846,48 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
             );
           })}
         </View>
+        {defaultColorDetails.length > 0 && (
+          <View
+            style={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+              gap: COLOR_DOT_GAP,
+              marginBottom: 8,
+              marginTop: 10,
+            }}
+          >
+            {defaultColorDetails.map((cd, index) => {
+              const hex = resolveColor(cd.color);
+              const isWhite =
+                hex.toLowerCase() === "#ffffff" ||
+                hex.toLowerCase() === "white";
+              const sel = selectedColorIndex === index;
+              const outOfStock = cd.availableQty <= 0;
+              return (
+                <TouchableOpacity
+                  key={cd.colorId}
+                  activeOpacity={outOfStock ? 1 : 0.7}
+                  disabled={outOfStock}
+                  onPress={() => handleSelectColor(index)}
+                  style={{
+                    width: COLOR_DOT_SIZE,
+                    height: COLOR_DOT_SIZE,
+                    borderRadius: COLOR_DOT_SIZE / 2,
+                    backgroundColor: hex,
+                    opacity: outOfStock ? 0.3 : 1,
+                    borderWidth: sel ? 3 : 1.5,
+                    borderColor: sel
+                      ? "#FF8000"
+                      : isWhite
+                        ? "#E0E0E0"
+                        : "transparent",
+                    elevation: sel ? 4 : 0,
+                  }}
+                />
+              );
+            })}
+          </View>
+        )}
         {hasMore && !showAllChips && (
           <TouchableOpacity onPress={() => setShowAllChips(true)}>
             <Text style={{ color: "#FF8000", fontSize: 12, marginBottom: 6 }}>
@@ -647,7 +901,8 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
 
   const BoundaryModal = () => {
     if (!boundaryModal?.visible || !boundaryModal.sub) return null;
-    const { sub, currentBatchPrice, nextBatchPrice } = boundaryModal;
+    const { sub, colorDetail, currentBatchPrice, nextBatchPrice } =
+      boundaryModal;
 
     const handleConfirm = () => {
       setBoundaryModal(null);
@@ -656,8 +911,9 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
       if (savedToDb) {
         setQuantity(nextQty);
         setDbUpdateLoading(true);
-        callUpsertAPI(sub, nextQty).then((ok) => {
+        callUpsertAPI(sub, nextQty, colorDetail).then((ok) => {
           if (!ok) setQuantity(quantity);
+          else fetchCart();
           setDbUpdateLoading(false);
         });
       } else {
@@ -819,7 +1075,8 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
             width: SCREEN_WIDTH,
             height: SCREEN_WIDTH,
             zIndex: 1,
-            borderRadius: 16,
+            borderTopLeftRadius: 16,
+            borderTopRightRadius: 16,
           }}
           resizeMode="cover"
         />
@@ -875,36 +1132,40 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
           renderChips()
         )}
 
+        <View
+          style={{
+            height: 1,
+            backgroundColor: "#D3DBE3",
+            marginHorizontal: -H_PAD,
+            marginTop: 4,
+            marginBottom: 14,
+          }}
+        />
+
         {activeSub && (
           <View
             style={{
               flexDirection: "row",
               alignItems: "center",
               gap: 10,
-              marginTop: 4,
-              marginBottom: 8,
+              marginBottom: 10,
             }}
           >
-            <View
-              style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "700",
+                color: "#FF8000",
+              }}
             >
-              <FontAwesome5 name="coins" size={13} color="#1A1A2E" />
-              <Text
-                style={{
-                  fontSize: 18,
-                  fontWeight: "800",
-                  color: "#FF8000",
-                  marginLeft: 4,
-                }}
-              >
-                Rs. {fmt(activePrice)}
-              </Text>
-            </View>
+              Rs. {fmt(activePrice)}
+            </Text>
             {hasDiscount && (
               <Text
                 style={{
                   fontSize: 13,
-                  color: "#AAAAAA",
+                  fontWeight: "600",
+                  color: "#4A4A4A",
                   textDecorationLine: "line-through",
                 }}
               >
@@ -918,15 +1179,15 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
           <View
             style={{
               alignSelf: "flex-start",
-              backgroundColor: "#F3F3F3",
-              borderRadius: 15,
-              paddingHorizontal: 12,
+              backgroundColor: "#F0F4FF",
+              borderRadius: 6,
+              paddingHorizontal: 10,
               paddingVertical: 5,
-              marginBottom: 12,
+              marginBottom: 16,
             }}
           >
-            <Text style={{ fontSize: 12, color: "#555", fontWeight: "500" }}>
-              {availableQty} Left
+            <Text style={{ fontSize: 11, color: "#6A728A", fontWeight: "700" }}>
+              {availableQty} {stockUnitLabel ? `${stockUnitLabel} ` : ""}Left
             </Text>
           </View>
         )}
@@ -935,8 +1196,8 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
           <Text
             style={{
               fontSize: 13,
-              color: "#555",
-              lineHeight: 20,
+              color: "#8FA3B8",
+              lineHeight: 22,
               textAlign: "justify",
             }}
           >
@@ -945,19 +1206,15 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
         )}
       </ScrollView>
 
-      {/* View Cart pill */}
-      {showViewCart && quantity > 0 && (
-        <View
-          style={{
-            position: "absolute",
-            bottom: Platform.OS === "ios" ? 128 : 112,
-            left: "15%",
-            right: "15%",
-            zIndex: 999,
-          }}
-        >
+      {showViewCart && cartCount > 0 && (
+        <View className="absolute bottom-[100px] left-[25%] right-[25%] z-[999]">
           <TouchableOpacity
-            onPress={() => navigation.navigate("CartScreen" as any, { shopname, branchId: Number(branchId) })}
+            onPress={() =>
+              navigation.navigate("CartScreen" as any, {
+                shopname,
+                branchId: Number(branchId),
+              })
+            }
             activeOpacity={0.9}
             style={{
               backgroundColor: "#FF8000CC",
@@ -982,7 +1239,7 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
                 View Cart
               </Text>
               <Text style={{ color: "white", fontSize: 12, opacity: 0.85 }}>
-                {quantity} {quantity === 1 ? "item" : "items"}
+                {cartCount} {cartCount === 1 ? "item" : "items"}
               </Text>
             </View>
             <View
@@ -1025,97 +1282,106 @@ const ViewProduct: React.FC<ViewProductProps> = ({ route, navigation }) => {
           </Text>
         </View>
 
-        {/* Stepper */}
+        {/* Right side: Stepper + Cart grouped together */}
         <View
           style={{
             flexDirection: "row",
             alignItems: "center",
-            backgroundColor: "#FF80001A",
-            borderRadius: 30,
-            borderWidth: 1,
-            borderColor: "#E8E8E8",
-            overflow: "hidden",
+            gap: 12,
           }}
         >
-          {/* MINUS / TRASH */}
-          <TouchableOpacity
-            onPress={handleDecrement}
-            disabled={dbUpdateLoading}
+          {/* Stepper */}
+          <View
             style={{
-              backgroundColor: dbUpdateLoading ? "#CCCCCC" : "#FF8000",
-              width: 38,
-              height: 38,
+              flexDirection: "row",
               alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 19,
+              backgroundColor: "#FF80001A",
+              borderRadius: 30,
+              borderWidth: 1,
+              borderColor: "#E8E8E8",
+              overflow: "hidden",
             }}
           >
-            {dbUpdateLoading ? (
-              <ActivityIndicator size={16} color="white" />
-            ) : quantity <= 1 ? (
-              <Ionicons name="trash-outline" size={16} color="white" />
-            ) : (
-              <Ionicons name="remove" size={18} color="white" />
-            )}
-          </TouchableOpacity>
+            {/* MINUS / TRASH */}
+            <TouchableOpacity
+              onPress={handleDecrement}
+              disabled={dbUpdateLoading}
+              style={{
+                backgroundColor: dbUpdateLoading ? "#CCCCCC" : "#FF8000",
+                width: 38,
+                height: 38,
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 19,
+              }}
+            >
+              {dbUpdateLoading ? (
+                <ActivityIndicator size={16} color="white" />
+              ) : quantity <= 1 ? (
+                <Ionicons name="trash-outline" size={16} color="white" />
+              ) : (
+                <Ionicons name="remove" size={18} color="white" />
+              )}
+            </TouchableOpacity>
 
-          <Text
-            style={{
-              paddingHorizontal: 14,
-              fontWeight: "700",
-              fontSize: 15,
-              color: "#3F3C57",
-              minWidth: 30,
-              textAlign: "center",
-            }}
-          >
-            {quantity}
-          </Text>
+            <Text
+              style={{
+                paddingHorizontal: 14,
+                fontWeight: "700",
+                fontSize: 15,
+                color: "#3F3C57",
+                minWidth: 30,
+                textAlign: "center",
+              }}
+            >
+              {quantity}
+            </Text>
 
-          {/* PLUS */}
-          <TouchableOpacity
-            onPress={handleIncrement}
-            disabled={isPlusDisabled || dbUpdateLoading}
-            style={{
-              backgroundColor:
-                isPlusDisabled || dbUpdateLoading ? "#CCCCCC" : "#FF8000",
-              width: 38,
-              height: 38,
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 19,
-            }}
-          >
-            {dbUpdateLoading ? (
-              <ActivityIndicator size={18} color="white" />
-            ) : (
-              <Ionicons name="add" size={18} color="white" />
-            )}
-          </TouchableOpacity>
+            {/* PLUS */}
+            <TouchableOpacity
+              onPress={handleIncrement}
+              disabled={isPlusDisabled || dbUpdateLoading}
+              style={{
+                backgroundColor:
+                  isPlusDisabled || dbUpdateLoading ? "#CCCCCC" : "#FF8000",
+                width: 38,
+                height: 38,
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 19,
+              }}
+            >
+              {dbUpdateLoading ? (
+                <ActivityIndicator size={18} color="white" />
+              ) : (
+                <Ionicons name="add" size={18} color="white" />
+              )}
+            </TouchableOpacity>
+          </View>
+
+          {!savedToDb && (
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={handleCartPress}
+              disabled={cartIconLoading}
+              style={{
+                width: 46,
+                height: 46,
+                borderRadius: 23,
+                backgroundColor: cartIconLoading ? "#AAAAAA" : "#3F3C57",
+                alignItems: "center",
+                justifyContent: "center",
+                elevation: 6,
+              }}
+            >
+              {cartIconLoading ? (
+                <ActivityIndicator size={22} color="white" />
+              ) : (
+                <Ionicons name="cart-outline" size={22} color="white" />
+              )}
+            </TouchableOpacity>
+          )}
         </View>
-
-        {!savedToDb && (
-          <TouchableOpacity
-            activeOpacity={0.85}
-            onPress={handleCartPress}
-            disabled={cartIconLoading}
-            style={{
-              width: 46,
-              height: 46,
-              borderRadius: 23,
-              backgroundColor: cartIconLoading ? "#AAAAAA" : "#3F3C57",
-              alignItems: "center",
-              justifyContent: "center",
-              elevation: 6,
-            }}
-          >
-            {cartIconLoading ? (
-              <ActivityIndicator size={22} color="white" />
-            ) : (
-              <Ionicons name="cart-outline" size={22} color="white" />
-            )}
-          </TouchableOpacity>
-        )}
       </View>
 
       <BoundaryModal />

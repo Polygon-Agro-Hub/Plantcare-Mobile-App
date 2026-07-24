@@ -389,8 +389,13 @@ CartScreen: {
     shopname: string;
     logo: string;
     adress: string;
+    adressLoaction:string;
   };
   LocationAccess: undefined;
+  OrderHistory:undefined;
+  InvoiceScreen:{
+    orderId:Number
+  };
   CheckoutScreen: {
     cartItems: CartItem[];
     branchId: number;

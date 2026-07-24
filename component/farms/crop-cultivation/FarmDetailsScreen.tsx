@@ -35,6 +35,7 @@ import LottieView from "lottie-react-native";
 import ImageData from "@/assets/jsons/farm/farm-image.json";
 import LoadingPage from "@/component/common/LoadingPage";
 import CustomHeader from "../../common/CustomHeader";
+import NoData from "../../common/NoData";
 
 interface CropCardProps {
   id: number;
@@ -1098,17 +1099,7 @@ const FarmDetailsScreen = () => {
 
         <View className="mt-6 w-full px-0">
           {crops.length === 0 ? (
-            <View className="justify-center items-center p-4 min-h-[300px] -mt-8">
-              <LottieView
-                source={require("@/assets/jsons/common/no-data.json")}
-                style={{ width: wp(50), height: hp(30) }}
-                autoPlay
-                loop
-              />
-              <Text className="text-center text-gray-600 -mt-8">
-                --{t("MyCrop.NoOngoingCultivationsYet")}--
-              </Text>
-            </View>
+            <NoData text={t("MyCrop.NoOngoingCultivationsYet") || "No ongoing cultivations yet"} />
           ) : (
             <View
               style={{

@@ -24,6 +24,7 @@ import {
 import { useTranslation } from "react-i18next";
 import LoadingPage from "@/component/common/LoadingPage";
 import CustomHeader from "../../common/CustomHeader";
+import NoData from "../../common/NoData";
 
 interface FarmItem {
   id: number;
@@ -384,17 +385,7 @@ const AddFarmList = () => {
         {loading ? (
           <LoadingPage fullScreen />
         ) : farms.length === 0 ? (
-          <View className="flex-1 justify-center items-center">
-            <LottieView
-              source={require("@/assets/jsons/common/no-data.json")}
-              style={{ width: wp(50), height: hp(50) }}
-              autoPlay
-              loop
-            />
-            <Text className="text-center text-gray-600 mt-4">
-              {t("ReportHistory.NoComplaintsFound")}
-            </Text>
-          </View>
+            <NoData text={t("ReportHistory.NoComplaintsFound") || "No complaints found"} />
         ) : (
           <>
             <View>

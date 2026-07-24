@@ -25,6 +25,7 @@ import {
 import { Entypo } from "@expo/vector-icons";
 import LoadingPage from "@/component/common/LoadingPage";
 import CustomHeader from "../../common/CustomHeader";
+import NoData from "../../common/NoData";
 
 interface FarmItem {
   id: number;
@@ -392,19 +393,7 @@ const MyCultivation = () => {
         {loading ? (
           <LoadingPage fullScreen />
         ) : farms.length === 0 ? (
-          <View className="flex-1 justify-center items-center">
-            <View className="-mt-[30%]">
-              <LottieView
-                source={require("@/assets/jsons/common/no-data.json")}
-                style={{ width: wp(50), height: hp(50) }}
-                autoPlay
-                loop
-              />
-            </View>
-            <Text className="text-center text-gray-600 -mt-[30%]">
-              {t("MyCrop.NoFarmCultivationsYet")}
-            </Text>
-          </View>
+            <NoData text={t("MyCrop.NoFarmCultivationsYet") || "No farm cultivations yet"} />
         ) : (
           <View>{farms.map((farm, index) => renderFarmItem(farm, index))}</View>
         )}

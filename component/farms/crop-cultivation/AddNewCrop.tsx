@@ -29,6 +29,7 @@ import { useFocusEffect, useRoute } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomHeader from "../../common/CustomHeader";
+import NoData from "../../common/NoData";
 import districtData from "@/assets/jsons/common/district.json";
 
 type AddNewCropNavigationProps = StackNavigationProp<
@@ -687,34 +688,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
                   }
                 />
               ) : (
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    paddingHorizontal: 20,
-                  }}
-                >
-                  <LottieView
-                    source={require("@/assets/jsons/common/no-data.json")}
-                    autoPlay
-                    loop
-                    style={{ width: 150, height: 150 }}
-                  />
-                  <Text
-                    style={{
-                      fontSize: 18,
-                      color: "#666",
-                      textAlign: "center",
-                      marginTop: 20,
-                      fontWeight: "500",
-                    }}
-                  >
-                    {searchQuery
-                      ? t("NewCrop.NoResultsFound")
-                      : t("NewCrop.NoResultsFound")}
-                  </Text>
-                </View>
+                <NoData text={t("NewCrop.NoResultsFound") || "No Results Found"} />
               )}
             </>
           )}
@@ -746,31 +720,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
                       farmId={farmId}
                     />
                   ) : (
-                    <View
-                      style={{
-                        flex: 1,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        paddingHorizontal: 20,
-                      }}
-                    >
-                      <LottieView
-                        source={require("@/assets/jsons/common/no-data.json")}
-                        autoPlay
-                        loop
-                        style={{ width: 150, height: 150 }}
-                      />
-                      <Text
-                        style={{
-                          fontSize: 18,
-                          color: "black",
-                          textAlign: "center",
-                          marginTop: 20,
-                        }}
-                      >
-                        {t("NewCrop.NoResultsFound")}
-                      </Text>
-                    </View>
+                      <NoData text={t("NewCrop.NoResultsFound") || "No Results Found"} />
                   )}
                 </>
               )}
