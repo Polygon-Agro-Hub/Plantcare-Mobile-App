@@ -107,12 +107,12 @@ const Splash: React.FC = () => {
         dispatch(setUserData(response.data.usermembership));
         dispatch(setUserPersonalData(response.data.user));
 
-        if (response.data.usermembership.role === "Laboror") {
-          navigation.navigate("Main", { screen: "LabororDashboard" as any });
+        if (response.data.usermembership.role === "Laboror" || response.data.usermembership.role === "Laborer") {
+          navigation.navigate("Main", { screen: "LabororDashbord" as any });
         } else if (response.data.usermembership.role === "Manager") {
-          navigation.navigate("Main", { screen: "ManagerDashboard" as any });
+          navigation.navigate("Main", { screen: "ManagerDashbord" as any });
         } else if (response.data.usermembership.role === "Supervisor") {
-          navigation.navigate("Main", { screen: "SupervisorDashboard" as any });
+          navigation.navigate("Main", { screen: "SupervisorDashbord" as any });
         } else {
           navigation.navigate("Main", { screen: "Dashboard" });
         }

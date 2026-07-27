@@ -76,7 +76,7 @@ const NavigationBar = ({
 
     if (!user || !user.role) {
       setTabs([]);
-    } else if (user.role === "Laborer") {
+    } else if (user.role === "Laborer" || user.role === "Laboror") {
       setTabs([]);
     } else if (user.role === "Manager") {
       setTabs([]);
@@ -129,7 +129,7 @@ const NavigationBar = ({
     useCallback(() => {
       if (!user) return;
 
-      if (user.role === "Laborer" && currentTabName === "Dashboard") {
+      if ((user.role === "Laborer" || user.role === "Laboror") && currentTabName === "Dashboard") {
         navigation.navigate("LabororDashbord");
       } else if (user.role === "Manager" && currentTabName === "Dashboard") {
         navigation.navigate("ManagerDashbord");
@@ -141,7 +141,7 @@ const NavigationBar = ({
     }, [user, currentTabName, navigation]),
   );
 
-  if (isKeyboardVisible || !tabs.length || (user && user.role === "Laborer"))
+  if (isKeyboardVisible || !tabs.length || (user && (user.role === "Laborer" || user.role === "Laboror")))
     return null;
 
   // Temporarily removing bottom navigation bar

@@ -88,7 +88,6 @@ import PublicForumPostEdit from "@/component/public-forum/PublicForumPostEdit";
 import MyCultivation from "@/component/farms/crop-cultivation/MyCultivation";
 import LabororDashbord from "@/component/laboror-screens/LabororDashbord";
 import OwnerQRcode from "@/component/laboror-screens/OwnerQRcode";
-
 import FarmCurrectAssetRemove from "@/component/farms/current-asset/FarmCurrectAssetRemove";
 import FarmCropCalander from "@/component/farms/crop-cultivation/FarmCropCalander";
 import ManagerDashbord from "@/component/manager-screens/ManagerDashbord";
@@ -190,7 +189,7 @@ function MainTabNavigator() {
   useEffect(() => {
     if (!user) return;
 
-    if (user.role === "Laborer") {
+    if (user.role === "Laborer" || user.role === "Laboror") {
       setInitialTab("LabororDashbord");
     } else if (user.role === "Manager") {
       setInitialTab("ManagerDashbord");
