@@ -467,6 +467,11 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
                     <Text className="text-[#333] text-center text-[13px] ml-1">
                       {selectedCountryCode}
                     </Text>
+                    <MaterialIcons
+                      name="arrow-drop-down"
+                      size={24}
+                      color="#666"
+                    />
                   </TouchableOpacity>
 
                   <TextInput
@@ -748,6 +753,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
         searchPlaceholder={t("Search country or dial code...")}
         searchKeys={["label", "countryName", "dialCode"]}
         multiSelect={false}
+        noResultsText="No country found"
       />
 
       <GlobalSearchModal
@@ -760,6 +766,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
         searchPlaceholder={t("Main.Search...")}
         searchKeys={["label", "districtName"]}
         multiSelect={false}
+        noResultsText="No district found"
       />
     </KeyboardAvoidingView>
   );

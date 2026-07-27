@@ -139,17 +139,34 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
 
           {/* Allow Button */}
           <TouchableOpacity
-            className="w-full max-w-xs rounded-full overflow-hidden"
             onPress={requestLocationPermission}
             activeOpacity={0.8}
+            style={{
+              width: "100%",
+              maxWidth: 320,
+              borderRadius: 9999,
+              overflow: "hidden",
+            }}
           >
             <LinearGradient
               colors={["#009570", "#19D7B7"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
-              className="py-4 items-center justify-center"
+              style={{
+                paddingVertical: 16,
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 9999,
+              }}
             >
-              <Text className="text-black font-extrabold text-lg tracking-wider">
+              <Text
+                style={{
+                  color: "#000000",
+                  fontWeight: "bold",
+                  fontSize: 18,
+                  letterSpacing: 1.25,
+                }}
+              >
                 Allow
               </Text>
             </LinearGradient>

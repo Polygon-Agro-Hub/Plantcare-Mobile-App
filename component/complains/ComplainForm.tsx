@@ -130,7 +130,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
   const handleSubmit = async () => {
     if (!selectedCategory || !complain) {
       Alert.alert(
-        t("ReportComplaint.sorry"),
+        t("Main.Sorry"),
         t("Main.PleaseFillAllRequiredFields"),
         [{ text: t("Main.OK") }],
       );
@@ -176,7 +176,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
         navigation.navigate("Main", { screen: "ComplainHistory" });
       } else {
         Alert.alert(
-          t("ReportComplaint.sorry"),
+          t("Main.Sorry"),
           t("ReportComplaint.FailedToAddAComplaintPleaseTryAgain"),
           [{ text: t("Main.OK") }],
         );
@@ -334,6 +334,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
         }}
         searchPlaceholder={t("Main.Search...")}
         multiSelect={false}
+        noResultsText="No category found"
       />
     </KeyboardAvoidingView>
   );

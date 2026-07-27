@@ -764,6 +764,7 @@ const EditFarm: React.FC<EditFarmProps> = ({
         }}
         searchPlaceholder={t("Farms.SearchDistrict")}
         multiSelect={false}
+        noResultsText="No district found"
       />
 
       {/* Farm Image Modal */}

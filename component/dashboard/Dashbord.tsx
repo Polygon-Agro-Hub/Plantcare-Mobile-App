@@ -157,9 +157,11 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       const data = await response.json();
 
       if (!data.user || !data.user.firstName) {
-        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error"),
+          t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
         navigation.navigate("Signin");
         return;
       }
@@ -171,9 +173,11 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         setLoading(false);
       }, 100);
     } catch (error) {
-      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(
+        t("Main.Error"),
+        t("Main.SomethingWentWrongPleaseTryAgainlater"),
+        [{ text: t("Main.OK") }],
+      );
       navigation.navigate("Signin");
     }
   };
@@ -225,27 +229,27 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   };
 
   const actionItems = [
-    {
-      image: require("../../assets/images/dashboard/assets.webp"),
-      label: t("Dashboard.MyAssets"),
-      action: () => {
-        navigation.navigate("CurrentAssert");
-        dispatch(setAssetData({ farmName: "My Assets", farmId: null }));
-      },
-      bgColor: "#FFFFFF",
-    },
+    // {
+    //   image: require("../../assets/images/dashboard/assets.webp"),
+    //   label: t("Dashboard.MyAssets"),
+    //   action: () => {
+    //     navigation.navigate("CurrentAssert");
+    //     dispatch(setAssetData({ farmName: "My Assets", farmId: null }));
+    //   },
+    //   bgColor: "#FFFFFF",
+    // },
     {
       image: require("../../assets/images/dashboard/weather.webp"),
       label: t("Dashboard.Weather"),
       action: handleWeatherNavigation,
       bgColor: "#FFFFFF",
     },
-    {
-      image: require("../../assets/images/dashboard/transaction.webp"),
-      label: t("TransactionList.Transactions"),
-      action: () => navigation.navigate("TransactionHistory" as any),
-      bgColor: "#FFFFFF",
-    },
+    // {
+    //   image: require("../../assets/images/dashboard/transaction.webp"),
+    //   label: t("TransactionList.Transactions"),
+    //   action: () => navigation.navigate("TransactionHistory" as any),
+    //   bgColor: "#FFFFFF",
+    // },
     // {
     //   image: require("../../assets/images/dashboard/govi-shop.webp"),
     //   label: t("Dashboard.GoviShop"),
@@ -258,24 +262,24 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       action: () => navigation.navigate("FarmCalMenu" as any),
       bgColor: "#FFFFFF",
     },
-    {
-      image: require("../../assets/images/dashboard/surveybadge.webp"),
-      label: t("Dashboard.Survey"),
-      action: () => navigation.navigate("RequestHistory"),
-      bgColor: "#FFFFFF",
-    },
-    {
-      image: require("../../assets/images/dashboard/govi-capital.webp"),
-      label: t("TransactionList.GoViCapital"),
-      action: () => navigation.navigate("GoViCapitalRequests" as any),
-      bgColor: "#FFFFFF",
-    },
-    {
-      image: require("../../assets/images/govi-pension/govi-pension.webp"),
-      label: t("TransactionList.GoViPension"),
-      action: handlePensionNavigation,
-      bgColor: "#FFFFFF",
-    },
+    // {
+    //   image: require("../../assets/images/dashboard/surveybadge.webp"),
+    //   label: t("Dashboard.Survey"),
+    //   action: () => navigation.navigate("RequestHistory"),
+    //   bgColor: "#FFFFFF",
+    // },
+    // {
+    //   image: require("../../assets/images/dashboard/govi-capital.webp"),
+    //   label: t("TransactionList.GoViCapital"),
+    //   action: () => navigation.navigate("GoViCapitalRequests" as any),
+    //   bgColor: "#FFFFFF",
+    // },
+    // {
+    //   image: require("../../assets/images/govi-pension/govi-pension.webp"),
+    //   label: t("TransactionList.GoViPension"),
+    //   action: handlePensionNavigation,
+    //   bgColor: "#FFFFFF",
+    // },
     {
       image: require("../../assets/images/dashboard/soil-data.webp"),
       label: t("Dashboard.SoilData"),
@@ -332,7 +336,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
             />
           </View>
         </TouchableOpacity>
-        <View style={{ marginTop: 15, marginLeft: 15, flex: 1 }}>
+        <View style={{ marginTop: 25, marginLeft: 15, flex: 1 }}>
           <Text style={{ fontSize: 15, fontWeight: "bold", flexWrap: "wrap" }}>
             {t("Dashboard.Hello")},{" "}
             {user ? (
@@ -349,7 +353,13 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
             navigation.navigate("PublicForum" as any);
           }}
           className="ml-auto mr-4 mt-4 justify-center items-center bg-[#F6F7F7] rounded-full w-12 h-12"
-          style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 }}
+          style={{
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.1,
+            shadowRadius: 2,
+            elevation: 2,
+          }}
         >
           <MaterialCommunityIcons
             name="message-processing"
@@ -366,7 +376,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         }
         showsVerticalScrollIndicator={false}
       >
-        <View style={{ marginLeft: 20, marginTop: 20 }}>
+        {/* <View style={{ marginLeft: 20, marginTop: 20 }}>
           <Text
             style={{
               fontSize: 15,
@@ -395,7 +405,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
           }}
         >
           <MarketPriceSlideShow language={language} />
-        </View>
+        </View> */}
 
         <View style={{ marginLeft: 20 }}>
           <Text

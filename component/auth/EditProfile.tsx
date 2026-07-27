@@ -28,6 +28,8 @@ import districtData from "@/assets/jsons/common/district.json";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../../component/common/CustomHeader";
 import LoadingPage from "../common/LoadingPage";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUserPersonal, setUserPersonalData } from "@/store/userSlice";
 
 type EditProfileNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -58,6 +60,8 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
   const [districtModalVisible, setDistrictModalVisible] = useState(false);
 
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const userPersonalData = useSelector(selectUserPersonal);
 
   const districtItems = districtData.map((d) => ({
     label: t(d.translationKey),
@@ -180,7 +184,25 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
         },
       );
       const data = await response.json();
-      if (data.status !== "success") {
+      if (data.status === "success") {
+        // The server is the source of truth for the hosted image URL.
+        // Fall back to the local uri only if the server doesn't echo one back.
+        const newImageUrl: string =
+          data.user?.profileImage || data.profileImage || imageUri;
+
+        // Keep the local preview in sync with what will be persisted.
+        setProfileImage({ uri: newImageUrl });
+
+        // This is the critical fix: push the new image URL into Redux so
+        // that any screen reading selectUserPersonal (e.g. UserProfile)
+        // sees the update immediately, without needing an app reload.
+        dispatch(
+          setUserPersonalData({
+            ...userPersonalData,
+            profileImage: newImageUrl,
+          }),
+        );
+      } else {
         Alert.alert(
           t("Main.Error"),
           t("Main.SomethingWentWrongPleaseTryAgainlater"),
@@ -219,7 +241,10 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
         [{ resize: { width: 500 } }],
         { compress: 0.6, format: ImageManipulator.SaveFormat.JPEG },
       );
+      // Show the local file immediately for a responsive UI...
       setProfileImage({ uri: resizedImage.uri });
+      // ...then uploadImage() will replace it (and Redux) with the
+      // server-hosted URL once the upload succeeds.
       await uploadImage(resizedImage.uri);
     }
   };
@@ -235,18 +260,18 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
 
     if (!trimmedFirstName && !trimmedLastName) {
       Alert.alert(
-        t("SignIn.sorry"),
+       t("Main.Sorry"),
         t("EditProfile.FirstNameAndLastNameCannotBeEmpty"),
         [{ text: t("Main.OK") }],
       );
       return;
     } else if (!trimmedFirstName) {
-      Alert.alert(t("SignIn.sorry"), t("Inputs.FirstNameRequired"), [
+      Alert.alert(t("Main.Sorry"), t("Inputs.FirstNameRequired"), [
         { text: t("Main.OK") },
       ]);
       return;
     } else if (!trimmedLastName) {
-      Alert.alert(t("SignIn.sorry"), t("Inputs.LastNameRequired"), [
+      Alert.alert(t("Main.Sorry"), t("Inputs.LastNameRequired"), [
         { text: t("Main.OK") },
       ]);
       return;
@@ -285,6 +310,19 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
 
       const data = await response.json();
       if (data.status === "success") {
+        // This is the critical fix: push the updated fields into Redux so
+        // UserProfile (which reads selectUserPersonal) reflects the change
+        // as soon as it comes back into focus.
+        dispatch(
+          setUserPersonalData({
+            ...userPersonalData,
+            firstName,
+            lastName,
+            NICnumber,
+            phoneNumber,
+          }),
+        );
+
         Toast.show({
           type: "success",
           position: "bottom",
@@ -348,7 +386,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
             }
           />
           {isMenuVisible && (
-            <View 
+            <View
               className="absolute bg-white rounded-lg border border-gray-200 shadow-lg z-50"
               style={{ top: 48, right: 16 }}
             >
@@ -557,7 +595,6 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
               </View>
             </View>
           </View>
-
         </ScrollView>
       </View>
 
@@ -571,6 +608,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
         searchPlaceholder={t("Main.Search...")}
         searchKeys={["label", "districtName"]}
         multiSelect={false}
+        noResultsText="No district found"
       />
     </KeyboardAvoidingView>
   );

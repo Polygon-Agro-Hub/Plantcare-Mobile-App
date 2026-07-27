@@ -29,12 +29,12 @@ const IrrigationWaterCalculatorsMenuScreen: React.FC<
   const { t } = useTranslation();
 
   const calculatorItems: CalculatorItem[] = [
-    {
-      id: "irrigation_water_requirement",
-      label: t("IrrigationWaterCalculators.IrrigationWaterRequirement"),
-      icon: require("@/assets/images/farm-cal/irrigation-water-calculators/irrigation-water-requirement.webp"),
-      screen: "",
-    },
+    // {
+    //   id: "irrigation_water_requirement",
+    //   label: t("IrrigationWaterCalculators.IrrigationWaterRequirement"),
+    //   icon: require("@/assets/images/farm-cal/irrigation-water-calculators/irrigation-water-requirement.webp"),
+    //   screen: "",
+    // },
     {
       id: "drip_irrigation",
       label: t("IrrigationWaterCalculators.DripIrrigation"),
@@ -47,12 +47,12 @@ const IrrigationWaterCalculatorsMenuScreen: React.FC<
       icon: require("@/assets/images/farm-cal/irrigation-water-calculators/sprinkler-system.webp"),
       screen: "SprinklerSystemCalculatorScreen",
     },
-    {
-      id: "evapotranspiration",
-      label: t("IrrigationWaterCalculators.Evapotranspiration"),
-      icon: require("@/assets/images/farm-cal/irrigation-water-calculators/evapotranspiration.webp"),
-      screen: "",
-    },
+    // {
+    //   id: "evapotranspiration",
+    //   label: t("IrrigationWaterCalculators.Evapotranspiration"),
+    //   icon: require("@/assets/images/farm-cal/irrigation-water-calculators/evapotranspiration.webp"),
+    //   screen: "",
+    // },
   ];
 
   const chunkArray = (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -168,7 +168,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
           }
         } catch (error) {
           Alert.alert(
-            t("PublicForum.sorry"),
+            t("Main.Sorry"),
             t("PublicForum.FailedToRefreshPosts"),
             [{ text: t("Main.OK") }],
           );
@@ -181,14 +181,17 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
     }, []),
   );
 
+  const searchInputRef = useRef<TextInput>(null);
+
   const handleDelete = async (id: string, postimage: string) => {
+    setActiveMenuId(null);
     try {
+      const token = await AsyncStorage.getItem("userToken");
       const response = await axios.delete(
-        `
-        ${environment.API_BASE_URL}api/auth/delete/${id}`,
+        `${environment.API_BASE_URL}api/auth/delete/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${await AsyncStorage.getItem("userToken")}`,
+            Authorization: `Bearer ${token}`,
           },
           data: {
             postImage: postimage,
@@ -196,22 +199,30 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
         },
       );
       if (response.status === 200) {
-        Alert.alert(t("Main.Success"), t("PublicForum.PostDeleteSuccessful"), [
-          {
-            text: t("Main.OK"),
-          },
-        ]);
+        setPosts((prevPosts) => prevPosts.filter((post) => post.id !== id));
+        Alert.alert(
+          t("Main.Success"),
+          t("PublicForum.PostDeleteSuccessful") || "Post Delete Successful!",
+          [
+            {
+              text: t("Main.OK"),
+            },
+          ],
+        );
       } else {
-        Alert.alert(t("PublicForum.error"), t("PublicForum.failedToDelete"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("PublicForum.error") || t("Main.Error") || "Error",
+          t("PublicForum.failedToDelete") || "Failed to delete post",
+          [{ text: t("Main.OK") }],
+        );
       }
-      setPosts(posts.filter((post) => post.id !== id));
     } catch (error) {
       console.error("Error deleting post:", error);
-      Alert.alert(t("PublicForum.error"), t("PublicForum.failedToDelete"), [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(
+        t("PublicForum.error") || t("Main.Error") || "Error",
+        t("PublicForum.failedToDelete") || "Failed to delete post",
+        [{ text: t("Main.OK") }],
+      );
     }
   };
 
@@ -237,9 +248,11 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
         setPosts([]);
       }
     } catch (error) {
-      Alert.alert(t("PublicForum.sorry"), t("PublicForum.FailedToRefreshPosts"), [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(
+        t("Main.Sorry"),
+        t("PublicForum.FailedToRefreshPosts"),
+        [{ text: t("Main.OK") }],
+      );
     } finally {
       setRefreshing(false);
     }
@@ -256,9 +269,11 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
     try {
       const replyMessage = comment[postId] || "";
       if (replyMessage.trim() === "") {
-        Alert.alert(t("PublicForum.sorry"), t("PublicForum.CommentCannotBeEmpty"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Sorry"),
+          t("PublicForum.CommentCannotBeEmpty"),
+          [{ text: t("Main.OK") }],
+        );
         return;
       }
       const replyId = "";
@@ -288,7 +303,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
         ),
       );
     } catch (error) {
-      Alert.alert(t("PublicForum.sorry"), t("PublicForum.FailedToAddComment"), [
+      Alert.alert(t("Main.Sorry"), t("PublicForum.FailedToAddComment"), [
         { text: t("Main.OK") },
       ]);
     }
@@ -431,13 +446,13 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
             </Text>
             {((item.staffId !== null && item.staffId === userId) ||
               (item.staffId === null && item.userId === userId)) && (
-                <TouchableOpacity
-                  onPress={() => toggleMenu(item.id)}
-                  hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-                >
-                  <Entypo name="dots-three-vertical" size={15} color="black" />
-                </TouchableOpacity>
-              )}
+              <TouchableOpacity
+                onPress={() => toggleMenu(item.id)}
+                hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+              >
+                <Entypo name="dots-three-vertical" size={15} color="black" />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
         <View className="border-t border-gray-200 " />
@@ -501,7 +516,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
                     postId: item.id,
                     own:
                       (item.staffId !== null && item.staffId === userId) ||
-                        (item.staffId === null && item.userId === userId)
+                      (item.staffId === null && item.userId === userId)
                         ? "1"
                         : "0",
                     userId: userId,
@@ -512,16 +527,19 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
               style={{ marginLeft: dynamicStyles.imageMarginLeft }}
             >
               <Text
-                className="text-[#939393] text-sm underline"
-                style={{ marginLeft: dynamicStyles.textMarginLeft }}
-              >
-                {item.replyCount} {t("PublicForum.Replies")}
-              </Text>
+  className="text-[#939393] text-sm underline"
+  style={{ marginLeft: dynamicStyles.textMarginLeft }}
+>
+  {item.replyCount}{" "}
+  {Number(item.replyCount) === 1
+    ? t("PublicForum.Reply")
+    : t("PublicForum.Replies")}
+</Text>
             </TouchableOpacity>
 
             <View className="flex-row items-center relative">
               <TextInput
-                className="flex-1 text-gray-500 bg-[#F2F2F2] text-sm  h-[50px] px-4 pr-10 rounded-3xl"
+                className="flex-1 text-gray-500 bg-[#F2F2F2] text-sm rounded-3xl"
                 placeholder={t("PublicForum.WriteAComment")}
                 placeholderTextColor="#000000"
                 value={comment[item.id] || ""}
@@ -530,9 +548,13 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
                 }
                 onContentSizeChange={handleContentSizeChange}
                 style={{
-                  height: inputHeight,
-                  maxHeight: 40,
-                  minHeight: 40,
+                  flex: 1,
+                  paddingHorizontal: 12,
+                  fontSize: 16,
+                  height: 50,
+                  paddingVertical: 0,
+                  includeFontPadding: false,
+                  textAlign: "left",
                 }}
               />
               <TouchableOpacity
@@ -623,20 +645,32 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
       />
 
       <View className="p-6 bg-white">
-        <View className="flex-row items-center bg-white border rounded-3xl  shadow-sm">
+        <View
+          className="bg-white border border-[#000000] rounded-3xl px-3 flex-row items-center"
+          style={{ height: 50 }}
+        >
           <TextInput
-            className="flex-1 text-gray-600  px-4 h-[40px] text-lg"
+            ref={searchInputRef}
+            className="flex-1 text-gray-600 h-[50px]"
             placeholder={t("Main.Search...")}
-            value={searchText}
+            defaultValue={searchText}
             onChangeText={(text) => {
               if (text.trimStart() === "" && text.length > 0) {
                 return;
               }
-
               const trimmedText = text.replace(/^\s+/, "");
               setSearchText(trimmedText);
             }}
             placeholderTextColor="#9CA3AF"
+            style={{
+              flex: 1,
+              paddingHorizontal: 12,
+              fontSize: 16,
+              height: 50,
+              paddingVertical: 0,
+              includeFontPadding: false,
+              textAlign: "center",
+            }}
           />
           <View className="h-[40px]">
             <TouchableOpacity className="bg-black rounded-full p-3">
@@ -671,13 +705,15 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
             .toLowerCase()
             .includes(searchText.trim().toLowerCase()),
       ).length === 0 && !loading ? (
-          <NoData
-            text={
-              searchText.trim() !== ""
-                ? t("PublicForum.NoResultsFoundForYourSearch") || "No results found for your search"
-                : t("PublicForum.NoDiscussionsAvailable") || "No discussions available"
-            }
-          />
+        <NoData
+          text={
+            searchText.trim() !== ""
+              ? t("PublicForum.NoResultsFoundForYourSearch") ||
+                "No results found for your search"
+              : t("PublicForum.NoDiscussionsAvailable") ||
+                "No discussions available"
+          }
+        />
       ) : (
         <FlatList
           showsVerticalScrollIndicator={false}

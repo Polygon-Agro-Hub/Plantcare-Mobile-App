@@ -1069,7 +1069,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
             className="flex-1 justify-start"
             style={{
               paddingTop:
-                Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
+                Platform.OS === "android" ? StatusBar.currentHeight || 0 : 30,
               backgroundColor: "rgba(0, 0, 0, 0.5)",
             }}
           >
