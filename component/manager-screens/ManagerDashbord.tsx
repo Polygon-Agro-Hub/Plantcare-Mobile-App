@@ -192,38 +192,38 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
       action: handleWeatherNavigation,
       bgColor: "#FFFFFF",
     },
-    {
-      image: require("../../assets/images/laboror/cultivation-image.webp"),
-      label: t("Farms.Cultivation"),
-      action: () =>
-        navigation.navigate("ManagerFarmDetails", {
-          farmId: user?.farmId,
-          farmName: user?.farmName,
-          imageId: user?.imageId,
-        }),
-      bgColor: "#FFFFFF",
-    },
-    {
-      image: require("../../assets/images/dashboard/assets.webp"),
-      label: t("Farms.Assets"),
-      action: () => {
-        if (
-          typeof user?.farmId === "number" &&
-          typeof user?.farmName === "string"
-        ) {
-          navigation.navigate("CurrentAssert", {
-            farmId: user.farmId,
-            farmName: user.farmName,
-          });
-          dispatch(
-            setAssetData({ farmName: "My Assets", farmId: user.farmId }),
-          );
-        } else {
-          Alert.alert("Error", "Farm ID or Farm Name is missing or invalid.");
-        }
-      },
-      bgColor: "#FFFFFF",
-    },
+    // {
+    //   image: require("../../assets/images/laboror/cultivation-image.webp"),
+    //   label: t("Farms.Cultivation"),
+    //   action: () =>
+    //     navigation.navigate("ManagerFarmDetails", {
+    //       farmId: user?.farmId,
+    //       farmName: user?.farmName,
+    //       imageId: user?.imageId,
+    //     }),
+    //   bgColor: "#FFFFFF",
+    // },
+    // {
+    //   image: require("../../assets/images/dashboard/assets.webp"),
+    //   label: t("Farms.Assets"),
+    //   action: () => {
+    //     if (
+    //       typeof user?.farmId === "number" &&
+    //       typeof user?.farmName === "string"
+    //     ) {
+    //       navigation.navigate("CurrentAssert", {
+    //         farmId: user.farmId,
+    //         farmName: user.farmName,
+    //       });
+    //       dispatch(
+    //         setAssetData({ farmName: "My Assets", farmId: user.farmId }),
+    //       );
+    //     } else {
+    //       Alert.alert("Error", "Farm ID or Farm Name is missing or invalid.");
+    //     }
+    //   },
+    //   bgColor: "#FFFFFF",
+    // },
   ];
 
   const chunkArray = (arr: any[], size: number) => {
@@ -309,7 +309,7 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
         }
         showsVerticalScrollIndicator={false}
       >
-        <View style={{ marginLeft: 20, marginTop: 20 }}>
+        {/* <View style={{ marginLeft: 20, marginTop: 20 }}>
           <Text style={{ fontSize: 15, color: "gray", marginBottom: 5 }}>
             {t("Dashboard.MarketPrice")}
           </Text>
@@ -320,9 +320,9 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
               marginRight: 80,
             }}
           />
-        </View>
+        </View> */}
 
-        <View
+        {/* <View
           style={{
             flex: 1,
             marginBottom: 10,
@@ -332,7 +332,7 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
           }}
         >
           <MarketPriceSlideShow language={language} />
-        </View>
+        </View> */}
 
         <View style={{ marginLeft: 20 }}>
           <Text style={{ fontSize: 15, color: "gray", marginBottom: 5 }}>

@@ -341,9 +341,9 @@ const UserProfile: React.FC<UserProfileProps> = ({ navigation }) => {
             </View>
           )}
 
-          <View className="h-0.5 bg-[#D2D2D2] my-4" />
+          {/* <View className="h-0.5 bg-[#D2D2D2] my-4" /> */}
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             className="flex-row items-center py-3"
             onPress={() =>
               isLaborer
@@ -361,7 +361,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ navigation }) => {
             >
               {isLaborer ? t("Profile.ViewQRCode") : t("Profile.ViewMyQR")}
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <View className="h-0.5 bg-[#D2D2D2] my-4" />
 

@@ -32,24 +32,24 @@ const CropPlanningCalculatorsMenuScreen: React.FC<CropPlanningProps> = ({
   const { t } = useTranslation();
 
   const calculatorItems: CalculatorItem[] = [
-    {
-      id: "seed_rate",
-      label: t("CropPlanningCalculators.SeedRate"),
-      icon: require("../../../assets/images/farm-cal/crop-planning-calculators/seed-rate.webp"),
-      screen: "SeedRateCalculatorScreen",
-    },
-    {
-      id: "plant_population",
-      label: t("CropPlanningCalculators.PlantPopulation"),
-      icon: require("../../../assets/images/farm-cal/crop-planning-calculators/plant-population.webp"),
-      screen: "PlantPopulationCalculatorScreen",
-    },
-    {
-      id: "yield_estimation",
-      label: t("CropPlanningCalculators.YieldEstimation"),
-      icon: require("../../../assets/images/farm-cal/crop-planning-calculators/yield-estimation.webp"),
-      screen: "YieldEstimationCalculatorScreen",
-    },
+    // {
+    //   id: "seed_rate",
+    //   label: t("CropPlanningCalculators.SeedRate"),
+    //   icon: require("../../../assets/images/farm-cal/crop-planning-calculators/seed-rate.webp"),
+    //   screen: "SeedRateCalculatorScreen",
+    // },
+    // {
+    //   id: "plant_population",
+    //   label: t("CropPlanningCalculators.PlantPopulation"),
+    //   icon: require("../../../assets/images/farm-cal/crop-planning-calculators/plant-population.webp"),
+    //   screen: "PlantPopulationCalculatorScreen",
+    // },
+    // {
+    //   id: "yield_estimation",
+    //   label: t("CropPlanningCalculators.YieldEstimation"),
+    //   icon: require("../../../assets/images/farm-cal/crop-planning-calculators/yield-estimation.webp"),
+    //   screen: "YieldEstimationCalculatorScreen",
+    // },
     {
       id: "germination_rate",
       label: t("CropPlanningCalculators.GerminationRate"),

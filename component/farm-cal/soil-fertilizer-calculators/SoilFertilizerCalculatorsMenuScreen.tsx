@@ -28,24 +28,24 @@ const SoilFertilizerCalculatorsMenuScreen: React.FC<
   const { t } = useTranslation();
 
   const calculatorItems: CalculatorItem[] = [
-    {
-      id: "fertilizer",
-      label: t("SoilFertilizerCalculators.Fertilizer"),
-      icon: require("@/assets/images/farm-cal/soil-fertilizer-calculators/fertilizer.webp"),
-      screen: "FertilizerRequirementCalculatorScreen",
-    },
-    {
-      id: "npk_ratio",
-      label: t("SoilFertilizerCalculators.NPKRatio"),
-      icon: require("@/assets/images/farm-cal/soil-fertilizer-calculators/npk-ratio.webp"),
-      screen: "NPKRatioCalculatorScreen",
-    },
-    {
-      id: "lime_requirement",
-      label: t("SoilFertilizerCalculators.LimeRequirement"),
-      icon: require("@/assets/images/farm-cal/soil-fertilizer-calculators/lime-requirement.webp"),
-      screen: "LimeRequirementCalculatorScreen",
-    },
+    // {
+    //   id: "fertilizer",
+    //   label: t("SoilFertilizerCalculators.Fertilizer"),
+    //   icon: require("@/assets/images/farm-cal/soil-fertilizer-calculators/fertilizer.webp"),
+    //   screen: "FertilizerRequirementCalculatorScreen",
+    // },
+    // {
+    //   id: "npk_ratio",
+    //   label: t("SoilFertilizerCalculators.NPKRatio"),
+    //   icon: require("@/assets/images/farm-cal/soil-fertilizer-calculators/npk-ratio.webp"),
+    //   screen: "NPKRatioCalculatorScreen",
+    // },
+    // {
+    //   id: "lime_requirement",
+    //   label: t("SoilFertilizerCalculators.LimeRequirement"),
+    //   icon: require("@/assets/images/farm-cal/soil-fertilizer-calculators/lime-requirement.webp"),
+    //   screen: "LimeRequirementCalculatorScreen",
+    // },
     {
       id: "compost_mixing",
       label: t("SoilFertilizerCalculators.CompostMixing"),

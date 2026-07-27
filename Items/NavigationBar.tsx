@@ -143,6 +143,10 @@ const NavigationBar = ({
 
   if (isKeyboardVisible || !tabs.length || (user && user.role === "Laborer"))
     return null;
+
+  // Temporarily removing bottom navigation bar
+  return null;
+
   return (
     <View className="absolute bottom-0 flex-row justify-between items-center bg-[#21202B] py-2 px-6 rounded-t-3xl w-full">
       {tabs.map((tab, index) => {

@@ -189,12 +189,12 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
       action: handleWeatherNavigation,
       bgColor: "#FFFFFF",
     },
-    {
-      image: require("../../assets/images/laboror/cultivation-image.webp"),
-      label: t("Farms.Cultivation"),
-      action: () => navigation.navigate("MyCrop"),
-      bgColor: "#FFFFFF",
-    },
+    // {
+    //   image: require("../../assets/images/laboror/cultivation-image.webp"),
+    //   label: t("Farms.Cultivation"),
+    //   action: () => navigation.navigate("MyCrop"),
+    //   bgColor: "#FFFFFF",
+    // },
   ];
 
   const chunkArray = (arr: any[], size: number) => {
@@ -280,7 +280,7 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
         }
         showsVerticalScrollIndicator={false}
       >
-        <View style={{ marginLeft: 20, marginTop: 20 }}>
+        {/* <View style={{ marginLeft: 20, marginTop: 20 }}>
           <Text style={{ fontSize: 15, color: "gray", marginBottom: 5 }}>
             {t("Dashboard.MarketPrice")}
           </Text>
@@ -291,9 +291,9 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
               marginRight: 80,
             }}
           />
-        </View>
+        </View> */}
 
-        <View
+        {/* <View
           style={{
             flex: 1,
             marginBottom: 10,
@@ -303,7 +303,7 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
           }}
         >
           <MarketPriceSlideShow language={language} />
-        </View>
+        </View> */}
 
         <View style={{ marginLeft: 20 }}>
           <Text style={{ fontSize: 15, color: "gray", marginBottom: 5 }}>
