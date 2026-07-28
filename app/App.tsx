@@ -215,7 +215,6 @@ function MainTabNavigator() {
       <Tab.Screen name="LabororDashbord" component={LabororDashbord} />
       <Tab.Screen name="ManagerDashbord" component={ManagerDashbord} />
       <Tab.Screen name="SupervisorDashbord" component={SupervisorDashboard} />
-
       <Tab.Screen name="AddFixedAsset" component={AddFixedAsset} />
       <Tab.Screen name="ComplainHistory" component={ComplainHistory} />
       <Tab.Screen name="CropCalander" component={CropCalander as any} />
@@ -231,7 +230,6 @@ function MainTabNavigator() {
         name="TransactionHistory"
         component={TransactionHistory as any}
       />
-
       <Tab.Screen name="AddNewFarmFirst" component={AddNewFarmFirst} />
       <Tab.Screen
         name="PaymentGatewayView"
@@ -263,7 +261,6 @@ function MainTabNavigator() {
       <Tab.Screen name="FromFramEditFarm" component={EditFarm as any} />
       <Tab.Screen name="AddNewCrop" component={AddNewCrop} />
       <Tab.Screen name="AssertsFixedView" component={AssertsFixedView as any} />
-
       <Tab.Screen
         name="GoViCapitalRequests"
         component={GoViCapitalRequests as any}
