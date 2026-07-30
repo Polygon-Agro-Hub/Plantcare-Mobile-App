@@ -317,16 +317,25 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
     clearError("startDate");
   };
 
+  // Land -> Permitted "Issued Date" picker handler
   const onIssuedDateChange = (event: any, selectedDate: Date | undefined) => {
     setShowIssuedDatePicker(false);
-    if (event.type === "set" && selectedDate) setIssuedDate(selectedDate);
+    if (event.type === "set" && selectedDate) {
+      setIssuedDate(selectedDate);
+      clearError("issuedDate");
+    }
   };
 
+  // Building -> Permitted Building "Issued Date" picker handler (Android path)
   const onLbIssuedDateChange = (event: any, selectedDate: Date | undefined) => {
     setShowLbIssuedDatePicker(false);
-    if (event.type === "set" && selectedDate) setLbIssuedDate(selectedDate);
+    if (event.type === "set" && selectedDate) {
+      setLbIssuedDate(selectedDate);
+      clearError("lbissuedDate");
+    }
   };
 
+  // Building -> Permitted Building "Issued Date" picker handler (iOS path)
   const onPermitIssuedDateChange = (selectedDate: any) => {
     if (selectedDate > new Date()) {
       Alert.alert(
@@ -337,6 +346,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
       return;
     }
     setLbIssuedDate(selectedDate);
+    clearError("lbissuedDate");
   };
 
   const warrantyStatusColor =
@@ -410,7 +420,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
       }
       if (ownership === "Permitted Building") {
         if (!lbissuedDate)
-          newErrors.lbissuedDate = t("FixedAssets.AnnualLeaseAmountIsRequired");
+          newErrors.lbissuedDate = t("FixedAssets.IssuedDateIsRequired");
         if (!permitFeeAnnually)
           newErrors.permitFeeAnnually = t("FixedAssets.AnnualPermitFeeIsRequired");
       }
@@ -446,6 +456,8 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
             "FixedAssets.AnnualLeaseAmountIsRequired",
           );
       }
+      if (landownership === "Permitted" && !issuedDate)
+        newErrors.issuedDate = t("FixedAssets.IssuedDateIsRequired");
       if (landownership === "Permitted" && !permitFeeAnnually)
         newErrors.permitFeeAnnually = t(
           "FixedAssets.enterPermitFeeAnnuallyLKR",
@@ -1490,6 +1502,8 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                           maximumDate={new Date()}
                         />
                       ))}
+                    {/* FIX: this ErrorText was completely missing before */}
+                    <ErrorText field="issuedDate" />
                     <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.PermitFeeAnnuallyLKR")} *
                     </Text>
@@ -2157,6 +2171,8 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                           maximumDate={new Date()}
                         />
                       ))}
+                    {/* FIX: this key was "issuedDate" before, which never matched
+                        because the validation for this section sets "lbissuedDate" */}
                     <ErrorText field="lbissuedDate" />
                     <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.AnnualPermitFee")} *

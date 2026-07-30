@@ -202,6 +202,8 @@ export type RootStackParamList = {
   };
   LabororEngProfile: undefined;
   LabororDashbord: undefined;
+  SupervisorProfileView: undefined;
+  ManagerProfileView: undefined;
   FarmCropVarietySelectCard: {
     cropId: Number;
     selectedVariety: string;

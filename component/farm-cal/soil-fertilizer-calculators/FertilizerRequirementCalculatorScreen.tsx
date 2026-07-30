@@ -110,16 +110,31 @@ const FertilizerRequirementCalculatorScreen: React.FC<
           `${environment.API_BASE_URL}api/crop/get-all-cropgroups`,
         );
 
+        // if (response.data.status === "success") {
+        //   const mapped: CropItem[] = response.data.data
+        //     .filter(
+        //       (item: CropGroup) =>
+        //         item.cropNameEnglish &&
+        //         (item.nitrogen > 0 ||
+        //           item.phosphorus > 0 ||
+        //           item.potassium > 0),
+        //     )
+        //     .map((item: CropGroup) => ({
+        //       label: item.cropNameEnglish,
+        //       value: item.cropNameEnglish,
+        //       nameEnglish: item.cropNameEnglish,
+        //       nameSinhala: item.cropNameSinhala || item.cropNameEnglish,
+        //       nameTamil: item.cropNameTamil || item.cropNameEnglish,
+        //       nitrogen: Number(item.nitrogen),
+        //       phosphorus: Number(item.phosphorus),
+        //       potassium: Number(item.potassium),
+        //       icon: item.image ?? null,
+        //     }));
+        //   setRawCrops(mapped);
+        // }
         if (response.data.status === "success") {
-          const mapped: CropItem[] = response.data.data
-            .filter(
-              (item: CropGroup) =>
-                item.cropNameEnglish &&
-                (item.nitrogen > 0 ||
-                  item.phosphorus > 0 ||
-                  item.potassium > 0),
-            )
-            .map((item: CropGroup) => ({
+          const mapped: CropItem[] = response.data.data.map(
+            (item: CropGroup) => ({
               label: item.cropNameEnglish,
               value: item.cropNameEnglish,
               nameEnglish: item.cropNameEnglish,
@@ -129,7 +144,8 @@ const FertilizerRequirementCalculatorScreen: React.FC<
               phosphorus: Number(item.phosphorus),
               potassium: Number(item.potassium),
               icon: item.image ?? null,
-            }));
+            }),
+          );
           setRawCrops(mapped);
         }
       } catch (error) {

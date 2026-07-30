@@ -158,14 +158,42 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     }, []),
   );
 
+  const handleBackPress = React.useCallback(() => {
+    const userRole = user?.role;
+    const fromScreen = (route.params as any)?.fromScreen;
+
+    if (
+      fromScreen === "MyCrop" ||
+      userRole === "Laborer" ||
+      userRole === "Laboror" ||
+      !farmName
+    ) {
+      (navigation as any).navigate("MyCrop");
+    } else if (fromScreen === "ManagerFarmDetails" || farmName) {
+      navigation.navigate("ManagerFarmDetails", {
+        farmId: farmId,
+        farmName: farmName,
+        imageId: imageId,
+      });
+    } else if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      let screenName = "Dashboard";
+      if (userRole === "Laborer" || userRole === "Laboror") {
+        screenName = "LabororDashbord";
+      } else if (userRole === "Manager") {
+        screenName = "ManagerDashbord";
+      } else if (userRole === "Supervisor") {
+        screenName = "SupervisorDashbord";
+      }
+      (navigation as any).navigate("Main", { screen: screenName });
+    }
+  }, [navigation, user, route.params, farmId, farmName, imageId]);
+
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.navigate("ManagerFarmDetails", {
-          farmId: farmId,
-          farmName: farmName,
-          imageId: imageId,
-        });
+        handleBackPress();
         return true;
       };
       const subscription = BackHandler.addEventListener(
@@ -174,7 +202,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       );
 
       return () => subscription.remove();
-    }, [navigation]),
+    }, [handleBackPress]),
   );
   useFocusEffect(
     React.useCallback(() => {
@@ -1013,15 +1041,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         style={{ paddingHorizontal: wp(4), paddingVertical: hp(2) }}
       >
         <View>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("ManagerFarmDetails", {
-                farmId: farmId,
-                farmName: farmName,
-                imageId: imageId,
-              })
-            }
-          >
+          <TouchableOpacity onPress={handleBackPress}>
             <Ionicons name="chevron-back-outline" size={30} color="gray" />
           </TouchableOpacity>
         </View>

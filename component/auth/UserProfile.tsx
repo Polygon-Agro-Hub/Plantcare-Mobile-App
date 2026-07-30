@@ -47,6 +47,10 @@ const UserProfile: React.FC<UserProfileProps> = ({ navigation }) => {
   const userData = useSelector(selectUserData);
   const isLaborer =
     userData?.role === "Laborer" || userData?.role === "Laboror";
+  const isStaffRole =
+    userData?.role === "Supervisor" ||
+    userData?.role === "Manager" ||
+    isLaborer;
 
   const [isLanguageDropdownOpen, setLanguageDropdownOpen] =
     useState<boolean>(false);
@@ -157,7 +161,16 @@ const UserProfile: React.FC<UserProfileProps> = ({ navigation }) => {
   };
 
   const handleEditClick = () => {
-    navigation.navigate("Main", { screen: "EditProfile" });
+    const role = userData?.role;
+    if (role === "Supervisor") {
+      navigation.navigate("SupervisorProfileView" as any);
+    } else if (role === "Manager") {
+      navigation.navigate("ManagerProfileView" as any);
+    } else if (role === "Laborer" || role === "Laboror") {
+     navigation.navigate("Main", { screen: "EditProfile" });
+    } else {
+      navigation.navigate("Main", { screen: "EditProfile" });
+    }
   };
 
   const HanldeAsynStorage = async (lng: string) => {
@@ -266,7 +279,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ navigation }) => {
               <TouchableOpacity onPress={handleEditClick}>
                 <Image
                   source={require("../../assets/images/common/square-pen-solid.webp")}
-                  className="w-7 h-7 "
+                  className="w-7 h-7"
                 />
               </TouchableOpacity>
             )}
@@ -343,25 +356,25 @@ const UserProfile: React.FC<UserProfileProps> = ({ navigation }) => {
 
           <View className="h-0.5 bg-[#D2D2D2] my-4" />
 
-          <TouchableOpacity
-            className="flex-row items-center py-3"
-            onPress={() =>
-              isLaborer
-                ? navigation.navigate("OwnerQRcode")
-                : navigation.navigate("Main", { screen: "QRcode" })
-            }
-          >
-            <Ionicons
-              name="qr-code"
-              size={20}
-              color={isLaborer ? "black" : "#434343"}
-            />
-            <Text
-              className={`flex-1 text-lg ml-2 ${isLaborer ? "" : "text-[#434343]"}`}
-            >
-              {isLaborer ? t("Profile.ViewQRCode") : t("Profile.ViewMyQR")}
-            </Text>
-          </TouchableOpacity>
+       <TouchableOpacity
+  className="flex-row items-center py-3"
+  onPress={() =>
+    isStaffRole
+      ? navigation.navigate("OwnerQRcode")
+      : navigation.navigate("Main", { screen: "QRcode" })
+  }
+>
+  <Ionicons
+    name="qr-code"
+    size={20}
+    color={isLaborer ? "black" : "#434343"}
+  />
+  <Text
+    className={`flex-1 text-lg ml-2 ${isLaborer ? "" : "text-[#434343]"}`}
+  >
+    {isStaffRole ? t("Profile.ViewQRCode") : t("Profile.ViewMyQR")}
+  </Text>
+</TouchableOpacity>
 
           <View className="h-0.5 bg-[#D2D2D2] my-4" />
 
