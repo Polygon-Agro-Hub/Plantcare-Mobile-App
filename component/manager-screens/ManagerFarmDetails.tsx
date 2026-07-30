@@ -271,6 +271,7 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
             : language === "ta"
               ? crop.varietyNameTamil
               : crop.varietyNameEnglish,
+        fromScreen: "ManagerFarmDetails",
       },
     } as any);
   };

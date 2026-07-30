@@ -88,6 +88,8 @@ import PublicForumPostEdit from "@/component/public-forum/PublicForumPostEdit";
 import MyCultivation from "@/component/farms/crop-cultivation/MyCultivation";
 import LabororDashbord from "@/component/laboror-screens/LabororDashbord";
 import OwnerQRcode from "@/component/laboror-screens/OwnerQRcode";
+import ManagerProfileView from "@/component/manager-screens/ManagerProfileView";
+import SupervisorProfileView from "@/component/supervisor-screens/SupervisorProfileView";
 
 import FarmCurrectAssetRemove from "@/component/farms/current-asset/FarmCurrectAssetRemove";
 import FarmCropCalander from "@/component/farms/crop-cultivation/FarmCropCalander";
@@ -717,6 +719,15 @@ function AppContent() {
             <Stack.Screen name="InvoiceScreen" component={InvoiceScreen as any} />
             <Stack.Screen name="SoilGridsScreen" component={SoilGridsScreen} />
             <Stack.Screen name="OrderHistory" component={OrderHistory} />
+            <Stack.Screen
+              name="SupervisorProfileView"
+              component={SupervisorProfileView as any}
+            />
+            <Stack.Screen
+              name="ManagerProfileView"
+              component={ManagerProfileView as any}
+            />
+          
           </Stack.Navigator>
         </NavigationContainer>
         <AlertModal

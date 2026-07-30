@@ -523,6 +523,17 @@ const RequestInspectionForm = () => {
     setTimeout(() => scrollToTop(), 100);
   };
 
+  useFocusEffect(
+  React.useCallback(() => {
+    return () => {
+      resetForm();
+      setAddedItems([]);
+      setCurrentScrollIndex(0);
+      setCurrentMonth(new Date());
+    };
+  }, []),
+);
+
   const handleRemoveItem = (id: number) => {
     const itemIndex = addedItems.findIndex((item) => item.id === id);
     const newItems = addedItems.filter((item) => item.id !== id);
