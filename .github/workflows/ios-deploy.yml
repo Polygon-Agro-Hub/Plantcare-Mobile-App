@@ -84,12 +84,11 @@ jobs:
           SHOUTOUT_API_KEY: ${{ secrets.DEV_SHOUTOUT_API_KEY }}
         run: |
           cat > environment/environment.ts << ENVEOF
-          const environment = {
+          export const environment = {
             production: false,
             API_BASE_URL: "${DEV_API_URL}",
             SHOUTOUT_API_KEY: "${SHOUTOUT_API_KEY}"
           };
-          export default environment;
           ENVEOF
           echo "✅ DEV environment.ts written with API: ${DEV_API_URL}"
 
@@ -103,12 +102,11 @@ jobs:
           SHOUTOUT_API_KEY: ${{ secrets.PROD_SHOUTOUT_API_KEY }}
         run: |
           cat > environment/environment.ts << ENVEOF
-          const environment = {
+          export const environment = {
             production: true,
             API_BASE_URL: "${PROD_API_URL}",
             SHOUTOUT_API_KEY: "${SHOUTOUT_API_KEY}"
           };
-          export default environment;
           ENVEOF
           echo "✅ PROD environment.ts written with API: ${PROD_API_URL}"
 
