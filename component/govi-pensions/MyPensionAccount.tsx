@@ -42,18 +42,40 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
   const whiteSectionHeight = screenHeight * 0.7;
 
   const videoSource = require("../../assets/images/govi-pension/pension-background.mov");
-  const player = useVideoPlayer(videoSource, player => {
+
+  // Set up player WITHOUT calling play() immediately.
+  const player = useVideoPlayer(videoSource, (player) => {
     player.loop = true;
     player.muted = true;
-    player.play();
   });
 
   const [pensionData, setPensionData] = useState<PensionData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
   const isSmallScreen = screenHeight < 700;
 
   const scrollX = useRef(new Animated.Value(0)).current;
+
+  // Listen for player status/errors, and only play once ready.
+  useEffect(() => {
+    const statusSub = player.addListener("statusChange", (status) => {
+      console.log("[VideoPlayer] status:", status.status);
+
+      if (status.status === "readyToPlay") {
+        setVideoReady(true);
+        player.play();
+      }
+
+      if (status.status === "error") {
+        console.log("[VideoPlayer] error status payload:", status.error);
+      }
+    });
+
+    return () => {
+      statusSub.remove();
+    };
+  }, [player]);
 
   useEffect(() => {
     fetchPensionData();
@@ -330,12 +352,39 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
   );
 
   return (
-    <View className="flex-1 bg-black">
+    <View style={{ flex: 1, backgroundColor: "#000" }}>
       <VideoView
         player={player}
-        className="absolute top-0 left-0 bottom-0 right-0 w-full h-full"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          width: "100%",
+          height: "100%",
+        }}
         contentFit="cover"
+        nativeControls={false}
       />
+
+      {/* Optional: show a loader over the black background until the video is ready */}
+      {!videoReady && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          pointerEvents="none"
+        >
+          <ActivityIndicator size="small" color="#ffffff" />
+        </View>
+      )}
 
       <CustomHeader
         title={t("MyPensionAccount.GoViPension")}

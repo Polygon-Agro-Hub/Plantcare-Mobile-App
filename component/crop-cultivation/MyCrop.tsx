@@ -270,10 +270,15 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
       "hardwareBackPress",
       () => {
         const userRole = user?.role;
-        let screenName = "LabororDashbord";
+        let screenName = "Dashboard";
 
-        if (userRole === "Manager") screenName = "ManagerDashbord";
-        else if (userRole === "Supervisor") screenName = "SupervisorDashbord";
+        if (userRole === "Laborer" || userRole === "Laboror") {
+          screenName = "LabororDashbord";
+        } else if (userRole === "Manager") {
+          screenName = "ManagerDashbord";
+        } else if (userRole === "Supervisor") {
+          screenName = "SupervisorDashbord";
+        }
 
         (navigation as any).navigate("Main", {
           screen: screenName,
@@ -326,10 +331,15 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
         navigation={navigation}
         onBackPress={() => {
           const userRole = user?.role;
-          let screenName = "LabororDashbord";
+          let screenName = "Dashboard";
 
-          if (userRole === "Manager") screenName = "ManagerDashbord";
-          else if (userRole === "Supervisor") screenName = "SupervisorDashbord";
+          if (userRole === "Laborer" || userRole === "Laboror") {
+            screenName = "LabororDashbord";
+          } else if (userRole === "Manager") {
+            screenName = "ManagerDashbord";
+          } else if (userRole === "Supervisor") {
+            screenName = "SupervisorDashbord";
+          }
 
           (navigation as any).navigate("Main", {
             screen: screenName,
@@ -375,6 +385,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
                         : language === "ta"
                           ? crop.varietyNameTamil
                           : crop.varietyNameEnglish,
+                    fromScreen: "MyCrop",
                   },
                 })
               }
