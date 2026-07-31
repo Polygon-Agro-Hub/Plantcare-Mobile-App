@@ -34,6 +34,8 @@ import {
 import LottieView from "lottie-react-native";
 import ImageData from "@/assets/jsons/farm/farm-image.json";
 import LoadingPage from "@/component/common/LoadingPage";
+import CustomHeader from "../../common/CustomHeader";
+import NoData from "../../common/NoData";
 
 interface CropCardProps {
   id: number;
@@ -86,18 +88,17 @@ const CropCard: React.FC<CropCardProps> = ({
     <TouchableOpacity
       onPress={handlePress}
       activeOpacity={0.7}
+      className="my-2"
       style={{
         width: "100%",
-        padding: 12,
         flexDirection: "row",
         alignItems: "center",
         backgroundColor: "white",
       }}
     >
       <View
-        className={`bg-white rounded-lg p-4 border-2 ${
-          isBlocked ? "border-[#EFEFEF]" : "border-[#EFEFEF]"
-        } flex-row items-center justify-between relative`}
+        className={`bg-white rounded-xl p-4 border-2 ${isBlocked ? "border-[#EFEFEF]" : "border-[#EFEFEF]"
+          } flex-row items-center justify-between relative`}
         style={{
           shadowColor: "#000",
           shadowOffset: { width: 0, height: 2 },
@@ -525,14 +526,14 @@ const FarmDetailsScreen = () => {
         const token = await AsyncStorage.getItem("userToken");
         if (!token) {
           Alert.alert(
-            t("Farms.Error"),
-            t("Farms.No authentication token found"),
-            [{ text: t("PublicForum.OK") }],
+            t("Main.Error"),
+            t("Farms.NoAuthenticationTokenFound"),
+            [{ text: t("Main.OK") }],
           );
           return;
         }
 
-        setLanguage(t("MyCrop.LNG"));
+        setLanguage(t("Main.LNG"));
 
         const [
           farmDetails,
@@ -725,7 +726,7 @@ const FarmDetailsScreen = () => {
   };
 
   const handleEditFarm = () => {
-    navigation.navigate("EditFarm", { farmId });
+    navigation.navigate("EditFarm", { farmId, from: "FarmDetailsScreen" });
     setShowMenu(false);
   };
 
@@ -736,9 +737,9 @@ const FarmDetailsScreen = () => {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
-          t("Farms.No authentication token found"),
-          [{ text: t("PublicForum.OK") }],
+          t("Main.Error"),
+          t("Farms.NoAuthenticationTokenFound"),
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -749,12 +750,12 @@ const FarmDetailsScreen = () => {
       dispatch(resetFarm());
       setPageLoading(false);
       navigation.navigate("Main", { screen: "Dashboard" });
-      Alert.alert(t("Farms.Success"), t("Farms.Farm deleted successfully"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Success"), t("Farms.FarmDeletedSuccessfully"), [
+        { text: t("Main.OK") },
       ]);
     } catch {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Failed to delete farm"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.FailedToDeleteFarm"), [
+        { text: t("Main.OK") },
       ]);
       setPageLoading(false);
     }
@@ -810,96 +811,90 @@ const FarmDetailsScreen = () => {
     }
   };
 
+  const rightComponent = (
+    <View className="relative">
+      <TouchableOpacity
+        onPress={() => setShowMenu(!showMenu)}
+        hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+      >
+        <Ionicons name="ellipsis-vertical" size={24} color="#374151" />
+      </TouchableOpacity>
+
+      {showMenu && (
+        <View
+          className="absolute right-0 border border-[#A49B9B] top-[30px] bg-white rounded-lg shadow-lg p-2 z-20 w-24"
+          style={{
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+            elevation: 3,
+          }}
+        >
+          <TouchableOpacity
+            onPress={handleEditFarm}
+            className="py-1 px-2 items-center justify-center"
+            accessibilityLabel="Edit farm"
+            accessibilityRole="button"
+          >
+            <Text className="text-sm text-gray-700 text-center font-medium">
+              {t("Farms.Edit")}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </View>
+  );
+
   if (pageLoading) {
-    return <LoadingPage fullScreen />;
+    return (
+      <View className="flex-1 bg-white">
+        <CustomHeader
+          title=""
+          navigation={navigation as any}
+          showBackButton={true}
+          onBackPress={() =>
+            navigation.navigate("Main", { screen: "MyCultivation" })
+          }
+          rightComponent={rightComponent}
+        />
+        <LoadingPage fullScreen />
+      </View>
+    );
   }
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar
-        barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"}
-        backgroundColor="#ffffff"
+      <CustomHeader
+        title=""
+        navigation={navigation as any}
+        showBackButton={true}
+        onBackPress={() =>
+          navigation.navigate("Main", { screen: "MyCultivation" })
+        }
+        rightComponent={rightComponent}
       />
-
-      <View className="bg-white px-4 py-3 flex-row items-center justify-between">
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate("Main", { screen: "MyCultivation" })
+      <View className="items-center bg-white pb-3">
+        <Image
+          source={getImageSource(farmData?.imageId)}
+          className="w-28 h-28 rounded-full border-2 border-gray-200"
+          resizeMode="cover"
+          accessible
+          accessibilityLabel={
+            farmData?.farmName || farmBasicDetails?.farmName
           }
-          className="p-2 mt-[-50]"
-          accessibilityLabel="Go back"
-          accessibilityRole="button"
-        >
-          <Ionicons
-            name="chevron-back"
-            size={24}
-            color="#374151"
-            style={{
-              paddingHorizontal: wp(3),
-              paddingVertical: hp(1.5),
-              backgroundColor: "#F6F6F680",
-              borderRadius: 50,
-            }}
-          />
-        </TouchableOpacity>
-
-        {showMenu && (
-          <View
-            className="absolute right-0 border border-[#A49B9B] top-full mt-[-45] mr-8 bg-white rounded-lg shadow-lg p-2 z-10"
-            style={{
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.1,
-              shadowRadius: 4,
-              elevation: 3,
-            }}
-          >
-            <TouchableOpacity
-              onPress={handleEditFarm}
-              className="px-4 items-center justify-center"
-              accessibilityLabel="Edit farm"
-              accessibilityRole="button"
-            >
-              <Text className="text-sm text-gray-700 text-center">
-                {t("Farms.Edit")}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
-
-        <View className="items-center bg-white">
-          <Image
-            source={getImageSource(farmData?.imageId)}
-            className="w-20 h-20 rounded-full border-2 border-gray-200"
-            resizeMode="cover"
-            accessible
-            accessibilityLabel={
-              farmData?.farmName || farmBasicDetails?.farmName
-            }
-          />
-        </View>
-
-        <View className="relative bg-white">
-          <TouchableOpacity
-            onPress={() => setShowMenu(!showMenu)}
-            className="p-2 mt-[-50]"
-            accessibilityLabel="Open menu"
-            accessibilityRole="button"
-          >
-            <Ionicons name="ellipsis-vertical" size={24} color="#374151" />
-          </TouchableOpacity>
-        </View>
+        />
       </View>
 
       <ScrollView
-        className="flex-1"
+        className="flex-1 px-6 bg-white"
         contentContainerStyle={{ paddingBottom: 100 }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         showsVerticalScrollIndicator={true}
       >
-        <View className="items-center px-4 py-4">
+        <View className="items-center py-4 w-full">
           <View className="flex-row items-center">
             <Text className="font-bold text-xl text-gray-900 mr-3">
               {farmData?.farmName || farmBasicDetails?.farmName}
@@ -927,25 +922,26 @@ const FarmDetailsScreen = () => {
           <Text className="text-[#6B6B6B] font-medium text-[15px] mt-1">
             {t("District." + (farmData?.district ?? ""))}
           </Text>
-          <View className="flex-row items-center mt-1 space-x-6">
+          <View className="flex-row items-center mt-1 gap-6">
             <Text className="text-[#6B6B6B] text-sm">
-              • {farmData?.appUserCount || 0} {t("Farms.Staff")}
+              • {farmData?.appUserCount || 0} {t("Farms.Members")}
             </Text>
             <Text className="text-[#6B6B6B] text-sm ml-2">
-              • {farmData?.staffCount || 0} {t("Farms.Other Staff")}
+              • {farmData?.staffCount || 0} {t("Farms.OtherStaff")}
             </Text>
           </View>
         </View>
 
-        <View className="flex-row justify-center mt-5 space-x-5 px-4">
+        <View className="flex-row justify-between mt-5 w-full">
           <TouchableOpacity
-            className="bg-white p-4 rounded-xl justify-center items-center w-36 h-40 border border-[#445F4A33]"
+            className="bg-white p-4 rounded-xl justify-center items-center border border-[#445F4A33]"
             style={{
               shadowColor: "#000",
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: 0.1,
               shadowRadius: 4,
               elevation: 3,
+              width: "48%",
             }}
             accessibilityLabel="View managers"
             accessibilityRole="button"
@@ -963,49 +959,52 @@ const FarmDetailsScreen = () => {
               }
             }}
           >
-            <View className="w-12 h-12 rounded-full items-center justify-center mb-2">
+            <View className="w-24 h-24 rounded-lg justify-center items-center mb-3 overflow-hidden">
               <Image
-                className="w-[75px] h-[75px]"
                 source={require("../../../assets/images/farms/managers-image.webp")}
+                style={{ width: "100%", height: "100%" }}
+                resizeMode="contain"
               />
             </View>
-            <Text className="text-black text-sm font-medium mt-4">
-              {t("Farms.Staff")}
+            <Text className="text-sm font-medium text-gray-800 text-center">
+              {t("Farms.Members")}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="bg-white p-4 rounded-xl justify-center items-center w-36 h-40 border border-[#445F4A33]"
+            className="bg-white p-4 rounded-xl justify-center items-center border border-[#445F4A33]"
             style={{
               shadowColor: "#000",
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: 0.1,
               shadowRadius: 4,
               elevation: 3,
+              width: "48%",
             }}
             accessibilityLabel="View farm assets"
             accessibilityRole="button"
             onPress={() =>
-              navigation.navigate("FarmCurrectAssets", {
+              navigation.navigate("CurrentAssert", {
                 farmId,
                 farmName: farmData?.farmName ?? farmName ?? "",
               })
             }
           >
-            <View className="w-12 h-12 bg-purple-600 rounded-full items-center justify-center mb-2">
+            <View className="w-24 h-24 rounded-lg justify-center items-center mb-3 overflow-hidden">
               <Image
-                className="w-[75px] h-[75px]"
                 source={require("../../../assets/images/farms/farm-assets.webp")}
+                style={{ width: "100%", height: "100%" }}
+                resizeMode="contain"
               />
             </View>
-            <Text className="text-black text-sm font-medium mt-4">
-              {t("Farms.Farm Assets")}
+            <Text className="text-sm font-medium text-gray-800 text-center">
+              {t("Farms.FarmAssets")}
             </Text>
           </TouchableOpacity>
         </View>
 
         {certificateStatuses.length > 0 && (
-          <View className="mt-6 px-7">
+          <View className="mt-6 w-full px-0">
             {certificateStatuses.map((certificate, index) => {
               const getCertificateName = () => {
                 if (language === "si" && certificate.srtNameSinhala)
@@ -1028,11 +1027,11 @@ const FarmDetailsScreen = () => {
                     elevation: 4,
                   }}
                 >
-                  <View className="flex-row items-start justify-between">
-                    <View className="flex-row items-start flex-1">
+                  <View className="flex-row items-center justify-between">
+                    <View className="flex-row items-center flex-1">
                       <Image
                         source={require("../../../assets/images/farms/star-certificate.webp")}
-                        className="w-12 h-12 mt-1"
+                        className="w-24 h-24"
                         resizeMode="contain"
                       />
                       <View className="ml-3 flex-1">
@@ -1049,24 +1048,22 @@ const FarmDetailsScreen = () => {
                           ) {
                             return (
                               <Text className="text-red-600 text-sm mt-1 font-medium">
-                                {t("Farms.Certificate has expired")}
+                                {t("Farms.CertificateHasExpired")}
                               </Text>
                             );
                           }
-                          let validityText = t("Farms.Valid for next") + " ";
+                          let validityText = t("Farms.ValidFor") + " ";
                           if (remainingTime.months > 0)
-                            validityText += `${remainingTime.months} ${
-                              remainingTime.months === 1
-                                ? t("Farms.month")
-                                : t("Farms.months")
-                            }`;
+                            validityText += `${remainingTime.months} ${remainingTime.months === 1
+                              ? t("Farms.Month")
+                              : t("Farms.Months")
+                              }`;
                           if (remainingTime.days > 0) {
                             if (remainingTime.months > 0) validityText += " ";
-                            validityText += `${remainingTime.days} ${
-                              remainingTime.days === 1
-                                ? t("Farms.day")
-                                : t("Farms.days")
-                            }`;
+                            validityText += `${remainingTime.days} ${remainingTime.days === 1
+                              ? t("Farms.Day")
+                              : t("Farms.Days")
+                              }`;
                           }
                           return (
                             <Text className="text-gray-600 text-sm mt-1">
@@ -1075,19 +1072,18 @@ const FarmDetailsScreen = () => {
                           );
                         })()}
                         <Text
-                          className={`text-sm font-medium mt-1 ${
-                            certificate.isAllCompleted
-                              ? "text-[#00A896]"
-                              : "text-red-500"
-                          }`}
+                          className={`text-sm font-medium mt-1 ${certificate.isAllCompleted
+                            ? "text-[#00A896]"
+                            : "text-red-500"
+                            }`}
                         >
                           {certificate.isAllCompleted
-                            ? t("Farms.All Completed")
+                            ? t("Farms.AllCompleted")
                             : t("Farms.Pending")}
                         </Text>
                       </View>
                     </View>
-                    <View className="ml-2 mt-1 mt-6">
+                    <View className="ml-2">
                       <Ionicons
                         name="chevron-forward"
                         size={20}
@@ -1101,19 +1097,9 @@ const FarmDetailsScreen = () => {
           </View>
         )}
 
-        <View className="mt-6 px-4">
+        <View className="mt-6 w-full px-0">
           {crops.length === 0 ? (
-            <View className="justify-center items-center p-4 min-h-[300px] -mt-8">
-              <LottieView
-                source={require("@/assets/jsons/common/no-data.json")}
-                style={{ width: wp(50), height: hp(30) }}
-                autoPlay
-                loop
-              />
-              <Text className="text-center text-gray-600 -mt-8">
-                --{t("MyCrop.No Ongoing Cultivations yet")}--
-              </Text>
-            </View>
+            <NoData text={t("MyCrop.NoOngoingCultivationsYet") || "No ongoing cultivations yet"} />
           ) : (
             <View
               style={{
@@ -1151,15 +1137,15 @@ const FarmDetailsScreen = () => {
         </View>
       </ScrollView>
 
-      <View className="mb-[8%]">
+      <View>
         <TouchableOpacity
-          className="absolute bottom-12 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
+          className="absolute bottom-20 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
           onPress={() => {
             if (membership.toLowerCase() === "basic" && cropCount >= 3) {
               Alert.alert(
-                t("Farms.Sorry"),
+                t("Main.Sorry"),
                 t("Farms.You only have 3 free crop enrollments for now"),
-                [{ text: t("Farms.okButton") }],
+                [{ text: t("Main.OK") }],
               );
               return;
             }
@@ -1199,7 +1185,7 @@ const FarmDetailsScreen = () => {
             </View>
             <Text className="text-gray-600 text-center text-sm leading-5 mb-6">
               {t(
-                "CropCalender.Please complete the certification tasks to unlock the calendar tasks",
+                "CropCalender.PleaseCompleteTheCertificationTasksToUnlockTheCalendarTasks",
               )}
             </Text>
             <TouchableOpacity
@@ -1207,7 +1193,7 @@ const FarmDetailsScreen = () => {
               className="bg-gray-900 rounded-xl py-3"
             >
               <Text className="text-white text-center font-medium text-base">
-                {t("CropCalender.OK")}
+                {t("Main.OK")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -1258,14 +1244,14 @@ const FarmDetailsScreen = () => {
               />
             </View>
             <Text className="text-lg font-bold text-center mb-2">
-              {t("Farms.Are you sure you want to delete this farm?")}
+              {t("Farms.AreYouSureYouWantToDeleteThisFarm")}
             </Text>
             <Text className="text-gray-600 text-center mb-6">
               {t(
-                "Farms.Deleting this farm will permanently remove all associated managers, crop calendars, and assets.",
+                "Farms.DeletingThisFarmWillPermanentlyRemoveAllAssociatedManagersCropCalendarsAndAssets",
               )}
               {"\n\n"}
-              {t("Farms.This action cannot be undone.")}
+              {t("Farms.ThisActionCannotBeUndone")}
             </Text>
             <View className="px-4">
               <TouchableOpacity
@@ -1273,7 +1259,7 @@ const FarmDetailsScreen = () => {
                 className="px-6 py-2 bg-[#000000] rounded-full"
               >
                 <View className="justify-center items-center">
-                  <Text className="text-white">{t("Farms.Yes, Delete")}</Text>
+                  <Text className="text-white">{t("Farms.YesDelete")}</Text>
                 </View>
               </TouchableOpacity>
             </View>
@@ -1284,7 +1270,7 @@ const FarmDetailsScreen = () => {
               >
                 <View className="justify-center items-center">
                   <Text className="text-gray-700">
-                    {t("Farms.No, Go Back")}
+                    {t("Main.GoBack")}
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -1295,7 +1281,7 @@ const FarmDetailsScreen = () => {
 
       {showMenu && (
         <TouchableOpacity
-          className="absolute inset-0 bg-black/20"
+          className="absolute inset-0"
           onPress={() => setShowMenu(false)}
           activeOpacity={1}
           accessibilityLabel="Close menu"

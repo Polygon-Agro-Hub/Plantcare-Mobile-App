@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { Video, ResizeMode } from "expo-av";
+import { useVideoPlayer, VideoView } from "expo-video";
 import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../common/CustomHeader";
 import { RootStackParamList } from "../types/types";
@@ -41,12 +41,41 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
   const screenHeight = Dimensions.get("window").height;
   const whiteSectionHeight = screenHeight * 0.7;
 
+  const videoSource = require("../../assets/images/govi-pension/pension-background.mov");
+
+  // Set up player WITHOUT calling play() immediately.
+  const player = useVideoPlayer(videoSource, (player) => {
+    player.loop = true;
+    player.muted = true;
+  });
+
   const [pensionData, setPensionData] = useState<PensionData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
   const isSmallScreen = screenHeight < 700;
 
   const scrollX = useRef(new Animated.Value(0)).current;
+
+  // Listen for player status/errors, and only play once ready.
+  useEffect(() => {
+    const statusSub = player.addListener("statusChange", (status) => {
+      console.log("[VideoPlayer] status:", status.status);
+
+      if (status.status === "readyToPlay") {
+        setVideoReady(true);
+        player.play();
+      }
+
+      if (status.status === "error") {
+        console.log("[VideoPlayer] error status payload:", status.error);
+      }
+    });
+
+    return () => {
+      statusSub.remove();
+    };
+  }, [player]);
 
   useEffect(() => {
     fetchPensionData();
@@ -323,15 +352,39 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
   );
 
   return (
-    <View className="flex-1 bg-black">
-      <Video
-        source={require("../../assets/images/govi-pension/pension-background.mov")}
-        className="absolute top-0 left-0 bottom-0 right-0 w-full h-full"
-        shouldPlay
-        isLooping
-        isMuted
-        resizeMode={ResizeMode.COVER}
+    <View style={{ flex: 1, backgroundColor: "#000" }}>
+      <VideoView
+        player={player}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          width: "100%",
+          height: "100%",
+        }}
+        contentFit="cover"
+        nativeControls={false}
       />
+
+      {/* Optional: show a loader over the black background until the video is ready */}
+      {!videoReady && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          pointerEvents="none"
+        >
+          <ActivityIndicator size="small" color="#ffffff" />
+        </View>
+      )}
 
       <CustomHeader
         title={t("MyPensionAccount.GoViPension")}
@@ -352,13 +405,13 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
         }
       >
         {eligible ? (
-          <View className="flex-1 items-center justify-center px-5 mt-[-15%] min-h-screen">
+          <View className="flex-1 items-center justify-center px-6 mt-[-15%] min-h-screen">
             <PensionAmount />
             <Text className="text-black text-lg my-6">Total Pension Value</Text>
           </View>
         ) : (
           <View className="flex-1 justify-end min-h-screen mt-[-10%]">
-            <View className="flex-1 items-center justify-center px-5">
+            <View className="flex-1 items-center justify-center px-6">
               <PensionAmount />
               <Text className="text-black text-lg my-6">
                 Total Pension Value

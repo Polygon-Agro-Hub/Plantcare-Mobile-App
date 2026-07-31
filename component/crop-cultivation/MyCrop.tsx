@@ -14,8 +14,8 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
-import AntDesign from "react-native-vector-icons/AntDesign";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import * as Progress from "react-native-progress";
 import { encode } from "base64-arraybuffer";
 import moment from "moment";
@@ -30,6 +30,7 @@ import ContentLoader, { Rect } from "react-content-loader/native";
 import { StatusBar } from "expo-status-bar";
 import LottieView from "lottie-react-native";
 import CustomHeader from "../common/CustomHeader";
+import NoData from "../common/NoData";
 
 interface CropCardProps {
   id: number;
@@ -174,7 +175,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
   const fetchCultivationsAndProgress = async () => {
     setLoading(true);
     try {
-      setLanguage(t("MyCrop.LNG"));
+      setLanguage(t("Main.LNG"));
 
       const token = await AsyncStorage.getItem("userToken");
 
@@ -269,10 +270,15 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
       "hardwareBackPress",
       () => {
         const userRole = user?.role;
-        let screenName = "LabororDashbord";
+        let screenName = "Dashboard";
 
-        if (userRole === "Manager") screenName = "ManagerDashbord";
-        else if (userRole === "Supervisor") screenName = "SupervisorDashbord";
+        if (userRole === "Laborer" || userRole === "Laboror") {
+          screenName = "LabororDashbord";
+        } else if (userRole === "Manager") {
+          screenName = "ManagerDashbord";
+        } else if (userRole === "Supervisor") {
+          screenName = "SupervisorDashbord";
+        }
 
         (navigation as any).navigate("Main", {
           screen: screenName,
@@ -318,17 +324,22 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      <StatusBar style="dark" />
+      
 
       <CustomHeader
         title={t("Farms.Cultivation")}
         navigation={navigation}
         onBackPress={() => {
           const userRole = user?.role;
-          let screenName = "LabororDashbord";
+          let screenName = "Dashboard";
 
-          if (userRole === "Manager") screenName = "ManagerDashbord";
-          else if (userRole === "Supervisor") screenName = "SupervisorDashbord";
+          if (userRole === "Laborer" || userRole === "Laboror") {
+            screenName = "LabororDashbord";
+          } else if (userRole === "Manager") {
+            screenName = "ManagerDashbord";
+          } else if (userRole === "Supervisor") {
+            screenName = "SupervisorDashbord";
+          }
 
           (navigation as any).navigate("Main", {
             screen: screenName,
@@ -339,23 +350,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
       {loading ? (
         <SkeletonLoader />
       ) : crops.length === 0 ? (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <LottieView
-            source={require("@/assets/jsons/common/no-data.json")}
-            style={{ width: wp(50), height: hp(25) }}
-            autoPlay
-            loop
-          />
-          <Text className="text-center text-gray-600 ">
-            --{t("MyCrop.NoAlreasdyEnrolled")}--
-          </Text>
-        </View>
+          <NoData text={t("MyCrop.YouHaveNotEnrolledAnyCropsYet") || "You have not enrolled any crops yet"} />
       ) : (
         <ScrollView
           contentContainerStyle={{ padding: 16 }}
@@ -390,6 +385,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
                         : language === "ta"
                           ? crop.varietyNameTamil
                           : crop.varietyNameEnglish,
+                    fromScreen: "MyCrop",
                   },
                 })
               }

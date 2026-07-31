@@ -17,7 +17,7 @@ import {
 } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types/types";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
@@ -32,6 +32,7 @@ import ContentLoader, {
 } from "react-content-loader/native";
 import { encode } from "base64-arraybuffer";
 import LottieView from "lottie-react-native";
+import NoData from "../common/NoData";
 
 type ManageMembersManagerNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -282,7 +283,7 @@ const ManageMembersManager = () => {
 
   return (
     <View className="flex-1 bg-gray-50">
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+      
 
       <ScrollView
         className="flex-1"
@@ -334,7 +335,7 @@ const ManageMembersManager = () => {
             <View className="flex-row justify-center items-center flex-wrap px-4 mt-4">
               <Text className="text-sm text-gray-600 mx-1">•</Text>
               <Text className="text-sm text-gray-600 mx-1">
-                {totalStaffCount} {t("Farms.Other Staff")}
+                {totalStaffCount} {t("Farms.OtherStaff")}
               </Text>
             </View>
           </View>
@@ -347,23 +348,7 @@ const ManageMembersManager = () => {
               (member) =>
                 member.role === "Supervisor" || member.role === "Laborer",
             ).length === 0 ? (
-            <View className="items-center justify-center py-10">
-              <View className="items-center justify-center mt-[-25%]">
-                <LottieView
-                  source={require("@/assets/jsons/common/no-data.json")}
-                  style={{ width: wp(50), height: hp(50) }}
-                  autoPlay
-                  loop
-                />
-                <View className="items-center justify-center mt-[-25%]">
-                  {" "}
-                  <Text className="text-gray-500 text-base text-center">
-                    {" "}
-                    {t("Farms.No supervisors or laborers found for this farm")}
-                  </Text>
-                </View>
-              </View>
-            </View>
+              <NoData text={t("Farms.NoSupervisorsOrLaborersFoundForThisFarm") || "No supervisors or laborers found for this farm"} />
           ) : (
             staff
               .filter(

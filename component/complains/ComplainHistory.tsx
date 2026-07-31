@@ -16,12 +16,9 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import LottieView from "lottie-react-native";
+import NoData from "../common/NoData";
 import { useSelector } from "react-redux";
 import { selectUserPersonal } from "@/store/userSlice";
 import { useFocusEffect } from "@react-navigation/native";
@@ -93,7 +90,7 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
 
   const fetchOngoingCultivations = async () => {
     try {
-      setLanguage(t("MyCrop.LNG"));
+      setLanguage(t("Main.LNG"));
       const token = await AsyncStorage.getItem("userToken");
 
       const res = await axios.get<complainItem[]>(
@@ -147,8 +144,8 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
       setSelectedComplain(complain);
       setModalVisible(true);
     } else {
-      Alert.alert(t("ReportHistory.sorry"), t("ReportHistory.NoReply"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Sorry"), t("ReportHistory.NoResponseYetForThisComplaint"), [
+        { text: t("Main.OK") },
       ]);
     }
   };
@@ -161,29 +158,21 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
     >
       <View className="flex-1 bg-[#F9F9FA]">
         <CustomHeader
-          title={t("ReportHistory.Complaints") || "Complaints"}
+          title={t("ReportHistory.ComplaintHistory") || "Complaints"}
           navigation={navigation}
           onBackPress={() => navigation.navigate("EngProfile")}
+          headerStyle={{ backgroundColor: loading ? "#FFFFFF" : "#F9F9FA" }}
         />
 
         {loading ? (
-          <LoadingPage fullScreen  />
+          <LoadingPage fullScreen />
         ) : complains.length === 0 ? (
-          <View className="flex-1 items-center justify-center -mt-[70%]">
-            <LottieView
-              source={require("@/assets/jsons/common/no-data.json")}
-              style={{ width: wp(50), height: hp(50) }}
-              autoPlay
-              loop
-            />
-            <Text className="text-center text-gray-600 -mt-[30%]">
-              {t("ReportHistory.noData") || "No complaints found"}
-            </Text>
-          </View>
+            <NoData text={t("ReportHistory.NoComplaintsFound") || "No complaints found"} />
         ) : (
           <ScrollView
-            className="p-4 flex-1 mb-[25%]"
-            contentContainerStyle={{ paddingBottom: hp(4) }}
+            className="flex-1 px-6"
+            contentContainerStyle={{ paddingBottom: 100 }}
+            showsVerticalScrollIndicator={false}
           >
             {complains.map((complain) => (
               <View
@@ -209,13 +198,13 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
                       onPress={() => handleViewReply(complain)}
                     >
                       <Text className="text-white text-xs">
-                        {t("ReportHistory.View") || "View"}
+                        {t("ReportHistory.ViewResponse") || "View"}
                       </Text>
                     </TouchableOpacity>
                   )}
-                  <View style={{ flex: 1, alignItems: "flex-end" }}>
+                  <View className="flex-1 items-end">
                     <Text
-                      className={`text-s font-semibold px-4 py-2 rounded ${
+                      className={`text-xs font-semibold px-4 py-2 rounded ${
                         complain.status === "Opened"
                           ? "bg-blue-100 text-[#0051FF]"
                           : "bg-green-100 text-green-800"
@@ -232,42 +221,50 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
           </ScrollView>
         )}
 
+        {/* Full-screen reply modal */}
         <Modal
-          animationType="fade"
-          transparent={true}
+          animationType="slide"
+          transparent={false}
           visible={modalVisible}
           onRequestClose={() => setModalVisible(false)}
           statusBarTranslucent={false}
         >
-          <View
-            className="flex-1 items-center bg-white bg-opacity-50"
-            style={{
-              paddingTop:
-                Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0,
-            }}
-          >
+          <View style={{ flex: 1, backgroundColor: "white" }}>
+            {/* Close button — fixed outside ScrollView so it never scrolls away */}
+            <TouchableOpacity
+              style={{
+                position: "absolute",
+                top: Platform.OS === "ios" ? 50 : 40,
+                right: 16,
+                zIndex: 10,
+                backgroundColor: "#2D2D2D",
+                borderRadius: 999,
+                padding: 8,
+              }}
+              onPress={() => setModalVisible(false)}
+            >
+              <AntDesign name="close" size={18} color="white" />
+            </TouchableOpacity>
+
             <ScrollView
-              className="bg-white rounded-lg shadow-lg w-full max-w-md"
-              contentContainerStyle={{ padding: 24, paddingBottom: 70 }}
+              contentContainerStyle={{
+                padding: 24,
+                paddingTop: Platform.OS === "ios" ? 100 : 70,
+                paddingBottom: 32,
+                flexGrow: 1,
+              }}
               showsVerticalScrollIndicator={false}
             >
-              <TouchableOpacity
-                className="absolute top-3 right-3 bg-gray-200 p-1 rounded-full"
-                onPress={() => setModalVisible(false)}
-              >
-                <AntDesign name="close" size={18} color="gray" />
-              </TouchableOpacity>
-
-              <View className="mt-4">
-                <Text className="text-gray-800 text-base leading-relaxed text-left">
+              <View>
+                <Text className="text-[#2D2D2D] text-base leading-relaxed text-left">
                   {language === "si"
-                    ? `හිතවත් ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nඅපි ඔබට කාරුණිකව දැනුම් දෙන්න කැමතියි ඔබගේ පැමිණිල්ල විසඳා ගෙන ඇත.\n\n${complainReply || "Loading..."}\n\nඔබට තවත් ගැටළු හෝ ප්‍රශ්න තිබේ නම්, කරුණාකර අප හා සම්බන්ධ වන්න. ඔබේ ඉවසීම සහ අවබෝධය වෙනුවෙන් ස්තූතියි.\n\nමෙයට,\nPolygon Agro Customer Support Team`
+                    ? `හිතවත් ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nඅපි ඔබට කාරුණිකව දැනුම් දෙන්න කැමතියි ඔබගේ පැමිණිල්ල විසඳා ගෙන ඇත.\n\n${complainReply || "Loading..."}\n\nඔබට තවත් ගැටළු හෝ ප්‍රශ්න තිබේ නම්, කරුණාකර අප හා සම්බන්ධ වන්න. ඔබේ ඉවසීම සහ අවබෝධය වෙනුවෙන් ස්තූතියි.\n\nමෙයට,\nPolygon Customer Support Team`
                     : language === "ta"
                       ? `அன்புள்ள ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nநாங்கள் உங்கள் புகாரை தீர்க்கப்பட்டதாக தெரிவித்ததில் மகிழ்ச்சி அடைகிறோம்\n\n${complainReply || "Loading..."}\n\nஉங்களுக்கு மேலும் ஏதேனும் சிக்கல்கள் அல்லது கேள்விகள் இருந்தால், தயவுசெய்து எங்களைத் தொடர்பு கொள்ளவும். உங்கள் பொறுமைக்கும் புரிதலுக்கும் நன்றி.\n\nஇதற்கு,\nPolygon Agro Customer Support Team`
-                      : `Dear ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nWe are pleased to inform you that your complaint has been resolved\n\n${complainReply || "Loading..."}\n\nIf you have any further concerns or questions, feel free to reach out.\nThank you for your patience and understanding.\n\nSincerely,\nPolygon Agro Customer Support Team`}
+                      : `Dear ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nWe are pleased to inform you that your complaint has been resolved\n\n${complainReply || "Loading..."}\n\nIf you have any further concerns or questions, feel free to reach out.\nThank you for your patience and understanding.\n\nSincerely,\nPolygon Customer Support Team`}
                 </Text>
                 {selectedComplain?.replyTime && (
-                  <Text className="  mb-3 mt-1 ">
+                  <Text className="mb-3 text-[#2D2D2D] text-base mt-1">
                     {formatDate(selectedComplain.replyTime)}
                   </Text>
                 )}

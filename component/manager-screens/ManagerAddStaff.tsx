@@ -133,7 +133,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
       setPhoneError(null);
     } catch (error: any) {
       if (error?.response?.status === 409) {
-        setPhoneError(t("Farms.This phone number is already registered"));
+        setPhoneError(t("Farms.ThisPhoneNumberIsAlreadyRegistered"));
       } else if (error?.response) {
         setPhoneError(t("Farms.Error checking phone number"));
       } else {
@@ -158,7 +158,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
     setPhoneError(null);
 
     if (digitsOnly.length > 9) {
-      setValidationError(t("Farms.Phone number cannot exceed 9 digits"));
+      setValidationError(t("Farms.PhoneNumberCannotExceed9Digits"));
       const formattedText = formatPhoneInput(text);
       setPhoneNumber(formattedText);
       return;
@@ -171,9 +171,9 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
 
     if (formattedText.length > 0) {
       if (formattedText[0] !== "7") {
-        setValidationError(t("Farms.Phone number must start with 7"));
+        setValidationError(t("Farms.PhoneNumberMustStartWith7"));
       } else if (formattedText.length < 9) {
-        setValidationError(t("Farms.Phone number must be exactly 9 digits"));
+        setValidationError(t("Farms.PhoneNumberMustBeExactly9Digits"));
       } else if (!validateSriLankanPhoneNumber(formattedText)) {
         setValidationError(t("Farms.Please enter a valid phone number"));
       } else {
@@ -224,26 +224,26 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
 
   const validateForm = () => {
     if (!firstName.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter first name"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterFirstName"), [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!lastName.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter last name"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterLastName"), [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!phoneNumber.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter phone number"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterPhoneNumber"), [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!nic.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter NIC"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterNIC"), [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
@@ -251,64 +251,64 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
     if (!validateSriLankanPhoneNumber(phoneNumber)) {
       if (phoneNumber.length !== 9) {
         Alert.alert(
-          t("Farms.Sorry"),
-          t("Farms.Phone number must be exactly 9 digits"),
-          [{ text: t("Farms.okButton") }],
+          t("Main.Sorry"),
+          t("Farms.PhoneNumberMustBeExactly9Digits"),
+          [{ text: t("Main.OK") }],
         );
       } else if (phoneNumber[0] !== "7") {
         Alert.alert(
-          t("Farms.Sorry"),
-          t("Farms.Phone number must start with 7"),
-          [{ text: t("Farms.okButton") }],
+          t("Main.Sorry"),
+          t("Farms.PhoneNumberMustStartWith7"),
+          [{ text: t("Main.OK") }],
         );
       } else if (phoneNumber.length > 9) {
         Alert.alert(
-          t("Farms.Sorry"),
-          t("Farms.Phone number cannot exceed 9 digits"),
-          [{ text: t("Farms.okButton") }],
+          t("Main.Sorry"),
+          t("Farms.PhoneNumberCannotExceed9Digits"),
+          [{ text: t("Main.OK") }],
         );
       } else {
         Alert.alert(
-          t("Farms.Sorry"),
+          t("Main.Sorry"),
           t("Farms.Please enter a valid phone number"),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
       }
       return false;
     }
 
     if (!selectedRole) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please select a role"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseSelectARole"), [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (phoneError) {
-      Alert.alert(t("Farms.Sorry"), phoneError, [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), phoneError, [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (validationError) {
-      Alert.alert(t("Farms.Sorry"), validationError, [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), validationError, [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
 
     if (nicErrors) {
       Alert.alert(
-        t("Farms.Sorry"),
-        t("Farms.Please enter a valid Sri Lankan NIC"),
-        [{ text: t("Farms.okButton") }],
+        t("Main.Sorry"),
+        t("Farms.PleaseEnterAValidSriLankanNIC"),
+        [{ text: t("Main.OK") }],
       );
       return false;
     }
     if (nicDuplicateErrors) {
       Alert.alert(
-        t("Farms.Sorry"),
-        t("Farms.This NIC is already used by another staff member"),
-        [{ text: t("Farms.okButton") }],
+        t("Main.Sorry"),
+        t("Farms.ThisNICIsAlreadyUsedByAnotherStaffMember"),
+        [{ text: t("Main.OK") }],
       );
       return false;
     }
@@ -349,11 +349,11 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
       );
 
       Alert.alert(
-        t("Farms.Success"),
-        `${t("Farms.Staff members has been added successfully!")}`,
+        t("Main.Success"),
+        `${t("Farms.StaffMembersHasBeenAddedSuccessfully")}`,
         [
           {
-            text: t("Farms.OK"),
+            text: t("Main.OK"),
             onPress: () => {
               navigation.goBack();
             },
@@ -363,16 +363,16 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
     } catch (error: any) {
       console.error("Error in handleSave:", error);
       let errorMessage = t(
-        "Farms.Failed to add staff member. Please try again.",
+        "Farms.FailedToAddStaffMemberPleaseTryAgain",
       );
 
       if (error.response) {
         errorMessage = error.response.data?.message || errorMessage;
       } else if (error.request) {
-        errorMessage = t("Farms.Network error. Please check your connection.");
+        errorMessage = t("Farms.NetworkErrorPleaseCheckYourConnection");
       }
 
-      Alert.alert("Error", errorMessage, [{ text: t("Farms.okButton") }]);
+      Alert.alert("Error", errorMessage, [{ text: t("Main.OK") }]);
     } finally {
       setIsSubmitting(false);
     }
@@ -404,7 +404,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
     setNicDuplicateErrors(null);
 
     if (formattedNic && !validateSriLankanNic(formattedNic)) {
-      setNicErrors(t("Farms.Please enter a valid Sri Lankan NIC"));
+      setNicErrors(t("Farms.PleaseEnterAValidSriLankanNIC"));
     } else {
       setNicErrors(null);
     }
@@ -457,10 +457,10 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
     } catch (error: any) {
       if (error?.response?.status === 409) {
         setNicDuplicateErrors(
-          t("Farms.This NIC is already used by another staff member"),
+          t("Farms.ThisNICIsAlreadyUsedByAnotherStaffMember"),
         );
       } else if (error?.response) {
-        setNicDuplicateErrors(t("Farms.Error checking NIC number"));
+        setNicDuplicateErrors(t("Farms.ErrorCheckingNICNumber"));
       } else {
         setNicDuplicateErrors(null);
       }
@@ -482,7 +482,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
   };
 
   const getSelectedRoleLabel = () => {
-    if (!selectedRole) return t("Farms.Select Role");
+    if (!selectedRole) return t("Farms.SelectRole");
     const role = roleItems.find((item) => item.value === selectedRole);
     return role ? role.label : selectedRole;
   };
@@ -508,7 +508,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
         keyboardShouldPersistTaps="handled"
       >
         <CustomHeader
-          title={t("Farms.Add New Staff Member")}
+          title={t("Farms.AddNewStaffMember")}
           showBackButton={true}
           navigation={navigation}
           onBackPress={() => navigation.goBack()}
@@ -534,39 +534,45 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
 
           <View className="gap-2">
             <Text className="text-gray-900 text-base">
-              {t("Farms.First Name")}
+              {t("Inputs.FirstName")}
             </Text>
-            <TextInput
-              className="bg-gray-100 px-4 h-[50px] rounded-3xl text-base text-gray-700"
-              placeholder={t("Farms.Enter First Name")}
-              placeholderTextColor="#9CA3AF"
-              value={firstName}
-              onChangeText={setFirstName}
-              autoCapitalize="words"
-              editable={!isSubmitting}
-            />
+            <View className="bg-gray-100 px-4 rounded-3xl h-[50px] justify-center">
+              <TextInput
+                className="text-base text-gray-700 w-full"
+                style={{ paddingVertical: 0 }}
+                placeholder={t("Farms.EnterFirstName")}
+                placeholderTextColor="#9CA3AF"
+                value={firstName}
+                onChangeText={setFirstName}
+                autoCapitalize="words"
+                editable={!isSubmitting}
+              />
+            </View>
           </View>
 
           <View className="gap-2">
             <Text className="text-gray-900 text-base">
-              {t("Farms.Last Name")}
+              {t("Inputs.LastName")}
             </Text>
-            <TextInput
-              className="bg-gray-100 px-4 h-[50px] rounded-3xl text-base text-gray-700"
-              placeholder={t("Farms.Enter Last Name")}
-              placeholderTextColor="#9CA3AF"
-              value={lastName}
-              onChangeText={setLastName}
-              autoCapitalize="words"
-              editable={!isSubmitting}
-            />
+            <View className="bg-gray-100 px-4 rounded-3xl h-[50px] justify-center">
+              <TextInput
+                className="text-base text-gray-700 w-full"
+                style={{ paddingVertical: 0 }}
+                placeholder={t("Farms.EnterLastName")}
+                placeholderTextColor="#9CA3AF"
+                value={lastName}
+                onChangeText={setLastName}
+                autoCapitalize="words"
+                editable={!isSubmitting}
+              />
+            </View>
           </View>
 
           <View className="gap-2">
             <Text className="text-gray-900 text-base">
-              {t("Farms.Phone Number")}
+              {t("Farms.PhoneNumber")}
             </Text>
-            <View className="flex-row items-center space-x-2">
+            <View className="flex-row items-center gap-2">
               <TouchableOpacity
                 onPress={() => setCountryCodeModalVisible(true)}
                 className="bg-[#F4F4F4] rounded-3xl h-[50px] w-1/3 px-3 justify-center items-center"
@@ -577,9 +583,9 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
                 </Text>
               </TouchableOpacity>
 
-              <View style={{ flex: 1 }}>
+              <View className="flex-1 bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
                 <TextInput
-                  className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4"
+                  className="text-base text-gray-700 w-full"
                   placeholder="7X XXXXXXX"
                   value={phoneNumber}
                   onChangeText={handlePhoneChange}
@@ -588,6 +594,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
                   style={{
                     fontSize: 14,
                     borderWidth: 0,
+                    paddingVertical: 0,
                   }}
                   underlineColorAndroid="transparent"
                   cursorColor="#141415ff"
@@ -600,7 +607,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
               <View className="flex-row items-center mt-1 ml-3">
                 <ActivityIndicator size="small" color="#2563EB" />
                 <Text className="text-blue-600 text-sm ml-2">
-                  {t("Farms.Checking number...")}
+                  {t("Farms.CheckingNumber...")}
                 </Text>
               </View>
             )}
@@ -618,21 +625,24 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
 
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.NIC")}</Text>
-            <TextInput
-              value={nic}
-              onChangeText={(text: string) => handleNicChange(text)}
-              placeholder={t("Farms.Enter NIC")}
-              placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
-              editable={!isSubmitting}
-              autoCapitalize="characters"
-              maxLength={12}
-            />
+            <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center">
+              <TextInput
+                value={nic}
+                onChangeText={(text: string) => handleNicChange(text)}
+                placeholder={t("Farms.EnterNIC")}
+                placeholderTextColor="#9CA3AF"
+                className="text-gray-800 text-base w-full"
+                style={{ paddingVertical: 0 }}
+                editable={!isSubmitting}
+                autoCapitalize="characters"
+                maxLength={12}
+              />
+            </View>
             {checkingNIC && (
               <View className="flex-row items-center mt-1 ml-3">
                 <ActivityIndicator size="small" color="#2563EB" />
                 <Text className="text-blue-600 text-sm ml-2">
-                  {t("Farms.Checking NIC...")}
+                  {t("Farms.CheckingNIC...")}
                 </Text>
               </View>
             )}
@@ -665,7 +675,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
               </View>
             ) : (
               <Text className="text-white text-lg font-semibold">
-                {t("Farms.Save")}
+                {t("Main.Save")}
               </Text>
             )}
           </TouchableOpacity>
@@ -675,7 +685,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
         <GlobalSearchModal
           visible={roleModalVisible}
           onClose={() => setRoleModalVisible(false)}
-          title={t("Farms.Select Role")}
+          title={t("Farms.SelectRole")}
           data={roleItems}
           selectedItems={selectedRole ? [selectedRole] : []}
           onSelect={handleRoleSelect}

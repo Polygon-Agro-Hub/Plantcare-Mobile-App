@@ -141,7 +141,7 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
                   }}
                   numberOfLines={3}
                 >
-                  {t("MarketPriceSlideShow.PleaseEnroll")}
+                  {t("MarketPriceSlideShow.PleaseEnrollToCropsToSeeHowTheMarketPricesAre")}
                 </Text>
               </View>
             </View>
@@ -192,7 +192,7 @@ const MarketPriceSlideShow: React.FC<NavigationbarProps> = ({ language }) => {
                 </View>
                 <Text className="italic  ">
                   {t("MarketPriceSlideShow.Note")}:{" "}
-                  {t("MarketPriceSlideShow.Text")}
+                  {t("MarketPriceSlideShow.ActualMarketPricesMayDifferFromTheDisplayedPrice")}
                 </Text>
               </View>
             </View>

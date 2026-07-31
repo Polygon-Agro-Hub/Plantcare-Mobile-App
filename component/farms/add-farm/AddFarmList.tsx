@@ -23,6 +23,8 @@ import {
 } from "react-native-responsive-screen";
 import { useTranslation } from "react-i18next";
 import LoadingPage from "@/component/common/LoadingPage";
+import CustomHeader from "../../common/CustomHeader";
+import NoData from "../../common/NoData";
 
 interface FarmItem {
   id: number;
@@ -125,9 +127,9 @@ const AddFarmList = () => {
 
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
-          t("Farms.No authentication token found"),
-          [{ text: t("PublicForum.OK") }],
+          t("Main.Error"),
+          t("Farms.NoAuthenticationTokenFound"),
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -147,14 +149,14 @@ const AddFarmList = () => {
         setMembership(res.data.membership);
       } else {
         console.error("Unexpected response structure:", res.data);
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
     } catch (err) {
       console.error("Error fetching membership:", err);
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
     } finally {
       setLoading(false);
@@ -167,9 +169,9 @@ const AddFarmList = () => {
 
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
-          t("Farms.No authentication token found"),
-          [{ text: t("PublicForum.OK") }],
+          t("Main.Error"),
+          t("Farms.NoAuthenticationTokenFound"),
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -196,8 +198,8 @@ const AddFarmList = () => {
     } catch (err) {
       console.error("Error fetching farms:", err);
 
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
     } finally {
       setLoading(false);
@@ -274,14 +276,14 @@ const AddFarmList = () => {
   const handleFarmPress = (farm: FarmItem) => {
     if (farm.isBlock === 1 && membership.toLowerCase() === "pro") {
       Alert.alert(
-        t("Farms.Farm Blocked"),
+        t("Farms.FarmBlocked"),
         t(
-          "Farms.This farm is blocked due to expired Pro membership. Please renew to access farm details.",
+          "Farms.ThisFarmIsBlockedDueToExpiredProMembershipPleaseRenewToAccessFarmDetails",
         ),
         [
           { text: t("Main.Cancel"), style: "cancel" },
           {
-            text: t("Farms.Renew Now"),
+            text: t("Farms.RenewNow"),
             onPress: () => {
               navigation.navigate("RenewalScreen" as any);
             },
@@ -307,7 +309,7 @@ const AddFarmList = () => {
 
     dispatch(setFarmBasicDetails(farmDetailsForRedux));
 
-    navigation.navigate("FromFramEditFarm", { farmId: farm.id });
+    navigation.navigate("EditFarm", { farmId: farm.id, from: "AddFarmList" });
   };
 
   const renderFarmItem = (farm: FarmItem, index: number) => {
@@ -319,7 +321,7 @@ const AddFarmList = () => {
         onPress={() => handleFarmPress(farm)}
         className="bg-white shadow-sm rounded-lg p-4 mb-4 border border-[#F2F2F2]"
       >
-        <View className="flex-row items-start">
+        <View className="flex-row items-center">
           <Image
             source={getImageSource(farm.imageId)}
             className="mr-4  rounded-full "
@@ -327,8 +329,8 @@ const AddFarmList = () => {
             resizeMode="cover"
           />
 
-          <View className="flex-1">
-            <View className="flex-row justify-between items-start">
+          <View className="flex-1 justify-center">
+            <View className="flex-row justify-between items-center">
               <View className="flex-1">
                 <Text className="font-semibold text-base text-black">
                   {farm.farmName}
@@ -363,34 +365,27 @@ const AddFarmList = () => {
 
   return (
     <View className="flex-1 bg-white">
+      <CustomHeader
+        title={t("Farms.MyFarms")}
+        navigation={navigation as any}
+        showBackButton={false}
+        onBackPress={() => navigation.goBack()}
+      />
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
-        className="px-4"
+        className="px-6"
       >
-        <View style={{ paddingVertical: 20 }}>
-          <Text className="text-center font-semibold text-lg text-black">
-            {t("Farms.My Farms")}
-          </Text>
-          <Text className="text-center text-[#5B5B5B] text-sm mt-2">
-            {t("Farms.Click on a farm to edit farm details")}
+        <View style={{ paddingVertical: 10 }}>
+          <Text className="text-center text-[#5B5B5B] text-sm -mt-4">
+            {t("Farms.ClickOnAFarmToEditFarmDetails")}
           </Text>
         </View>
 
         {loading ? (
           <LoadingPage fullScreen />
         ) : farms.length === 0 ? (
-          <View className="flex-1 justify-center items-center">
-            <LottieView
-              source={require("@/assets/jsons/common/no-data.json")}
-              style={{ width: wp(50), height: hp(50) }}
-              autoPlay
-              loop
-            />
-            <Text className="text-center text-gray-600 mt-4">
-              {t("ReportHistory.noData")}
-            </Text>
-          </View>
+            <NoData text={t("ReportHistory.NoComplaintsFound") || "No complaints found"} />
         ) : (
           <>
             <View>
@@ -405,7 +400,7 @@ const AddFarmList = () => {
           membership.toLowerCase() === "pro" && (
             <View className="">
               <Text className="text-center text-orange-600 text-sm font-medium mb-2">
-                {t("Farms.Your Pro membership expires in", {
+                {t("Farms.YourProMembershipExpiresInDate", {
                   date: renewalData.daysRemaining,
                 })}
               </Text>

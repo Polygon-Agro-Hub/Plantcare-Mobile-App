@@ -19,7 +19,7 @@ const CalculatorHeader: React.FC<CalculatorHeaderProps> = ({
 }) => {
   return (
     <View>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFDB33" />
+      
 
       {/* Header Bar */}
       <View className="bg-[#FFDB33] flex-row items-center justify-between px-4 py-3 relative">

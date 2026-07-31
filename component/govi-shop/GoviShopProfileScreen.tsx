@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -11,17 +11,20 @@ import {
   ActivityIndicator,
   RefreshControl,
   Modal,
+  Alert,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { RootStackParamList } from "../types/types";
 import CustomHeader from "../common/CustomHeader";
+import ShopLoading from "./ShopLoading";
+import NoData from "../common/NoData";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
-import LottieView from "lottie-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { environment } from "@/environment/environment";
 import { RouteProp } from "@react-navigation/core";
+import { useFocusEffect } from "@react-navigation/native";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -38,13 +41,22 @@ interface GoviShopProfileProps {
   route: GoviShopProfileRouteProp;
 }
 
+interface ColorDetail {
+  colorId: number;
+  color: string;
+  normalPrice: number;
+  discountPrice?: number;
+  availableQty: number;
+  batches?: Batch[];
+}
+
 interface ProductCategory {
   id: string;
+
   name: string;
   image: string;
   productCount: number;
 }
-
 interface Product {
   id: string;
   name: string;
@@ -59,14 +71,13 @@ interface Product {
   categoryId: string;
   availableQty?: number;
   description?: string;
+  searchKeyWord?: string;
 }
-
 interface Batch {
   qty: number;
   salePrice: number;
   originalPrice: number | null;
 }
-
 interface SubProduct {
   id: string;
   label: string;
@@ -77,13 +88,12 @@ interface SubProduct {
   availableQty?: number;
   isMRP?: number;
   batches?: Batch[];
+  colorDetails?: ColorDetail[];
 }
-
 interface FilterButton {
   id: string;
   name: string;
 }
-
 interface CartItem {
   productId: string;
   productName: string;
@@ -92,12 +102,6 @@ interface CartItem {
   price: number;
   quantity: number;
   image: string;
-}
-
-interface BatchModalData {
-  product: Product;
-  sub: SubProduct;
-  cartQty: number;
 }
 
 type UomDisplayMode = "DEFAULT" | "LOOSE" | "ROLL" | "COLOR" | "EQUIPMENT";
@@ -118,6 +122,47 @@ const resolveColor = (raw: string): string => {
   return trimmed.startsWith("#") ? trimmed : `#${trimmed}`;
 };
 
+const UNIT_TO_BASE: Record<string, number> = {
+  g: 1,
+  kg: 1000,
+  ml: 1,
+  l: 1000,
+  mm: 0.001,
+  cm: 0.01,
+  m: 1,
+  km: 1000,
+  pc: 1,
+  pcs: 1,
+};
+
+const parseVariantQty = (label: string): number => {
+  if (!label) return 0;
+  const rollMatch = label.match(/^([\d.]+)\s*x\s*([\d.]+)\s*(\w+)?$/i);
+  if (rollMatch) {
+    const w = parseFloat(rollMatch[1]);
+    const h = parseFloat(rollMatch[2]);
+    const unit = (rollMatch[3] ?? "").toLowerCase();
+    const multiplier = UNIT_TO_BASE[unit] ?? 1;
+    return w * h * multiplier;
+  }
+  const match = label.match(/^([\d.]+)\s*(\w+)?$/i);
+  if (match) {
+    const qty = parseFloat(match[1]);
+    const unit = (match[2] ?? "").toLowerCase();
+    const multiplier = UNIT_TO_BASE[unit] ?? 1;
+    return qty * multiplier;
+  }
+  return 0;
+};
+
+const sortSubProducts = (subs: SubProduct[]): SubProduct[] => {
+  return [...subs].sort((a, b) => {
+    const aVal = parseVariantQty(a.label);
+    const bVal = parseVariantQty(b.label);
+    return aVal - bVal;
+  });
+};
+
 const CARD_H_PADDING = 14;
 const CARD_INNER_WIDTH = screenWidth - 32 - CARD_H_PADDING * 2;
 const ROLL_GAP = 8;
@@ -131,27 +176,64 @@ const MAX_CHIPS_VISIBLE = CHIP_COLUMNS * MAX_CHIP_ROWS;
 const COLOR_DOT_SIZE = 34;
 const COLOR_DOT_GAP = 8;
 
+function resolveVariantIds(
+  baseUom: string,
+  sub: SubProduct,
+  colorDetail?: ColorDetail,
+) {
+  const mode = getDisplayMode(baseUom);
+
+  if (mode === "EQUIPMENT") {
+    if (sub.colorCode && sub.colorCode.trim()) {
+      return {
+        subProdId: null,
+        subProdColorId: null,
+        equipColorId: Number(sub.id),
+      };
+    }
+  }
+
+  if (mode === "COLOR") {
+    if (colorDetail) {
+      return {
+        subProdId: null,
+        subProdColorId: Number(colorDetail.colorId),
+        equipColorId: null,
+      };
+    }
+  }
+
+  return {
+    subProdId: Number(sub.id),
+    subProdColorId: null,
+    equipColorId: null,
+  };
+}
+
+const cartItemKey = (productId: string, subProductId: string) =>
+  `${productId}_${subProductId}`;
+
 const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
   navigation,
   route,
 }) => {
   const { t } = useTranslation();
-  const { shopId, branchId, shopname, logo, adress } = route.params;
+  const { shopId, branchId, shopname, logo, adress ,adressLoaction} = route.params;
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("All");
   const [refreshing, setRefreshing] = useState(false);
-
   const [categories, setCategories] = useState<ProductCategory[]>([]);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
-
   const [products, setProducts] = useState<Product[]>([]);
   const [productsLoading, setProductsLoading] = useState(false);
 
+  const [selectedColorIndexMap, setSelectedColorIndexMap] = useState<
+    Record<string, number>
+  >({});
   const [filterButtons, setFilterButtons] = useState<FilterButton[]>([
     { id: "all", name: "All" },
   ]);
-
   const [expandedProductId, setExpandedProductId] = useState<string | null>(
     null,
   );
@@ -168,22 +250,350 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
     Record<string, string>
   >({});
   const [showAllChips, setShowAllChips] = useState<Record<string, boolean>>({});
-
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showViewCart, setShowViewCart] = useState(false);
+
+  const [savedToDb, setSavedToDb] = useState<Set<string>>(new Set());
+
+  const [cartIconLoading, setCartIconLoading] = useState<
+    Record<string, boolean>
+  >({});
+  const [dbUpdateLoading, setDbUpdateLoading] = useState<
+    Record<string, boolean>
+  >({});
 
   const [boundaryModal, setBoundaryModal] = useState<{
     visible: boolean;
     product: Product | null;
     sub: SubProduct | null;
+    colorDetail?: ColorDetail;
     currentBatchPrice: number;
     nextBatchPrice: number;
   } | null>(null);
 
+  const cartRef = useRef(cart);
+  useEffect(() => {
+    cartRef.current = cart;
+  }, [cart]);
+
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  const getTotalCap = (sub: SubProduct): number | undefined => {
-    return sub.availableQty;
+  const getAuthHeaders = async () => {
+    const token = await AsyncStorage.getItem("userToken");
+    return { Authorization: `Bearer ${token}` };
+  };
+
+  const fetchCart = useCallback(async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) return;
+
+      const { data } = await axios.get(
+        `${environment.API_BASE_URL}api/govi-shop/cart`,
+        {
+          params: { branchId },
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      const items = data.items ?? [];
+      const mappedCart: CartItem[] = items.map((r: any) => {
+        const subId = r.subProdId || r.subProdColorId || r.equipColorId || "";
+        return {
+          productId: String(r.productId),
+          productName: r.productName,
+          subProductId: String(subId),
+          subProductLabel: r.variantLabel ?? "",
+          price: Number(r.pricePerUnit ?? 0),
+          quantity: Number(r.qty ?? 0),
+          image: r.productImage ?? "",
+        };
+      });
+
+      setCart(mappedCart);
+
+      const dbKeys = new Set<string>();
+      mappedCart.forEach((item) => {
+        dbKeys.add(cartItemKey(item.productId, item.subProductId));
+      });
+      setSavedToDb(dbKeys);
+
+      if (mappedCart.length > 0) {
+        setShowViewCart(true);
+      } else {
+        setShowViewCart(false);
+      }
+    } catch (error) {
+      console.error("Error fetching cart on profile screen:", error);
+    }
+  }, [branchId]);
+
+  const getTotalCap = (sub: SubProduct): number | undefined => sub.availableQty;
+
+  const getActiveColorDetail = (
+    sub: SubProduct | undefined,
+    colorIdx: number,
+  ): ColorDetail | undefined => {
+    if (!sub?.colorDetails || sub.colorDetails.length === 0) return undefined;
+    return sub.colorDetails[colorIdx] ?? sub.colorDetails[0];
+  };
+
+  const getCartQty = (productId: string, subProductId: string): number =>
+    cart.find(
+      (c) => c.productId === productId && c.subProductId === subProductId,
+    )?.quantity ?? 0;
+
+  const addLocalCart = (
+    product: Product,
+    sub: SubProduct,
+    colorDetail?: ColorDetail,
+  ) => {
+    const variantId = getVariantId(product.baseUom, sub, colorDetail);
+    const price = colorDetail
+      ? (colorDetail.discountPrice ?? colorDetail.normalPrice)
+      : (sub.discountPrice ?? sub.price);
+
+    setCart((prev) => {
+      const exists = prev.find(
+        (c) => c.productId === product.id && c.subProductId === variantId,
+      );
+      if (exists) {
+        return prev.map((c) =>
+          c.productId === product.id && c.subProductId === variantId
+            ? { ...c, quantity: c.quantity + 1 }
+            : c,
+        );
+      }
+      return [
+        ...prev,
+        {
+          productId: product.id,
+          productName: product.name,
+          subProductId: variantId,
+          subProductLabel: sub.label,
+          price,
+          quantity: 1,
+          image: product.image,
+        },
+      ];
+    });
+  };
+
+  const removeLocalCart = (
+    product: Product,
+    sub: SubProduct,
+    colorDetail?: ColorDetail,
+  ) => {
+    const variantId = getVariantId(product.baseUom, sub, colorDetail);
+    setCart((prev) => {
+      const updated = prev
+        .map((c) =>
+          c.productId === product.id && c.subProductId === variantId
+            ? { ...c, quantity: c.quantity - 1 }
+            : c,
+        )
+        .filter((c) => c.quantity > 0);
+      if (updated.length === 0) setShowViewCart(false);
+      return updated;
+    });
+  };
+
+  const getVariantId = (
+    baseUom: string,
+    sub: SubProduct,
+    colorDetail?: ColorDetail,
+  ): string => {
+    const mode = getDisplayMode(baseUom);
+    if (mode === "COLOR" && colorDetail) return String(colorDetail.colorId);
+    return sub.id;
+  };
+
+  const callUpsertAPI = async (
+    product: Product,
+    sub: SubProduct,
+    qty: number,
+    colorDetail?: ColorDetail,
+  ): Promise<boolean> => {
+    try {
+      const headers = await getAuthHeaders();
+      const { subProdId, subProdColorId, equipColorId } = resolveVariantIds(
+        product.baseUom,
+        sub,
+        colorDetail,
+      );
+      await axios.post(
+        `${environment.API_BASE_URL}api/govi-shop/cart/item`,
+        {
+          branchId: Number(branchId),
+          productId: Number(product.id),
+          subProdId,
+          subProdColorId,
+          equipColorId,
+          qty,
+        },
+        { headers },
+      );
+      return true;
+    } catch (error: any) {
+      Alert.alert(
+        "Cart Error",
+        error?.response?.data?.message ??
+          "Failed to update cart. Please try again.",
+      );
+      return false;
+    }
+  };
+
+  const callDeleteAPI = async (
+    product: Product,
+    sub: SubProduct,
+    colorDetail?: ColorDetail,
+  ): Promise<boolean> => {
+    try {
+      const headers = await getAuthHeaders();
+      const { subProdId, subProdColorId, equipColorId } = resolveVariantIds(
+        product.baseUom,
+        sub,
+        colorDetail,
+      );
+      await axios.delete(`${environment.API_BASE_URL}api/govi-shop/cart/item`, {
+        headers,
+        data: {
+          branchId: Number(branchId),
+          productId: Number(product.id),
+          subProdId,
+          subProdColorId,
+          equipColorId,
+        },
+      });
+      return true;
+    } catch (error: any) {
+      Alert.alert(
+        "Cart Error",
+        error?.response?.data?.message ??
+          "Failed to remove item. Please try again.",
+      );
+      return false;
+    }
+  };
+
+  const handleCartIconPress = async (
+    product: Product,
+    sub: SubProduct,
+    colorDetail?: ColorDetail,
+  ) => {
+    const variantId = getVariantId(product.baseUom, sub, colorDetail);
+    const key = cartItemKey(product.id, variantId);
+    const qty = getCartQty(product.id, variantId);
+    if (qty === 0) return;
+
+    setCartIconLoading((prev) => ({ ...prev, [key]: true }));
+    const ok = await callUpsertAPI(product, sub, qty, colorDetail);
+    setCartIconLoading((prev) => ({ ...prev, [key]: false }));
+
+    if (ok) {
+      setSavedToDb((prev) => new Set(prev).add(key));
+      setShowViewCart(true);
+    }
+  };
+
+  const tryAddToCart = (
+    product: Product,
+    sub: SubProduct,
+    colorDetail?: ColorDetail,
+  ) => {
+    const variantId = getVariantId(product.baseUom, sub, colorDetail);
+    const currentQty = getCartQty(product.id, variantId);
+    const totalCap = colorDetail ? colorDetail.availableQty : getTotalCap(sub);
+    if (totalCap !== undefined && currentQty >= totalCap) return;
+
+    const batches = colorDetail ? colorDetail.batches : sub.batches;
+
+    if (sub.isMRP === 1 && batches && batches.length > 1) {
+      let cumulative = 0;
+      for (let i = 0; i < batches.length - 1; i++) {
+        cumulative += batches[i].qty;
+        if (currentQty === cumulative) {
+          const currentBatchPrice = batches[i].salePrice;
+          const nextBatchPrice = batches[i + 1].salePrice;
+          if (nextBatchPrice !== currentBatchPrice) {
+            setBoundaryModal({
+              visible: true,
+              product,
+              sub,
+              colorDetail,
+              currentBatchPrice,
+              nextBatchPrice,
+            });
+            return;
+          }
+          break;
+        }
+      }
+    }
+
+    const key = cartItemKey(product.id, variantId);
+    const newQty = currentQty + 1;
+
+    if (savedToDb.has(key)) {
+      addLocalCart(product, sub, colorDetail);
+      setDbUpdateLoading((prev) => ({ ...prev, [key]: true }));
+      callUpsertAPI(product, sub, newQty, colorDetail).then((ok) => {
+        if (!ok) removeLocalCart(product, sub, colorDetail);
+        setDbUpdateLoading((prev) => ({ ...prev, [key]: false }));
+      });
+    } else {
+      addLocalCart(product, sub, colorDetail);
+    }
+  };
+
+  const handleRemove = (
+    product: Product,
+    sub: SubProduct,
+    colorDetail?: ColorDetail,
+  ) => {
+    const variantId = getVariantId(product.baseUom, sub, colorDetail);
+    const qty = getCartQty(product.id, variantId);
+    const key = cartItemKey(product.id, variantId);
+
+    if (qty === 1) {
+      setLooseStateMap((prev) => ({ ...prev, [product.id]: "preview" }));
+    }
+
+    if (savedToDb.has(key)) {
+      const newQty = qty - 1;
+
+      if (newQty === 0) {
+        setCart((prev) => {
+          const updated = prev.filter(
+            (c) =>
+              !(c.productId === product.id && c.subProductId === variantId),
+          );
+          if (updated.length === 0) setShowViewCart(false);
+          return updated;
+        });
+        setSavedToDb((prev) => {
+          const next = new Set(prev);
+          next.delete(key);
+          return next;
+        });
+        const snapshot = [...cartRef.current];
+        setDbUpdateLoading((prev) => ({ ...prev, [key]: true }));
+        callDeleteAPI(product, sub, colorDetail).then((ok) => {
+          if (!ok) setCart(snapshot);
+          setDbUpdateLoading((prev) => ({ ...prev, [key]: false }));
+        });
+      } else {
+        removeLocalCart(product, sub, colorDetail);
+        setDbUpdateLoading((prev) => ({ ...prev, [key]: true }));
+        callUpsertAPI(product, sub, newQty, colorDetail).then((ok) => {
+          if (!ok) addLocalCart(product, sub, colorDetail);
+          setDbUpdateLoading((prev) => ({ ...prev, [key]: false }));
+        });
+      }
+    } else {
+      removeLocalCart(product, sub, colorDetail);
+    }
   };
 
   const fetchCategories = async () => {
@@ -248,8 +658,160 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
         categoryId: String(p.categoryId),
         availableQty: p.maxQty ?? undefined,
         description: p.discription ?? "",
+        searchKeyWord: p.searchKeyWord ?? "",
       }));
-      setProducts(mappedProducts);
+
+      const variantChecks = await Promise.allSettled(
+        mappedProducts.map((p) =>
+          axios.get(
+            `${environment.API_BASE_URL}api/govi-shop/products/${p.id}/variants`,
+            {
+              params: { branchId },
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          ),
+        ),
+      );
+
+      const validProducts: Product[] = [];
+      const cachedSubProducts: Record<string, SubProduct[]> = {};
+      const cachedSelectedSubProductId: Record<string, string> = {};
+
+      const cachedColorIndexMap: Record<string, number> = {};
+
+      mappedProducts.forEach((p, i) => {
+        const result = variantChecks[i];
+
+        if (result.status === "rejected") return;
+        const variants = result.value.data;
+        if (!Array.isArray(variants) || variants.length === 0) return;
+
+        let mode = getDisplayMode(p.baseUom);
+        if (mode === "DEFAULT" && variants.some((v: any) => v.width != null && v.height != null)) {
+          mode = "ROLL";
+          p.baseUom = "roll"; 
+        }
+
+        const mapped: SubProduct[] = variants.map((v: any) => {
+          const basePrice = Number(v.normalPrice ?? 0);
+          const salePrice =
+            v.discountPrice != null ? Number(v.discountPrice) : undefined;
+          let label = "";
+          if (mode === "ROLL") {
+            const w = v.width != null ? parseFloat(String(v.width)) : "";
+            const h = v.height != null ? parseFloat(String(v.height)) : "";
+            const uom = v.uom ?? "m";
+            label =
+              w !== "" && h !== ""
+                ? `${w} x ${h} ${uom}`.trim()
+                : `${w || h} ${uom}`.trim();
+          } else if (mode === "COLOR") {
+            const qty = v.qty != null ? parseFloat(String(v.qty)) : 1;
+            label = `${qty} ${qty === 1 ? "pc" : "pcs"}`;
+          } else if (mode === "EQUIPMENT") {
+            label = v.color ?? "";
+          } else {
+            const qty = v.qty != null ? parseFloat(String(v.qty)) : "";
+            label = `${qty} ${v.uom ?? ""}`.trim();
+          }
+          return {
+            id: String(v.variantId),
+            label,
+            price: basePrice,
+            discountPrice: salePrice,
+            colorCode: v.color ?? undefined,
+            colors: Array.isArray(v.colorDetails)
+              ? v.colorDetails.map((c: any) => c.color)
+              : Array.isArray(v.colors)
+                ? v.colors
+                : undefined,
+            colorDetails: Array.isArray(v.colorDetails)
+              ? v.colorDetails.map((c: any) => ({
+                  colorId: c.colorId,
+                  color: c.color,
+                  normalPrice: Number(c.normalPrice ?? 0),
+                  discountPrice:
+                    c.discountPrice != null
+                      ? Number(c.discountPrice)
+                      : undefined,
+                  availableQty: Number(c.availableQty ?? 0),
+                  batches: Array.isArray(c.batches)
+                    ? c.batches.map((b: any) => ({
+                        qty: Number(b.qty),
+                        salePrice: Number(b.salePrice),
+                        originalPrice:
+                          b.originalPrice != null
+                            ? Number(b.originalPrice)
+                            : null,
+                      }))
+                    : undefined,
+                }))
+              : undefined,
+            availableQty: Number(v.availableQty ?? 0),
+            isMRP: v.isMRP ?? 0,
+            batches: Array.isArray(v.batches)
+              ? v.batches.map((b: any) => ({
+                  qty: Number(b.qty),
+                  salePrice: Number(b.salePrice),
+                  originalPrice:
+                    b.originalPrice != null ? Number(b.originalPrice) : null,
+                }))
+              : undefined,
+          };
+        });
+
+        const hasStock = mapped.some((s) => (s.availableQty ?? 0) > 0);
+        if (!hasStock) return;
+
+        const sortedMapped = sortSubProducts(mapped);
+
+        const firstSub = sortedMapped[0];
+        const firstColorDetail =
+          mode === "COLOR" &&
+          firstSub.colorDetails &&
+          firstSub.colorDetails.length > 0
+            ? firstSub.colorDetails[0]
+            : null;
+
+        const updatedProduct: Product = {
+          ...p,
+          normalPrice: firstColorDetail
+            ? firstColorDetail.normalPrice
+            : firstSub.price,
+          discountPrice: firstColorDetail
+            ? firstColorDetail.discountPrice
+            : firstSub.discountPrice,
+          availableQty: firstColorDetail
+            ? firstColorDetail.availableQty > 0
+              ? firstColorDetail.availableQty
+              : undefined
+            : firstSub.availableQty && firstSub.availableQty > 0
+              ? firstSub.availableQty
+              : undefined,
+        };
+
+        cachedSubProducts[p.id] = sortedMapped;
+        const firstSelectable =
+          mode === "EQUIPMENT" || mode === "COLOR"
+            ? (sortedMapped.find((s) => s.colorCode && s.colorCode.trim()) ??
+              sortedMapped[0])
+            : sortedMapped[0];
+        cachedSelectedSubProductId[p.id] = firstSelectable.id;
+
+        if (mode === "COLOR") {
+          cachedColorIndexMap[p.id] = 0;
+        }
+
+        validProducts.push(updatedProduct);
+      });
+
+      setSubProducts((prev) => ({ ...prev, ...cachedSubProducts }));
+      setSelectedSubProductId((prev) => ({
+        ...prev,
+        ...cachedSelectedSubProductId,
+      }));
+      setSelectedColorIndexMap((prev) => ({ ...prev, ...cachedColorIndexMap }));
+      setProducts(validProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
       setProducts([]);
@@ -271,7 +833,12 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
         `${environment.API_BASE_URL}api/govi-shop/products/${productId}/variants`,
         { params: { branchId }, headers: { Authorization: `Bearer ${token}` } },
       );
-      const mode = getDisplayMode(baseUom);
+      let mode = getDisplayMode(baseUom);
+      if (mode === "DEFAULT" && response.data.some((v: any) => v.width != null && v.height != null)) {
+        mode = "ROLL";
+        setProducts(prev => prev.map(p => p.id === productId ? { ...p, baseUom: "roll" } : p));
+      }
+
       const mapped: SubProduct[] = response.data.map((v: any) => {
         const basePrice = Number(v.normalPrice ?? 0);
         const salePrice =
@@ -286,12 +853,13 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
               ? `${w} x ${h} ${uom}`.trim()
               : `${w || h} ${uom}`.trim();
         } else if (mode === "COLOR") {
-          const qty = v.qty ?? 1;
+          const qty = v.qty != null ? parseFloat(String(v.qty)) : 1;
           label = `${qty} ${qty === 1 ? "pc" : "pcs"}`;
         } else if (mode === "EQUIPMENT") {
           label = v.color ?? "";
         } else {
-          label = `${v.qty ?? ""} ${v.uom ?? ""}`.trim();
+          const qty = v.qty != null ? parseFloat(String(v.qty)) : "";
+          label = `${qty} ${v.uom ?? ""}`.trim();
         }
         return {
           id: String(v.variantId),
@@ -299,7 +867,31 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
           price: basePrice,
           discountPrice: salePrice,
           colorCode: v.color ?? undefined,
-          colors: Array.isArray(v.colors) ? v.colors : undefined,
+          colors: Array.isArray(v.colorDetails)
+            ? v.colorDetails.map((c: any) => c.color)
+            : Array.isArray(v.colors)
+              ? v.colors
+              : undefined,
+          colorDetails: Array.isArray(v.colorDetails)
+            ? v.colorDetails.map((c: any) => ({
+                colorId: c.colorId,
+                color: c.color,
+                normalPrice: Number(c.normalPrice ?? 0),
+                discountPrice:
+                  c.discountPrice != null ? Number(c.discountPrice) : undefined,
+                availableQty: Number(c.availableQty ?? 0),
+                batches: Array.isArray(c.batches)
+                  ? c.batches.map((b: any) => ({
+                      qty: Number(b.qty),
+                      salePrice: Number(b.salePrice),
+                      originalPrice:
+                        b.originalPrice != null
+                          ? Number(b.originalPrice)
+                          : null,
+                    }))
+                  : undefined,
+              }))
+            : undefined,
           availableQty: Number(v.availableQty ?? 0),
           isMRP: v.isMRP ?? 0,
           batches: Array.isArray(v.batches)
@@ -313,8 +905,17 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
         };
       });
 
-      if (mapped.length > 0) {
-        const firstSub = mapped[0];
+      const hasStock = mapped.some((s) => (s.availableQty ?? 0) > 0);
+      if (mapped.length === 0 || !hasStock) {
+        setProducts((prev) => prev.filter((p) => p.id !== productId));
+        setSubProducts((prev) => ({ ...prev, [productId]: [] }));
+        return [];
+      }
+
+      const sortedMapped = sortSubProducts(mapped);
+
+      if (sortedMapped.length > 0) {
+        const firstSub = sortedMapped[0];
         setProducts((prev) =>
           prev.map((p) =>
             p.id === productId
@@ -331,21 +932,34 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
           ),
         );
       }
-      setSubProducts((prev) => ({ ...prev, [productId]: mapped }));
-      if (mapped.length > 0) {
+
+      setSubProducts((prev) => ({ ...prev, [productId]: sortedMapped }));
+
+      if (sortedMapped.length > 0) {
         const firstSelectable =
-          mode === "EQUIPMENT"
-            ? (mapped.find((s) => s.colorCode && s.colorCode.trim()) ??
-              mapped[0])
-            : mapped[0];
+          mode === "EQUIPMENT" || mode === "COLOR"
+            ? (sortedMapped.find((s) => s.colorCode && s.colorCode.trim()) ??
+              sortedMapped[0])
+            : sortedMapped[0];
         setSelectedSubProductId((prev) => ({
           ...prev,
           [productId]: firstSelectable.id,
         }));
+
+        if (mode === "COLOR") {
+          setSelectedColorIndexMap((prev) => ({
+            ...prev,
+            [productId]: prev[productId] ?? 0,
+          }));
+        }
       }
-      return mapped;
-    } catch (error) {
+      return sortedMapped;
+    } catch (error: any) {
       console.error("Error fetching sub-products:", error);
+      const status = error?.response?.status;
+      if (status === 404 || status === 400) {
+        setProducts((prev) => prev.filter((p) => p.id !== productId));
+      }
       setSubProducts((prev) => ({ ...prev, [productId]: [] }));
       return [];
     } finally {
@@ -353,98 +967,10 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
     }
   };
 
-  const getCartQty = (productId: string, subProductId: string): number =>
-    cart.find(
-      (c) => c.productId === productId && c.subProductId === subProductId,
-    )?.quantity ?? 0;
-
-  const addToCart = (product: Product, sub: SubProduct) => {
-    setCart((prev) => {
-      const exists = prev.find(
-        (c) => c.productId === product.id && c.subProductId === sub.id,
-      );
-      if (exists) {
-        return prev.map((c) =>
-          c.productId === product.id && c.subProductId === sub.id
-            ? { ...c, quantity: c.quantity + 1 }
-            : c,
-        );
-      }
-      return [
-        ...prev,
-        {
-          productId: product.id,
-          productName: product.name,
-          subProductId: sub.id,
-          subProductLabel: sub.label,
-          price: sub.discountPrice ?? sub.price,
-          quantity: 1,
-          image: product.image,
-        },
-      ];
-    });
-  };
-
-  const tryAddToCart = (product: Product, sub: SubProduct) => {
-    const currentQty = getCartQty(product.id, sub.id);
-    const totalCap = getTotalCap(sub);
-
-    if (totalCap !== undefined && currentQty >= totalCap) return;
-
-    if (sub.isMRP === 1 && sub.batches && sub.batches.length > 1) {
-      let cumulative = 0;
-      for (let i = 0; i < sub.batches.length - 1; i++) {
-        cumulative += sub.batches[i].qty;
-
-        if (currentQty === cumulative) {
-          const currentBatchPrice = sub.batches[i].salePrice;
-          const nextBatchPrice = sub.batches[i + 1].salePrice;
-          if (nextBatchPrice !== currentBatchPrice) {
-            setBoundaryModal({
-              visible: true,
-              product,
-              sub,
-              currentBatchPrice,
-              nextBatchPrice,
-            });
-            return;
-          }
-          break;
-        }
-      }
-    }
-
-    addToCart(product, sub);
-  };
-
-  const handleRemove = (product: Product, sub: SubProduct) => {
-    const qty = getCartQty(product.id, sub.id);
-    if (qty === 1) {
-      setLooseStateMap((prev) => ({ ...prev, [product.id]: "preview" }));
-    }
-    setCart((prev) => {
-      const updated = prev
-        .map((c) =>
-          c.productId === product.id && c.subProductId === sub.id
-            ? { ...c, quantity: c.quantity - 1 }
-            : c,
-        )
-        .filter((c) => c.quantity > 0);
-      if (updated.length === 0) setShowViewCart(false);
-      return updated;
-    });
-  };
-
-  // REPLACE the entire handleCartIconPress function with:
-  const handleCartIconPress = (_product: Product, _sub: SubProduct) => {
-    setShowViewCart(true);
-  };
-
   const handleLoosePlusPress = async (productId: string) => {
     const product = products.find((p) => p.id === productId);
     if (!product) return;
     const currentState = looseStateMap[productId] ?? "collapsed";
-
     setExpandedProductId(null);
     setLooseStateMap((prev) => {
       const next: Record<string, LooseState> = {};
@@ -453,17 +979,13 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
       });
       return next;
     });
-
     if (currentState === "collapsed") {
       setLooseStateMap((prev) => ({ ...prev, [productId]: "preview" }));
-      if (!subProducts[productId]) {
-        fetchSubProducts(productId, product.baseUom);
-      }
+      if (!subProducts[productId]) fetchSubProducts(productId, product.baseUom);
     } else if (currentState === "preview") {
       let subs = subProducts[productId];
-      if (!subs || subs.length === 0) {
+      if (!subs || subs.length === 0)
         subs = await fetchSubProducts(productId, product.baseUom);
-      }
       if (subs.length > 0) {
         const firstSub = subs[0];
         setSelectedSubProductId((prev) => ({
@@ -491,9 +1013,15 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
       setExpandedProductId(null);
     } else {
       setExpandedProductId(productId);
-      if (!subProducts[productId]) {
-        fetchSubProducts(productId, product.baseUom);
+      const mode = getDisplayMode(product.baseUom);
+      if (mode === "COLOR") {
+        setSelectedColorIndexMap((prev) => ({
+          ...prev,
+          [productId]: prev[productId] ?? 0,
+        }));
       }
+
+      if (!subProducts[productId]) fetchSubProducts(productId, product.baseUom);
     }
   };
 
@@ -515,13 +1043,20 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
     return () => clearTimeout(delay);
   }, [searchQuery]);
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchCart();
+    }, [fetchCart]),
+  );
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     setExpandedProductId(null);
     setLooseStateMap({});
     fetchCategories();
     fetchProducts(selectedFilter, searchQuery);
-  }, [selectedFilter, searchQuery]);
+    fetchCart();
+  }, [selectedFilter, searchQuery, fetchCart]);
 
   const renderFilterButton = ({ item }: { item: FilterButton }) => (
     <TouchableOpacity
@@ -529,21 +1064,16 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
         setSelectedFilter(item.name);
         setSearchQuery("");
       }}
+      className="px-5 py-2 rounded-[20px] mr-2.5 border"
       style={{
-        paddingHorizontal: 20,
-        paddingVertical: 8,
-        borderRadius: 20,
-        marginRight: 10,
         backgroundColor: selectedFilter === item.name ? "#FF8000" : "#FFFFFF",
-        borderWidth: 1,
         borderColor: selectedFilter === item.name ? "#FF8000" : "#7A9BC9",
       }}
       activeOpacity={0.8}
     >
       <Text
+        className="font-semibold text-[13px]"
         style={{
-          fontWeight: "600",
-          fontSize: 13,
           color: selectedFilter === item.name ? "#FFFFFF" : "#7A9BC9",
         }}
       >
@@ -564,20 +1094,72 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
 
     if (displayMode === "EQUIPMENT") {
       const coloredSubs = subs.filter((s) => s.colorCode && s.colorCode.trim());
-      if (coloredSubs.length === 0) return null;
+
+      if (displayMode === "EQUIPMENT") {
+        const coloredSubs = subs.filter(
+          (s) => s.colorCode && s.colorCode.trim(),
+        );
+
+        if (coloredSubs.length > 0) {
+          return (
+            <View
+              className="flex-row flex-wrap mb-3"
+              style={{
+                gap: COLOR_DOT_GAP,
+              }}
+            >
+              {coloredSubs.map((sub) => {
+                const hex = resolveColor(sub.colorCode!);
+                const isWhite = hex.toLowerCase() === "#ffffff";
+                const isSelected = activeSubId === sub.id;
+                return (
+                  <TouchableOpacity
+                    key={sub.id}
+                    onPress={() =>
+                      setSelectedSubProductId((prev) => ({
+                        ...prev,
+                        [item.id]: sub.id,
+                      }))
+                    }
+                    activeOpacity={0.7}
+                    style={{
+                      width: COLOR_DOT_SIZE,
+                      height: COLOR_DOT_SIZE,
+                      borderRadius: COLOR_DOT_SIZE / 2,
+                      backgroundColor: hex,
+                      borderWidth: isSelected ? 3 : 1.5,
+                      borderColor: isSelected
+                        ? "#FF8000"
+                        : isWhite
+                          ? "#E0E0E0"
+                          : "transparent",
+                      shadowColor: isSelected ? "#FF8000" : "transparent",
+                      shadowOffset: { width: 0, height: 0 },
+                      shadowOpacity: isSelected ? 0.45 : 0,
+                      shadowRadius: 4,
+                      elevation: isSelected ? 4 : 0,
+                    }}
+                  />
+                );
+              })}
+            </View>
+          );
+        }
+
+        return null;
+      }
+
+      if (subs.length <= 1) return null;
       return (
         <View
+          className="flex-row flex-wrap mb-3"
           style={{
-            flexDirection: "row",
-            flexWrap: "wrap",
-            gap: COLOR_DOT_GAP,
-            marginBottom: 12,
+            gap: CHIP_GAP,
           }}
         >
-          {coloredSubs.map((sub) => {
-            const hex = resolveColor(sub.colorCode!);
-            const isWhite = hex.toLowerCase() === "#ffffff";
+          {subs.map((sub) => {
             const isSelected = activeSubId === sub.id;
+            const label = sub.label || `Variant ${sub.id}`;
             return (
               <TouchableOpacity
                 key={sub.id}
@@ -588,24 +1170,20 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                   }))
                 }
                 activeOpacity={0.7}
+                className="px-4 py-[7px] rounded-[20px] border-[1.5px] bg-white items-center justify-center"
                 style={{
-                  width: COLOR_DOT_SIZE,
-                  height: COLOR_DOT_SIZE,
-                  borderRadius: COLOR_DOT_SIZE / 2,
-                  backgroundColor: hex,
-                  borderWidth: isSelected ? 3 : 1.5,
-                  borderColor: isSelected
-                    ? "#FF8000"
-                    : isWhite
-                      ? "#E0E0E0"
-                      : "transparent",
-                  shadowColor: isSelected ? "#FF8000" : "transparent",
-                  shadowOffset: { width: 0, height: 0 },
-                  shadowOpacity: isSelected ? 0.45 : 0,
-                  shadowRadius: 4,
-                  elevation: isSelected ? 4 : 0,
+                  borderColor: isSelected ? "#FF8000" : "#E0E0E0",
                 }}
-              />
+              >
+                <Text
+                  className="text-[13px] font-semibold"
+                  style={{
+                    color: isSelected ? "#FF8000" : "#888888",
+                  }}
+                >
+                  {label}
+                </Text>
+              </TouchableOpacity>
             );
           })}
         </View>
@@ -614,20 +1192,27 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
 
     if (displayMode === "COLOR") {
       const activeSub = subs.find((s) => s.id === activeSubId);
-      const dotColors: string[] =
-        activeSub?.colors && activeSub.colors.length > 0
-          ? activeSub.colors
-          : activeSub?.colorCode
-            ? [activeSub.colorCode]
-            : [];
+      const colorDetails: ColorDetail[] = activeSub?.colorDetails ?? [];
+
+      const selectedColorIdx = selectedColorIndexMap[item.id] ?? 0;
+
+      const activeDetail = colorDetails[selectedColorIdx] ?? colorDetails[0];
+      const displayPrice = activeDetail
+        ? (activeDetail.discountPrice ?? activeDetail.normalPrice)
+        : (activeSub?.discountPrice ?? activeSub?.price ?? 0);
+      const originalPrice = activeDetail?.discountPrice
+        ? activeDetail.normalPrice
+        : null;
+      const dotAvailableQty = activeDetail?.availableQty ?? 0;
+
       return (
         <>
+          {/* ── Quantity chips ── */}
           <View
+            className="flex-row flex-wrap"
             style={{
-              flexDirection: "row",
-              flexWrap: "wrap",
               gap: CHIP_GAP,
-              marginBottom: dotColors.length > 0 ? 10 : 4,
+              marginBottom: colorDetails.length > 0 ? 10 : 4,
             }}
           >
             {subs.map((sub) => {
@@ -635,28 +1220,26 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
               return (
                 <TouchableOpacity
                   key={sub.id}
-                  onPress={() =>
+                  onPress={() => {
                     setSelectedSubProductId((prev) => ({
                       ...prev,
                       [item.id]: sub.id,
-                    }))
-                  }
+                    }));
+
+                    setSelectedColorIndexMap((prev) => ({
+                      ...prev,
+                      [item.id]: 0,
+                    }));
+                  }}
                   activeOpacity={0.7}
+                  className="px-[18px] py-[7px] rounded-[20px] border-[1.5px] bg-white items-center justify-center"
                   style={{
-                    paddingHorizontal: 18,
-                    paddingVertical: 7,
-                    borderRadius: 20,
-                    borderWidth: 1.5,
                     borderColor: isSelected ? "#FF8000" : "#E0E0E0",
-                    backgroundColor: "#FFFFFF",
-                    alignItems: "center",
-                    justifyContent: "center",
                   }}
                 >
                   <Text
+                    className="text-[13px] font-semibold"
                     style={{
-                      fontSize: 13,
-                      fontWeight: "600",
                       color: isSelected ? "#FF8000" : "#888888",
                     }}
                   >
@@ -666,28 +1249,49 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
               );
             })}
           </View>
-          {dotColors.length > 0 && (
+
+          {/* ── Color dots — each with its own price ── */}
+          {colorDetails.length > 0 && (
             <View
+              className="flex-row flex-wrap mb-2"
               style={{
-                flexDirection: "row",
-                flexWrap: "wrap",
                 gap: COLOR_DOT_GAP,
-                marginBottom: 8,
               }}
             >
-              {dotColors.map((rawColor, index) => {
-                const hex = resolveColor(rawColor);
+              {colorDetails.map((cd, index) => {
+                const hex = resolveColor(cd.color);
                 const isWhite = hex.toLowerCase() === "#ffffff";
+                const isSelected = selectedColorIdx === index;
+                const outOfStock = cd.availableQty <= 0;
+
                 return (
-                  <View
-                    key={index}
+                  <TouchableOpacity
+                    key={cd.colorId}
+                    activeOpacity={outOfStock ? 1 : 0.75}
+                    disabled={outOfStock}
+                    onPress={() =>
+                      setSelectedColorIndexMap((prev) => ({
+                        ...prev,
+                        [item.id]: index,
+                      }))
+                    }
                     style={{
                       width: COLOR_DOT_SIZE,
                       height: COLOR_DOT_SIZE,
                       borderRadius: COLOR_DOT_SIZE / 2,
                       backgroundColor: hex,
-                      borderWidth: 1.5,
-                      borderColor: isWhite ? "#E0E0E0" : "transparent",
+                      opacity: outOfStock ? 0.3 : 1,
+                      borderWidth: isSelected ? 3 : 1.5,
+                      borderColor: isSelected
+                        ? "#FF8000"
+                        : isWhite
+                          ? "#E0E0E0"
+                          : "transparent",
+                      shadowColor: isSelected ? "#FF8000" : "transparent",
+                      shadowOffset: { width: 0, height: 0 },
+                      shadowOpacity: isSelected ? 0.45 : 0,
+                      shadowRadius: 4,
+                      elevation: isSelected ? 4 : 0,
                     }}
                   />
                 );
@@ -702,15 +1306,11 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
       return (
         <>
           <View
-            style={{
-              flexDirection: "row",
-              flexWrap: "wrap",
-              gap: ROLL_GAP,
-              marginBottom: 4,
-            }}
+            className="flex-row flex-wrap mb-1"
           >
-            {visibleSubs.map((sub) => {
+            {visibleSubs.map((sub, index) => {
               const isSelected = activeSubId === sub.id;
+              const isLeftChip = index % 2 === 0;
               return (
                 <TouchableOpacity
                   key={sub.id}
@@ -721,21 +1321,16 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                     }))
                   }
                   activeOpacity={0.7}
+                  className="w-[48%] py-[9px] rounded-[20px] border-[1.5px] bg-white items-center justify-center"
                   style={{
-                    width: ROLL_CHIP_WIDTH,
-                    paddingVertical: 9,
-                    borderRadius: 20,
-                    borderWidth: 1.5,
+                    marginRight: isLeftChip ? "4%" : 0,
+                    marginBottom: ROLL_GAP,
                     borderColor: isSelected ? "#FF8000" : "#E0E0E0",
-                    backgroundColor: "#FFFFFF",
-                    alignItems: "center",
-                    justifyContent: "center",
                   }}
                 >
                   <Text
+                    className="text-[13px] font-semibold"
                     style={{
-                      fontSize: 13,
-                      fontWeight: "600",
                       color: isSelected ? "#FF8000" : "#888888",
                     }}
                     numberOfLines={1}
@@ -752,7 +1347,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                 setShowAllChips((prev) => ({ ...prev, [item.id]: true }))
               }
             >
-              <Text style={{ color: "#FF8000", fontSize: 12, marginBottom: 6 }}>
+              <Text className="text-[#FF8000] text-[12px] mb-1.5">
                 +{subs.length - MAX_CHIPS_VISIBLE} more
               </Text>
             </TouchableOpacity>
@@ -761,14 +1356,16 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
       );
     }
 
+    if (visibleSubs.length === 1 && visibleSubs[0].label === "Variant") {
+      return null;
+    }
+
     return (
       <>
         <View
+          className="flex-row flex-wrap mb-1"
           style={{
-            flexDirection: "row",
-            flexWrap: "wrap",
             marginRight: -CHIP_GAP,
-            marginBottom: 4,
           }}
         >
           {visibleSubs.map((sub) => {
@@ -783,23 +1380,17 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                   }))
                 }
                 activeOpacity={0.7}
+                className="py-[7px] rounded-[20px] border-[1.5px] bg-white items-center justify-center"
                 style={{
                   width: CHIP_WIDTH,
                   marginRight: CHIP_GAP,
                   marginBottom: CHIP_GAP,
-                  paddingVertical: 7,
-                  borderRadius: 20,
-                  borderWidth: 1.5,
                   borderColor: isSelected ? "#FF8000" : "#E0E0E0",
-                  backgroundColor: "#FFFFFF",
-                  alignItems: "center",
-                  justifyContent: "center",
                 }}
               >
                 <Text
+                  className="text-[12px] font-semibold"
                   style={{
-                    fontSize: 12,
-                    fontWeight: "600",
                     color: isSelected ? "#FF8000" : "#888888",
                   }}
                   numberOfLines={1}
@@ -816,7 +1407,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
               setShowAllChips((prev) => ({ ...prev, [item.id]: true }))
             }
           >
-            <Text style={{ color: "#FF8000", fontSize: 12, marginBottom: 6 }}>
+            <Text className="text-[#FF8000] text-[12px] mb-1.5">
               +{subs.length - MAX_CHIPS_VISIBLE} more
             </Text>
           </TouchableOpacity>
@@ -829,33 +1420,32 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
     item: Product,
     activeSub: SubProduct,
     cartQty: number,
+    colorDetail?: ColorDetail,
   ) => {
-    const displayPrice = activeSub.discountPrice ?? activeSub.price;
-    const totalCap = getTotalCap(activeSub);
-
+    const displayPrice = colorDetail
+      ? (colorDetail.discountPrice ?? colorDetail.normalPrice)
+      : (activeSub.discountPrice ?? activeSub.price);
+    const totalCap = colorDetail
+      ? colorDetail.availableQty
+      : getTotalCap(activeSub);
     const isPlusDisabled = totalCap !== undefined && cartQty >= totalCap;
-
-    const showCartIcon = cartQty > 0 && !showViewCart;
+    const variantId = getVariantId(item.baseUom, activeSub, colorDetail);
+    const key = cartItemKey(item.id, variantId);
+    const isSaved = savedToDb.has(key);
+    const isCartIconSpinning = cartIconLoading[key] ?? false;
+    const isDbUpdating = dbUpdateLoading[key] ?? false;
+    const showCartIcon = cartQty > 0 && !isSaved;
 
     return (
       <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginTop: 4,
-        }}
+        className="flex-row items-center justify-between mt-1"
       >
-        <View style={{ gap: 2 }}>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+        {/* Price */}
+        <View className="gap-[2px]">
+          <View className="flex-row items-center gap-1">
             <FontAwesome5 name="coins" size={14} color="black" />
             <Text
-              style={{
-                color: "#FF8000",
-                fontWeight: "800",
-                fontSize: 16,
-                marginLeft: 5,
-              }}
+              className="text-[#FF8000] font-[800] text-[16px] ml-[5px]"
             >
               Rs.{" "}
               {displayPrice.toLocaleString("en-LK", {
@@ -864,117 +1454,99 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
               })}
             </Text>
           </View>
-
           {totalCap !== undefined && (
             <View
-              style={{ flexDirection: "row", alignItems: "center", gap: 3 }}
+              className="flex-row items-center gap-[3px]"
             >
               <Ionicons
                 name="information-circle-outline"
                 size={12}
                 color="#AAAAAA"
               />
-              <Text style={{ color: "#AAAAAA", fontSize: 11 }}>
+              <Text className="text-[#AAAAAA] text-[11px]">
                 {totalCap} Left
               </Text>
             </View>
           )}
         </View>
 
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+        {/* Buttons */}
+        <View className="flex-row items-center gap-2">
           {cartQty === 0 ? (
             <TouchableOpacity
-              onPress={() => tryAddToCart(item, activeSub)}
-              activeOpacity={isPlusDisabled ? 1 : 0.85}
-              disabled={isPlusDisabled}
+              onPress={() => tryAddToCart(item, activeSub, colorDetail)}
+              activeOpacity={0.85}
+              className="bg-[#3F3C57] rounded-[20px] p-2"
               style={{
-                backgroundColor: isPlusDisabled ? "#BBBBBB" : "#3F3C57",
-                borderRadius: 20,
-                padding: 8,
-                shadowColor: isPlusDisabled ? "transparent" : "#3F3C57",
+                shadowColor: "#3F3C57",
                 shadowOffset: { width: 0, height: 3 },
-                shadowOpacity: isPlusDisabled ? 0 : 0.3,
+                shadowOpacity: 0.3,
                 shadowRadius: 4,
-                elevation: isPlusDisabled ? 0 : 5,
+                elevation: 5,
               }}
             >
               <Ionicons name="add" size={20} color="white" />
             </TouchableOpacity>
           ) : (
             <>
+              {/* Stepper */}
               <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  backgroundColor: "#FF80001A",
-                  borderRadius: 20,
-                  borderWidth: 1,
-                  borderColor: "#E8E8E8",
-                  overflow: "hidden",
-                }}
+                className="flex-row items-center bg-[#FF80001A] rounded-[20px] border border-[#E8E8E8] overflow-hidden"
               >
                 <TouchableOpacity
-                  onPress={() => handleRemove(item, activeSub)}
+                  onPress={() => handleRemove(item, activeSub, colorDetail)}
+                  disabled={isDbUpdating}
+                  className="w-[34px] h-[34px] items-center justify-center rounded-[17px]"
                   style={{
-                    backgroundColor: "#FF8000",
-                    width: 34,
-                    height: 34,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: 17,
+                    backgroundColor: isDbUpdating ? "#CCCCCC" : "#FF8000",
                   }}
                 >
-                  {cartQty === 1 ? (
+                  {isDbUpdating ? (
+                    <ActivityIndicator size={16} color="white" />
+                  ) : cartQty === 1 ? (
                     <Ionicons name="trash-outline" size={16} color="white" />
                   ) : (
                     <Ionicons name="remove" size={18} color="white" />
                   )}
                 </TouchableOpacity>
-
                 <Text
-                  style={{
-                    paddingHorizontal: 12,
-                    fontWeight: "700",
-                    fontSize: 15,
-                    color: "#3F3C57",
-                    minWidth: 28,
-                    textAlign: "center",
-                  }}
+                  className="px-3 font-bold text-[15px] text-[#3F3C57] min-w-[28px] text-center"
                 >
                   {cartQty}
                 </Text>
-
                 <TouchableOpacity
-                  onPress={() => tryAddToCart(item, activeSub)}
-                  activeOpacity={isPlusDisabled ? 1 : 0.85}
-                  disabled={isPlusDisabled}
+                  onPress={() => tryAddToCart(item, activeSub, colorDetail)}
+                  activeOpacity={isPlusDisabled || isDbUpdating ? 1 : 0.85}
+                  disabled={isPlusDisabled || isDbUpdating}
+                  className="w-[34px] h-[34px] items-center justify-center rounded-[17px]"
                   style={{
-                    backgroundColor: isPlusDisabled ? "#CCCCCC" : "#FF8000",
-                    width: 34,
-                    height: 34,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: 17,
+                    backgroundColor:
+                      isPlusDisabled || isDbUpdating ? "#CCCCCC" : "#FF8000",
                   }}
                 >
-                  <Ionicons name="add" size={18} color="white" />
+                  {isDbUpdating ? (
+                    <ActivityIndicator size={18} color="white" />
+                  ) : (
+                    <Ionicons name="add" size={18} color="white" />
+                  )}
                 </TouchableOpacity>
               </View>
 
+              {/* Cart icon */}
               {showCartIcon && (
                 <TouchableOpacity
-                  style={{
-                    backgroundColor: "#3F3C57",
-                    width: 36,
-                    height: 36,
-                    borderRadius: 18,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                  onPress={() => handleCartIconPress(item, activeSub)}
+                  className="bg-[#3F3C57] w-[36px] h-[36px] rounded-[18px] items-center justify-center"
+                  onPress={() =>
+                    handleCartIconPress(item, activeSub, colorDetail)
+                  }
+                  disabled={isCartIconSpinning}
                   activeOpacity={0.85}
                 >
-                  <Ionicons name="cart-outline" size={18} color="white" />
+                  {isCartIconSpinning ? (
+                    <ActivityIndicator size={18} color="white" />
+                  ) : (
+                    <Ionicons name="cart-outline" size={18} color="white" />
+                  )}
                 </TouchableOpacity>
               )}
             </>
@@ -986,42 +1558,41 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
 
   const BoundaryConfirmModal = () => {
     if (!boundaryModal?.visible) return null;
-    const { product, sub, currentBatchPrice, nextBatchPrice } = boundaryModal;
+    const { product, sub, colorDetail, currentBatchPrice, nextBatchPrice } =
+      boundaryModal;
     if (!product || !sub) return null;
 
-    const handleIDontWant = () => {
-      setBoundaryModal(null);
-    };
-
+    const handleIDontWant = () => setBoundaryModal(null);
     const handleAddToCart = () => {
       setBoundaryModal(null);
-      addToCart(product, sub);
+      const variantId = getVariantId(product.baseUom, sub, colorDetail);
+      const key = cartItemKey(product.id, variantId);
+      const newQty = getCartQty(product.id, variantId) + 1;
+      if (savedToDb.has(key)) {
+        addLocalCart(product, sub, colorDetail);
+        setDbUpdateLoading((prev) => ({ ...prev, [key]: true }));
+        callUpsertAPI(product, sub, newQty, colorDetail).then((ok) => {
+          if (!ok) removeLocalCart(product, sub, colorDetail);
+          setDbUpdateLoading((prev) => ({ ...prev, [key]: false }));
+        });
+      } else {
+        addLocalCart(product, sub, colorDetail);
+      }
     };
 
     return (
       <Modal
         transparent
-        visible={boundaryModal.visible}
+        visible
         animationType="fade"
         onRequestClose={handleIDontWant}
       >
         <View
-          style={{
-            flex: 1,
-            backgroundColor: "rgba(0,0,0,0.55)",
-            justifyContent: "center",
-            alignItems: "center",
-            paddingHorizontal: 20,
-          }}
+          className="flex-1 bg-[rgba(0,0,0,0.55)] justify-center items-center px-5"
         >
           <View
+            className="bg-white rounded-[22px] w-full px-6 pt-7 pb-6"
             style={{
-              backgroundColor: "#FFFFFF",
-              borderRadius: 22,
-              width: "100%",
-              paddingHorizontal: 24,
-              paddingTop: 28,
-              paddingBottom: 24,
               shadowColor: "#000",
               shadowOffset: { width: 0, height: 10 },
               shadowOpacity: 0.45,
@@ -1032,46 +1603,23 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
             <TouchableOpacity
               onPress={handleIDontWant}
               activeOpacity={0.8}
-              style={{
-                position: "absolute",
-                top: 14,
-                right: 14,
-                width: 30,
-                height: 30,
-                borderRadius: 15,
-                backgroundColor: "#2A2840",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+              className="absolute top-3.5 right-3.5 w-[30px] h-[30px] rounded-[15px] bg-[#2A2840] items-center justify-center"
             >
               <Ionicons name="close" size={16} color="#AAAAAA" />
             </TouchableOpacity>
-
             <Text
-              style={{
-                color: "#000",
-                fontWeight: "800",
-                fontSize: 18,
-                marginBottom: 20,
-              }}
+              className="text-black font-[800] text-[18px] mb-5"
             >
               Please Confirm Action!
             </Text>
-
             <View
-              style={{
-                borderWidth: 1.5,
-                borderColor: "#8F95BD",
-                borderRadius: 12,
-                padding: 16,
-                marginBottom: 24,
-              }}
+              className="border-[1.5px] border-[#8F95BD] rounded-xl p-4 mb-6"
             >
               <Text
-                style={{ color: "#484848", fontSize: 13.5, lineHeight: 22 }}
+                className="text-[#484848] text-[13.5px] leading-[22px]"
               >
                 {"Last batch priced at "}
-                <Text style={{ color: "#000", fontWeight: "700" }}>
+                <Text className="text-black font-bold">
                   Rs.{" "}
                   {currentBatchPrice.toLocaleString("en-LK", {
                     minimumFractionDigits: 2,
@@ -1079,7 +1627,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                   })}
                 </Text>
                 {" has been sold.\n\nThe next batch will be available at "}
-                <Text style={{ color: "#FF8000", fontWeight: "700" }}>
+                <Text className="text-[#FF8000] font-bold">
                   Rs.{" "}
                   {nextBatchPrice.toLocaleString("en-LK", {
                     minimumFractionDigits: 2,
@@ -1090,44 +1638,23 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                 {"\nDo you wish to continue?"}
               </Text>
             </View>
-
             <TouchableOpacity
               onPress={handleIDontWant}
               activeOpacity={0.85}
-              style={{
-                backgroundColor: "#CCCCCC",
-                borderRadius: 50,
-                paddingVertical: 15,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 10,
-                marginBottom: 12,
-              }}
+              className="bg-[#CCCCCC] rounded-[50px] py-[15px] flex-row items-center justify-center gap-2.5 mb-3"
             >
               <Ionicons name="arrow-back" size={18} color="#555" />
-              <Text style={{ color: "#555", fontWeight: "700", fontSize: 15 }}>
+              <Text className="text-[#555] font-bold text-[15px]">
                 I don't want
               </Text>
             </TouchableOpacity>
-
             <TouchableOpacity
               onPress={handleAddToCart}
               activeOpacity={0.88}
-              style={{
-                backgroundColor: "#2A2840",
-                borderRadius: 50,
-                paddingVertical: 15,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 10,
-                borderWidth: 1.5,
-                borderColor: "#3A3858",
-              }}
+              className="bg-[#2A2840] rounded-[50px] py-[15px] flex-row items-center justify-center gap-2.5 border-[1.5px] border-[#3A3858]"
             >
               <Text
-                style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}
+                className="text-white font-bold text-[15px]"
               >
                 Add to Cart
               </Text>
@@ -1144,44 +1671,52 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
     const isLoose = displayMode === "LOOSE";
     const looseState = looseStateMap[item.id] ?? "collapsed";
     const isExpanded = expandedProductId === item.id;
-
     const subs = subProducts[item.id] ?? [];
     const isLoadingSubs = subProductsLoading[item.id] ?? false;
     const activeSubId = selectedSubProductId[item.id];
-
     const activeSub =
       displayMode === "EQUIPMENT"
-        ? subs
+        ? (subs
             .filter((s) => s.colorCode && s.colorCode.trim())
-            .find((s) => s.id === activeSubId)
+            .find((s) => s.id === activeSubId) ??
+          subs.find((s) => s.id === activeSubId))
         : subs.find((s) => s.id === activeSubId);
 
-    const cartQty = activeSub ? getCartQty(item.id, activeSub.id) : 0;
+    const activeColorDetail =
+      displayMode === "COLOR" && activeSub
+        ? getActiveColorDetail(activeSub, selectedColorIndexMap[item.id] ?? 0)
+        : undefined;
 
-    const looseSubtitle =
-      isLoose && item.minQtyRaw
-        ? `${item.minQtyRaw}${item.minQtyUom ? ` ${item.minQtyUom}` : ""} – By ${item.baseUom}`
-            .replace(/\s+/g, " ")
-            .trim()
-        : null;
+    const variantId = activeSub
+      ? getVariantId(item.baseUom, activeSub, activeColorDetail)
+      : undefined;
+
+    const cartQty = activeSub && variantId ? getCartQty(item.id, variantId) : 0;
 
     const previewPrice = item.discountPrice ?? item.normalPrice;
     const previewOriginalPrice = item.discountPrice ? item.normalPrice : null;
+    const showImageInHeader = !isExpanded;
+    const showTopRightPlus = isLoose ? true : !isExpanded;
 
-    const showImageInHeader = isLoose
-      ? looseState === "collapsed"
-      : !isExpanded;
-    const showTopRightPlus = isLoose ? looseState === "collapsed" : !isExpanded;
+    const looseKey = activeSub ? cartItemKey(item.id, activeSub.id) : "";
+    const isLooseSaved = activeSub ? savedToDb.has(looseKey) : false;
+    const isLooseCartIconSpinning = cartIconLoading[looseKey] ?? false;
+    const isLooseDbUpdating = dbUpdateLoading[looseKey] ?? false;
+
+    const looseShowCartIcon = cartQty > 0 && !isLooseSaved && activeSub != null;
+
+    const loosePillLabel: string | null = (() => {
+      if (item.minQtyRaw) {
+        return `${item.minQtyRaw}${item.minQtyUom ? ` ${item.minQtyUom}` : ""}`;
+      }
+      const firstSubLabel = subProducts[item.id]?.[0]?.label ?? null;
+      return firstSubLabel;
+    })();
 
     return (
       <View
+        className="bg-white rounded-2xl mb-3.5 overflow-hidden border border-[#F0F0F0]"
         style={{
-          backgroundColor: "#FFFFFF",
-          borderRadius: 16,
-          marginBottom: 14,
-          overflow: "hidden",
-          borderWidth: 1,
-          borderColor: "#F0F0F0",
           shadowColor: "#000",
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.08,
@@ -1190,55 +1725,42 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
         }}
       >
         <TouchableOpacity
-          activeOpacity={isLoose || isExpanded ? 1 : 0.97}
+          activeOpacity={isExpanded ? 1 : 0.97}
           onPress={() => {
-            if (!isLoose && !isExpanded) {
+            if (!isExpanded) {
               navigation.navigate("ViewProduct" as any, {
                 productId: item.id,
                 productName: item.name,
                 image: item.image,
                 categoryId: item.categoryId,
+                baseUom: item.baseUom,
                 branchId,
                 shopId,
+                shopname,
               });
             }
           }}
         >
           <View
+            className="flex-row items-center"
             style={{
-              flexDirection: "row",
               padding: CARD_H_PADDING,
-              alignItems: "center",
             }}
           >
             {showImageInHeader && (
               <View
-                style={{
-                  width: 72,
-                  height: 72,
-                  borderRadius: 12,
-                  backgroundColor: "#F3F4F6",
-                  marginRight: 12,
-                  overflow: "hidden",
-                  borderWidth: 1,
-                  borderColor: "#F0F0F0",
-                }}
+                className="w-[72px] h-[72px] rounded-xl bg-[#F3F4F6] mr-3 overflow-hidden border border-[#F0F0F0]"
               >
                 <Image
                   source={{ uri: item.image }}
-                  style={{ width: "100%", height: "100%" }}
+                  className="w-full h-full"
                   resizeMode="cover"
                 />
               </View>
             )}
-            <View style={{ flex: 1 }}>
+            <View className="flex-1">
               <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: "700",
-                  color: "#111827",
-                  lineHeight: 20,
-                }}
+                className="text-[14px] font-bold text-[#111827] leading-5"
                 numberOfLines={2}
               >
                 {item.name}
@@ -1253,11 +1775,8 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                     : handleNonLoosePlusPress(item.id);
                 }}
                 activeOpacity={0.8}
+                className="bg-[#3F3C57] rounded-[20px] p-[5px] ml-2.5"
                 style={{
-                  backgroundColor: "#3F3C57",
-                  borderRadius: 20,
-                  padding: 5,
-                  marginLeft: 10,
                   shadowColor: "#3F3C57",
                   shadowOffset: { width: 0, height: 3 },
                   shadowOpacity: 0.3,
@@ -1271,6 +1790,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
           </View>
         </TouchableOpacity>
 
+        {/* LOOSE: PREVIEW */}
         {isLoose && looseState === "preview" && (
           <View
             style={{
@@ -1278,43 +1798,29 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
               paddingBottom: CARD_H_PADDING,
             }}
           >
-            <View
-              style={{
-                height: 1,
-                backgroundColor: "#F0F0F0",
-                marginBottom: 12,
-              }}
-            />
-            {looseSubtitle && (
+            {(loosePillLabel || item.baseUom) && (
               <Text
-                style={{
-                  fontSize: 13,
-                  color: "#8A94A6",
-                  fontWeight: "500",
-                  marginBottom: 10,
-                }}
+                className="text-[13px] text-[#8A94A6] font-medium mb-2.5"
               >
-                {looseSubtitle}
+                {loosePillLabel
+                  ? `${loosePillLabel} - By ${item.baseUom}`
+                  : `By ${item.baseUom}`}
               </Text>
             )}
+
             <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
+              className="h-[1px] bg-[#F0F0F0] mb-3"
+            />
+
+            <View
+              className="flex-row items-center justify-between"
             >
               <View
-                style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
+                className="flex-row items-center gap-1"
               >
                 <FontAwesome5 name="coins" size={14} color="black" />
                 <Text
-                  style={{
-                    color: "#FF8000",
-                    fontWeight: "800",
-                    fontSize: 16,
-                    marginLeft: 5,
-                  }}
+                  className="text-[#FF8000] font-[800] text-[16px] ml-[5px]"
                 >
                   Rs.{" "}
                   {previewPrice.toLocaleString("en-LK", {
@@ -1322,30 +1828,12 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                     maximumFractionDigits: 2,
                   })}
                 </Text>
-                {previewOriginalPrice && (
-                  <Text
-                    style={{
-                      color: "#AAAAAA",
-                      fontSize: 11,
-                      textDecorationLine: "line-through",
-                      marginLeft: 6,
-                    }}
-                  >
-                    Rs.{" "}
-                    {previewOriginalPrice.toLocaleString("en-LK", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
-                  </Text>
-                )}
               </View>
               <TouchableOpacity
                 onPress={() => handleLoosePlusPress(item.id)}
                 activeOpacity={0.8}
+                className="bg-[#3F3C57] rounded-[20px] p-[5px]"
                 style={{
-                  backgroundColor: "#3F3C57",
-                  borderRadius: 20,
-                  padding: 5,
                   shadowColor: "#3F3C57",
                   shadowOffset: { width: 0, height: 3 },
                   shadowOpacity: 0.3,
@@ -1359,6 +1847,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
           </View>
         )}
 
+        {/* LOOSE: ACTIVE */}
         {isLoose && looseState === "active" && (
           <View
             style={{
@@ -1367,38 +1856,23 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
             }}
           >
             <View
-              style={{
-                height: 1,
-                backgroundColor: "#F0F0F0",
-                marginBottom: 12,
-              }}
+              className="h-[1px] bg-[#F0F0F0] mb-3"
             />
             {isLoadingSubs ? (
               <ActivityIndicator
                 size="small"
                 color="#FF8000"
-                style={{ marginVertical: 10 }}
+                className="my-2.5"
               />
             ) : (
               <>
                 {activeSub && (
-                  <View style={{ marginBottom: 10 }}>
+                  <View className="mb-2.5">
                     <View
-                      style={{
-                        alignSelf: "flex-start",
-                        paddingHorizontal: 14,
-                        paddingVertical: 6,
-                        borderRadius: 20,
-                        borderWidth: 1.5,
-                        borderColor: "#FF8000",
-                      }}
+                      className="self-start px-3.5 py-1.5 rounded-[20px] border-[1.5px] border-[#FF8000]"
                     >
                       <Text
-                        style={{
-                          color: "#FF8000",
-                          fontWeight: "700",
-                          fontSize: 13,
-                        }}
+                        className="text-[#FF8000] font-bold text-[13px]"
                       >
                         {activeSub.label}
                         {cartQty > 0 ? ` X ${cartQty}` : ""}
@@ -1406,29 +1880,18 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                     </View>
                   </View>
                 )}
-
                 {activeSub &&
                   (() => {
                     const totalCap = getTotalCap(activeSub);
                     const isPlusDisabled =
                       totalCap !== undefined && cartQty >= totalCap;
-                    const showCartIcon = cartQty > 0 && !showViewCart;
-
                     return (
                       <View
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                        }}
+                        className="flex-row items-center justify-between"
                       >
-                        <View style={{ gap: 2 }}>
+                        <View className="gap-[2px]">
                           <View
-                            style={{
-                              flexDirection: "row",
-                              alignItems: "center",
-                              gap: 4,
-                            }}
+                            className="flex-row items-center gap-1"
                           >
                             <FontAwesome5
                               name="coins"
@@ -1436,12 +1899,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                               color="black"
                             />
                             <Text
-                              style={{
-                                color: "#FF8000",
-                                fontWeight: "800",
-                                fontSize: 16,
-                                marginLeft: 5,
-                              }}
+                              className="text-[#FF8000] font-[800] text-[16px] ml-[5px]"
                             >
                               Rs.{" "}
                               {(
@@ -1455,72 +1913,41 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                               })}
                             </Text>
                           </View>
-                          {activeSub.discountPrice != null && (
-                            <Text
-                              style={{
-                                color: "#AAAAAA",
-                                fontSize: 11,
-                                textDecorationLine: "line-through",
-                              }}
-                            >
-                              Rs.{" "}
-                              {activeSub.price.toLocaleString("en-LK", {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              })}
-                            </Text>
-                          )}
 
                           {totalCap !== undefined && (
                             <View
-                              style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                gap: 3,
-                              }}
+                              className="flex-row items-center gap-[3px]"
                             >
                               <Ionicons
                                 name="information-circle-outline"
                                 size={12}
                                 color="#AAAAAA"
                               />
-                              <Text style={{ color: "#AAAAAA", fontSize: 11 }}>
+                              <Text className="text-[#AAAAAA] text-[11px]">
                                 {totalCap} Left
                               </Text>
                             </View>
                           )}
                         </View>
-
                         <View
-                          style={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            gap: 8,
-                          }}
+                          className="flex-row items-center gap-2"
                         >
                           <View
-                            style={{
-                              flexDirection: "row",
-                              alignItems: "center",
-                              backgroundColor: "#FF80001A",
-                              borderRadius: 20,
-                              borderWidth: 1,
-                              borderColor: "#E8E8E8",
-                              overflow: "hidden",
-                            }}
+                            className="flex-row items-center bg-[#FF80001A] rounded-[20px] border border-[#E8E8E8] overflow-hidden"
                           >
                             <TouchableOpacity
                               onPress={() => handleRemove(item, activeSub)}
+                              disabled={isLooseDbUpdating}
+                              className="w-[34px] h-[34px] items-center justify-center rounded-[17px]"
                               style={{
-                                backgroundColor: "#FF8000",
-                                width: 34,
-                                height: 34,
-                                alignItems: "center",
-                                justifyContent: "center",
-                                borderRadius: 17,
+                                backgroundColor: isLooseDbUpdating
+                                  ? "#CCCCCC"
+                                  : "#FF8000",
                               }}
                             >
-                              {cartQty === 1 ? (
+                              {isLooseDbUpdating ? (
+                                <ActivityIndicator size={16} color="white" />
+                              ) : cartQty === 1 ? (
                                 <Ionicons
                                   name="trash-outline"
                                   size={16}
@@ -1534,59 +1961,50 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
                                 />
                               )}
                             </TouchableOpacity>
-
                             <Text
-                              style={{
-                                paddingHorizontal: 12,
-                                fontWeight: "700",
-                                fontSize: 15,
-                                color: "#3F3C57",
-                                minWidth: 28,
-                                textAlign: "center",
-                              }}
+                              className="px-3 font-bold text-[15px] text-[#3F3C57] min-w-[28px] text-center"
                             >
                               {cartQty}
                             </Text>
-
                             <TouchableOpacity
                               onPress={() => tryAddToCart(item, activeSub)}
-                              activeOpacity={isPlusDisabled ? 1 : 0.85}
-                              disabled={isPlusDisabled}
+                              activeOpacity={
+                                isPlusDisabled || isLooseDbUpdating ? 1 : 0.85
+                              }
+                              disabled={isPlusDisabled || isLooseDbUpdating}
+                              className="w-[34px] h-[34px] items-center justify-center rounded-[17px]"
                               style={{
-                                backgroundColor: isPlusDisabled
-                                  ? "#CCCCCC"
-                                  : "#FF8000",
-                                width: 34,
-                                height: 34,
-                                alignItems: "center",
-                                justifyContent: "center",
-                                borderRadius: 17,
+                                backgroundColor:
+                                  isPlusDisabled || isLooseDbUpdating
+                                    ? "#CCCCCC"
+                                    : "#FF8000",
                               }}
                             >
-                              <Ionicons name="add" size={18} color="white" />
+                              {isLooseDbUpdating ? (
+                                <ActivityIndicator size={18} color="white" />
+                              ) : (
+                                <Ionicons name="add" size={18} color="white" />
+                              )}
                             </TouchableOpacity>
                           </View>
-
-                          {showCartIcon && (
+                          {looseShowCartIcon && (
                             <TouchableOpacity
-                              style={{
-                                backgroundColor: "#3F3C57",
-                                width: 36,
-                                height: 36,
-                                borderRadius: 18,
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}
+                              className="bg-[#3F3C57] w-[36px] h-[36px] rounded-[18px] items-center justify-center"
                               onPress={() =>
                                 handleCartIconPress(item, activeSub)
                               }
+                              disabled={isLooseCartIconSpinning}
                               activeOpacity={0.85}
                             >
-                              <Ionicons
-                                name="cart-outline"
-                                size={18}
-                                color="white"
-                              />
+                              {isLooseCartIconSpinning ? (
+                                <ActivityIndicator size={18} color="white" />
+                              ) : (
+                                <Ionicons
+                                  name="cart-outline"
+                                  size={18}
+                                  color="white"
+                                />
+                              )}
                             </TouchableOpacity>
                           )}
                         </View>
@@ -1598,6 +2016,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
           </View>
         )}
 
+        {/* NON-LOOSE: EXPANDED */}
         {!isLoose && isExpanded && (
           <View
             style={{
@@ -1606,33 +2025,49 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
             }}
           >
             <View
-              style={{
-                height: 1,
-                backgroundColor: "#F0F0F0",
-                marginBottom: 12,
-              }}
+              className="h-[1px] bg-[#F0F0F0] mb-3"
             />
             {isLoadingSubs ? (
               <ActivityIndicator
                 size="small"
                 color="#FF8000"
-                style={{ marginVertical: 10 }}
+                className="my-2.5"
               />
             ) : subs.length === 0 ? (
               <Text
-                style={{
-                  color: "#AAA",
-                  fontSize: 13,
-                  textAlign: "center",
-                  paddingVertical: 8,
-                }}
+                className="text-[#AAA] text-[13px] text-center py-2"
               >
                 No variants available
               </Text>
             ) : (
               <>
                 {renderChips(item, subs, activeSubId, displayMode)}
-                {activeSub && renderPriceActionRow(item, activeSub, cartQty)}
+                {activeSub &&
+                  (() => {
+                    const mode = getDisplayMode(item.baseUom);
+                    if (mode === "COLOR") {
+                      const cd = getActiveColorDetail(
+                        activeSub,
+                        selectedColorIndexMap[item.id] ?? 0,
+                      );
+                      if (cd) {
+                        const patchedSub: SubProduct = {
+                          ...activeSub,
+                          price: cd.normalPrice,
+                          discountPrice: cd.discountPrice,
+                          availableQty: cd.availableQty,
+                          batches: cd.batches,
+                        };
+                        return renderPriceActionRow(
+                          item,
+                          patchedSub,
+                          cartQty,
+                          cd,
+                        );
+                      }
+                    }
+                    return renderPriceActionRow(item, activeSub, cartQty);
+                  })()}
               </>
             )}
           </View>
@@ -1642,35 +2077,28 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+    <View className="flex-1 bg-white">
       <View
-        style={{ position: "absolute", top: 0, left: 0, right: 0, zIndex: 0 }}
+        className="absolute top-0 left-0 right-0 z-0"
       >
         <Image
           source={require("@/assets/images/govi-shop/shop-profile-header.webp")}
-          style={{ width: screenWidth, height: 100 }}
+          className="h-[100px]"
+          style={{ width: screenWidth }}
           resizeMode="cover"
         />
         <View
+          className="absolute -bottom-20 self-center z-10"
           style={{
-            position: "absolute",
-            bottom: -80,
-            alignSelf: "center",
-            zIndex: 10,
             elevation: 10,
           }}
         >
           <View
-            style={{
-              width: 128,
-              height: 128,
-              backgroundColor: "#F3F4F6",
-              overflow: "hidden",
-            }}
+            className="w-32 h-32 bg-[#F3F4F6] overflow-hidden"
           >
             <Image
               source={{ uri: logo }}
-              style={{ width: "100%", height: "100%" }}
+              className="w-full h-full"
               resizeMode="cover"
             />
           </View>
@@ -1685,7 +2113,7 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
       />
 
       <ScrollView
-        style={{ flex: 1, marginTop: 130 }}
+        className="flex-1 mt-[130px]"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: showViewCart ? 100 : 40 }}
         refreshControl={
@@ -1693,170 +2121,105 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
         }
       >
         <View
-          style={{
-            alignItems: "center",
-            paddingBottom: 16,
-            paddingHorizontal: 16,
-            backgroundColor: "#FFFFFF",
-          }}
+          className="items-center pb-4 px-4 bg-white"
         >
           <Text
-            style={{
-              fontSize: 20,
-              fontWeight: "700",
-              color: "#000000",
-              marginBottom: 6,
-            }}
+            className="text-[20px] font-bold text-black mb-1.5 text-center"
           >
             {shopname}
           </Text>
           {adress ? (
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View className="flex-row items-center">
               <Ionicons name="location" size={16} color="#FF0000" />
-              <Text style={{ fontSize: 13, color: "#626786", marginLeft: 4 }}>
+              <Text className="text-[13px] text-[#626786] ml-1">
                 {adress}
               </Text>
             </View>
           ) : null}
+          <Text
+            className=" text-[#626786] mb-1.5 text-center"
+          >{adressLoaction}</Text>
+          
         </View>
 
         <View
-          style={{
-            paddingHorizontal: 16,
-            paddingBottom: 8,
-            backgroundColor: "#FFFFFF",
-          }}
+          className="mx-6 pb-2 bg-white"
         >
           <View
-            style={{
-              backgroundColor: "#E8E9EDCC",
-              borderRadius: 28,
-              paddingHorizontal: 16,
-              paddingVertical: 4,
-              flexDirection: "row",
-              alignItems: "center",
-            }}
+            className="bg-[#E8E9EDCC] rounded-[28px] px-4 py-1 flex-row items-center"
           >
             <TextInput
               value={searchQuery}
               onChangeText={setSearchQuery}
               placeholder={`Search ${selectedFilter === "All" ? "" : selectedFilter + " "}Products...`}
               placeholderTextColor="#373737"
-              style={{
-                flex: 1,
-                marginLeft: 8,
-                fontSize: 15,
-                color: "#1F2937",
-                paddingVertical: 8,
-                height: 48,
-              }}
+              className="flex-1 ml-2 text-base text-gray-800 h-[50px]"
             />
             {searchQuery.length === 0 ? (
-              <Ionicons name="search-outline" size={20} color="#373737" />
+              <Ionicons name="search-outline" size={28} color="#373737" />
             ) : (
               <TouchableOpacity onPress={() => setSearchQuery("")}>
-                <Ionicons name="close-circle" size={20} color="#373737" />
+                <Ionicons name="close-sharp" size={28} color="#373737" />
               </TouchableOpacity>
             )}
           </View>
         </View>
 
-        <View
-          style={{
-            paddingHorizontal: 16,
-            paddingTop: 14,
-            paddingBottom: 8,
-            backgroundColor: "#FFFFFF",
-          }}
-        >
-          {categoriesLoading ? (
-            <ActivityIndicator size="small" color="#FF8000" />
-          ) : (
-            <FlatList
-              data={filterButtons}
-              renderItem={renderFilterButton}
-              keyExtractor={(item) => item.id}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingRight: 20 }}
-            />
-          )}
-        </View>
-
-        <View
-          style={{
-            paddingHorizontal: 16,
-            paddingTop: 8,
-            backgroundColor: "#FFFFFF",
-          }}
-        >
-          {productsLoading ? (
-            <View style={{ paddingVertical: 40, alignItems: "center" }}>
-              <ActivityIndicator size="large" color="#FF8000" />
+        {categoriesLoading || productsLoading ? (
+          <ShopLoading
+            text={t("GoviShop.LoadingProducts") || "Loading products..."}
+          />
+        ) : (
+          <>
+            <View
+              className="mx-6 pt-3.5 pb-2 bg-white"
+            >
+              <FlatList
+                data={filterButtons}
+                renderItem={renderFilterButton}
+                keyExtractor={(item) => item.id}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ paddingRight: 20 }}
+              />
             </View>
-          ) : (
-            <FlatList
-              data={products}
-              renderItem={renderProductItem}
-              keyExtractor={(item, index) =>
-                item?.id?.toString() ?? index.toString()
-              }
-              scrollEnabled={false}
-              ListEmptyComponent={
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    paddingVertical: 40,
-                  }}
-                >
-                  <LottieView
-                    source={require("@/assets/jsons/common/no-data.json")}
-                    autoPlay
-                    loop
-                    style={{ width: 250, height: 250 }}
+
+            <View
+              className="mx-6 pt-2 bg-white"
+            >
+              <FlatList
+                data={products}
+                renderItem={renderProductItem}
+                keyExtractor={(item, index) =>
+                  item?.id?.toString() ?? index.toString()
+                }
+                scrollEnabled={false}
+                ListEmptyComponent={
+                  <NoData
+                    text={
+                      searchQuery
+                        ? `No results for "${searchQuery}"`
+                        : `No ${selectedFilter === "All" ? "" : selectedFilter + " "}products available`
+                    }
                   />
-                  <Text
-                    style={{
-                      color: "#7A9BC9",
-                      fontSize: 15,
-                      marginTop: 16,
-                      textAlign: "center",
-                    }}
-                  >
-                    {searchQuery
-                      ? `No results for "${searchQuery}"`
-                      : `No ${selectedFilter === "All" ? "" : selectedFilter + " "}products available`}
-                  </Text>
-                </View>
-              }
-            />
-          )}
-        </View>
+                }
+              />
+            </View>
+          </>
+        )}
       </ScrollView>
 
       {showViewCart && cartCount > 0 && (
         <View
-          style={{
-            position: "absolute",
-            bottom: 100,
-            left: "25%",
-            right: "25%",
-            zIndex: 999,
-          }}
+          className="absolute bottom-[100px] left-[25%] right-[25%] z-[999]"
         >
           <TouchableOpacity
-            onPress={() => navigation.navigate("CartScreen" as any)}
+            onPress={() =>
+              navigation.navigate("CartScreen" as any, { shopname, branchId })
+            }
             activeOpacity={0.9}
+            className="bg-[#FF8000CC] rounded-[50px] flex-row items-center justify-between py-3.5 px-5"
             style={{
-              backgroundColor: "#FF8000CC",
-              borderRadius: 50,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingVertical: 14,
-              paddingHorizontal: 20,
               shadowColor: "#3F3C57",
               shadowOffset: { width: 0, height: 6 },
               shadowOpacity: 0.4,
@@ -1864,30 +2227,18 @@ const GoviShopProfileScreen: React.FC<GoviShopProfileProps> = ({
               elevation: 10,
             }}
           >
-            <View style={{ flexDirection: "column" }}>
+            <View className="flex-col">
               <Text
-                style={{
-                  color: "white",
-                  fontWeight: "700",
-                  fontSize: 15,
-                  letterSpacing: 0.3,
-                }}
+                className="text-white font-bold text-[15px] tracking-[0.3px]"
               >
                 View Cart
               </Text>
-              <Text style={{ color: "white", fontSize: 12, opacity: 0.85 }}>
+              <Text className="text-white text-[12px] opacity-85">
                 {cartCount} {cartCount === 1 ? "item" : "items"}
               </Text>
             </View>
             <View
-              style={{
-                height: 40,
-                width: 40,
-                backgroundColor: "white",
-                borderRadius: 20,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+              className="h-10 w-10 bg-white rounded-[20px] items-center justify-center"
             >
               <Ionicons name="chevron-forward" size={20} color="#FF8000" />
             </View>

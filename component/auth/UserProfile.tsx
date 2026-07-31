@@ -22,23 +22,35 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTranslation } from "react-i18next";
 import { LanguageContext } from "@/context/LanguageContext";
 import { useFocusEffect } from "@react-navigation/native";
-import { useSelector } from "react-redux";
-import { selectUserPersonal } from "@/store/userSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { selectUserPersonal, selectUserData } from "@/store/userSlice";
 import { setUserPersonalData } from "../../store/userSlice";
-import { useDispatch } from "react-redux";
 import CustomHeader from "../common/CustomHeader";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
-type EngProfileNavigationProp = StackNavigationProp<
+type UserProfileNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "EngProfile"
+  "EngProfile" | "LabororEngProfile"
 >;
 
-interface EngProfileProps {
-  navigation: EngProfileNavigationProp;
+interface UserProfileProps {
+  navigation: UserProfileNavigationProp;
 }
 
-const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
+const UserProfile: React.FC<UserProfileProps> = ({ navigation }) => {
   const { t, i18n } = useTranslation();
+  const dispatch = useDispatch();
+
+  const userData = useSelector(selectUserData);
+  const isLaborer =
+    userData?.role === "Laborer" || userData?.role === "Laboror";
+  const isStaffRole =
+    userData?.role === "Supervisor" ||
+    userData?.role === "Manager" ||
+    isLaborer;
 
   const [isLanguageDropdownOpen, setLanguageDropdownOpen] =
     useState<boolean>(false);
@@ -55,11 +67,14 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
     phoneNumber: string;
     id: number;
     profileImage: string;
+    farmId?: number;
+    farmName?: string;
+    NICnumber?: string;
   } | null>(null);
   const { changeLanguage } = useContext(LanguageContext);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const dispatch = useDispatch();
   const userPersonalData = useSelector(selectUserPersonal);
+
   useFocusEffect(
     React.useCallback(() => {
       setProfile({
@@ -68,11 +83,10 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
         phoneNumber: userPersonalData?.phoneNumber || "",
         id: userPersonalData?.id || 0,
         profileImage: userPersonalData?.profileImage || "",
+        farmId: userPersonalData?.farmId || 0,
+        farmName: userPersonalData?.farmName || "",
+        NICnumber: userPersonalData?.NICnumber || "",
       });
-    }, [userPersonalData]),
-  );
-  useFocusEffect(
-    React.useCallback(() => {
       if (i18n.language === "en") {
         setSelectedLanguage("ENGLISH");
       } else if (i18n.language === "si") {
@@ -80,7 +94,10 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
       } else if (i18n.language === "ta") {
         setSelectedLanguage("TAMIL");
       }
-    }, [i18n.language]),
+      return () => {
+        setModalVisible(false);
+      };
+    }, [userPersonalData, i18n.language]),
   );
 
   const complaintOptions = [
@@ -100,7 +117,11 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
 
   useEffect(() => {
     const handleBackPress = () => {
-      navigation.navigate("Main", { screen: "Dashboard" });
+      if (isLaborer) {
+        navigation.navigate("Main" as any);
+      } else {
+        navigation.navigate("Main", { screen: "Dashboard" });
+      }
       return true;
     };
 
@@ -112,15 +133,17 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
     return () => {
       backHandler.remove();
     };
-  }, []);
+  }, [isLaborer]);
 
   const handleCall = () => {
     const phoneNumber = "+94770111999";
     const url = `tel:${phoneNumber}`;
     Linking.openURL(url).catch((err) =>
-      Alert.alert(t("Main.error"), t("Profile.UnabletoOpen"), [
-        { text: t("PublicForum.OK") },
-      ]),
+      Alert.alert(
+        t("Main.Error"),
+        t("Profile.UnableToOpenTheDialerPleaseTryAgain"),
+        [{ text: t("Main.OK") }],
+      ),
     );
   };
 
@@ -138,7 +161,16 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
   };
 
   const handleEditClick = () => {
-    navigation.navigate("Main", { screen: "EngEditProfile" });
+    const role = userData?.role;
+    if (role === "Supervisor") {
+      navigation.navigate("SupervisorProfileView" as any);
+    } else if (role === "Manager") {
+      navigation.navigate("ManagerProfileView" as any);
+    } else if (role === "Laborer" || role === "Laboror") {
+     navigation.navigate("Main", { screen: "EditProfile" });
+    } else {
+      navigation.navigate("Main", { screen: "EditProfile" });
+    }
   };
 
   const HanldeAsynStorage = async (lng: string) => {
@@ -176,33 +208,56 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
   if (isLoading) {
     return (
       <View className="flex-1 bg-white justify-center items-center">
-        <Text className="text-lg">{t("CropCalender.Loading")}</Text>
+        <Text className="text-lg">
+          {isLaborer ? t("Loading...") : t("Main.Loading...")}
+        </Text>
       </View>
     );
   }
 
   return (
     <View className="flex-1 bg-white ">
-      <CustomHeader
-        title=""
-        showBackButton={true}
-        navigation={navigation}
-        onBackPress={() => navigation.navigate("Main", { screen: "Dashboard" })}
-      />
-      <View className="flex-1 bg-white px-6">
+      {isLaborer ? (
+        <View className="absolute pb-5 mt-2 pl-4 z-50">
+          <AntDesign
+            name="left"
+            size={24}
+            color="#000000"
+            onPress={() => navigation.navigate("Main" as any)}
+            style={{
+              paddingHorizontal: wp(3),
+              paddingVertical: hp(1.5),
+              backgroundColor: "#F6F6F680",
+              borderRadius: 50,
+            }}
+          />
+        </View>
+      ) : (
+        <CustomHeader
+          title=""
+          showBackButton={true}
+          navigation={navigation}
+          onBackPress={() =>
+            navigation.navigate("Main", { screen: "Dashboard" })
+          }
+        />
+      )}
+      <View className={`flex-1 bg-white px-6`}>
         <ScrollView
-          className="py-2"
+          className={isLaborer ? "p-2" : "py-2"}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 40 }}
+          contentContainerStyle={isLaborer ? undefined : { paddingBottom: 40 }}
         >
-          <View className="flex-row items-center mb-4 ">
+          <View
+            className={`flex-row items-center mb-4 ${isLaborer ? "mt-10" : ""}`}
+          >
             <Image
               source={
                 profile?.profileImage
                   ? { uri: profile.profileImage }
                   : require("../../assets/images/auth/profile.webp")
               }
-              className="w-12 h-12 rounded-full mr-3"
+              className={`${isLaborer ? "w-12 h-12" : "w-16 h-16"} rounded-full mr-3`}
             />
             <View className="flex-1">
               {profile ? (
@@ -211,7 +266,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
                 </Text>
               ) : (
                 <Text className="text-lg mb-1">
-                  {t("CropCalender.Loading")}
+                  {isLaborer ? "Loading..." : t("Main.Loading...")}
                 </Text>
               )}
               {profile && (
@@ -220,12 +275,14 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
                 </Text>
               )}
             </View>
-            <TouchableOpacity onPress={handleEditClick}>
-              <Image
-                source={require("../../assets/images/common/square-pen-solid.webp")}
-                className="w-7 h-7 "
-              />
-            </TouchableOpacity>
+            {!isLaborer && (
+              <TouchableOpacity onPress={handleEditClick}>
+                <Image
+                  source={require("../../assets/images/common/square-pen-solid.webp")}
+                  className="w-7 h-7"
+                />
+              </TouchableOpacity>
+            )}
           </View>
 
           <View className="h-0.5 bg-[#D2D2D2] my-2" />
@@ -233,15 +290,33 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
             onPress={() => setLanguageDropdownOpen(!isLanguageDropdownOpen)}
             className="flex-row items-center py-3"
           >
-            <Ionicons name="globe-outline" size={20} color="#434343" />
-            <Text className="flex-1 text-lg ml-2 text-[#434343]">
+            <Ionicons
+              name="globe-outline"
+              size={20}
+              color={isLaborer ? "black" : "#434343"}
+            />
+            <Text
+              className={`flex-1 text-lg ml-2 ${isLaborer ? "" : "text-[#434343]"}`}
+            >
               {t("Profile.LanguageSettings")}
             </Text>
-            <AntDesign
-              name={isLanguageDropdownOpen ? "caret-up" : "caret-down"}
-              size={20}
-              color="#434343"
-            />
+            {isLaborer ? (
+              <MaterialIcons
+                name={
+                  isLanguageDropdownOpen ? "arrow-drop-up" : "arrow-drop-down"
+                }
+                size={24}
+                color="black"
+              />
+            ) : (
+              <MaterialIcons
+                name={
+                  isLanguageDropdownOpen ? "arrow-drop-up" : "arrow-drop-down"
+                }
+                size={24}
+                color="#666"
+              />
+            )}
           </TouchableOpacity>
 
           {isLanguageDropdownOpen && (
@@ -261,7 +336,9 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
                       className={`text-base ${
                         selectedLanguage === language
                           ? "text-black"
-                          : "text-[#434343]"
+                          : isLaborer
+                            ? "text-gray-700"
+                            : "text-[#434343]"
                       }`}
                     >
                       {displayLanguage}
@@ -279,15 +356,25 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
 
           <View className="h-0.5 bg-[#D2D2D2] my-4" />
 
-          <TouchableOpacity
-            className="flex-row items-center py-3"
-            onPress={() => navigation.navigate("Main", { screen: "EngQRcode" })}
-          >
-            <Ionicons name="qr-code" size={20} color="#434343" />
-            <Text className="flex-1 text-lg ml-2 text-[#434343]">
-              {t("Profile.ViewQR")}
-            </Text>
-          </TouchableOpacity>
+       <TouchableOpacity
+  className="flex-row items-center py-3"
+  onPress={() =>
+    isStaffRole
+      ? navigation.navigate("OwnerQRcode")
+      : navigation.navigate("Main", { screen: "QRcode" })
+  }
+>
+  <Ionicons
+    name="qr-code"
+    size={20}
+    color={isLaborer ? "black" : "#434343"}
+  />
+  <Text
+    className={`flex-1 text-lg ml-2 ${isLaborer ? "" : "text-[#434343]"}`}
+  >
+    {isStaffRole ? t("Profile.ViewQRCode") : t("Profile.ViewMyQR")}
+  </Text>
+</TouchableOpacity>
 
           <View className="h-0.5 bg-[#D2D2D2] my-4" />
 
@@ -295,56 +382,70 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
             className="flex-row items-center py-3"
             onPress={() => setModalVisible(true)}
           >
-            <Ionicons name="person" size={20} color="#434343" />
-            <Text className="flex-1 text-lg ml-2 text-[#434343]">
+            <Ionicons
+              name="person"
+              size={20}
+              color={isLaborer ? "black" : "#434343"}
+            />
+            <Text
+              className={`flex-1 text-lg ml-2 ${isLaborer ? "" : "text-[#434343]"}`}
+            >
               {t("Profile.GoViCareHelp")}
             </Text>
           </TouchableOpacity>
 
-          <View className="h-0.5 bg-[#D2D2D2] my-4" />
+          {!isLaborer && (
+            <>
+              <View className="h-0.5 bg-[#D2D2D2] my-4" />
 
-          <TouchableOpacity
-            onPress={() => setComplaintDropdownOpen(!isComplaintDropdownOpen)}
-            className="flex-row items-center py-3"
-          >
-            <AntDesign name="warning" size={20} color="#434343" />
-            <Text className="flex-1 text-lg ml-2 text-[#434343]">
-              {t("Profile.Complaints")}
-            </Text>
-            <AntDesign
-              name={isComplaintDropdownOpen ? "caret-up" : "caret-down"}
-              size={20}
-              color="#434343"
-            />
-          </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() =>
+                  setComplaintDropdownOpen(!isComplaintDropdownOpen)
+                }
+                className="flex-row items-center py-3"
+              >
+                <AntDesign name="warning" size={20} color="#434343" />
+                <Text className="flex-1 text-lg ml-2 text-[#434343]">
+                  {t("Profile.Complaints")}
+                </Text>
+                <MaterialIcons
+                  name={
+                    isLanguageDropdownOpen ? "arrow-drop-up" : "arrow-drop-down"
+                  }
+                  size={24}
+                  color="#666"
+                />
+              </TouchableOpacity>
 
-          {isComplaintDropdownOpen && (
-            <View className="pl-8">
-              {complaintOptions.map((complaint) => (
-                <TouchableOpacity
-                  key={complaint}
-                  onPress={() => handleComplaintSelect(complaint)}
-                  className={`flex-row items-center py-2 px-4 rounded-lg my-1 ${
-                    selectedComplaint === complaint ? "bg-green-200" : ""
-                  }`}
-                >
-                  <Text
-                    className={`text-base ${
-                      selectedComplaint === complaint
-                        ? "text-black"
-                        : "text-[#434343]"
-                    }`}
-                  >
-                    {complaint}
-                  </Text>
-                  {selectedComplaint === complaint && (
-                    <View className="absolute right-4">
-                      <Ionicons name="checkmark" size={20} color="black" />
-                    </View>
-                  )}
-                </TouchableOpacity>
-              ))}
-            </View>
+              {isComplaintDropdownOpen && (
+                <View className="pl-8">
+                  {complaintOptions.map((complaint) => (
+                    <TouchableOpacity
+                      key={complaint}
+                      onPress={() => handleComplaintSelect(complaint)}
+                      className={`flex-row items-center py-2 px-4 rounded-lg my-1 ${
+                        selectedComplaint === complaint ? "bg-green-200" : ""
+                      }`}
+                    >
+                      <Text
+                        className={`text-base ${
+                          selectedComplaint === complaint
+                            ? "text-black"
+                            : "text-[#434343]"
+                        }`}
+                      >
+                        {complaint}
+                      </Text>
+                      {selectedComplaint === complaint && (
+                        <View className="absolute right-4">
+                          <Ionicons name="checkmark" size={20} color="black" />
+                        </View>
+                      )}
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
+            </>
           )}
 
           <View className="h-0.5 bg-[#D2D2D2] my-4" />
@@ -352,8 +453,14 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
             className="flex-row items-center py-3"
             onPress={() => navigation.navigate("PrivacyPolicy")}
           >
-            <MaterialIcons name="privacy-tip" size={20} color="#434343" />
-            <Text className="flex-1 text-lg ml-2 text-[#434343]">
+            <MaterialIcons
+              name="privacy-tip"
+              size={20}
+              color={isLaborer ? "black" : "#434343"}
+            />
+            <Text
+              className={`flex-1 text-lg ml-2 ${isLaborer ? "" : "text-[#434343]"}`}
+            >
               {t("Profile.PrivacyPolicy")}
             </Text>
           </TouchableOpacity>
@@ -367,9 +474,11 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
             <MaterialCommunityIcons
               name="text-box-check-outline"
               size={20}
-              color="#434343"
+              color={isLaborer ? "black" : "#434343"}
             />
-            <Text className="flex-1 text-lg ml-2 text-[#434343]">
+            <Text
+              className={`flex-1 text-lg ml-2 ${isLaborer ? "" : "text-[#434343]"}`}
+            >
               {t("Profile.Terms&Conditions")}
             </Text>
           </TouchableOpacity>
@@ -393,7 +502,7 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
             onRequestClose={() => setModalVisible(false)}
           >
             <View className="flex-1 justify-center items-center bg-black/50 bg-opacity-50">
-              <View className="bg-white p-6 rounded-2xl shadow-lg w-80">
+              <View className="bg-white p-6 rounded-2xl shadow-lg w-11/12">
                 <View className="flex-row justify-center mb-4">
                   <View className=" rounded-full p-4">
                     <Image
@@ -406,18 +515,20 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
                   {t("Profile.NeedHelp")}?
                 </Text>
                 <Text className="text-base text-center mb-8">
-                  {t("Profile.NeedGoViCareHelp")}
+                  {t(
+                    "Profile.NeedGoViCareHelpTapTheCallButtonForInstantSupport",
+                  )}
                 </Text>
                 <View className="flex-row justify-around">
                   <TouchableOpacity
                     onPress={() => setModalVisible(false)}
-                    className="bg-gray-300 p-3 rounded-full flex-1 mx-1 px-2"
+                    className="bg-gray-300 p-3 rounded-full flex-1 mx-1 px-2 items-center justify-center"
                   >
-                    <Text className="text-center">{t("Profile.Cancel")}</Text>
+                    <Text className="text-center">{t("Main.Cancel")}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={handleCall}
-                    className="bg-[#00A896] p-3 rounded-full flex-1 mx-1 px-2"
+                    className="bg-[#00A896] p-3 rounded-full flex-1 mx-1 px-2 items-center justify-center"
                   >
                     <Text className="text-center text-white">
                       {t("Profile.Call")}
@@ -433,4 +544,4 @@ const EngProfile: React.FC<EngProfileProps> = ({ navigation }) => {
   );
 };
 
-export default EngProfile;
+export default UserProfile;

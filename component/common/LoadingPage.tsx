@@ -37,7 +37,7 @@ const LoadingPage: React.FC<LoadingPageProps> = ({
           source={require("@/assets/jsons/common/loader.json")}
           autoPlay
           loop
-          style={{ width: 300, height: 300 }}
+          style={{ width: 150, height: 150 }}
         />
       </View>
      

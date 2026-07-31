@@ -84,24 +84,30 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
   const [batchModalVisible, setBatchModalVisible] = useState(false);
   const [unitModalVisible, setUnitModalVisible] = useState(false);
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const route = useRoute();
   const { farmId, farmName } = route.params as RouteParams;
 
-  const categoryItems = [
-    { label: t("CurrentAssets.Agro chemicals"), value: "Agro Chemicals" },
-    { label: t("CurrentAssets.Fertilizers"), value: "Fertilizers" },
-    {
-      label: t("CurrentAssets.Seeds and Seedlings"),
-      value: "Seeds and Seedlings",
-    },
-    {
-      label: t("CurrentAssets.Livestock for sale"),
-      value: "Livestock for Sale",
-    },
-    { label: t("CurrentAssets.Animal feed"), value: "Animal Feed" },
-    { label: t("CurrentAssets.Other consumables"), value: "Other Consumables" },
-  ];
+  const categoryData = require("@/assets/jsons/current-asset/categories.json");
+  const assetTranslationData = require("@/assets/jsons/current-asset/assets-translations.json");
+
+  const getCategoryLabel = (val: string) => {
+    const item = categoryData.find((c: any) => c.value === val);
+    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
+    return item ? (item.translations[lang] || item.translations["en"]) : val;
+  };
+
+  const getAssetLabel = (val: string) => {
+    if (val === "Other") return t("CurrentAssets.Other");
+    const item = assetTranslationData.find((a: any) => a.value === val);
+    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
+    return item ? (item.translations[lang] || item.translations["en"]) : val;
+  };
+
+  const categoryItems = categoryData.map((item: any) => ({
+    label: getCategoryLabel(item.value),
+    value: item.value,
+  }));
 
   const unitvol = [
     { value: "ml", label: t("CurrentAssets.ml") },
@@ -111,7 +117,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
 
   const uniqueAssetNames = [...new Set(assets.map((a) => a.asset))].map(
     (name) => ({
-      label: name,
+      label: getAssetLabel(name),
       value: name,
     }),
   );
@@ -161,9 +167,9 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         Alert.alert(
-          t("Farms.Error"),
-          t("Farms.No authentication token found"),
-          [{ text: t("Farms.okButton") }],
+          t("Main.Error"),
+          t("Farms.NoAuthenticationTokenFound"),
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -180,9 +186,9 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
       const fetchedAssets = response.data.assets;
       if (!fetchedAssets || fetchedAssets.length === 0) {
         Alert.alert(
-          t("Farms.No Assets Found"),
+          t("Farms.NoAssetsFound"),
           t("Farms.There are no assets available for the selected category."),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
         setAssets([]);
       } else {
@@ -191,15 +197,15 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
         Alert.alert(
-          t("Farms.Error"),
+          t("Main.Error"),
           t("Farms.Farm assets not found. Please check the farm ID."),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
       } else {
         Alert.alert(
-          t("Farms.Error"),
+          t("Main.Error"),
           t("Farms.Failed to fetch assets. Please try again."),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
       }
       setAssets([]);
@@ -302,22 +308,22 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
     const unitPriceValue = parseFloat(unitPrice);
 
     if (!numberOfUnits || !assetId || !category) {
-      Alert.alert(t("PublicForum.sorry"), t("PublicForum.fillAllFields"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("PublicForum.sorry"), t("PublicForum.PleaseCompleteAllRequiredFieldsBeforeProceeding"), [
+        { text: t("Main.OK") },
       ]);
       return;
     }
     if (isNaN(numUnits) || numUnits <= 0) {
-      Alert.alert(t("Farms.Error"), "Please enter a valid number of units", [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Error"), "Please enter a valid number of units", [
+        { text: t("Main.OK") },
       ]);
       return;
     }
     if (numUnits > availableUnits) {
       Alert.alert(
         t("CurrentAssets.sorry"),
-        t("CurrentAssets.YouCannotRemove"),
-        [{ text: t("Farms.okButton") }],
+        t("CurrentAssets.YouCannotRemoveMoreUnitsThanAvailable"),
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -336,8 +342,8 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Farms.No authentication token found"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"), [
+          { text: t("Main.OK") },
         ]);
         setIsLoading(false);
         return;
@@ -359,30 +365,30 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
 
       if (response.status === 200 || response.status === 204) {
         Alert.alert(
-          t("CurrentAssets.Success"),
-          t("CurrentAssets.RemoveSuccess"),
+          t("Main.Success"),
+          t("CurrentAssets.AssetRemovedSuccessfully"),
           [
             {
-              text: t("CropCalender.OK"),
+              text: t("Main.OK"),
               onPress: () =>
                 navigation.navigate("Main", {
-                  screen: "FarmCurrectAssets",
+                  screen: "CurrentAssert",
                   params: { farmId, farmName },
                 }),
             },
           ],
         );
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
     } catch (error) {
       let errorMessage = "An unexpected error occurred. Please try again.";
       if (axios.isAxiosError(error))
         errorMessage = error.response?.data?.message || errorMessage;
-      Alert.alert(t("Main.error"), errorMessage, [
-        { text: t("PublicForum.OK") },
+      Alert.alert(t("Main.Error"), errorMessage, [
+        { text: t("Main.OK") },
       ]);
     } finally {
       setIsLoading(false);
@@ -403,17 +409,17 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
           navigation={navigation}
           onBackPress={() =>
             navigation.navigate("Main", {
-              screen: "FarmCurrectAssets",
+              screen: "CurrentAssert",
               params: { farmId, farmName },
             })
           }
         />
 
-        <View className="space-y-4 p-8 -mt-8">
+        <View className="gap-4 p-8 -mt-8">
           {/* Category */}
           <View>
             <Text className="text-gray-600 mb-2">
-              {t("CurrentAssets.category")}
+              {t("CurrentAssets.Category")}
             </Text>
             <TouchableOpacity
               onPress={() => {
@@ -429,7 +435,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
               >
                 {category
                   ? getLabel(categoryItems, category)
-                  : t("CurrentAssets.selectcategory")}
+                  : t("CurrentAssets.SelectCategory")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -437,7 +443,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
           {/* Asset */}
           <View>
             <Text className="text-gray-600 mb-2">
-              {t("CurrentAssets.asset")}
+              {t("CurrentAssets.Asset")}
             </Text>
             <TouchableOpacity
               onPress={() => {
@@ -452,16 +458,16 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
                   asset ? "text-gray-800 text-sm" : "text-gray-400 text-sm"
                 }
               >
-                {asset || t("CurrentAssets.selectasset")}
+                {asset ? getAssetLabel(asset) : t("CurrentAssets.SelectAsset")}
               </Text>
             </TouchableOpacity>
           </View>
 
           {/* Brand */}
-          {category !== "Livestock for Sale" && (
+          {category !== "Livestock for sale" && (
             <View>
               <Text className="text-gray-600 mb-2">
-                {t("CurrentAssets.brand")}
+                {t("CurrentAssets.Brand")}
               </Text>
               {availableBrands.length > 1 ? (
                 <TouchableOpacity
@@ -476,12 +482,12 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
                       brand ? "text-gray-800 text-sm" : "text-gray-400 text-sm"
                     }
                   >
-                    {brand || t("CurrentAssets.selectbrand")}
+                    {brand || t("CurrentAssets.SelectBrand")}
                   </Text>
                 </TouchableOpacity>
               ) : (
                 <TextInput
-                  placeholder={t("CurrentAssets.brand")}
+                  placeholder={t("CurrentAssets.Brand")}
                   value={brand}
                   onChangeText={setBrand}
                   className="bg-gray-200 p-2 pl-4 mt-2 rounded-3xl h-[50px]"
@@ -494,7 +500,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
           {/* Batch */}
           <View>
             <Text className="text-gray-600 mb-2">
-              {t("CurrentAssets.batchnumber")}
+              {t("CurrentAssets.BatchNumber")}
             </Text>
             {availableBatches.length > 1 ? (
               <TouchableOpacity
@@ -509,12 +515,12 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
                     batchNum ? "text-gray-800 text-sm" : "text-gray-400 text-sm"
                   }
                 >
-                  {batchNum || t("CurrentAssets.selectbatch")}
+                  {batchNum || t("CurrentAssets.SelectBatchNumber")}
                 </Text>
               </TouchableOpacity>
             ) : (
               <TextInput
-                placeholder={t("CurrentAssets.batchnumber")}
+                placeholder={t("CurrentAssets.BatchNumber")}
                 value={batchNum}
                 onChangeText={setBatchNum}
                 className="bg-gray-200 p-2 pl-4 rounded-3xl h-[50px]"
@@ -526,11 +532,11 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
           {/* Unit Volume */}
           <View>
             <Text className="text-gray-600 mb-2">
-              {t("CurrentAssets.unitvolume_weight")}
+              {t("CurrentAssets.UnitVolumeWeight")}
             </Text>
             <View className="flex-row items-center justify-between">
               <TextInput
-                placeholder={t("CurrentAssets.unitvolume_weight")}
+                placeholder={t("CurrentAssets.UnitVolumeWeight")}
                 value={volume}
                 editable={false}
                 className="flex-1 mr-2 py-2 pl-4 p-3 bg-gray-200 rounded-3xl h-[50px]"
@@ -547,7 +553,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
                     unit ? "text-gray-800 text-sm" : "text-gray-400 text-sm"
                   }
                 >
-                  {unit ? getLabel(unitvol, unit) : t("CurrentAssets.unit")}
+                  {unit ? getLabel(unitvol, unit) : t("CurrentAssets.Unit")}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -560,15 +566,15 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
               {availableUnits})
             </Text>
             <TextInput
-              placeholder={t("CurrentAssets.numberofunits")}
+              placeholder={t("CurrentAssets.NumberOfUnits")}
               value={numberOfUnits}
               onChangeText={(value) => {
                 const cleaned = value.replace(/[-.*#]/g, "");
                 if (parseFloat(cleaned) > availableUnits) {
                   Alert.alert(
                     t("CurrentAssets.sorry"),
-                    t("CurrentAssets.YouCannotRemove"),
-                    [{ text: t("PublicForum.OK") }],
+                    t("CurrentAssets.YouCannotRemoveMoreUnitsThanAvailable"),
+                    [{ text: t("Main.OK") }],
                   );
                 } else {
                   setNumberOfUnits(cleaned);
@@ -582,10 +588,10 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
           {/* Unit Price */}
           <View>
             <Text className="text-gray-600 mb-2">
-              {t("CurrentAssets.unitprice")}
+              {t("CurrentAssets.UnitPrice")}
             </Text>
             <TextInput
-              placeholder={t("CurrentAssets.unitprice")}
+              placeholder={t("CurrentAssets.UnitPrice")}
               value={unitPrice}
               onChangeText={setUnitPrice}
               keyboardType="numeric"
@@ -597,10 +603,10 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
           {/* Total Price */}
           <View>
             <Text className="text-gray-600 mb-2">
-              {t("CurrentAssets.totalprice")}
+              {t("CurrentAssets.TotalPrice")}
             </Text>
             <TextInput
-              placeholder={t("CurrentAssets.totalprice")}
+              placeholder={t("CurrentAssets.TotalPrice")}
               value={totalPrice}
               editable={false}
               className="bg-gray-200 p-2 rounded-3xl pl-4 h-[50px]"
@@ -617,7 +623,7 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
               <ActivityIndicator size="small" color="#fff" />
             ) : (
               <Text className="text-white text-center">
-                {t("CurrentAssets.removeAsset")}
+                {t("CurrentAssets.RemoveAsset")}
               </Text>
             )}
           </TouchableOpacity>
@@ -627,13 +633,13 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
       <GlobalSearchModal
         visible={categoryModalVisible}
         onClose={() => setCategoryModalVisible(false)}
-        title={t("CurrentAssets.category")}
+        title={t("CurrentAssets.Category")}
         data={categoryItems}
         selectedItems={category ? [category] : []}
         onSelect={(selected) => {
           if (selected.length > 0) setCategory(selected[0]);
         }}
-        searchPlaceholder={t("CurrentAssets.selectcategory")}
+        searchPlaceholder={t("CurrentAssets.SelectCategory")}
         multiSelect={false}
         showSearch={false}
       />
@@ -641,13 +647,13 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
       <GlobalSearchModal
         visible={assetModalVisible}
         onClose={() => setAssetModalVisible(false)}
-        title={t("CurrentAssets.asset")}
+        title={t("CurrentAssets.Asset")}
         data={uniqueAssetNames}
         selectedItems={asset ? [asset] : []}
         onSelect={(selected) => {
           if (selected.length > 0) handleAssetSelection(selected[0]);
         }}
-        searchPlaceholder={t("CurrentAssets.selectasset")}
+        searchPlaceholder={t("CurrentAssets.SelectAsset")}
         multiSelect={false}
         showSearch={true}
       />
@@ -655,13 +661,13 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
       <GlobalSearchModal
         visible={brandModalVisible}
         onClose={() => setBrandModalVisible(false)}
-        title={t("CurrentAssets.brand")}
+        title={t("CurrentAssets.Brand")}
         data={brandItems}
         selectedItems={brand ? [brand] : []}
         onSelect={(selected) => {
           if (selected.length > 0) handleBrandSelection(selected[0]);
         }}
-        searchPlaceholder={t("CurrentAssets.selectbrand")}
+        searchPlaceholder={t("CurrentAssets.SelectBrand")}
         multiSelect={false}
         showSearch={true}
       />
@@ -669,13 +675,13 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
       <GlobalSearchModal
         visible={batchModalVisible}
         onClose={() => setBatchModalVisible(false)}
-        title={t("CurrentAssets.batchnumber")}
+        title={t("CurrentAssets.BatchNumber")}
         data={batchItems}
         selectedItems={batchNum ? [batchNum] : []}
         onSelect={(selected) => {
           if (selected.length > 0) handleBatchSelection(selected[0]);
         }}
-        searchPlaceholder={t("CurrentAssets.selectbatch")}
+        searchPlaceholder={t("CurrentAssets.SelectBatchNumber")}
         multiSelect={false}
         showSearch={true}
       />
@@ -683,13 +689,13 @@ const FarmCurrectAssetRemove: React.FC<FarmCurrectAssetRemoveProps> = ({
       <GlobalSearchModal
         visible={unitModalVisible}
         onClose={() => setUnitModalVisible(false)}
-        title={t("CurrentAssets.unit")}
+        title={t("CurrentAssets.Unit")}
         data={unitvol}
         selectedItems={unit ? [unit] : []}
         onSelect={(selected) => {
           if (selected.length > 0) setUnit(selected[0]);
         }}
-        searchPlaceholder={t("CurrentAssets.unit")}
+        searchPlaceholder={t("CurrentAssets.Unit")}
         multiSelect={false}
         showSearch={false}
       />

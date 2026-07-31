@@ -6,7 +6,6 @@ import {
   ScrollView,
   TextInput,
   Platform,
-  StatusBar,
   KeyboardAvoidingView,
   Image,
   Modal,
@@ -22,7 +21,7 @@ import {
 } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTranslation } from "react-i18next";
 import {
   widthPercentageToDP as wp,
@@ -33,6 +32,7 @@ import { environment } from "@/environment/environment";
 import axios from "axios";
 import LottieView from "lottie-react-native";
 import CustomHeader from "@/component/common/CustomHeader";
+import NoData from "@/component/common/NoData";
 
 type CropEarnCertificateNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -81,7 +81,7 @@ const CropEarnCertificate: React.FC = () => {
     const months = parseInt(timeline);
     return months === 1
       ? t("EarnCertificate.month")
-      : t("EarnCertificate.months");
+      : t("EarnCertificate.Months");
   };
 
   const formatPrice = (price: string) => {
@@ -106,8 +106,8 @@ const CropEarnCertificate: React.FC = () => {
       if (!token) {
         Alert.alert(
           t("Farms.Error"),
-          t("Farms.No authentication token found"),
-          [{ text: t("PublicForum.OK") }],
+          t("Farms.NoAuthenticationTokenFound"),
+          [{ text: t("Main.OK") }],
         );
         return;
       }
@@ -131,15 +131,15 @@ const CropEarnCertificate: React.FC = () => {
 
       if (err.response?.status === 404) {
         Alert.alert(
-          t("Main.error"),
+          t("Main.Error"),
           t(
-            "EarnCertificate.No certificates available for crops at the moment",
+            "EarnCertificate.NoCertificatesAvailableForCropsAtTheMoment",
           ),
-          [{ text: t("PublicForum.OK") }],
+          [{ text: t("Main.OK") }],
         );
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
       }
     } finally {
@@ -155,13 +155,29 @@ const CropEarnCertificate: React.FC = () => {
   const handleContinue = () => {
     setModalVisible(false);
 
-    navigation.navigate("CropPaymentScreen", {
-      certificateName: selectedCertificate?.srtName || "",
-      certificatePrice: selectedCertificate?.price || "",
-      certificateValidity: selectedCertificate?.timeLine || "",
+    const priceNum = parseFloat(selectedCertificate?.price || "0");
+    const commissionNum = parseFloat(selectedCertificate?.commission || "0");
+    const percent = parseFloat(commissionNum.toFixed(2));
+    const calculatedFee = parseFloat((priceNum * (percent / 100)).toFixed(2));
+    const calculatedTotal = priceNum + calculatedFee;
+
+    const match = String(selectedCertificate?.timeLine || "18").match(/(\d+)/);
+    const validity = match ? parseInt(match[1]) : 18;
+
+    navigation.navigate("PaymentSummary", {
+      subTotal: priceNum,
+      processingFee: calculatedFee,
+      processingFeePercentage: percent,
+      fullTotal: calculatedTotal,
+      title: t("Payment.PaymentSummary", "Payment Summary"),
+      isCertificatePayment: true,
+      certificateType: "Crop",
       certificateId: selectedCertificate?.id || 0,
       cropId: cropId,
-      farmId: farmId,
+      farmId: Number(farmId),
+      farmName: farmName,
+      certificateName: selectedCertificate?.srtName || "",
+      validityMonths: validity,
     });
   };
 
@@ -243,10 +259,10 @@ const CropEarnCertificate: React.FC = () => {
       className="bg-white"
       style={{ flex: 1 }}
     >
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      
 
       <CustomHeader
-        title={t("EarnCertificate.Earn a Certificate")}
+        title={t("EarnCertificate.EarnACertificate")}
         navigation={navigation}
         onBackPress={() =>
           navigation.navigate("Main", {
@@ -263,7 +279,7 @@ const CropEarnCertificate: React.FC = () => {
         <View className="bg-[#F6F6F6CC] rounded-3xl h-[50px] flex-row items-center px-4">
           <TextInput
             className="flex-1 text-lg text-gray-700"
-            placeholder={t("EarnCertificate.Search")}
+            placeholder={t("Main.Search...")}
             placeholderTextColor="#9CA3AF"
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -277,7 +293,7 @@ const CropEarnCertificate: React.FC = () => {
           <ActivityIndicator size="large" color="#A07700" />
           <Text className="text-gray-600 mt-4">
             {" "}
-            {t("EarnCertificate.Loading certificates")}
+            {t("EarnCertificate.LoadingCertificates")}
           </Text>
         </View>
       ) : (
@@ -288,7 +304,7 @@ const CropEarnCertificate: React.FC = () => {
           {filteredCertificates.length > 0 && (
             <Text className="text-center text-gray-600 text-sm mb-3 mr-3 ml-3">
               {t(
-                "EarnCertificate.Just click on the certificate you want to apply for",
+                "EarnCertificate.JustClickOnTheCertificateYouWantToApplyFor",
               )}
             </Text>
           )}
@@ -325,7 +341,7 @@ const CropEarnCertificate: React.FC = () => {
                     {t("EarnCertificate.Rs")}.{formatPrice(certificate.price)}
                   </Text>
                   <Text className="text-[#6B6B6B] text-sm">
-                    {t("EarnCertificate.Valid for")} {certificate.timeLine}{" "}
+                    {t("Farms.ValidityPeriod")} : {certificate.timeLine}{" "}
                     {getMonthLabel(certificate.timeLine)}
                   </Text>
                 </View>
@@ -334,33 +350,13 @@ const CropEarnCertificate: React.FC = () => {
               </TouchableOpacity>
             ))
           ) : (
-            <View
-              className="justify-center items-center py-2"
-              style={{ height: hp(50) }}
-            >
-              <View
-                style={{
-                  height: hp(30),
-                  width: wp(50),
-                  marginBottom: hp(-6),
-                }}
-              >
-                <LottieView
-                  source={require("@/assets/jsons/common/no-data.json")}
-                  style={{ width: "100%", height: "100%" }}
-                  autoPlay
-                  loop
-                />
-              </View>
-              <Text
-                className="text-gray-500 text-center mt-2"
-                style={{ fontSize: wp(4) }}
-              >
-                {searchQuery
-                  ? "No certificates found matching your search"
-                  : "No certificates available"}
-              </Text>
-            </View>
+              <NoData
+                text={
+                  searchQuery
+                    ? "No certificates found matching your search"
+                    : "No certificates available"
+                }
+              />
           )}
 
           {filteredCertificates.length > 0 && (
@@ -386,7 +382,7 @@ const CropEarnCertificate: React.FC = () => {
                       : { fontSize: 18 },
                 ]}
               >
-                {t("EarnCertificate.Proceed without a certificate")}
+                {t("EarnCertificate.ProceedWithoutACertificate")}
               </Text>
             </TouchableOpacity>
           )}
@@ -423,12 +419,12 @@ const CropEarnCertificate: React.FC = () => {
               </Text>
             </Text>
             <Text className="text-center text-gray-800 mb-2">
-              {t("EarnCertificate.costs")}{" "}
+              {t("EarnCertificate.Costs")}{" "}
               <Text className="text-[#A07700] font-semibold">
                 {t("EarnCertificate.Rs")}.
                 {formatPrice(selectedCertificate?.price || "0")}
               </Text>{" "}
-              {t("EarnCertificate.and is valid for")}
+              {t("EarnCertificate.AndIsValidFor")}
             </Text>
             <Text
               className="text-center text-gray-800"
@@ -438,7 +434,7 @@ const CropEarnCertificate: React.FC = () => {
                 {selectedCertificate?.timeLine}{" "}
                 {getMonthLabel(selectedCertificate?.timeLine || "0")}
               </Text>
-              . {t("EarnCertificate.Do you want to apply for it")}
+              . {t("EarnCertificate.DoYouWantToApplyForIt")}
             </Text>
 
             <View className="flex-row justify-between gap-3">
@@ -457,7 +453,7 @@ const CropEarnCertificate: React.FC = () => {
                         : { fontSize: 16 },
                   ]}
                 >
-                  {t("EarnCertificate.Go Back")}
+                  {t("Main.GoBack")}
                 </Text>
               </TouchableOpacity>
 
@@ -476,7 +472,7 @@ const CropEarnCertificate: React.FC = () => {
                         : { fontSize: 16 },
                   ]}
                 >
-                  {t("EarnCertificate.Continue")}
+                  {t("Main.Continue")}
                 </Text>
               </TouchableOpacity>
             </View>

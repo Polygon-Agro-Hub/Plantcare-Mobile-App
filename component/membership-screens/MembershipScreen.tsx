@@ -19,44 +19,59 @@ type MembershipScreenNavigationProp = StackNavigationProp<
 
 interface MembershipScreenProps {
   navigation: MembershipScreenNavigationProp;
+  route: any;
 }
 
-const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
+const MembershipScreen: React.FC<MembershipScreenProps> = ({
+  navigation,
+  route,
+}) => {
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
+  const isSignUp = route.name === "MembershipScreenSignUp";
 
   const adjustFontSize = (size: number) =>
     language !== "en" ? size * 0.9 : size;
 
   useEffect(() => {
-    const selectedLanguage = t("Membership.LNG");
+    const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
 
-    const backAction = () => {
-      navigation.navigate("Main", { screen: "EngQRcode" });
-      return true;
-    };
+    if (!isSignUp) {
+      const backAction = () => {
+        navigation.navigate("Main", { screen: "QRcode" });
+        return true;
+      };
 
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction,
-    );
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction,
+      );
 
-    return () => {
-      backHandler.remove();
-    };
-  }, [t, navigation]);
+      return () => {
+        backHandler.remove();
+      };
+    }
+  }, [t, navigation, isSignUp]);
 
   return (
     <View className="flex-1 bg-white">
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 24 }}
-        className="flex-1 "
+        contentContainerClassName="pb-6"
+        className="flex-1"
+        showsVerticalScrollIndicator={false}
       >
         <CustomHeader
           title={""}
           navigation={navigation}
-          onBackPress={() => navigation.goBack()}
+          showBackButton={true}
+          onBackPress={() => {
+            if (isSignUp) {
+              navigation.goBack();
+            } else {
+              navigation.navigate("Main", { screen: "QRcode" });
+            }
+          }}
         />
 
         <View className="items-center mb-6 px-4">
@@ -67,7 +82,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
             />
           </View>
           <Text
-            className="text-xl font-bold text-gray-900"
+            className="font-bold text-gray-900 text-center"
             style={{ fontSize: adjustFontSize(18) }}
           >
             {t("Membership.ActiveMembership")}
@@ -76,23 +91,25 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
             className="text-gray-600 text-center mt-1"
             style={{ fontSize: adjustFontSize(14) }}
           >
-            {t("Membership.ActiveYourMemvbershipText")}
+            {t(
+              "Membership.ActivateYourMembershipAsAnPolygonAgroRegisteredFarmer",
+            )}
           </Text>
         </View>
 
-        <View className="flex-row items-center mb-6 ">
-          <View style={{ flex: 1, height: 1, backgroundColor: "#ccc" }} />
+        <View className="flex-row items-center mb-6 px-4">
+          <View className="flex-1 h-px bg-gray-300" />
           <TouchableOpacity className="bg-yellow-500 rounded-[10px] py-2 px-6 mx-4">
             <Text className="text-white font-bold text-center">
               {t("Membership.Benifits")}
             </Text>
           </TouchableOpacity>
-          <View style={{ flex: 1, height: 1, backgroundColor: "#ccc" }} />
+          <View className="flex-1 h-px bg-gray-300" />
         </View>
 
-        <View className="mb-6 px-4" style={{ paddingHorizontal: 4 }}>
+        <View className="mb-6 px-4">
           <View className="flex-row justify-between mb-3">
-            <View style={{ width: "48%" }}>
+            <View className="w-[48%]">
               <View
                 className="bg-white border border-gray-300 rounded-lg items-center justify-start"
                 style={{
@@ -107,8 +124,8 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
                   style={{ width: 50, height: 50, marginBottom: 16 }}
                 />
                 <Text
-                  className="font-bold text-gray-900 text-center"
-                  style={{ fontSize: adjustFontSize(14), marginBottom: 8 }}
+                  className="font-bold text-gray-900 text-center mb-2"
+                  style={{ fontSize: adjustFontSize(14) }}
                 >
                   {t("Membership.SellYourHarvest")}
                 </Text>
@@ -119,12 +136,12 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
                     lineHeight: adjustFontSize(16),
                   }}
                 >
-                  {t("Membership.SellYourHarvestDes")}
+                  {t("Membership.EasilySellYourHarvestDirectlyToPolygonAgro")}
                 </Text>
               </View>
             </View>
 
-            <View style={{ width: "48%" }}>
+            <View className="w-[48%]">
               <View
                 className="bg-white border border-gray-300 rounded-lg items-center justify-start"
                 style={{
@@ -139,8 +156,8 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
                   style={{ width: 50, height: 50, marginBottom: 16 }}
                 />
                 <Text
-                  className="font-bold text-gray-900 text-center"
-                  style={{ fontSize: adjustFontSize(14), marginBottom: 8 }}
+                  className="font-bold text-gray-900 text-center mb-2"
+                  style={{ fontSize: adjustFontSize(14) }}
                 >
                   {t("Membership.FairPricing")}
                 </Text>
@@ -151,14 +168,14 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
                     lineHeight: adjustFontSize(16),
                   }}
                 >
-                  {t("Membership.FairPricingDes")}
+                  {t("Membership.ReceiveFairMarketPricesForYourCrops")}
                 </Text>
               </View>
             </View>
           </View>
 
           <View className="flex-row justify-between">
-            <View style={{ width: "48%" }}>
+            <View className="w-[48%]">
               <View
                 className="bg-white border border-gray-300 rounded-lg items-center justify-start"
                 style={{
@@ -173,10 +190,10 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
                   style={{ width: 50, height: 50, marginBottom: 16 }}
                 />
                 <Text
-                  className="font-bold text-gray-900 text-center"
-                  style={{ fontSize: adjustFontSize(14), marginBottom: 8 }}
+                  className="font-bold text-gray-900 text-center mb-2"
+                  style={{ fontSize: adjustFontSize(14) }}
                 >
-                  {t("Membership.QrCodeAcess")}
+                  {t("Membership.QrCodeAccess")}
                 </Text>
                 <Text
                   className="text-gray-600 text-center"
@@ -185,12 +202,12 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
                     lineHeight: adjustFontSize(16),
                   }}
                 >
-                  {t("Membership.QrCodeAcessDes")}
+                  {t("Membership.UniqueQRCodeForEntryAtOurCentre")}
                 </Text>
               </View>
             </View>
 
-            <View style={{ width: "48%" }}>
+            <View className="w-[48%]">
               <View
                 className="bg-white border border-gray-300 rounded-lg items-center justify-start"
                 style={{
@@ -205,8 +222,8 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
                   style={{ width: 50, height: 50, marginBottom: 16 }}
                 />
                 <Text
-                  className="font-bold text-gray-900 text-center"
-                  style={{ fontSize: adjustFontSize(14), marginBottom: 8 }}
+                  className="font-bold text-gray-900 text-center mb-2"
+                  style={{ fontSize: adjustFontSize(14) }}
                 >
                   {t("Membership.CustomerSupport")}
                 </Text>
@@ -217,24 +234,27 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
                     lineHeight: adjustFontSize(16),
                   }}
                 >
-                  {t("Membership.CustomerSupportDes")}
+                  {t("Membership.AssistanceWheneverYouNeedIt")}
                 </Text>
               </View>
             </View>
           </View>
         </View>
+
         <View className="px-4">
           <Text
-            className="text-gray-600 text-center text-sm mb-6 p-2 "
+            className="text-gray-600 text-center text-sm mb-6 p-2"
             style={{ fontSize: adjustFontSize(12) }}
           >
-            {t("Membership.Terms&ConditionsDes")}
+            {t(
+              "Membership.ToObtainAccessToYourUniqueQRCodePleaseRegisterAsAMemberByEnteringYourBankDetailsThisCodeWillEnsureSmoothTransactionsAndSecurePaymentsDirectlyToYourBankAtOurCollectionCentres",
+            )}
           </Text>
-          <View className="flex items-center justify-center">
+
+          <View className="items-center justify-center">
             {language === "en" ? (
               <View className="flex-row justify-center flex-wrap">
                 <Text className="text-sm text-black font-thin">View </Text>
-
                 <TouchableOpacity
                   onPress={() => navigation.navigate("TermsConditions")}
                 >
@@ -242,9 +262,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
                     Terms & Conditions
                   </Text>
                 </TouchableOpacity>
-
                 <Text className="text-sm text-black font-thin"> and </Text>
-
                 <TouchableOpacity
                   onPress={() => navigation.navigate("PrivacyPolicy")}
                 >
@@ -265,14 +283,12 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
                     නියමයන් සහ කොන්දේසි
                   </Text>
                 </TouchableOpacity>
-
                 <Text
-                  className="text-black font-thin"
-                  style={{ fontSize: adjustFontSize(12), marginHorizontal: 2 }}
+                  className="text-black font-thin mx-0.5"
+                  style={{ fontSize: adjustFontSize(12) }}
                 >
-                  {""} සහ
+                  සහ
                 </Text>
-
                 <TouchableOpacity
                   onPress={() => navigation.navigate("PrivacyPolicy")}
                 >
@@ -280,39 +296,34 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({ navigation }) => {
                     className="text-black font-bold underline"
                     style={{ fontSize: adjustFontSize(12) }}
                   >
-                    {""} රහස්‍යතා ප්‍රතිපත්තිය
+                    රහස්‍යතා ප්‍රතිපත්තිය
                   </Text>
                 </TouchableOpacity>
-
                 <Text
-                  className="text-black font-thin"
-                  style={{ fontSize: adjustFontSize(12), marginLeft: 2 }}
+                  className="text-black font-thin ml-0.5"
+                  style={{ fontSize: adjustFontSize(12) }}
                 >
-                  {""} බලන්න
+                  බලන්න
                 </Text>
               </View>
             )}
           </View>
-
-          <View className="justify-center items-center">
-            <TouchableOpacity
-                className={`rounded-3xl  w-2/3 h-[50px] mt-6 mb-3 bg-[#353535] shadow-lg justify-center items-center`}
-              onPress={async () => {
-                navigation.navigate("BankDetailsScreen" as any);
-              }}
-              style={{
-                shadowColor: "#000000",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.25,
-                shadowRadius: 4,
-                elevation: 4,
-              }}
-            >
-              <Text className="text-white font-bold text-center">
-                {t("Membership.Continue")}
-              </Text>
-            </TouchableOpacity>
-          </View>
+        </View>
+        <View className="justify-center items-center w-full px-12">
+          <TouchableOpacity
+            className="w-full rounded-3xl h-[50px] mt-6 mb-3 bg-[#353535] shadow-lg elevation-6 justify-center items-center"
+            onPress={async () => {
+              navigation.navigate(
+                isSignUp
+                  ? ("BankDetailsSignUp" as any)
+                  : ("BankDetailsScreen" as any),
+              );
+            }}
+          >
+            <Text className="text-white font-bold text-center text-lg">
+              {t("Main.Continue")}
+            </Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>

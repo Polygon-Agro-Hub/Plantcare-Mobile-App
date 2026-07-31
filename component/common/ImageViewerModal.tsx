@@ -12,6 +12,7 @@ import {
 import Swiper from "react-native-swiper";
 import { Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
+import CustomHeader from "./CustomHeader";
 
 interface ImageData {
   uri: string;
@@ -74,53 +75,37 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
       onRequestClose={onClose}
       presentationStyle="fullScreen"
     >
-      <StatusBar backgroundColor="white" barStyle="dark-content" />
+      
       <View style={styles.container}>
-        <View style={styles.header}>
-          <View style={styles.headerContent}>
-            {images[currentIndex]?.from === "certificate" ? (
-              images[currentIndex]?.uploadedBy && (
-                <View className="mt-5">
-                  <Text
-                    className="text-[#000000] text-xl"
-                    style={styles.uploadedBy}
-                  >
-                    {t("ImageViewerModal.Uploaded By")}{" "}
-                    {images[currentIndex].uploadedBy === "You"
-                      ? t("ImageViewerModal.You")
-                      : images[currentIndex].uploadedBy}
-                  </Text>
-                </View>
-              )
-            ) : (
-              <>
-                <Text style={styles.photoCount}>
-                  {images.length}{" "}
-                  {images.length !== 1
+        <CustomHeader
+          title={
+            images[currentIndex]?.from === "certificate"
+              ? ""
+              : `${images.length} ${
+                  images.length !== 1
                     ? t("ImageViewerModal.Photos")
-                    : t("ImageViewerModal.Photo")}
-                </Text>
-                {images[currentIndex]?.uploadedBy && (
-                  <View className="mt-5">
-                    <Text
-                      className="text-[#000000] text-xl"
-                      style={styles.uploadedBy}
-                    >
-                      {t("ImageViewerModal.Uploaded By")}{" "}
-                      {images[currentIndex].uploadedBy === "You"
-                        ? t("ImageViewerModal.You")
-                        : images[currentIndex].uploadedBy}
-                    </Text>
-                  </View>
-                )}
-              </>
-            )}
-          </View>
+                    : t("ImageViewerModal.Photo")
+                }`
+          }
+          showBackButton={false}
+          headerStyle={{ paddingTop: 50 }}
+          rightComponent={
+            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+              <Ionicons name="close" size={25} color="black" />
+            </TouchableOpacity>
+          }
+        />
 
-          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <Ionicons name="close" size={20} color="#666" />
-          </TouchableOpacity>
-        </View>
+        {images[currentIndex]?.uploadedBy && (
+          <View style={styles.uploadedByContainer}>
+            <Text style={styles.uploadedBy}>
+              {t("ImageViewerModal.UploadedBy")}{" "}
+              {images[currentIndex].uploadedBy === "You"
+                ? t("ImageViewerModal.You")
+                : images[currentIndex].uploadedBy}
+            </Text>
+          </View>
+        )}
 
         {showNavigation && (
           <View style={styles.navigationContainer}>
@@ -142,7 +127,7 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
             <View style={styles.counterContainer}>
               <Text style={styles.currentIndex}>{currentIndex + 1}</Text>
               <Text style={styles.separator}>
-                {t("ImageViewerModal.out of")}
+                {t("ImageViewerModal.OutOf")}
               </Text>
               <Text style={styles.totalCount}>{images.length}</Text>
             </View>
@@ -201,42 +186,23 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
   },
-  header: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingTop: 50,
-    paddingBottom: 15,
-    backgroundColor: "white",
-  },
-  headerContent: {
-    flex: 1,
+  closeButton: {
+    width: 45,
+    height: 45,
+    borderRadius: 22.5,
+    backgroundColor: "#F6F6F6",
+    justifyContent: "center",
     alignItems: "center",
-  },
-  photoCount: {
-    color: "#333",
-    fontSize: 16,
-    fontWeight: "600",
-    textAlign: "center",
-    marginBottom: 2,
   },
   uploadedBy: {
     color: "#666",
     fontSize: 15,
     textAlign: "center",
   },
-  closeButton: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: "#959292ff",
-    justifyContent: "center",
+  uploadedByContainer: {
     alignItems: "center",
-    position: "absolute",
-    right: 20,
-    top: 15,
-    marginTop: 40,
+    paddingBottom: 10,
+    backgroundColor: "white",
   },
   navigationContainer: {
     flexDirection: "row",

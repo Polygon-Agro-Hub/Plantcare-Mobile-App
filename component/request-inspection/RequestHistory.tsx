@@ -11,7 +11,7 @@ import {
   RefreshControl,
   BackHandler,
 } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Entypo } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import {
@@ -27,6 +27,7 @@ import LottieView from "lottie-react-native";
 import { useSelector } from "react-redux";
 import { selectUserFarmCount } from "../../store/userSlice";
 import CustomHeader from "../common/CustomHeader";
+import NoData from "../common/NoData";
 import LoadingPage from "../common/LoadingPage";
 
 type RequestHistoryNavigationProp = StackNavigationProp<
@@ -112,7 +113,7 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
               const year = date.getFullYear();
               const monthIndex = date.getMonth();
 
-              const monthKey = `RequestHistory.months.${monthIndex}`;
+              const monthKey = `RequestHistory.Months.${monthIndex}`;
               const month = t(monthKey);
 
               return `${month} ${day}, ${year}`;
@@ -231,8 +232,8 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
   const handleFABPress = () => {
     if (farmCount === 0) {
       Alert.alert(
-        t("RequestHistory.noFarmTitle") || "No Farm Available",
-        t("RequestHistory.noFarmMessage") ||
+        t("RequestHistory.NoFarmAvailable") || "No Farm Available",
+        t("RequestHistory.YouMustCreateAFarmAndEnrollInAtLeastOneCropVarietyBeforeYouCanContinue") ||
           "You must create a farm and enroll in at least one crop variety before you can continue.",
         [{ text: t("OK") || "OK" }],
       );
@@ -242,20 +243,14 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
   };
 
   const EmptyState = () => (
-    <View className="flex-1 items-center justify-center -mt-[70%]">
-      <LottieView
-        source={require("@/assets/jsons/common/no-data.json")}
-        style={{ width: wp(50), height: hp(50) }}
-        autoPlay
-        loop
-      />
-      <Text className="text-center text-gray-600 px-8 -mt-[30%]">
-        {farmCount === 0
-          ? t("RequestHistory.noFarmMessage") ||
+    <NoData
+      text={
+        farmCount === 0
+          ? t("RequestHistory.YouMustCreateAFarmAndEnrollInAtLeastOneCropVarietyBeforeYouCanContinue") ||
             "You must create a farm and enroll in at least one crop variety before you can continue."
-          : t("RequestHistory.noData") || "You have no requests added yet"}
-      </Text>
-    </View>
+          : t("RequestHistory.YouHaveNoRequestsAddedYet") || "You have no requests added yet"
+      }
+    />
   );
 
   const RequestCard = ({ request }: { request: ServiceRequest }) => (
@@ -263,19 +258,19 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
       onPress={() => handleRequestPress(request)}
       activeOpacity={0.7}
     >
-      <View className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-3 mx-4">
+      <View className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-3 mx-6">
         <View className="flex-row justify-between items-start mb-3">
           <Text className="font-semibold text-gray-800 flex-1 mr-2">
             {request.serviceName}
           </Text>
         </View>
 
-        <View className="space-y-2">
+        <View className="gap-2">
           <View className="flex-row justify-between items-center">
             <Text className="text-gray-600 text-sm">
-              {t("RequestHistory.Scheduled")} {request.scheduledDate}
+              {t("RequestHistory.ScheduledTo")} {request.scheduledDate}
             </Text>
-            <AntDesign name="right" size={18} color="#9CA3AF" />
+            <Entypo name="chevron-right" size={18} color="#9CA3AF" />
           </View>
           <View className="flex-row items-center">
             <Text
@@ -304,7 +299,7 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
     >
       <View className="flex-1">
         <CustomHeader
-          title={t("RequestHistory.Request History")}
+          title={t("RequestHistory.RequestHistory")}
           showBackButton={true}
           navigation={navigation}
           onBackPress={() =>
@@ -332,8 +327,8 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
       </View>
 
       <View className="">
-        <TouchableOpacity
-          className={`absolute bottom-12 right-6 w-16 h-16 rounded-full items-center justify-center shadow-lg ${
+        <TouchableOpacity    
+          className={`absolute bottom-20 right-6 w-16 h-16 rounded-full items-center justify-center shadow-lg ${
             farmCount === 0 ? "bg-gray-400" : "bg-gray-800"
           }`}
           onPress={handleFABPress}

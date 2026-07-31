@@ -47,10 +47,50 @@ function CameraScreen({
 
   if (permission === null) {
     return (
-      <View className="flex-1 justify-center items-center bg-black">
-        <Text className="text-white text-lg mb-4">
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "black",
+        }}
+      >
+        <Text style={{ color: "white", fontSize: 18, marginBottom: 16 }}>
           {t("CropCalender.loadingCameraPermission")}
         </Text>
+      </View>
+    );
+  }
+
+  if (!permission.granted) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "black",
+        }}
+      >
+        <Text
+          style={{
+            color: "white",
+            fontSize: 16,
+            marginBottom: 16,
+            textAlign: "center",
+            paddingHorizontal: 24,
+          }}
+        >
+          Camera permission is required.
+        </Text>
+        <TouchableOpacity
+          onPress={requestPermission}
+          style={{ backgroundColor: "#26D041", padding: 14, borderRadius: 50 }}
+        >
+          <Text style={{ color: "black", fontWeight: "600" }}>
+            Grant Permission
+          </Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -67,12 +107,14 @@ function CameraScreen({
   };
 
   return (
-    <CameraView
-      className="flex-1"
-      facing={facing}
-      ref={(ref) => setCamera(ref)}
-      onCameraReady={() => setIsCameraReady(true)}
-    >
+    <View style={{ flex: 1, backgroundColor: "black" }}>
+      <CameraView
+        style={{ flex: 1 }}
+        facing={facing}
+        ref={(ref) => setCamera(ref)}
+        onCameraReady={() => setIsCameraReady(true)}
+      />
+
       <View
         style={{
           position: "absolute",
@@ -89,30 +131,34 @@ function CameraScreen({
         <TouchableOpacity
           onPress={toggleCameraFacing}
           style={{
-            backgroundColor: "#26D041",
+            backgroundColor: "#2AAD7A",
             padding: 16,
             borderRadius: 50,
-            marginBottom: 12,
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <Text style={{ color: "black" }}>{t("CropCalender.FlipCamera")}</Text>
+          <Text style={{ color: "black", textAlign: "center" }}>{t("CropCalender.FlipCamera")}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           onPress={captureImage}
           style={{
-            backgroundColor: "#26D041",
+            backgroundColor: "#2AAD7A",
             padding: 16,
             borderRadius: 50,
-            marginBottom: 12,
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <Text style={{ color: "black", fontWeight: "600" }}>
+          <Text style={{ color: "black", fontWeight: "600", textAlign: "center" }}>
             {t("CropCalender.Capture")}
           </Text>
         </TouchableOpacity>
       </View>
-    </CameraView>
+    </View>
   );
 }
 
@@ -138,11 +184,11 @@ export default function CultivatedLandModal({
       if (!cropId || cropId === "" || cropId === "undefined") {
         console.error("CultivatedLandModal: Invalid cropId:", cropId);
         Alert.alert(
-          t("Main.error"),
+          t("Main.Error"),
           t("CropCalender.Invalid crop data. Please try again."),
           [
             {
-              text: t("PublicForum.OK"),
+              text: t("Main.OK"),
               onPress: () => {
                 setLoading(false);
                 onClose();
@@ -156,11 +202,11 @@ export default function CultivatedLandModal({
       if (!farmId || farmId === 0) {
         console.error(" CultivatedLandModal: Invalid farmId:", farmId);
         Alert.alert(
-          t("Main.error"),
+          t("Main.Error"),
           t("CropCalender.Invalid farm data. Please try again."),
           [
             {
-              text: t("PublicForum.OK"),
+              text: t("Main.OK"),
               onPress: () => {
                 setLoading(false);
                 onClose();
@@ -177,11 +223,11 @@ export default function CultivatedLandModal({
           onCulscropID,
         );
         Alert.alert(
-          t("Main.error"),
+          t("Main.Error"),
           t("CropCalender.Invalid cultivation data. Please try again."),
           [
             {
-              text: t("PublicForum.OK"),
+              text: t("Main.OK"),
               onPress: () => {
                 setLoading(false);
                 onClose();
@@ -253,7 +299,7 @@ export default function CultivatedLandModal({
     } catch (error: any) {
       console.error(" Error fetching required images:", error);
 
-      let errorMessage = t("Main.somethingWentWrong");
+      let errorMessage = t("Main.SomethingWentWrongPleaseTryAgainlater");
 
       if (error.response?.status === 404) {
         errorMessage = t("CropCalender.Task not found. Please try again.");
@@ -263,9 +309,9 @@ export default function CultivatedLandModal({
         errorMessage = t("CropCalender.Please log in again.");
       }
 
-      Alert.alert(t("Main.error"), errorMessage, [
+      Alert.alert(t("Main.Error"), errorMessage, [
         {
-          text: t("PublicForum.OK"),
+          text: t("Main.OK"),
           onPress: () => onClose(),
         },
       ]);
@@ -373,9 +419,9 @@ export default function CultivatedLandModal({
             }
 
             Alert.alert(
-              t("CropCalender.Success"),
-              t("CropCalender.TaskSuccessMessage"),
-              [{ text: t("PublicForum.OK") }],
+              t("Main.Success"),
+              t("CropCalender.TaskStatusUpdatedSuccessfully"),
+              [{ text: t("Main.OK") }],
             );
 
             onClose(true);
@@ -394,8 +440,8 @@ export default function CultivatedLandModal({
         console.error(`Upload attempt ${attempt} failed:`, error);
 
         if (attempt >= maxRetries) {
-          Alert.alert(t("Main.error"), t("CropCalender.UploadRetryFailed"), [
-            { text: t("PublicForum.OK") },
+          Alert.alert(t("Main.Error"), t("CropCalender.UploadRetryFailed"), [
+            { text: t("Main.OK") },
           ]);
           setLoading(false);
           await markTaskAsIncomplete();
@@ -478,7 +524,7 @@ export default function CultivatedLandModal({
       <Modal transparent={true} visible={visible} animationType="fade">
         <View className="flex-1 justify-center items-center bg-black/50">
           <ActivityIndicator size="large" color="#ffffff" />
-          <Text className="text-white mt-4">{t("CropCalender.Loading")}</Text>
+          <Text className="text-white mt-4">{t("Main.Loading...")}</Text>
         </View>
       </Modal>
     );
@@ -496,8 +542,8 @@ export default function CultivatedLandModal({
         onRequestClose={() => onClose()}
         animationType="fade"
       >
-        <View className="flex-1 justify-center items-center bg-black/50">
-          <View className="bg-white rounded-lg w-3/4 p-6 shadow-lg items-center">
+        <View className="flex-1 justify-center items-center bg-black/50 px-6">
+          <View className="bg-white rounded-2xl p-6 shadow-lg items-center w-full">
             <View className="bg-gray-200 p-4 rounded-full mb-4">
               <Image
                 source={require("../../assets/images/crop-cultivation/camera.webp")}
@@ -540,10 +586,10 @@ export default function CultivatedLandModal({
             </ScrollView>
 
             <Text className="text-gray-600 text-center mb-4">
-              {t("CropCalender.photo")} {t("CropCalender.yourcultivated")}
+              {t("CropCalender.UploadAPhoto")} {t("CropCalender.OfYourCultivatedLandToReceiveOurGuidance")}
             </Text>
             <TouchableOpacity
-              className="bg-black py-2 px-6 rounded-full"
+              className="bg-black py-2 px-6 rounded-full h-[50px] items-center justify-center w-full"
               onPress={() => setShowCamera(true)}
             >
               <Text className="text-white text-base">
@@ -574,8 +620,8 @@ export default function CultivatedLandModal({
           onRequestClose={() => setCapturedImage(null)}
           animationType="slide"
         >
-          <View className="flex-1 justify-center items-center bg-black/50">
-            <View className="bg-white rounded-lg w-3/4 p-6 shadow-lg items-center">
+          <View className="flex-1 justify-center items-center bg-black/50 px-6">
+            <View className="bg-white rounded-2xl p-6 shadow-lg items-center w-full">
               <Text className="text-lg font-semibold mb-2">
                 {t("CropCalender.ImagePreview")}
               </Text>
@@ -584,7 +630,7 @@ export default function CultivatedLandModal({
                 style={{ width: 250, height: 250, marginBottom: 20 }}
               />
 
-              <View className="space-y-4">
+              <View className="gap-4 w-full">
                 {isButtonEnabled ? (
                   <Text className="text-center font-semibold">
                     {t("CropCalender.ReadyToSubmit")}
@@ -596,19 +642,19 @@ export default function CultivatedLandModal({
                 )}
 
                 <TouchableOpacity
-                  className={`py-2 px-6 rounded-full ${
+                  className={`py-2 px-6 rounded-full h-[50px] items-center justify-center ${
                     isButtonEnabled ? "bg-black" : "bg-gray-400"
                   }`}
                   onPress={() => isButtonEnabled && uploadImage(capturedImage)}
                   disabled={!isButtonEnabled}
                 >
                   <Text className="text-white text-base text-center">
-                    {t("CropCalender.Send")}
+                    {t("CropCalender.Submit")}
                   </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  className="border-2 border-black bg-white py-2 px-6 rounded-full"
+                  className="border-2 border-black bg-white py-2 px-6 rounded-full h-[50px] items-center justify-center"
                   onPress={() => setCapturedImage(null)}
                 >
                   <Text className="text-black text-base text-center">

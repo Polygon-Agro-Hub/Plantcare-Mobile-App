@@ -11,7 +11,6 @@ import {
   KeyboardAvoidingView,
   ActivityIndicator,
   BackHandler,
-  StatusBar,
 } from "react-native";
 import axios from "axios";
 import { RootStackParamList } from "../types/types";
@@ -21,8 +20,7 @@ import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import bankNames from "@/assets/jsons/bank-details/banks.json";
 import { useTranslation } from "react-i18next";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import { MaterialIcons } from "@expo/vector-icons";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 
 type BankDetailsScreenNavigationProp = StackNavigationProp<
@@ -32,6 +30,7 @@ type BankDetailsScreenNavigationProp = StackNavigationProp<
 
 interface BankDetailsScreenProps {
   navigation: BankDetailsScreenNavigationProp;
+  route: any;
 }
 
 interface allBranches {
@@ -40,7 +39,10 @@ interface allBranches {
   name: string;
 }
 
-const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
+const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
+  navigation,
+  route,
+}) => {
   const [accountNumber, setAccountNumber] = useState("");
   const [confirmAccountNumber, setConfirmAccountNumber] = useState("");
   const [bankName, setBankName] = useState("");
@@ -59,11 +61,13 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
     useState("");
   const [accountNumberError, setAccountNumberError] = useState("");
 
+  const isSignUp = route.name === "BankDetailsSignUp";
+
   const adjustFontSize = (size: number) =>
     language !== "en" ? size * 0.9 : size;
 
   useEffect(() => {
-    const selectedLanguage = t("BankDetails.LNG");
+    const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
   }, [t]);
 
@@ -86,9 +90,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       if (selectedBank) {
         try {
           const data = require("@/assets/jsons/bank-details/branches.json");
-          const filteredBranches = data[selectedBank.ID] || [];
+          const branchesList = data[selectedBank.ID] || [];
 
-          const sortedBranches = filteredBranches.sort(
+          const sortedBranches = branchesList.sort(
             (a: { name: string }, b: { name: any }) =>
               a.name.localeCompare(b.name),
           );
@@ -96,9 +100,11 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
           setFilteredBranches(sortedBranches);
         } catch (error) {
           console.error("Error loading branches", error);
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-            { text: t("PublicForum.OK") },
-          ]);
+          Alert.alert(
+            t("Main.Error"),
+            t("Main.SomethingWentWrongPleaseTryAgainlater"),
+            [{ text: t("Main.OK") }],
+          );
         } finally {
           setLoading(false);
         }
@@ -108,13 +114,17 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
     } else {
       setFilteredBranches([]);
     }
+
+    setBranchName("");
   }, [bankName]);
 
   const handleRegister = async () => {
-    if (loading) {
-      Alert.alert(t("BankDetails.Loading"), t("BankDetails.LoadingText"), [
-        { text: t("PublicForum.OK") },
-      ]);
+    if (loading && bankName) {
+      Alert.alert(
+        t("Main.Loading..."),
+        t("BankDetails.PleaseWaitDataIsBeingLoaded"),
+        [{ text: t("Main.OK") }],
+      );
       return;
     }
 
@@ -131,19 +141,21 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       !trimmedBankName ||
       !trimmedBranchName
     ) {
-      Alert.alert(t("BankDetails.sorry"), t("BankDetails.PlzFillAllFields"), [
-        { text: t("PublicForum.OK") },
-      ]);
+      Alert.alert(
+        t("BankDetails.sorry"),
+        t("Main.PleaseFillAllRequiredFields"),
+        [{ text: t("Main.OK") }],
+      );
       return;
     }
 
     if (trimmedAccountNumber !== trimmedConfirmAccountNumber) {
       Alert.alert(
-        t("BankDetails.sorry"),
-        t("BankDetails.AccountNumberMismatch"),
-        [{ text: t("PublicForum.OK") }],
+        t("Main.Sorry"),
+        t("BankDetails.AccountNumbersDoNotMatch"),
+        [{ text: t("Main.OK") }],
       );
-      setAccountNumbermisMatchError(t("BankDetails.AccountNumberMismatch"));
+      setAccountNumbermisMatchError(t("BankDetails.AccountNumbersDoNotMatch"));
       return;
     }
 
@@ -160,9 +172,11 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error"),
+          t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
         setDisableSubmit(false);
         setIsLoading(false);
         return;
@@ -180,38 +194,56 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
 
       if (response.status === 200) {
         Alert.alert(
-          t("BankDetails.success"),
-          t("BankDetails.SuccessfullyRegistered"),
-          [{ text: t("PublicForum.OK") }],
+          t("Main.Success"),
+          t("BankDetails.BankDetailsRegisteredSuccessfully"),
+          [
+            {
+              text: t("Main.OK"),
+              onPress: () => {
+                if (isSignUp) {
+                  navigation.navigate("Main", { screen: "Dashboard" });
+                } else {
+                  navigation.navigate("Main", { screen: "QRcode" });
+                }
+              },
+            },
+          ],
         );
-        navigation.navigate("Main", { screen: "EngQRcode" });
         setDisableSubmit(false);
         setIsLoading(false);
       } else {
         Alert.alert(
-          t("BankDetails.failed"),
-          t("BankDetails.failedToRegister"),
-          [{ text: t("PublicForum.OK") }],
+          t("BankDetails.Failed"),
+          t("BankDetails.FailedToRegisterBankDetailsPleaseTryAgain"),
+          [{ text: t("Main.OK") }],
         );
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 400) {
           Alert.alert(
-            t("BankDetails.failed"),
+            t("BankDetails.Failed"),
             t("BankDetails.ExistingBankDetails"),
-            [{ text: t("PublicForum.OK") }],
+            [{ text: t("Main.OK") }],
           );
-          navigation.navigate("EngProfile");
+          if (isSignUp) {
+            navigation.navigate("Main", { screen: "Dashboard" });
+          } else {
+            navigation.navigate("EngProfile");
+          }
         } else {
-          Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-            { text: t("PublicForum.OK") },
-          ]);
+          Alert.alert(
+            t("Main.Error"),
+            t("Main.SomethingWentWrongPleaseTryAgainlater"),
+            [{ text: t("Main.OK") }],
+          );
         }
       } else {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("PublicForum.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error"),
+          t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
       }
     } finally {
       setDisableSubmit(false);
@@ -241,7 +273,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       setAccountHolderName(trimmedText);
       setHoldernameNameError("");
     } else {
-      setHoldernameNameError(t("Signup.Startwithletter"));
+      setHoldernameNameError(
+        t("SignUp.UserNameMustStartWithALetterAndContainNoSpaces"),
+      );
     }
   };
 
@@ -256,12 +290,14 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       setAccountNumberError("");
 
       if (confirmAccountNumber !== "" && confirmAccountNumber !== text) {
-        setAccountNumbermisMatchError(t("BankDetails.AccountNumberMismatch"));
+        setAccountNumbermisMatchError(
+          t("BankDetails.AccountNumbersDoNotMatch"),
+        );
       } else if (confirmAccountNumber === text) {
         setAccountNumbermisMatchError("");
       }
     } else {
-      setAccountNumberError(t("BankDetails.OnlyNumbers"));
+      setAccountNumberError(t("BankDetails.AccountNumberMustBeANumber"));
     }
   };
 
@@ -271,12 +307,14 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
       setAccountNumberError("");
 
       if (text !== "" && accountNumber !== text) {
-        setAccountNumbermisMatchError(t("BankDetails.AccountNumberMismatch"));
+        setAccountNumbermisMatchError(
+          t("BankDetails.AccountNumbersDoNotMatch"),
+        );
       } else {
         setAccountNumbermisMatchError("");
       }
     } else {
-      setAccountNumberError(t("BankDetails.OnlyNumbers"));
+      setAccountNumberError(t("BankDetails.AccountNumberMustBeANumber"));
     }
   };
 
@@ -293,14 +331,8 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       enabled
-      style={{ flex: 1, backgroundColor: "white" }}
+      className="flex-1 bg-white"
     >
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="transparent"
-        translucent={false}
-      />
-
       <GlobalSearchModal
         visible={bankModalVisible}
         onClose={() => setBankModalVisible(false)}
@@ -314,8 +346,9 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
             setBranchName("");
           }
         }}
-        searchPlaceholder={t("Signup.TypeSomething")}
+        searchPlaceholder={t("Main.Search...")}
         multiSelect={false}
+        noResultsText="No bank found"
       />
 
       <GlobalSearchModal
@@ -327,288 +360,280 @@ const BankDetailsScreen: React.FC<any> = ({ navigation, route }) => {
         onSelect={(items) => {
           setBranchName(items[0] ?? "");
         }}
-        searchPlaceholder={t("Signup.TypeSomething")}
+        searchPlaceholder={t("Main.Search...")}
         multiSelect={false}
         isLoading={loading && !!bankName}
+        noResultsText="No branch found"
+      />
+
+      <CustomHeader
+        title=""
+        navigation={navigation}
+        onBackPress={() => navigation.goBack()}
       />
 
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 24 }}
+        contentContainerClassName="pb-6"
         className="flex-1 bg-white"
         keyboardShouldPersistTaps="handled"
       >
-        <CustomHeader
-          title=""
-          navigation={navigation}
-          onBackPress={() => navigation.goBack()}
-        />
-
-        <View className="items-center mb-6 mt-[-15%]">
+        <View className="items-center mb-4">
           <Image
             source={require("../../assets/images/bank-details/qr-screen.webp")}
-            style={{ width: 200, height: 200 }}
+            style={{ width: 280, height: 280 }}
             resizeMode="contain"
           />
         </View>
 
-        <Text className="text-lg font-bold text-center text-gray-900 mb-2 ml-[7%]">
+        <Text className="text-lg font-bold text-center text-gray-900 mb-4">
           {t("BankDetails.FillBankDetails")}
         </Text>
 
-        <View className="space-y-4 p-4 ">
-          <Text
-            className="text-[#070707] -mb-2"
-            style={{ fontSize: adjustFontSize(14) }}
-          >
-            {t("BankDetails.AccountHolderName")}
-          </Text>
-          <TextInput
-            placeholder={t("BankDetails.EnterAccountHolderName")}
-           className="rounded-3xl h-[50px]"
-            placeholderTextColor="#5e5d5d"
-            value={accountHolderName}
-            onChangeText={handleFirstNameChange}     
-            style={{
-              backgroundColor: "#F4F4F4",
-              borderRadius: 25,
-              paddingHorizontal: 16,
-              paddingVertical: 16,
-              textDecorationLine: "none",
-              borderBottomWidth: 0,
-              borderBottomColor: "transparent",
-              borderWidth: 0,
-              borderColor: "transparent",
-              elevation: 0,
-              shadowOpacity: 0,
-            }}
-            underlineColorAndroid="transparent"
-            cursorColor="#000000"
-          />
-          {holdernameNameError ? (
+        <View className="gap-4 px-6">
+          <View>
             <Text
-              className="text-red-500"
-              style={{ fontSize: wp(3), marginTop: wp(-4) }}
+              className="text-[#070707] mb-2"
+              style={{ fontSize: adjustFontSize(14) }}
             >
-              {holdernameNameError}
+              {t("BankDetails.AccountHoldersName")}
             </Text>
-          ) : null}
-
-          <Text
-            className="text-[#070707] -mb-2"
-            style={{ fontSize: adjustFontSize(14) }}
-          >
-            {t("BankDetails.AccountNumber")}
-          </Text>
-          <TextInput
-            placeholder={t("BankDetails.Enter Account Number")}
-            placeholderTextColor="#5e5d5d"
-            className="pb-2 bg-[#F4F4F4] rounded-3xl h-[50px] p-4"
-            keyboardType="number-pad"
-            value={accountNumber}
-            onChangeText={handleAccountNumberChange}
-          />
-          {accountNumberError && !validateAccountNumber(accountNumber) ? (
-            <Text
-              className="text-red-500"
-              style={{ fontSize: wp(3), marginTop: wp(-4) }}
-            >
-              {accountNumberError}
-            </Text>
-          ) : null}
-
-          <Text
-            className="text-[#070707] -mb-2"
-            style={{ fontSize: adjustFontSize(14) }}
-          >
-            {t("BankDetails.ConfirmAccountNumber")}
-          </Text>
-          <TextInput
-            placeholder={t("BankDetails.Re-enter Account Number")}
-            placeholderTextColor="#5e5d5d"
-            className="pb-2 bg-[#F4F4F4] rounded-3xl h-[50px] p-4"
-            keyboardType="number-pad"
-            value={confirmAccountNumber}
-            onChangeText={handleConfirmAccountNumberChange}
-          />
-          {accountNumberError &&
-          !validateAccountNumber(confirmAccountNumber) ? (
-            <Text
-              className="text-red-500"
-              style={{ fontSize: wp(3), marginTop: wp(-4) }}
-            >
-              {accountNumberError}
-            </Text>
-          ) : null}
-
-          {accountNumbermisMatchError ? (
-            <Text
-              className="text-red-500"
-              style={{ fontSize: wp(3), marginTop: wp(-4) }}
-            >
-              {accountNumbermisMatchError}
-            </Text>
-          ) : null}
-
-          <Text
-            className="text-[#070707] -mb-2"
-            style={{ fontSize: adjustFontSize(14) }}
-          >
-            {t("BankDetails.BankName")}
-          </Text>
-          <TouchableOpacity
-            onPress={() => setBankModalVisible(true)}
-             className="rounded-3xl h-[50px]"
-            style={{
-              backgroundColor: "#F4F4F4",
-              borderRadius: 25,
-              paddingHorizontal: 16,
-              paddingVertical: 16,
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Text
+            <TextInput
+              placeholder={t("BankDetails.EnterAccountHoldersName")}
+              className="rounded-3xl h-[50px] px-4"
+              placeholderTextColor="#5e5d5d"
+              value={accountHolderName}
+              onChangeText={handleFirstNameChange}
               style={{
-                color: bankName ? "#070707" : "#5e5d5d",
-                fontSize: adjustFontSize(14),
+                backgroundColor: "#F4F4F4",
+                borderRadius: 25,
+                paddingVertical: 16,
+                textDecorationLine: "none",
+                borderBottomWidth: 0,
+                borderBottomColor: "transparent",
+                borderWidth: 0,
+                borderColor: "transparent",
+                elevation: 0,
+                shadowOpacity: 0,
               }}
-            >
-              {bankName || t("BankDetails.Select Bank Name")}
-            </Text>
-            <AntDesign name="caret-down" size={14} color="#555" />
-          </TouchableOpacity>
+              underlineColorAndroid="transparent"
+              cursorColor="#000000"
+            />
+            {holdernameNameError ? (
+              <Text className="text-red-500 text-xs mb-2">
+                {holdernameNameError}
+              </Text>
+            ) : null}
+          </View>
 
-          <Text
-            className="text-[#070707] -mb-2"
-            style={{ fontSize: adjustFontSize(14) }}
-          >
-            {t("BankDetails.BranchName")}
-          </Text>
-          <TouchableOpacity
-            onPress={() => {
-              if (bankName) {
-                setBranchModalVisible(true);
-              } else {
-                Alert.alert(
-                  t("BankDetails.sorry"),
-                  t("BankDetails.SelectBankFirst") ||
-                    "Please select a bank first.",
-                  [{ text: t("PublicForum.OK") }],
-                );
-              }
-            }}
-            style={{
-              backgroundColor: "#F4F4F4",
-              borderRadius: 25,
-              paddingHorizontal: 16,
-              paddingVertical: 16,
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              opacity: bankName ? 1 : 0.5,
-            }}
-             className="rounded-3xl h-[50px]"
-          >
+          <View>
             <Text
-              style={{
-                color: branchName ? "#070707" : "#5e5d5d",
-                fontSize: adjustFontSize(14),
-              }}
+              className="text-[#070707] mb-2"
+              style={{ fontSize: adjustFontSize(14) }}
             >
-              {branchName || t("BankDetails.Select Branch Name")}
+              {t("BankDetails.AccountNumber")}
             </Text>
-            <AntDesign name="caret-down" size={14} color="#555" />
-          </TouchableOpacity>
+            <TextInput
+              placeholder={t("BankDetails.EnterAccountNumber")}
+              placeholderTextColor="#5e5d5d"
+              className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4"
+              keyboardType="number-pad"
+              value={accountNumber}
+              onChangeText={handleAccountNumberChange}
+            />
+            {accountNumberError && !validateAccountNumber(accountNumber) ? (
+              <Text className="text-red-500 text-xs mt-2">
+                {accountNumberError}
+              </Text>
+            ) : null}
+          </View>
+
+          <View>
+            <Text
+              className="text-[#070707] mb-2"
+              style={{ fontSize: adjustFontSize(14) }}
+            >
+              {t("BankDetails.ConfirmYourAccountNumber")}
+            </Text>
+            <TextInput
+              placeholder={t("BankDetails.ReEnterAccountNumber")}
+              placeholderTextColor="#5e5d5d"
+              className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4"
+              keyboardType="number-pad"
+              value={confirmAccountNumber}
+              onChangeText={handleConfirmAccountNumberChange}
+            />
+            {accountNumberError &&
+            !validateAccountNumber(confirmAccountNumber) ? (
+              <Text className="text-red-500 text-xs mt-2">
+                {accountNumberError}
+              </Text>
+            ) : null}
+            {accountNumbermisMatchError ? (
+              <Text className="text-red-500 text-xs mt-2">
+                {accountNumbermisMatchError}
+              </Text>
+            ) : null}
+          </View>
+
+          <View>
+            <Text
+              className="text-[#070707] mb-2"
+              style={{ fontSize: adjustFontSize(14) }}
+            >
+              {t("BankDetails.BankName")}
+            </Text>
+            <TouchableOpacity
+              onPress={() => setBankModalVisible(true)}
+              className="rounded-3xl h-[50px] px-4 flex-row justify-between items-center"
+              style={{ backgroundColor: "#F4F4F4", borderRadius: 25 }}
+            >
+              <Text
+                style={{
+                  color: bankName ? "#070707" : "#5e5d5d",
+                  fontSize: adjustFontSize(14),
+                }}
+              >
+                {bankName || t("BankDetails.SelectBankName")}
+              </Text>
+              <MaterialIcons
+                name="arrow-drop-down"
+                size={24}
+                color="#666"
+              />
+            </TouchableOpacity>
+          </View>
+
+          <View>
+            <Text
+              className="text-[#070707] mb-2"
+              style={{ fontSize: adjustFontSize(14) }}
+            >
+              {t("BankDetails.BranchName")}
+            </Text>
+            <TouchableOpacity
+              onPress={() => {
+                if (bankName) {
+                  setBranchModalVisible(true);
+                } else {
+                  Alert.alert(
+                    t("Main.Sorry"),
+                    t("BankDetails.SelectBankFirst") ||
+                      "Please select a bank first.",
+                    [{ text: t("Main.OK") }],
+                  );
+                }
+              }}
+              style={{
+                backgroundColor: "#F4F4F4",
+                borderRadius: 25,
+                opacity: bankName ? 1 : 0.5,
+              }}
+              className="rounded-3xl h-[50px] px-4 flex-row justify-between items-center"
+            >
+              <Text
+                style={{
+                  color: branchName ? "#070707" : "#5e5d5d",
+                  fontSize: adjustFontSize(14),
+                }}
+              >
+                {branchName || t("BankDetails.SelectBranchName")}
+              </Text>
+              <MaterialIcons
+                name="arrow-drop-down"
+                size={24}
+                color="#666"
+              />
+            </TouchableOpacity>
+          </View>
         </View>
 
-        <View className="flex items-center justify-center pb-4">
+        <View className="items-center justify-center pb-4 w-full px-12 mt-6">
+          {isSignUp && (
+            <TouchableOpacity
+              className="w-full rounded-3xl  mb-2 bg-[#ECECEC] h-[50px] justify-center items-center shadow-lg elevation-6"
+              onPress={() =>
+                navigation.navigate("Main", { screen: "Dashboard" })
+              }
+            >
+              <Text className="text-[#686868] font-bold text-center text-lg">
+                {t("Membership.Skip")}
+              </Text>
+            </TouchableOpacity>
+          )}
+
           <TouchableOpacity
             onPress={handleRegister}
             disabled={disableSubmit || !isFormValid()}
-            className={`${
-              disableSubmit || !isFormValid()
-                ? "bg-gray-400 rounded-full p-4 mt-2 w-60 "
-                : "bg-[#353535] rounded-full p-4 mt-2 w-60"
+            className={`w-full rounded-3xl mt-2 h-[50px] justify-center items-center shadow-lg elevation-6 ${
+              disableSubmit || !isFormValid() ? "bg-[#9CA3AF]" : "bg-[#353535]"
             }`}
-            style={{
-              shadowColor: "#000000",
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.25,
-              shadowRadius: 4,
-              elevation: 4,
-            }}
           >
             {isLoading ? (
               <ActivityIndicator size="small" color="#fff" />
             ) : (
-              <Text className="text-white font-bold text-center">
+              <Text className="text-white font-bold text-center text-lg">
                 {t("BankDetails.Register")}
               </Text>
             )}
           </TouchableOpacity>
-        </View>
 
-        <View className="flex items-center justify-center mt-4 pb-4">
-          {language === "en" ? (
-            <View className="flex-row justify-center flex-wrap">
-              <Text className="text-sm text-black font-thin">View </Text>
-
-              <TouchableOpacity
-                onPress={() => navigation.navigate("TermsConditions")}
-              >
-                <Text className="text-sm text-black font-bold underline">
-                  Terms & Conditions
-                </Text>
-              </TouchableOpacity>
-
-              <Text className="text-sm text-black font-thin"> and </Text>
-
-              <TouchableOpacity
-                onPress={() => navigation.navigate("PrivacyPolicy")}
-              >
-                <Text className="text-sm text-black font-bold underline">
-                  Privacy Policy
-                </Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View className="flex-row justify-center flex-wrap">
-              <TouchableOpacity
-                onPress={() => navigation.navigate("TermsConditions")}
-              >
-                <Text
-                  className="text-black font-bold underline"
-                  style={{ fontSize: adjustFontSize(12) }}
-                >
-                  නියමයන් සහ කොන්දේසි
-                </Text>
-              </TouchableOpacity>
-
-              <Text
-                className="text-black font-thin"
-                style={{ fontSize: adjustFontSize(12), marginHorizontal: 2 }}
-              >
-                {""} සහ
-              </Text>
-
-              <TouchableOpacity
-                onPress={() => navigation.navigate("PrivacyPolicy")}
-              >
-                <Text
-                  className="text-black font-bold underline"
-                  style={{ fontSize: adjustFontSize(12) }}
-                >
-                  {""} රහස්‍යතා ප්‍රතිපත්තිය
-                </Text>
-              </TouchableOpacity>
-
-              <Text
-                className="text-black font-thin"
-                style={{ fontSize: adjustFontSize(12), marginLeft: 2 }}
-              >
-                {""} බලන්න
-              </Text>
+          {!isSignUp && (
+            <View className="items-center justify-center mt-6 w-full">
+              {language === "en" ? (
+                <View className="flex-row justify-center flex-wrap">
+                  <Text className="text-sm text-black font-thin">View </Text>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("TermsConditions")}
+                  >
+                    <Text className="text-sm text-black font-bold underline">
+                      Terms & Conditions
+                    </Text>
+                  </TouchableOpacity>
+                  <Text className="text-sm text-black font-thin"> and </Text>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("PrivacyPolicy")}
+                  >
+                    <Text className="text-sm text-black font-bold underline">
+                      Privacy Policy
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <View className="flex-row justify-center flex-wrap">
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("TermsConditions")}
+                  >
+                    <Text
+                      className="text-black font-bold underline"
+                      style={{ fontSize: adjustFontSize(12) }}
+                    >
+                      නියමයන් සහ කොන්දේසි
+                    </Text>
+                  </TouchableOpacity>
+                  <Text
+                    className="text-black font-thin mx-0.5"
+                    style={{ fontSize: adjustFontSize(12) }}
+                  >
+                    සහ
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("PrivacyPolicy")}
+                  >
+                    <Text
+                      className="text-black font-bold underline"
+                      style={{ fontSize: adjustFontSize(12) }}
+                    >
+                      රහස්‍යතා ප්‍රතිපත්තිය
+                    </Text>
+                  </TouchableOpacity>
+                  <Text
+                    className="text-black font-thin ml-0.5"
+                    style={{ fontSize: adjustFontSize(12) }}
+                  >
+                    බලන්න
+                  </Text>
+                </View>
+              )}
             </View>
           )}
         </View>

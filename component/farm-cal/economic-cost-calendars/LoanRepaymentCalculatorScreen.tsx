@@ -77,8 +77,8 @@ const LoanRepaymentCalculatorScreen: React.FC<LoanRepaymentProps> = ({
     if (!loanAmount || !interestRate || !loanYears) {
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("EconomicCostCalendars.FillAllFields") ||
-          "Please fill all required fields.",
+        t("Main.PleaseFillAllRequiredFields") ||
+        "Please fill all required fields.",
       );
       return;
     }
@@ -90,24 +90,24 @@ const LoanRepaymentCalculatorScreen: React.FC<LoanRepaymentProps> = ({
     if (isNaN(loanNum) || loanNum <= 0) {
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("EconomicCostCalendars.LoanAmountError") ||
-          "Loan amount must be greater than 0.",
+        t("EconomicCostCalendars.LoanAmountMustBeGreaterThan0") ||
+        "Loan amount must be greater than 0.",
       );
       return;
     }
     if (isNaN(rateNum) || rateNum <= 0) {
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("EconomicCostCalendars.InterestRateError") ||
-          "Interest rate must be greater than 0.",
+        t("EconomicCostCalendars.InterestRateMustBeGreaterThan0") ||
+        "Interest rate must be greater than 0.",
       );
       return;
     }
     if (isNaN(yearsNum) || yearsNum <= 0) {
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("EconomicCostCalendars.YearsError") ||
-          "Number of years must be greater than 0.",
+        t("EconomicCostCalendars.NumberOfYearsMustBeGreaterThan0") ||
+        "Number of years must be greater than 0.",
       );
       return;
     }
@@ -145,39 +145,39 @@ const LoanRepaymentCalculatorScreen: React.FC<LoanRepaymentProps> = ({
       />
 
       <ScrollView
-        className="flex-1 px-4"
+        className="flex-1 px-6"
         contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            {t("EconomicCostCalendars.FillRequiredFields") ||
+            {t("Main.PleaseFillAllRequiredFields") ||
               "Please fill all required fields!"}
           </Text>
         )}
 
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("EconomicCostCalendars.LoanAmount") || "Loan Amount (Rs.)"} *
+          {t("EconomicCostCalendars.LoanAmountRs") || "Loan Amount (Rs.)"} *
         </Text>
         <TextInput
           value={formatWithCommas(loanAmount)}
           onChangeText={(text) =>
             handleCommaNumberInput(text, setLoanAmount, 2)
           }
-          placeholder={t("EconomicCostCalendars.TypeHere") || "--Type Here--"}
+          placeholder={t("Main.TypeHere") || "--Type Here--"}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"
         />
 
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("EconomicCostCalendars.InterestRate") || "Interest Rate (%)"} *
+          {t("EconomicCostCalendars.InterestRate%") || "Interest Rate (%)"} *
         </Text>
         <TextInput
           value={interestRate}
           onChangeText={(text) => handleNumberInput(text, setInterestRate, 2)}
-          placeholder={t("EconomicCostCalendars.TypeHere") || "--Type Here--"}
+          placeholder={t("Main.TypeHere") || "--Type Here--"}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"
@@ -189,7 +189,7 @@ const LoanRepaymentCalculatorScreen: React.FC<LoanRepaymentProps> = ({
         <TextInput
           value={loanYears}
           onChangeText={(text) => handleNumberInput(text, setLoanYears, 1)}
-          placeholder={t("EconomicCostCalendars.TypeHere") || "--Type Here--"}
+          placeholder={t("Main.TypeHere") || "--Type Here--"}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   View,
   Text,
@@ -31,6 +31,8 @@ interface PlantPopulationProps {
 interface CropGroup {
   id: number;
   cropNameEnglish: string;
+  cropNameSinhala: string;
+  cropNameTamil: string;
   rowSpace: number;
   plantSpace: number;
   image: string | null;
@@ -39,6 +41,9 @@ interface CropGroup {
 interface CropItem {
   label: string;
   value: string;
+  nameEnglish: string;
+  nameSinhala: string;
+  nameTamil: string;
   rowSpace: number;
   plantSpace: number;
   icon: string | null;
@@ -52,8 +57,8 @@ const AREA_UNITS = [
 const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
   navigation,
 }) => {
-  const { t } = useTranslation();
-  const [crops, setCrops] = useState<CropItem[]>([]);
+  const { t, i18n } = useTranslation();
+  const [rawCrops, setRawCrops] = useState<CropItem[]>([]);
   const [cropsLoading, setCropsLoading] = useState(false);
 
   const [cropModalVisible, setCropModalVisible] = useState(false);
@@ -66,6 +71,19 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
   const [modalVisible, setModalVisible] = useState(false);
   const [result, setResult] = useState({ value: "", unit: "" });
   const [showValidation, setShowValidation] = useState(false);
+
+  const crops = useMemo<CropItem[]>(() => {
+    const lang = i18n.language;
+    return rawCrops.map((c) => ({
+      ...c,
+      label:
+        lang === "si"
+          ? c.nameSinhala
+          : lang === "ta"
+            ? c.nameTamil
+            : c.nameEnglish,
+    }));
+  }, [rawCrops, i18n.language]);
 
   const selectedCrop = crops.find((c) => c.value === selectedCropValue) || null;
 
@@ -90,17 +108,20 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
             .map((item: CropGroup) => ({
               label: item.cropNameEnglish,
               value: item.cropNameEnglish,
+              nameEnglish: item.cropNameEnglish,
+              nameSinhala: item.cropNameSinhala || item.cropNameEnglish,
+              nameTamil: item.cropNameTamil || item.cropNameEnglish,
               rowSpace: Number(item.rowSpace),
               plantSpace: Number(item.plantSpace),
               icon: item.image ?? null,
             }));
-          setCrops(mapped);
+          setRawCrops(mapped);
         }
       } catch (error) {
         console.error("Error fetching crop groups:", error);
         Alert.alert(
-          t("CropPlanningCalculators.Error"),
-          t("CropPlanningCalculators.FetchError"),
+          t("Main.Error"),
+          t("CropPlanningCalculators.FailedToLoadCropsPleaseTryAgain"),
         );
       } finally {
         setCropsLoading(false);
@@ -128,7 +149,7 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
     if (isNaN(areaNum) || areaNum <= 0) {
       Alert.alert(
         t("CropPlanningCalculators.InvalidInput"),
-        t("CropPlanningCalculators.AreaError"),
+        t("CropPlanningCalculators.AreaMustBeGreaterThan0"),
       );
       return;
     }
@@ -172,20 +193,20 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
-        title={`${t("CropPlanningCalculators.PlantPopulation")} ${t("Calculator.calculator")}`}
+        title={`${t("CropPlanningCalculators.PlantPopulation")} ${t("Calculator.Calculator")}`}
         icon={require("@/assets/images/farm-cal/crop-planning-calculators/plant-population-icon.webp")}
         onBack={() => navigation.goBack()}
       />
 
       <ScrollView
-        className="flex-1 px-4"
+        className="flex-1 px-6"
         contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            {t("CropPlanningCalculators.FillAllFields")}
+            {t("Main.PleaseFillAllRequiredFields")}
           </Text>
         )}
 
@@ -206,9 +227,7 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
           ) : (
             <>
               <Text
-                className={`text-sm ${
-                  selectedCropValue ? "text-gray-900" : "text-gray-400"
-                }`}
+                className={`text-sm ${selectedCropValue ? "text-gray-900" : "text-gray-400"}`}
               >
                 {getSelectedCropLabel()}
               </Text>
@@ -225,7 +244,7 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
           <TextInput
             value={area}
             onChangeText={handleAreaChange}
-            placeholder={t("CropPlanningCalculators.TypeHere")}
+            placeholder={t("Main.TypeHere")}
             placeholderTextColor="#9CA3AF"
             keyboardType="decimal-pad"
             className="flex-1 bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900"
@@ -247,13 +266,11 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
 
         {/* Row Spacing Auto Fill */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          {t("CropPlanningCalculators.RowSpacing")}
+          {t("CropPlanningCalculators.RowSpacingCm")}
         </Text>
         <View className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
           <Text
-            className={`text-sm ${
-              selectedCrop ? "text-[#287097]" : "text-gray-400"
-            }`}
+            className={`text-sm ${selectedCrop ? "text-[#287097]" : "text-gray-400"}`}
           >
             {selectedCrop
               ? `${selectedCrop.rowSpace} cm`
@@ -263,13 +280,11 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
 
         {/* Plant Spacing Auto Fill */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          {t("CropPlanningCalculators.PlantSpacing")}
+          {t("CropPlanningCalculators.PlantSpacingCm")}
         </Text>
         <View className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
           <Text
-            className={`text-sm ${
-              selectedCrop ? "text-[#287097]" : "text-gray-400"
-            }`}
+            className={`text-sm ${selectedCrop ? "text-[#287097]" : "text-gray-400"}`}
           >
             {selectedCrop
               ? `${selectedCrop.plantSpace} cm`
@@ -297,7 +312,7 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
         data={crops}
         selectedItems={selectedCropValue ? [selectedCropValue] : []}
         onSelect={handleCropSelect}
-        searchPlaceholder={t("CropPlanningCalculators.SearchCrops")}
+        searchPlaceholder={t("CropPlanningCalculators.SearchCrops...")}
         noResultsText={t("CropPlanningCalculators.NoCropsFound")}
         multiSelect={false}
         searchKeys={["label"]}
@@ -311,7 +326,7 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
         data={AREA_UNITS}
         selectedItems={[areaUnit]}
         onSelect={handleUnitSelect}
-        searchPlaceholder={t("CropPlanningCalculators.SearchUnits")}
+        searchPlaceholder={t("CropPlanningCalculators.SearchUnits...")}
         noResultsText={t("CropPlanningCalculators.NoUnitsFound")}
         multiSelect={false}
         searchKeys={["label"]}

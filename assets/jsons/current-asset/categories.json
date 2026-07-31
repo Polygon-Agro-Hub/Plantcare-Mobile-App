@@ -1,0 +1,50 @@
+[
+  {
+    "value": "Agro chemicals",
+    "translations": {
+      "en": "Agro chemicals",
+      "si": "කෘෂි රසායනික ද්‍රව්‍ය",
+      "ta": "வேளாண் இரசாயனங்கள்"
+    }
+  },
+  {
+    "value": "Fertilizers",
+    "translations": {
+      "en": "Fertilizers",
+      "si": "පොහොර",
+      "ta": "உரங்கள்"
+    }
+  },
+  {
+    "value": "Seeds and Seedlings",
+    "translations": {
+      "en": "Seeds and Seedlings",
+      "si": "බීජ සහ පැල",
+      "ta": "விதைகள் மற்றும் நாற்றுகள்"
+    }
+  },
+  {
+    "value": "Livestock for sale",
+    "translations": {
+      "en": "Livestock for Sale",
+      "si": "විකිණීම සඳහා පශු සම්පත්",
+      "ta": "விற்பனைக்கான கால்நடைகள்"
+    }
+  },
+  {
+    "value": "Animal feed",
+    "translations": {
+      "en": "Animal Feed",
+      "si": "සත්ව ආහාර",
+      "ta": "விலங்குத் தீவனம்"
+    }
+  },
+  {
+    "value": "Other consumables",
+    "translations": {
+      "en": "Other Consumables",
+      "si": "වෙනත් පරිභෝජන ද්‍රව්‍ය",
+      "ta": "பிற நுகர்பொருட்கள்"
+    }
+  }
+]

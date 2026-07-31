@@ -11,6 +11,7 @@ import {
   Keyboard,
   ActivityIndicator,
   BackHandler,
+  StatusBar,
 } from "react-native";
 import axios from "axios";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
@@ -20,8 +21,9 @@ import { RootStackParamList } from "../types/types";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { RefreshControl } from "react-native";
-import Entypo from "react-native-vector-icons/Entypo";
+import Entypo from "@expo/vector-icons/Entypo";
 import CustomHeader from "../common/CustomHeader";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type PublicForumRepliesNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -41,6 +43,9 @@ interface Comment {
   replyStaffId: number;
 }
 
+const MIN_INPUT_HEIGHT = 44;
+const MAX_INPUT_HEIGHT = 120;
+
 const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
   navigation,
 }) => {
@@ -49,7 +54,13 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [inputHeight, setInputHeight] = useState(40);
+  // contentHeight tracks the TRUE, unclamped content height reported by the
+  // native view. We do NOT bind the TextInput's `height` style to this value —
+  // on iOS, manually driving `height` via state fights UITextView's own
+  // autogrow layout and the box gets stuck at minHeight. Instead we only use
+  // this to decide when scrolling should kick in (content > maxHeight).
+  // The box itself grows natively via minHeight/maxHeight in the style.
+  const [contentHeight, setContentHeight] = useState(MIN_INPUT_HEIGHT);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
 
   const { t } = useTranslation();
@@ -60,6 +71,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
     userId: number;
   };
 
+  const insets = useSafeAreaInsets();
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -127,16 +139,15 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
 
       setNewComment("");
       setEditingCommentId(null);
-
-      setInputHeight(40);
+      setContentHeight(MIN_INPUT_HEIGHT);
       dismissKeyboard();
     } catch (error) {
       console.error("Error with comment:", error);
       Alert.alert(
-        t("PublicForum.sorry"),
+        t("Main.Sorry"),
         editingCommentId
-          ? t("PublicForum.updateFailed")
-          : t("PublicForum.commentFailed"),
+          ? t("PublicForum.FailedToUpdatePost")
+          : t("PublicForum.FailedToAddComment"),
       );
     } finally {
       setSubmitting(false);
@@ -157,10 +168,9 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
     nativeEvent: { contentSize: { height: any } };
   }) => {
     const { height } = event.nativeEvent.contentSize;
-    const maxHeight = 120;
-    const minHeight = 40;
-
-    setInputHeight(Math.min(Math.max(height, minHeight), maxHeight));
+    // Only tracked to decide when scrolling should engage — the box's
+    // actual visual height is handled natively via minHeight/maxHeight.
+    setContentHeight(height);
   };
 
   const formatDate = (dateString: string) => {
@@ -185,8 +195,10 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
       setNewComment(commentToEdit.replyMessage);
 
       const lines = commentToEdit.replyMessage.split("\n").length;
-      const estimatedHeight = Math.min(Math.max(lines * 20 + 20, 40), 120);
-      setInputHeight(estimatedHeight);
+      const estimatedHeight = Math.max(lines * 20 + 20, MIN_INPUT_HEIGHT);
+      // Just seeds contentHeight so scrollEnabled is correct immediately;
+      // the box itself will re-measure via onContentSizeChange right after.
+      setContentHeight(estimatedHeight);
     }
   };
 
@@ -194,15 +206,15 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
     setActiveMenuId(null);
 
     Alert.alert(
-      t("PublicForum.delete"),
-      t("PublicForum.Are you sure you want to delete this comment?"),
+      t("Main.Delete"),
+      t("PublicForum.AreYouSureYouWantToDeleteThisComment"),
       [
         {
-          text: t("PublicForum.cancel"),
+          text: t("Main.Cancel"),
           style: "cancel",
         },
         {
-          text: t("PublicForum.delete"),
+          text: t("Main.Delete"),
           style: "destructive",
           onPress: async () => {
             try {
@@ -220,9 +232,9 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
             } catch (error) {
               console.error("Error deleting comment:", error);
               Alert.alert(
-                t("Main.error"),
-                t("PublicForum.Failed to delete comment"),
-                [{ text: t("PublicForum.OK") }],
+                t("Main.Error"),
+                t("PublicForum.FailedToDDeletedComment"),
+                [{ text: t("Main.OK") }],
               );
             }
           },
@@ -256,43 +268,47 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
   );
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      enabled
-      className="bg-[#F4F7FF]"
-      style={{ flex: 1 }}
-    >
+    <View style={{ flex: 1, backgroundColor: "#F4F7FF" }}>
       <CustomHeader
         title=""
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
+        transparent
       />
-      <View className="flex-1 p-4 bg-[#F4F7FF]">
+      <KeyboardAvoidingView
+        behavior="padding"
+        keyboardVerticalOffset={
+          Platform.OS === "ios"
+            ? insets.top + 10
+            : (StatusBar.currentHeight || 24) + 10
+        }
+        style={{ flex: 1 }}
+      >
         <FlatList
           data={comments}
           keyExtractor={(item, index) =>
             `${item.id}-${item.createdAt}-${index}`
           }
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="interactive"
           renderItem={({ item }) => {
             const isOwnComment = isUserComment(item);
 
             return (
               <View
-                className={`bg-white mb-4 rounded-lg shadow-sm border border-gray-300 ${
-                  isOwnComment ? "self-end ml-12" : "self-start mr-12"
-                }`}
+                className={`bg-white mb-4 rounded-lg shadow-sm border border-gray-300 ${isOwnComment ? "self-end ml-12" : "self-start mr-12"
+                  }`}
                 style={{ width: "90%" }}
               >
                 <View className="flex-row justify-between p-4">
                   <View className="flex-1 max-w-4/5">
                     <View>
                       <Text
-                        className={`text-base overflow-hidden  ${
-                          isOwnComment || isPostOwner
-                            ? "font-bold"
-                            : "font-bold text-gray-600"
-                        }`}
+                        className={`text-base overflow-hidden  ${isOwnComment || isPostOwner
+                          ? "font-bold"
+                          : "font-bold text-gray-600"
+                          }`}
                         numberOfLines={1}
                       >
                         {item.userName || "GoviCare"}{" "}
@@ -300,7 +316,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                       </Text>
                     </View>
                   </View>
-                  <View className="flex-row items-center space-x-3">
+                  <View className="flex-row items-center gap-3">
                     <Text className="text-gray-500">
                       {formatDate(item.createdAt)}
                     </Text>
@@ -353,7 +369,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                       className="rounded-lg py-2 px-4"
                     >
                       <Text className="text-[16px] text-red-600">
-                        {t("PublicForum.delete")}
+                        {t("Main.Delete")}
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -366,13 +382,13 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
               <View className="flex-1 justify-center items-center py-8">
                 <ActivityIndicator size="large" color="#000" />
                 <Text className="text-gray-500 text-base mt-4">
-                  {t("PublicForum.loadingComments") || "Loading comments..."}
+                  {t("PublicForum.LoadingComments") || "Loading comments..."}
                 </Text>
               </View>
             ) : (
               <View className="flex-1 justify-center items-center py-8">
                 <Text className="text-gray-500 text-lg">
-                  {t("PublicForum.noComments")}
+                  {t("PublicForum.NotHaveAnyCommentYet")}
                 </Text>
               </View>
             )
@@ -380,72 +396,92 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
-          contentContainerStyle={{
-            flexGrow: 1,
-            paddingBottom: 80,
-          }}
+          style={{ flex: 1, paddingHorizontal: 16, paddingTop: 8 }}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 16 }}
         />
-      </View>
 
-      <View className="absolute bottom-0 left-0 right-0 bg-[#F4F7FF] border-t border-gray-200">
-        <View className="flex-row items-center p-4">
-          <View className="flex-row items-center w-full">
+        {/* Comment input bar - sits naturally at bottom, rises with keyboard */}
+        <View
+          style={{
+            backgroundColor: "#F4F7FF",
+            borderTopWidth: 1,
+            borderTopColor: "#E5E7EB",
+            paddingHorizontal: 16,
+            paddingVertical: 10,
+            paddingBottom: Platform.OS === "ios" ? Math.max(insets.bottom, 10) : 10,
+          }}
+        >
+          <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
             <TextInput
               value={newComment}
               onChangeText={setNewComment}
+              placeholderTextColor="#9CA3AF"
               placeholder={
                 editingCommentId
-                  ? t("PublicForum.Edit your comment...")
-                  : t("PublicForum.writeacomment")
+                  ? t("PublicForum.EditYourComment...")
+                  : t("PublicForum.WriteAComment")
               }
               multiline={true}
               textAlignVertical="top"
               onContentSizeChange={handleContentSizeChange}
               editable={!submitting}
-              style={{
-                height: inputHeight,
-                maxHeight: 120,
-                minHeight: 40,
-                opacity: submitting ? 0.6 : 1,
-                borderColor: editingCommentId ? "#D1D5DB" : "#D1D5DB",
-                borderWidth: editingCommentId ? 2 : 1,
-              }}
-              className={`flex-1 px-3 py-2 rounded-lg mr-2 ${editingCommentId ? "bg-gray-50" : "bg-gray-50"}`}
-              scrollEnabled={inputHeight >= 120}
+              // Always scrollable — toggling scrollEnabled dynamically based
+              // on state is a known iOS bug that causes the UITextView to
+              // stop growing/scrolling correctly. maxHeight below caps the
+              // visible box; scrollEnabled=true just lets overflow text
+              // scroll inside that cap on both platforms.
+              scrollEnabled={true}
               autoFocus={editingCommentId ? true : false}
+              style={{
+                flex: 1,
+                maxHeight: MAX_INPUT_HEIGHT,
+                minHeight: MIN_INPUT_HEIGHT,
+                opacity: submitting ? 0.6 : 1,
+                borderColor: editingCommentId ? "#6B7280" : "#D1D5DB",
+                borderWidth: editingCommentId ? 2 : 1,
+                borderRadius: 10,
+                backgroundColor: "#F9FAFB",
+                paddingHorizontal: 12,
+                paddingTop: 10,
+                paddingBottom: 10,
+                marginRight: 10,
+                fontSize: 14,
+                textAlign: "left",
+                includeFontPadding: false,
+              }}
             />
 
             <TouchableOpacity
               onPress={handleAddComment}
-              className={`px-4 py-2 rounded-lg ${
-                newComment.trim() === "" || submitting
-                  ? "bg-gray-400"
-                  : editingCommentId
-                    ? "bg-green-500"
-                    : "bg-[#0075FF]"
-              }`}
               disabled={newComment.trim() === "" || submitting}
               style={{
-                height: 40,
-                minWidth: 60,
+                height: 44,
+                minWidth: 64,
+                borderRadius: 10,
                 justifyContent: "center",
                 alignItems: "center",
+                backgroundColor:
+                  newComment.trim() === "" || submitting
+                    ? "#9CA3AF"
+                    : editingCommentId
+                    ? "#22C55E"
+                    : "#0075FF",
               }}
             >
               {submitting ? (
                 <ActivityIndicator size="small" color="white" />
               ) : (
-                <Text className="text-white">
+                <Text style={{ color: "white", fontWeight: "600" }}>
                   {editingCommentId
-                    ? t("PublicForum.Update")
-                    : t("PublicForum.send")}
+                    ? t("Main.Update")
+                    : t("PublicForum.Send")}
                 </Text>
               )}
             </TouchableOpacity>
           </View>
         </View>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 

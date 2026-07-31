@@ -10,10 +10,9 @@ import {
   BackHandler,
   Alert,
 } from "react-native";
-import { StatusBar } from "expo-status-bar";
 import axios from "axios";
-import EvilIcons from "react-native-vector-icons/EvilIcons";
-import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
+import EvilIcons from "@expo/vector-icons/EvilIcons";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Modal from "react-native-modal";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
@@ -30,6 +29,7 @@ import { useFocusEffect, useRoute } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomHeader from "../../common/CustomHeader";
+import NoData from "../../common/NoData";
 import districtData from "@/assets/jsons/common/district.json";
 
 type AddNewCropNavigationProps = StackNavigationProp<
@@ -147,11 +147,11 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
 
     if (!isValid) {
       Alert.alert(
-        t("NewCrop.Not Allowed"),
+        t("NewCrop.NotAllowed"),
         t(
-          "NewCrop.The certificate you purchased does not include this crop variety",
+          "NewCrop.TheCertificateYouPurchasedDoesNotIncludeThisCropVariety",
         ),
-        [{ text: t("NewCrop.OK") }],
+        [{ text: t("Main.OK") }],
       );
       return;
     }
@@ -170,7 +170,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
 
   const fetchCrop = async () => {
     try {
-      const selectedLanguage = t("NewCrop.LNG");
+      const selectedLanguage = t("Main.LNG");
       setLanguage(selectedLanguage);
 
       const res = await axios.get<CropData[]>(
@@ -359,7 +359,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
       setLoadingVarieties(true);
 
       try {
-        const selectedLanguage = t("NewCrop.LNG");
+        const selectedLanguage = t("Main.LNG");
         setLanguage(selectedLanguage);
 
         const varietyResponse = await axios.get<VarietyData[]>(
@@ -518,10 +518,8 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar style="dark" />
-
       <CustomHeader
-        title={t("NewCrop.NewCrop")}
+        title={t("NewCrop.SelectANewCrop")}
         navigation={navigation}
         onBackPress={() =>
           navigation.navigate("Main", {
@@ -531,22 +529,23 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
         }
       />
 
-      <View className="flex-row mt-6 items-center ml-5 mr-5">
+      <View className="px-6 mt-6 w-full">
         <TouchableOpacity
           onPress={handlePress}
-          className="flex-row justify-center"
+          activeOpacity={1}
+          className="w-full"
         >
-          <View className="flex-row items-center bg-gray-100 rounded-3xl h-[50px] p-1 w-full max-w-md">
-            <EvilIcons name="search" size={26} color="gray" />
+          <View className="flex-row items-center bg-gray-100 rounded-3xl h-[50px] px-4 w-full">
             <TextInput
               ref={inputRef}
-              className="ml-2 mr-6 text-lg flex-1"
-              placeholder={t("NewCrop.Search")}
+              className="text-base flex-1 h-full mr-2 text-black"
+              placeholder={t("NewCrop.SearchCrop")}
               placeholderTextColor="gray"
               style={{ textAlignVertical: "center" }}
               value={searchQuery}
               onChangeText={setSearchQuery}
             />
+            <EvilIcons name="search" size={28} color="gray" />
           </View>
         </TouchableOpacity>
       </View>
@@ -577,11 +576,11 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
             className="bg-slate-100"
             onPress={() => setShowDistricts(true)}
           >
-            <Text className="text-base mb-2">{t("NewCrop.District")}</Text>
+            <Text className="text-base mb-2">{t("NewCrop.ByDistrict")}</Text>
           </TouchableOpacity>
           <View className="border-t border-gray-400" />
           <TouchableOpacity className="bg-slate-100">
-            <Text className="text-base">{t("NewCrop.Price")}</Text>
+            <Text className="text-base">{t("NewCrop.ByPrice")}</Text>
           </TouchableOpacity>
 
           {showDistricts && (
@@ -622,15 +621,15 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
                     setSelectedVariety([]);
                     setSelectedCropId(null);
                   }}
-                  className={`${
-                    selectedCategory === category.name
+                  className={`${selectedCategory === category.name
                       ? "bg-green-300 border-2 border-green-500"
                       : "bg-gray-200"
-                  } rounded-full items-center justify-center`}
+                    } rounded-full items-center justify-center`}
                   style={{
                     width: wp("20%"),
                     height: wp("20%"),
                     padding: wp("2%"),
+                    ...({ outlineStyle: "none" } as any),
                   }}
                   disabled={selectedCrop}
                 >
@@ -673,54 +672,23 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
           {selectedCrop === false && (
             <>
               {filteredCrops && filteredCrops.length > 0 ? (
-                <ScrollView
-                  contentContainerStyle={{ flexGrow: 1, zIndex: 1 }}
+                <FarmCropItem
+                  data={filteredCrops}
+                  navigation={navigation}
+                  lang={language}
+                  selectedCrop={selectedCrop}
+                  setSelectedCrop={setSelectedCrop}
+                  onCropSelect={handleCropSelect}
+                  allowedCropIds={allowedCropIds}
                   refreshControl={
                     <RefreshControl
                       refreshing={refreshing}
                       onRefresh={handleRefresh}
                     />
                   }
-                >
-                  <FarmCropItem
-                    data={filteredCrops}
-                    navigation={navigation}
-                    lang={language}
-                    selectedCrop={selectedCrop}
-                    setSelectedCrop={setSelectedCrop}
-                    onCropSelect={handleCropSelect}
-                    allowedCropIds={allowedCropIds}
-                  />
-                </ScrollView>
+                />
               ) : (
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    paddingHorizontal: 20,
-                  }}
-                >
-                  <LottieView
-                    source={require("@/assets/jsons/common/no-data.json")}
-                    autoPlay
-                    loop
-                    style={{ width: 150, height: 150 }}
-                  />
-                  <Text
-                    style={{
-                      fontSize: 18,
-                      color: "#666",
-                      textAlign: "center",
-                      marginTop: 20,
-                      fontWeight: "500",
-                    }}
-                  >
-                    {searchQuery
-                      ? t("NewCrop.No results found")
-                      : t("NewCrop.No results found")}
-                  </Text>
-                </View>
+                <NoData text={t("NewCrop.NoResultsFound") || "No Results Found"} />
               )}
             </>
           )}
@@ -744,41 +712,15 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
               ) : (
                 <>
                   {filterdVareity && filterdVareity.length > 0 ? (
-                    <ScrollView>
-                      <CropVariety
-                        data={filterdVareity}
-                        navigation={navigation as any}
-                        lang={language}
-                        selectedCrop={selectedCrop}
-                        farmId={farmId}
-                      />
-                    </ScrollView>
+                    <CropVariety
+                      data={filterdVareity}
+                      navigation={navigation as any}
+                      lang={language}
+                      selectedCrop={selectedCrop}
+                      farmId={farmId}
+                    />
                   ) : (
-                    <View
-                      style={{
-                        flex: 1,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        paddingHorizontal: 20,
-                      }}
-                    >
-                      <LottieView
-                        source={require("@/assets/jsons/common/no-data.json")}
-                        autoPlay
-                        loop
-                        style={{ width: 150, height: 150 }}
-                      />
-                      <Text
-                        style={{
-                          fontSize: 18,
-                          color: "black",
-                          textAlign: "center",
-                          marginTop: 20,
-                        }}
-                      >
-                        {t("NewCrop.No results found")}
-                      </Text>
-                    </View>
+                      <NoData text={t("NewCrop.NoResultsFound") || "No Results Found"} />
                   )}
                 </>
               )}

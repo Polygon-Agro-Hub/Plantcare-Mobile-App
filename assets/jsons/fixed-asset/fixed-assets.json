@@ -1,23 +1,45 @@
 {
   "categoryOptions": [
     {
-      "labelKey": "FixedAssets.buildingandInfrastructures",
-      "value": "Building and Infrastructures"
+      "value": "Building and Infrastructures",
+      "translations": {
+        "en": "Building and Infrastructures",
+        "si": "ගොඩනැගිලි සහ යටිතල පහසුකම්",
+        "ta": "கட்டிடங்கள் மற்றும் உள்கட்டமைப்புகள்"
+      }
     },
     {
-      "labelKey": "FixedAssets.machineandVehicles",
-      "value": "Machine and Vehicles"
+      "value": "Machine and Vehicles",
+      "translations": {
+        "en": "Machine and Vehicles",
+        "si": "යන්ත්‍රෝපකරණ සහ වාහන",
+        "ta": "இயந்திரங்கள் மற்றும் வாகனங்கள்"
+      }
     },
-    { "labelKey": "FixedAssets.land", "value": "Land" },
-    { "labelKey": "FixedAssets.toolsandEquipments", "value": "Tools" }
+    {
+      "value": "Land",
+      "translations": {
+        "en": "Land",
+        "si": "ඉඩම්",
+        "ta": "நிலங்கள்"
+      }
+    },
+    {
+      "value": "Tools",
+      "translations": {
+        "en": "Tools",
+        "si": "මෙවලම් සහ උපකරණ",
+        "ta": "கருவிகள் மற்றும் உபகரணங்கள்"
+      }
+    }
   ],
 
   "ownershipCategories": [
     {
-      "labelKey": "FixedAssets.ownBuilding",
+      "labelKey": "FixedAssets.OwnBuildingWithTitleOwnership",
       "value": "Own Building (with title ownership)"
     },
-    { "labelKey": "FixedAssets.leasedBuilding", "value": "Leased Building" },
+    { "labelKey": "FixedAssets.LeasedBuilding", "value": "Leased Building" },
     { "labelKey": "FixedAssets.permitBuilding", "value": "Permitted Building" },
     {
       "labelKey": "FixedAssets.sharedOwnership",
@@ -33,28 +55,28 @@
   ],
 
   "generalConditionOptions": [
-    { "labelKey": "FixedAssets.good", "value": "Good" },
-    { "labelKey": "FixedAssets.average", "value": "Average" },
-    { "labelKey": "FixedAssets.poor", "value": "Poor" }
+    { "labelKey": "FixedAssets.Good", "value": "Good" },
+    { "labelKey": "FixedAssets.Average", "value": "Average" },
+    { "labelKey": "FixedAssets.Poor", "value": "Poor" }
   ],
 
   "buildingTypeOptions": [
-    { "labelKey": "FixedAssets.barn", "value": "Barn" },
-    { "labelKey": "FixedAssets.silo", "value": "Silo" },
+    { "labelKey": "FixedAssets.Barn", "value": "Barn" },
+    { "labelKey": "FixedAssets.Silo", "value": "Silo" },
     {
-      "labelKey": "FixedAssets.greenhouseStructure",
+      "labelKey": "FixedAssets.GreenhouseStructure",
       "value": "Greenhouse structure"
     },
-    { "labelKey": "FixedAssets.storageFacility", "value": "Storage facility" },
-    { "labelKey": "FixedAssets.storageShed", "value": "Storage shed" },
+    { "labelKey": "FixedAssets.StorageFacility", "value": "Storage facility" },
+    { "labelKey": "FixedAssets.StorageShed", "value": "Storage shed" },
     {
-      "labelKey": "FixedAssets.processingFacility",
+      "labelKey": "FixedAssets.ProcessingFacility",
       "value": "Processing facility"
     },
-    { "labelKey": "FixedAssets.packingShed", "value": "Packing shed" },
-    { "labelKey": "FixedAssets.dairyParlor", "value": "Dairy parlor" },
-    { "labelKey": "FixedAssets.poultryHouse", "value": "Poultry house" },
-    { "labelKey": "FixedAssets.livestockShelter", "value": "Livestock shelter" }
+    { "labelKey": "FixedAssets.PackingShed", "value": "Packing shed" },
+    { "labelKey": "FixedAssets.DairyParlor", "value": "Dairy parlor" },
+    { "labelKey": "FixedAssets.PoultryHouse", "value": "Poultry house" },
+    { "labelKey": "FixedAssets.LivestockShelter", "value": "Livestock shelter" }
   ],
 
   "machineasset": [
@@ -92,38 +114,38 @@
   ],
 
   "assetOptions": [
-    { "labelKey": "FixedAssets.handFork", "value": "Hand Fork" },
-    { "labelKey": "FixedAssets.cuttingKnife", "value": "Cutting knife" },
-    { "labelKey": "FixedAssets.ilukKaththa", "value": "Iluk kaththa" },
-    { "labelKey": "FixedAssets.kaththa", "value": "Kaththa" },
-    { "labelKey": "FixedAssets.karaDigaManna", "value": "Kara diga manna" },
+    { "labelKey": "FixedAssets.HandFork", "value": "Hand Fork" },
+    { "labelKey": "FixedAssets.CuttingKnife", "value": "Cutting knife" },
+    { "labelKey": "FixedAssets.IlukKaththa", "value": "Iluk kaththa" },
+    { "labelKey": "FixedAssets.Kaththa", "value": "Kaththa" },
+    { "labelKey": "FixedAssets.KaraDigaManna", "value": "Kara diga manna" },
     {
-      "labelKey": "FixedAssets.coconutHarvestingKnife",
+      "labelKey": "FixedAssets.CoconutHarvestingKnife",
       "value": "Coconut harvesting knife"
     },
-    { "labelKey": "FixedAssets.tappingKnife", "value": "Tapping knife" },
-    { "labelKey": "FixedAssets.mamotie", "value": "Mamotie" },
-    { "labelKey": "FixedAssets.mannaKnife", "value": "Manna knife" },
-    { "labelKey": "FixedAssets.shovel", "value": "Shovel" },
-    { "labelKey": "FixedAssets.smallAxe", "value": "Small axe" },
-    { "labelKey": "FixedAssets.puningKnife", "value": "Puning knife" },
-    { "labelKey": "FixedAssets.hoeWithFork", "value": "Hoe with fork" },
-    { "labelKey": "FixedAssets.forkHoe", "value": "Fork hoe" },
-    { "labelKey": "FixedAssets.sicklePaddy", "value": "Sickle - paddy" },
-    { "labelKey": "FixedAssets.growBags", "value": "Grow bags" },
-    { "labelKey": "FixedAssets.seedlingTray", "value": "Seedling tray" },
-    { "labelKey": "FixedAssets.fogger", "value": "Fogger" },
+    { "labelKey": "FixedAssets.TappingKnife", "value": "Tapping knife" },
+    { "labelKey": "FixedAssets.Mamotie", "value": "Mamotie" },
+    { "labelKey": "FixedAssets.MannaKnife", "value": "Manna knife" },
+    { "labelKey": "FixedAssets.Shovel", "value": "Shovel" },
+    { "labelKey": "FixedAssets.SmallAxe", "value": "Small axe" },
+    { "labelKey": "FixedAssets.PuningKnife", "value": "Puning knife" },
+    { "labelKey": "FixedAssets.HoeWithFork", "value": "Hoe with fork" },
+    { "labelKey": "FixedAssets.ForkHoe", "value": "Fork hoe" },
+    { "labelKey": "FixedAssets.SicklePaddy", "value": "Sickle - paddy" },
+    { "labelKey": "FixedAssets.GrowBags", "value": "Grow bags" },
+    { "labelKey": "FixedAssets.SeedlingTray", "value": "Seedling tray" },
+    { "labelKey": "FixedAssets.Fogger", "value": "Fogger" },
     {
-      "labelKey": "FixedAssets.dripIrrigationSystem",
+      "labelKey": "FixedAssets.DripIrrigationSystem",
       "value": "Drip Irrigation system"
     },
     {
-      "labelKey": "FixedAssets.sprinklerIrrigationSystem",
+      "labelKey": "FixedAssets.SprinklerIrrigationSystem",
       "value": "Sprinkler Irrigation system"
     },
-    { "labelKey": "FixedAssets.waterPump", "value": "Water pump" },
-    { "labelKey": "FixedAssets.waterTank", "value": "Water tank" },
-    { "labelKey": "FixedAssets.other", "value": "Other" }
+    { "labelKey": "FixedAssets.WaterPump", "value": "Water pump" },
+    { "labelKey": "FixedAssets.WaterTank", "value": "Water tank" },
+    { "labelKey": "FixedAssets.Other", "value": "Other" }
   ],
 
   "toolBrandOptions": [

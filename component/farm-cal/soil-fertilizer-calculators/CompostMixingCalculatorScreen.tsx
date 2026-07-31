@@ -63,7 +63,7 @@ const CompostMixingCalculatorScreen: React.FC<CompostMixingProps> = ({
     if (isNaN(G) || G <= 0) {
       Alert.alert(
         t("Calculator.InvalidInput"),
-        `${t("SoilFertilizerCalculators.GreenWastePercentage")} ${t("Calculator.InvalidInput").toLowerCase()}`,
+        `${t("SoilFertilizerCalculators.GreenWastePercentage%")} ${t("Calculator.InvalidInput").toLowerCase()}`,
       );
       return;
     }
@@ -71,7 +71,7 @@ const CompostMixingCalculatorScreen: React.FC<CompostMixingProps> = ({
     if (isNaN(B) || B <= 0) {
       Alert.alert(
         t("Calculator.InvalidInput"),
-        `${t("SoilFertilizerCalculators.BrownWastePercentage")} ${t("Calculator.InvalidInput").toLowerCase()}`,
+        `${t("SoilFertilizerCalculators.BrownWastePercentage%")} ${t("Calculator.InvalidInput").toLowerCase()}`,
       );
       return;
     }
@@ -90,7 +90,7 @@ const CompostMixingCalculatorScreen: React.FC<CompostMixingProps> = ({
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
-        title={`${t("SoilFertilizerCalculators.CompostMixing")} ${t("Calculator.calculator")}`}
+        title={`${t("SoilFertilizerCalculators.CompostMixing")} ${t("Calculator.Calculator")}`}
         icon={require("@/assets/images/farm-cal/soil-fertilizer-calculators/compost-mixing-icon.webp")}
         onBack={() => navigation.goBack()}
       />
@@ -103,18 +103,18 @@ const CompostMixingCalculatorScreen: React.FC<CompostMixingProps> = ({
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            {t("Calculator.RequiredFields")}
+            {t("Main.PleaseFillAllRequiredFields")}
           </Text>
         )}
 
         {/* Green Waste */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("SoilFertilizerCalculators.GreenWastePercentage")} *
+          {t("SoilFertilizerCalculators.GreenWastePercentage%")} *
         </Text>
         <TextInput
           value={greenWaste}
           onChangeText={handleGreenWasteChange}
-          placeholder={t("Calculator.TypeHere")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900"
@@ -122,12 +122,12 @@ const CompostMixingCalculatorScreen: React.FC<CompostMixingProps> = ({
 
         {/* Brown Waste */}
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
-          {t("SoilFertilizerCalculators.BrownWastePercentage")} *
+          {t("SoilFertilizerCalculators.BrownWastePercentage%")} *
         </Text>
         <TextInput
           value={brownWaste}
           onChangeText={handleBrownWasteChange}
-          placeholder={t("Calculator.TypeHere")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900"
@@ -148,7 +148,7 @@ const CompostMixingCalculatorScreen: React.FC<CompostMixingProps> = ({
       <ResultModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        cropName={t("SoilFertilizerCalculators.IdealRatio")}
+        cropName={t("SoilFertilizerCalculators.IdealRatioBG")}
         resultValue={result.value}
         resultUnit={result.unit}
       />

@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StatusBar,
   ScrollView,
   ActivityIndicator,
   BackHandler,
@@ -94,9 +93,9 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
           lottieSource: require("@/assets/jsons/govi-capital/stay-tuned.json"),
           title: t("GoviPensionStatus.Stay Tuned!"),
           content: t(
-            "GoviPensionStatus.We're taking a closer look at your pension application and will update you soon. This process might take a while.",
+            "GoviPensionStatus.WereTakingACloserLookAtYourPensionApplicationAndWillUpdateYouSoonThisProcessMightTakeAWhile",
           ),
-          buttonText: t("GoviPensionStatus.Go Back"),
+          buttonText: t("Main.GoBack"),
           onPress: () => navigation.navigate("Main", { screen: "Dashboard" }),
           buttonStyle: "bg-[#ECECEC]",
           buttonTextColor: "text-[#8E8E8E]",
@@ -104,11 +103,11 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
       case "Approved":
         return {
           lottieSource: require("@/assets/jsons/govi-capital/congratulation.json"),
-          title: t("GoviPensionStatus.Congratulations!"),
+          title: t("GoviPensionStatus.Congratulations"),
           content: t(
-            "GoviPensionStatus.You are now eligible for the pension scheme.",
+            "GoviPensionStatus.YouAreNowEligibleForThePensionScheme",
           ),
-          buttonText: t("GoviPensionStatus.View My Pension Account"),
+          buttonText: t("GoviPensionStatus.ViewMyPensionAccount"),
           onPress: async () => {
             try {
               const token = await AsyncStorage.getItem("userToken");
@@ -133,11 +132,11 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
       case "Rejected":
         return {
           lottieSource: require("@/assets/jsons/govi-capital/request-rejected.json"),
-          title: t("GoviPensionStatus.Try Again!"),
+          title: t("GoviPensionStatus.TryAgain"),
           content: t(
-            "GoviPensionStatus.We're sorry to inform you that your pension request has been rejected. Please feel free to try again in the future.",
+            "GoviPensionStatus.WereSorryToInformYouThatYourPensionRequestHasBeenRejectedPleaseFeelFreeToTryAgainInTheFuture",
           ),
-          buttonText: t("GoviPensionStatus.Go Back"),
+          buttonText: t("Main.GoBack"),
           onPress: () => navigation.navigate("Main", { screen: "Dashboard" }),
           buttonStyle: "bg-[#ECECEC]",
           buttonTextColor: "text-[#8E8E8E]",
@@ -147,9 +146,9 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
           lottieSource: require("@/assets/jsons/govi-capital/stay-tuned.json"),
           title: t("GoviPensionStatus.Stay Tuned!"),
           content: t(
-            "GoviPensionStatus.We're taking a closer look at your pension application and will update you soon. This process might take a while.",
+            "GoviPensionStatus.WereTakingACloserLookAtYourPensionApplicationAndWillUpdateYouSoonThisProcessMightTakeAWhile",
           ),
-          buttonText: t("GoviPensionStatus.Go Back"),
+          buttonText: t("Main.GoBack"),
           onPress: () => navigation.navigate("Main", { screen: "Dashboard" }),
           buttonStyle: "bg-[#ECECEC]",
           buttonTextColor: "text-[#8E8E8E]",
@@ -162,7 +161,7 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
   if (isLoading) {
     return (
       <View className="flex-1 bg-white">
-        <StatusBar barStyle="dark-content" backgroundColor="white" />
+        
         <CustomHeader
           title={t("TransactionList.GoViPension")}
           showBackButton={true}
@@ -174,7 +173,7 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="#00A896" />
           <Text className="mt-4 text-gray-600">
-            {t("GoviPensionStatus.Loading status...")}
+            {t("GoviPensionStatus.LoadingStatus")}
           </Text>
         </View>
       </View>
@@ -183,15 +182,12 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar barStyle="dark-content" backgroundColor="white" />
-
       <CustomHeader
         title={t("TransactionList.GoViPension")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.navigate("Main", { screen: "Dashboard" })}
       />
-
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ flexGrow: 1 }}
@@ -214,7 +210,7 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
         </View>
 
         {/* Status Content */}
-        <View className="px-8 mb-10">
+        <View className="px-6 mb-10">
           <Text className="text-md text-[#4B6B87] text-center leading-7">
             {config.content}
           </Text>
@@ -224,7 +220,7 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
       </ScrollView>
 
       {/* Action Button */}
-      <View className="px-5 pb-6 pt-4 bg-white">
+      <View className="px-6 pb-6 pt-4 bg-white">
         <TouchableOpacity
           onPress={config.onPress}
           className={`${config.buttonStyle} rounded-3xl h-[50px] justify-center `}

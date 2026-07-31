@@ -49,6 +49,9 @@ const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
 
   useEffect(() => {
     setSelectedValues(selectedItems);
+    if (visible) {
+      setSearchValue("");
+    }
   }, [selectedItems, visible]);
 
   useEffect(() => {
@@ -118,16 +121,28 @@ const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
 
   const renderSearchInput = () => (
     <View className="px-4 py-2 border-b border-gray-200">
-      <View className="bg-gray-100 rounded-3xl h-[50px] px-3 flex-row items-center">
+      <View
+        className="bg-gray-100 rounded-3xl px-3 flex-row items-center"
+        style={{ height: 50 }}
+      >
         <MaterialIcons name="search" size={20} color="#666" />
         <TextInput
           placeholder={searchPlaceholder}
           value={searchValue}
           onChangeText={setSearchValue}
-          className="flex-1 ml-2 text-base"
           placeholderTextColor="#7F7F7F"
           autoCapitalize="none"
           autoCorrect={false}
+          style={{
+            flex: 1,
+            marginLeft: 8,
+            fontSize: 16,
+            // iOS fix: explicit height + paddingVertical:0 prevents text clipping
+            // (descenders like g, j, y, f, p, q getting cut off)
+            height: 50,
+            paddingVertical: 0,
+            includeFontPadding: false,
+          }}
         />
         {searchValue ? (
           <TouchableOpacity onPress={clearSearch}>

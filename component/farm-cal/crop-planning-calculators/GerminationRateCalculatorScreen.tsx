@@ -58,7 +58,7 @@ const GerminationRateCalculatorScreen: React.FC<GerminationRateProps> = ({
     if (ST <= 0) {
       Alert.alert(
         t("CropPlanningCalculators.InvalidInput"),
-        t("CropPlanningCalculators.SeedsTestedError"),
+        t("CropPlanningCalculators.NumberOfSeedsTestedMustBeGreaterThan0"),
       );
       return;
     }
@@ -66,7 +66,7 @@ const GerminationRateCalculatorScreen: React.FC<GerminationRateProps> = ({
     if (SG > ST) {
       Alert.alert(
         t("CropPlanningCalculators.InvalidInput"),
-        t("CropPlanningCalculators.SeedsGerminatedError"),
+        t("CropPlanningCalculators.SeedsGerminatedCannotBeGreaterThanSeedsTested"),
       );
       return;
     }
@@ -87,7 +87,7 @@ const GerminationRateCalculatorScreen: React.FC<GerminationRateProps> = ({
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
-        title={`${t("CropPlanningCalculators.GerminationRate")} ${t("Calculator.calculator")}`}
+        title={`${t("CropPlanningCalculators.GerminationRate")} ${t("Calculator.Calculator")}`}
         icon={require("@/assets/images/farm-cal/crop-planning-calculators/germination-rate-icon.webp")}
         onBack={() => navigation.goBack()}
       />
@@ -100,18 +100,18 @@ const GerminationRateCalculatorScreen: React.FC<GerminationRateProps> = ({
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            {t("CropPlanningCalculators.FillAllFields")}
+            {t("Main.PleaseFillAllRequiredFields")}
           </Text>
         )}
 
         {/* Number of Seeds Tested */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("CropPlanningCalculators.SeedsTested")} *
+          {t("CropPlanningCalculators.NumberOfSeedsTested")} *
         </Text>
         <TextInput
           value={seedsTested}
           onChangeText={handleSeedsTestedChange}
-          placeholder={t("CropPlanningCalculators.TypeHere")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="numeric"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900"
@@ -124,7 +124,7 @@ const GerminationRateCalculatorScreen: React.FC<GerminationRateProps> = ({
         <TextInput
           value={seedsGerminated}
           onChangeText={handleSeedsGerminatedChange}
-          placeholder={t("CropPlanningCalculators.TypeHere")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="numeric"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900"

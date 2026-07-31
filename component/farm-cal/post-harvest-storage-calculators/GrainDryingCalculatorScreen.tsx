@@ -49,7 +49,7 @@ const GrainDryingCalculatorScreen: React.FC<GrainDryingProps> = ({
     setShowValidation(true);
 
     if (!initialMoisture || !finalMoisture || !grainWeight) {
-      Alert.alert(t("PostHarvestStorageCalculators.InvalidInput"), t("PostHarvestStorageCalculators.FillAllFields"));
+      Alert.alert(t("PostHarvestStorageCalculators.InvalidInput"), t("Main.PleaseFillAllRequiredFields"));
       return;
     }
 
@@ -60,23 +60,23 @@ const GrainDryingCalculatorScreen: React.FC<GrainDryingProps> = ({
     if (isNaN(initialNum) || initialNum <= 0 || initialNum > 100) {
       Alert.alert(
         t("PostHarvestStorageCalculators.InvalidInput"),
-        t("PostHarvestStorageCalculators.InitialMoistureError"),
+        t("PostHarvestStorageCalculators.InitialMoistureMustBeBetween0And100"),
       );
       return;
     }
     if (isNaN(finalNum) || finalNum <= 0 || finalNum > 100) {
-      Alert.alert(t("PostHarvestStorageCalculators.InvalidInput"), t("PostHarvestStorageCalculators.FinalMoistureError"));
+      Alert.alert(t("PostHarvestStorageCalculators.InvalidInput"), t("PostHarvestStorageCalculators.FinalMoistureMustBeBetween0And100"));
       return;
     }
     if (initialNum <= finalNum) {
       Alert.alert(
         t("PostHarvestStorageCalculators.InvalidInput"),
-        t("PostHarvestStorageCalculators.MoistureComparisonError"),
+        t("PostHarvestStorageCalculators.InitialMoistureMustBeGreaterThanFinalMoisture"),
       );
       return;
     }
     if (isNaN(weightNum) || weightNum <= 0) {
-      Alert.alert(t("PostHarvestStorageCalculators.InvalidInput"), t("PostHarvestStorageCalculators.WeightError"));
+      Alert.alert(t("PostHarvestStorageCalculators.InvalidInput"), t("PostHarvestStorageCalculators.GrainWeightMustBeGreaterThan0"));
       return;
     }
 
@@ -104,7 +104,7 @@ const GrainDryingCalculatorScreen: React.FC<GrainDryingProps> = ({
       />
 
       <ScrollView
-        className="flex-1 px-4"
+        className="flex-1 px-6"
         contentContainerStyle={{
           paddingBottom: 40,
         }}
@@ -113,20 +113,20 @@ const GrainDryingCalculatorScreen: React.FC<GrainDryingProps> = ({
       >
         {isFormInvalid && (
           <Text className="text-[#287097] text-sm font-medium mb-5">
-            {t("PostHarvestStorageCalculators.FillRequiredFields")}
+            {t("Main.PleaseFillAllRequiredFields")}
           </Text>
         )}
 
         {/* Initial Moisture Input */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("PostHarvestStorageCalculators.InitialMoisture")} *
+          {t("PostHarvestStorageCalculators.InitialMoisture%")} *
         </Text>
         <TextInput
           value={initialMoisture}
           onChangeText={(text) =>
             handleNumberInput(text, setInitialMoisture, 3)
           }
-          placeholder={t("PostHarvestStorageCalculators.TypeHere")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"
@@ -134,12 +134,12 @@ const GrainDryingCalculatorScreen: React.FC<GrainDryingProps> = ({
 
         {/* Final Moisture Input */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("PostHarvestStorageCalculators.FinalMoisture")} *
+          {t("PostHarvestStorageCalculators.FinalMoisture%")} *
         </Text>
         <TextInput
           value={finalMoisture}
           onChangeText={(text) => handleNumberInput(text, setFinalMoisture, 3)}
-          placeholder={t("PostHarvestStorageCalculators.TypeHere")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"
@@ -147,12 +147,12 @@ const GrainDryingCalculatorScreen: React.FC<GrainDryingProps> = ({
 
         {/* Grain Weight Input */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("PostHarvestStorageCalculators.TotalGrainWeight")} *
+          {t("PostHarvestStorageCalculators.TotalGrainWeightKg")} *
         </Text>
         <TextInput
           value={grainWeight}
           onChangeText={(text) => handleNumberInput(text, setGrainWeight, 3)}
-          placeholder={t("PostHarvestStorageCalculators.TypeHere")}
+          placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"

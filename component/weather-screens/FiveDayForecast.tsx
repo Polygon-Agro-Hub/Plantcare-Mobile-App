@@ -1,20 +1,31 @@
-import React, { useState, useCallback } from 'react';
-import { View, Text, Image, ScrollView, BackHandler, Dimensions } from 'react-native';
-import axios from 'axios';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../types/types';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect } from '@react-navigation/native';
-import CustomHeader from '../common/CustomHeader';
-import { useTranslation } from 'react-i18next';
-import LoadingPage from '../common/LoadingPage';
+import React, { useState, useCallback } from "react";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  BackHandler,
+  Dimensions,
+} from "react-native";
+import axios from "axios";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../types/types";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
+import CustomHeader from "../common/CustomHeader";
+import { FontAwesome6 } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
+import LoadingPage from "../common/LoadingPage";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 const isSmallScreen = width < 400;
 
-const API_KEY = '8561cb293616fe29259448fd098f654b';
+const API_KEY = "8561cb293616fe29259448fd098f654b";
 
-type FiveDayForecastNavigationProp = StackNavigationProp<RootStackParamList, 'FiveDayForecast'>;
+type FiveDayForecastNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "FiveDayForecast"
+>;
 
 interface FiveDayForecastProps {
   navigation: FiveDayForecastNavigationProp;
@@ -43,59 +54,60 @@ interface ForecastItem {
     speed: number;
   };
   rain?: {
-    '3h': number;
+    "1h"?: number;
+    "3h"?: number;
   };
   dt_txt: string;
 }
 
 const getWeatherImage = (id: number, icon: string): any => {
-  const iconString = typeof icon === 'string' ? icon : '';
-  const isDayTime = iconString.includes('d');
+  const iconString = typeof icon === "string" ? icon : "";
+  const isDayTime = iconString.includes("d");
 
   try {
     if (id === 800) {
       return isDayTime
-        ? require('../../assets/images/weather icons/daytime/sunny.webp')
-        : require('../../assets/images/weather icons/night-time/night-clear sky.webp');
+        ? require("../../assets/images/weather icons/daytime/sunny.webp")
+        : require("../../assets/images/weather icons/night-time/night-clear sky.webp");
     } else if (id >= 800 && id <= 804) {
       if (id === 801 || id === 802) {
         return isDayTime
-          ? require('../../assets/images/weather icons/daytime/partly cloudy.webp')
-          : require('../../assets/images/weather icons/night-time/Partly Cloudy - night.webp');
+          ? require("../../assets/images/weather icons/daytime/partly cloudy.webp")
+          : require("../../assets/images/weather icons/night-time/Partly Cloudy - night.webp");
       } else {
         return isDayTime
-          ? require('../../assets/images/weather icons/daytime/cloudy.webp')
-          : require('../../assets/images/weather icons/night-time/cloudy-night.webp');
+          ? require("../../assets/images/weather icons/daytime/cloudy.webp")
+          : require("../../assets/images/weather icons/night-time/cloudy-night.webp");
       }
     } else if (id >= 200 && id <= 232) {
       if (id === 210 || id === 211 || id === 212 || id === 221) {
         return isDayTime
-          ? require('../../assets/images/weather icons/daytime/thunderclouds.webp')
-          : require('../../assets/images/weather icons/night-time/night-thunderclouds.webp');
+          ? require("../../assets/images/weather icons/daytime/thunderclouds.webp")
+          : require("../../assets/images/weather icons/night-time/night-thunderclouds.webp");
       } else {
         return isDayTime
-          ? require('../../assets/images/weather icons/daytime/thunderstorms.webp')
-          : require('../../assets/images/weather icons/night-time/night-thunderstorms.webp');
+          ? require("../../assets/images/weather icons/daytime/thunderstorms.webp")
+          : require("../../assets/images/weather icons/night-time/night-thunderstorms.webp");
       }
     } else if (id >= 500 && id <= 531) {
       if (id === 502 || id === 504 || id === 503 || id === 522 || id === 511) {
         return isDayTime
-          ? require('../../assets/images/weather icons/daytime/heavy rain.webp')
-          : require('../../assets/images/weather icons/night-time/night-heavy rain.webp');
+          ? require("../../assets/images/weather icons/daytime/heavy rain.webp")
+          : require("../../assets/images/weather icons/night-time/night-heavy rain.webp");
       } else {
         return isDayTime
-          ? require('../../assets/images/weather icons/daytime/partly rainy.webp')
-          : require('../../assets/images/weather icons/night-time/night-partly-rainy.webp');
+          ? require("../../assets/images/weather icons/daytime/partly rainy.webp")
+          : require("../../assets/images/weather icons/night-time/night-partly-rainy.webp");
       }
     } else if (id === 701) {
       return isDayTime
-        ? require('../../assets/images/weather icons/daytime/mist.webp')
-        : require('../../assets/images/weather icons/night-time/mist-nightsky.webp');
+        ? require("../../assets/images/weather icons/daytime/mist.webp")
+        : require("../../assets/images/weather icons/night-time/mist-nightsky.webp");
     } else if (id >= 600 && id <= 622) {
-      return require('../../assets/images/weather icons/daytime/snow.webp');
+      return require("../../assets/images/weather icons/daytime/snow.webp");
     }
   } catch (error) {
-    console.error('Error loading image:', error);
+    console.error("Error loading image:", error);
   }
 };
 
@@ -109,7 +121,7 @@ const FiveDayForecast: React.FC<FiveDayForecastProps> = ({ navigation }) => {
     rain: 0,
   });
   const [loading, setLoading] = useState<boolean>(true);
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
 
   const getWeatherName = (id: any, icon: any) => {
     const iconString = typeof icon === "string" ? icon : "";
@@ -131,7 +143,13 @@ const FiveDayForecast: React.FC<FiveDayForecastProps> = ({ navigation }) => {
           return t("WeatherNames.Thunderstorms");
         }
       } else if (id >= 500 && id <= 531) {
-        if (id === 502 || id === 504 || id === 503 || id === 522 || id === 511) {
+        if (
+          id === 502 ||
+          id === 504 ||
+          id === 503 ||
+          id === 522 ||
+          id === 511
+        ) {
           return t("WeatherNames.HeavyRain");
         } else {
           return t("WeatherNames.LightRain");
@@ -141,7 +159,9 @@ const FiveDayForecast: React.FC<FiveDayForecastProps> = ({ navigation }) => {
       } else if (id >= 600 && id <= 622) {
         return t("WeatherNames.Snow");
       } else {
-        return isDayTime ? t("WeatherNames.Place") : t("WeatherNames.NightPlace");
+        return isDayTime
+          ? t("WeatherNames.Place")
+          : t("WeatherNames.NightPlace");
       }
     } catch (error) {
       console.error("Error getting weather name:", error);
@@ -152,44 +172,53 @@ const FiveDayForecast: React.FC<FiveDayForecastProps> = ({ navigation }) => {
   const fetchWeather = async (name: string): Promise<void> => {
     setLoading(true);
     try {
-      const response = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?q=${name}&appid=${API_KEY}`);
+      const response = await axios.get(
+        `https://api.openweathermap.org/data/2.5/forecast?q=${name}&appid=${API_KEY}`,
+      );
 
       const data = response.data;
-      const tmrwWeather = data.list[1];
 
-      const minTempCelsius = tmrwWeather.main.temp_min - 273.15;
-      const maxTempCelsius = tmrwWeather.main.temp_max - 273.15;
+      const todayStr = new Date().toISOString().split("T")[0];
+      const dailyMap = new Map<string, ForecastItem>();
 
+      for (const item of data.list as ForecastItem[]) {
+        const dateStr = item.dt_txt.split(" ")[0];
+        if (dateStr === todayStr) continue;
+        if (!dailyMap.has(dateStr)) {
+          dailyMap.set(dateStr, item);
+        }
+        if (dailyMap.size === 5) break;
+      }
+
+      const futureDays = Array.from(dailyMap.values());
+
+      const tmrw = futureDays[0];
       setTomorrowWeather({
-        weatherId: tmrwWeather.weather[0].id,
-        icon: tmrwWeather.weather[0].icon,
-        minTemp: minTempCelsius,
-        maxTemp: maxTempCelsius,
+        weatherId: tmrw.weather[0].id,
+        icon: tmrw.weather[0].icon,
+        minTemp: tmrw.main.temp_min - 273.15,
+        maxTemp: tmrw.main.temp_max - 273.15,
       });
 
       const firstEntry = data.list[0];
       setWeatherStats({
         wind: firstEntry.wind.speed,
         humidity: firstEntry.main.humidity,
-        rain: firstEntry.rain ? firstEntry.rain['3h'] : 0,
+        rain: firstEntry.rain ? (firstEntry.rain["1h"] ?? firstEntry.rain["3h"] ?? 0) : 0,
       });
 
-      const fiveDayForecast = data.list
-        .filter((item: ForecastItem, index: number) => index % 8 === 0)
-        .slice(0, 5)
-        .map((item: ForecastItem) => ({
-          ...item,
-          main: {
-            ...item.main,
-            temp: (item.main.temp - 273.15).toFixed(2),
-            temp_min: (item.main.temp_min - 273.15).toFixed(2),
-            temp_max: (item.main.temp_max - 273.15).toFixed(2),
-          },
-        }));
-
+      const fiveDayForecast = futureDays.map((item: ForecastItem) => ({
+        ...item,
+        main: {
+          ...item.main,
+          temp: (item.main.temp - 273.15).toFixed(2),
+          temp_min: (item.main.temp_min - 273.15).toFixed(2),
+          temp_max: (item.main.temp_max - 273.15).toFixed(2),
+        },
+      }));
       setForecastData(fiveDayForecast);
     } catch (error) {
-      console.error('Error fetching weather data:', error);
+      console.error("Error fetching weather data:", error);
     } finally {
       setLoading(false);
     }
@@ -198,25 +227,28 @@ const FiveDayForecast: React.FC<FiveDayForecastProps> = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       const handleBackPress = () => {
-        navigation.navigate('WeatherForecast');
+        navigation.navigate("WeatherForecast");
         return true;
       };
 
-      const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        handleBackPress,
+      );
       return () => backHandler.remove();
-    }, [navigation])
+    }, [navigation]),
   );
 
   useFocusEffect(
     useCallback(() => {
       const loadLastSearchedCity = async () => {
         try {
-          const storedCityName = await AsyncStorage.getItem('lastSearchedCity');
+          const storedCityName = await AsyncStorage.getItem("lastSearchedCity");
           if (storedCityName) {
             setName(storedCityName);
           }
         } catch (error) {
-          console.error('Error loading city name from local storage:', error);
+          console.error("Error loading city name from local storage:", error);
         }
       };
 
@@ -224,13 +256,11 @@ const FiveDayForecast: React.FC<FiveDayForecastProps> = ({ navigation }) => {
       if (name) {
         fetchWeather(name);
       }
-    }, [name])
+    }, [name]),
   );
 
   if (loading) {
-    return (
-     <LoadingPage fullScreen />
-    );
+    return <LoadingPage fullScreen />;
   }
 
   const twItem = tomorrowWeather as TomorrowWeather;
@@ -238,10 +268,10 @@ const FiveDayForecast: React.FC<FiveDayForecastProps> = ({ navigation }) => {
   return (
     <View className="flex-1 bg-white">
       <CustomHeader
-        title={t('FiveDayForcast.Title')}
+        title={t("FiveDayForcast.5DaysForecast")}
         showBackButton={true}
         navigation={navigation as any}
-        onBackPress={() => navigation.navigate('WeatherForecast')}
+        onBackPress={() => navigation.navigate("WeatherForecast")}
       />
 
       <ScrollView contentContainerStyle={{ padding: 5 }} className="mb-10 mt-6">
@@ -253,57 +283,122 @@ const FiveDayForecast: React.FC<FiveDayForecastProps> = ({ navigation }) => {
               resizeMode="contain"
             />
             <View className="ml-2">
-              <Text className="text-xl">{t('FiveDayForcast.Tomorrow')}</Text>
+              <Text className="text-xl">{t("FiveDayForcast.Tomorrow")}</Text>
               <Text className="mt-3">
-                <Text className="text-3xl font-bold">{Math.round(twItem.minTemp)}°C</Text>
-                <Text className="text-base font-semibold text-gray-400"> / {Math.round(twItem.maxTemp)}°C</Text>
+                <Text className="text-3xl font-bold">
+                  {Math.round(twItem.minTemp)}°C
+                </Text>
+                <Text className="text-base font-semibold text-gray-400">
+                  {" "}
+                  / {Math.round(twItem.maxTemp)}°C
+                </Text>
               </Text>
             </View>
           </View>
         </View>
 
         <View className="flex-row justify-between mb-1 p-5">
-          <View className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center" style={{ shadowColor: 'grey', shadowOffset: { width: 1, height: 2 }, shadowOpacity: 0.9, shadowRadius: 4, elevation: 4 }}>
-            <Image source={require('../../assets/images/weather icons/common/wind-image.webp')} className="w-6 h-6" />
-            <Text className="text-l font-bold">{Math.round(weatherStats.wind)} km/h</Text>
-            <Text style={{ fontSize: isSmallScreen ? 13 : 16, color: '#666' }}>{t('WeatherForecast.Wind')}</Text>
+          <View
+            className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center"
+            style={{
+              shadowColor: "grey",
+              shadowOffset: { width: 1, height: 2 },
+              shadowOpacity: 0.9,
+              shadowRadius: 4,
+              elevation: 4,
+            }}
+          >
+            <FontAwesome6 name="wind" size={24} color="#0075FF" style={{ marginBottom: 8 }} />
+            <Text className="text-l font-bold">
+              {Math.round(weatherStats.wind)} km/h
+            </Text>
+            <Text style={{ fontSize: isSmallScreen ? 13 : 16, color: "#666" }}>
+              {t("WeatherForecast.Wind")}
+            </Text>
           </View>
 
-          <View className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center" style={{ shadowColor: 'grey', shadowOffset: { width: 1, height: 2 }, shadowOpacity: 0.9, shadowRadius: 4, elevation: 4 }}>
-            <Image source={require('../../assets/images/weather icons/common/water-image.webp')} className="w-8 h-8" />
+          <View
+            className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center"
+            style={{
+              shadowColor: "grey",
+              shadowOffset: { width: 1, height: 2 },
+              shadowOpacity: 0.9,
+              shadowRadius: 4,
+              elevation: 4,
+            }}
+          >
+            <FontAwesome6 name="water" size={24} color="#0075FF" style={{ marginBottom: 8 }} />
             <Text className="text-l font-bold">{weatherStats.humidity}%</Text>
-            <Text style={{ fontSize: isSmallScreen ? 13 : 16, color: '#666' }}>{t('WeatherForecast.Humidity')}</Text>
+            <Text style={{ fontSize: isSmallScreen ? 13 : 16, color: "#666" }}>
+              {t("WeatherForecast.Humidity")}
+            </Text>
           </View>
 
-          <View className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center" style={{ shadowColor: 'grey', shadowOffset: { width: 1, height: 2 }, shadowOpacity: 0.9, shadowRadius: 4, elevation: 4 }}>
-            <Image source={require('../../assets/images/weather icons/common/rain-image.webp')} className="w-8 h-8" />
+          <View
+            className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center"
+            style={{
+              shadowColor: "grey",
+              shadowOffset: { width: 1, height: 2 },
+              shadowOpacity: 0.9,
+              shadowRadius: 4,
+              elevation: 4,
+            }}
+          >
+            <FontAwesome6 name="cloud-rain" size={24} color="#0075FF" style={{ marginBottom: 8 }} />
             <Text className="text-l font-bold">{weatherStats.rain} mm</Text>
-            <Text style={{ fontSize: isSmallScreen ? 13 : 16, color: '#666' }}>{t('WeatherForecast.Rain')}</Text>
+            <Text style={{ fontSize: isSmallScreen ? 13 : 16, color: "#666" }}>
+              {t("WeatherForecast.Rain")}
+            </Text>
           </View>
         </View>
 
         {forecastData.map((item: ForecastItem, index: number) => {
           const date = new Date(item.dt_txt);
-          const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-          const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-          
+          const months = [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+          ];
+          const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
           const month = t(`Months.${months[date.getMonth()]}`);
-          const dayName = t(`Days.${days[date.getDay()]}`);
+          const dayName = t(`RequestHistory.Days.${days[date.getDay()]}`);
           const dd = date.getDate();
 
           return (
-            <View key={index} className="flex-row justify-between items-center p-4">
+            <View
+              key={index}
+              className="flex-row justify-between items-center p-4"
+            >
               <View className="items-center">
-                <Text className="text-lg text-black font-bold">{month} {dd}</Text>
+                <Text className="text-lg text-black font-bold">
+                  {month} {dd}
+                </Text>
                 <Text className="text-sm">{dayName}</Text>
               </View>
               <Image
-                source={getWeatherImage(item.weather[0].id, item.weather[0].icon)}
+                source={getWeatherImage(
+                  item.weather[0].id,
+                  item.weather[0].icon,
+                )}
                 className="w-10 h-10"
                 resizeMode="contain"
               />
-              <Text className="text-base text-gray-500">{getWeatherName(item.weather[0].id, item.weather[0].icon)}</Text>
-              <Text className="text-base font-bold text-gray-500">{Math.round(item.main.temp)}°C</Text>
+              <Text className="text-base text-gray-500">
+                {getWeatherName(item.weather[0].id, item.weather[0].icon)}
+              </Text>
+              <Text className="text-base font-bold text-gray-500">
+                {Math.round(item.main.temp)}°C
+              </Text>
             </View>
           );
         })}

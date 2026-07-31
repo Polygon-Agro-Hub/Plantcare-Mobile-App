@@ -11,7 +11,7 @@ import {
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import NewsSlideShow from "@/Items/NewsSlideShow";
 import MarketPriceSlideShow from "@/Items/MarketPriceSlideShow";
 import { RootStackParamList } from "../types/types";
@@ -131,7 +131,7 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
   );
 
   const fetchProfileData = async () => {
-    const selectedLanguage = t("Dashboard.LNG");
+    const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
     try {
       const response = await fetch(
@@ -147,8 +147,8 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
       const data = await response.json();
 
       if (!data.user || !data.user.firstName) {
-        Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-          { text: t("Farms.okButton") },
+        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+          { text: t("Main.OK") },
         ]);
         navigation.navigate("Signin");
         return;
@@ -159,8 +159,8 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
       dispatch(setUserPersonalData(data.user));
       setTimeout(() => setLoading(false), 300);
     } catch (error) {
-      Alert.alert(t("Main.error"), t("Main.somethingWentWrong"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+        { text: t("Main.OK") },
       ]);
       navigation.navigate("Signin");
     }
@@ -185,7 +185,7 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
   const actionItems = [
     {
       image: require("../../assets/images/dashboard/weather.webp"),
-      label: t("Dashboard.weather"),
+      label: t("Dashboard.Weather"),
       action: handleWeatherNavigation,
       bgColor: "#FFFFFF",
     },
@@ -211,7 +211,7 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar style="auto" />
+      
 
       <View style={{ flexDirection: "row" }} className="mb-2">
         <TouchableOpacity
@@ -250,13 +250,13 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
 
         <View style={{ marginTop: 15, marginLeft: 15, flex: 1 }}>
           <Text style={{ fontSize: 15, fontWeight: "bold", flexWrap: "wrap" }}>
-            {t("Dashboard.hi")},{" "}
+            {t("Dashboard.Hello")},{" "}
             {user ? (
               <Text numberOfLines={1} ellipsizeMode="tail">
                 {user.firstName} ✋🏻
               </Text>
             ) : (
-              t("Dashboard.loading")
+              t("Main.Loading...")
             )}
           </Text>
         </View>
@@ -282,7 +282,7 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
       >
         <View style={{ marginLeft: 20, marginTop: 20 }}>
           <Text style={{ fontSize: 15, color: "gray", marginBottom: 5 }}>
-            {t("Dashboard.marketplace")}
+            {t("Dashboard.MarketPrice")}
           </Text>
           <View
             style={{
@@ -307,7 +307,7 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
 
         <View style={{ marginLeft: 20 }}>
           <Text style={{ fontSize: 15, color: "gray", marginBottom: 5 }}>
-            {t("Dashboard.news")}
+            {t("Dashboard.News")}
           </Text>
           <View
             style={{

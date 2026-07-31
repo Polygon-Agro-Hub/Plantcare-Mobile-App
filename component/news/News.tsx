@@ -1,6 +1,13 @@
-import { View, Text, Image, Dimensions, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  Dimensions,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
 import React, { useEffect, useState } from "react";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { RouteProp } from "@react-navigation/native";
 import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -13,6 +20,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { Entypo } from "@expo/vector-icons";
 
 interface NewsItem {
   id: number;
@@ -44,6 +52,20 @@ const formatDate = (dateString: string) => {
   return `${year}-${month}-${day}`;
 };
 
+const titleBaseStyle = {
+  fontWeight: "bold" as const,
+  fontSize: 18,
+  color: "#000",
+  textAlign: "center" as const,
+};
+
+const titleTagsStyles = {
+  p: { textAlign: "center" as const },
+  div: { textAlign: "center" as const },
+  span: { textAlign: "center" as const },
+  body: { textAlign: "center" as const },
+};
+
 const News: React.FC<NewsProps> = ({ navigation, route }) => {
   const { newsId } = route.params;
   const [news, setNews] = useState<NewsItem | null>(null);
@@ -54,7 +76,7 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
   const screenWidth = Dimensions.get("window").width;
 
   useEffect(() => {
-    const selectedLanguage = t("News.LNG");
+    const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
     const fetchNews = async () => {
       try {
@@ -88,26 +110,27 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
     <View className="flex-1 bg-white">
       <View className="absolute top-0 left-0 right-0 z-10  ">
         <View className="flex-row ml-5 mt-5 items-center">
-          <AntDesign
-            name="left"
-            size={24}
-            color="#000502"
-            onPress={() => navigation.goBack()}
-            style={{
-              paddingHorizontal: wp(3),
-              paddingVertical: hp(1.5),
-              backgroundColor: "#F6F6F680",
-              borderRadius: 50,
-            }}
-          />
+          <TouchableOpacity className="p-2 bg-transparent">
+            <Entypo
+              name="chevron-left"
+              size={24}
+              color="#000502"
+              onPress={() => navigation.goBack()}
+              style={{
+                backgroundColor: "#F6F6F6CC",
+                borderRadius: 50,
+                padding: wp(2.5),
+              }}
+            />
+          </TouchableOpacity>
         </View>
       </View>
 
       <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}>
-        <View className=" p-3  ">
+        <View className="p-4">
           {news?.image ? (
             <View className="item-center">
-              <View className=" right-0 bottom-0  opacity-90 rounded-3xl">
+              <View className=" right-0 bottom-0 opacity-90 rounded-3xl">
                 <Image
                   source={
                     typeof news.image === "string"
@@ -117,39 +140,30 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
                   className="w-[100%] h-56 bg-black  rounded-3xl shadow-md"
                 />
               </View>
-              <View className="  py-5  -mt-14  items-center l">
+              <View className="py-5 -mt-14 items-center l">
                 <View className="bg-[#FFFFFF] border-[#f8f8f8] border rounded-3xl shadow-md p-4 w-[90%]">
                   {language === "en" && news?.titleEnglish && (
                     <RenderHtml
                       contentWidth={screenWidth}
                       source={{ html: news.titleEnglish }}
-                      baseStyle={{
-                        fontWeight: "bold",
-                        fontSize: 18,
-                        color: "#000",
-                      }}
+                      baseStyle={titleBaseStyle}
+                      tagsStyles={titleTagsStyles}
                     />
                   )}
                   {language === "si" && news?.titleSinhala && (
                     <RenderHtml
                       contentWidth={screenWidth}
                       source={{ html: news.titleSinhala }}
-                      baseStyle={{
-                        fontWeight: "bold",
-                        fontSize: 18,
-                        color: "#000",
-                      }}
+                      baseStyle={titleBaseStyle}
+                      tagsStyles={titleTagsStyles}
                     />
                   )}
                   {language === "ta" && news?.titleTamil && (
                     <RenderHtml
                       contentWidth={screenWidth}
                       source={{ html: news.titleTamil }}
-                      baseStyle={{
-                        fontWeight: "bold",
-                        fontSize: 18,
-                        color: "#000",
-                      }}
+                      baseStyle={titleBaseStyle}
+                      tagsStyles={titleTagsStyles}
                     />
                   )}
                 </View>
@@ -160,7 +174,7 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
           )}
         </View>
 
-        <View className=" pl-8 flex-row items-center">
+        <View className="px-6 flex-row items-center">
           <AntDesign name="calendar" size={20} color="#000502" />
           <Text className="ml-2">
             {news?.createdAt
@@ -168,10 +182,10 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
               : "Date not available"}
           </Text>
         </View>
-        <View className="pl-8 pt-2">
-          <View className="w-4/5 border-t border-gray-300" />
+        <View className="px-6 pt-2">
+          <View className="w-full border-t border-gray-300" />
         </View>
-        <View className="pl-8 pr-9 pb-2">
+        <View className="px-6 pb-2">
           {language === "en" && news?.descriptionEnglish && (
             <RenderHtml
               contentWidth={screenWidth}

@@ -16,8 +16,8 @@ import {
   StyleSheet,
 } from 'react-native';
 import * as Location from 'expo-location';
-import { Ionicons, Entypo, AntDesign } from '@expo/vector-icons';
-import debounce from 'lodash.debounce';
+import { Ionicons, Entypo, AntDesign, FontAwesome6 } from '@expo/vector-icons';
+const debounce = require('lodash.debounce');
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -164,7 +164,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
     const netState = await NetInfo.fetch();
     if (!netState.isConnected) {
       setLoading(false);
-      Alert.alert(t('WeatherForecast.NoInternet'), t('WeatherForecast.CheckInternet'));
+      Alert.alert(t('WeatherForecast.NoInternet'), t('WeatherForecast.PleaseCheckYourInternetConnectionAndTryAgain'));
       return;
     }
 
@@ -191,7 +191,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
           setForecastData(forecastData.list);
         } else {
           setForecastData([]);
-          Alert.alert(t('WeatherForecast.NoForecastAvailable'));
+          Alert.alert(t('WeatherForecast.NoForecastDataAvailable'));
         }
       } else {
         setWeatherData(null);
@@ -199,7 +199,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
       }
     } catch (error) {
       console.error('Error fetching weather data:', error);
-      Alert.alert(t('WeatherForecast.ErrorFetching'));
+      Alert.alert(t('WeatherForecast.AnErrorOccurredWhileFetchingWeatherData'));
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -289,17 +289,30 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
       }
     } catch (error) {
       console.error('Error getting current location:', error);
-      Alert.alert(t('WeatherForecast.Error'), t('WeatherForecast.UnableToFetchLocation'));
+      Alert.alert(t('Main.Error'), t('WeatherForecast.UnableToFetchCurrentLocation'));
     }
   };
 
   const getCurrentTimeDate = (): string => {
     const now = new Date();
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     const month = t(`Months.${months[now.getMonth()]}`);
-    const dayName = t(`Days.${days[now.getDay()]}`);
+    const dayName = t(`RequestHistory.Days.${days[now.getDay()]}`);
     const dd = now.getDate();
     let hours = now.getHours();
     let mins: any = now.getMinutes();
@@ -410,7 +423,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
       }
     } catch (error) {
       console.error('Error refreshing with current location:', error);
-      Alert.alert(t('WeatherForecast.Error'), t('WeatherForecast.UnableToFetchLocation'));
+      Alert.alert(t('Main.Error'), t('WeatherForecast.UnableToFetchCurrentLocation'));
     } finally {
       setRefreshing(false);
     }
@@ -444,7 +457,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
             </View>
 
             <View className="relative flex-1 items-center">
-              <View className="flex-row items-center bg-[#F6F6F6CC] rounded-3xl max-w-[300px] h-[50px]">
+              <View className="flex-row items-center bg-[#F6F6F6CC] rounded-3xl max-w-[300px] h-[40px]">
                 <TextInput
                   className="flex-1 p-1 text-lg text-black ml-4"
                   placeholder={t('WeatherForecast.SearchLocation')}
@@ -475,25 +488,28 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
             </View>
 
             <TouchableOpacity
-              className="bg-transparent ml-2 h-[50px] w-[50px] items-center justify-center"
+              className="bg-transparent ml-2 h-[40px] w-[40px] items-center justify-center"
               onPress={handleLocationIconPress}
             >
-              <View className="bg-[#F8F8F8] rounded-xl w-[50px] h-[50px] items-center justify-center">
+              <View className="bg-[#F8F8F8] rounded-xl w-[40px] h-[40px] items-center justify-center">
                 <AntDesign name="aim" size={20} color="#000502" />
               </View>
             </TouchableOpacity>
           </View>
         </View>
 
-        <ScrollView
-          className="mt-6"
-          contentContainerStyle={{ flexGrow: 1, zIndex: 1 }}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-        >
-          <View className="p-1 pt-0 mt-0 pb-4">
-            {loading ? (
-              <LoadingPage fullScreen />
-            ) : weatherData ? (
+        {loading ? (
+          <View className="flex-1 justify-center items-center">
+            <LoadingPage fullScreen />
+          </View>
+        ) : (
+          <ScrollView
+            className="mt-6"
+            contentContainerStyle={{ flexGrow: 1, zIndex: 1 }}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+          >
+            <View className="p-1 pt-0 mt-0 pb-4">
+              {weatherData ? (
               <View className="items-center">
                 <Image
                   source={getWeatherImage(weatherData.weather[0].id, weatherData.weather[0].icon)}
@@ -504,32 +520,40 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
                 <Text className="text-lg text-gray-400 mb-4">{getWeatherName(weatherData.weather[0].id, weatherData.weather[0].icon)}</Text>
 
                 <View className="flex-row gap-1 items-baseline">
-                  <Entypo name="location-pin" size={20} color="black" className="ml-2 mt-2" />
-                  <Text className="text-lg font-semibold">{weatherData.name}, {weatherData.sys.country}</Text>
+                  <Entypo name="location-pin" size={18} color="black" className="ml-2 mt-2" />
+                  <Text className="text-xl font-semibold">{weatherData.name}, {weatherData.sys.country}</Text>
                 </View>
 
                 <Text className="text font-semibold text-gray-700 mb-2">{getCurrentTimeDate()}</Text>
 
                 <View className="flex-row justify-between p-5 mt-2">
                   <View className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center" style={{ shadowColor: 'grey', shadowOffset: { width: 1, height: 2 }, shadowOpacity: 0.9, shadowRadius: 4, elevation: 4 }}>
-                    <Image source={require('../../assets/images/weather icons/common/wind-image.webp')} className="w-8 h-8" resizeMode="contain" />
-                    <Text className="text-l font-bold">{weatherData.wind.speed} m/s</Text>
+                    <FontAwesome6 name="wind" size={24} color="#0075FF" style={{ marginBottom: 8 }} />
+                    <Text className="text-l font-bold">{weatherData.wind.speed} km/h</Text>
                     <Text style={{ fontSize: isSmallScreen ? 13 : 16, color: '#666' }}>{t('WeatherForecast.Wind')}</Text>
                   </View>
                   <View className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center" style={{ shadowColor: 'grey', shadowOffset: { width: 1, height: 2 }, shadowOpacity: 0.9, shadowRadius: 4, elevation: 4 }}>
-                    <Image source={require('../../assets/images/weather icons/common/water-image.webp')} className="w-8 h-8" resizeMode="contain" />
+                    <FontAwesome6 name="water" size={24} color="#0075FF" style={{ marginBottom: 8 }} />
                     <Text className="text-l font-bold">{weatherData.main.humidity}%</Text>
                     <Text style={{ fontSize: isSmallScreen ? 13 : 16, color: '#666' }}>{t('WeatherForecast.Humidity')}</Text>
                   </View>
                   <View className="bg-white p-4 rounded-xl shadow-lg flex-1 mx-2 items-center justify-center" style={{ shadowColor: 'grey', shadowOffset: { width: 1, height: 2 }, shadowOpacity: 0.9, shadowRadius: 4, elevation: 4 }}>
-                    <Image source={require('../../assets/images/weather icons/common/rain-image.webp')} className="w-8 h-8" resizeMode="contain" />
-                    <Text className="text-l font-bold">{weatherData.rain ? `${weatherData.rain['1h']} mm` : '0 mm'}</Text>
+                    <FontAwesome6 name="cloud-rain" size={24} color="#0075FF" style={{ marginBottom: 8 }} />
+                    <Text className="text-l font-bold">
+                      {`${
+                        weatherData?.rain?.['1h'] ??
+                        weatherData?.rain?.['3h'] ??
+                        forecastData?.[0]?.rain?.['1h'] ??
+                        forecastData?.[0]?.rain?.['3h'] ??
+                        0
+                      } mm`}
+                    </Text>
                     <Text style={{ fontSize: isSmallScreen ? 13 : 16, color: '#666' }}>{t('WeatherForecast.Rain')}</Text>
                   </View>
                 </View>
 
                 <ScrollView className="mt-0 pt-0">
-                  <View className="flex-row justify-between items-center px-4 pt-0">
+                  <View className="flex-row justify-between items-center px-6 pt-0">
                     <Text className="text-l mb-2 font-semibold">{t('WeatherForecast.Today')}</Text>
                     <TouchableOpacity
                       className="p-2"
@@ -542,7 +566,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
                       }}
                     >
                       <Text className="text-l mb-2 font-semibold -mr-3">
-                        {t('WeatherForecast.Days')}
+                        {t('WeatherForecast.5Days')}
                         <AntDesign name="caret-right" size={14} color="black" />
                       </Text>
                     </TouchableOpacity>
@@ -555,7 +579,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
                       horizontal
                       keyExtractor={(item) => item.dt.toString()}
                       renderItem={({ item }) => (
-                        <View className="bg-white p-4 rounded-lg shadow-lg mx-2 items-center mt-1 mb-2" style={{ shadowColor: 'gray', shadowOffset: { width: 1, height: 1 }, shadowOpacity: 0.8, shadowRadius: 2, elevation: 4 }}>
+                        <View className="bg-white p-4 rounded-lg shadow-lg mx-2 items-center mt-1 mb-2 min-w-28" style={{ shadowColor: 'gray', shadowOffset: { width: 1, height: 1 }, shadowOpacity: 0.8, shadowRadius: 2, elevation: 4 }}>
                           <Image source={getWeatherImage(item.weather[0].id, item.weather[0].icon)} className="w-6 h-6" resizeMode="contain" />
                           <Text className="text-base font-bold mb-1">{item.main.temp}°C</Text>
                           <Text className="text-gray-600">{formatForecastTime(item.dt)}</Text>
@@ -565,17 +589,18 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
                       contentContainerStyle={{ paddingHorizontal: 10 }}
                     />
                   ) : (
-                    <Text className="text-center text-lg text-gray-700">{t('WeatherForecast.Forecast')}</Text>
+                    <Text className="text-center text-lg text-gray-700">{t('WeatherForecast.NoForecastDataAvailable')}</Text>
                   )}
                 </ScrollView>
               </View>
-            ) : (
-              <View className="flex-1 justify-center items-center">
-                <ActivityIndicator size="large" color="#26D041" />
-              </View>
-            )}
-          </View>
-        </ScrollView>
+              ) : (
+                <View className="flex-1 justify-center items-center">
+                  <ActivityIndicator size="large" color="#26D041" />
+                </View>
+              )}
+            </View>
+          </ScrollView>
+        )}
       </View>
     </View>
   );

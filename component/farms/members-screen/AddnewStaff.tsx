@@ -12,13 +12,9 @@ import {
   BackHandler,
   Keyboard,
 } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
@@ -119,7 +115,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
       setPhoneError(null);
     } catch (error: any) {
       if (error?.response?.status === 409) {
-        setPhoneError(t("Farms.This phone number is already registered"));
+        setPhoneError(t("Farms.ThisPhoneNumberIsAlreadyRegistered"));
       } else if (error?.response) {
         setPhoneError(t("Farms.Error checking phone number"));
       } else {
@@ -142,7 +138,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
     setPhoneError(null);
 
     if (digitsOnly.length > 9) {
-      setValidationError(t("Farms.Phone number cannot exceed 9 digits"));
+      setValidationError(t("Farms.PhoneNumberCannotExceed9Digits"));
       const formattedText = formatPhoneInput(text);
       setPhoneNumber(formattedText);
       return;
@@ -154,9 +150,9 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
 
     if (formattedText.length > 0) {
       if (formattedText[0] !== "7") {
-        setValidationError(t("Farms.Phone number must start with 7"));
+        setValidationError(t("Farms.PhoneNumberMustStartWith7"));
       } else if (formattedText.length < 9) {
-        setValidationError(t("Farms.Phone number must be exactly 9 digits"));
+        setValidationError(t("Farms.PhoneNumberMustBeExactly9Digits"));
       } else if (!validateSriLankanPhoneNumber(formattedText)) {
         setValidationError(t("Farms.Please enter a valid phone number"));
       } else {
@@ -207,26 +203,26 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
 
   const validateForm = () => {
     if (!firstName.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter first name"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterFirstName"), [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!lastName.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter last name"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterLastName"), [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!phoneNumber.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter phone number"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterPhoneNumber"), [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (!nic.trim()) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please enter NIC"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterNIC"), [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
@@ -234,63 +230,55 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
     if (!validateSriLankanPhoneNumber(phoneNumber)) {
       if (phoneNumber.length !== 9) {
         Alert.alert(
-          t("Farms.Sorry"),
-          t("Farms.Phone number must be exactly 9 digits"),
-          [{ text: t("Farms.okButton") }],
+          t("Main.Sorry"),
+          t("Farms.PhoneNumberMustBeExactly9Digits"),
+          [{ text: t("Main.OK") }],
         );
       } else if (phoneNumber[0] !== "7") {
-        Alert.alert(
-          t("Farms.Sorry"),
-          t("Farms.Phone number must start with 7"),
-          [{ text: t("Farms.okButton") }],
-        );
+        Alert.alert(t("Main.Sorry"), t("Farms.PhoneNumberMustStartWith7"), [
+          { text: t("Main.OK") },
+        ]);
       } else if (phoneNumber.length > 9) {
         Alert.alert(
-          t("Farms.Sorry"),
-          t("Farms.Phone number cannot exceed 9 digits"),
-          [{ text: t("Farms.okButton") }],
+          t("Main.Sorry"),
+          t("Farms.PhoneNumberCannotExceed9Digits"),
+          [{ text: t("Main.OK") }],
         );
       } else {
         Alert.alert(
-          t("Farms.Sorry"),
+          t("Main.Sorry"),
           t("Farms.Please enter a valid phone number"),
-          [{ text: t("Farms.okButton") }],
+          [{ text: t("Main.OK") }],
         );
       }
       return false;
     }
 
     if (!selectedRole) {
-      Alert.alert(t("Farms.Sorry"), t("Farms.Please select a role"), [
-        { text: t("Farms.okButton") },
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseSelectARole"), [
+        { text: t("Main.OK") },
       ]);
       return false;
     }
     if (phoneError) {
-      Alert.alert(t("Farms.Sorry"), phoneError, [
-        { text: t("Farms.okButton") },
-      ]);
+      Alert.alert(t("Main.Sorry"), phoneError, [{ text: t("Main.OK") }]);
       return false;
     }
     if (validationError) {
-      Alert.alert(t("Farms.Sorry"), validationError, [
-        { text: t("Farms.okButton") },
-      ]);
+      Alert.alert(t("Main.Sorry"), validationError, [{ text: t("Main.OK") }]);
       return false;
     }
     if (nicErrors) {
-      Alert.alert(
-        t("Farms.Sorry"),
-        t("Farms.Please enter a valid Sri Lankan NIC"),
-        [{ text: t("Farms.okButton") }],
-      );
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterAValidSriLankanNIC"), [
+        { text: t("Main.OK") },
+      ]);
       return false;
     }
     if (nicDuplicateErrors) {
       Alert.alert(
-        t("Farms.Sorry"),
-        t("Farms.This NIC is already used by another staff member"),
-        [{ text: t("Farms.okButton") }],
+        t("Main.Sorry"),
+        t("Farms.ThisNICIsAlreadyUsedByAnotherStaffMember"),
+        [{ text: t("Main.OK") }],
       );
       return false;
     }
@@ -329,11 +317,11 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
       );
 
       Alert.alert(
-        t("Farms.Success"),
-        `${t("Farms.Staff members has been added successfully!")}`,
+        t("Main.Success"),
+        `${t("Farms.StaffMembersHasBeenAddedSuccessfully")}`,
         [
           {
-            text: t("Farms.OK"),
+            text: t("Main.OK"),
             onPress: () => {
               navigation.navigate("Main", {
                 screen: "EditManagersScreen",
@@ -345,17 +333,15 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
       );
     } catch (error: any) {
       console.error("Error in handleSave:", error);
-      let errorMessage = t(
-        "Farms.Failed to add staff member. Please try again.",
-      );
+      let errorMessage = t("Farms.FailedToAddStaffMemberPleaseTryAgain");
 
       if (error.response) {
         errorMessage = error.response.data?.message || errorMessage;
       } else if (error.request) {
-        errorMessage = t("Farms.Network error. Please check your connection.");
+        errorMessage = t("Farms.NetworkErrorPleaseCheckYourConnection");
       }
 
-      Alert.alert("Error", errorMessage, [{ text: t("Farms.okButton") }]);
+      Alert.alert("Error", errorMessage, [{ text: t("Main.OK") }]);
     } finally {
       setIsSubmitting(false);
     }
@@ -388,7 +374,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
     setNicDuplicateErrors(null);
 
     if (formattedNic && !validateSriLankanNic(formattedNic)) {
-      setNicErrors(t("Farms.Please enter a valid Sri Lankan NIC"));
+      setNicErrors(t("Farms.PleaseEnterAValidSriLankanNIC"));
     } else {
       setNicErrors(null);
     }
@@ -430,10 +416,10 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
     } catch (error: any) {
       if (error?.response?.status === 409) {
         setNicDuplicateErrors(
-          t("Farms.This NIC is already used by another staff member"),
+          t("Farms.ThisNICIsAlreadyUsedByAnotherStaffMember"),
         );
       } else if (error?.response) {
-        setNicDuplicateErrors(t("Farms.Error checking NIC number"));
+        setNicDuplicateErrors(t("Farms.ErrorCheckingNICNumber"));
       } else {
         setNicDuplicateErrors(null);
       }
@@ -443,6 +429,18 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
   };
 
   const selectedCountry = countryData.find((c) => c.dial_code === countryCode);
+
+  const stripLeadingSpaces = (text: string): string => {
+    return text.replace(/^\s+/, "").replace(/\s{2,}/g, " ");
+  };
+
+  const handleFirstNameChange = (text: string) => {
+    setFirstName(stripLeadingSpaces(text));
+  };
+
+  const handleLastNameChange = (text: string) => {
+    setLastName(stripLeadingSpaces(text));
+  };
 
   return (
     <KeyboardAvoidingView
@@ -456,7 +454,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
         keyboardShouldPersistTaps="handled"
       >
         <CustomHeader
-          title={t("Farms.Add New Staff Member")}
+          title={t("Farms.AddNewStaffMember")}
           navigation={navigation}
           onBackPress={() =>
             navigation.navigate("Main", {
@@ -466,14 +464,13 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
           }
         />
 
-        <View className="px-4 gap-6 pt-3">
+        <View className="px-6 gap-6 pt-3">
           {/* Role */}
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.Role")}</Text>
             <TouchableOpacity
               onPress={() => !isSubmitting && setRoleModalVisible(true)}
-              className="bg-gray-100 px-4 rounded-full flex-row items-center justify-between"
-              style={{ height: hp(7) }}
+              className="bg-gray-100 px-4 rounded-3xl flex-row items-center justify-between h-[50px]"
               activeOpacity={0.7}
             >
               <Text
@@ -485,9 +482,9 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
               >
                 {selectedRole
                   ? roleItems.find((r) => r.value === selectedRole)?.label
-                  : t("Farms.Select Role")}
+                  : t("Farms.SelectRole")}
               </Text>
-              <AntDesign name="caret-down" size={14} color="#555" />
+              <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
             </TouchableOpacity>
 
             <GlobalSearchModal
@@ -497,7 +494,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
               data={roleItems}
               selectedItems={selectedRole ? [selectedRole] : []}
               onSelect={(items) => setSelectedRole(items[0] ?? "")}
-              searchPlaceholder={t("Farms.Select Role")}
+              searchPlaceholder={t("Farms.SelectRole")}
               showSearch={false}
               multiSelect={false}
             />
@@ -506,65 +503,90 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
           {/* First Name */}
           <View className="gap-2">
             <Text className="text-gray-900 text-base">
-              {t("Farms.First Name")}
+              {t("Inputs.FirstName")}
             </Text>
-            <TextInput
-              className="bg-gray-100 px-4 rounded-3xl h-[50px] text-base text-gray-700"
-              placeholder={t("Farms.Enter First Name")}
-              placeholderTextColor="#9CA3AF"
-              value={firstName}
-              onChangeText={setFirstName}
-              autoCapitalize="words"
-              editable={!isSubmitting}
-            />
+            <View className="bg-gray-100 px-4 rounded-3xl h-[50px] justify-center">
+              <TextInput
+                placeholder={t("Farms.EnterFirstName")}
+                placeholderTextColor="#9CA3AF"
+                value={firstName}
+                onChangeText={handleFirstNameChange}
+                autoCapitalize="words"
+                editable={!isSubmitting}
+                style={{
+                  flex: 1,
+                  marginLeft: 8,
+                  fontSize: 16,
+                  height: 50,
+                  paddingVertical: 0,
+                  includeFontPadding: false,
+                }}
+              />
+            </View>
           </View>
 
           {/* Last Name */}
           <View className="gap-2">
             <Text className="text-gray-900 text-base">
-              {t("Farms.Last Name")}
+              {t("Inputs.LastName")}
             </Text>
-            <TextInput
-              className="bg-gray-100 px-4 py-3 rounded-3xl h-[50px] text-base text-gray-700"
-              placeholder={t("Farms.Enter Last Name")}
-              placeholderTextColor="#9CA3AF"
-              value={lastName}
-              onChangeText={setLastName}
-              autoCapitalize="words"
-              editable={!isSubmitting}
-            />
+            <View className="bg-gray-100 px-4 rounded-3xl h-[50px] justify-center">
+              <TextInput
+                placeholder={t("Farms.EnterLastName")}
+                placeholderTextColor="#9CA3AF"
+                value={lastName}
+                onChangeText={handleLastNameChange}
+                autoCapitalize="words"
+                editable={!isSubmitting}
+                style={{
+                  flex: 1,
+                  marginLeft: 8,
+                  fontSize: 16,
+                  height: 50,
+                  paddingVertical: 0,
+                  includeFontPadding: false,
+                }}
+              />
+            </View>
           </View>
 
           {/* Phone Number */}
           <View className="gap-2">
             <Text className="text-gray-900 text-base">
-              {t("Farms.Phone Number")}
+              {t("Farms.PhoneNumber")}
             </Text>
             <View className="flex-row items-center">
               {/* Country Code Trigger */}
               <TouchableOpacity
                 onPress={() => !isSubmitting && setCountryModalVisible(true)}
-                className="bg-[#F4F4F4] rounded-3xl h-[50px] flex-row items-center justify-between px-4 mr-2"
-                style={{ width: wp(33), height: hp(7) }}
+                className="bg-[#F4F4F4] rounded-3xl h-[50px] flex-row items-center justify-center px-3 mr-2 min-w-[100px]"
                 activeOpacity={0.7}
               >
-                <Text className="text-base text-gray-700">
+                <Text className="text-[18px]">
                   {selectedCountry?.emoji ?? "🇱🇰"}
-                  {"  "}({countryCode})
                 </Text>
-                <AntDesign name="caret-down" size={14} color="#555" />
+                <Text className="text-[#333] text-center text-[13px] ml-1">
+                  {countryCode}
+                </Text>
+                <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
               </TouchableOpacity>
 
               {/* Phone Input */}
-              <View style={{ flex: 1 }}>
+              <View className="flex-1 bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
                 <TextInput
-                  className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4"
+                  style={{
+                    flex: 1,
+                    marginLeft: 8,
+                    fontSize: 16,
+                    height: 50,
+                    paddingVertical: 0,
+                    includeFontPadding: false,
+                  }}
                   placeholder="7X XXXXXXX"
                   value={phoneNumber}
                   onChangeText={handlePhoneChange}
                   keyboardType="phone-pad"
                   maxLength={9}
-                  style={{ height: hp(7), fontSize: 14 }}
                   underlineColorAndroid="transparent"
                   cursorColor="#141415ff"
                   editable={!isSubmitting}
@@ -576,7 +598,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
               <View className="flex-row items-center mt-1 ml-3">
                 <ActivityIndicator size="small" color="#2563EB" />
                 <Text className="text-blue-600 text-sm ml-2">
-                  {t("Farms.Checking number...")}
+                  {t("Farms.CheckingNumber...")}
                 </Text>
               </View>
             )}
@@ -595,35 +617,46 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
             <GlobalSearchModal
               visible={countryModalVisible}
               onClose={() => setCountryModalVisible(false)}
-              title={t("Farms.Select Country Code")}
+              title={t("Farms.SelectCountryCode")}
               data={countryModalData}
               selectedItems={[countryCode]}
               onSelect={(items) => setCountryCode(items[0] ?? "+94")}
-              searchPlaceholder={t("Farms.Search country...")}
+              searchPlaceholder={t("Farms.SearchCountry")}
               searchKeys={["label"]}
               showSearch={true}
               multiSelect={false}
+              noResultsText="No country found"
             />
           </View>
 
           {/* NIC */}
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.NIC")}</Text>
-            <TextInput
-              value={nic}
-              onChangeText={(text: string) => handleNicChange(text)}
-              placeholder={t("Farms.Enter NIC")}
-              placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] p-4 mx-4 rounded-3xl h-[50px] text-gray-800  text-base"
-              editable={!isSubmitting}
-              autoCapitalize="characters"
-              maxLength={12}
-            />
+            <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center">
+              <TextInput
+                value={nic}
+                onChangeText={(text: string) => handleNicChange(text)}
+                placeholder={t("Farms.EnterNIC")}
+                placeholderTextColor="#9CA3AF"
+                className="text-gray-800 text-base w-full"
+                style={{
+                  flex: 1,
+                  marginLeft: 8,
+                  fontSize: 16,
+                  height: 50,
+                  paddingVertical: 0,
+                  includeFontPadding: false,
+                }}
+                editable={!isSubmitting}
+                autoCapitalize="characters"
+                maxLength={12}
+              />
+            </View>
             {checkingNIC && (
               <View className="flex-row items-center mt-1 ml-3">
                 <ActivityIndicator size="small" color="#2563EB" />
                 <Text className="text-blue-600 text-sm ml-2">
-                  {t("Farms.Checking NIC...")}
+                  {t("Farms.CheckingNIC...")}
                 </Text>
               </View>
             )}
@@ -641,23 +674,16 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
         </View>
 
         {/* Save Button */}
-        <View className="pt-10 pb-32 items-center">
+        <View className="pt-10 pb-32 px-12 items-center w-full">
           <TouchableOpacity
             onPress={handleSave}
             className={`${
               isSubmitting || checkingNumber || checkingNIC
                 ? "bg-gray-400"
                 : "bg-black"
-            } rounded-3xl h-[50px] items-center justify-center w-2/3`}
+            } rounded-3xl h-[50px] items-center justify-center w-full shadow-lg elevation-6`}
             activeOpacity={0.8}
             disabled={isSubmitting || checkingNumber || checkingNIC}
-            style={{
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 6 },
-              shadowOpacity: 0.25,
-              shadowRadius: 6,
-              elevation: 8,
-            }}
           >
             {isSubmitting ? (
               <View className="flex-row items-center">
@@ -668,7 +694,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
               </View>
             ) : (
               <Text className="text-white text-lg font-semibold">
-                {t("Farms.Save")}
+                {t("Main.Save")}
               </Text>
             )}
           </TouchableOpacity>

@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Remove default browser focus outline on clickable elements in React Native Web */
+*:focus,
+*:focus-visible,
+[role="button"]:focus,
+[role="button"]:focus-visible,
+button:focus,
+button:focus-visible,
+div:focus,
+div:focus-visible,
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none !important;
+  outline-style: none !important;
+  box-shadow: none !important;
+}
+

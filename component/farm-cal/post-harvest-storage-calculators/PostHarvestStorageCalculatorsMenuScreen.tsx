@@ -64,7 +64,7 @@ const PostHarvestStorageCalculatorsMenuScreen: React.FC<
   return (
     <View className="flex-1 bg-white">
       <CustomHeader
-        title={t("PostHarvestStorageCalculators.Title")}
+        title={t("PostHarvestStorageCalculators.PostHarvestStorageCalculators")}
         showBackButton={true}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
@@ -72,7 +72,7 @@ const PostHarvestStorageCalculatorsMenuScreen: React.FC<
       />
 
       <ScrollView
-        className="flex-1 px-4 pt-4"
+        className="flex-1 px-6 pt-4"
         contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
