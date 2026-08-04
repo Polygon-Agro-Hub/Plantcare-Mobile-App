@@ -40,9 +40,9 @@
       "value": "Own Building (with title ownership)"
     },
     { "labelKey": "FixedAssets.LeasedBuilding", "value": "Leased Building" },
-    { "labelKey": "FixedAssets.permitBuilding", "value": "Permitted Building" },
+    { "labelKey": "FixedAssets.PermittedBuilding", "value": "Permitted Building" },
     {
-      "labelKey": "FixedAssets.sharedOwnership",
+      "labelKey": "FixedAssets.SharedNoOwnership",
       "value": "Shared / No Ownership"
     }
   ],
