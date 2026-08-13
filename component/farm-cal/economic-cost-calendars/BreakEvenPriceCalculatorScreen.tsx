@@ -65,7 +65,7 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
         t("Main.PleaseFillAllRequiredFields") ||
-        "Please fill all required fields.",
+          "Please fill all required fields.",
       );
       return;
     }
@@ -77,7 +77,7 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
         t("EconomicCostCalendars.TotalCostMustBeGreaterThan0") ||
-        "Total cost must be greater than 0.",
+          "Total cost must be greater than 0.",
       );
       return;
     }
@@ -85,7 +85,7 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
       Alert.alert(
         t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
         t("EconomicCostCalendars.TotalYieldMustBeGreaterThan0") ||
-        "Total yield must be greater than 0.",
+          "Total yield must be greater than 0.",
       );
       return;
     }
@@ -106,7 +106,7 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
-        title={t("EconomicCostCalendars.BreakEvenPrice")}
+        title={`${t("EconomicCostCalendars.BreakEvenPrice")} ${t("Calculator.Calculator")}`}
         icon={require("@/assets/images/farm-cal/economic-cost-calculators/break-even-price-icon.webp")}
         onBack={() => navigation.goBack()}
       />
@@ -126,7 +126,7 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
 
         {/* Total Cost Input */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
-          {t("EconomicCostCalendars.TotalCostRs") || "Total Cost (Rs.)"} *
+          {t("EconomicCostCalendars.TotalCost") || "Total Cost (Rs.)"} *
         </Text>
         <TextInput
           value={formatWithCommas(totalCost)}

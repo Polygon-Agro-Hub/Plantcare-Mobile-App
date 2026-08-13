@@ -190,15 +190,18 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
           <LoadingPage fullScreen />
         </View>
       ) : (
-        <View className="flex-1 px-6">
+        <View className="flex-1 ">
+          <View className="px-6">
           <Text className="font-medium text-base text-gray-600 mb-2">
             {t("TransactionList.All")} (
             {String(transactions.length).padStart(2, "0")})
           </Text>
+          </View>
           <FlatList
             data={transactions}
             keyExtractor={(item) => item.id}
             contentContainerStyle={{ paddingVertical: 8, paddingBottom: 40 }}
+            className="px-6"
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
@@ -212,7 +215,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
             ListFooterComponent={renderFooter}
             renderItem={({ item }) => (
               <TouchableOpacity
-                className="flex-row justify-between items-center p-4 bg-white border border-gray-200 mt-2"
+                className="flex-row justify-between  items-center p-5 bg-white border border-gray-200 mt-2"
                 style={{
                   shadowColor: "#000",
                   shadowOffset: { width: 0, height: 2 },

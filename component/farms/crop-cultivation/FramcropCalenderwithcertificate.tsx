@@ -261,7 +261,9 @@ function CameraScreen({
             justifyContent: "center",
           }}
         >
-          <Text style={{ color: "black", textAlign: "center" }}>{t("CropCalender.FlipCamera")}</Text>
+          <Text style={{ color: "black", textAlign: "center" }}>
+            {t("CropCalender.FlipCamera")}
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -276,7 +278,9 @@ function CameraScreen({
             justifyContent: "center",
           }}
         >
-          <Text style={{ color: "black", fontWeight: "600", textAlign: "center" }}>
+          <Text
+            style={{ color: "black", fontWeight: "600", textAlign: "center" }}
+          >
             {t("CropCalender.Capture")}
           </Text>
         </TouchableOpacity>
@@ -1114,9 +1118,7 @@ const FramcropCalenderwithcertificate: React.FC<
           },
         )}`;
 
-        Alert.alert(t("Main.Sorry"), updateMessage, [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(t("Main.Sorry"), updateMessage, [{ text: t("Main.OK") }]);
         return;
       }
 
@@ -1203,20 +1205,18 @@ const FramcropCalenderwithcertificate: React.FC<
       ) {
         Alert.alert(
           t("Main.Sorry"),
-          t("CropCalender.YouCantChangeTheStatusBackToPendingOnce1HourHasPassedAfterMarkingItAsCompleted"),
+          t(
+            "CropCalender.YouCantChangeTheStatusBackToPendingOnce1HourHasPassedAfterMarkingItAsCompleted",
+          ),
           [{ text: t("Main.OK") }],
         );
       } else if (
         error.response &&
         error.response.data.message.includes("You need to wait 6 hours")
       ) {
-        Alert.alert(t("Main.Sorry"), updateMessage, [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(t("Main.Sorry"), updateMessage, [{ text: t("Main.OK") }]);
       } else {
-        Alert.alert(t("Main.Sorry"), updateMessage, [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(t("Main.Sorry"), updateMessage, [{ text: t("Main.OK") }]);
       }
     }
   };
@@ -1499,7 +1499,9 @@ const FramcropCalenderwithcertificate: React.FC<
       if (!location) {
         Alert.alert(
           t("Main.Error"),
-          t("Farms.UnableToFetchLocationAfterMultipleAttemptsPleaseTryAgainLater"),
+          t(
+            "Farms.UnableToFetchLocationAfterMultipleAttemptsPleaseTryAgainLater",
+          ),
           [{ text: t("Main.OK") }],
         );
         setLoading(false);
@@ -1612,7 +1614,10 @@ const FramcropCalenderwithcertificate: React.FC<
       } else {
         Alert.alert(
           t("CropCalender.No Images Yet"),
-          t("CropCalender.YouHaventUploadedAnyImagesForTaskYetCompleteThisTaskByTakingPhotosToTrackYourProgress", { taskIndex: crop.taskIndex }),
+          t(
+            "CropCalender.YouHaventUploadedAnyImagesForTaskYetCompleteThisTaskByTakingPhotosToTrackYourProgress",
+            { taskIndex: crop.taskIndex },
+          ),
           [
             {
               text: t("Main.OK"),
@@ -1662,8 +1667,6 @@ const FramcropCalenderwithcertificate: React.FC<
 
   return (
     <View className="flex-1 bg-gray-50">
-      
-
       {isCultivatedLandModalVisible &&
         lastCompletedIndex !== null &&
         crops[lastCompletedIndex] && (
@@ -1757,7 +1760,7 @@ const FramcropCalenderwithcertificate: React.FC<
           <View>
             <Image
               source={require("../../../assets/images/farms/star-certificate.webp")}
-              className="w-8 h-8"
+              className="w-14 h-16"
               resizeMode="contain"
             />
           </View>
@@ -2313,9 +2316,7 @@ const FramcropCalenderwithcertificate: React.FC<
             </Text>
 
             <Text className="text-gray-500 text-center mt-2 mb-6">
-              {t(
-                "Farms.PleaseTakeAPhotoOfTheCompletedWorkInTheField",
-              )}
+              {t("Farms.PleaseTakeAPhotoOfTheCompletedWorkInTheField")}
             </Text>
 
             <TouchableOpacity

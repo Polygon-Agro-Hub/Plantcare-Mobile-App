@@ -336,7 +336,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
             />
           </View>
         </TouchableOpacity>
-        <View style={{ marginTop: 25, marginLeft: 15, flex: 1 }}>
+        <View style={{ marginTop: 32, marginLeft: 15, flex: 1 }}>
           <Text style={{ fontSize: 15, fontWeight: "bold", flexWrap: "wrap" }}>
             {t("Dashboard.Hello")},{" "}
             {user ? (

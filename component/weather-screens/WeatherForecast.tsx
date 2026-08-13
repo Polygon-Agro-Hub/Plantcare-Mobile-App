@@ -519,16 +519,18 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
         <View className="relative w-full">
           <View className="flex-row items-center justify-between mt-1 px-2">
             <View>
-              <TouchableOpacity className="p-2 bg-transparent">
+              <TouchableOpacity
+                className="p-2"
+                onPress={() => navigation.navigate("Dashboard")}
+              >
                 <Entypo
                   name="chevron-left"
                   size={24}
-                  color="#000502"
-                  onPress={() => navigation.navigate("Dashboard")}
+                  color={"black"}
                   style={{
                     backgroundColor: "#F6F6F6CC",
                     borderRadius: 50,
-                    padding: wp(2.5),
+                    padding: 10,
                   }}
                 />
               </TouchableOpacity>

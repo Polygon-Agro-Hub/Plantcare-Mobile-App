@@ -98,7 +98,7 @@ const GrainDryingCalculatorScreen: React.FC<GrainDryingProps> = ({
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
-        title={t("PostHarvestStorageCalculators.GrainDrying")}
+        title={`${t("PostHarvestStorageCalculators.GrainDrying")} ${t("Calculator.Calculator")}`}
         icon={require("@/assets/images/farm-cal/post-harvest-storage-calculators/grain-drying-icon.webp")}
         onBack={() => navigation.goBack()}
       />

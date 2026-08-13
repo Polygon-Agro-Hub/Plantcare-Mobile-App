@@ -100,7 +100,7 @@
     "ThisUserIsNotRegisteredPleaseSignUpFirst": "This user is not registered. Please sign up first"
   },
   "Dashboard": {
-    "Hello": "Hello",
+    "Hello": "Hi",
     "News": "News",
     "MarketPrice": "Market Price",
     "MyAssets": "My Assets",
@@ -703,7 +703,9 @@
     "FailedToSharePDFFile": "Failed to share PDF file",
     "NoTransactionsFound": "No transactions found",
     "Delivered on":"Delivered on",
-    "of Items":"of Items"
+    "of Items":"of Items",
+    "Info":"Info",
+    "UseTheSave":"Use the 'Save to Files' option to save to Downloads"
   },
   "EarnCertificate": {
     "EarnACertificate": "Earn a Certificate",
@@ -1256,7 +1258,8 @@
     "YourInspectionRequestHasBeenSubmittedSuccessfully": "Your inspection request has been submitted successfully!",
     "FailedToFetchFarmCropsPleaseTryAgain": "Failed to fetch farm crops. Please try again.",
     "FailedToFetchFarmsPleaseTryAgain": "Failed to fetch farms. Please try again.",
-    "FailedToFetchServicesPleaseTryAgain": "Failed to fetch services. Please try again."
+    "FailedToFetchServicesPleaseTryAgain": "Failed to fetch services. Please try again.",
+    "SearchFarm":"Search Farm"
   },
   "RequestHistory": {
     "YouHaveNoRequestsAddedYet": "--You have no requests added yet--",
@@ -1420,6 +1423,7 @@
   "SoilFertilizerCalculators": {
     "Soil&FertilizerCalculators": "Soil & Fertilizer Calculators",
     "Fertilizer": "Fertilizer",
+    "FertilizerRequirement":"Fertilizer Requirement",
     "NPKRatio": "NPK Ratio",
     "LimeRequirement": "Lime Requirement",
     "CompostMixing": "Compost Mixing",
@@ -1437,6 +1441,7 @@
     "SearchUnits...": "Search units...",
     "NoUnitsFound": "No units found",
     "Hectares": "Hectares",
+    "Acres": "acres",
     "N": "N",
     "P": "P",
     "K": "K",
