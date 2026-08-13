@@ -192,7 +192,8 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
       ) : (
         <View className="flex-1 px-6">
           <Text className="font-medium text-base text-gray-600 mb-2">
-            {t("TransactionList.All")} ({transactions.length})
+            {t("TransactionList.All")} (
+            {String(transactions.length).padStart(2, "0")})
           </Text>
           <FlatList
             data={transactions}
@@ -252,7 +253,9 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                     <Text className="text-gray-800 ">
                       # {t("TransactionList.of Items")}
                     </Text>
-                    <Text className="text-gray-800 ml-2">: {item.itemCount}</Text>
+                    <Text className="text-gray-800 ml-2">
+                      : {item.itemCount}
+                    </Text>
                   </View>
                   <View className="flex-row">
                     <Text className="text-gray-800 ">
@@ -271,7 +274,12 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
               </TouchableOpacity>
             )}
             ListEmptyComponent={
-              <NoData text={t("TransactionList.NoTransactionsFound") || "No transactions found"} />
+              <NoData
+                text={
+                  t("TransactionList.NoTransactionsFound") ||
+                  "No transactions found"
+                }
+              />
             }
           />
         </View>

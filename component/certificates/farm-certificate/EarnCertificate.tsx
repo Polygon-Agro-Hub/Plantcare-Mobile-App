@@ -81,7 +81,7 @@ const EarnCertificate: React.FC = () => {
   const getMonthLabel = (timeline: string) => {
     const months = parseInt(timeline);
     return months === 1
-      ? t("EarnCertificate.month")
+      ? t("EarnCertificate.Month")
       : t("EarnCertificate.Months");
   };
 

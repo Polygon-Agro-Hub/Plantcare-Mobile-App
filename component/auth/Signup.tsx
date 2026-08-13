@@ -86,7 +86,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
     React.useCallback(() => {
       const onBackPress = () => {
         AsyncStorage.removeItem("@user_language");
-        navigation.navigate("Lanuage");
+        navigation.navigate("Signin");
         return true;
       };
       const subscription = BackHandler.addEventListener(
@@ -356,11 +356,11 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
 
       let otpMessage = "";
       if (i18n.language === "en") {
-        otpMessage = `Thank you for joining Polygon Agro!\nYour GoviCare OTP is {{code}}`;
+        otpMessage = `Thank you for joining Polygon Holdings!\nYour GoviCare OTP is {{code}}`;
       } else if (i18n.language === "si") {
-        otpMessage = `Polygon Agro සමඟ සම්බන්ධ වීම ගැන ඔබට ස්තූතියි!\nඔබේ GoviCare OTP මුරපදය {{code}} වේ.`;
+        otpMessage = `Polygon Holdings සමඟ සම්බන්ධ වීම ගැන ඔබට ස්තූතියි!\nඔබේ GoviCare OTP මුරපදය {{code}} වේ.`;
       } else if (i18n.language === "ta") {
-        otpMessage = `Polygon Agro ல் இணைந்ததற்கு நன்றி!\nஉங்கள் GoviCare OTP {{code}} ஆகும்.`;
+        otpMessage = `Polygon Holdings ல் இணைந்ததற்கு நன்றி!\nஉங்கள் GoviCare OTP {{code}} ஆகும்.`;
       }
 
       const otpResponse = await axios.post(
