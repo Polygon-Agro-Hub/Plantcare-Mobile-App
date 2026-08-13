@@ -312,7 +312,8 @@
     "EnterAccountNumber": "Enter Account Number",
     "ReEnterAccountNumber": "Re-enter Account Number",
     "SelectBankName": "Select Bank Name",
-    "SelectBranchName": "Select Branch Name"
+    "SelectBranchName": "Select Branch Name",
+    "SelectBankFirst":"Please select a bank first."
   },
   "QRcode": {
     "MyQRCode": "My QR Code",
@@ -476,7 +477,7 @@
     "EditSelectedRoleDetails": "Edit {{selectedRole}} Details",
     "FailedToDeleteFarm": "Failed to delete farm",
     "FailedToDeleteStaffMember": "Failed to delete staff member",
-    "Crops": "crops",
+    "Crops": "Crops",
     "MyCultivation": "My Cultivation",
     "SelectAFarmToManageYourCultivationAndAssets": "Select a farm to manage your cultivation and assets",
     "Assets": "Assets",
@@ -581,6 +582,7 @@
   "CropCalender": {
     "ConfirmRemove": "Confirm Remove",
     "AreYouSureYouWantToRemoveThisTask": "Are you sure you want to remove this task?",
+    "YouMustUploadTheRequiredImagesToCompleteThisTask": "You must upload the required images to complete this task.",
     "CertificateTaskCompletedSuccessfully": "Certificate task completed successfully",
     "YouCantChangeTheStatusBackToPendingOnce1HourHasPassedAfterMarkingItAsCompleted": "You can’t change the status back to pending once 1 hour has passed after marking it as completed.",
     "TaskStatusUpdatedSuccessfully": "Task status updated successfully!",

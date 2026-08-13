@@ -312,7 +312,8 @@
     "EnterAccountNumber": "ගිණුම් අංකය ඇතුළත් කරන්න",
     "ReEnterAccountNumber": "ගිණුම් අංකය නැවත ඇතුළත් කරන්න",
     "SelectBankName": "බැංකුවේ නම තෝරන්න",
-    "SelectBranchName": "ශාඛාවේ නම තෝරන්න"
+    "SelectBranchName": "ශාඛාවේ නම තෝරන්න",
+    "SelectBankFirst":"කරුණාකර පළමුව බැංකුවක් තෝරන්න."
   },
   "QRcode": {
     "MyQRCode": "මගේ QR කේතය",
@@ -581,6 +582,7 @@
   "CropCalender": {
     "ConfirmRemove": "ඉවත් කිරීම තහවුරු කරන්න",
     "AreYouSureYouWantToRemoveThisTask": "ඔබට මෙම කාර්යය ඉවත් කිරීමට අවශ්‍ය බව ඔබට විශ්වාසද?",
+    "YouMustUploadTheRequiredImagesToCompleteThisTask": "මෙම කාර්යය සම්පූර්ණ කිරීමට ඔබ අවශ්‍ය ඡායාරූප උඩුගත කළ යුතුය.",
     "CertificateTaskCompletedSuccessfully": "සහතික කාර්යය සාර්ථකව සම්පූර්ණ කරන ලදී",
     "YouCantChangeTheStatusBackToPendingOnce1HourHasPassedAfterMarkingItAsCompleted": "සම්පූර්ණ ලෙස සලකුණු කිරීමෙන් පසු පැය 1 ක් ගත වූ පසු ඔබට තත්වය නැවත විකල්ප වෙත වෙනස් කළ නොහැක.",
     "TaskStatusUpdatedSuccessfully": "කාර්ය තත්වය සාර්ථකව යාවත්කාලීන කරන ලදී!",

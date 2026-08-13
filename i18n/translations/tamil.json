@@ -312,7 +312,8 @@
     "EnterAccountNumber": "கணக்கு எண்ணை உள்ளிடவும்",
     "ReEnterAccountNumber": "கணக்கு எண்ணை மீண்டும் உள்ளிடவும்",
     "SelectBankName": "வங்கியின் பெயரைத் தேர்ந்தெடுக்கவும்",
-    "SelectBranchName": "கிளையின் பெயரைத் தேர்ந்தெடுக்கவும்"
+    "SelectBranchName": "கிளையின் பெயரைத் தேர்ந்தெடுக்கவும்",
+    "SelectBankFirst":"முதலில் ஒரு வங்கியைத் தேர்ந்தெடுக்கவும்."
   },
   "QRcode": {
     "MyQRCode": "எனது QR குறியீடு",
@@ -581,6 +582,7 @@
   "CropCalender": {
     "ConfirmRemove": "அகற்றுவதை உறுதிப்படுத்தவும்",
     "AreYouSureYouWantToRemoveThisTask": "இந்தப் பணியை அகற்ற விரும்புகிறீர்களா?",
+     "YouMustUploadTheRequiredImagesToCompleteThisTask": "இந்த பணியை முடிக்க தேவையான படங்களை நீங்கள் பதிவேற்ற வேண்டும்.",
     "CertificateTaskCompletedSuccessfully": "சான்றிதழ் பணி வெற்றிகரமாக முடிந்தது",
     "YouCantChangeTheStatusBackToPendingOnce1HourHasPassedAfterMarkingItAsCompleted": "முடிந்தது எனக் குறித்த பிறகு 1 மணி நேரம் கடந்துவிட்டால், நிலுவையில் உள்ள நிலைக்கு நிலையை மாற்ற முடியாது.",
     "TaskStatusUpdatedSuccessfully": "பணி நிலை வெற்றிகரமாகப் புதுப்பிக்கப்பட்டது!",

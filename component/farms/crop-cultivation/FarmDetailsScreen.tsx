@@ -5,8 +5,6 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
-  StatusBar,
-  Platform,
   Alert,
   RefreshControl,
   Modal,
@@ -97,8 +95,9 @@ const CropCard: React.FC<CropCardProps> = ({
       }}
     >
       <View
-        className={`bg-white rounded-xl p-4 border-2 ${isBlocked ? "border-[#EFEFEF]" : "border-[#EFEFEF]"
-          } flex-row items-center justify-between relative`}
+        className={`bg-white rounded-xl p-4 border-2 ${
+          isBlocked ? "border-[#EFEFEF]" : "border-[#EFEFEF]"
+        } flex-row items-center justify-between relative`}
         style={{
           shadowColor: "#000",
           shadowOffset: { width: 0, height: 2 },
@@ -150,7 +149,7 @@ const CropCard: React.FC<CropCardProps> = ({
           }}
         >
           <Progress.Circle
-            size={50}
+            size={60}
             progress={progress}
             thickness={4}
             color={isBlocked ? "#ccc" : "#4caf50"}
@@ -158,14 +157,15 @@ const CropCard: React.FC<CropCardProps> = ({
             showsText={true}
             formatText={() => {
               const percentage = progress * 100;
-              if (percentage > 0 && percentage < 1) {
-                return "1%";
+              if (percentage > 0 && percentage < 0.01) {
+                return "0.01%";
               }
-              return `${Math.floor(percentage)}%`;
+              return `${percentage.toFixed(2)}%`;
             }}
             textStyle={{
               fontSize: 12,
-              color: isBlocked ? "#999" : "#333",
+              color: isBlocked ? "#999" : "#4caf50",
+              fontWeight: "bold"
             }}
           />
         </View>
@@ -525,11 +525,9 @@ const FarmDetailsScreen = () => {
       try {
         const token = await AsyncStorage.getItem("userToken");
         if (!token) {
-          Alert.alert(
-            t("Main.Error"),
-            t("Farms.NoAuthenticationTokenFound"),
-            [{ text: t("Main.OK") }],
-          );
+          Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"), [
+            { text: t("Main.OK") },
+          ]);
           return;
         }
 
@@ -736,11 +734,9 @@ const FarmDetailsScreen = () => {
       setPageLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(
-          t("Main.Error"),
-          t("Farms.NoAuthenticationTokenFound"),
-          [{ text: t("Main.OK") }],
-        );
+        Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"), [
+          { text: t("Main.OK") },
+        ]);
         return;
       }
       await axios.delete(
@@ -880,9 +876,7 @@ const FarmDetailsScreen = () => {
           className="w-28 h-28 rounded-full border-2 border-gray-200"
           resizeMode="cover"
           accessible
-          accessibilityLabel={
-            farmData?.farmName || farmBasicDetails?.farmName
-          }
+          accessibilityLabel={farmData?.farmName || farmBasicDetails?.farmName}
         />
       </View>
 
@@ -1054,16 +1048,18 @@ const FarmDetailsScreen = () => {
                           }
                           let validityText = t("Farms.ValidFor") + " ";
                           if (remainingTime.months > 0)
-                            validityText += `${remainingTime.months} ${remainingTime.months === 1
-                              ? t("Farms.Month")
-                              : t("Farms.Months")
-                              }`;
+                            validityText += `${remainingTime.months} ${
+                              remainingTime.months === 1
+                                ? t("Farms.Month")
+                                : t("Farms.Months")
+                            }`;
                           if (remainingTime.days > 0) {
                             if (remainingTime.months > 0) validityText += " ";
-                            validityText += `${remainingTime.days} ${remainingTime.days === 1
-                              ? t("Farms.Day")
-                              : t("Farms.Days")
-                              }`;
+                            validityText += `${remainingTime.days} ${
+                              remainingTime.days === 1
+                                ? t("Farms.Day")
+                                : t("Farms.Days")
+                            }`;
                           }
                           return (
                             <Text className="text-gray-600 text-sm mt-1">
@@ -1072,10 +1068,11 @@ const FarmDetailsScreen = () => {
                           );
                         })()}
                         <Text
-                          className={`text-sm font-medium mt-1 ${certificate.isAllCompleted
-                            ? "text-[#00A896]"
-                            : "text-red-500"
-                            }`}
+                          className={`text-sm font-medium mt-1 ${
+                            certificate.isAllCompleted
+                              ? "text-[#00A896]"
+                              : "text-red-500"
+                          }`}
                         >
                           {certificate.isAllCompleted
                             ? t("Farms.AllCompleted")
@@ -1099,7 +1096,12 @@ const FarmDetailsScreen = () => {
 
         <View className="mt-6 w-full px-0">
           {crops.length === 0 ? (
-            <NoData text={t("MyCrop.NoOngoingCultivationsYet") || "No ongoing cultivations yet"} />
+            <NoData
+              text={
+                t("MyCrop.NoOngoingCultivationsYet") ||
+                "No ongoing cultivations yet"
+              }
+            />
           ) : (
             <View
               style={{
@@ -1269,9 +1271,7 @@ const FarmDetailsScreen = () => {
                 className="px-6 py-2 bg-[#D9D9D9] rounded-full"
               >
                 <View className="justify-center items-center">
-                  <Text className="text-gray-700">
-                    {t("Main.GoBack")}
-                  </Text>
+                  <Text className="text-gray-700">{t("Main.GoBack")}</Text>
                 </View>
               </TouchableOpacity>
             </View>

@@ -605,7 +605,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
                 NatureOfCultivationOptions,
                 natureOfCultivation,
               )}
-              placeholder={t("Cropenroll.SelectNaOfCultivation")}
+              placeholder={t("Cropenroll.SelectNatureOfCultivation")}
               onPress={() => openModal("natureOfCultivation")}
             />
 
