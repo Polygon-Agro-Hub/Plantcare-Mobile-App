@@ -88,6 +88,50 @@ interface Crop {
   createdAt: string;
 }
 
+// Single source of truth for the "Received Items" table.
+// Both the header row and every data row read widths/keys from here,
+// so they can never drift apart from one another.
+type ColumnKey =
+  | "cropName"
+  | "variety"
+  | "grade"
+  | "unitPrice"
+  | "quantity"
+  | "subTotal";
+
+interface ColumnDef {
+  key: ColumnKey;
+  label: string;
+  width: number;
+  numeric?: boolean;
+}
+
+const COLUMNS: ColumnDef[] = [
+  { key: "cropName", label: "TransactionList.CropName", width: 96 },
+  { key: "variety", label: "TransactionList.Variety", width: 96 },
+  { key: "grade", label: "TransactionList.Grade", width: 80 },
+  {
+    key: "unitPrice",
+    label: "TransactionList.UnitPriceRs",
+    width: 96,
+    numeric: true,
+  },
+  {
+    key: "quantity",
+    label: "TransactionList.Quantitykg",
+    width: 96,
+    numeric: true,
+  },
+  {
+    key: "subTotal",
+    label: "TransactionList.SubTotalRs",
+    width: 96,
+    numeric: true,
+  },
+];
+
+const BORDER_COLOR = "#d1d5db"; // tailwind gray-300, matches the outer border
+
 const TransactionReport: React.FC<TransactionReportProps> = ({
   navigation,
 }) => {
@@ -133,6 +177,35 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
       return isNaN(parsed) ? "0.00" : formatNumberWithCommas(parsed);
     }
     return formatNumberWithCommas(value);
+  };
+
+  // Resolves the display value for a given column + crop row,
+  // respecting the current i18next language for translated fields.
+  const getCellValue = (col: ColumnDef, crop: Crop): string => {
+    switch (col.key) {
+      case "cropName":
+        return i18next.language === "si"
+          ? crop.cropNameSinhala || "-"
+          : i18next.language === "ta"
+            ? crop.cropNameTamil || "-"
+            : crop.cropName || "-";
+      case "variety":
+        return i18next.language === "si"
+          ? crop.varietyNameSinhala || "-"
+          : i18next.language === "ta"
+            ? crop.varietyNameTamil || "-"
+            : crop.variety || "-";
+      case "grade":
+        return crop.grade || "-";
+      case "unitPrice":
+        return formatNumber(crop.unitPrice);
+      case "quantity":
+        return formatNumber(crop.quantity);
+      case "subTotal":
+        return formatNumber(crop.subTotal);
+      default:
+        return "-";
+    }
   };
 
   const selectedDate = transactionDate || new Date().toISOString().slice(0, 10);
@@ -272,7 +345,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
             font-weight: bold; margin: 15px 0 5px 0; text-align: center;
             background-color: #D6E6F4; padding: 8px; border: 1px solid #000; font-size: 16px;
           }
-          table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+          table { width: 100%; border-collapse: collapse; margin-bottom: 15px; table-layout: fixed; }
           th {
             background-color: #fff; text-align: center; padding: 8px;
             border: 1px solid #000; font-weight: bold; font-size: 12px;
@@ -369,7 +442,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         <div class="total-row">
           <div class="total-box">
             <div class="total-label">${t("TransactionList.FullTotalRs")} </div>
-            <div class="total-value">: Rs. ${formatNumberWithCommas(total)}</div>
+            <div class="total-value"> Rs. ${formatNumberWithCommas(total)}</div>
           </div>
         </div>
 
@@ -619,6 +692,13 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         </View>
 
         {/* Received Items Table */}
+        {/*
+          Fix: borders are now drawn on the wrapping `View` for each cell
+          (which always stretches to the row's full height) instead of on
+          the `Text` node itself (whose box only wraps its own content).
+          A single COLUMNS array drives both the header and the data rows
+          so widths can never drift apart between them.
+        */}
         <View className="mb-4">
           <Text
             className="font-bold text-sm mb-3"
@@ -630,53 +710,51 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
             <View>
               {/* Header Row */}
               <View className="flex-row bg-gray-200">
-                {[
-                  t("TransactionList.CropName"),
-                  t("TransactionList.Variety"),
-                  t("TransactionList.Grade"),
-                  t("TransactionList.UnitPriceRs"),
-                  t("TransactionList.Quantitykg"),
-                  t("TransactionList.SubTotalRs"),
-                ].map((header, i, arr) => (
-                  <Text
-                    key={header}
-                    className={`w-24 p-2 font-bold ${i < arr.length - 1 ? "border-r border-gray-300" : ""} ${i === 2 ? "w-20" : ""}`}
-                    style={getTextStyle(i18next.language)}
+                {COLUMNS.map((col, i) => (
+                  <View
+                    key={col.key}
+                    style={{
+                      width: col.width,
+                      borderRightWidth: i < COLUMNS.length - 1 ? 1 : 0,
+                      borderColor: BORDER_COLOR,
+                      padding: 8,
+                    }}
                   >
-                    {header}
-                  </Text>
+                    <Text
+                      className="font-bold"
+                      style={getTextStyle(i18next.language)}
+                    >
+                      {t(col.label)}
+                    </Text>
+                  </View>
                 ))}
               </View>
 
               {/* Data Rows */}
               {crops.map((crop, index) => (
-                <View key={`${crop.id}-${index}`} className="flex-row">
-                  <Text className="w-24 p-2 border-t border-r border-gray-300">
-                    {i18next.language === "si"
-                      ? crop.cropNameSinhala || "-"
-                      : i18next.language === "ta"
-                        ? crop.cropNameTamil || "-"
-                        : crop.cropName || "-"}
-                  </Text>
-                  <Text className="w-24 p-2 border-t border-r border-gray-300">
-                    {i18next.language === "si"
-                      ? crop.varietyNameSinhala || "-"
-                      : i18next.language === "ta"
-                        ? crop.varietyNameTamil || "-"
-                        : crop.variety || "-"}
-                  </Text>
-                  <Text className="w-20 p-2 border-t border-r border-gray-300">
-                    {crop.grade || "-"}
-                  </Text>
-                  <Text className="w-24 p-2 border-t border-r border-gray-300 text-right">
-                    {formatNumber(crop.unitPrice)}
-                  </Text>
-                  <Text className="w-24 p-2 border-t border-r border-gray-300 text-right">
-                    {formatNumber(crop.quantity)}
-                  </Text>
-                  <Text className="w-24 p-2 border-t border-gray-300 text-right">
-                    {formatNumber(crop.subTotal)}
-                  </Text>
+                <View
+                  key={`${crop.id}-${index}`}
+                  className="flex-row"
+                  style={{ borderTopWidth: 1, borderColor: BORDER_COLOR }}
+                >
+                  {COLUMNS.map((col, i) => (
+                    <View
+                      key={col.key}
+                      style={{
+                        width: col.width,
+                        borderRightWidth: i < COLUMNS.length - 1 ? 1 : 0,
+                        borderColor: BORDER_COLOR,
+                        padding: 8,
+                      }}
+                    >
+                      <Text
+                        numberOfLines={1}
+                        style={col.numeric ? { textAlign: "right" } : undefined}
+                      >
+                        {getCellValue(col, crop)}
+                      </Text>
+                    </View>
+                  ))}
                 </View>
               ))}
             </View>

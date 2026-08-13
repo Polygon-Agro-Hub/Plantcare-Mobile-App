@@ -5,6 +5,7 @@ import {
   Dimensions,
   ActivityIndicator,
   TouchableOpacity,
+  BackHandler,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -21,6 +22,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Entypo } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 
 interface NewsItem {
   id: number;
@@ -75,6 +77,21 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
 
   const screenWidth = Dimensions.get("window").width;
 
+     useFocusEffect(
+      React.useCallback(() => {
+        const onBackPress = () => {
+          navigation.goBack()
+          return true;
+        };
+        const subscription = BackHandler.addEventListener(
+          "hardwareBackPress",
+          onBackPress,
+        );
+        return () => subscription.remove();
+      }, [navigation]),
+    );
+
+
   useEffect(() => {
     const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
@@ -105,6 +122,7 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
       </View>
     );
   }
+
 
   return (
     <View className="flex-1 bg-white">

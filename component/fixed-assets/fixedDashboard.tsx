@@ -312,10 +312,10 @@ const FixedDashboard: React.FC<fixedDashboardProps> = ({
                 <View
                   className="bg-white w-full flex-row h-[50px] rounded-lg justify-between items-center px-4"
                   style={{
-                    shadowColor: "gray",
-                    shadowOffset: { width: 1, height: 1 },
-                    shadowOpacity: 0.8,
-                    shadowRadius: 2,
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.15,
+                    shadowRadius: 4,
                     elevation: 4,
                   }}
                 >

@@ -305,8 +305,6 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
 
   return (
     <View className="flex-1 bg-white">
-      
-
       <ScrollView
         className="flex-1"
         refreshControl={
@@ -379,7 +377,12 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
           {loading ? (
             <SkeletonLoader />
           ) : crops.length === 0 ? (
-              <NoData text={t("Manager.NoOngoingCultivationsFound") || "No ongoing cultivations found"} />
+            <NoData
+              text={
+                t("Manager.NoOngoingCultivationsFound") ||
+                "No ongoing cultivations found"
+              }
+            />
           ) : (
             crops.map((crop) => (
               <View key={crop.id} style={{ position: "relative" }}>
@@ -451,13 +454,19 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
                     style={{ alignItems: "center", justifyContent: "center" }}
                   >
                     <Progress.Circle
-                      size={50}
+                      size={60}
                       progress={crop.progress}
                       thickness={4}
                       color="#4caf50"
                       unfilledColor="#ddd"
                       showsText={true}
-                      formatText={() => `${Math.round(crop.progress * 100)}%`}
+                      formatText={() => {
+                        const percentage = crop.progress * 100;
+                        if (percentage > 0 && percentage < 0.01) {
+                          return "0.01%";
+                        }
+                        return `${percentage.toFixed(2)}%`;
+                      }}
                       textStyle={{ fontSize: 12, fontWeight: "bold" }}
                     />
                   </View>

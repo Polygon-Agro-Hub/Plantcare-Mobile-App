@@ -312,7 +312,8 @@
     "EnterAccountNumber": "ගිණුම් අංකය ඇතුළත් කරන්න",
     "ReEnterAccountNumber": "ගිණුම් අංකය නැවත ඇතුළත් කරන්න",
     "SelectBankName": "බැංකුවේ නම තෝරන්න",
-    "SelectBranchName": "ශාඛාවේ නම තෝරන්න"
+    "SelectBranchName": "ශාඛාවේ නම තෝරන්න",
+    "SelectBankFirst":"කරුණාකර පළමුව බැංකුවක් තෝරන්න."
   },
   "QRcode": {
     "MyQRCode": "මගේ QR කේතය",
@@ -581,6 +582,7 @@
   "CropCalender": {
     "ConfirmRemove": "ඉවත් කිරීම තහවුරු කරන්න",
     "AreYouSureYouWantToRemoveThisTask": "ඔබට මෙම කාර්යය ඉවත් කිරීමට අවශ්‍ය බව ඔබට විශ්වාසද?",
+    "YouMustUploadTheRequiredImagesToCompleteThisTask": "මෙම කාර්යය සම්පූර්ණ කිරීමට ඔබ අවශ්‍ය ඡායාරූප උඩුගත කළ යුතුය.",
     "CertificateTaskCompletedSuccessfully": "සහතික කාර්යය සාර්ථකව සම්පූර්ණ කරන ලදී",
     "YouCantChangeTheStatusBackToPendingOnce1HourHasPassedAfterMarkingItAsCompleted": "සම්පූර්ණ ලෙස සලකුණු කිරීමෙන් පසු පැය 1 ක් ගත වූ පසු ඔබට තත්වය නැවත විකල්ප වෙත වෙනස් කළ නොහැක.",
     "TaskStatusUpdatedSuccessfully": "කාර්ය තත්වය සාර්ථකව යාවත්කාලීන කරන ලදී!",
@@ -699,7 +701,9 @@
     "SharingIsNotAvailableOnThisDevice": "මෙම උපාංගයෙන් බෙදාගැනීම ලබා ගත නොහැක",
     "GeneratedPDFFileNotFound": "ජනනය කරන ලද PDF ගොනුව හමු නොවීය",
     "FailedToSharePDFFile": "PDF ගොනුව බෙදාගැනීමට අසමත් විය",
-    "NoTransactionsFound": "ගනුදෙනු කිසිවක් හමු නොවීය"
+    "NoTransactionsFound": "ගනුදෙනු කිසිවක් හමු නොවීය",
+    "Delivered on":"බෙදා හරින ලද්දේ",
+     "of Items":"අයිතම වලින්"
   },
   "EarnCertificate": {
     "EarnACertificate": "සහතිකයක් ලබා ගන්න",
@@ -815,7 +819,8 @@
     "warranty": "වගකීම",
     "SelectWarrantyIsRequired": "වගකීම තෝරාගැනීම අවශ්‍ය වේ",
     "Yes": "ඔව්",
-    "No": "නැහැ",
+    "no": "නැහැ",
+    "Status": "වගකීම් තත්ත්වය",
     "PurchasedDate": "මිලදී ගත් දිනය",
     "WarrantyExpireDate": "වගකීම් කල් ඉකුත්වන දිනය",
     "GeneralCondition": "සාමාන්‍ය තත්ත්වය",
@@ -842,11 +847,13 @@
     "AnnualLeaseAmountIsRequired": "වාර්ෂික කුලී මුදල (රු.) අවශ්‍ය වේ",
     "IssuedDate": "නිකුත් කළ දිනය",
     "IssuedDateIsRequired": "නිකුත් කළ දිනය අවශ්‍ය වේ",
+     "enterPermitFeeAnnuallyLKR":"වාර්ෂික බලපත්‍ර ගාස්තුව අවශ්‍ය වේ.",
     "AnnualPermitFee": "වාර්ෂික බලපත්‍ර ගාස්තුව (රු.)",
     "AnnualPermitFeeIsRequired": "වාර්ෂික බලපත්‍ර ගාස්තුව (රු.) අවශ්‍ය වේ",
     "AnnualPaymentFee": "වාර්ෂික ගෙවීමේ ගාස්තුව (රු.)",
     "AnnualPaymentFeeIsRequired": "වාර්ෂික ගෙවීමේ ගාස්තුව (රු.) අවශ්‍ය වේ",
     "IsTheLandFenced": "ඉඩම වැටක් සහිතද?",
+    "PleaseSelectAnOption":"කරුණාකර විකල්පයක් තෝරන්න.",
     "DoesTheLandHavePerennialCrops": "ඉඩමේ බහු වාර්ෂික භෝග තිබේද?",
     "MentionOtherDetails": "වෙනත් විස්තර සඳහන් කරන්න",
     "MentionOther": "වෙනත් සඳහන් කරන්න",
@@ -1383,6 +1390,7 @@
     "NoCropsFound": "භෝග හමු නොවීය",
     "SelectAreaUnit": "ප්‍රදේශ ඒකකය තෝරන්න",
     "Hectares": "හෙක්ටයාර්",
+    "Acres":"අක්කර",
     "SearchUnits...": "ඒකක සොයන්න...",
     "NoUnitsFound": "ඒකක හමු නොවීය",
     "AreaMustBeGreaterThan0": "ප්‍රදේශය 0 ට වඩා වැඩි විය යුතුය.",

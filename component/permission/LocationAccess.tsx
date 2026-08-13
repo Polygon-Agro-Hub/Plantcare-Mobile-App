@@ -35,6 +35,7 @@ interface LocationAccessProps {
 }
 
 const locationImage = require("../../assets/images/permission/location.webp");
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const LocationAccess: React.FC<LocationAccessProps> = ({
   navigation,
@@ -105,8 +106,6 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
 
   return (
     <View className="flex-1 bg-black">
-      
-
       <CustomHeader
         title=""
         navigation={navigation}
@@ -139,7 +138,6 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
 
           {/* Allow Button */}
           <TouchableOpacity
-            className="w-full max-w-xs rounded-full overflow-hidden"
             onPress={requestLocationPermission}
             activeOpacity={0.8}
           >
@@ -148,6 +146,13 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               className="py-4 items-center justify-center"
+              style={{
+                borderRadius: 999,
+                height: 50,
+                width: SCREEN_HEIGHT > 900 ? 260 : 220,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
             >
               <Text className="text-black font-extrabold text-lg tracking-wider">
                 Allow

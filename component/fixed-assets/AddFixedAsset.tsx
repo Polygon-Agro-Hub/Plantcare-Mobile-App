@@ -361,7 +361,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
       ? expireDate.getTime() > new Date().getTime()
         ? t("FixedAssets.UnderWarranty")
         : t("FixedAssets.Expired")
-      : t("CurrentAssets.Status");
+      : t("FixedAssets.Status");
 
   const ErrorText = ({ field }: { field: string }) =>
     errors[field] ? (
@@ -436,10 +436,10 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
       );
       if (nonZeroExtent.length === 0)
         newErrors.extent = t("FixedAssets.AtLeastOneExtentTypeIsRequired");
-      if (!landFenced) newErrors.landFenced = t("FixedAssets.IsTheLandFenced");
+      if (!landFenced) newErrors.landFenced = t("FixedAssets.PleaseSelectAnOption");
       if (!landName) newErrors.landName = t("FixedAssets.LandNameIsRequired");
       if (!perennialCrop)
-        newErrors.perennialCrop = t("FixedAssets.DoesTheLandHavePerennialCrops");
+        newErrors.perennialCrop = t("FixedAssets.PleaseSelectAnOption");
       if (landownership === "Own" && !estimateValue)
         newErrors.estimateValue = t(
           "FixedAssets.EstimatedBuildingValueIsRequired",
@@ -485,7 +485,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
       if (!numberOfUnits)
         newErrors.numberOfUnits = t("FixedAssets.NumberOfUnitsIsRequired");
       if (!unitPrice) newErrors.unitPrice = t("FixedAssets.UnitPriceIsRequired");
-      if (!warranty) newErrors.warranty = t("FixedAssets.SelectWarrantyIsRequired");
+      if (!warranty) newErrors.warranty = t("FixedAssets.PleaseSelectAnOption");
       if (warranty === "yes" && !purchasedDate)
         newErrors.purchasedDate = t("FixedAssets.PurchasedDateIsRequired");
       if (warranty === "yes" && !expireDate)
@@ -502,7 +502,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
       if (!numberOfUnits)
         newErrors.numberOfUnits = t("FixedAssets.NumberOfUnitsIsRequired");
       if (!unitPrice) newErrors.unitPrice = t("FixedAssets.UnitPriceIsRequired");
-      if (!warranty) newErrors.warranty = t("FixedAssets.SelectWarrantyIsRequired");
+      if (!warranty) newErrors.warranty = t("FixedAssets.PleaseSelectAnOption");
       if (warranty === "yes" && !purchasedDate)
         newErrors.purchasedDate = t("FixedAssets.PurchasedDateIsRequired");
       if (warranty === "yes" && !expireDate)
@@ -666,6 +666,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
             clearError("category");
           }}
           searchPlaceholder={t("Main.Search...")}
+          noResultsText = "No category found"
         />
 
         {/* Machine asset */}
@@ -682,6 +683,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
             clearError("asset");
           }}
           searchPlaceholder={t("Main.Search...")}
+          noResultsText = "No assets found"
         />
 
         {/* Asset type (Machine) */}
@@ -733,6 +735,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
               clearError("landownership");
             }}
             searchPlaceholder={t("Main.Search...")}
+            noResultsText = "No ownership found"
           />
         )}
 
@@ -750,6 +753,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
               clearError("assetname");
             }}
             searchPlaceholder={t("Main.Search...")}
+            noResultsText = "No assets found"
           />
         )}
 
@@ -766,6 +770,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
               clearError("toolbrand");
             }}
             searchPlaceholder={t("Main.Search...")}
+            noResultsText = "No brand found"
           />
         )}
 
@@ -798,6 +803,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
               clearError("ownership");
             }}
             searchPlaceholder={t("Main.Search...")}
+            noResultsText = "No ownership found"
           />
         )}
 
@@ -897,7 +903,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
             </Text>
             <SelectorButton
               label={getLabel(categoryOptions, category)}
-              placeholder={t("CurrentAssets.Selectcategory")}
+              placeholder={t("CurrentAssets.SelectCategory")}
               onPress={() => {
                 Keyboard.dismiss();
                 setModalCategory(true);
@@ -1052,8 +1058,8 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 </View>
 
                 {/* Warranty */}
-                <Text className="text-[#070707] text-sm mt-2">{t("FixedAssets.warranty")}</Text>
-                <View className="flex-row justify-around">
+                <Text className="text-[#070707] text-sm mt-2">{t("FixedAssets.Warranty")}</Text>
+                <View className="flex-row mt-2 mb-4 justify-around">
                   {["yes", "no"].map((w) => (
                     <TouchableOpacity
                       key={w}
@@ -1066,8 +1072,8 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       />
                       <Text className="ml-2">
                         {w === "yes"
-                          ? t("FixedAssets.Yes")
-                          : t("FixedAssets.No")}
+                          ? t("FixedAssets.yes")
+                          : t("FixedAssets.no")}
                       </Text>
                     </TouchableOpacity>
                   ))}
@@ -1232,7 +1238,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
 
                     {/* Status */}
                     <Text className="text-[#070707] text-sm mt-2">
-                      {t("CurrentAssets.Status")}
+                      {t("FixedAssets.Status")}
                     </Text>
                     <View className="bg-[#F4F4F4] rounded-3xl h-[50px] justify-center items-center mt-2 mb-2">
                       <Text
@@ -1259,12 +1265,13 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
                   placeholder={t("FixedAssets.EnterLandName")}
                   value={landName}
+                  maxLength={20}
                   autoCapitalize="sentences"
                   onChangeText={(text) => {
                     const trimmed = text.replace(/^\s+/, "");
                     const capitalized =
                       trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
-                    setLandName(capitalized);
+                    setLandName(capitalized.slice(0, 20));
                     clearError("landName");
                   }}
                 />
@@ -1464,7 +1471,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 {/* Permitted */}
                 {landownership === "Permitted" && (
                   <View className="mt-4">
-                    <Text className="pb-2">
+                    <Text className="pb-2 text-sm">
                       {t("FixedAssets.IssuedDate")} *
                     </Text>
                     <TouchableOpacity
@@ -1508,7 +1515,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.PermitFeeAnnuallyLKR")} *
                     </Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4  text-sm rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
                       placeholder={t("FixedAssets.EnterAnnualPermitFee")}
                       value={permitFeeAnnually}
                       onChangeText={(text) => {
@@ -1524,7 +1531,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 {/* Shared */}
                 {landownership === "Shared" && (
                   <View className="mt-4">
-                    <Text className="pb-2">
+                    <Text className="pb-2 text-sm">
                       {t("FixedAssets.AnnualPaymentFee")} *
                     </Text>
                     <TextInput
@@ -1546,7 +1553,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   <Text className="text-[#070707] text-sm mt-2 font-bold">
                     {t("FixedAssets.IsTheLandFenced")} *
                   </Text>
-                  <View className="flex-row justify-around mb">
+                  <View className="flex-row justify-around mt-4  mb-2">
                     {["yes", "no"].map((v) => (
                       <TouchableOpacity
                         key={v}
@@ -1559,8 +1566,8 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         />
                         <Text className="ml-2">
                           {v === "yes"
-                            ? t("FixedAssets.Yes")
-                            : t("FixedAssets.No")}
+                            ? t("FixedAssets.yes")
+                            : t("FixedAssets.no")}
                         </Text>
                       </TouchableOpacity>
                     ))}
@@ -1571,7 +1578,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   <Text className="text-[#070707] text-sm mt-2 font-bold">
                     {t("FixedAssets.DoesTheLandHavePerennialCrops")} *
                   </Text>
-                  <View className="flex-row justify-around mb-1">
+                  <View className="flex-row justify-around mt-4 mb-1">
                     {["yes", "no"].map((v) => (
                       <TouchableOpacity
                         key={v}
@@ -1584,8 +1591,8 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         />
                         <Text className="ml-2">
                           {v === "yes"
-                            ? t("FixedAssets.Yes")
-                            : t("FixedAssets.No")}
+                            ? t("FixedAssets.yes")
+                            : t("FixedAssets.no")}
                         </Text>
                       </TouchableOpacity>
                     ))}
@@ -1709,8 +1716,8 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 </View>
 
                 {/* Warranty */}
-                <Text className="text-[#070707] text-sm mt-2">{t("FixedAssets.warranty")}</Text>
-                <View className="flex-row justify-around mb-5">
+                <Text className="text-[#070707] text-sm mt-2">{t("FixedAssets.Warranty")}</Text>
+                <View className="flex-row justify-around mt-2 mb-5">
                   {["yes", "no"].map((w) => (
                     <TouchableOpacity
                       key={w}
@@ -1723,8 +1730,8 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       />
                       <Text className="ml-2">
                         {w === "yes"
-                          ? t("FixedAssets.Yes")
-                          : t("FixedAssets.No")}
+                          ? t("FixedAssets.yes")
+                          : t("FixedAssets.no")}
                       </Text>
                     </TouchableOpacity>
                   ))}
@@ -1734,7 +1741,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 {warranty === "yes" && (
                   <>
                     {/* Purchased date */}
-                    <Text className="pb-3">
+                    <Text className="pb-3 text-sm">
                       {t("FixedAssets.PurchasedDate")} *
                     </Text>
                     <TouchableOpacity
@@ -1892,7 +1899,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     ) : null}
 
                     <Text className="text-[#070707] text-sm mt-2">
-                      {t("CurrentAssets.Status")}
+                      {t("FixedAssets.Status")}
                     </Text>
                     <View className="bg-[#F4F4F4] rounded-3xl h-[50px] justify-center items-center mt-2 mb-2">
                       <Text
@@ -1930,7 +1937,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.BuildingName")} *
                 </Text>
                 <TextInput
-                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                  className="bg-[#F4F4F4] px-4 rounded-3xl text-sm h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
                   placeholder={t("FixedAssets.EnterBuildingName")}
                   value={buildingName}
                   onChangeText={(text) => {
@@ -1948,7 +1955,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.FloorArea")} *
                 </Text>
                 <TextInput
-                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                  className="bg-[#F4F4F4] px-4 rounded-3xl text-sm h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
                   placeholder={t("FixedAssets.EnterFloorArea")}
                   value={floorArea}
                   onChangeText={(text) => {
@@ -2000,7 +2007,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 {/* Leased Building */}
                 {ownership === "Leased Building" && (
                   <View className="mt-4">
-                    <Text className="pb-2">{t("FixedAssets.LeaseStartDate")} *</Text>
+                    <Text className="pb-2 text-sm">{t("FixedAssets.LeaseStartDate")} *</Text>
                     <TouchableOpacity
                       onPress={() => {
                         Keyboard.dismiss();
@@ -2119,7 +2126,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 {/* Permitted Building */}
                 {ownership === "Permitted Building" && (
                   <View className="mt-4">
-                    <Text className="pb-2">
+                    <Text className="pb-2 text-sm">
                       {t("FixedAssets.IssuedDate")} *
                     </Text>
                     <TouchableOpacity
@@ -2194,7 +2201,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 {/* Shared / No Ownership */}
                 {ownership === "Shared / No Ownership" && (
                   <View className="mt-4">
-                    <Text className="pb-2">
+                    <Text className="pb-2 text-sm">
                       {t("FixedAssets.AnnualPaymentFee")} *
                     </Text>
                     <TextInput

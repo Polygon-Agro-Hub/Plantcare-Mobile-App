@@ -39,7 +39,7 @@ import ImageViewerModal from "../common/ImageViewerModal";
 
 let Notifications: any = null;
 try {
-  if (Constants.appOwnership !== 'expo') {
+  if (Constants.appOwnership !== "expo") {
     Notifications = require("expo-notifications");
     Notifications.setNotificationHandler({
       handleNotification: async () => ({
@@ -124,6 +124,11 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
   const [startIndex, setStartIndex] = useState(0);
   const [showediticon, setShowEditIcon] = useState(false);
+
+  const [pendingImageCrop, setPendingImageCrop] = useState<{
+    crop: CropItem;
+    globalIndex: number;
+  } | null>(null);
 
   const tasksPerPage = 5;
 
@@ -279,12 +284,60 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         setLoading(false);
       }, 300);
     } catch (error) {
-      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(
+        t("Main.Error"),
+        t("Main.SomethingWentWrongPleaseTryAgainlater"),
+        [{ text: t("Main.OK") }],
+      );
       setTimeout(() => {
         setLoading(false);
       }, 300);
+    }
+  };
+
+  const completeTask = async (globalIndex: number, currentCrop: CropItem) => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      await axios.post(
+        `${environment.API_BASE_URL}api/crop/update-slave`,
+        {
+          id: currentCrop.id,
+          status: "completed",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const updatedChecked = [...checked];
+      updatedChecked[globalIndex] = true;
+      setChecked(updatedChecked);
+
+      const now = moment().toISOString();
+      const updatedTimestamps = [...timestamps];
+      updatedTimestamps[globalIndex] = now;
+      setTimestamps(updatedTimestamps);
+      await AsyncStorage.setItem(`taskTimestamp_${globalIndex}`, now);
+
+      const newLastCompletedIndex = updatedChecked.lastIndexOf(true);
+      setLastCompletedIndex(newLastCompletedIndex);
+
+      if (currentCrop.taskIndex === 1) {
+        await handleLocationIconPress(currentCrop);
+      }
+
+      if (globalIndex < crops.length - 1) {
+        registerForPushNotificationsAsync();
+        await scheduleDailyNotification();
+      }
+    } catch (error: any) {
+      let msg = t("Main.SomethingWentWrongPleaseTryAgainlater");
+      if (error.response?.data?.message?.includes("You need to wait 6 hours")) {
+        msg = error.response.data.message;
+      }
+      Alert.alert(t("Main.Sorry"), msg, [{ text: t("Main.OK") }]);
     }
   };
 
@@ -338,9 +391,11 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
       setTimestamps(new Array(response.data.length).fill(""));
     } catch (error) {
-      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(
+        t("Main.Error"),
+        t("Main.SomethingWentWrongPleaseTryAgainlater"),
+        [{ text: t("Main.OK") }],
+      );
     }
   };
 
@@ -397,44 +452,64 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
     const newStatus = checked[globalIndex] ? "pending" : "completed";
 
-    let updateMessage = "";
+    if (newStatus === "pending") {
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        await axios.post(
+          `${environment.API_BASE_URL}api/crop/update-slave`,
+          { id: currentCrop.id, status: "pending" },
+          { headers: { Authorization: `Bearer ${token}` } },
+        );
 
-    if (newStatus === "pending" && updateMessage) {
-      await cancelScheduledNotification();
+        const updatedChecked = [...checked];
+        updatedChecked[globalIndex] = false;
+        setChecked(updatedChecked);
+
+        const updatedTimestamps = [...timestamps];
+        updatedTimestamps[globalIndex] = "";
+        setTimestamps(updatedTimestamps);
+        await AsyncStorage.removeItem(`taskTimestamp_${globalIndex}`);
+
+        setLastCompletedIndex(updatedChecked.lastIndexOf(true));
+        await cancelScheduledNotification();
+      } catch (error: any) {
+        Alert.alert(
+          t("Main.Sorry"),
+          error.response?.data?.message?.includes(
+            "You cannot change the status back to pending after 1 hour",
+          )
+            ? t(
+                "CropCalender.YouCantChangeTheStatusBackToPendingOnce1HourHasPassedAfterMarkingItAsCompleted",
+              )
+            : t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
+      }
+      return;
     }
 
+    let updateMessage = "";
+
     if (PreviousCrop && currentCrop) {
-      let PreviousCropDate;
-      if (new Date(PreviousCrop.createdAt) < new Date()) {
-        PreviousCropDate = new Date(PreviousCrop.startingDate);
-      } else {
-        PreviousCropDate = new Date(PreviousCrop.createdAt);
-      }
+      let PreviousCropDate =
+        new Date(PreviousCrop.createdAt) < new Date()
+          ? new Date(PreviousCrop.startingDate)
+          : new Date(PreviousCrop.createdAt);
 
       const TaskDays = currentCrop.days;
       const CurrentDate = new Date();
-
       const nextCropUpdate = new Date(
         PreviousCropDate.getTime() + TaskDays * 24 * 60 * 60 * 1000,
       );
-
       const nextCropUpdate2 = new Date(
         CurrentDate.getTime() + TaskDays * 24 * 60 * 60 * 1000,
       );
 
-      if (PreviousCrop) {
-        const data = {
-          taskID: globalIndex + 1,
-          date: nextCropUpdate.toISOString(),
-        };
-        await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
-      } else {
-        const data = {
-          taskID: globalIndex + 1,
-          date: nextCropUpdate2.toISOString(),
-        };
-        await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
-      }
+      const data = {
+        taskID: globalIndex + 1,
+        date: (PreviousCrop ? nextCropUpdate : nextCropUpdate2).toISOString(),
+      };
+      await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
 
       const remainingTime = nextCropUpdate.getTime() - CurrentDate.getTime();
       const remainingDays = Math.ceil(remainingTime / (24 * 60 * 60 * 1000));
@@ -442,116 +517,34 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       if (remainingDays > 0) {
         updateMessage = `${t("CropCalender.YouHave")} ${t(
           "CropCalender.DaysRemainingUntilTheNextUpdate",
-          {
-            date: remainingDays,
-          },
+          { date: remainingDays },
         )}`;
-
-        Alert.alert(t("Main.Sorry"), updateMessage, [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(t("Main.Sorry"), updateMessage, [{ text: t("Main.OK") }]);
         return;
       }
-
-      if (!updateMessage) {
-        updateMessage = `${t("CropCalender.YouHave")} ${t(
-          "CropCalender.DaysRemainingUntilTheNextUpdate",
-          {
-            date: remainingDays,
-          },
-        )}`;
-      }
-    } else {
-      updateMessage = t("CropCalender.noCropData");
     }
-    if (currentCrop.taskIndex === 1 && newStatus === "completed") {
+
+    if (currentCrop.taskIndex === 1) {
       const TaskDays = NextCrop.days;
-      const CurrentDate = new Date();
-
       const nextCropUpdate2 = new Date(
-        CurrentDate.getTime() + TaskDays * 24 * 60 * 60 * 1000,
+        Date.now() + TaskDays * 24 * 60 * 60 * 1000,
       );
-      const data = {
-        taskID: globalIndex + 1,
-        date: nextCropUpdate2.toISOString(),
-      };
-      await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
+      await AsyncStorage.setItem(
+        "nextCropUpdate",
+        JSON.stringify({
+          taskID: globalIndex + 1,
+          date: nextCropUpdate2.toISOString(),
+        }),
+      );
     }
 
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      await axios.post(
-        `${environment.API_BASE_URL}api/crop/update-slave`,
-        {
-          id: currentCrop.id,
-          status: newStatus,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      const updatedChecked = [...checked];
-      updatedChecked[globalIndex] = !updatedChecked[globalIndex];
-      setChecked(updatedChecked);
-
-      const updatedTimestamps = [...timestamps];
-      if (updatedChecked[globalIndex]) {
-        const now = moment().toISOString();
-        updatedTimestamps[globalIndex] = now;
-        setTimestamps(updatedTimestamps);
-
-        await AsyncStorage.setItem(`taskTimestamp_${globalIndex}`, now);
-      } else {
-        updatedTimestamps[globalIndex] = "";
-        setTimestamps(updatedTimestamps);
-
-        await AsyncStorage.removeItem(`taskTimestamp_${globalIndex}`);
-      }
-
-      const newLastCompletedIndex = updatedChecked.lastIndexOf(true);
-      setLastCompletedIndex(newLastCompletedIndex);
-
-      if (currentCrop.taskIndex === 1 && newStatus === "completed") {
-        await handleLocationIconPress(currentCrop);
-      }
-      if (globalIndex < crops.length - 1) {
-        if (newStatus === "completed") {
-          registerForPushNotificationsAsync();
-          await scheduleDailyNotification();
-        }
-      }
-
-      if (updatedChecked[globalIndex] && currentCrop.reqImages > 0) {
-        setCultivatedLandModalVisible(true);
-      }
-    } catch (error: any) {
-      if (
-        error.response &&
-        error.response.data.message.includes(
-          "You cannot change the status back to pending after 1 hour",
-        )
-      ) {
-        Alert.alert(
-          t("Main.Sorry"),
-          t("CropCalender.YouCantChangeTheStatusBackToPendingOnce1HourHasPassedAfterMarkingItAsCompleted"),
-          [{ text: t("Main.OK") }],
-        );
-      } else if (
-        error.response &&
-        error.response.data.message.includes("You need to wait 6 hours")
-      ) {
-        Alert.alert(t("Main.Sorry"), updateMessage, [
-          { text: t("Main.OK") },
-        ]);
-      } else {
-        Alert.alert(t("Main.Sorry"), updateMessage, [
-          { text: t("Main.OK") },
-        ]);
-      }
+    if (currentCrop.reqImages > 0) {
+      setPendingImageCrop({ crop: currentCrop, globalIndex });
+      setCultivatedLandModalVisible(true);
+      return;
     }
+
+    await completeTask(globalIndex, currentCrop);
   };
 
   const checkTasksWithImages = async () => {
@@ -851,7 +844,9 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       if (!location) {
         Alert.alert(
           t("Main.Error"),
-          t("Farms.UnableToFetchLocationAfterMultipleAttemptsPleaseTryAgainLater"),
+          t(
+            "Farms.UnableToFetchLocationAfterMultipleAttemptsPleaseTryAgainLater",
+          ),
           [{ text: t("Main.OK") }],
         );
         setLoading(false);
@@ -928,11 +923,9 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(
-          t("Main.Error"),
-          t("Farms.NoAuthenticationTokenFound"),
-          [{ text: t("Main.OK") }],
-        );
+        Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"), [
+          { text: t("Main.OK") },
+        ]);
         setLoading(false);
         return;
       }
@@ -968,7 +961,10 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       } else {
         Alert.alert(
           t("CropCalender.No Images Yet"),
-          t("CropCalender.YouHaventUploadedAnyImagesForTaskYetCompleteThisTaskByTakingPhotosToTrackYourProgress", { taskIndex: crop.taskIndex }),
+          t(
+            "CropCalender.YouHaventUploadedAnyImagesForTaskYetCompleteThisTaskByTakingPhotosToTrackYourProgress",
+            { taskIndex: crop.taskIndex },
+          ),
           [
             {
               text: t("Main.OK"),
@@ -1015,26 +1011,34 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
   return (
     <View className="flex-1">
-      
+      {isCultivatedLandModalVisible && pendingImageCrop && (
+        <CultivatedLandModal
+          visible={isCultivatedLandModalVisible}
+          onClose={async (success) => {
+            setCultivatedLandModalVisible(false);
+            const { crop, globalIndex } = pendingImageCrop;
+            setPendingImageCrop(null);
 
-      {isCultivatedLandModalVisible &&
-        lastCompletedIndex !== null &&
-        crops[lastCompletedIndex] && (
-          <CultivatedLandModal
-            visible={isCultivatedLandModalVisible}
-            onClose={(success) => {
-              setCultivatedLandModalVisible(false);
-              if (success && lastCompletedIndex !== null) {
-                const cropId = crops[lastCompletedIndex].id;
-                setTasksWithImages((prev) => new Set(prev).add(cropId));
-              }
-            }}
-            cropId={crops[lastCompletedIndex].id}
-            farmId={farmId}
-            onCulscropID={crops[lastCompletedIndex].onCulscropID}
-            requiredImages={crops[lastCompletedIndex].reqImages}
-          />
-        )}
+            if (success) {
+              await completeTask(globalIndex, crop);
+
+              setTasksWithImages((prev) => new Set(prev).add(crop.id));
+            } else {
+              Alert.alert(
+                t("Main.Sorry"),
+                t(
+                  "CropCalender.YouMustUploadTheRequiredImagesToCompleteThisTask",
+                ),
+                [{ text: t("Main.OK") }],
+              );
+            }
+          }}
+          cropId={pendingImageCrop.crop.id}
+          farmId={farmId}
+          onCulscropID={pendingImageCrop.crop.onCulscropID}
+          requiredImages={pendingImageCrop.crop.reqImages}
+        />
+      )}
 
       <View
         className="flex-row items-center justify-between"
@@ -1093,14 +1097,15 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           {currentTasks.map((crop, index) => (
             <View
               key={index}
-              className={`flex-1 m-6 mb-[-5] shadow border-gray-200 border-[1px] rounded-[15px] ${checked[startIndex + index] &&
+              className={`flex-1 m-6 mb-[-5] shadow border-gray-200 border-[1px] rounded-[15px] ${
+                checked[startIndex + index] &&
                 (user?.role === "Owner" ||
                   user?.role === "Manager" ||
                   user?.role === "Supervisor" ||
                   user?.role === "Laborer")
-                ? "bg-gray-600/80"
-                : "bg-white"
-                }`}
+                  ? "bg-gray-600/80"
+                  : "bg-white"
+              }`}
             >
               <View className="flex-row">
                 <View>
@@ -1122,8 +1127,8 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
                       style={{
                         borderWidth:
                           checked[startIndex + index] ||
-                            (lastCompletedIndex !== null &&
-                              startIndex + index === lastCompletedIndex + 1)
+                          (lastCompletedIndex !== null &&
+                            startIndex + index === lastCompletedIndex + 1)
                             ? 0
                             : 2,
                         borderColor: "#00A896",
@@ -1135,7 +1140,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
                         backgroundColor: checked[startIndex + index]
                           ? "#00A896"
                           : lastCompletedIndex !== null &&
-                            startIndex + index === lastCompletedIndex + 1
+                              startIndex + index === lastCompletedIndex + 1
                             ? "black"
                             : "transparent",
                       }}
@@ -1147,7 +1152,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
                           checked[startIndex + index]
                             ? "white"
                             : lastCompletedIndex !== null &&
-                              startIndex + index === lastCompletedIndex + 1
+                                startIndex + index === lastCompletedIndex + 1
                               ? "white"
                               : "black"
                         }

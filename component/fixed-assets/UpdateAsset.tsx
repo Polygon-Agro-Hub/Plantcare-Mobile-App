@@ -508,7 +508,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
   const handleUpdateTools = async () => {
     if (!validateAllTools()) {
       Alert.alert(
-        t("FixedAssets.sorry"),
+        t("Main.Sorry"),
         t("FixedAssets.PleaseFillRequiredFields"),
         [{ text: t("Main.OK") }],
       );
@@ -640,7 +640,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         ]);
       } else {
         Alert.alert(
-          t("FixedAssets.sorry"),
+          t("Main.Sorry"),
           t("FixedAssets.FailedToUpdateAssetDetailsPleaseTryAgain"),
           [{ text: t("Main.OK") }],
         );
