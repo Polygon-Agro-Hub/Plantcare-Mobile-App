@@ -45,15 +45,26 @@ const ResultModal: React.FC<ResultModalProps> = ({
             style={{ height: 10, backgroundColor: "#F5C518", width: "100%" }}
           />
 
+          {/* Close button — sibling of yellow bar & content, positioned against the card itself */}
+          <TouchableOpacity
+            onPress={onClose}
+            style={{
+              position: "absolute",
+              top: 16, 
+              right: 12, 
+              width: 28,
+              height: 28,
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 10,
+            }}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Ionicons name="close-circle" size={26} color="#C7C9CB" />
+          </TouchableOpacity>
+
           {/* Content */}
           <View className="py-7 px-9 items-center">
-            <TouchableOpacity
-              onPress={onClose}
-              className="absolute top-3 right-3 w-7 h-7 rounded-full items-center justify-center"
-            >
-              <Ionicons name="close-circle" size={30} color="#C7C9CB" />
-            </TouchableOpacity>
-
             {cropIcon && (
               <Image
                 source={cropIcon}

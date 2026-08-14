@@ -10,11 +10,15 @@ import {
   KeyboardAvoidingView,
   ActivityIndicator,
   BackHandler,
+  Modal,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { StatusBar, Platform } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
@@ -144,20 +148,32 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
   const [asset, setAsset] = useState("");
   const [brand, setBrand] = useState("");
   const [warranty, setWarranty] = useState("");
+
   const [showPurchasedDatePicker, setShowPurchasedDatePicker] = useState(false);
   const [showExpireDatePicker, setShowExpireDatePicker] = useState(false);
   const [purchasedDate, setPurchasedDate] = useState<Date | null>(null);
   const [expireDate, setExpireDate] = useState<Date | null>(null);
+
   const [extentha, setExtentha] = useState("");
   const [extentac, setExtentac] = useState("");
   const [extentp, setExtentp] = useState("");
   const [estimateValue, setEstimatedValue] = useState("");
+
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [startDate, setStartDate] = useState<Date | null>(null);
+
   const [showIssuedDatePicker, setShowIssuedDatePicker] = useState(false);
   const [issuedDate, setIssuedDate] = useState<Date | null>(null);
+
   const [lbissuedDate, setLbIssuedDate] = useState<Date | null>(null);
   const [showLbIssuedDatePicker, setShowLbIssuedDatePicker] = useState(false);
+
+  // Temp values held while the iOS inline picker is open, committed only on OK.
+  const [tempPurchasedDate, setTempPurchasedDate] = useState<Date>(new Date());
+  const [tempExpireDate, setTempExpireDate] = useState<Date>(new Date());
+  const [tempStartDate, setTempStartDate] = useState<Date>(new Date());
+  const [tempIssuedDate, setTempIssuedDate] = useState<Date>(new Date());
+  const [tempLbIssuedDate, setTempLbIssuedDate] = useState<Date>(new Date());
 
   const [assetname, setAssetname] = useState("");
   const [othertool, setOthertool] = useState("");
@@ -267,6 +283,11 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
     setBuildingName("");
     setErrors({});
     setErrorMessage("");
+    setShowPurchasedDatePicker(false);
+    setShowExpireDatePicker(false);
+    setShowStartDatePicker(false);
+    setShowIssuedDatePicker(false);
+    setShowLbIssuedDatePicker(false);
   };
 
   useFocusEffect(
@@ -304,8 +325,45 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
   const maxDate = new Date(currentDate);
   maxDate.setFullYear(currentDate.getFullYear() + 1000);
 
-  const onStartDateChange = (selectedDate: any) => {
-    if (selectedDate > new Date()) {
+  // Today at 23:59:59.999 — using this (instead of `new Date()`, which carries
+  // the exact current time) as the picker ceiling is what guarantees "today"
+  // is always selectable, on both Android and iOS.
+  const getEndOfToday = (): Date => {
+    const d = new Date();
+    d.setHours(23, 59, 59, 999);
+    return d;
+  };
+
+  // ---------- Apply functions: run validation, then commit the date ----------
+  const applyPurchasedDate = (date: Date) => {
+    if (date > getEndOfToday()) {
+      Alert.alert(
+        t("FixedAssets.sorry"),
+        t("FixedAssets.ThePurchaseDateCannotBeInTheFuture"),
+        [{ text: t("Main.OK") }],
+      );
+      return;
+    }
+    setPurchasedDate(date);
+    clearError("purchasedDate");
+  };
+
+  const applyExpireDate = (date: Date) => {
+    if (purchasedDate && date < purchasedDate) {
+      Alert.alert(
+        t("FixedAssets.sorry"),
+        t("FixedAssets.errorInvalidExpireDate"),
+        [{ text: t("Main.OK") }],
+      );
+      return;
+    }
+    setExpireDate(date);
+    setErrorMessage("");
+    clearError("expireDate");
+  };
+
+  const applyStartDate = (date: Date) => {
+    if (date > getEndOfToday()) {
       Alert.alert(
         t("FixedAssets.sorry"),
         t("FixedAssets.TheIssuedDateCannotBeInTheFuture"),
@@ -313,31 +371,12 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
       );
       return;
     }
-    setStartDate(selectedDate);
+    setStartDate(date);
     clearError("startDate");
   };
 
-  // Land -> Permitted "Issued Date" picker handler
-  const onIssuedDateChange = (event: any, selectedDate: Date | undefined) => {
-    setShowIssuedDatePicker(false);
-    if (event.type === "set" && selectedDate) {
-      setIssuedDate(selectedDate);
-      clearError("issuedDate");
-    }
-  };
-
-  // Building -> Permitted Building "Issued Date" picker handler (Android path)
-  const onLbIssuedDateChange = (event: any, selectedDate: Date | undefined) => {
-    setShowLbIssuedDatePicker(false);
-    if (event.type === "set" && selectedDate) {
-      setLbIssuedDate(selectedDate);
-      clearError("lbissuedDate");
-    }
-  };
-
-  // Building -> Permitted Building "Issued Date" picker handler (iOS path)
-  const onPermitIssuedDateChange = (selectedDate: any) => {
-    if (selectedDate > new Date()) {
+  const applyIssuedDate = (date: Date) => {
+    if (date > getEndOfToday()) {
       Alert.alert(
         t("FixedAssets.sorry"),
         t("FixedAssets.TheIssuedDateCannotBeInTheFuture"),
@@ -345,8 +384,119 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
       );
       return;
     }
-    setLbIssuedDate(selectedDate);
+    setIssuedDate(date);
+    clearError("issuedDate");
+  };
+
+  const applyLbIssuedDate = (date: Date) => {
+    if (date > getEndOfToday()) {
+      Alert.alert(
+        t("FixedAssets.sorry"),
+        t("FixedAssets.TheIssuedDateCannotBeInTheFuture"),
+        [{ text: t("Main.OK") }],
+      );
+      return;
+    }
+    setLbIssuedDate(date);
     clearError("lbissuedDate");
+  };
+
+  // ---------- Open handlers: seed temp state, then show the picker ----------
+  const handleOpenPurchasedPicker = () => {
+    Keyboard.dismiss();
+    setTempPurchasedDate(purchasedDate || new Date());
+    setShowPurchasedDatePicker(true);
+  };
+
+  const handleOpenExpirePicker = () => {
+    Keyboard.dismiss();
+    setTempExpireDate(expireDate || purchasedDate || new Date());
+    setShowExpireDatePicker(true);
+  };
+
+  const handleOpenStartPicker = () => {
+    Keyboard.dismiss();
+    setTempStartDate(startDate || new Date());
+    setShowStartDatePicker(true);
+  };
+
+  const handleOpenIssuedPicker = () => {
+    Keyboard.dismiss();
+    setTempIssuedDate(issuedDate || new Date());
+    setShowIssuedDatePicker(true);
+  };
+
+  const handleOpenLbIssuedPicker = () => {
+    Keyboard.dismiss();
+    setTempLbIssuedDate(lbissuedDate || new Date());
+    setShowLbIssuedDatePicker(true);
+  };
+
+  // ---------- Android onChange: native dialog applies + closes itself ----------
+  const onChangePurchasedDateAndroid = (
+    event: DateTimePickerEvent,
+    selectedDate?: Date,
+  ) => {
+    setShowPurchasedDatePicker(false);
+    if (event.type === "set" && selectedDate) applyPurchasedDate(selectedDate);
+  };
+
+  const onChangeExpireDateAndroid = (
+    event: DateTimePickerEvent,
+    selectedDate?: Date,
+  ) => {
+    setShowExpireDatePicker(false);
+    if (event.type === "set" && selectedDate) applyExpireDate(selectedDate);
+  };
+
+  const onChangeStartDateAndroid = (
+    event: DateTimePickerEvent,
+    selectedDate?: Date,
+  ) => {
+    setShowStartDatePicker(false);
+    if (event.type === "set" && selectedDate) applyStartDate(selectedDate);
+  };
+
+  const onChangeIssuedDateAndroid = (
+    event: DateTimePickerEvent,
+    selectedDate?: Date,
+  ) => {
+    setShowIssuedDatePicker(false);
+    if (event.type === "set" && selectedDate) applyIssuedDate(selectedDate);
+  };
+
+  const onChangeLbIssuedDateAndroid = (
+    event: DateTimePickerEvent,
+    selectedDate?: Date,
+  ) => {
+    setShowLbIssuedDatePicker(false);
+    if (event.type === "set" && selectedDate) applyLbIssuedDate(selectedDate);
+  };
+
+  // ---------- iOS confirm (Modal OK button): commit temp value ----------
+  const onConfirmPurchasedDateIOS = () => {
+    applyPurchasedDate(tempPurchasedDate);
+    setShowPurchasedDatePicker(false);
+  };
+
+  const onConfirmExpireDateIOS = () => {
+    applyExpireDate(tempExpireDate);
+    setShowExpireDatePicker(false);
+  };
+
+  const onConfirmStartDateIOS = () => {
+    applyStartDate(tempStartDate);
+    setShowStartDatePicker(false);
+  };
+
+  const onConfirmIssuedDateIOS = () => {
+    applyIssuedDate(tempIssuedDate);
+    setShowIssuedDatePicker(false);
+  };
+
+  const onConfirmLbIssuedDateIOS = () => {
+    applyLbIssuedDate(tempLbIssuedDate);
+    setShowLbIssuedDatePicker(false);
   };
 
   const warrantyStatusColor =
@@ -367,6 +517,115 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
     errors[field] ? (
       <Text className="text-red-500 text-xs mt-1 ml-2">{errors[field]}</Text>
     ) : null;
+
+  // Reusable date field: trigger button + Android native dialog + iOS Modal
+  // (inline calendar with Cancel/OK). This is the pattern that reliably lets
+  // the user pick "today" on iOS — nothing commits until OK is tapped.
+  const DateField = ({
+    value,
+    placeholder,
+    onOpen,
+    showPicker,
+    setShowPicker,
+    tempDate,
+    setTempDate,
+    onConfirmIOS,
+    onChangeAndroid,
+    minimumDate,
+    maximumDate,
+    modalTitle,
+  }: {
+    value: Date | null;
+    placeholder: string;
+    onOpen: () => void;
+    showPicker: boolean;
+    setShowPicker: (v: boolean) => void;
+    tempDate: Date;
+    setTempDate: (d: Date) => void;
+    onConfirmIOS: () => void;
+    onChangeAndroid: (event: DateTimePickerEvent, selectedDate?: Date) => void;
+    minimumDate?: Date;
+    maximumDate?: Date;
+    modalTitle: string;
+  }) => (
+    <>
+      <TouchableOpacity
+        onPress={onOpen}
+        className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2 mb-2"
+      >
+        <Text className={`flex-1 ${!value ? "text-[#6B7280]" : "text-black"}`}>
+          {value ? formatDate(value) : placeholder}
+        </Text>
+        <EvilIcons name="calendar" size={28} color="#5e5d5d" />
+      </TouchableOpacity>
+
+      {Platform.OS === "android" ? (
+        showPicker && (
+          <DateTimePicker
+            value={value || new Date()}
+            mode="date"
+            display="default"
+            onChange={onChangeAndroid}
+            minimumDate={minimumDate}
+            maximumDate={maximumDate}
+          />
+        )
+      ) : (
+        <Modal
+          transparent
+          visible={showPicker}
+          animationType="fade"
+          onRequestClose={() => setShowPicker(false)}
+        >
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => setShowPicker(false)}
+            className="flex-1 bg-black/50 justify-center items-center p-4"
+          >
+            <TouchableWithoutFeedback>
+              <View className="bg-white rounded-2xl p-4 w-full max-w-[340px] shadow-lg">
+                <Text className="text-black font-bold text-base mb-2 px-2">
+                  {modalTitle}
+                </Text>
+                <DateTimePicker
+                  value={tempDate}
+                  mode="date"
+                  display="inline"
+                  onChange={(_, selectedDate) => {
+                    if (selectedDate) setTempDate(selectedDate);
+                  }}
+                  minimumDate={minimumDate}
+                  maximumDate={maximumDate}
+                  themeVariant="light"
+                />
+                <View
+                  className="flex-row justify-end mt-3 pr-2"
+                  style={{ gap: 12 }}
+                >
+                  <TouchableOpacity
+                    onPress={() => setShowPicker(false)}
+                    className="px-4 py-2 rounded-lg"
+                  >
+                    <Text className="text-[#007AFF] font-semibold text-sm">
+                      {t("Main.Cancel", "Cancel")}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={onConfirmIOS}
+                    className="bg-[#F7CA21] px-5 py-2 rounded-full"
+                  >
+                    <Text className="text-black font-semibold text-sm">
+                      {t("Main.OK")}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+          </TouchableOpacity>
+        </Modal>
+      )}
+    </>
+  );
 
   useEffect(() => {
     const fetchFarmData = async () => {
@@ -616,7 +875,6 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
       style={{ flex: 1 }}
     >
       <View style={{ flex: 1 }}>
-        
 
         {/* Farm */}
         <GlobalSearchModal
@@ -1086,155 +1344,40 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.PurchasedDate")} *
                     </Text>
-                    <TouchableOpacity
-                      onPress={() => {
-                        Keyboard.dismiss();
-                        setShowPurchasedDatePicker((prev) => !prev);
-                      }}
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2 mb-2"
-                    >
-                      <Text
-                        className={`flex-1 ${!purchasedDate ? "text-[#6B7280]" : "text-black"}`}
-                      >
-                        {purchasedDate
-                          ? formatDate(purchasedDate)
-                          : t("CurrentAssets.PurchaseDate")}
-                      </Text>
-                      <EvilIcons name="calendar" size={28} color="#5e5d5d" />
-                    </TouchableOpacity>
+                    <DateField
+                      value={purchasedDate}
+                      placeholder={t("CurrentAssets.PurchaseDate")}
+                      onOpen={handleOpenPurchasedPicker}
+                      showPicker={showPurchasedDatePicker}
+                      setShowPicker={setShowPurchasedDatePicker}
+                      tempDate={tempPurchasedDate}
+                      setTempDate={setTempPurchasedDate}
+                      onConfirmIOS={onConfirmPurchasedDateIOS}
+                      onChangeAndroid={onChangePurchasedDateAndroid}
+                      maximumDate={getEndOfToday()}
+                      modalTitle={t("FixedAssets.PurchasedDate")}
+                    />
                     <ErrorText field="purchasedDate" />
-
-                    {showPurchasedDatePicker &&
-                      (Platform.OS === "ios" ? (
-                        <View className="justify-center items-center z-50 mt-2 bg-gray-100 rounded-lg">
-                          <DateTimePicker
-                            value={purchasedDate || new Date()}
-                            mode="date"
-                            display="inline"
-                            style={{ width: 320, height: 260 }}
-                            onChange={(event, selectedDate) => {
-                              if (event.type === "set" && selectedDate) {
-                                if (selectedDate > new Date()) {
-                                  Alert.alert(
-                                    t("FixedAssets.sorry"),
-                                    t("FixedAssets.ThePurchaseDateCannotBeInTheFuture"),
-                                    [{ text: t("Main.OK") }],
-                                  );
-                                } else {
-                                  setPurchasedDate(selectedDate);
-                                  clearError("purchasedDate");
-                                }
-                              }
-                              setShowPurchasedDatePicker(false);
-                            }}
-                            maximumDate={new Date()}
-                          />
-                        </View>
-                      ) : (
-                        <DateTimePicker
-                          value={purchasedDate || new Date()}
-                          mode="date"
-                          display="default"
-                          onChange={(event, selectedDate) => {
-                            if (event.type === "set" && selectedDate) {
-                              if (selectedDate > new Date()) {
-                                Alert.alert(
-                                  t("FixedAssets.sorry"),
-                                  t("FixedAssets.ThePurchaseDateCannotBeInTheFuture"),
-                                  [{ text: t("Main.OK") }],
-                                );
-                              } else {
-                                setPurchasedDate(selectedDate);
-                                clearError("purchasedDate");
-                              }
-                            }
-                            setShowPurchasedDatePicker(false);
-                          }}
-                          maximumDate={new Date()}
-                        />
-                      ))}
 
                     {/* Expire date */}
                     <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.WarrantyExpireDate")} *
                     </Text>
-                    <TouchableOpacity
-                      onPress={() => {
-                        Keyboard.dismiss();
-                        setShowExpireDatePicker((prev) => !prev);
-                      }}
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2 mb-2"
-                    >
-                      <Text
-                        className={`flex-1 ${!expireDate ? "text-[#6B7280]" : "text-black"}`}
-                      >
-                        {expireDate
-                          ? formatDate(expireDate)
-                          : t("CurrentAssets.ExpireDate")}
-                      </Text>
-                      <EvilIcons name="calendar" size={28} color="#5e5d5d" />
-                    </TouchableOpacity>
+                    <DateField
+                      value={expireDate}
+                      placeholder={t("CurrentAssets.ExpireDate")}
+                      onOpen={handleOpenExpirePicker}
+                      showPicker={showExpireDatePicker}
+                      setShowPicker={setShowExpireDatePicker}
+                      tempDate={tempExpireDate}
+                      setTempDate={setTempExpireDate}
+                      onConfirmIOS={onConfirmExpireDateIOS}
+                      onChangeAndroid={onChangeExpireDateAndroid}
+                      minimumDate={purchasedDate || undefined}
+                      maximumDate={maxDate}
+                      modalTitle={t("FixedAssets.WarrantyExpireDate")}
+                    />
                     <ErrorText field="expireDate" />
-
-                    {showExpireDatePicker &&
-                      (Platform.OS === "ios" ? (
-                        <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
-                          <DateTimePicker
-                            value={expireDate || new Date()}
-                            mode="date"
-                            display="inline"
-                            style={{ width: 320, height: 260 }}
-                            onChange={(event, selectedDate) => {
-                              setShowExpireDatePicker(false);
-                              if (event.type === "set" && selectedDate) {
-                                if (
-                                  purchasedDate &&
-                                  selectedDate < purchasedDate
-                                ) {
-                                  Alert.alert(
-                                    t("FixedAssets.sorry"),
-                                    t("FixedAssets.errorInvalidExpireDate"),
-                                    [{ text: t("Main.OK") }],
-                                  );
-                                } else {
-                                  setExpireDate(selectedDate);
-                                  setErrorMessage("");
-                                  clearError("expireDate");
-                                }
-                              }
-                            }}
-                            minimumDate={purchasedDate || undefined}
-                            maximumDate={maxDate}
-                          />
-                        </View>
-                      ) : (
-                        <DateTimePicker
-                          value={expireDate || new Date()}
-                          mode="date"
-                          display="default"
-                          onChange={(event, selectedDate) => {
-                            setShowExpireDatePicker(false);
-                            if (event.type === "set" && selectedDate) {
-                              if (
-                                purchasedDate &&
-                                selectedDate < purchasedDate
-                              ) {
-                                Alert.alert(
-                                  t("FixedAssets.sorry"),
-                                  t("FixedAssets.errorInvalidExpireDate"),
-                                  [{ text: t("Main.OK") }],
-                                );
-                              } else {
-                                setExpireDate(selectedDate);
-                                setErrorMessage("");
-                                clearError("expireDate");
-                              }
-                            }
-                          }}
-                          minimumDate={purchasedDate || undefined}
-                          maximumDate={maxDate}
-                        />
-                      ))}
 
                     {/* Status */}
                     <Text className="text-[#070707] text-sm mt-2">
@@ -1356,58 +1499,19 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.LeaseStartDate")} *
                     </Text>
-                    <TouchableOpacity
-                      onPress={() => {
-                        Keyboard.dismiss();
-                        setShowStartDatePicker((prev) => !prev);
-                      }}
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2 mb-2"
-                    >
-                      <Text
-                        className={`flex-1 ${!startDate ? "text-[#6B7280]" : "text-black"}`}
-                      >
-                        {startDate
-                          ? formatDate(new Date(startDate))
-                          : t("FixedAssets.SelectDate")}
-                      </Text>
-                      <EvilIcons name="calendar" size={28} color="#5e5d5d" />
-                    </TouchableOpacity>
-
-                    {showStartDatePicker &&
-                      (Platform.OS === "ios" ? (
-                        <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
-                          <DateTimePicker
-                            value={startDate || new Date()}
-                            mode="date"
-                            display="inline"
-                            style={{ width: 320, height: 260 }}
-                            onChange={(event, selectedDate) => {
-                              if (event.type === "set") {
-                                onStartDateChange(selectedDate);
-                                setShowStartDatePicker(false);
-                              } else {
-                                setShowStartDatePicker(false);
-                              }
-                            }}
-                            maximumDate={new Date()}
-                          />
-                        </View>
-                      ) : (
-                        <DateTimePicker
-                          value={startDate || new Date()}
-                          mode="date"
-                          display="default"
-                          onChange={(event, selectedDate) => {
-                            if (event.type === "set") {
-                              onStartDateChange(selectedDate);
-                              setShowStartDatePicker(false);
-                            } else {
-                              setShowStartDatePicker(false);
-                            }
-                          }}
-                          maximumDate={new Date()}
-                        />
-                      ))}
+                    <DateField
+                      value={startDate}
+                      placeholder={t("FixedAssets.SelectDate")}
+                      onOpen={handleOpenStartPicker}
+                      showPicker={showStartDatePicker}
+                      setShowPicker={setShowStartDatePicker}
+                      tempDate={tempStartDate}
+                      setTempDate={setTempStartDate}
+                      onConfirmIOS={onConfirmStartDateIOS}
+                      onChangeAndroid={onChangeStartDateAndroid}
+                      maximumDate={getEndOfToday()}
+                      modalTitle={t("FixedAssets.LeaseStartDate")}
+                    />
                     <ErrorText field="startDate" />
 
                     <Text className="text-[#070707] text-sm mt-2">
@@ -1474,42 +1578,19 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     <Text className="pb-2 text-sm">
                       {t("FixedAssets.IssuedDate")} *
                     </Text>
-                    <TouchableOpacity
-                      onPress={() => {
-                        Keyboard.dismiss();
-                        setShowIssuedDatePicker((prev) => !prev);
-                      }}
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2 mb-2"
-                    >
-                      <Text
-                        className={`flex-1 ${!issuedDate ? "text-[#6B7280]" : "text-black"}`}
-                      >
-                        {issuedDate ? formatDate(issuedDate) : t("FixedAssets.SelectDate")}
-                      </Text>
-                      <EvilIcons name="calendar" size={28} color="#5e5d5d" />
-                    </TouchableOpacity>
-                    {showIssuedDatePicker &&
-                      (Platform.OS === "ios" ? (
-                        <View className="justify-center items-center z-50 bg-[#F4F4F4] rounded-lg">
-                          <DateTimePicker
-                            value={issuedDate ?? new Date()}
-                            mode="date"
-                            display="inline"
-                            style={{ width: 320, height: 260 }}
-                            onChange={onIssuedDateChange}
-                            maximumDate={new Date()}
-                          />
-                        </View>
-                      ) : (
-                        <DateTimePicker
-                          value={issuedDate ?? new Date()}
-                          mode="date"
-                          display="default"
-                          onChange={onIssuedDateChange}
-                          maximumDate={new Date()}
-                        />
-                      ))}
-                    {/* FIX: this ErrorText was completely missing before */}
+                    <DateField
+                      value={issuedDate}
+                      placeholder={t("FixedAssets.SelectDate")}
+                      onOpen={handleOpenIssuedPicker}
+                      showPicker={showIssuedDatePicker}
+                      setShowPicker={setShowIssuedDatePicker}
+                      tempDate={tempIssuedDate}
+                      setTempDate={setTempIssuedDate}
+                      onConfirmIOS={onConfirmIssuedDateIOS}
+                      onChangeAndroid={onChangeIssuedDateAndroid}
+                      maximumDate={getEndOfToday()}
+                      modalTitle={t("FixedAssets.IssuedDate")}
+                    />
                     <ErrorText field="issuedDate" />
                     <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.PermitFeeAnnuallyLKR")} *
@@ -1744,155 +1825,40 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     <Text className="pb-3 text-sm">
                       {t("FixedAssets.PurchasedDate")} *
                     </Text>
-                    <TouchableOpacity
-                      onPress={() => {
-                        Keyboard.dismiss();
-                        setShowPurchasedDatePicker((prev) => !prev);
-                      }}
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2 mb-2"
-                    >
-                      <Text
-                        className={`flex-1 ${!purchasedDate ? "text-[#6B7280]" : "text-black"}`}
-                      >
-                        {purchasedDate
-                          ? formatDate(purchasedDate)
-                          : t("CurrentAssets.PurchaseDate")}
-                      </Text>
-                      <EvilIcons name="calendar" size={28} color="#5e5d5d" />
-                    </TouchableOpacity>
+                    <DateField
+                      value={purchasedDate}
+                      placeholder={t("CurrentAssets.PurchaseDate")}
+                      onOpen={handleOpenPurchasedPicker}
+                      showPicker={showPurchasedDatePicker}
+                      setShowPicker={setShowPurchasedDatePicker}
+                      tempDate={tempPurchasedDate}
+                      setTempDate={setTempPurchasedDate}
+                      onConfirmIOS={onConfirmPurchasedDateIOS}
+                      onChangeAndroid={onChangePurchasedDateAndroid}
+                      maximumDate={getEndOfToday()}
+                      modalTitle={t("FixedAssets.PurchasedDate")}
+                    />
                     <ErrorText field="purchasedDate" />
-
-                    {showPurchasedDatePicker &&
-                      (Platform.OS === "ios" ? (
-                        <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
-                          <DateTimePicker
-                            value={purchasedDate || new Date()}
-                            mode="date"
-                            display="inline"
-                            style={{ width: 320, height: 260 }}
-                            onChange={(event, selectedDate) => {
-                              if (event.type === "set" && selectedDate) {
-                                if (selectedDate > new Date()) {
-                                  Alert.alert(
-                                    t("FixedAssets.sorry"),
-                                    t("FixedAssets.ThePurchaseDateCannotBeInTheFuture"),
-                                    [{ text: t("Main.OK") }],
-                                  );
-                                } else {
-                                  setPurchasedDate(selectedDate);
-                                  clearError("purchasedDate");
-                                }
-                              }
-                              setShowPurchasedDatePicker(false);
-                            }}
-                            maximumDate={new Date()}
-                          />
-                        </View>
-                      ) : (
-                        <DateTimePicker
-                          value={purchasedDate || new Date()}
-                          mode="date"
-                          display="default"
-                          onChange={(event, selectedDate) => {
-                            if (event.type === "set" && selectedDate) {
-                              if (selectedDate > new Date()) {
-                                Alert.alert(
-                                  t("FixedAssets.sorry"),
-                                  t("FixedAssets.ThePurchaseDateCannotBeInTheFuture"),
-                                  [{ text: t("Main.OK") }],
-                                );
-                              } else {
-                                setPurchasedDate(selectedDate);
-                                clearError("purchasedDate");
-                              }
-                            }
-                            setShowPurchasedDatePicker(false);
-                          }}
-                          maximumDate={new Date()}
-                        />
-                      ))}
 
                     {/* Expire date */}
                     <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.WarrantyExpireDate")} *
                     </Text>
-                    <TouchableOpacity
-                      onPress={() => {
-                        Keyboard.dismiss();
-                        setShowExpireDatePicker((prev) => !prev);
-                      }}
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2 mb-2"
-                    >
-                      <Text
-                        className={`flex-1 ${!expireDate ? "text-[#6B7280]" : "text-black"}`}
-                      >
-                        {expireDate
-                          ? formatDate(expireDate)
-                          : t("CurrentAssets.ExpireDate")}
-                      </Text>
-                      <EvilIcons name="calendar" size={28} color="#5e5d5d" />
-                    </TouchableOpacity>
+                    <DateField
+                      value={expireDate}
+                      placeholder={t("CurrentAssets.ExpireDate")}
+                      onOpen={handleOpenExpirePicker}
+                      showPicker={showExpireDatePicker}
+                      setShowPicker={setShowExpireDatePicker}
+                      tempDate={tempExpireDate}
+                      setTempDate={setTempExpireDate}
+                      onConfirmIOS={onConfirmExpireDateIOS}
+                      onChangeAndroid={onChangeExpireDateAndroid}
+                      minimumDate={purchasedDate || undefined}
+                      maximumDate={maxDate}
+                      modalTitle={t("FixedAssets.WarrantyExpireDate")}
+                    />
                     <ErrorText field="expireDate" />
-
-                    {showExpireDatePicker &&
-                      (Platform.OS === "ios" ? (
-                        <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
-                          <DateTimePicker
-                            value={expireDate || new Date()}
-                            mode="date"
-                            display="inline"
-                            style={{ width: 320, height: 260 }}
-                            onChange={(event, selectedDate) => {
-                              setShowExpireDatePicker(false);
-                              if (event.type === "set" && selectedDate) {
-                                if (
-                                  purchasedDate &&
-                                  selectedDate < purchasedDate
-                                ) {
-                                  Alert.alert(
-                                    t("FixedAssets.sorry"),
-                                    t("FixedAssets.errorInvalidExpireDate"),
-                                    [{ text: t("Main.OK") }],
-                                  );
-                                } else {
-                                  setExpireDate(selectedDate);
-                                  setErrorMessage("");
-                                  clearError("expireDate");
-                                }
-                              }
-                            }}
-                            minimumDate={purchasedDate || undefined}
-                            maximumDate={maxDate}
-                          />
-                        </View>
-                      ) : (
-                        <DateTimePicker
-                          value={expireDate || new Date()}
-                          mode="date"
-                          display="default"
-                          onChange={(event, selectedDate) => {
-                            setShowExpireDatePicker(false);
-                            if (event.type === "set" && selectedDate) {
-                              if (
-                                purchasedDate &&
-                                selectedDate < purchasedDate
-                              ) {
-                                Alert.alert(
-                                  t("FixedAssets.sorry"),
-                                  t("FixedAssets.errorInvalidExpireDate"),
-                                  [{ text: t("Main.OK") }],
-                                );
-                              } else {
-                                setExpireDate(selectedDate);
-                                setErrorMessage("");
-                                clearError("expireDate");
-                              }
-                            }
-                          }}
-                          minimumDate={purchasedDate || undefined}
-                          maximumDate={maxDate}
-                        />
-                      ))}
 
                     {errorMessage ? (
                       <Text className="text-red-500 mt-2">{errorMessage}</Text>
@@ -2008,57 +1974,19 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 {ownership === "Leased Building" && (
                   <View className="mt-4">
                     <Text className="pb-2 text-sm">{t("FixedAssets.LeaseStartDate")} *</Text>
-                    <TouchableOpacity
-                      onPress={() => {
-                        Keyboard.dismiss();
-                        setShowStartDatePicker((prev) => !prev);
-                      }}
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2 mb-2"
-                    >
-                      <Text
-                        className={`flex-1 ${!startDate ? "text-[#6B7280]" : "text-black"}`}
-                      >
-                        {startDate
-                          ? formatDate(new Date(startDate))
-                          : t("FixedAssets.SelectDate")}
-                      </Text>
-                      <EvilIcons name="calendar" size={28} color="#5e5d5d" />
-                    </TouchableOpacity>
-                    {showStartDatePicker &&
-                      (Platform.OS === "ios" ? (
-                        <View className="justify-center items-center z-50 bg-[#F4F4F4] rounded-lg">
-                          <DateTimePicker
-                            value={startDate || new Date()}
-                            mode="date"
-                            display="inline"
-                            style={{ width: 320, height: 260 }}
-                            onChange={(event, selectedDate) => {
-                              if (event.type === "set") {
-                                onStartDateChange(selectedDate);
-                                setShowStartDatePicker(false);
-                              } else {
-                                setShowStartDatePicker(false);
-                              }
-                            }}
-                            maximumDate={new Date()}
-                          />
-                        </View>
-                      ) : (
-                        <DateTimePicker
-                          value={startDate || new Date()}
-                          mode="date"
-                          display="default"
-                          onChange={(event, selectedDate) => {
-                            if (event.type === "set") {
-                              onStartDateChange(selectedDate);
-                              setShowStartDatePicker(false);
-                            } else {
-                              setShowStartDatePicker(false);
-                            }
-                          }}
-                          maximumDate={new Date()}
-                        />
-                      ))}
+                    <DateField
+                      value={startDate}
+                      placeholder={t("FixedAssets.SelectDate")}
+                      onOpen={handleOpenStartPicker}
+                      showPicker={showStartDatePicker}
+                      setShowPicker={setShowStartDatePicker}
+                      tempDate={tempStartDate}
+                      setTempDate={setTempStartDate}
+                      onConfirmIOS={onConfirmStartDateIOS}
+                      onChangeAndroid={onChangeStartDateAndroid}
+                      maximumDate={getEndOfToday()}
+                      modalTitle={t("FixedAssets.LeaseStartDate")}
+                    />
                     <ErrorText field="startDate" />
 
                     <Text className="text-[#070707] text-sm mt-2">
@@ -2129,57 +2057,19 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     <Text className="pb-2 text-sm">
                       {t("FixedAssets.IssuedDate")} *
                     </Text>
-                    <TouchableOpacity
-                      onPress={() => {
-                        Keyboard.dismiss();
-                        setShowLbIssuedDatePicker((prev) => !prev);
-                      }}
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2 mb-2"
-                    >
-                      <Text
-                        className={`flex-1 ${!lbissuedDate ? "text-[#6B7280]" : "text-black"}`}
-                      >
-                        {lbissuedDate ? formatDate(lbissuedDate) : t("FixedAssets.SelectDate")}
-                      </Text>
-                      <EvilIcons name="calendar" size={28} color="#5e5d5d" />
-                    </TouchableOpacity>
-                    {showLbIssuedDatePicker &&
-                      (Platform.OS === "ios" ? (
-                        <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
-                          <DateTimePicker
-                            value={lbissuedDate || new Date()}
-                            mode="date"
-                            display="inline"
-                            style={{ width: 320, height: 260 }}
-                            onChange={(event, selectedDate) => {
-                              if (event.type === "set") {
-                                onPermitIssuedDateChange(selectedDate);
-                                setShowLbIssuedDatePicker(false);
-                              } else {
-                                setShowLbIssuedDatePicker(false);
-                              }
-                            }}
-                            maximumDate={new Date()}
-                          />
-                        </View>
-                      ) : (
-                        <DateTimePicker
-                          value={lbissuedDate || new Date()}
-                          mode="date"
-                          display="default"
-                          onChange={(event, selectedDate) => {
-                            if (event.type === "set") {
-                              onPermitIssuedDateChange(selectedDate);
-                              setShowLbIssuedDatePicker(false);
-                            } else {
-                              setShowLbIssuedDatePicker(false);
-                            }
-                          }}
-                          maximumDate={new Date()}
-                        />
-                      ))}
-                    {/* FIX: this key was "issuedDate" before, which never matched
-                        because the validation for this section sets "lbissuedDate" */}
+                    <DateField
+                      value={lbissuedDate}
+                      placeholder={t("FixedAssets.SelectDate")}
+                      onOpen={handleOpenLbIssuedPicker}
+                      showPicker={showLbIssuedDatePicker}
+                      setShowPicker={setShowLbIssuedDatePicker}
+                      tempDate={tempLbIssuedDate}
+                      setTempDate={setTempLbIssuedDate}
+                      onConfirmIOS={onConfirmLbIssuedDateIOS}
+                      onChangeAndroid={onChangeLbIssuedDateAndroid}
+                      maximumDate={getEndOfToday()}
+                      modalTitle={t("FixedAssets.IssuedDate")}
+                    />
                     <ErrorText field="lbissuedDate" />
                     <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.AnnualPermitFee")} *

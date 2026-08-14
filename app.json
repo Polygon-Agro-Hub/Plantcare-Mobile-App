@@ -13,6 +13,7 @@
       "backgroundColor": "#26D041"
     },
     "ios": {
+      "icon": "./assets/images/public/app-icon-ios.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.polygonagro.GoviCare",
       "buildNumber": "2.0.0",

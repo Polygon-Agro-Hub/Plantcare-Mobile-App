@@ -703,7 +703,9 @@
     "FailedToSharePDFFile": "PDF ගොනුව බෙදාගැනීමට අසමත් විය",
     "NoTransactionsFound": "ගනුදෙනු කිසිවක් හමු නොවීය",
     "Delivered on":"බෙදා හරින ලද්දේ",
-     "of Items":"අයිතම වලින්"
+    "of Items":"අයිතම වලින්",
+    "Info":"තොරතුරු",
+    "UseTheSave":"බාගැනීම් වලට සුරැකීමට 'ගොනු වලට සුරකින්න' විකල්පය භාවිතා කරන්න."
   },
   "EarnCertificate": {
     "EarnACertificate": "සහතිකයක් ලබා ගන්න",
@@ -1256,7 +1258,8 @@
     "YourInspectionRequestHasBeenSubmittedSuccessfully": "ඔබගේ පරීක්ෂා ඉල්ලීම සාර්ථකව ඉදිරිපත් කර ඇත!",
     "FailedToFetchFarmCropsPleaseTryAgain": "ගොවිපල භෝග ලබා ගැනීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
     "FailedToFetchFarmsPleaseTryAgain": "ගොවිපල ලබා ගැනීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
-    "FailedToFetchServicesPleaseTryAgain": "සේවා ලබා ගැනීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න."
+    "FailedToFetchServicesPleaseTryAgain": "සේවා ලබා ගැනීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
+    "SearchFarm":"ගොවිපල සොයන්න"
   },
   "RequestHistory": {
     "YouHaveNoRequestsAddedYet": "--ඔබ තවමත් කිසිදු ඉල්ලීමක් එකතු කර නැත--",
@@ -1420,6 +1423,7 @@
   "SoilFertilizerCalculators": {
     "Soil&FertilizerCalculators": "පාංශු සහ පොහොර ගණක යන්ත්‍ර",
     "Fertilizer": "පොහොර",
+    "FertilizerRequirement":"පොහොර අවශ්‍යතාවය",
     "NPKRatio": "NPK අනුපාතය",
     "LimeRequirement": "දෙහි අවශ්‍යතාවය",
     "CompostMixing": "කොම්පොස්ට් මිශ්‍ර කිරීම",
@@ -1437,6 +1441,7 @@
     "SearchUnits...": "ඒකක සොයන්න...",
     "NoUnitsFound": "ඒකක හමු නොවීය",
     "Hectares": "හෙක්ටයාර්",
+    "Acres": "අක්කර",
     "N": "N",
     "P": "P",
     "K": "K",

@@ -167,7 +167,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ navigation }) => {
     } else if (role === "Manager") {
       navigation.navigate("ManagerProfileView" as any);
     } else if (role === "Laborer" || role === "Laboror") {
-     navigation.navigate("Main", { screen: "EditProfile" });
+      navigation.navigate("Main", { screen: "EditProfile" });
     } else {
       navigation.navigate("Main", { screen: "EditProfile" });
     }
@@ -219,7 +219,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ navigation }) => {
     <View className="flex-1 bg-white ">
       {isLaborer ? (
         <View className="absolute pb-5 mt-2 pl-4 z-50">
-          <AntDesign
+          {/* <AntDesign
             name="left"
             size={24}
             color="#000000"
@@ -230,6 +230,12 @@ const UserProfile: React.FC<UserProfileProps> = ({ navigation }) => {
               backgroundColor: "#F6F6F680",
               borderRadius: 50,
             }}
+          /> */}
+          <CustomHeader
+            title=""
+            showBackButton={true}
+            navigation={navigation}
+            onBackPress={() => navigation.navigate("Main" as any)}
           />
         </View>
       ) : (
@@ -248,42 +254,78 @@ const UserProfile: React.FC<UserProfileProps> = ({ navigation }) => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={isLaborer ? undefined : { paddingBottom: 40 }}
         >
-          <View
-            className={`flex-row items-center mb-4 ${isLaborer ? "mt-10" : ""}`}
-          >
-            <Image
-              source={
-                profile?.profileImage
-                  ? { uri: profile.profileImage }
-                  : require("../../assets/images/auth/profile.webp")
-              }
-              className={`${isLaborer ? "w-12 h-12" : "w-16 h-16"} rounded-full mr-3`}
-            />
-            <View className="flex-1">
-              {profile ? (
-                <Text className="text-lg mb-1">
-                  {profile.firstName} {profile.lastName}
-                </Text>
-              ) : (
-                <Text className="text-lg mb-1">
-                  {isLaborer ? "Loading..." : t("Main.Loading...")}
-                </Text>
-              )}
-              {profile && (
-                <Text className="text-sm text-gray-600">
-                  {profile.phoneNumber}
-                </Text>
+          {!isLaborer && (
+            <View
+              className={`flex-row items-center mb-4 ${isLaborer ? "mt-10" : ""}`}
+            >
+              <Image
+                source={
+                  profile?.profileImage
+                    ? { uri: profile.profileImage }
+                    : require("../../assets/images/auth/profile.webp")
+                }
+                className={`${isLaborer ? "w-12 h-12" : "w-16 h-16"} rounded-full mr-3`}
+              />
+              <View className="flex-1">
+                {profile ? (
+                  <Text className="text-lg mb-1">
+                    {profile.firstName} {profile.lastName}
+                  </Text>
+                ) : (
+                  <Text className="text-lg mb-1">
+                    {isLaborer ? "Loading..." : t("Main.Loading...")}
+                  </Text>
+                )}
+                {profile && (
+                  <Text className="text-sm text-gray-600">
+                    {profile.phoneNumber}
+                  </Text>
+                )}
+              </View>
+              {!isLaborer && (
+                <TouchableOpacity onPress={handleEditClick}>
+                  <Image
+                    source={require("../../assets/images/common/square-pen-solid.webp")}
+                    className="w-7 h-7"
+                  />
+                </TouchableOpacity>
               )}
             </View>
-            {!isLaborer && (
-              <TouchableOpacity onPress={handleEditClick}>
-                <Image
-                  source={require("../../assets/images/common/square-pen-solid.webp")}
-                  className="w-7 h-7"
-                />
-              </TouchableOpacity>
-            )}
-          </View>
+          )}
+
+          {isLaborer && (
+            <View
+              className={"flex-row items-center mb-4 "}
+              style={{
+                marginTop: 75,
+              }}
+            >
+              <Image
+                source={
+                  profile?.profileImage
+                    ? { uri: profile.profileImage }
+                    : require("../../assets/images/auth/profile.webp")
+                }
+                className={`w-16 h-16 rounded-full mr-3`}
+              />
+              <View className="flex-1">
+                {profile ? (
+                  <Text className="text-lg mb-1">
+                    {profile.firstName} {profile.lastName}
+                  </Text>
+                ) : (
+                  <Text className="text-lg mb-1">
+                    {isLaborer ? "Loading..." : t("Main.Loading...")}
+                  </Text>
+                )}
+                {profile && (
+                  <Text className="text-sm text-gray-600">
+                    {profile.phoneNumber}
+                  </Text>
+                )}
+              </View>
+            </View>
+          )}
 
           <View className="h-0.5 bg-[#D2D2D2] my-2" />
           <TouchableOpacity
@@ -356,25 +398,25 @@ const UserProfile: React.FC<UserProfileProps> = ({ navigation }) => {
 
           <View className="h-0.5 bg-[#D2D2D2] my-4" />
 
-       <TouchableOpacity
-  className="flex-row items-center py-3"
-  onPress={() =>
-    isStaffRole
-      ? navigation.navigate("OwnerQRcode")
-      : navigation.navigate("Main", { screen: "QRcode" })
-  }
->
-  <Ionicons
-    name="qr-code"
-    size={20}
-    color={isLaborer ? "black" : "#434343"}
-  />
-  <Text
-    className={`flex-1 text-lg ml-2 ${isLaborer ? "" : "text-[#434343]"}`}
-  >
-    {isStaffRole ? t("Profile.ViewQRCode") : t("Profile.ViewMyQR")}
-  </Text>
-</TouchableOpacity>
+          <TouchableOpacity
+            className="flex-row items-center py-3"
+            onPress={() =>
+              isStaffRole
+                ? navigation.navigate("OwnerQRcode")
+                : navigation.navigate("Main", { screen: "QRcode" })
+            }
+          >
+            <Ionicons
+              name="qr-code"
+              size={20}
+              color={isLaborer ? "black" : "#434343"}
+            />
+            <Text
+              className={`flex-1 text-lg ml-2 ${isLaborer ? "" : "text-[#434343]"}`}
+            >
+              {isStaffRole ? t("Profile.ViewQRCode") : t("Profile.ViewMyQR")}
+            </Text>
+          </TouchableOpacity>
 
           <View className="h-0.5 bg-[#D2D2D2] my-4" />
 

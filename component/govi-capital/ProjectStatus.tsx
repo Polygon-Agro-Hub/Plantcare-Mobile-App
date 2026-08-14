@@ -66,11 +66,34 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
   const { t } = useTranslation();
 
   const videoSource = require("../../assets/images/govi-pension/pension-background.mov");
-  const player = useVideoPlayer(videoSource, player => {
+
+  // Set up player WITHOUT calling play() immediately.
+  const player = useVideoPlayer(videoSource, (player) => {
     player.loop = true;
     player.muted = true;
-    player.play();
   });
+
+  const [videoReady, setVideoReady] = useState(false);
+
+  // Listen for player status/errors, and only play once ready.
+  useEffect(() => {
+    const statusSub = player.addListener("statusChange", (status) => {
+      console.log("[VideoPlayer] status:", status.status);
+
+      if (status.status === "readyToPlay") {
+        setVideoReady(true);
+        player.play();
+      }
+
+      if (status.status === "error") {
+        console.log("[VideoPlayer] error status payload:", status.error);
+      }
+    });
+
+    return () => {
+      statusSub.remove();
+    };
+  }, [player]);
 
   const [loading, setLoading] = useState(true);
   const [investmentDetail, setInvestmentDetail] =
@@ -190,23 +213,37 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
     });
   };
 
-  if (loading) {
-    return (
-      <View className="flex-1 bg-white items-center justify-center">
-        <ActivityIndicator size="large" color="#FFCD01" />
-        <Text className="mt-4 text-[#5A7386]">Loading...</Text>
-      </View>
-    );
-  }
-
   return (
     <View className="flex-1 bg-white">
-      <View className="pt-5 pb-6 overflow-hidden" style={{ height: 180 }}>
+      <View
+        className="pt-5 pb-6 overflow-hidden"
+        style={{ height: 180, backgroundColor: "#FFCD01" }}
+      >
         <VideoView
           player={player}
           className="absolute top-0 left-0 bottom-0 right-0 w-full h-[200%]"
           contentFit="cover"
+          nativeControls={false}
         />
+
+        {/* Optional loader shown until the video is ready */}
+        {!videoReady && (
+          <View
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            pointerEvents="none"
+          >
+            <ActivityIndicator size="small" color="#ffffff" />
+          </View>
+        )}
+
         <View className="mb-2 z-10 px-6">
           <View className="flex-row items-center">
             <TouchableOpacity

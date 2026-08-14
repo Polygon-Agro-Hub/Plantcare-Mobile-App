@@ -255,11 +255,11 @@ const ViewInvestmentRequestLetter: React.FC<
         contentContainerStyle={{ paddingBottom: 20 }}
       >
         <View className="bg-white rounded-2xl  mb-5">
-          <Text className="text-[#070707] mb-3 text-sm">
+          <Text className="text-[#070707] mb-3 ">
             {t("Govicapital.DearSirMadam")}
           </Text>
 
-          <Text className="text-[#070707] leading-5 mb-3">
+          <Text className="text-[#070707] leading-6 mb-3">
             {t(
               "Govicapital.IFarmersNameAFarmerFromDistrictAmWritingToFormallyRequestAnAgriculturalInvestmentForTheUpcomingCultivationSeason",
             )
@@ -267,7 +267,7 @@ const ViewInvestmentRequestLetter: React.FC<
               .replace("[District]", district)}
           </Text>
 
-          <Text className="text-[#070707] leading-5 mb-3">
+          <Text className="text-[#070707] leading-6 mb-3">
             {t("Govicapital.TheProjectDetailsAreAsFollows")}
           </Text>
 
@@ -336,13 +336,13 @@ const ViewInvestmentRequestLetter: React.FC<
             </View>
           </View>
 
-          <Text className="text-[#070707] leading-5 mb-3">
+          <Text className="text-[#070707] leading-6 mb-3">
             {t(
               "Govicapital.ThisInvestmentIsEssentialForCoveringTheCostsOfHighQualitySeedsFertilizersPesticidesIrrigationFacilitiesAndLaborExpensesForTheProjectedYearTheExpectedHarvestIsSufficientToGenerateSufficientRevenueForTheTimelyRepaymentOfTheLoanAlongWithAccruedInterest",
             )}
           </Text>
 
-          <Text className="text-[#070707] leading-5 mb-3">
+          <Text className="text-[#070707] leading-6 mb-3">
             {t(
               "Govicapital.IHaveAAttachedTheNecessaryDocumentsForYourPerusal",
             )}
@@ -372,18 +372,18 @@ const ViewInvestmentRequestLetter: React.FC<
             </View>
           )}
 
-          <Text className="text-gray-700 leading-5 mb-3">
+          <Text className="text-[#070707] leading-6 mb-3">
             {t(
               "Govicapital.IAmConfidentInTheSuccessOfThisVentureAndRequestYouToKindlyApproveMyLoanApplicationILookForwardToYourFavorableTimeAndConsideration",
             )}
           </Text>
 
           <View className="mt-3">
-            <Text className="text-gray-700 font-semibold mb-1">
+            <Text className="text-[#070707] leading-6 ">
               {t("Govicapital.Sincerely")}
             </Text>
-            <Text className="text-gray-700">{farmerName}</Text>
-            <Text className="text-gray-700">{contactNumber}</Text>
+            <Text className="text-[#070707] leading-6">{farmerName}</Text>
+            <Text className="text-[#070707] leading-6">{contactNumber}</Text>
           </View>
         </View>
       </ScrollView>

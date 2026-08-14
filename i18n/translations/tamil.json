@@ -703,7 +703,9 @@
     "FailedToSharePDFFile": "PDF கோப்பைப் பகிரத் தவறியது",
     "NoTransactionsFound": "பரிவர்த்தனைகள் எதுவும் கிடைக்கவில்லை",
     "Delivered on":"வழங்கப்பட்டது",
-     "of Items":"பொருட்களின்"
+    "of Items":"பொருட்களின்",
+    "Info":"தகவல்",
+    "UseTheSave":"பதிவிறக்கங்களில் சேமிக்க, 'கோப்புகளில் சேமி' என்ற விருப்பத்தைப் பயன்படுத்தவும்."
   },
   "EarnCertificate": {
     "EarnACertificate": "சான்றிதழைப் பெறுங்கள்",
@@ -1256,7 +1258,8 @@
     "YourInspectionRequestHasBeenSubmittedSuccessfully": "Your inspection request has been submitted successfully!",
     "FailedToFetchFarmCropsPleaseTryAgain": "Failed to fetch farm crops. Please try again.",
     "FailedToFetchFarmsPleaseTryAgain": "Failed to fetch farms. Please try again.",
-    "FailedToFetchServicesPleaseTryAgain": "Failed to fetch services. Please try again."
+    "FailedToFetchServicesPleaseTryAgain": "Failed to fetch services. Please try again.",
+    "SearchFarm":"Search Farm"
   },
   "RequestHistory": {
     "YouHaveNoRequestsAddedYet": "--You have no requests added yet--",
@@ -1420,6 +1423,7 @@
   "SoilFertilizerCalculators": {
     "Soil&FertilizerCalculators": "Soil & Fertilizer Calculators",
     "Fertilizer": "Fertilizer",
+    "FertilizerRequirement":"உரத் தேவை",
     "NPKRatio": "NPK Ratio",
     "LimeRequirement": "Lime Requirement",
     "CompostMixing": "Compost Mixing",
@@ -1437,6 +1441,7 @@
     "SearchUnits...": "Search units...",
     "NoUnitsFound": "No units found",
     "Hectares": "Hectares",
+    "Acres": "acres",
     "N": "N",
     "P": "P",
     "K": "K",

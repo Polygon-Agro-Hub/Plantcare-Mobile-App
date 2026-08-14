@@ -254,35 +254,40 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
   );
 
   const RequestCard = ({ request }: { request: ServiceRequest }) => (
-    <TouchableOpacity
-      onPress={() => handleRequestPress(request)}
-      activeOpacity={0.7}
+  <TouchableOpacity onPress={() => handleRequestPress(request)} activeOpacity={0.7}>
+    <View
+      className="rounded-xl border border-gray-200 p-4 mb-3 mx-6"
+      style={{
+        backgroundColor: "#ffffff", // explicit + opaque, required for Android elevation
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.12,
+        shadowRadius: 4,
+        elevation: 4, // Android
+      }}
     >
-      <View className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-3 mx-6">
-        <View className="flex-row justify-between items-start mb-3">
-          <Text className="font-semibold text-gray-800 flex-1 mr-2">
-            {request.serviceName}
+      <View className="flex-row justify-between items-start mb-3">
+        <Text className="font-semibold text-gray-800 flex-1 mr-2">
+          {request.serviceName}
+        </Text>
+      </View>
+
+      <View className="gap-2">
+        <View className="flex-row justify-between items-center">
+          <Text className="text-gray-600 text-sm">
+            {t("RequestHistory.ScheduledTo")} {request.scheduledDate}
+          </Text>
+          <Entypo name="chevron-right" size={18} color="#9CA3AF" />
+        </View>
+        <View className="flex-row items-center">
+          <Text className={`font-medium ${getStatusTextColor(request.status)}`}>
+            {getTranslatedStatus(request.status)}
           </Text>
         </View>
-
-        <View className="gap-2">
-          <View className="flex-row justify-between items-center">
-            <Text className="text-gray-600 text-sm">
-              {t("RequestHistory.ScheduledTo")} {request.scheduledDate}
-            </Text>
-            <Entypo name="chevron-right" size={18} color="#9CA3AF" />
-          </View>
-          <View className="flex-row items-center">
-            <Text
-              className={`font-medium ${getStatusTextColor(request.status)}`}
-            >
-              {getTranslatedStatus(request.status)}
-            </Text>
-          </View>
-        </View>
       </View>
-    </TouchableOpacity>
-  );
+    </View>
+  </TouchableOpacity>
+);
 
   if (loading) {
     return (

@@ -867,7 +867,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
         {/* Successor Full Name */}
         <View className="mb-5 mt-4">
           <Text className="text-[#070707] mb-2">
-            {t("GoviPensionForm.Successor's Full Name")} *
+            {t("GoviPensionForm.SuccessorsFullName")} *
           </Text>
           <TextInput
             value={formData.successorFullName}
