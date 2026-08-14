@@ -22,6 +22,7 @@ import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { RootStackParamList } from "../types/types";
 import CustomHeader from "../common/CustomHeader";
 import GlobalSearchModal from "../common/GlobalSearchModal";
+import CustomDatePicker from "../common/CustomDatePicker";
 
 type InvestmentRequestFormNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -207,12 +208,11 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
   };
 
   const onDateChange = (event: any, selectedDate?: Date) => {
-    const currentDate = selectedDate || startDate;
-    setShowDatePicker(Platform.OS === "ios");
-    if (currentDate) {
-      setStartDate(currentDate);
-    }
-  };
+  setShowDatePicker(false);
+  if (selectedDate) {
+    setStartDate(selectedDate);
+  }
+};
 
   const requestPermission = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -380,7 +380,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
         ref={scrollViewRef}
         className="flex-1 px-6"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{ paddingBottom: 250 }}
         nestedScrollEnabled={true}
       >
         {/* Crop Selection with GlobalSearchModal */}
@@ -418,7 +418,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
                 }}
                 keyboardType="numeric"
                 placeholder="0"
-                placeholderTextColor="#000000"
+                placeholderTextColor="#9CA3AF"
               />
               <Text className="text-sm">{t("Govicapital.ha")}</Text>
             </View>
@@ -434,7 +434,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
                 }}
                 keyboardType="numeric"
                 placeholder="0"
-                placeholderTextColor="#000000"
+                placeholderTextColor="#9CA3AF"
               />
               <Text className="text-sm">{t("Govicapital.ac")}</Text>
             </View>
@@ -450,7 +450,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
                 }}
                 keyboardType="numeric"
                 placeholder="0"
-                placeholderTextColor="#000000"
+                placeholderTextColor="#9CA3AF"
               />
               <Text className="text-sm">{t("Govicapital.p")}</Text>
             </View>
@@ -471,7 +471,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             }}
             placeholder="0.00"
             style={{ color: '#000000' }} 
-            placeholderTextColor="#000000"
+            placeholderTextColor="#9CA3AF"
             keyboardType="numeric"
             className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
           />
@@ -490,43 +490,56 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             }}
             placeholder={t("Main.TypeHere")}
             style={{ color: '#000000' }} 
-            placeholderTextColor="#000000"
+            placeholderTextColor="#9CA3AF"
             keyboardType="numeric"
             className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
           />
         </View>
 
-        {/* Expected Start Date with Calendar */}
-        <View className="mb-5">
-          <Text className="text-[#070707] mb-2">
-            {t("Govicapital.ExpectedStartDate")} *
-          </Text>
-          <TouchableOpacity
-            onPress={() => setShowDatePicker(true)}
-            className="bg-[#F4F4F4] rounded-full px-4 h-[50px] flex-row justify-between items-center border border-[#F4F4F4]"
-          >
-            <Text
-              className={`text-sm ${startDate ? "text-gray-900" : "text-gray-400"}`}
-            >
-              {startDate ? formatDate(startDate) : t("Govicapital.SelectDate")}
-            </Text>
-            <MaterialCommunityIcons
-              name="calendar-blank"
-              size={22}
-              color="#6B7280"
-            />
-          </TouchableOpacity>
+      {/* Expected Start Date with Calendar */}
+<View className="mb-5">
+  <Text className="text-[#070707] mb-2">
+    {t("Govicapital.ExpectedStartDate")} *
+  </Text>
+  <TouchableOpacity
+    onPress={() => setShowDatePicker(true)}
+    className="bg-[#F4F4F4] rounded-full px-4 h-[50px] flex-row justify-between items-center border border-[#F4F4F4]"
+  >
+    <Text
+      className={`text-sm ${startDate ? "text-gray-900" : "text-gray-400"}`}
+    >
+      {startDate ? formatDate(startDate) : t("Govicapital.SelectDate")}
+    </Text>
+    <MaterialCommunityIcons
+      name="calendar-blank"
+      size={22}
+      color="#6B7280"
+    />
+  </TouchableOpacity>
 
-          {showDatePicker && (
-            <DateTimePicker
-              value={startDate || new Date()}
-              mode="date"
-              display={Platform.OS === "ios" ? "spinner" : "default"}
-              onChange={onDateChange}
-              minimumDate={new Date()}
-            />
-          )}
-        </View>
+  {Platform.OS === "ios" ? (
+    <CustomDatePicker
+      visible={showDatePicker}
+      onClose={() => setShowDatePicker(false)}
+      value={startDate}
+      onConfirm={(date) => setStartDate(date)}
+      minimumDate={new Date()}
+      title={t("Govicapital.ExpectedStartDate")}
+      cancelText={t("Main.Cancel")}
+      confirmText={t("Main.Continue")}
+    />
+  ) : (
+    showDatePicker && (
+      <DateTimePicker
+        value={startDate || new Date()}
+        mode="date"
+        display="default"
+        onChange={onDateChange}
+        minimumDate={new Date()}
+      />
+    )
+  )}
+</View>
 
         {/* NIC Front Image */}
         <View className="mb-5">
@@ -612,7 +625,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             onChangeText={(text) => setPlotNumber(text.trimStart())}
             placeholder={t("Govicapital.Eg10B")}
             style={{ color: '#000000' }} 
-            placeholderTextColor="#000000"
+            placeholderTextColor="#9CA3AF"
             className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
           />
         </View>
@@ -627,7 +640,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             onChangeText={(text) => setStreetName(text.trimStart())}
             placeholder={t("Main.TypeHere")}
             style={{ color: '#000000' }} 
-            placeholderTextColor="#000000"
+            placeholderTextColor="#9CA3AF"
             className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
           />
         </View>
@@ -647,7 +660,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
             }}
             placeholder={t("Main.TypeHere")}
             style={{ color: '#000000' }} 
-            placeholderTextColor="#000000"
+            placeholderTextColor="#9CA3AF"
             className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
           />
         </View>
@@ -699,7 +712,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
         onSelect={handleCropSelect}
         searchPlaceholder={t("Govicapital.SearchCrop")}
         doneButtonText={t("Govicapital.Done")}
-        noResultsText={t("Govicapital.No crops found")}
+        noResultsText={t("CropPlanningCalculators.NoCropsFound")}
         multiSelect={false}
         isLoading={loadingCrops}
         searchKeys={["label"]}

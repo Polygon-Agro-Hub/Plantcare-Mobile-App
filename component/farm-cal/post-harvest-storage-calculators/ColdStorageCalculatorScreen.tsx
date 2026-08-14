@@ -48,10 +48,6 @@ const ColdStorageCalculatorScreen: React.FC<ColdStorageProps> = ({
     setShowValidation(true);
 
     if (!storageVolume || !coolingPowerPerUnit) {
-      Alert.alert(
-        t("PostHarvestStorageCalculators.InvalidInput"),
-        t("Main.PleaseFillAllRequiredFields"),
-      );
       return;
     }
 

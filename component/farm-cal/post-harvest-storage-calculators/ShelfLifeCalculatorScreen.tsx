@@ -64,10 +64,6 @@ const ShelfLifeCalculatorScreen: React.FC<ShelfLifeProps> = ({
     setShowValidation(true);
 
     if (!idealStorageLife || !temperature || !humidity) {
-      Alert.alert(
-        t("PostHarvestStorageCalculators.InvalidInput"),
-        t("Main.PleaseFillAllRequiredFields"),
-      );
       return;
     }
 
@@ -78,7 +74,9 @@ const ShelfLifeCalculatorScreen: React.FC<ShelfLifeProps> = ({
     if (isNaN(idealNum) || idealNum <= 0) {
       Alert.alert(
         t("PostHarvestStorageCalculators.InvalidInput"),
-        t("PostHarvestStorageCalculators.IdealStorageLifeDaysMustBeGreaterThan0"),
+        t(
+          "PostHarvestStorageCalculators.IdealStorageLifeDaysMustBeGreaterThan0",
+        ),
       );
       return;
     }
@@ -102,7 +100,9 @@ const ShelfLifeCalculatorScreen: React.FC<ShelfLifeProps> = ({
     if (averageFactor === 0) {
       Alert.alert(
         t("PostHarvestStorageCalculators.InvalidInput"),
-        t("PostHarvestStorageCalculators.TemperatureAndHumidityCannotBothBeZero"),
+        t(
+          "PostHarvestStorageCalculators.TemperatureAndHumidityCannotBothBeZero",
+        ),
       );
       return;
     }

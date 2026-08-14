@@ -62,11 +62,6 @@ const BreakEvenPriceCalculatorScreen: React.FC<BreakEvenPriceProps> = ({
     setShowValidation(true);
 
     if (!totalCost || !totalYield) {
-      Alert.alert(
-        t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("Main.PleaseFillAllRequiredFields") ||
-          "Please fill all required fields.",
-      );
       return;
     }
 

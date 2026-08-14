@@ -49,7 +49,6 @@ const GrainDryingCalculatorScreen: React.FC<GrainDryingProps> = ({
     setShowValidation(true);
 
     if (!initialMoisture || !finalMoisture || !grainWeight) {
-      Alert.alert(t("PostHarvestStorageCalculators.InvalidInput"), t("Main.PleaseFillAllRequiredFields"));
       return;
     }
 

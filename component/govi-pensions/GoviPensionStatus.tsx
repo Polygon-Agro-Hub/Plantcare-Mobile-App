@@ -91,7 +91,7 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
       case "To Review":
         return {
           lottieSource: require("@/assets/jsons/govi-capital/stay-tuned.json"),
-          title: t("GoviPensionStatus.Stay Tuned!"),
+          title: t("GoviPensionStatus.StayTuned"),
           content: t(
             "GoviPensionStatus.WereTakingACloserLookAtYourPensionApplicationAndWillUpdateYouSoonThisProcessMightTakeAWhile",
           ),

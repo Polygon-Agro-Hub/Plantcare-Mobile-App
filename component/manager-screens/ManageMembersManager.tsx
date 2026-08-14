@@ -283,8 +283,6 @@ const ManageMembersManager = () => {
 
   return (
     <View className="flex-1 bg-gray-50">
-      
-
       <ScrollView
         className="flex-1"
         refreshControl={
@@ -322,17 +320,23 @@ const ManageMembersManager = () => {
             <Text className="text-2xl font-bold text-gray-800">{farmName}</Text>
           </View>
 
-          <View className="flex-row justify-center items-center flex-wrap px-4">
-            <Text className="text-sm text-gray-600 mx-1">
-              {stats.supervisorCount} {t("Farms.Supervisor")}
-              {stats.supervisorCount !== 1 ? "s" : ""}
-            </Text>
-            <Text className="text-sm text-gray-600 mx-1">•</Text>
-            <Text className="text-sm text-gray-600 mx-1">
-              {stats.laborerCount} {t("Farms.Laborer")}
-              {stats.laborerCount !== 1 ? "s" : ""}
-            </Text>
-            <View className="flex-row justify-center items-center flex-wrap px-4 mt-4">
+          <View className="items-center px-4">
+            {/* Line 1: Supervisor / Laborer */}
+            <View className="flex-row justify-center items-center flex-wrap">
+              <Text className="text-sm text-gray-600 mx-1">•</Text>
+              <Text className="text-sm text-gray-600 mx-1">
+                {stats.supervisorCount} {t("Farms.Supervisor")}
+                {stats.supervisorCount !== 1 ? "s" : ""}
+              </Text>
+              <Text className="text-sm text-gray-600 mx-1">•</Text>
+              <Text className="text-sm text-gray-600 mx-1">
+                {stats.laborerCount} {t("Farms.Laborer")}
+                {stats.laborerCount !== 1 ? "s" : ""}
+              </Text>
+            </View>
+
+            {/* Line 2: Other Staff — always on its own line */}
+            <View className="flex-row justify-center items-center flex-wrap mt-2">
               <Text className="text-sm text-gray-600 mx-1">•</Text>
               <Text className="text-sm text-gray-600 mx-1">
                 {totalStaffCount} {t("Farms.OtherStaff")}
@@ -348,7 +352,12 @@ const ManageMembersManager = () => {
               (member) =>
                 member.role === "Supervisor" || member.role === "Laborer",
             ).length === 0 ? (
-              <NoData text={t("Farms.NoSupervisorsOrLaborersFoundForThisFarm") || "No supervisors or laborers found for this farm"} />
+            <NoData
+              text={
+                t("Farms.NoSupervisorsOrLaborersFoundForThisFarm") ||
+                "No supervisors or laborers found for this farm"
+              }
+            />
           ) : (
             staff
               .filter(

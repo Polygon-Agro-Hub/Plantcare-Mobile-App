@@ -1055,16 +1055,15 @@ const RequestInspectionForm = () => {
           {t("RequestInspectionForm.PriceRs")}
         </Text>
         <TextInput
-          value={price ? formatCurrency(price) : "0.00"}
+          value={price ? formatCurrency(price) : ""}
           onChangeText={setPrice}
           placeholder="0.00"
           keyboardType="numeric"
           style={{ color: "#000000" }}
-          placeholderTextColor="#9CA3AF" 
+          placeholderTextColor="#9CA3AF"
           className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px] text-gray-900"
           editable={false}
         />
-
         <Text className="text-[#070707] text-sm mt-2">
           {t("RequestInspectionForm.Farm")}
         </Text>
@@ -1096,7 +1095,7 @@ const RequestInspectionForm = () => {
           onChangeText={(text) => handleTextInputChange(text, setPlotNo)}
           placeholder={t("RequestInspectionForm.EnterPlotNumber")}
           style={{ color: "#000000" }}
-          placeholderTextColor="#9CA3AF" // was "#000000"
+          placeholderTextColor="#9CA3AF" 
           className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px] text-gray-900"
         />
 

@@ -75,11 +75,6 @@ const LoanRepaymentCalculatorScreen: React.FC<LoanRepaymentProps> = ({
     setShowValidation(true);
 
     if (!loanAmount || !interestRate || !loanYears) {
-      Alert.alert(
-        t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("Main.PleaseFillAllRequiredFields") ||
-        "Please fill all required fields.",
-      );
       return;
     }
 

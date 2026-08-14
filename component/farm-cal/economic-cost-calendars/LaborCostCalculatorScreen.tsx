@@ -57,11 +57,6 @@ const LaborCostCalculatorScreen: React.FC<LaborCostProps> = ({
     setShowValidation(true);
 
     if (!numberOfWorkers || !dailyWage || !workdays) {
-      Alert.alert(
-        t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("Main.PleaseFillAllRequiredFields") ||
-        "Please fill all required fields.",
-      );
       return;
     }
 
