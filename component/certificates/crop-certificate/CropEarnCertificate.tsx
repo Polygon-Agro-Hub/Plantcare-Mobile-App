@@ -359,7 +359,7 @@ const CropEarnCertificate: React.FC = () => {
               />
           )}
 
-          {filteredCertificates.length > 0 && (
+          {!searchQuery && (
             <TouchableOpacity
               onPress={handleProceedWithout}
               className="bg-[#F3F3F5] rounded-3xl h-[50px] justify-center px-6 mt-6 mb-8 shadow-sm"
