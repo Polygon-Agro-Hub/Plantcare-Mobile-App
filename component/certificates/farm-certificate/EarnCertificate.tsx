@@ -105,11 +105,9 @@ const EarnCertificate: React.FC = () => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(
-          t("Main.Error"),
-          t("Farms.NoAuthenticationTokenFound"),
-          [{ text: t("Main.OK") }],
-        );
+        Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"), [
+          { text: t("Main.OK") },
+        ]);
         return;
       }
 
@@ -136,9 +134,11 @@ const EarnCertificate: React.FC = () => {
           [{ text: t("Main.OK") }],
         );
       } else {
-        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error"),
+          t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
       }
     } finally {
       setLoading(false);
@@ -212,8 +212,6 @@ const EarnCertificate: React.FC = () => {
       className="bg-white"
       style={{ flex: 1 }}
     >
-      
-
       <CustomHeader
         title={t("EarnCertificate.EarnACertificate")}
         navigation={navigation}
@@ -255,9 +253,7 @@ const EarnCertificate: React.FC = () => {
         >
           {filteredCertificates.length > 0 && (
             <Text className="text-center text-gray-600 text-sm mb-3 mr-3 ml-3">
-              {t(
-                "EarnCertificate.JustClickOnTheCertificateYouWantToApplyFor",
-              )}
+              {t("EarnCertificate.JustClickOnTheCertificateYouWantToApplyFor")}
             </Text>
           )}
 
@@ -302,16 +298,16 @@ const EarnCertificate: React.FC = () => {
               </TouchableOpacity>
             ))
           ) : (
-              <NoData
-                text={
-                  searchQuery
-                    ? "No certificates found matching your search"
-                    : "No certificates available"
-                }
-              />
+            <NoData
+              text={
+                searchQuery
+                  ? "No certificates found matching your search"
+                  : "No certificates available"
+              }
+            />
           )}
 
-          {filteredCertificates.length > 0 && (
+          {!searchQuery && (
             <TouchableOpacity
               onPress={handleProceedWithout}
               className="bg-[#F3F3F5] rounded-3xl h-[50px] justify-center px-6 mt-6 mb-8 shadow-sm"

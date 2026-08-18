@@ -13,7 +13,7 @@ const NoData: React.FC<NoDataProps> = ({ text }) => {
         source={require("@/assets/jsons/common/no-data.json")}
         autoPlay
         loop
-        style={{ width: 250, height: 250 }}
+        style={{ width: 200, height: 200 }}
       />
       <Text className="text-[#7A9BC9] text-base text-center px-4">
         {text}
