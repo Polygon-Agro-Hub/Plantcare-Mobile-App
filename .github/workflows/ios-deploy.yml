@@ -89,7 +89,7 @@ jobs:
           SHOUTOUT_API_KEY: ${{ secrets.DEV_SHOUTOUT_API_KEY }}
         run: |
           cat > environment/environment.ts << ENVEOF
-          const environment = {
+          export const environment = {
             isDevelopment: false,
             production: false,
             API_BASE_URL: "${DEV_API_URL}",
@@ -111,7 +111,7 @@ jobs:
           SHOUTOUT_API_KEY: ${{ secrets.UAT_SHOUTOUT_API_KEY }}
         run: |
           cat > environment/environment.ts << ENVEOF
-          const environment = {
+          export const environment = {
             isDevelopment: false,
             production: false,
             API_BASE_URL: "${UAT_API_URL}",
@@ -131,7 +131,7 @@ jobs:
           SHOUTOUT_API_KEY: ${{ secrets.PROD_SHOUTOUT_API_KEY }}
         run: |
           cat > environment/environment.ts << ENVEOF
-          const environment = {
+          export const environment = {
             isDevelopment: false,
             production: true,
             API_BASE_URL: "${PROD_API_URL}",
@@ -160,19 +160,13 @@ jobs:
         uses: actions/cache@v4
         id: pods-cache
         with:
-          # path: |
-          #   ios/Pods
-          #   ~/.cocoapods
-          # key: pods-${{ hashFiles('ios/Podfile.lock') }}
-          # restore-keys: |
-          #   pods-
           path: |
               ~/Library/Caches/CocoaPods
               ~/.cocoapods
           key: pods-v2-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}
           restore-keys: |
             pods-v2-${{ runner.os }}-
-#
+
       # ─────────────────────────────────────────────────────────────────
       # STEP 8: Install CocoaPods dependencies
       # Installs native iOS packages defined in the Podfile
@@ -230,6 +224,7 @@ jobs:
           GITHUB_RUN_NUMBER: ${{ github.run_number }}
           #Apple Team ID
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+
       # ─────────────────────────────────────────────────────────────────
       # STEP 10: Upload build artifacts (for debugging if build fails)
       # Saves the .ipa file as a GitHub Actions artifact for 7 days.
