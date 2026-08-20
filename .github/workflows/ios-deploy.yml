@@ -4,12 +4,16 @@
 #
 # TRIGGERS:
 #   Push to dev-main → Upload to TestFlight (QA testing)
+#   Push to UAT      → Upload to TestFlight (UAT testing)
 #   Push to main     → Upload to App Store Connect (production)
 #
 # PREREQUISITES (all must be set up — see SETUP_GUIDE.md):
 #   GitHub Secrets: ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_CONTENT,
 #                   MATCH_GIT_URL, MATCH_GIT_BASIC_AUTHORIZATION,
-#                   MATCH_PASSWORD, DEV_API_URL, PROD_API_URL
+#                   MATCH_PASSWORD, DEV_API_URL, DEV_SHOUTOUT_API_KEY,
+#                   UAT_API_URL, UAT_SHOUTOUT_API_KEY,
+#                   PROD_API_URL, PROD_SHOUTOUT_API_KEY,
+#                   APPLE_TEAM_ID
 
 name: iOS Deploy
 
@@ -17,6 +21,7 @@ on:
   push:
     branches:
       - dev-main   # → TestFlight build for QA team
+      - UAT        # → TestFlight build for UAT testers
       - main       # → App Store submission
 
 # Prevent multiple builds running simultaneously for the same branch.
@@ -84,16 +89,40 @@ jobs:
           SHOUTOUT_API_KEY: ${{ secrets.DEV_SHOUTOUT_API_KEY }}
         run: |
           cat > environment/environment.ts << ENVEOF
-          export const environment = {
+          const environment = {
+            isDevelopment: false,
             production: false,
             API_BASE_URL: "${DEV_API_URL}",
             SHOUTOUT_API_KEY: "${SHOUTOUT_API_KEY}"
           };
+          export default environment;
           ENVEOF
           echo "✅ DEV environment.ts written with API: ${DEV_API_URL}"
 
       # ─────────────────────────────────────────────────────────────────
-      # STEP 5b: Write PROD environment (main branch only)
+      # STEP 5b: Write UAT environment (UAT branch only)
+      # Overwrites environment/environment.ts with UAT API URL before building.
+      # This does NOT change the committed file — only the build-time file.
+      # ─────────────────────────────────────────────────────────────────
+      - name: "🔧 Write UAT environment (UAT → TestFlight)"
+        if: github.ref == 'refs/heads/UAT'
+        env:
+          UAT_API_URL: ${{ secrets.UAT_API_URL }}
+          SHOUTOUT_API_KEY: ${{ secrets.UAT_SHOUTOUT_API_KEY }}
+        run: |
+          cat > environment/environment.ts << ENVEOF
+          const environment = {
+            isDevelopment: false,
+            production: false,
+            API_BASE_URL: "${UAT_API_URL}",
+            SHOUTOUT_API_KEY: "${SHOUTOUT_API_KEY}"
+          };
+          export default environment;
+          ENVEOF
+          echo "✅ UAT environment.ts written with API: ${UAT_API_URL}"
+
+      # ─────────────────────────────────────────────────────────────────
+      # STEP 5c: Write PROD environment (main branch only)
       # ─────────────────────────────────────────────────────────────────
       - name: "🔧 Write PROD environment (main → App Store)"
         if: github.ref == 'refs/heads/main'
@@ -102,11 +131,13 @@ jobs:
           SHOUTOUT_API_KEY: ${{ secrets.PROD_SHOUTOUT_API_KEY }}
         run: |
           cat > environment/environment.ts << ENVEOF
-          export const environment = {
+          const environment = {
+            isDevelopment: false,
             production: true,
             API_BASE_URL: "${PROD_API_URL}",
             SHOUTOUT_API_KEY: "${SHOUTOUT_API_KEY}"
           };
+          export default environment;
           ENVEOF
           echo "✅ PROD environment.ts written with API: ${PROD_API_URL}"
 
@@ -157,12 +188,12 @@ jobs:
           cd ..
 
       # ─────────────────────────────────────────────────────────────────
-      # STEP 9a: Deploy to TestFlight (dev-main branch)
+      # STEP 9a: Deploy to TestFlight (dev-main + UAT branches)
       # Runs: fastlane beta
       # Which: syncs certs, sets build number, builds .ipa, uploads
       # ─────────────────────────────────────────────────────────────────
-      - name: "🚀 Deploy to TestFlight [dev-main]"
-        if: github.ref == 'refs/heads/dev-main'
+      - name: "🚀 Deploy to TestFlight [dev-main & UAT]"
+        if: github.ref == 'refs/heads/dev-main' || github.ref == 'refs/heads/UAT'
         run: bundle exec fastlane beta
         env:
           # App Store Connect API Key — authenticates with Apple servers
