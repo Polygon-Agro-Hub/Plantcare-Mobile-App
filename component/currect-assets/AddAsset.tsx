@@ -28,6 +28,7 @@ import type { RootState } from "@/services/reducxStore";
 import { RootStackParamList } from "../types/types";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
+import CustomDatePicker from "../common/CustomDatePicker";
 import { MaterialIcons } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
 
@@ -204,6 +205,31 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
     return minDate;
   }, [expireDate, getExpireMinimumDate, parseLocalDate]);
+
+  // Memoized date parameters for iOS DateTimePickers to prevent reference changes on every render
+  const purchaseMinimumDate = useMemo(() => new Date(2000, 0, 1), []);
+  const purchaseMaximumDate = useMemo(() => {
+    const max = getPurchaseMaximumDate();
+    return new Date(max.getFullYear(), max.getMonth(), max.getDate(), 23, 59, 59, 999);
+  }, [getPurchaseMaximumDate]);
+
+  const clampedPurchaseDate = useMemo(() => {
+    return clampDate(tempPurchaseDate, purchaseMinimumDate, purchaseMaximumDate);
+  }, [tempPurchaseDate, purchaseMinimumDate, purchaseMaximumDate, clampDate]);
+
+  const expireMinimumDate = useMemo(() => {
+    const min = getExpireMinimumDate();
+    return new Date(min.getFullYear(), min.getMonth(), min.getDate());
+  }, [purchaseDate, getExpireMinimumDate]);
+
+  const expireMaximumDate = useMemo(() => {
+    const max = getMaximumDate();
+    return new Date(max.getFullYear(), max.getMonth(), max.getDate());
+  }, [getMaximumDate]);
+
+  const clampedExpireDate = useMemo(() => {
+    return clampDate(tempExpireDate, expireMinimumDate, expireMaximumDate);
+  }, [tempExpireDate, expireMinimumDate, expireMaximumDate, clampDate]);
 
   const openModal = useCallback((key: keyof ModalState) =>
     setModals((m) => ({ ...m, [key]: true })), []);
@@ -473,8 +499,14 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       ? clampDate(parseLocalDate(purchaseDate), undefined, getPurchaseMaximumDate())
       : clampDate(new Date(), undefined, getPurchaseMaximumDate());
     setTempPurchaseDate(initial);
-    setShowPurchaseDatePicker(true);
     setShowExpireDatePicker(false);
+    if (Platform.OS === "ios") {
+      setTimeout(() => {
+        setShowPurchaseDatePicker(true);
+      }, 300);
+    } else {
+      setShowPurchaseDatePicker(true);
+    }
   }, [purchaseDate, parseLocalDate, clampDate, getPurchaseMaximumDate, clearError]);
 
   const handleOpenExpirePicker = useCallback(() => {
@@ -484,8 +516,14 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     const maxDate = getMaximumDate();
     const initial = clampDate(getExpirePickerValue(), minDate, maxDate);
     setTempExpireDate(initial);
-    setShowExpireDatePicker(true);
     setShowPurchaseDatePicker(false);
+    if (Platform.OS === "ios") {
+      setTimeout(() => {
+        setShowExpireDatePicker(true);
+      }, 300);
+    } else {
+      setShowExpireDatePicker(true);
+    }
   }, [getExpireMinimumDate, getMaximumDate, getExpirePickerValue, clampDate, clearError]);
 
   // ---- Android onChange (dialog closes itself after pick) ----
@@ -1267,58 +1305,17 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           />
         )
       ) : (
-        <Modal
-          transparent
+        <CustomDatePicker
           visible={showPurchaseDatePicker}
-          animationType="fade"
-          onRequestClose={() => setShowPurchaseDatePicker(false)}
-        >
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={() => setShowPurchaseDatePicker(false)}
-            className="flex-1 bg-black/50 justify-center items-center p-4"
-          >
-            <TouchableWithoutFeedback>
-              <View className="bg-white rounded-2xl p-4 w-full max-w-[340px] shadow-lg">
-                <Text className="text-black font-bold text-base mb-2 px-2">
-                  {t("CurrentAssets.PurchaseDate")}
-                </Text>
-                <DateTimePicker
-                  value={tempPurchaseDate}
-                  mode="date"
-                  display="inline"
-                  onChange={(_, selectedDate) => {
-                    if (selectedDate) setTempPurchaseDate(selectedDate);
-                  }}
-                  maximumDate={getPurchaseMaximumDate()}
-                  minimumDate={new Date(2000, 0, 1)}
-                  themeVariant="light"
-                />
-                <View
-                  className="flex-row justify-end mt-3 pr-2"
-                  style={{ gap: 12 }}
-                >
-                  <TouchableOpacity
-                    onPress={() => setShowPurchaseDatePicker(false)}
-                    className="px-4 py-2 rounded-lg"
-                  >
-                    <Text className="text-[#007AFF] font-semibold text-sm">
-                      {t("Main.Cancel", "Cancel")}
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={onConfirmPurchaseDateIOS}
-                    className="bg-[#F7CA21] px-5 py-2 rounded-full"
-                  >
-                    <Text className="text-black font-semibold text-sm">
-                      {t("Main.OK")}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </TouchableWithoutFeedback>
-          </TouchableOpacity>
-        </Modal>
+          onClose={() => setShowPurchaseDatePicker(false)}
+          value={clampedPurchaseDate}
+          onConfirm={applyPurchaseDate}
+          minimumDate={purchaseMinimumDate}
+          maximumDate={purchaseMaximumDate}
+          title={t("CurrentAssets.PurchaseDate")}
+          cancelText={t("Main.Cancel", "Cancel")}
+          confirmText={t("Main.OK")}
+        />
       )}
 
       {/* Expire Date Picker */}
@@ -1334,58 +1331,17 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           />
         )
       ) : (
-        <Modal
-          transparent
+        <CustomDatePicker
           visible={showExpireDatePicker}
-          animationType="fade"
-          onRequestClose={() => setShowExpireDatePicker(false)}
-        >
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={() => setShowExpireDatePicker(false)}
-            className="flex-1 bg-black/50 justify-center items-center p-4"
-          >
-            <TouchableWithoutFeedback>
-              <View className="bg-white rounded-2xl p-4 w-full max-w-[340px] shadow-lg">
-                <Text className="text-black font-bold text-base mb-2 px-2">
-                  {t("CurrentAssets.ExpireDate")}
-                </Text>
-                <DateTimePicker
-                  value={tempExpireDate}
-                  mode="date"
-                  display="inline"
-                  onChange={(_, selectedDate) => {
-                    if (selectedDate) setTempExpireDate(selectedDate);
-                  }}
-                  minimumDate={getExpireMinimumDate()}
-                  maximumDate={getMaximumDate()}
-                  themeVariant="light"
-                />
-                <View
-                  className="flex-row justify-end mt-3 pr-2"
-                  style={{ gap: 12 }}
-                >
-                  <TouchableOpacity
-                    onPress={() => setShowExpireDatePicker(false)}
-                    className="px-4 py-2 rounded-lg"
-                  >
-                    <Text className="text-[#007AFF] font-semibold text-sm">
-                      {t("Main.Cancel", "Cancel")}
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={onConfirmExpireDateIOS}
-                    className="bg-[#F7CA21] px-5 py-2 rounded-full"
-                  >
-                    <Text className="text-black font-semibold text-sm">
-                      {t("Main.OK")}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </TouchableWithoutFeedback>
-          </TouchableOpacity>
-        </Modal>
+          onClose={() => setShowExpireDatePicker(false)}
+          value={clampedExpireDate}
+          onConfirm={applyExpireDate}
+          minimumDate={expireMinimumDate}
+          maximumDate={expireMaximumDate}
+          title={t("CurrentAssets.ExpireDate")}
+          cancelText={t("Main.Cancel", "Cancel")}
+          confirmText={t("Main.OK")}
+        />
       )}
 
       {/* GlobalSearchModals */}

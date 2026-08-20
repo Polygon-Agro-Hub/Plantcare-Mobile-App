@@ -208,7 +208,19 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
     }
   };
 
-  const selectedDate = transactionDate || new Date().toISOString().slice(0, 10);
+  // `transactionDate` may arrive as a plain "YYYY-MM-DD" string or as a
+  // full ISO timestamp (e.g. "2026-08-11T18:30:00.00Z") depending on the
+  // caller. Always normalize down to just the date portion so it's safe
+  // to use in filenames (colons in a timestamp get mangled into "/" on
+  // iOS) and consistent for display/API calls.
+  const toDateOnly = (value: string): string => {
+    const match = value.match(/^\d{4}-\d{2}-\d{2}/);
+    return match ? match[0] : value.slice(0, 10);
+  };
+
+  const selectedDate = transactionDate
+    ? toDateOnly(transactionDate)
+    : new Date().toISOString().slice(0, 10);
 
   useEffect(() => {
     fetchDetails();
@@ -467,6 +479,17 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
     }
   };
 
+  // Copies the freshly generated PDF (which has an auto-generated,
+  // non-descriptive filename from expo-print) to a file whose name we
+  // control. Both Android and iOS now go through this so the filename
+  // that shows up in the native share/save sheet is always
+  // GRN_{invoiceNumber}_{transactionDate}.pdf on both platforms.
+  const buildNamedPdfCopy = async (uri: string, fileName: string) => {
+    const destPath = `${(FileSystem as any).cacheDirectory}${fileName}`;
+    await FileSystem.copyAsync({ from: uri, to: destPath });
+    return destPath;
+  };
+
   const handleDownloadPDF = async () => {
     try {
       const uri = await generatePDF();
@@ -479,15 +502,12 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         return;
       }
 
-      const date = new Date().toISOString().slice(0, 10);
-      const fileName = `GRN_${crops.length > 0 ? crops[0].invoiceNumber : "N/A"}_${date}.pdf`;
+      const fileName = `GRN_${crops.length > 0 ? crops[0].invoiceNumber : "N/A"}_${selectedDate}.pdf`;
+      const namedFilePath = await buildNamedPdfCopy(uri, fileName);
 
       if (Platform.OS === "android") {
-        const tempFilePath = `${(FileSystem as any).cacheDirectory}${fileName}`;
-        await FileSystem.copyAsync({ from: uri, to: tempFilePath });
-
         if (await Sharing.isAvailableAsync()) {
-          await Sharing.shareAsync(tempFilePath, {
+          await Sharing.shareAsync(namedFilePath, {
             dialogTitle: t("Save GRN Report"),
             mimeType: "application/pdf",
             UTI: "com.adobe.pdf",
@@ -501,7 +521,11 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         }
       } else if (Platform.OS === "ios") {
         if (await Sharing.isAvailableAsync()) {
-          await Sharing.shareAsync(uri, {
+          // Share the renamed copy (not the raw `uri` from expo-print) so
+          // the filename iOS shows in the share sheet / "Save to Files"
+          // matches GRN_{invoiceNumber}_{date}.pdf instead of the
+          // auto-generated name expo-print assigns.
+          await Sharing.shareAsync(namedFilePath, {
             dialogTitle: t("TransactionList.Save GRN Report"),
             mimeType: "application/pdf",
             UTI: "com.adobe.pdf",
@@ -509,7 +533,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
           Alert.alert(
             t("TransactionList.Info"),
             t(
-              'TransactionList.Use the "Save to Files" option to save to Downloads',
+              'TransactionList.UseTheSave',
             ),
             [{ text: t("Main.OK") }],
           );
@@ -552,9 +576,6 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         return;
       }
 
-      const fileName = `PurchaseReport_${crops.length > 0 ? crops[0].invoiceNumber : "N/A"}_${selectedDate}.pdf`;
-      const newUri = `${(FileSystem as any).cacheDirectory}${fileName}`;
-
       const fileInfo = await FileSystem.getInfoAsync(uri);
       if (!fileInfo.exists) {
         Alert.alert(
@@ -565,8 +586,13 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         return;
       }
 
-      await FileSystem.copyAsync({ from: uri, to: newUri });
-      await Sharing.shareAsync(newUri, {
+      // Use the same GRN_{invoiceNumber}_{date} naming convention as the
+      // download flow, so Share produces a consistently named file on
+      // both Android and iOS.
+      const fileName = `GRN_${crops.length > 0 ? crops[0].invoiceNumber : "N/A"}_${selectedDate}.pdf`;
+      const namedFilePath = await buildNamedPdfCopy(uri, fileName);
+
+      await Sharing.shareAsync(namedFilePath, {
         mimeType: "application/pdf",
         dialogTitle: "Share Purchase Report",
         UTI: "com.adobe.pdf",

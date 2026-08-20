@@ -25,6 +25,7 @@ interface GlobalSearchModalProps {
   searchKeys?: string[];
   showSearch?: boolean;
   isLoading?: boolean;
+  placeholderTextColor?: string;
 }
 
 const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
@@ -42,6 +43,7 @@ const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
   searchKeys = ["label"],
   showSearch = true,
   isLoading = false,
+  placeholderTextColor = "#7F7F7F",
 }) => {
   const [searchValue, setSearchValue] = useState("");
   const [filteredData, setFilteredData] = useState(data);
@@ -130,7 +132,7 @@ const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
           placeholder={searchPlaceholder}
           value={searchValue}
           onChangeText={setSearchValue}
-          placeholderTextColor="#7F7F7F"
+          placeholderTextColor={placeholderTextColor}
           autoCapitalize="none"
           autoCorrect={false}
           style={{

@@ -77,20 +77,19 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
 
   const screenWidth = Dimensions.get("window").width;
 
-     useFocusEffect(
-      React.useCallback(() => {
-        const onBackPress = () => {
-          navigation.goBack()
-          return true;
-        };
-        const subscription = BackHandler.addEventListener(
-          "hardwareBackPress",
-          onBackPress,
-        );
-        return () => subscription.remove();
-      }, [navigation]),
-    );
-
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.goBack();
+        return true;
+      };
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
+      );
+      return () => subscription.remove();
+    }, [navigation]),
+  );
 
   useEffect(() => {
     const selectedLanguage = t("Main.LNG");
@@ -123,17 +122,18 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
     );
   }
 
-
   return (
     <View className="flex-1 bg-white">
       <View className="absolute top-0 left-0 right-0 z-10  ">
         <View className="flex-row ml-5 mt-5 items-center">
-          <TouchableOpacity className="p-2 bg-transparent">
+          <TouchableOpacity
+            className="p-2 bg-transparent"
+            onPress={() => navigation.goBack()}
+          >
             <Entypo
               name="chevron-left"
               size={24}
               color="#000502"
-              onPress={() => navigation.goBack()}
               style={{
                 backgroundColor: "#F6F6F6CC",
                 borderRadius: 50,

@@ -296,7 +296,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
                 className="w-full h-52 border border-[#F4F4F4] rounded-lg p-3 bg-[#F4F4F4] mb-8 text-gray-800"
                 placeholder={t("ReportComplaint.KindlySubmitYourComplaintHere")}
                 style={{ color: '#000000', textAlignVertical: "top" }} 
-                placeholderTextColor="#000000"
+                placeholderTextColor="#9CA3AF" 
                 multiline
                 value={complain}
                 onChangeText={(text) => setComplain(text)}
@@ -335,6 +335,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
         searchPlaceholder={t("Main.Search...")}
         multiSelect={false}
         noResultsText="No category found"
+        placeholderTextColor="#000000"
       />
     </KeyboardAvoidingView>
   );

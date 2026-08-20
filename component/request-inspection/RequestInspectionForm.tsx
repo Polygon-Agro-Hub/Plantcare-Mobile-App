@@ -294,9 +294,7 @@ const RequestInspectionForm = () => {
     } catch {
       Alert.alert(
         t("Main.Error"),
-        t(
-          "RequestInspectionForm.FailedToFetchFarmCropsPleaseTryAgain",
-        ),
+        t("RequestInspectionForm.FailedToFetchFarmCropsPleaseTryAgain"),
         [{ text: t("Main.OK") }],
       );
       setFarmCrops([
@@ -315,7 +313,7 @@ const RequestInspectionForm = () => {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.goBack();
+        navigation.navigate("RequestHistory" as never);
         return true;
       };
       const backHandler = BackHandler.addEventListener(
@@ -444,9 +442,7 @@ const RequestInspectionForm = () => {
     if (!selectedService || !price || !selectedFarm) {
       Alert.alert(
         t("RequestInspectionForm.ValidationError"),
-        t(
-          "RequestInspectionForm.PleaseFillInServicePriceAndFarmFields",
-        ),
+        t("RequestInspectionForm.PleaseFillInServicePriceAndFarmFields"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -486,9 +482,7 @@ const RequestInspectionForm = () => {
     if (selectedCrops.length === 0) {
       Alert.alert(
         t("RequestInspectionForm.ValidationError"),
-        t(
-          "RequestInspectionForm.PleaseSelectAtLeastOneCropForInspection",
-        ),
+        t("RequestInspectionForm.PleaseSelectAtLeastOneCropForInspection"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -524,15 +518,15 @@ const RequestInspectionForm = () => {
   };
 
   useFocusEffect(
-  React.useCallback(() => {
-    return () => {
-      resetForm();
-      setAddedItems([]);
-      setCurrentScrollIndex(0);
-      setCurrentMonth(new Date());
-    };
-  }, []),
-);
+    React.useCallback(() => {
+      return () => {
+        resetForm();
+        setAddedItems([]);
+        setCurrentScrollIndex(0);
+        setCurrentMonth(new Date());
+      };
+    }, []),
+  );
 
   const handleRemoveItem = (id: number) => {
     const itemIndex = addedItems.findIndex((item) => item.id === id);
@@ -609,9 +603,7 @@ const RequestInspectionForm = () => {
     if (itemsToUse.some((item) => !item.date)) {
       Alert.alert(
         t("Main.Error"),
-        t(
-          "RequestInspectionForm.PleaseSelectADateForAllInspectionRequests",
-        ),
+        t("RequestInspectionForm.PleaseSelectADateForAllInspectionRequests"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -762,11 +754,9 @@ const RequestInspectionForm = () => {
           : t("Main.Error"),
         hasPartialData
           ? t(
-            "RequestInspectionForm.Please complete all required fields or click 'Add More' to save your current data",
-          )
-          : t(
-            "RequestInspectionForm.PleaseAddAtLeastOneInspectionRequest",
-          ),
+              "RequestInspectionForm.Please complete all required fields or click 'Add More' to save your current data",
+            )
+          : t("RequestInspectionForm.PleaseAddAtLeastOneInspectionRequest"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -934,13 +924,11 @@ const RequestInspectionForm = () => {
 
   return (
     <View className="flex-1 bg-[#FFFFFF]">
-      
-
       <CustomHeader
         title={t("RequestInspectionForm.RequestInspection")}
         showBackButton={true}
         navigation={navigation as any}
-        onBackPress={() => navigation.goBack()}
+        onBackPress={() => navigation.navigate("RequestHistory" as never)}
       />
 
       {addedItems.length > 0 && (
@@ -975,26 +963,38 @@ const RequestInspectionForm = () => {
               {addedItems.map((item, index) => (
                 <View
                   key={item.id}
-                  className="bg-white border border-gray-200 rounded-lg p-4 mr-3"
-                  style={{ width: wp(70), elevation: 2 }}
+                  className="bg-white border border-gray-100 rounded-2xl p-5 mr-3"
+                  style={{
+                    width: wp(78),
+                    elevation: 3,
+                    shadowColor: "#000",
+                    shadowOpacity: 0.06,
+                    shadowRadius: 8,
+                  }}
                 >
                   <View className="flex-row justify-between items-center">
-                    <View className="flex-1">
-                      <Text className="text-base font-semibold text-gray-900">
+                    <View className="flex-1 pr-3">
+                      <Text className="text-base font-bold text-black">
                         ({String(index + 1).padStart(2, "0")}) {item.service}
                       </Text>
-                      <Text className="text-sm text-black font-medium mt-1">
-                        {t("RequestInspectionForm.Rs")}.
-                        {formatCurrency(item.price)}
-                      </Text>
+                      <View
+                        style={{
+                          marginLeft: 30,
+                        }}
+                      >
+                        <Text className="text-base text-balck mt-1">
+                          {t("RequestInspectionForm.Rs")}.
+                          {formatCurrency(item.price)}
+                        </Text>
+                      </View>
                     </View>
                     <TouchableOpacity
                       onPress={() => handleRemoveItem(item.id)}
-                      className="ml-3"
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                     >
                       <Ionicons
                         name="trash-outline"
-                        size={20}
+                        size={26}
                         color="#EF4444"
                       />
                     </TouchableOpacity>
@@ -1023,7 +1023,11 @@ const RequestInspectionForm = () => {
         </View>
       )}
 
-      <ScrollView className="flex-1 px-5 py-4" ref={scrollViewRef} contentContainerStyle={{ paddingBottom: 20 }}>
+      <ScrollView
+        className="flex-1 px-5 py-4"
+        ref={scrollViewRef}
+        contentContainerStyle={{ paddingBottom: 20 }}
+      >
         <Text className="text-[#070707] text-sm mt-2">
           {t("RequestInspectionForm.Service")}
         </Text>
@@ -1038,7 +1042,7 @@ const RequestInspectionForm = () => {
             {loadingServices
               ? t("RequestInspectionForm.LoadingServices...")
               : getSelectedLabel(serviceItems, selectedService) ||
-              t("RequestInspectionForm.SelectService...")}
+                t("RequestInspectionForm.SelectService...")}
           </Text>
           {loadingServices ? (
             <ActivityIndicator size="small" color="#9CA3AF" />
@@ -1051,16 +1055,15 @@ const RequestInspectionForm = () => {
           {t("RequestInspectionForm.PriceRs")}
         </Text>
         <TextInput
-          value={price ? formatCurrency(price) : "0.00"}
+          value={price ? formatCurrency(price) : ""}
           onChangeText={setPrice}
           placeholder="0.00"
           keyboardType="numeric"
-          style={{ color: '#000000' }} 
-          placeholderTextColor="#000000"
+          style={{ color: "#000000" }}
+          placeholderTextColor="#9CA3AF"
           className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px] text-gray-900"
           editable={false}
         />
-
         <Text className="text-[#070707] text-sm mt-2">
           {t("RequestInspectionForm.Farm")}
         </Text>
@@ -1075,7 +1078,7 @@ const RequestInspectionForm = () => {
             {loadingFarms
               ? t("RequestInspectionForm.LoadingFarms...")
               : getSelectedLabel(farmItems, selectedFarm) ||
-              t("RequestInspectionForm.SelectFarm...")}
+                t("RequestInspectionForm.SelectFarm...")}
           </Text>
           {loadingFarms ? (
             <ActivityIndicator size="small" color="#9CA3AF" />
@@ -1091,8 +1094,8 @@ const RequestInspectionForm = () => {
           value={plotNo}
           onChangeText={(text) => handleTextInputChange(text, setPlotNo)}
           placeholder={t("RequestInspectionForm.EnterPlotNumber")}
-          style={{ color: '#000000' }} 
-          placeholderTextColor="#000000"
+          style={{ color: "#000000" }}
+          placeholderTextColor="#9CA3AF" 
           className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px] text-gray-900"
         />
 
@@ -1103,8 +1106,8 @@ const RequestInspectionForm = () => {
           value={streetName}
           onChangeText={(text) => handleTextInputChange(text, setStreetName)}
           placeholder={t("RequestInspectionForm.EnterStreetName")}
-          style={{ color: '#000000' }} 
-          placeholderTextColor="#000000"
+          style={{ color: "#000000" }}
+          placeholderTextColor="#9CA3AF"
           className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px] text-gray-900"
         />
 
@@ -1114,13 +1117,13 @@ const RequestInspectionForm = () => {
         <TextInput
           value={city}
           onChangeText={(text) => handleTextInputChange(text, setCity)}
-          style={{ color: '#000000' }} 
-          placeholderTextColor="#000000"
+          style={{ color: "#000000" }}
+          placeholderTextColor="#9CA3AF"
           placeholder={t("RequestInspectionForm.EnterCity")}
           className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px] text-gray-900"
         />
 
-        <Text className="text-[#070707] text-sm mt-2">
+        <Text className="text-[#070707] text-xm mt-2">
           {t("RequestInspectionForm.FieldVisitRequestFor")}
         </Text>
         <View className="mt-2 mb-2">
@@ -1150,7 +1153,7 @@ const RequestInspectionForm = () => {
                       <Ionicons name="checkmark" size={14} color="#fff" />
                     )}
                   </View>
-                  <Text className="text-black font-medium">
+                  <Text className="text-black text-sm   font-medium">
                     {t("RequestInspectionForm.AllInThisFarm")}
                   </Text>
                 </TouchableOpacity>
@@ -1168,7 +1171,9 @@ const RequestInspectionForm = () => {
                         <Ionicons name="checkmark" size={14} color="#fff" />
                       )}
                     </View>
-                    <Text className="text-black">{crop.name}</Text>
+                    <Text className="text-black text-sm font-semibold ">
+                      {crop.name}
+                    </Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -1187,9 +1192,7 @@ const RequestInspectionForm = () => {
         <Text className="text-[#070707] text-sm mt-2">
           {t("RequestInspectionForm.ScheduleDate")}
         </Text>
-        <View className="mt-2 mb-2">
-          {renderCalendar()}
-        </View>
+        <View className="mt-2 mb-2">{renderCalendar()}</View>
 
         <View className="mt-8 mb-6 mx-6">
           <TouchableOpacity
@@ -1237,6 +1240,7 @@ const RequestInspectionForm = () => {
         onSelect={handleServiceSelect}
         searchPlaceholder={t("RequestInspectionForm.SearchServices...")}
         searchKeys={["label"]}
+        noResultsText="No service found"
         multiSelect={false}
         showSearch={true}
       />
@@ -1248,7 +1252,8 @@ const RequestInspectionForm = () => {
         data={farmItems}
         selectedItems={selectedFarm ? [selectedFarm] : []}
         onSelect={handleFarmSelect}
-        searchPlaceholder={t("RequestInspectionForm.SelectFarm...")}
+        searchPlaceholder={t("RequestInspectionForm.SearchFarm")}
+        noResultsText="No farm found"
         searchKeys={["label"]}
         multiSelect={false}
         showSearch={true}
