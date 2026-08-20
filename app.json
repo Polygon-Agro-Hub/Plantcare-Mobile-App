@@ -130,15 +130,14 @@
         }
       ],
       "expo-image-picker",
-      "expo-location",
-      "expo-tracking-transparency"
+      "expo-location"
     ],
     "extra": {
       "router": {
         "origin": false
       },
       "eas": {
-        "projectId": "0e03cacc-a139-45fd-9407-3936e86b20ea"
+        "projectId": "68d9936b-3a8e-44af-be66-862f318c517a"
       }
     }
   }
