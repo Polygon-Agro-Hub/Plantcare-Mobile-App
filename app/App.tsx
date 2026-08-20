@@ -24,6 +24,7 @@ import store, { RootState } from "@/services/reducxStore";
 import NetInfo from "@react-native-community/netinfo";
 import { useTranslation } from "react-i18next";
 import * as SplashScreen from "expo-splash-screen";
+import { requestTrackingIfNeeded } from "@/utils/ios/trackingPermissions";
 import Splash from "../component/auth/Splash";
 import Lanuage from "../component/common/Lanuage";
 import Signin from "@/component/auth/Signin";
@@ -322,6 +323,9 @@ function AppContent() {
     SplashScreen.hideAsync().catch((err) => {
       console.warn("Failed to hide splash screen:", err);
     });
+
+    // Request iOS AppTrackingTransparency permission if needed (iOS only)
+    requestTrackingIfNeeded();
   }, []);
 
   useEffect(() => {

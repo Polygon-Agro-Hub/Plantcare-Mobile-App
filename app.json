@@ -12,31 +12,16 @@
       "resizeMode": "contain",
       "backgroundColor": "#26D041"
     },
-    "ios": {
-      "icon": "./assets/images/public/app-icon-ios.png",
-      "supportsTablet": true,
-      "bundleIdentifier": "com.polygonagro.GoviCare",
-      "buildNumber": "2.0.0",
-      "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false,
-        "NSCameraUsageDescription": "Camera access is required to scan documents and capture images.",
-        "NSMicrophoneUsageDescription": "Microphone access is required for in-app communication.",
-        "NSPhotoLibraryUsageDescription": "Photo library access is required to upload related images.",
-        "NSLocationWhenInUseUsageDescription": "Location access is required to track activity.",
-        "NSUserTrackingUsageDescription": "Tracking is used to improve app experience.",
-        "NSUserNotificationUsageDescription": "Notifications are used to send important updates.",
-        "NSPhoneUsageDescription": "Phone access is used to call directly."
-      }
-    },
     "android": {
+      "package": "com.polygonagro.GoviCare",
+      "versionCode": 18,
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/public/favicon.png",
         "backgroundColor": "#ffffff"
       },
-      "predictiveBackGestureEnabled": false,
-      "softwareKeyboardLayoutMode": "pan",
-      "package": "com.polygonagro.GoviCare",
-      "versionCode": 18,
       "permissions": [
         "android.permission.INTERNET",
         "android.permission.CAMERA",
@@ -65,7 +50,29 @@
         "android.permission.READ_MEDIA_VIDEO",
         "android.permission.READ_MEDIA_AUDIO",
         "android.permission.ACCESS_MEDIA_LOCATION"
+      ],
+      "blockedPermissions": [
+        "com.google.android.gms.permission.AD_ID"
       ]
+    },
+    "ios": {
+      "icon": "./assets/images/public/app-icon-ios.png",
+      "bundleIdentifier": "com.polygonagro.GoviCare",
+      "buildNumber": "2.0.0",
+      "supportsTablet": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        },
+        "NSCameraUsageDescription": "Camera access is required to scan documents and capture images.",
+        "NSMicrophoneUsageDescription": "Microphone access is required for in-app communication.",
+        "NSPhotoLibraryUsageDescription": "Photo library access is required to upload related images.",
+        "NSLocationWhenInUseUsageDescription": "Location access is required to track activity.",
+        "NSUserTrackingUsageDescription": "Tracking is used to improve app experience.",
+        "NSUserNotificationUsageDescription": "Notifications are used to send important updates.",
+        "NSPhoneUsageDescription": "Phone access is used to call directly."
+      }
     },
     "web": {
       "bundler": "metro",
@@ -74,6 +81,23 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 36,
+            "targetSdkVersion": 36,
+            "minSdkVersion": 24,
+            "enableProguardInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true,
+            "enableMinifyInReleaseBuilds": true,
+            "extraProguardRules": "-keep class expo.modules.** { *; }\n-keep class expo.** { *; }"
+          },
+          "ios": {
+            "deploymentTarget": "15.1"
+          }
+        }
+      ],
       [
         "expo-notifications",
         {
@@ -84,30 +108,6 @@
         }
       ],
       "expo-font",
-      [
-        "expo-build-properties",
-        {
-          "ios": {
-            "deploymentTarget": "15.1"
-          },
-          "android": {
-            "ndkVersion": "28.0.12433566",
-            "enableProguardInReleaseBuilds": true,
-            "packagingOptions": {
-              "jniLibs": {
-                "useLegacyPackaging": false
-              }
-            },
-            "gradleProperties": {
-              "android.useAndroidX": "true",
-              "android.enableJetifier": "true",
-              "ANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES": "true"
-            },
-            "enableMinifyInReleaseBuilds": true,
-            "extraProguardRules": "-keep class expo.modules.** { *; }\n-keep class expo.** { *; }"
-          }
-        }
-      ],
       "expo-video",
       "expo-audio",
       "expo-web-browser",
@@ -130,7 +130,8 @@
         }
       ],
       "expo-image-picker",
-      "expo-location"
+      "expo-location",
+      "expo-tracking-transparency"
     ],
     "extra": {
       "router": {
