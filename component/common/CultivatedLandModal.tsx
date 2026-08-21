@@ -44,7 +44,7 @@ function CameraScreen({
     return (
       <View className="flex-1 justify-center items-center bg-black">
         <Text className="text-white text-lg mb-4">
-          {t("CropCalender.loadingCameraPermission")}
+          {t("CropCalender.LoadingCameraPermission")}
         </Text>
       </View>
     );

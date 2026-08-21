@@ -637,7 +637,7 @@ const renderDatePicker = () => {
                 disabled={isLoading}
               >
                 <Text className="text-white text-lg font-bold">
-                  {t("Main.Search...")}
+                  {t("Main.Search")}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -683,7 +683,7 @@ const renderDatePicker = () => {
           </View>
         ) : (
           <View className="px-6">
-            <Text className="mt-8">{t("Main.Extent")}</Text>
+            <Text className="mt-8">{t("Farms.Extent")}</Text>
             {renderExtentInputs()}
             {renderDatePicker()}
 

@@ -379,8 +379,6 @@ const MyCultivation = () => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            colors={["#FDCF3F"]}
-            tintColor="#FDCF3F"
           />
         }
       >

@@ -426,9 +426,24 @@ const EditFarm: React.FC<EditFarmProps> = ({
         },
       );
 
-      Alert.alert(t("Main.Success"), t("Farms.FarmUpdatedSuccessfully"), [
-        { text: t("Main.OK"), onPress: () => navigation.goBack() },
-      ]);
+     Alert.alert(t("Main.Success"), t("Farms.FarmUpdatedSuccessfully"), [
+  {
+    text: t("Main.OK"),
+    onPress: () => {
+      if (fromScreen === "FarmDetailsScreen") {
+        navigation.navigate("Main", {
+          screen: "FarmDetailsScreen",
+          params: { farmId },
+        });
+      } else {
+        navigation.navigate("Main", {
+          screen: "AddFarmList",
+          params: { farmId: farmId },
+        });
+      }
+    },
+  },
+]);
     } catch (err: any) {
       console.error("Error updating farm:", err);
 
@@ -708,7 +723,7 @@ const EditFarm: React.FC<EditFarmProps> = ({
             <View>
               <View className="flex-row justify-between items-center mb-2">
                 <Text className="text-[#070707] font-medium">
-                  {t("Farms.NumberOfStaff")} *
+                  {t("Farms.NumberOfStaff")} 
                 </Text>
               </View>
               <TextInput

@@ -17,7 +17,7 @@
       "versionCode": 18,
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "softwareKeyboardLayoutMode": "pan",
+      "softwareKeyboardLayoutMode": "resize",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/public/favicon.png",
         "backgroundColor": "#ffffff"

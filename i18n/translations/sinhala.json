@@ -12,6 +12,7 @@
     "GoBack": "ආපසු යන්න",
     "Continue": "දිගටම කරගෙන යන්න",
     "Search...": "සොයන්න...",
+    "Search": "සොයන්න",
     "Loading...": "පූරණය වෙමින්...",
     "TypeHere": "--මෙතැන ටයිප් කරන්න--",
     "NoInternetConnection": "අන්තර්ජාල සම්බන්ධතාවයක් නැත.",
@@ -619,7 +620,8 @@
     "GAPCertification": "හොඳ කෘෂිකාර්මික පිළිවෙත් සහතිකය",
     "CheckingValidity": "වලංගු භාවය පරීක්ෂා කරමින්...",
     "CertificateExpired": "සහතිකය කල් ඉකුත් වී ඇත",
-    "NoActiveCertificate": "සක්‍රිය සහතිකයක් නොමැත"
+    "NoActiveCertificate": "සක්‍රිය සහතිකයක් නොමැත",
+    "GrantPermission":"අවසර දෙන්න"
   },
   "Manager": {
     "ManageWorkers": "කම්කරුවන් කළමනාකරණය කරන්න",

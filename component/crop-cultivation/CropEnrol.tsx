@@ -487,7 +487,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
 
             {search && (
               <>
-                <Text className="mt-8">{t("Main.Extent")}</Text>
+                <Text className="mt-8">{t("Farms.Extent")}</Text>
                 <View className="flex-row items-center justify-between w-full mt-4 max-w-xl">
                   <View className="flex-row items-center gap-1">
                     <Text className="text-right">{t("FixedAssets.ha")}</Text>
@@ -585,7 +585,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
           </View>
         ) : (
           <View className="px-6">
-            <Text className="mt-8">{t("Main.Extent")}</Text>
+            <Text className="mt-8">{t("Farms.Extent")}</Text>
             <View className="flex-row items-center justify-between w-full mt-4">
               <View className="flex-row items-center gap-1">
                 <Text className="text-right">{t("FixedAssets.ha")}</Text>

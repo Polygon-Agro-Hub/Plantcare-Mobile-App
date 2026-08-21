@@ -12,6 +12,7 @@
     "GoBack": "திரும்பிச் செல்லுங்கள்",
     "Continue": "தொடரவும்",
     "Search...": "தேடுங்கள்...",
+    "Search": "தேடுங்கள்",
     "Loading...": "ஏற்றுகிறது...",
     "TypeHere": "--இங்கே தட்டச்சு செய்யவும்--",
     "NoInternetConnection": "இணைய இணைப்பு இல்லை.",
@@ -619,7 +620,8 @@
     "GAPCertification": "GAP சான்றிதழ்",
     "CheckingValidity": "செல்லுபடியை சரிபார்க்கிறது...",
     "CertificateExpired": "சான்றிதழ் காலாவதியானது",
-    "NoActiveCertificate": "செயலில் உள்ள சான்றிதழ் இல்லை"
+    "NoActiveCertificate": "செயலில் உள்ள சான்றிதழ் இல்லை",
+    "GrantPermission":"அனுமதியை வழங்கு"
   },
   "Manager": {
     "ManageWorkers": "தொழிலாளர்களை நிர்வகிக்கவும்",
