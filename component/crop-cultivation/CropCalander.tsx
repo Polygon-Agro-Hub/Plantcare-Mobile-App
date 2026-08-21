@@ -1015,7 +1015,12 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
             uri: taskImage.image,
             title: `Task ${crop.taskIndex} - Photo ${index + 1}`,
             description: crop.taskDescriptionEnglish,
-            uploadedBy: taskImage.uploadedBy,
+            uploadedBy:
+              taskImage.uploadedBy ||
+              taskImage.userName ||
+              taskImage.name ||
+              taskImage.uploaderName ||
+              taskImage.user_name,
             createdAt: taskImage.createdAt,
             from: "crop",
           }),

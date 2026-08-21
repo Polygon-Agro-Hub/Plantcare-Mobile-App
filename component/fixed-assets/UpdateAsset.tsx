@@ -55,6 +55,7 @@ interface ToolErrors {
     assetType?: string;
     mentionOther?: string;
     brand?: string;
+    customBrand?: string;
     numberOfUnits?: string;
     unitPrice?: string;
     totalPrice?: string;
@@ -78,6 +79,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
   const generalConditionOptions = toOptions(assetData.generalConditionOptions);
   const ownershipCategories = toOptions(assetData.ownershipCategories);
   const landownershipCategories = toOptions(assetData.landOwnershipOptions);
+  const toolBrandOptions = toOptions(assetData.toolBrandOptions);
 
   const assetTypesForAssets: Record<
     string,
@@ -88,6 +90,24 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       toOptions(items as RawOption[]),
     ]),
   );
+
+  const brandTypesForAssets: Record<
+    string,
+    { label: string; value: string }[]
+  > = Object.fromEntries(
+    Object.entries(assetData.brandTypesForAssets).map(([key, items]) => [
+      key,
+      toOptions(items as RawOption[]),
+    ]),
+  );
+
+  const getLabel = (
+    options: { label: string; value: string }[] | undefined,
+    val: string,
+  ) => {
+    if (!options || !val) return val;
+    return options.find((o) => o.value === val)?.label ?? val;
+  };
 
   const [tools, setTools] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -104,6 +124,8 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
   const [showTypeModal, setShowTypeModal] = useState(false);
   const [showAssetModal, setShowAssetModal] = useState(false);
   const [showAssetTypeModal, setShowAssetTypeModal] = useState(false);
+  const [showBrandModal, setShowBrandModal] = useState(false);
+  const [showToolBrandModal, setShowToolBrandModal] = useState(false);
   const [showGeneralConditionModal, setShowGeneralConditionModal] =
     useState(false);
   const [showPurchaseDatePicker, setShowPurchaseDatePicker] = useState(false);
@@ -290,6 +312,11 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       if (!toolDetails.brand) {
         errors.brand = t("FixedAssets.BrandIsRequired");
       }
+      if (toolDetails.brand === "Other" && !toolDetails.customBrand) {
+        errors.customBrand =
+          t("FixedAssets.MentionOtherBrandName") ||
+          t("FixedAssets.BrandIsRequired");
+      }
       if (!toolDetails.numberOfUnits) {
         errors.numberOfUnits = t("FixedAssets.NumberOfUnitsIsRequired");
       }
@@ -424,8 +451,33 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
         setTools(data);
         setUpdatedDetails(
           data.reduce((acc: any, tool: any) => {
+            let brandVal = tool.brand ?? "";
+            let customBrandVal = "";
+
+            if (tool.category === "Machine and Vehicles") {
+              const brandList =
+                (assetData.brandTypesForAssets as any)[tool.asset] || [];
+              const isPredefined = brandList.some(
+                (b: any) => b.value === tool.brand,
+              );
+              if (!isPredefined && tool.brand && brandList.length > 0) {
+                brandVal = "Other";
+                customBrandVal = tool.brand;
+              }
+            } else if (tool.category === "Tools") {
+              const isPredefined = assetData.toolBrandOptions.some(
+                (b: any) => b.value === tool.brand,
+              );
+              if (!isPredefined && tool.brand) {
+                brandVal = "Other";
+                customBrandVal = tool.brand;
+              }
+            }
+
             acc[tool.id] = {
               ...tool,
+              brand: brandVal,
+              customBrand: customBrandVal,
               ownership: normalizeOwnership(
                 tool.ownership ?? "",
                 tool.category,
@@ -606,6 +658,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
             updatedToolDetails.totalPrice = cleanNumber(
               updatedToolDetails.totalPrice.toString(),
             );
+          if (
+            updatedToolDetails.brand === "Other" &&
+            updatedToolDetails.customBrand
+          ) {
+            updatedToolDetails.brand = updatedToolDetails.customBrand;
+          }
         }
 
         if (updatedToolDetails.ownershipDetails) {
@@ -1872,8 +1930,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       onSelect={(items) => {
                         if (items[0]) {
                           handleInputChange(tool.id, "asset", items[0]);
+                          handleInputChange(tool.id, "assetType", "");
+                          handleInputChange(tool.id, "mentionOther", "");
+                          handleInputChange(tool.id, "brand", "");
+                          handleInputChange(tool.id, "customBrand", "");
                           setSelectedAsset(items[0]);
                           clearFieldError(tool.id, "asset");
+                          clearFieldError(tool.id, "brand");
                         }
                       }}
                       searchPlaceholder={t("Main.Search...")}
@@ -1943,21 +2006,105 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       </>
                     )}
 
-                    <Text className="text-[#070707] text-sm mt-2">
-                      {t("FixedAssets.Brand")} *
-                    </Text>
-                    <TextInput
-                      placeholder={t("FixedAssets.SelectBrand")}
-                      value={updatedDetails[tool.id]?.brand ?? ""}
-                      editable={false}
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm text-black"
-                      placeholderTextColor="#6B7280"
-                    />
-                    {fieldErrors[tool.id]?.brand ? (
-                      <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
-                        {fieldErrors[tool.id].brand}
-                      </Text>
-                    ) : null}
+                    {/* Brand */}
+                    {updatedDetails[tool.id]?.asset &&
+                    brandTypesForAssets[updatedDetails[tool.id]?.asset]?.length >
+                      0 ? (
+                      <>
+                        <Text className="text-[#070707] text-sm mt-2">
+                          {t("FixedAssets.Brand")} *
+                        </Text>
+                        <DropdownTrigger
+                          value={getLabel(
+                            brandTypesForAssets[updatedDetails[tool.id]?.asset],
+                            updatedDetails[tool.id]?.brand ?? "",
+                          )}
+                          placeholder={t("FixedAssets.SelectBrand")}
+                          onPress={() => {
+                            clearFieldError(tool.id, "brand");
+                            setShowBrandModal(true);
+                          }}
+                          error={fieldErrors[tool.id]?.brand}
+                        />
+                        <GlobalSearchModal
+                          visible={showBrandModal}
+                          onClose={() => setShowBrandModal(false)}
+                          title={t("FixedAssets.SelectBrand")}
+                          data={
+                            brandTypesForAssets[updatedDetails[tool.id]?.asset]
+                          }
+                          selectedItems={
+                            updatedDetails[tool.id]?.brand
+                              ? [updatedDetails[tool.id].brand]
+                              : []
+                          }
+                          onSelect={(items) => {
+                            if (items[0]) {
+                              handleInputChange(tool.id, "brand", items[0]);
+                              if (items[0] !== "Other") {
+                                handleInputChange(tool.id, "customBrand", "");
+                              }
+                              clearFieldError(tool.id, "brand");
+                            }
+                          }}
+                          searchPlaceholder={t("Main.Search...")}
+                          noResultsText="No brand found"
+                        />
+
+                        {updatedDetails[tool.id]?.brand === "Other" && (
+                          <>
+                            <Text className="text-[#070707] text-sm mt-2">
+                              {t("FixedAssets.MentionOtherBrandName")}
+                            </Text>
+                            <TextInput
+                              placeholder={t("FixedAssets.EnterBrandName")}
+                              value={updatedDetails[tool.id]?.customBrand ?? ""}
+                              onChangeText={(value) => {
+                                handleInputChange(
+                                  tool.id,
+                                  "customBrand",
+                                  value.replace(/^\s+/, ""),
+                                );
+                                clearFieldError(tool.id, "customBrand");
+                              }}
+                              className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm text-black"
+                              placeholderTextColor="#6B7280"
+                            />
+                            {fieldErrors[tool.id]?.customBrand ? (
+                              <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                                {fieldErrors[tool.id].customBrand}
+                              </Text>
+                            ) : null}
+                          </>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <Text className="text-[#070707] text-sm mt-2">
+                          {t("FixedAssets.Brand")} *
+                        </Text>
+                        <TextInput
+                          placeholder={t("FixedAssets.SelectBrand")}
+                          value={updatedDetails[tool.id]?.brand ?? ""}
+                          editable={true}
+                          onChangeText={(value) => {
+                            handleInputChange(
+                              tool.id,
+                              "brand",
+                              value.replace(/^\s+/, ""),
+                            );
+                            clearFieldError(tool.id, "brand");
+                          }}
+                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm text-black"
+                          placeholderTextColor="#6B7280"
+                        />
+                        {fieldErrors[tool.id]?.brand ? (
+                          <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                            {fieldErrors[tool.id].brand}
+                          </Text>
+                        ) : null}
+                      </>
+                    )}
 
                     <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.NumberOfUnits")} *
@@ -2303,8 +2450,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       onSelect={(items) => {
                         if (items[0]) {
                           handleInputChange(tool.id, "asset", items[0]);
+                          handleInputChange(tool.id, "mentionOther", "");
+                          handleInputChange(tool.id, "brand", "");
+                          handleInputChange(tool.id, "customBrand", "");
                           setSelectedAsset(items[0]);
                           clearFieldError(tool.id, "asset");
+                          clearFieldError(tool.id, "brand");
                         }
                       }}
                       searchPlaceholder={t("Main.Search...")}
@@ -2337,21 +2488,71 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       </>
                     )}
 
+                    {/* Brand */}
                     <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.Brand")} *
                     </Text>
-                    <TextInput
+                    <DropdownTrigger
+                      value={getLabel(
+                        toolBrandOptions,
+                        updatedDetails[tool.id]?.brand ?? "",
+                      )}
                       placeholder={t("FixedAssets.SelectBrand")}
-                      value={updatedDetails[tool.id]?.brand ?? ""}
-                      editable={false}
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm text-black"
-                      placeholderTextColor="#6B7280"
+                      onPress={() => {
+                        clearFieldError(tool.id, "brand");
+                        setShowToolBrandModal(true);
+                      }}
+                      error={fieldErrors[tool.id]?.brand}
                     />
-                    {fieldErrors[tool.id]?.brand ? (
-                      <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
-                        {fieldErrors[tool.id].brand}
-                      </Text>
-                    ) : null}
+                    <GlobalSearchModal
+                      visible={showToolBrandModal}
+                      onClose={() => setShowToolBrandModal(false)}
+                      title={t("FixedAssets.Brand")}
+                      data={toolBrandOptions}
+                      selectedItems={
+                        updatedDetails[tool.id]?.brand
+                          ? [updatedDetails[tool.id].brand]
+                          : []
+                      }
+                      onSelect={(items) => {
+                        if (items[0]) {
+                          handleInputChange(tool.id, "brand", items[0]);
+                          if (items[0] !== "Other") {
+                            handleInputChange(tool.id, "customBrand", "");
+                          }
+                          clearFieldError(tool.id, "brand");
+                        }
+                      }}
+                      searchPlaceholder={t("Main.Search...")}
+                      noResultsText="No brand found"
+                    />
+
+                    {updatedDetails[tool.id]?.brand === "Other" && (
+                      <>
+                        <Text className="text-[#070707] text-sm mt-2">
+                          {t("FixedAssets.MentionOtherBrandName")}
+                        </Text>
+                        <TextInput
+                          placeholder={t("FixedAssets.EnterBrandName")}
+                          value={updatedDetails[tool.id]?.customBrand ?? ""}
+                          onChangeText={(value) => {
+                            handleInputChange(
+                              tool.id,
+                              "customBrand",
+                              value.replace(/^\s+/, ""),
+                            );
+                            clearFieldError(tool.id, "customBrand");
+                          }}
+                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm text-black"
+                          placeholderTextColor="#6B7280"
+                        />
+                        {fieldErrors[tool.id]?.customBrand ? (
+                          <Text className="text-red-500 text-xs mt-1 ml-2 mb-2">
+                            {fieldErrors[tool.id].customBrand}
+                          </Text>
+                        ) : null}
+                      </>
+                    )}
 
                     <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.NumberOfUnits")} *

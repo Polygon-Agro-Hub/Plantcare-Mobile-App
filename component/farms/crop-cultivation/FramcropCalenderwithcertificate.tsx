@@ -1523,7 +1523,12 @@ const FramcropCalenderwithcertificate: React.FC<
             uri: taskImage.image,
             title: `Task ${crop.taskIndex} - Photo ${index + 1}`,
             description: crop.taskDescriptionEnglish,
-            uploadedBy: taskImage.uploadedBy,
+            uploadedBy:
+              taskImage.uploadedBy ||
+              taskImage.userName ||
+              taskImage.name ||
+              taskImage.uploaderName ||
+              taskImage.user_name,
             createdAt: taskImage.createdAt,
           }),
         );
@@ -1833,7 +1838,10 @@ const FramcropCalenderwithcertificate: React.FC<
                                         : language === "ta"
                                           ? item.qTamil
                                           : item.qEnglish,
-                                    uploadedBy: t("ImageViewerModal.You"),
+                                    uploadedBy:
+                                      (item as any).uploadedBy ||
+                                      (item as any).userName ||
+                                      "Owner",
                                     from: "certificate",
                                   },
                                 ]);

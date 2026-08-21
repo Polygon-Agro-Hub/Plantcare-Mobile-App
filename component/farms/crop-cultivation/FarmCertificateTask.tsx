@@ -25,6 +25,8 @@ import axios from "axios";
 import moment from "moment";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/services/reducxStore";
 import CustomHeader from "../../common/CustomHeader";
 import LoadingPage from "@/component/common/LoadingPage";
 import CultivatedLandModal from "../../common/CultivatedLandModal";
@@ -73,6 +75,13 @@ const FarmCertificateTask: React.FC = () => {
     srtNameTamil?: string;
   };
   const { t } = useTranslation();
+  const user = useSelector((state: RootState) => state.user.userData);
+  const userRole = (user?.role || "").toLowerCase();
+  const isStaff =
+    userRole === "manager" ||
+    userRole === "supervisor" ||
+    userRole === "laborer" ||
+    userRole === "laboror";
 
   const [certificateStatus, setCertificateStatus] =
     useState<CertificateStatus | null>(null);
@@ -765,7 +774,9 @@ const FarmCertificateTask: React.FC = () => {
           </TouchableOpacity>
 
           <Text className="text-black text-center px-4 py-2 rounded-lg">
-            {t("Farms.UploadedByYou")}
+            {isStaff
+              ? `${t("ImageViewerModal.UploadedBy")} ${t("ImageViewerModal.Owner") || "Owner"}`
+              : t("Farms.UploadedByYou")}
           </Text>
 
           {selectedImage && (
