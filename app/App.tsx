@@ -91,7 +91,6 @@ import LabororDashbord from "@/component/laboror-screens/LabororDashbord";
 import OwnerQRcode from "@/component/laboror-screens/OwnerQRcode";
 import ManagerProfileView from "@/component/manager-screens/ManagerProfileView";
 import SupervisorProfileView from "@/component/supervisor-screens/SupervisorProfileView";
-
 import FarmCurrectAssetRemove from "@/component/farms/current-asset/FarmCurrectAssetRemove";
 import FarmCropCalander from "@/component/farms/crop-cultivation/FarmCropCalander";
 import ManagerDashbord from "@/component/manager-screens/ManagerDashbord";
