@@ -203,19 +203,11 @@ const ManageMembersManager = () => {
   }, [farmId]);
 
   const handleEditMember = (member: StaffMember) => {
-    Alert.alert("Edit Member", `Edit ${member.firstName} ${member.lastName}?`, [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Edit",
-        onPress: () => {
-          navigation.navigate("ManageEditscreen", {
-            staffMemberId: member.id,
-            farmId: farmId,
-            farmName: farmName,
-          });
-        },
-      },
-    ]);
+    navigation.navigate("ManageEditscreen", {
+      staffMemberId: member.id,
+      farmId: farmId,
+      farmName: farmName,
+    });
   };
 
   const getRoleDisplayName = (role: string) => {

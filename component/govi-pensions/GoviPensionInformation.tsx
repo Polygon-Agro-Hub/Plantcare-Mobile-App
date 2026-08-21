@@ -9,6 +9,7 @@ import {
   ScrollView,
   Modal,
   ActivityIndicator,
+  BackHandler,
 } from "react-native";
 import CustomHeader from "../common/CustomHeader";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -16,6 +17,7 @@ import axios from "axios";
 import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AntDesign, Entypo } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 
 interface GoviPensionInformationProps {
   navigation: StackNavigationProp<any>;
@@ -31,6 +33,20 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
 
   const [isCheckingEligibility, setIsCheckingEligibility] = useState(false);
   const [showIneligibleModal, setShowIneligibleModal] = useState(false);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        handleBackPress();
+        return true;
+      };
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
+      );
+      return () => subscription.remove();
+    }, [navigation]),
+  );
 
   const handleBackPress = () => {
     navigation.goBack();

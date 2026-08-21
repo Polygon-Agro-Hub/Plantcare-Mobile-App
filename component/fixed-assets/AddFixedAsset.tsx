@@ -511,7 +511,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
         onPress={onOpen}
         className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2 mb-2"
       >
-        <Text className={`flex-1 ${!value ? "text-[#6B7280]" : "text-black"}`}>
+        <Text className={`text-sm flex-1 ${!value ? "text-[#6B7280]" : "text-black"}`}>
           {value ? formatDate(value) : placeholder}
         </Text>
         <EvilIcons name="calendar" size={28} color="#5e5d5d" />
@@ -868,7 +868,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
             <GlobalSearchModal
               visible={modalAssetType}
               onClose={() => setModalAssetType(false)}
-              title={t("FixedAssets.SelectAssetTypeIsRequired")}
+              title={t("FixedAssets.AssetTypeSelect")}
               data={assetTypesForAssets[asset]}
               selectedItems={assetType ? [assetType] : []}
               onSelect={(items) => {
@@ -1093,7 +1093,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 </Text>
                 <SelectorButton
                   label={getLabel(Machineasset, asset)}
-                  placeholder={t("FixedAssets.SelectAssetIsRequired")}
+                  placeholder={t("FixedAssets.SelectType")}
                   onPress={() => {
                     Keyboard.dismiss();
                     setModalAsset(true);
@@ -1105,7 +1105,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 {asset && assetTypesForAssets[asset]?.length > 0 && (
                   <>
                     <Text className="text-[#070707] text-sm mt-2">
-                      {t("FixedAssets.SelectAssetTypeIsRequired")} *
+                      {t("FixedAssets.AssetType")} *
                     </Text>
                     <SelectorButton
                       label={getLabel(assetTypesForAssets[asset], assetType)}
@@ -1121,9 +1121,9 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
 
                 {assetType === "Other" && (
                   <View className="mt-4">
-                    <Text>{t("FixedAssets.MentionOther")}</Text>
+                    <Text className="text-sm">{t("FixedAssets.MentionOther")}</Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       placeholder={t("FixedAssets.MentionOther")}
                       value={mentionOther}
                       onChangeText={(text) => {
@@ -1159,7 +1159,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.MentionOtherBrandName")}
                     </Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       placeholder={t("FixedAssets.EnterBrandName")}
                       value={customBrand}
                       onChangeText={(text) => {
@@ -1176,8 +1176,8 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.NumberOfUnits")} *
                 </Text>
                 <TextInput
-                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
-                  placeholder={t("FixedAssets.NumberOfUnitsIsRequired")}
+                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
+                  placeholder={t("FixedAssets.NumberOfUnits")}
                   value={numberOfUnits}
                   onChangeText={(text) => {
                     setNumberOfUnits(text.replace(/[-.*#+]/g, "").trimStart());
@@ -1192,8 +1192,8 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.UnitPrice")} *
                 </Text>
                 <TextInput
-                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
-                  placeholder={t("FixedAssets.UnitPriceIsRequired")}
+                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
+                  placeholder={t("FixedAssets.UnitPrices")}
                   value={unitPrice}
                   onChangeText={(text) => {
                     let cleaned = text.replace(/[^0-9.]/g, "");
@@ -1218,7 +1218,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.TotalPrice")}
                 </Text>
                 <View className="border border-[#F4F4F4] p-4 pl-4 rounded-full bg-gray-100">
-                  <Text>
+                  <Text className="text-sm">
                     {totalPrice
                       ? (() => {
                         const parts = totalPrice.toFixed(2).split(".");
@@ -1245,7 +1245,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         className={`w-5 h-5 rounded-full ${warranty === w ? "bg-green-500" : "bg-gray-400"
                           }`}
                       />
-                      <Text className="ml-2">
+                      <Text className="ml-2 text-sm">
                         {w === "yes"
                           ? t("FixedAssets.yes")
                           : t("FixedAssets.no")}
@@ -1298,6 +1298,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     </Text>
                     <View className="bg-[#F4F4F4] rounded-3xl h-[50px] justify-center items-center mt-2 mb-2">
                       <Text
+                        className="text-sm"
                         style={{
                           color: warrantyStatusColor,
                           fontWeight: "bold",
@@ -1318,7 +1319,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.LandName")} *
                 </Text>
                 <TextInput
-                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                   placeholder={t("FixedAssets.EnterLandName")}
                   value={landName}
                   maxLength={20}
@@ -1359,7 +1360,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     >
                       <Text className="text-[#070707] text-sm mt-2 mr-2">{label}</Text>
                       <TextInput
-                        className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-20 mt-2 mb-2" placeholderTextColor="#585858"
+                        className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-20 mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                         value={val}
                         onChangeText={(text) =>
                           setter(text.replace(/[-.*#+]/g, ""))
@@ -1378,7 +1379,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 </Text>
                 <SelectorButton
                   label={getLabel(landOwnershipOptions, landownership)}
-                  placeholder={t("FixedAssets.SelectOwnershipCategoryIsRequired")}
+                  placeholder={t("FixedAssets.SelectOwnership")}
                   onPress={() => {
                     Keyboard.dismiss();
                     setModalLandOwnership(true);
@@ -1393,7 +1394,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.EstimatedValue")} *
                     </Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       placeholder={t("FixedAssets.EnterEstimatedValue")}
                       value={estimateValue}
                       onChangeText={(text) => {
@@ -1429,11 +1430,11 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.Duration")} *
                     </Text>
                     <View className="items-center flex-row justify-center">
-                      <Text className="w-[20%] text-right pr-2">
+                      <Text className="w-[20%] text-right pr-2 text-sm">
                         {t("FixedAssets.Years")}
                       </Text>
                       <TextInput
-                        className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2" placeholderTextColor="#585858"
+                        className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                         value={durationYears}
                         onChangeText={(text) => {
                           setDurationYears(
@@ -1444,11 +1445,11 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         keyboardType="numeric"
                         placeholder={t("FixedAssets.Years")}
                       />
-                      <Text className="w-[20%] text-right pr-2">
+                      <Text className="w-[20%] text-right pr-2 text-sm">
                         {t("FixedAssets.Months")}
                       </Text>
                       <TextInput
-                        className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2" placeholderTextColor="#585858"
+                        className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                         value={durationMonths}
                         onChangeText={(text) => {
                           const cleaned = text
@@ -1470,7 +1471,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.AnnualLeaseAmount")} *
                     </Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       value={leastAmountAnnually}
                       onChangeText={(text) => {
                         setLeastAmountAnnually(formatCurrency(text));
@@ -1505,7 +1506,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.PermitFeeAnnuallyLKR")} *
                     </Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4  text-sm rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       placeholder={t("FixedAssets.EnterAnnualPermitFee")}
                       value={permitFeeAnnually}
                       onChangeText={(text) => {
@@ -1525,7 +1526,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.AnnualPaymentFee")} *
                     </Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       value={paymentAnnually}
                       onChangeText={(text) => {
                         setPaymentAnnually(formatCurrency(text.trimStart()));
@@ -1554,7 +1555,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                           className={`w-5 h-5 rounded-full ${landFenced === v ? "bg-green-500" : "bg-gray-400"
                             }`}
                         />
-                        <Text className="ml-2">
+                        <Text className="ml-2 text-sm">
                           {v === "yes"
                             ? t("FixedAssets.yes")
                             : t("FixedAssets.no")}
@@ -1579,7 +1580,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                           className={`w-5 h-5 rounded-full ${perennialCrop === v ? "bg-green-500" : "bg-gray-400"
                             }`}
                         />
-                        <Text className="ml-2">
+                        <Text className="ml-2 text-sm">
                           {v === "yes"
                             ? t("FixedAssets.yes")
                             : t("FixedAssets.no")}
@@ -1598,7 +1599,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 <View className="rounded-full mt-2">
                   <SelectorButton
                     label={getLabel(assetOptions, assetname)}
-                    placeholder={t("FixedAssets.SelectAssetIsRequired")}
+                    placeholder={t("FixedAssets.Asset")}
                     onPress={() => {
                       Keyboard.dismiss();
                       setModalAsset(true);
@@ -1613,7 +1614,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.MentionOtherDetails")}
                     </Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       value={othertool}
                       onChangeText={(text) => {
                         setOthertool(text.replace(/^\s+/, ""));
@@ -1645,7 +1646,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.MentionOtherBrandName")}
                     </Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       placeholder={t("FixedAssets.EnterBrandName")}
                       value={customBrand}
                       onChangeText={(text) =>
@@ -1661,7 +1662,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.NumberOfUnits")} *
                 </Text>
                 <TextInput
-                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                   placeholder={t("FixedAssets.NumberOfUnitsIsRequired")}
                   value={numberOfUnits}
                   onChangeText={(text) =>
@@ -1675,7 +1676,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.UnitPrice")} *
                 </Text>
                 <TextInput
-                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                   placeholder={t("FixedAssets.UnitPriceIsRequired")}
                   value={unitPrice}
                   onChangeText={(text) => {
@@ -1718,7 +1719,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         className={`w-5 h-5 rounded-full ${warranty === w ? "bg-green-500" : "bg-gray-400"
                           }`}
                       />
-                      <Text className="ml-2">
+                      <Text className="ml-2 text-sm">
                         {w === "yes"
                           ? t("FixedAssets.yes")
                           : t("FixedAssets.no")}
@@ -1774,6 +1775,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     </Text>
                     <View className="bg-[#F4F4F4] rounded-3xl h-[50px] justify-center items-center mt-2 mb-2">
                       <Text
+                        className="text-sm"
                         style={{
                           color: warrantyStatusColor,
                           fontWeight: "bold",
@@ -1808,7 +1810,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.BuildingName")} *
                 </Text>
                 <TextInput
-                  className="bg-[#F4F4F4] px-4 rounded-3xl text-sm h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                   placeholder={t("FixedAssets.EnterBuildingName")}
                   value={buildingName}
                   onChangeText={(text) => {
@@ -1826,7 +1828,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.FloorArea")} *
                 </Text>
                 <TextInput
-                  className="bg-[#F4F4F4] px-4 rounded-3xl text-sm h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                   placeholder={t("FixedAssets.EnterFloorArea")}
                   value={floorArea}
                   onChangeText={(text) => {
@@ -1847,7 +1849,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 </Text>
                 <SelectorButton
                   label={getLabel(ownershipCategories, ownership)}
-                  placeholder={t("FixedAssets.SelectOwnershipCategoryIsRequired")}
+                  placeholder={t("FixedAssets.SelectOwnership")}
                   onPress={() => {
                     Keyboard.dismiss();
                     setModalOwnership(true);
@@ -1862,7 +1864,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.EstimatedBuildingValue")} *
                     </Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       placeholder={t("FixedAssets.EnterEstimatedValue")}
                       value={estimateValue}
                       onChangeText={(text) => {
@@ -1897,11 +1899,11 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     </Text>
                     <View className="flex-row items-center justify-between">
                       <View className="flex-row items-center">
-                        <Text className="w-[20%] text-right pr-2">
+                        <Text className="w-[20%] text-right pr-2 text-sm">
                           {t("FixedAssets.Years")}
                         </Text>
                         <TextInput
-                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2" placeholderTextColor="#585858"
+                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                           value={durationYears}
                           onChangeText={(text) => {
                             setDurationYears(
@@ -1912,11 +1914,11 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                           keyboardType="numeric"
                           placeholder={t("FixedAssets.Years")}
                         />
-                        <Text className="w-[20%] text-right pr-2">
+                        <Text className="w-[20%] text-right pr-2 text-sm">
                           {t("FixedAssets.Months")}
                         </Text>
                         <TextInput
-                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2" placeholderTextColor="#585858"
+                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                           value={durationMonths}
                           onChangeText={(text) => {
                             const cleaned = text
@@ -1939,7 +1941,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.AnnualLeaseAmount")} *
                     </Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       value={leastAmountAnnually}
                       onChangeText={(text) => {
                         setLeastAmountAnnually(
@@ -1976,7 +1978,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.AnnualPermitFee")} *
                     </Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       value={permitFeeAnnually}
                       onChangeText={(text) => {
                         setPermitFeeAnnually(formatCurrency(text.trimStart()));
@@ -1996,7 +1998,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.AnnualPaymentFee")} *
                     </Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       value={paymentAnnually}
                       onChangeText={(text) => {
                         setPaymentAnnually(formatCurrency(text.trimStart()));
@@ -2015,7 +2017,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 </Text>
                 <SelectorButton
                   label={getLabel(generalConditionOptions, generalCondition)}
-                  placeholder={t("FixedAssets.SelectGeneralConditionIsRequired")}
+                  placeholder={t("FixedAssets.SelectGeneralCondition")}
                   onPress={() => {
                     Keyboard.dismiss();
                     setModalGeneralCondition(true);

@@ -8,6 +8,7 @@ import {
   Alert,
   RefreshControl,
   Modal,
+  BackHandler,
 } from "react-native";
 import {
   useFocusEffect,
@@ -354,6 +355,20 @@ const FarmDetailsScreen = () => {
       return null;
     }
   };
+
+   useFocusEffect(
+      React.useCallback(() => {
+        const onBackPress = () => {
+          navigation.navigate("Main", { screen: "MyCultivation" })
+          return true;
+        };
+        const subscription = BackHandler.addEventListener(
+          "hardwareBackPress",
+          onBackPress,
+        );
+        return () => subscription.remove();
+      }, [navigation]),
+    );
 
   const _fetchCertificateStatuses = async (
     token: string,
