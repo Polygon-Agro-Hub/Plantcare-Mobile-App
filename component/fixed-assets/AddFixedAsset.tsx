@@ -10,8 +10,6 @@ import {
   KeyboardAvoidingView,
   ActivityIndicator,
   BackHandler,
-  Modal,
-  TouchableWithoutFeedback,
 } from "react-native";
 import { StatusBar, Platform } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -19,6 +17,7 @@ import { RootStackParamList } from "../types/types";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import CustomDatePicker from "../common/CustomDatePicker";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
@@ -167,13 +166,6 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
 
   const [lbissuedDate, setLbIssuedDate] = useState<Date | null>(null);
   const [showLbIssuedDatePicker, setShowLbIssuedDatePicker] = useState(false);
-
-  // Temp values held while the iOS inline picker is open, committed only on OK.
-  const [tempPurchasedDate, setTempPurchasedDate] = useState<Date>(new Date());
-  const [tempExpireDate, setTempExpireDate] = useState<Date>(new Date());
-  const [tempStartDate, setTempStartDate] = useState<Date>(new Date());
-  const [tempIssuedDate, setTempIssuedDate] = useState<Date>(new Date());
-  const [tempLbIssuedDate, setTempLbIssuedDate] = useState<Date>(new Date());
 
   const [assetname, setAssetname] = useState("");
   const [othertool, setOthertool] = useState("");
@@ -401,34 +393,29 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
     clearError("lbissuedDate");
   };
 
-  // ---------- Open handlers: seed temp state, then show the picker ----------
+  // ---------- Open handlers: just show the picker ----------
   const handleOpenPurchasedPicker = () => {
     Keyboard.dismiss();
-    setTempPurchasedDate(purchasedDate || new Date());
     setShowPurchasedDatePicker(true);
   };
 
   const handleOpenExpirePicker = () => {
     Keyboard.dismiss();
-    setTempExpireDate(expireDate || purchasedDate || new Date());
     setShowExpireDatePicker(true);
   };
 
   const handleOpenStartPicker = () => {
     Keyboard.dismiss();
-    setTempStartDate(startDate || new Date());
     setShowStartDatePicker(true);
   };
 
   const handleOpenIssuedPicker = () => {
     Keyboard.dismiss();
-    setTempIssuedDate(issuedDate || new Date());
     setShowIssuedDatePicker(true);
   };
 
   const handleOpenLbIssuedPicker = () => {
     Keyboard.dismiss();
-    setTempLbIssuedDate(lbissuedDate || new Date());
     setShowLbIssuedDatePicker(true);
   };
 
@@ -473,32 +460,6 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
     if (event.type === "set" && selectedDate) applyLbIssuedDate(selectedDate);
   };
 
-  // ---------- iOS confirm (Modal OK button): commit temp value ----------
-  const onConfirmPurchasedDateIOS = () => {
-    applyPurchasedDate(tempPurchasedDate);
-    setShowPurchasedDatePicker(false);
-  };
-
-  const onConfirmExpireDateIOS = () => {
-    applyExpireDate(tempExpireDate);
-    setShowExpireDatePicker(false);
-  };
-
-  const onConfirmStartDateIOS = () => {
-    applyStartDate(tempStartDate);
-    setShowStartDatePicker(false);
-  };
-
-  const onConfirmIssuedDateIOS = () => {
-    applyIssuedDate(tempIssuedDate);
-    setShowIssuedDatePicker(false);
-  };
-
-  const onConfirmLbIssuedDateIOS = () => {
-    applyLbIssuedDate(tempLbIssuedDate);
-    setShowLbIssuedDatePicker(false);
-  };
-
   const warrantyStatusColor =
     purchasedDate && expireDate && expireDate > new Date()
       ? "#26D041"
@@ -518,18 +479,17 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
       <Text className="text-red-500 text-xs mt-1 ml-2">{errors[field]}</Text>
     ) : null;
 
-  // Reusable date field: trigger button + Android native dialog + iOS Modal
-  // (inline calendar with Cancel/OK). This is the pattern that reliably lets
-  // the user pick "today" on iOS — nothing commits until OK is tapped.
+  // Reusable date field: trigger button + Android native dialog + the
+  // CustomDatePicker calendar on iOS. CustomDatePicker owns its own selection
+  // state internally and only calls back once the user taps OK, so `onConfirm`
+  // is just the same validate-then-commit function used for Android.
   const DateField = ({
     value,
     placeholder,
     onOpen,
     showPicker,
     setShowPicker,
-    tempDate,
-    setTempDate,
-    onConfirmIOS,
+    onConfirm,
     onChangeAndroid,
     minimumDate,
     maximumDate,
@@ -540,9 +500,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
     onOpen: () => void;
     showPicker: boolean;
     setShowPicker: (v: boolean) => void;
-    tempDate: Date;
-    setTempDate: (d: Date) => void;
-    onConfirmIOS: () => void;
+    onConfirm: (date: Date) => void;
     onChangeAndroid: (event: DateTimePickerEvent, selectedDate?: Date) => void;
     minimumDate?: Date;
     maximumDate?: Date;
@@ -571,58 +529,17 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
           />
         )
       ) : (
-        <Modal
-          transparent
+        <CustomDatePicker
           visible={showPicker}
-          animationType="fade"
-          onRequestClose={() => setShowPicker(false)}
-        >
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={() => setShowPicker(false)}
-            className="flex-1 bg-black/50 justify-center items-center p-4"
-          >
-            <TouchableWithoutFeedback>
-              <View className="bg-white rounded-2xl p-4 w-full max-w-[340px] shadow-lg">
-                <Text className="text-black font-bold text-base mb-2 px-2">
-                  {modalTitle}
-                </Text>
-                <DateTimePicker
-                  value={tempDate}
-                  mode="date"
-                  display="inline"
-                  onChange={(_, selectedDate) => {
-                    if (selectedDate) setTempDate(selectedDate);
-                  }}
-                  minimumDate={minimumDate}
-                  maximumDate={maximumDate}
-                  themeVariant="light"
-                />
-                <View
-                  className="flex-row justify-end mt-3 pr-2"
-                  style={{ gap: 12 }}
-                >
-                  <TouchableOpacity
-                    onPress={() => setShowPicker(false)}
-                    className="px-4 py-2 rounded-lg"
-                  >
-                    <Text className="text-[#007AFF] font-semibold text-sm">
-                      {t("Main.Cancel", "Cancel")}
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={onConfirmIOS}
-                    className="bg-[#F7CA21] px-5 py-2 rounded-full"
-                  >
-                    <Text className="text-black font-semibold text-sm">
-                      {t("Main.OK")}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </TouchableWithoutFeedback>
-          </TouchableOpacity>
-        </Modal>
+          onClose={() => setShowPicker(false)}
+          value={value}
+          onConfirm={onConfirm}
+          minimumDate={minimumDate}
+          maximumDate={maximumDate}
+          title={modalTitle}
+          cancelText={t("Main.Cancel", "Cancel")}
+          confirmText={t("Main.OK")}
+        />
       )}
     </>
   );
@@ -1350,9 +1267,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       onOpen={handleOpenPurchasedPicker}
                       showPicker={showPurchasedDatePicker}
                       setShowPicker={setShowPurchasedDatePicker}
-                      tempDate={tempPurchasedDate}
-                      setTempDate={setTempPurchasedDate}
-                      onConfirmIOS={onConfirmPurchasedDateIOS}
+                      onConfirm={applyPurchasedDate}
                       onChangeAndroid={onChangePurchasedDateAndroid}
                       maximumDate={getEndOfToday()}
                       modalTitle={t("FixedAssets.PurchasedDate")}
@@ -1369,9 +1284,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       onOpen={handleOpenExpirePicker}
                       showPicker={showExpireDatePicker}
                       setShowPicker={setShowExpireDatePicker}
-                      tempDate={tempExpireDate}
-                      setTempDate={setTempExpireDate}
-                      onConfirmIOS={onConfirmExpireDateIOS}
+                      onConfirm={applyExpireDate}
                       onChangeAndroid={onChangeExpireDateAndroid}
                       minimumDate={purchasedDate || undefined}
                       maximumDate={maxDate}
@@ -1505,9 +1418,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       onOpen={handleOpenStartPicker}
                       showPicker={showStartDatePicker}
                       setShowPicker={setShowStartDatePicker}
-                      tempDate={tempStartDate}
-                      setTempDate={setTempStartDate}
-                      onConfirmIOS={onConfirmStartDateIOS}
+                      onConfirm={applyStartDate}
                       onChangeAndroid={onChangeStartDateAndroid}
                       maximumDate={getEndOfToday()}
                       modalTitle={t("FixedAssets.LeaseStartDate")}
@@ -1584,9 +1495,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       onOpen={handleOpenIssuedPicker}
                       showPicker={showIssuedDatePicker}
                       setShowPicker={setShowIssuedDatePicker}
-                      tempDate={tempIssuedDate}
-                      setTempDate={setTempIssuedDate}
-                      onConfirmIOS={onConfirmIssuedDateIOS}
+                      onConfirm={applyIssuedDate}
                       onChangeAndroid={onChangeIssuedDateAndroid}
                       maximumDate={getEndOfToday()}
                       modalTitle={t("FixedAssets.IssuedDate")}
@@ -1831,9 +1740,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       onOpen={handleOpenPurchasedPicker}
                       showPicker={showPurchasedDatePicker}
                       setShowPicker={setShowPurchasedDatePicker}
-                      tempDate={tempPurchasedDate}
-                      setTempDate={setTempPurchasedDate}
-                      onConfirmIOS={onConfirmPurchasedDateIOS}
+                      onConfirm={applyPurchasedDate}
                       onChangeAndroid={onChangePurchasedDateAndroid}
                       maximumDate={getEndOfToday()}
                       modalTitle={t("FixedAssets.PurchasedDate")}
@@ -1850,9 +1757,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       onOpen={handleOpenExpirePicker}
                       showPicker={showExpireDatePicker}
                       setShowPicker={setShowExpireDatePicker}
-                      tempDate={tempExpireDate}
-                      setTempDate={setTempExpireDate}
-                      onConfirmIOS={onConfirmExpireDateIOS}
+                      onConfirm={applyExpireDate}
                       onChangeAndroid={onChangeExpireDateAndroid}
                       minimumDate={purchasedDate || undefined}
                       maximumDate={maxDate}
@@ -1980,9 +1885,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       onOpen={handleOpenStartPicker}
                       showPicker={showStartDatePicker}
                       setShowPicker={setShowStartDatePicker}
-                      tempDate={tempStartDate}
-                      setTempDate={setTempStartDate}
-                      onConfirmIOS={onConfirmStartDateIOS}
+                      onConfirm={applyStartDate}
                       onChangeAndroid={onChangeStartDateAndroid}
                       maximumDate={getEndOfToday()}
                       modalTitle={t("FixedAssets.LeaseStartDate")}
@@ -2063,9 +1966,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       onOpen={handleOpenLbIssuedPicker}
                       showPicker={showLbIssuedDatePicker}
                       setShowPicker={setShowLbIssuedDatePicker}
-                      tempDate={tempLbIssuedDate}
-                      setTempDate={setTempLbIssuedDate}
-                      onConfirmIOS={onConfirmLbIssuedDateIOS}
+                      onConfirm={applyLbIssuedDate}
                       onChangeAndroid={onChangeLbIssuedDateAndroid}
                       maximumDate={getEndOfToday()}
                       modalTitle={t("FixedAssets.IssuedDate")}

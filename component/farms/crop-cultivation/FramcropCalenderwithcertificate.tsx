@@ -39,6 +39,7 @@ import * as ScreenCapture from "expo-screen-capture";
 import ImageViewerModal from "../../common/ImageViewerModal";
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import CustomHeader from "@/component/common/CustomHeader";
+import { Entypo } from "@expo/vector-icons";
 
 let Notifications: any = null;
 try {
@@ -169,50 +170,10 @@ function CameraScreen({
 
   if (permission === null) {
     return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "black",
-        }}
-      >
-        <Text style={{ color: "white", fontSize: 18, marginBottom: 16 }}>
+      <View className="flex-1 justify-center items-center bg-black">
+        <Text className="text-white text-lg mb-4">
           {t("CropCalender.loadingCameraPermission")}
         </Text>
-      </View>
-    );
-  }
-
-  if (!permission.granted) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "black",
-        }}
-      >
-        <Text
-          style={{
-            color: "white",
-            fontSize: 16,
-            marginBottom: 16,
-            textAlign: "center",
-            paddingHorizontal: 24,
-          }}
-        >
-          {t("CropCalender.loadingCameraPermission")}
-        </Text>
-        <TouchableOpacity
-          onPress={requestPermission}
-          style={{ backgroundColor: "#26D041", padding: 14, borderRadius: 50 }}
-        >
-          <Text style={{ color: "black", fontWeight: "600" }}>
-            {t("CropCalender.GrantPermission")}
-          </Text>
-        </TouchableOpacity>
       </View>
     );
   }
@@ -236,6 +197,26 @@ function CameraScreen({
         ref={(ref) => setCamera(ref)}
         onCameraReady={() => setIsCameraReady(true)}
       />
+
+      {/* Back Button - closes camera and returns to the previous popup */}
+      <TouchableOpacity
+        onPress={() => onClose(null)}
+        style={{
+          position: "absolute",
+          top: 50,
+          left: 20,
+          zIndex: 1000,
+          backgroundColor: "rgba(0,0,0,0.5)",
+          borderRadius: 20,
+          width: 40,
+          height: 40,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Entypo name="chevron-left" size={24} color="white" />
+      </TouchableOpacity>
+
       <View
         style={{
           position: "absolute",
@@ -651,7 +632,7 @@ const FramcropCalenderwithcertificate: React.FC<
 
         Alert.alert(
           t("Main.Success"),
-          t("Farms.Completion removed successfully"),
+          t("Farms.CompletionRemovedSuccessfully"),
         );
       } else {
         throw new Error("Invalid response from server");
@@ -2297,7 +2278,7 @@ const FramcropCalenderwithcertificate: React.FC<
 
       {/* Camera Modal */}
       <Modal
-        visible={showCameraModal && !capturedImage}
+        visible={showCameraModal && !showCamera && !capturedImage}
         animationType="fade"
         transparent
         onRequestClose={() => {

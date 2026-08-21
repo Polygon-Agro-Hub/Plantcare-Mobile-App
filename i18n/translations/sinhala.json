@@ -531,7 +531,8 @@
     "RENEW": "අලුත් කිරීම",
     "PRO": "PRO",
     "ID":"හැඳුනුම්පත",
-    "StaffMemberHasBeenUpdatedSuccessfully":"කාර්ය මණ්ඩල සාමාජිකයා සාර්ථකව යාවත්කාලීන කර ඇත."
+    "StaffMemberHasBeenUpdatedSuccessfully":"කාර්ය මණ්ඩල සාමාජිකයා සාර්ථකව යාවත්කාලීන කර ඇත.",
+    "CompletionRemovedSuccessfully":"සම්පූර්ණ කිරීම සාර්ථකව ඉවත් කරන ලදී"
   },
   "SelectCrop": {
     "Description": "විස්තරය",

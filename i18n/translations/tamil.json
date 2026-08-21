@@ -531,7 +531,8 @@
     "RENEW": "புதுப்பி",
     "PRO": "புரோ",
     "ID":"ஐடி",
-    "StaffMemberHasBeenUpdatedSuccessfully":"பணியாளர் வெற்றிகரமாகப் புதுப்பிக்கப்பட்டார்."
+    "StaffMemberHasBeenUpdatedSuccessfully":"பணியாளர் வெற்றிகரமாகப் புதுப்பிக்கப்பட்டார்.",
+    "CompletionRemovedSuccessfully":"நிறைவு வெற்றிகரமாக நீக்கப்பட்டது"
   },
   "SelectCrop": {
     "Description": "விளக்கம்",

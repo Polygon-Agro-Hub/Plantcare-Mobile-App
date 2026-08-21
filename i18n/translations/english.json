@@ -531,7 +531,8 @@
     "RENEW": "RENEW",
     "PRO": "PRO",
     "ID":"ID",
-    "StaffMemberHasBeenUpdatedSuccessfully":"Staff member has been updated successfully"
+    "StaffMemberHasBeenUpdatedSuccessfully":"Staff member has been updated successfully",
+    "CompletionRemovedSuccessfully":"Completion removed successfully"
   },
   "SelectCrop": {
     "Description": "Description",
@@ -953,7 +954,7 @@
     "Sowing": "Sowing",
     "HandFork": "Hand Fork",
     "CuttingKnife": "Cutting knife",
-    "LlukKaththa": "Iluk kaththa",
+    "IlukKaththa": "Iluk kaththa",
     "Kaththa": "Kaththa",
     "KaraDigaManna": "Kara diga manna",
     "CoconutHarvestingKnife": "Coconut harvesting knife",

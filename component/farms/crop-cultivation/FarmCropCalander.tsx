@@ -298,6 +298,17 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
     });
   };
 
+  // Closes the certification modal and navigates back to FarmDetailsScreen.
+  // Used by the chevron back button and the hardware back button so the
+  // modal never stays mounted/visible after navigating away.
+  const closeModalAndGoToFarmDetails = () => {
+    setCertificationModalVisible(false);
+    navigation.navigate("Main", {
+      screen: "FarmDetailsScreen",
+      params: { farmId: farmId },
+    });
+  };
+
   const completeTask = async (globalIndex: number, currentCrop: CropItem) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -895,6 +906,11 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
   useFocusEffect(
     useCallback(() => {
       const handleBackPress = () => {
+        // If the certification modal is open, close it as part of
+        // navigating back so it doesn't stay mounted/visible.
+        if (certificationModalVisible) {
+          setCertificationModalVisible(false);
+        }
         navigation.navigate("Main", {
           screen: "FarmDetailsScreen",
           params: { farmId: farmId },
@@ -906,7 +922,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
         handleBackPress,
       );
       return () => subscription.remove();
-    }, [navigation]),
+    }, [navigation, certificationModalVisible, farmId]),
   );
 
   const SkeletonLoader = () => {
@@ -1050,7 +1066,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
           animationType="slide"
           transparent={true}
           visible={certificationModalVisible}
-          onRequestClose={handleReject}
+          onRequestClose={closeModalAndGoToFarmDetails}
           className="mt-20"
           statusBarTranslucent={false}
         >
@@ -1064,14 +1080,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
           >
             <View className="bg-white rounded-b-3xl shadow-2xl">
               <View className="flex-row items-center justify-between px-5 pt-4 pb-4 ">
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate("Main", {
-                      screen: "FarmDetailsScreen",
-                      params: { farmId: farmId },
-                    })
-                  }
-                >
+                <TouchableOpacity onPress={closeModalAndGoToFarmDetails}>
                   <Ionicons
                     name="chevron-back-outline"
                     size={30}
@@ -1083,13 +1092,14 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
                 </Text>
                 <View>
                   <TouchableOpacity
-                    onPress={() =>
+                    onPress={() => {
+                      setCertificationModalVisible(false);
                       navigation.navigate("CropEnrol", {
                         status: "edit",
                         onCulscropID: crops[0]?.onCulscropID,
                         cropId,
-                      })
-                    }
+                      });
+                    }}
                   >
                     <Ionicons name="pencil" size={20} color="black" />
                   </TouchableOpacity>

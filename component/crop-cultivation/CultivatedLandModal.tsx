@@ -17,6 +17,7 @@ import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTranslation } from "react-i18next";
 import * as ImageManipulator from "expo-image-manipulator";
+import { Entypo } from "@expo/vector-icons";
 
 interface CultivatedLandModalProps {
   visible: boolean;
@@ -47,50 +48,10 @@ function CameraScreen({
 
   if (permission === null) {
     return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "black",
-        }}
-      >
-        <Text style={{ color: "white", fontSize: 18, marginBottom: 16 }}>
+      <View className="flex-1 justify-center items-center bg-black">
+        <Text className="text-white text-lg mb-4">
           {t("CropCalender.loadingCameraPermission")}
         </Text>
-      </View>
-    );
-  }
-
-  if (!permission.granted) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "black",
-        }}
-      >
-        <Text
-          style={{
-            color: "white",
-            fontSize: 16,
-            marginBottom: 16,
-            textAlign: "center",
-            paddingHorizontal: 24,
-          }}
-        >
-          Camera permission is required.
-        </Text>
-        <TouchableOpacity
-          onPress={requestPermission}
-          style={{ backgroundColor: "#26D041", padding: 14, borderRadius: 50 }}
-        >
-          <Text style={{ color: "black", fontWeight: "600" }}>
-            Grant Permission
-          </Text>
-        </TouchableOpacity>
       </View>
     );
   }
@@ -115,6 +76,25 @@ function CameraScreen({
         onCameraReady={() => setIsCameraReady(true)}
       />
 
+      {/* Back Button - closes camera and returns to the previous popup */}
+      <TouchableOpacity
+        onPress={() => onClose(null)}
+        style={{
+          position: "absolute",
+          top: 50,
+          left: 20,
+          zIndex: 1000,
+          backgroundColor: "rgba(0,0,0,0.5)",
+          borderRadius: 20,
+          width: 40,
+          height: 40,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Entypo name="chevron-left" size={24} color="white" />
+      </TouchableOpacity>
+
       <View
         style={{
           position: "absolute",
@@ -134,12 +114,15 @@ function CameraScreen({
             backgroundColor: "#2AAD7A",
             padding: 16,
             borderRadius: 50,
+            marginBottom: 12,
             flex: 1,
             alignItems: "center",
             justifyContent: "center",
           }}
         >
-          <Text style={{ color: "black", textAlign: "center" }}>{t("CropCalender.FlipCamera")}</Text>
+          <Text style={{ color: "black", textAlign: "center" }}>
+            {t("CropCalender.FlipCamera")}
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -148,12 +131,15 @@ function CameraScreen({
             backgroundColor: "#2AAD7A",
             padding: 16,
             borderRadius: 50,
+            marginBottom: 12,
             flex: 1,
             alignItems: "center",
             justifyContent: "center",
           }}
         >
-          <Text style={{ color: "black", fontWeight: "600", textAlign: "center" }}>
+          <Text
+            style={{ color: "black", fontWeight: "600", textAlign: "center" }}
+          >
             {t("CropCalender.Capture")}
           </Text>
         </TouchableOpacity>
@@ -544,6 +530,20 @@ export default function CultivatedLandModal({
       >
         <View className="flex-1 justify-center items-center bg-black/50 px-6">
           <View className="bg-white rounded-2xl p-6 shadow-lg items-center w-full">
+            {/* Close Button - top right */}
+            <TouchableOpacity
+              onPress={() => onClose()}
+              style={{
+                position: "absolute",
+                top: 12,
+                right: 12,
+                zIndex: 10,
+                padding: 6,
+              }}
+            >
+              <Entypo name="cross" size={24} color="#000" />
+            </TouchableOpacity>
+
             <View className="bg-gray-200 p-4 rounded-full mb-4">
               <Image
                 source={require("../../assets/images/crop-cultivation/camera.webp")}
