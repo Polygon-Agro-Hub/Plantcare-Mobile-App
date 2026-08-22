@@ -495,7 +495,7 @@ const ManageEditscreen: React.FC<ManageEditscreenProps> = ({
 
       Alert.alert(
         t("Main.Success"),
-        `${t("Farms.Staff member has been updated successfully")}`,
+        `${t("Farms.StaffMemberUpdated")}`,
         [
           {
             text: t("Farms.OK"),

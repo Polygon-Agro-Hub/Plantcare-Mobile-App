@@ -162,16 +162,8 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
         throw new Error('Download failed');
       }
 
-      // Save to media library
-      const asset = await MediaLibrary.createAssetAsync(downloadResult.uri);
-      
-      // Create album and save
-      const album = await MediaLibrary.getAlbumAsync('GoviCare');
-      if (album) {
-        await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
-      } else {
-        await MediaLibrary.createAlbumAsync('GoviCare', asset, false);
-      }
+      // Save to media library (directly saves to device gallery without triggering Android scoped storage modify prompt)
+      await MediaLibrary.createAssetAsync(downloadResult.uri);
 
       Alert.alert(
         t("Main.Success"), 

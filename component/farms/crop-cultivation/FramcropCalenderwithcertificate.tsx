@@ -25,7 +25,7 @@ import { environment } from "@/environment/environment";
 import i18n from "@/i18n/i18n";
 import { useTranslation } from "react-i18next";
 import * as ImageManipulator from "expo-image-manipulator";
-import CultivatedLandModal from "../../crop-cultivation/CultivatedLandModal";
+import CultivatedLandModal from "../../common/CultivatedLandModal";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -37,8 +37,8 @@ import * as Device from "expo-device";
 import Constants from "expo-constants";
 import * as ScreenCapture from "expo-screen-capture";
 import ImageViewerModal from "../../common/ImageViewerModal";
-import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import CustomHeader from "@/component/common/CustomHeader";
+import { Entypo } from "@expo/vector-icons";
 
 let Notifications: any = null;
 try {
@@ -150,145 +150,6 @@ interface CertificateData {
   questionnaireItems: QuestionnaireItem[];
 }
 
-function CameraScreen({
-  onClose,
-}: {
-  onClose: (capturedImageUri: string | null) => void;
-}) {
-  const [facing, setFacing] = useState<CameraType>("back");
-  const [permission, requestPermission] = useCameraPermissions();
-  const [camera, setCamera] = useState<CameraView | null>(null);
-  const [isCameraReady, setIsCameraReady] = useState(false);
-  const { t } = useTranslation();
-
-  useEffect(() => {
-    if (permission?.granted === false) {
-      requestPermission();
-    }
-  }, [permission]);
-
-  if (permission === null) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "black",
-        }}
-      >
-        <Text style={{ color: "white", fontSize: 18, marginBottom: 16 }}>
-          {t("CropCalender.loadingCameraPermission")}
-        </Text>
-      </View>
-    );
-  }
-
-  if (!permission.granted) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "black",
-        }}
-      >
-        <Text
-          style={{
-            color: "white",
-            fontSize: 16,
-            marginBottom: 16,
-            textAlign: "center",
-            paddingHorizontal: 24,
-          }}
-        >
-          {t("CropCalender.loadingCameraPermission")}
-        </Text>
-        <TouchableOpacity
-          onPress={requestPermission}
-          style={{ backgroundColor: "#26D041", padding: 14, borderRadius: 50 }}
-        >
-          <Text style={{ color: "black", fontWeight: "600" }}>
-            {t("CropCalender.GrantPermission")}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
-  const toggleCameraFacing = () => {
-    setFacing((current) => (current === "back" ? "front" : "back"));
-  };
-
-  const captureImage = async () => {
-    if (camera && isCameraReady) {
-      const photo = await camera.takePictureAsync();
-      onClose(photo?.uri ?? null);
-    }
-  };
-
-  return (
-    <View style={{ flex: 1, backgroundColor: "black" }}>
-      <CameraView
-        style={{ flex: 1 }}
-        facing={facing}
-        ref={(ref) => setCamera(ref)}
-        onCameraReady={() => setIsCameraReady(true)}
-      />
-      <View
-        style={{
-          position: "absolute",
-          bottom: 50,
-          left: 0,
-          right: 0,
-          flexDirection: "row",
-          justifyContent: "center",
-          paddingHorizontal: 24,
-          gap: 16,
-          zIndex: 1000,
-        }}
-      >
-        <TouchableOpacity
-          onPress={toggleCameraFacing}
-          style={{
-            backgroundColor: "#2AAD7A",
-            padding: 16,
-            borderRadius: 50,
-            marginBottom: 12,
-            flex: 1,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text style={{ color: "black", textAlign: "center" }}>
-            {t("CropCalender.FlipCamera")}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={captureImage}
-          style={{
-            backgroundColor: "#2AAD7A",
-            padding: 16,
-            borderRadius: 50,
-            marginBottom: 12,
-            flex: 1,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text
-            style={{ color: "black", fontWeight: "600", textAlign: "center" }}
-          >
-            {t("CropCalender.Capture")}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-}
-
 const FramcropCalenderwithcertificate: React.FC<
   FramcropCalenderwithcertificateProps
 > = ({ navigation, route }) => {
@@ -336,30 +197,8 @@ const FramcropCalenderwithcertificate: React.FC<
   const [showCertificationModal, setShowCertificationModal] = useState(false);
 
   const [showCameraModal, setShowCameraModal] = useState(false);
-  const [showCamera, setShowCamera] = useState(false);
   const [selectedQuestion, setSelectedQuestion] =
     useState<QuestionnaireItem | null>(null);
-  const [capturedImage, setCapturedImage] = useState<string | null>(null);
-  const [countdown, setCountdown] = useState(3);
-  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
-
-  useEffect(() => {
-    if (capturedImage) {
-      setIsButtonEnabled(false);
-      setCountdown(3);
-      const timer = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            setIsButtonEnabled(true);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [capturedImage]);
 
   const showCertificationLockAlert = () => {
     setShowCertificationModal(true);
@@ -651,7 +490,7 @@ const FramcropCalenderwithcertificate: React.FC<
 
         Alert.alert(
           t("Main.Success"),
-          t("Farms.Completion removed successfully"),
+          t("Farms.CompletionRemovedSuccessfully"),
         );
       } else {
         throw new Error("Invalid response from server");
@@ -675,11 +514,12 @@ const FramcropCalenderwithcertificate: React.FC<
     }
   };
 
-  const handleSubmitPhoto = async () => {
-    if (!capturedImage || !selectedQuestion) return;
-
+  const handleUploadQuestionnairePhoto = async (
+    imageUri: string,
+    question: QuestionnaireItem,
+  ) => {
     try {
-      setUploadingImageForItem(selectedQuestion.id);
+      setUploadingImageForItem(question.id);
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
@@ -689,7 +529,7 @@ const FramcropCalenderwithcertificate: React.FC<
       }
 
       const manipulatedImage = await ImageManipulator.manipulateAsync(
-        capturedImage,
+        imageUri,
         [
           {
             resize: {
@@ -705,7 +545,7 @@ const FramcropCalenderwithcertificate: React.FC<
         },
       );
 
-      const fileName = `questionnaire_${selectedQuestion.id}_${Date.now()}.jpg`;
+      const fileName = `questionnaire_${question.id}_${Date.now()}.jpg`;
       const fileType = "image/jpeg";
 
       const formData = new FormData();
@@ -714,12 +554,12 @@ const FramcropCalenderwithcertificate: React.FC<
         type: fileType,
         name: fileName,
       } as any);
-      formData.append("itemId", selectedQuestion.id.toString());
-      formData.append("slaveId", selectedQuestion.slaveId.toString());
+      formData.append("itemId", question.id.toString());
+      formData.append("slaveId", question.slaveId.toString());
       formData.append("farmId", farmId.toString());
 
       const response = await axios.post(
-        `${environment.API_BASE_URL}api/certificate/questionnaire-item/upload-image/${selectedQuestion.id}`,
+        `${environment.API_BASE_URL}api/certificate/questionnaire-item/upload-image/${question.id}`,
         formData,
         {
           headers: {
@@ -732,7 +572,7 @@ const FramcropCalenderwithcertificate: React.FC<
 
       if (response.data.success) {
         const updatedItems = questionnaireItems.map((prevItem) =>
-          prevItem.id === selectedQuestion.id
+          prevItem.id === question.id
             ? {
                 ...prevItem,
                 uploadImage: response.data.imageUrl,
@@ -746,21 +586,11 @@ const FramcropCalenderwithcertificate: React.FC<
         const isComplete = checkCertificationCompletion(updatedItems);
         setAreCertificationTasksComplete(isComplete);
 
-        const pending = updatedItems.filter((item) => {
-          if (item.type === "Tick Off") return item.tickResult !== 1;
-          if (item.type === "Photo Proof") return item.uploadImage === null;
-          return false;
-        });
-
         Alert.alert(
           t("Main.Success"),
           t("CropCalender.CertificateTaskCompletedSuccessfully"),
           [{ text: t("Main.OK") }],
         );
-
-        setShowCameraModal(false);
-        setCapturedImage(null);
-        setSelectedQuestion(null);
       }
     } catch (error: any) {
       console.error("Error uploading questionnaire image:", error);
@@ -780,11 +610,95 @@ const FramcropCalenderwithcertificate: React.FC<
     }
   };
 
-  const handleCameraClose = (imageUri: string | null) => {
-    setShowCamera(false);
-    if (imageUri) {
-      setCapturedImage(imageUri);
-      setShowCameraModal(true);
+  const handleUploadCalendarTaskImage = async (
+    imageUri: string,
+    crop: CropItem,
+    isLastImage: boolean,
+  ) => {
+    try {
+      setLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+
+      const manipResult = await ImageManipulator.manipulateAsync(
+        imageUri,
+        [{ resize: { width: 800 } }],
+        { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG },
+      );
+
+      const fileName = manipResult.uri.split("/").pop();
+      const fileType = fileName?.split(".").pop()
+        ? `image/${fileName.split(".").pop()}`
+        : "image/jpeg";
+
+      const formData = new FormData();
+      formData.append("image", {
+        uri: manipResult.uri,
+        name: fileName,
+        type: fileType,
+      } as any);
+      formData.append("slaveId", crop.id);
+      formData.append("farmId", farmId.toString());
+      formData.append("onCulscropID", crop.onCulscropID.toString());
+
+      await axios.post(
+        `${environment.API_BASE_URL}api/auth/calendar-tasks/upload-image`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+          timeout: 60000,
+        },
+      );
+
+      setTasksWithImages((prev) => new Set(prev).add(crop.id));
+
+      if (isLastImage) {
+        await axios.post(
+          `${environment.API_BASE_URL}api/crop/update-slave`,
+          {
+            id: crop.id,
+            status: "completed",
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        const cropIndex = crops.findIndex((c) => c.id === crop.id);
+        if (cropIndex !== -1) {
+          const updatedChecked = [...checked];
+          updatedChecked[cropIndex] = true;
+          setChecked(updatedChecked);
+
+          const now = moment().toISOString();
+          const updatedTimestamps = [...timestamps];
+          updatedTimestamps[cropIndex] = now;
+          setTimestamps(updatedTimestamps);
+          await AsyncStorage.setItem(`taskTimestamp_${cropIndex}`, now);
+
+          setLastCompletedIndex(cropIndex);
+        }
+
+        await fetchCropswithoutload();
+        Alert.alert(
+          t("Main.Success"),
+          t("CropCalender.TaskStatusUpdatedSuccessfully"),
+          [{ text: t("Main.OK") }],
+        );
+      }
+    } catch (error: any) {
+      console.error("Error uploading calendar task image:", error);
+      Alert.alert(
+        t("Main.Error"),
+        t("CropCalender.UploadRetryFailed"),
+        [{ text: t("Main.OK") }],
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -1067,6 +981,12 @@ const FramcropCalenderwithcertificate: React.FC<
     }
 
     const newStatus = checked[globalIndex] ? "pending" : "completed";
+
+    if (!checked[globalIndex] && currentCrop.reqImages > 0) {
+      setLastCompletedIndex(globalIndex);
+      setCultivatedLandModalVisible(true);
+      return;
+    }
 
     let updateMessage = "";
 
@@ -1603,7 +1523,12 @@ const FramcropCalenderwithcertificate: React.FC<
             uri: taskImage.image,
             title: `Task ${crop.taskIndex} - Photo ${index + 1}`,
             description: crop.taskDescriptionEnglish,
-            uploadedBy: taskImage.uploadedBy,
+            uploadedBy:
+              taskImage.uploadedBy ||
+              taskImage.userName ||
+              taskImage.name ||
+              taskImage.uploaderName ||
+              taskImage.user_name,
             createdAt: taskImage.createdAt,
           }),
         );
@@ -1673,10 +1598,18 @@ const FramcropCalenderwithcertificate: React.FC<
           <CultivatedLandModal
             visible={isCultivatedLandModalVisible}
             onClose={() => setCultivatedLandModalVisible(false)}
-            cropId={crops[lastCompletedIndex].id}
-            farmId={Number(farmId)}
-            onCulscropID={crops[lastCompletedIndex].onCulscropID}
-            requiredImages={0}
+            onCaptureImage={async (imageUri, isLastImage) => {
+              const currentCrop = crops[lastCompletedIndex];
+              if (isLastImage) {
+                setCultivatedLandModalVisible(false);
+              }
+              await handleUploadCalendarTaskImage(
+                imageUri,
+                currentCrop,
+                isLastImage,
+              );
+            }}
+            requiredImages={crops[lastCompletedIndex].reqImages || 1}
           />
         )}
 
@@ -1905,7 +1838,10 @@ const FramcropCalenderwithcertificate: React.FC<
                                         : language === "ta"
                                           ? item.qTamil
                                           : item.qEnglish,
-                                    uploadedBy: t("ImageViewerModal.You"),
+                                    uploadedBy:
+                                      (item as any).uploadedBy ||
+                                      (item as any).userName ||
+                                      "Owner",
                                     from: "certificate",
                                   },
                                 ]);
@@ -2295,140 +2231,23 @@ const FramcropCalenderwithcertificate: React.FC<
         }}
       />
 
-      {/* Camera Modal */}
-      <Modal
-        visible={showCameraModal && !capturedImage}
-        animationType="fade"
-        transparent
-        onRequestClose={() => {
-          setShowCameraModal(false);
-          setSelectedQuestion(null);
-        }}
-      >
-        <View className="flex-1 bg-black/50 justify-center items-center px-6">
-          <View className="bg-white rounded-2xl p-8 items-center w-full">
-            <View className="p-2 bg-[#F6F6F6] rounded-xl">
-              <Ionicons name="camera" size={45} color="#000" />
-            </View>
-
-            <Text className="text-lg font-semibold mt-2 text-center">
-              {t("Farms.ClickAPhoto")}
-            </Text>
-
-            <Text className="text-gray-500 text-center mt-2 mb-6">
-              {t("Farms.PleaseTakeAPhotoOfTheCompletedWorkInTheField")}
-            </Text>
-
-            <TouchableOpacity
-              onPress={() => setShowCamera(true)}
-              className="bg-black py-2 px-6 rounded-full h-[50px] items-center justify-center w-full"
-            >
-              <Text className="text-white text-base">
-                {t("CropCalender.OpenCamera")}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => {
-                setShowCameraModal(false);
-                setSelectedQuestion(null);
-              }}
-              className="mt-4"
-            >
-              <Text className="text-gray-400 text-sm">{t("Main.Cancel")}</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Camera Screen Modal */}
-      <Modal visible={showCamera} animationType="slide" transparent={false}>
-        <CameraScreen
-          onClose={(imageUri) => {
-            handleCameraClose(imageUri);
-          }}
-        />
-      </Modal>
-
-      {/* Image Preview Modal (after capture) */}
-      {capturedImage && (
-        <Modal
-          visible={capturedImage !== null}
-          animationType="fade"
-          transparent
-          onRequestClose={() => {
-            setCapturedImage(null);
+      {/* Questionnaire Item Camera Modal */}
+      {showCameraModal && selectedQuestion && (
+        <CultivatedLandModal
+          visible={showCameraModal}
+          onClose={() => {
             setShowCameraModal(false);
+            setSelectedQuestion(null);
           }}
-        >
-          <View className="flex-1 bg-black/50 justify-center items-center px-6">
-            <View className="bg-white rounded-2xl p-6 shadow-lg items-center w-full">
-              <Text className="text-lg font-semibold mb-2">
-                {t("CropCalender.ImagePreview")}
-              </Text>
-
-              <Image
-                source={{ uri: capturedImage }}
-                style={{ width: 250, height: 250, marginBottom: 20 }}
-                resizeMode="contain"
-                className="mt-2"
-              />
-
-              <View className="gap-4 w-full">
-                {isButtonEnabled ? (
-                  <Text className="text-center font-semibold">
-                    {t("Farms.ReadyToSubmit")}
-                  </Text>
-                ) : (
-                  <Text className="text-gray-600 text-center text-lg">
-                    {countdown} {t("Farms.Seconds")}
-                  </Text>
-                )}
-
-                <TouchableOpacity
-                  onPress={handleSubmitPhoto}
-                  className={`py-2 px-6 rounded-full h-[50px] items-center justify-center ${
-                    isButtonEnabled ? "bg-[#353535]" : "bg-gray-400"
-                  }`}
-                  disabled={
-                    uploadingImageForItem === selectedQuestion?.id ||
-                    !isButtonEnabled
-                  }
-                >
-                  {uploadingImageForItem === selectedQuestion?.id ? (
-                    <ActivityIndicator size="small" color="#fff" />
-                  ) : (
-                    <Text className="text-white text-base text-center">
-                      {t("Farms.Submit")}
-                    </Text>
-                  )}
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => setShowCamera(true)}
-                  className="border-2 border-black bg-white py-2 px-6 rounded-full h-[50px] items-center justify-center"
-                >
-                  <Text className="text-black text-base text-center">
-                    {t("Farms.RetakePreviousPhoto")}
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => {
-                    setCapturedImage(null);
-                    setShowCameraModal(false);
-                    setSelectedQuestion(null);
-                  }}
-                  className="items-center mt-2"
-                >
-                  <Text className="text-gray-400 text-sm">
-                    {t("Main.Cancel")}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
+          onCaptureImage={(imageUri) => {
+            const currentQ = selectedQuestion;
+            setShowCameraModal(false);
+            setSelectedQuestion(null);
+            handleUploadQuestionnairePhoto(imageUri, currentQ);
+          }}
+          title={t("Farms.ClickAPhoto")}
+          subtitle={t("Farms.PleaseTakeAPhotoOfTheCompletedWorkInTheField.")}
+        />
       )}
     </View>
   );

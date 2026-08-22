@@ -12,6 +12,7 @@
     "GoBack": "Go Back",
     "Continue": "Continue",
     "Search...": "Search...",
+    "Search": "Search",
     "Loading...": "Loading...",
     "TypeHere": "--Type here--",
     "NoInternetConnection": "No Internet Connection.",
@@ -414,6 +415,7 @@
     "EnterFarmNameHere": "Enter Farm Name Here",
     "SearchDistrict": "Search district",
     "SearchCountry":"Search country...",
+    "NoCountriesFound":"No countries found",
     "EnterPlotNumberHere": "Enter Plot Number Here",
     "EnterStreetName": "Enter Street Name",
     "EnterCityName": "Enter City Name",
@@ -480,6 +482,7 @@
     "Crops": "Crops",
     "MyCultivation": "My Cultivation",
     "SelectAFarmToManageYourCultivationAndAssets": "Select a farm to manage your cultivation and assets",
+    "StaffMemberUpdated":"Staff member has been updated successfully",
     "Assets": "Assets",
     "Cultivation": "Cultivation",
     "StaffMember": "Staff Member -",
@@ -531,7 +534,8 @@
     "RENEW": "RENEW",
     "PRO": "PRO",
     "ID":"ID",
-    "StaffMemberHasBeenUpdatedSuccessfully":"Staff member has been updated successfully"
+    "StaffMemberHasBeenUpdatedSuccessfully":"Staff member has been updated successfully",
+    "CompletionRemovedSuccessfully":"Completion removed successfully"
   },
   "SelectCrop": {
     "Description": "Description",
@@ -618,7 +622,8 @@
     "GAPCertification": "GAP Certification",
     "CheckingValidity": "Checking validity...",
     "CertificateExpired": "Certificate Expired",
-    "NoActiveCertificate": "No active certificate"
+    "NoActiveCertificate": "No active certificate",
+    "GrantPermission":"Grant Permission"
   },
   "Manager": {
     "ManageWorkers": "Manage Workers",
@@ -812,10 +817,12 @@
     "SelectAssetIsRequired": "Select Asset is required",
     "AssetType": "Asset Type",
     "SelectAssetTypeIsRequired": "Select Asset Type is required",
+    "SelectType":"Select Type",
     "AssetAddSuccessfuly": "Asset added successfully!",
     "NumberOfUnits": "Number of Units",
     "NumberOfUnitsIsRequired": "Number of units is required",
     "UnitPrice": "Unit Price (LKR)",
+    "UnitPrices":"Unit Price",
     "UnitPriceIsRequired": "Unit price is required",
     "TotalPrice": "Total Price (LKR)",
     "Warranty": "Warranty",
@@ -871,6 +878,8 @@
     "EnterAnnualPermitFee": "Enter Annual Permit Fee (LKR)",
     "NoAssetsAvailableForThisCategory": "No assets available for this category",
     "SelectOwnershipCategoryIsRequired": "Select Ownership Category is required",
+    "SelectOwnership":"Select Ownership",
+    "SelectGeneralCondition":"Select General Condition",
     "OwnBuildingWithTitleOwnership": "Own Building (with title ownership)",
     "LeasedBuilding": "Leased Building",
     "NoToolsSelected": "No Tools Selected",
@@ -922,7 +931,7 @@
     "SelectDate": "Select Date",
     "WarrantyPurchasedDateIsRequired": "Warranty Purchased Date is required",
     "WarrantyExpireDateIsRequired": "Warranty Expire Date is required",
-    "AssetTypeSelect": "Asset Type Select",
+    "AssetTypeSelect": "Select Asset Type",
     "PermitBuilding": "Permitted Building",
     "SharedOwnership": "Shared",
     "Good": "Good",
@@ -953,7 +962,7 @@
     "Sowing": "Sowing",
     "HandFork": "Hand Fork",
     "CuttingKnife": "Cutting knife",
-    "LlukKaththa": "Iluk kaththa",
+    "IlukKaththa": "Iluk kaththa",
     "Kaththa": "Kaththa",
     "KaraDigaManna": "Kara diga manna",
     "CoconutHarvestingKnife": "Coconut harvesting knife",
@@ -1089,7 +1098,8 @@
     "OutOf": "out of",
     "Photo": "Photo",
     "Photos": "Photos",
-    "You": "You"
+    "You": "You",
+    "Owner": "Owner"
   },
   "PublicForum": {
     "StartANewDiscussion": "Start a new discussion",
@@ -1121,7 +1131,7 @@
     "NoDiscussionsAvailable": "No discussions available",
     "DeletePost": "Delete Post",
     "AreYouSureYouWantToDeleteThisPost": "Are you sure you want to delete this post?",
-    "PostDeleteSuccessful": "Post Delete Successful!",
+    "PostDeleteSuccessful": "Post deleted successfully!",
     "error": "Error",
     "failedToDelete": "Failed to delete post",
     "AreYouSureYouWantToDeleteThisComment": "Are you sure you want to delete this comment?",

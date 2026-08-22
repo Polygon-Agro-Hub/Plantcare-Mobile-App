@@ -20,6 +20,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import countryData from "@/assets/jsons/common/country-flag.json";
 import CustomHeader from "../common/CustomHeader";
 import GlobalSearchModal from "../common/GlobalSearchModal";
+import { MaterialIcons } from "@expo/vector-icons";
 
 interface RouteParams {
   farmId: number;
@@ -256,11 +257,9 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
           [{ text: t("Main.OK") }],
         );
       } else if (phoneNumber[0] !== "7") {
-        Alert.alert(
-          t("Main.Sorry"),
-          t("Farms.PhoneNumberMustStartWith7"),
-          [{ text: t("Main.OK") }],
-        );
+        Alert.alert(t("Main.Sorry"), t("Farms.PhoneNumberMustStartWith7"), [
+          { text: t("Main.OK") },
+        ]);
       } else if (phoneNumber.length > 9) {
         Alert.alert(
           t("Main.Sorry"),
@@ -284,24 +283,18 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
       return false;
     }
     if (phoneError) {
-      Alert.alert(t("Main.Sorry"), phoneError, [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(t("Main.Sorry"), phoneError, [{ text: t("Main.OK") }]);
       return false;
     }
     if (validationError) {
-      Alert.alert(t("Main.Sorry"), validationError, [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(t("Main.Sorry"), validationError, [{ text: t("Main.OK") }]);
       return false;
     }
 
     if (nicErrors) {
-      Alert.alert(
-        t("Main.Sorry"),
-        t("Farms.PleaseEnterAValidSriLankanNIC"),
-        [{ text: t("Main.OK") }],
-      );
+      Alert.alert(t("Main.Sorry"), t("Farms.PleaseEnterAValidSriLankanNIC"), [
+        { text: t("Main.OK") },
+      ]);
       return false;
     }
     if (nicDuplicateErrors) {
@@ -362,9 +355,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
       );
     } catch (error: any) {
       console.error("Error in handleSave:", error);
-      let errorMessage = t(
-        "Farms.FailedToAddStaffMemberPleaseTryAgain",
-      );
+      let errorMessage = t("Farms.FailedToAddStaffMemberPleaseTryAgain");
 
       if (error.response) {
         errorMessage = error.response.data?.message || errorMessage;
@@ -528,7 +519,7 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
               >
                 {getSelectedRoleLabel()}
               </Text>
-              <Text className="text-gray-500">▼</Text>
+              <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
             </TouchableOpacity>
           </View>
 
@@ -575,12 +566,13 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
             <View className="flex-row items-center gap-2">
               <TouchableOpacity
                 onPress={() => setCountryCodeModalVisible(true)}
-                className="bg-[#F4F4F4] rounded-3xl h-[50px] w-1/3 px-3 justify-center items-center"
+                className="bg-[#F4F4F4] rounded-3xl h-[50px] w-1/3 px-3 flex-row justify-between items-center"
                 disabled={isSubmitting}
               >
                 <Text className="text-base text-gray-900">
                   {getSelectedCountryCodeLabel()}
                 </Text>
+                <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
               </TouchableOpacity>
 
               <View className="flex-1 bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
@@ -700,13 +692,13 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
         <GlobalSearchModal
           visible={countryCodeModalVisible}
           onClose={() => setCountryCodeModalVisible(false)}
-          title={t("Farms.Select Country Code")}
+          title={t("Farms.SelectCountryCode")}
           data={countryCodeItems}
           selectedItems={[countryCode]}
           onSelect={handleCountryCodeSelect}
-          searchPlaceholder={t("Farms.Search country...")}
+          searchPlaceholder={t("Farms.SearchCountry")}
           doneButtonText={t("Farms.Done")}
-          noResultsText={t("Farms.No countries found")}
+          noResultsText={t("Farms.NoCountriesFound")}
           multiSelect={false}
           searchKeys={["label", "countryName", "dialCode"]}
         />

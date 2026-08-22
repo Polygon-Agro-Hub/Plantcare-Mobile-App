@@ -317,13 +317,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   confirmButton: {
-    backgroundColor: "#F7CA21",
+    backgroundColor: "#2AAD7A",
     paddingHorizontal: 20,
     paddingVertical: 8,
     borderRadius: 9999,
   },
   confirmText: {
-    color: "#000000",
+    color: "#ffffff",
     fontWeight: "600",
     fontSize: 14,
   },

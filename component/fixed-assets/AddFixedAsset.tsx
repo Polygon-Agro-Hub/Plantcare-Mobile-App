@@ -10,8 +10,6 @@ import {
   KeyboardAvoidingView,
   ActivityIndicator,
   BackHandler,
-  Modal,
-  TouchableWithoutFeedback,
 } from "react-native";
 import { StatusBar, Platform } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -19,6 +17,7 @@ import { RootStackParamList } from "../types/types";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import CustomDatePicker from "../common/CustomDatePicker";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
@@ -167,13 +166,6 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
 
   const [lbissuedDate, setLbIssuedDate] = useState<Date | null>(null);
   const [showLbIssuedDatePicker, setShowLbIssuedDatePicker] = useState(false);
-
-  // Temp values held while the iOS inline picker is open, committed only on OK.
-  const [tempPurchasedDate, setTempPurchasedDate] = useState<Date>(new Date());
-  const [tempExpireDate, setTempExpireDate] = useState<Date>(new Date());
-  const [tempStartDate, setTempStartDate] = useState<Date>(new Date());
-  const [tempIssuedDate, setTempIssuedDate] = useState<Date>(new Date());
-  const [tempLbIssuedDate, setTempLbIssuedDate] = useState<Date>(new Date());
 
   const [assetname, setAssetname] = useState("");
   const [othertool, setOthertool] = useState("");
@@ -401,34 +393,29 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
     clearError("lbissuedDate");
   };
 
-  // ---------- Open handlers: seed temp state, then show the picker ----------
+  // ---------- Open handlers: just show the picker ----------
   const handleOpenPurchasedPicker = () => {
     Keyboard.dismiss();
-    setTempPurchasedDate(purchasedDate || new Date());
     setShowPurchasedDatePicker(true);
   };
 
   const handleOpenExpirePicker = () => {
     Keyboard.dismiss();
-    setTempExpireDate(expireDate || purchasedDate || new Date());
     setShowExpireDatePicker(true);
   };
 
   const handleOpenStartPicker = () => {
     Keyboard.dismiss();
-    setTempStartDate(startDate || new Date());
     setShowStartDatePicker(true);
   };
 
   const handleOpenIssuedPicker = () => {
     Keyboard.dismiss();
-    setTempIssuedDate(issuedDate || new Date());
     setShowIssuedDatePicker(true);
   };
 
   const handleOpenLbIssuedPicker = () => {
     Keyboard.dismiss();
-    setTempLbIssuedDate(lbissuedDate || new Date());
     setShowLbIssuedDatePicker(true);
   };
 
@@ -473,32 +460,6 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
     if (event.type === "set" && selectedDate) applyLbIssuedDate(selectedDate);
   };
 
-  // ---------- iOS confirm (Modal OK button): commit temp value ----------
-  const onConfirmPurchasedDateIOS = () => {
-    applyPurchasedDate(tempPurchasedDate);
-    setShowPurchasedDatePicker(false);
-  };
-
-  const onConfirmExpireDateIOS = () => {
-    applyExpireDate(tempExpireDate);
-    setShowExpireDatePicker(false);
-  };
-
-  const onConfirmStartDateIOS = () => {
-    applyStartDate(tempStartDate);
-    setShowStartDatePicker(false);
-  };
-
-  const onConfirmIssuedDateIOS = () => {
-    applyIssuedDate(tempIssuedDate);
-    setShowIssuedDatePicker(false);
-  };
-
-  const onConfirmLbIssuedDateIOS = () => {
-    applyLbIssuedDate(tempLbIssuedDate);
-    setShowLbIssuedDatePicker(false);
-  };
-
   const warrantyStatusColor =
     purchasedDate && expireDate && expireDate > new Date()
       ? "#26D041"
@@ -518,18 +479,17 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
       <Text className="text-red-500 text-xs mt-1 ml-2">{errors[field]}</Text>
     ) : null;
 
-  // Reusable date field: trigger button + Android native dialog + iOS Modal
-  // (inline calendar with Cancel/OK). This is the pattern that reliably lets
-  // the user pick "today" on iOS — nothing commits until OK is tapped.
+  // Reusable date field: trigger button + Android native dialog + the
+  // CustomDatePicker calendar on iOS. CustomDatePicker owns its own selection
+  // state internally and only calls back once the user taps OK, so `onConfirm`
+  // is just the same validate-then-commit function used for Android.
   const DateField = ({
     value,
     placeholder,
     onOpen,
     showPicker,
     setShowPicker,
-    tempDate,
-    setTempDate,
-    onConfirmIOS,
+    onConfirm,
     onChangeAndroid,
     minimumDate,
     maximumDate,
@@ -540,9 +500,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
     onOpen: () => void;
     showPicker: boolean;
     setShowPicker: (v: boolean) => void;
-    tempDate: Date;
-    setTempDate: (d: Date) => void;
-    onConfirmIOS: () => void;
+    onConfirm: (date: Date) => void;
     onChangeAndroid: (event: DateTimePickerEvent, selectedDate?: Date) => void;
     minimumDate?: Date;
     maximumDate?: Date;
@@ -553,7 +511,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
         onPress={onOpen}
         className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2 mb-2"
       >
-        <Text className={`flex-1 ${!value ? "text-[#6B7280]" : "text-black"}`}>
+        <Text className={`text-sm flex-1 ${!value ? "text-[#6B7280]" : "text-black"}`}>
           {value ? formatDate(value) : placeholder}
         </Text>
         <EvilIcons name="calendar" size={28} color="#5e5d5d" />
@@ -571,58 +529,17 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
           />
         )
       ) : (
-        <Modal
-          transparent
+        <CustomDatePicker
           visible={showPicker}
-          animationType="fade"
-          onRequestClose={() => setShowPicker(false)}
-        >
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={() => setShowPicker(false)}
-            className="flex-1 bg-black/50 justify-center items-center p-4"
-          >
-            <TouchableWithoutFeedback>
-              <View className="bg-white rounded-2xl p-4 w-full max-w-[340px] shadow-lg">
-                <Text className="text-black font-bold text-base mb-2 px-2">
-                  {modalTitle}
-                </Text>
-                <DateTimePicker
-                  value={tempDate}
-                  mode="date"
-                  display="inline"
-                  onChange={(_, selectedDate) => {
-                    if (selectedDate) setTempDate(selectedDate);
-                  }}
-                  minimumDate={minimumDate}
-                  maximumDate={maximumDate}
-                  themeVariant="light"
-                />
-                <View
-                  className="flex-row justify-end mt-3 pr-2"
-                  style={{ gap: 12 }}
-                >
-                  <TouchableOpacity
-                    onPress={() => setShowPicker(false)}
-                    className="px-4 py-2 rounded-lg"
-                  >
-                    <Text className="text-[#007AFF] font-semibold text-sm">
-                      {t("Main.Cancel", "Cancel")}
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={onConfirmIOS}
-                    className="bg-[#F7CA21] px-5 py-2 rounded-full"
-                  >
-                    <Text className="text-black font-semibold text-sm">
-                      {t("Main.OK")}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </TouchableWithoutFeedback>
-          </TouchableOpacity>
-        </Modal>
+          onClose={() => setShowPicker(false)}
+          value={value}
+          onConfirm={onConfirm}
+          minimumDate={minimumDate}
+          maximumDate={maximumDate}
+          title={modalTitle}
+          cancelText={t("Main.Cancel", "Cancel")}
+          confirmText={t("Main.OK")}
+        />
       )}
     </>
   );
@@ -951,7 +868,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
             <GlobalSearchModal
               visible={modalAssetType}
               onClose={() => setModalAssetType(false)}
-              title={t("FixedAssets.SelectAssetTypeIsRequired")}
+              title={t("FixedAssets.AssetTypeSelect")}
               data={assetTypesForAssets[asset]}
               selectedItems={assetType ? [assetType] : []}
               onSelect={(items) => {
@@ -1176,7 +1093,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 </Text>
                 <SelectorButton
                   label={getLabel(Machineasset, asset)}
-                  placeholder={t("FixedAssets.SelectAssetIsRequired")}
+                  placeholder={t("FixedAssets.SelectType")}
                   onPress={() => {
                     Keyboard.dismiss();
                     setModalAsset(true);
@@ -1188,7 +1105,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 {asset && assetTypesForAssets[asset]?.length > 0 && (
                   <>
                     <Text className="text-[#070707] text-sm mt-2">
-                      {t("FixedAssets.SelectAssetTypeIsRequired")} *
+                      {t("FixedAssets.AssetType")} *
                     </Text>
                     <SelectorButton
                       label={getLabel(assetTypesForAssets[asset], assetType)}
@@ -1204,9 +1121,9 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
 
                 {assetType === "Other" && (
                   <View className="mt-4">
-                    <Text>{t("FixedAssets.MentionOther")}</Text>
+                    <Text className="text-sm">{t("FixedAssets.MentionOther")}</Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       placeholder={t("FixedAssets.MentionOther")}
                       value={mentionOther}
                       onChangeText={(text) => {
@@ -1242,7 +1159,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.MentionOtherBrandName")}
                     </Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       placeholder={t("FixedAssets.EnterBrandName")}
                       value={customBrand}
                       onChangeText={(text) => {
@@ -1259,8 +1176,8 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.NumberOfUnits")} *
                 </Text>
                 <TextInput
-                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
-                  placeholder={t("FixedAssets.NumberOfUnitsIsRequired")}
+                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
+                  placeholder={t("FixedAssets.NumberOfUnits")}
                   value={numberOfUnits}
                   onChangeText={(text) => {
                     setNumberOfUnits(text.replace(/[-.*#+]/g, "").trimStart());
@@ -1275,8 +1192,8 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.UnitPrice")} *
                 </Text>
                 <TextInput
-                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
-                  placeholder={t("FixedAssets.UnitPriceIsRequired")}
+                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
+                  placeholder={t("FixedAssets.UnitPrices")}
                   value={unitPrice}
                   onChangeText={(text) => {
                     let cleaned = text.replace(/[^0-9.]/g, "");
@@ -1301,7 +1218,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.TotalPrice")}
                 </Text>
                 <View className="border border-[#F4F4F4] p-4 pl-4 rounded-full bg-gray-100">
-                  <Text>
+                  <Text className="text-sm">
                     {totalPrice
                       ? (() => {
                         const parts = totalPrice.toFixed(2).split(".");
@@ -1328,7 +1245,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         className={`w-5 h-5 rounded-full ${warranty === w ? "bg-green-500" : "bg-gray-400"
                           }`}
                       />
-                      <Text className="ml-2">
+                      <Text className="ml-2 text-sm">
                         {w === "yes"
                           ? t("FixedAssets.yes")
                           : t("FixedAssets.no")}
@@ -1350,9 +1267,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       onOpen={handleOpenPurchasedPicker}
                       showPicker={showPurchasedDatePicker}
                       setShowPicker={setShowPurchasedDatePicker}
-                      tempDate={tempPurchasedDate}
-                      setTempDate={setTempPurchasedDate}
-                      onConfirmIOS={onConfirmPurchasedDateIOS}
+                      onConfirm={applyPurchasedDate}
                       onChangeAndroid={onChangePurchasedDateAndroid}
                       maximumDate={getEndOfToday()}
                       modalTitle={t("FixedAssets.PurchasedDate")}
@@ -1369,9 +1284,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       onOpen={handleOpenExpirePicker}
                       showPicker={showExpireDatePicker}
                       setShowPicker={setShowExpireDatePicker}
-                      tempDate={tempExpireDate}
-                      setTempDate={setTempExpireDate}
-                      onConfirmIOS={onConfirmExpireDateIOS}
+                      onConfirm={applyExpireDate}
                       onChangeAndroid={onChangeExpireDateAndroid}
                       minimumDate={purchasedDate || undefined}
                       maximumDate={maxDate}
@@ -1385,6 +1298,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     </Text>
                     <View className="bg-[#F4F4F4] rounded-3xl h-[50px] justify-center items-center mt-2 mb-2">
                       <Text
+                        className="text-sm"
                         style={{
                           color: warrantyStatusColor,
                           fontWeight: "bold",
@@ -1405,7 +1319,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.LandName")} *
                 </Text>
                 <TextInput
-                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                   placeholder={t("FixedAssets.EnterLandName")}
                   value={landName}
                   maxLength={20}
@@ -1446,7 +1360,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     >
                       <Text className="text-[#070707] text-sm mt-2 mr-2">{label}</Text>
                       <TextInput
-                        className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-20 mt-2 mb-2" placeholderTextColor="#585858"
+                        className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-20 mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                         value={val}
                         onChangeText={(text) =>
                           setter(text.replace(/[-.*#+]/g, ""))
@@ -1465,7 +1379,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 </Text>
                 <SelectorButton
                   label={getLabel(landOwnershipOptions, landownership)}
-                  placeholder={t("FixedAssets.SelectOwnershipCategoryIsRequired")}
+                  placeholder={t("FixedAssets.SelectOwnership")}
                   onPress={() => {
                     Keyboard.dismiss();
                     setModalLandOwnership(true);
@@ -1480,7 +1394,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.EstimatedValue")} *
                     </Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       placeholder={t("FixedAssets.EnterEstimatedValue")}
                       value={estimateValue}
                       onChangeText={(text) => {
@@ -1505,9 +1419,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       onOpen={handleOpenStartPicker}
                       showPicker={showStartDatePicker}
                       setShowPicker={setShowStartDatePicker}
-                      tempDate={tempStartDate}
-                      setTempDate={setTempStartDate}
-                      onConfirmIOS={onConfirmStartDateIOS}
+                      onConfirm={applyStartDate}
                       onChangeAndroid={onChangeStartDateAndroid}
                       maximumDate={getEndOfToday()}
                       modalTitle={t("FixedAssets.LeaseStartDate")}
@@ -1518,11 +1430,11 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.Duration")} *
                     </Text>
                     <View className="items-center flex-row justify-center">
-                      <Text className="w-[20%] text-right pr-2">
+                      <Text className="w-[20%] text-right pr-2 text-sm">
                         {t("FixedAssets.Years")}
                       </Text>
                       <TextInput
-                        className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2" placeholderTextColor="#585858"
+                        className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                         value={durationYears}
                         onChangeText={(text) => {
                           setDurationYears(
@@ -1533,11 +1445,11 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         keyboardType="numeric"
                         placeholder={t("FixedAssets.Years")}
                       />
-                      <Text className="w-[20%] text-right pr-2">
+                      <Text className="w-[20%] text-right pr-2 text-sm">
                         {t("FixedAssets.Months")}
                       </Text>
                       <TextInput
-                        className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2" placeholderTextColor="#585858"
+                        className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                         value={durationMonths}
                         onChangeText={(text) => {
                           const cleaned = text
@@ -1559,7 +1471,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.AnnualLeaseAmount")} *
                     </Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       value={leastAmountAnnually}
                       onChangeText={(text) => {
                         setLeastAmountAnnually(formatCurrency(text));
@@ -1584,9 +1496,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       onOpen={handleOpenIssuedPicker}
                       showPicker={showIssuedDatePicker}
                       setShowPicker={setShowIssuedDatePicker}
-                      tempDate={tempIssuedDate}
-                      setTempDate={setTempIssuedDate}
-                      onConfirmIOS={onConfirmIssuedDateIOS}
+                      onConfirm={applyIssuedDate}
                       onChangeAndroid={onChangeIssuedDateAndroid}
                       maximumDate={getEndOfToday()}
                       modalTitle={t("FixedAssets.IssuedDate")}
@@ -1596,7 +1506,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.PermitFeeAnnuallyLKR")} *
                     </Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4  text-sm rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       placeholder={t("FixedAssets.EnterAnnualPermitFee")}
                       value={permitFeeAnnually}
                       onChangeText={(text) => {
@@ -1616,7 +1526,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.AnnualPaymentFee")} *
                     </Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       value={paymentAnnually}
                       onChangeText={(text) => {
                         setPaymentAnnually(formatCurrency(text.trimStart()));
@@ -1645,7 +1555,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                           className={`w-5 h-5 rounded-full ${landFenced === v ? "bg-green-500" : "bg-gray-400"
                             }`}
                         />
-                        <Text className="ml-2">
+                        <Text className="ml-2 text-sm">
                           {v === "yes"
                             ? t("FixedAssets.yes")
                             : t("FixedAssets.no")}
@@ -1670,7 +1580,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                           className={`w-5 h-5 rounded-full ${perennialCrop === v ? "bg-green-500" : "bg-gray-400"
                             }`}
                         />
-                        <Text className="ml-2">
+                        <Text className="ml-2 text-sm">
                           {v === "yes"
                             ? t("FixedAssets.yes")
                             : t("FixedAssets.no")}
@@ -1689,7 +1599,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 <View className="rounded-full mt-2">
                   <SelectorButton
                     label={getLabel(assetOptions, assetname)}
-                    placeholder={t("FixedAssets.SelectAssetIsRequired")}
+                    placeholder={t("FixedAssets.Asset")}
                     onPress={() => {
                       Keyboard.dismiss();
                       setModalAsset(true);
@@ -1704,7 +1614,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.MentionOtherDetails")}
                     </Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       value={othertool}
                       onChangeText={(text) => {
                         setOthertool(text.replace(/^\s+/, ""));
@@ -1736,7 +1646,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.MentionOtherBrandName")}
                     </Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       placeholder={t("FixedAssets.EnterBrandName")}
                       value={customBrand}
                       onChangeText={(text) =>
@@ -1752,7 +1662,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.NumberOfUnits")} *
                 </Text>
                 <TextInput
-                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                   placeholder={t("FixedAssets.NumberOfUnitsIsRequired")}
                   value={numberOfUnits}
                   onChangeText={(text) =>
@@ -1766,7 +1676,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.UnitPrice")} *
                 </Text>
                 <TextInput
-                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                   placeholder={t("FixedAssets.UnitPriceIsRequired")}
                   value={unitPrice}
                   onChangeText={(text) => {
@@ -1809,7 +1719,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         className={`w-5 h-5 rounded-full ${warranty === w ? "bg-green-500" : "bg-gray-400"
                           }`}
                       />
-                      <Text className="ml-2">
+                      <Text className="ml-2 text-sm">
                         {w === "yes"
                           ? t("FixedAssets.yes")
                           : t("FixedAssets.no")}
@@ -1831,9 +1741,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       onOpen={handleOpenPurchasedPicker}
                       showPicker={showPurchasedDatePicker}
                       setShowPicker={setShowPurchasedDatePicker}
-                      tempDate={tempPurchasedDate}
-                      setTempDate={setTempPurchasedDate}
-                      onConfirmIOS={onConfirmPurchasedDateIOS}
+                      onConfirm={applyPurchasedDate}
                       onChangeAndroid={onChangePurchasedDateAndroid}
                       maximumDate={getEndOfToday()}
                       modalTitle={t("FixedAssets.PurchasedDate")}
@@ -1850,9 +1758,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       onOpen={handleOpenExpirePicker}
                       showPicker={showExpireDatePicker}
                       setShowPicker={setShowExpireDatePicker}
-                      tempDate={tempExpireDate}
-                      setTempDate={setTempExpireDate}
-                      onConfirmIOS={onConfirmExpireDateIOS}
+                      onConfirm={applyExpireDate}
                       onChangeAndroid={onChangeExpireDateAndroid}
                       minimumDate={purchasedDate || undefined}
                       maximumDate={maxDate}
@@ -1869,6 +1775,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     </Text>
                     <View className="bg-[#F4F4F4] rounded-3xl h-[50px] justify-center items-center mt-2 mb-2">
                       <Text
+                        className="text-sm"
                         style={{
                           color: warrantyStatusColor,
                           fontWeight: "bold",
@@ -1903,7 +1810,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.BuildingName")} *
                 </Text>
                 <TextInput
-                  className="bg-[#F4F4F4] px-4 rounded-3xl text-sm h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                   placeholder={t("FixedAssets.EnterBuildingName")}
                   value={buildingName}
                   onChangeText={(text) => {
@@ -1921,7 +1828,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   {t("FixedAssets.FloorArea")} *
                 </Text>
                 <TextInput
-                  className="bg-[#F4F4F4] px-4 rounded-3xl text-sm h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                   placeholder={t("FixedAssets.EnterFloorArea")}
                   value={floorArea}
                   onChangeText={(text) => {
@@ -1942,7 +1849,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 </Text>
                 <SelectorButton
                   label={getLabel(ownershipCategories, ownership)}
-                  placeholder={t("FixedAssets.SelectOwnershipCategoryIsRequired")}
+                  placeholder={t("FixedAssets.SelectOwnership")}
                   onPress={() => {
                     Keyboard.dismiss();
                     setModalOwnership(true);
@@ -1957,7 +1864,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.EstimatedBuildingValue")} *
                     </Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       placeholder={t("FixedAssets.EnterEstimatedValue")}
                       value={estimateValue}
                       onChangeText={(text) => {
@@ -1980,9 +1887,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       onOpen={handleOpenStartPicker}
                       showPicker={showStartDatePicker}
                       setShowPicker={setShowStartDatePicker}
-                      tempDate={tempStartDate}
-                      setTempDate={setTempStartDate}
-                      onConfirmIOS={onConfirmStartDateIOS}
+                      onConfirm={applyStartDate}
                       onChangeAndroid={onChangeStartDateAndroid}
                       maximumDate={getEndOfToday()}
                       modalTitle={t("FixedAssets.LeaseStartDate")}
@@ -1994,11 +1899,11 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     </Text>
                     <View className="flex-row items-center justify-between">
                       <View className="flex-row items-center">
-                        <Text className="w-[20%] text-right pr-2">
+                        <Text className="w-[20%] text-right pr-2 text-sm">
                           {t("FixedAssets.Years")}
                         </Text>
                         <TextInput
-                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2" placeholderTextColor="#585858"
+                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                           value={durationYears}
                           onChangeText={(text) => {
                             setDurationYears(
@@ -2009,11 +1914,11 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                           keyboardType="numeric"
                           placeholder={t("FixedAssets.Years")}
                         />
-                        <Text className="w-[20%] text-right pr-2">
+                        <Text className="w-[20%] text-right pr-2 text-sm">
                           {t("FixedAssets.Months")}
                         </Text>
                         <TextInput
-                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2" placeholderTextColor="#585858"
+                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                           value={durationMonths}
                           onChangeText={(text) => {
                             const cleaned = text
@@ -2036,7 +1941,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.AnnualLeaseAmount")} *
                     </Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       value={leastAmountAnnually}
                       onChangeText={(text) => {
                         setLeastAmountAnnually(
@@ -2063,9 +1968,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       onOpen={handleOpenLbIssuedPicker}
                       showPicker={showLbIssuedDatePicker}
                       setShowPicker={setShowLbIssuedDatePicker}
-                      tempDate={tempLbIssuedDate}
-                      setTempDate={setTempLbIssuedDate}
-                      onConfirmIOS={onConfirmLbIssuedDateIOS}
+                      onConfirm={applyLbIssuedDate}
                       onChangeAndroid={onChangeLbIssuedDateAndroid}
                       maximumDate={getEndOfToday()}
                       modalTitle={t("FixedAssets.IssuedDate")}
@@ -2075,7 +1978,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.AnnualPermitFee")} *
                     </Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       value={permitFeeAnnually}
                       onChangeText={(text) => {
                         setPermitFeeAnnually(formatCurrency(text.trimStart()));
@@ -2095,7 +1998,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       {t("FixedAssets.AnnualPaymentFee")} *
                     </Text>
                     <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2" placeholderTextColor="#585858"
+                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
                       value={paymentAnnually}
                       onChangeText={(text) => {
                         setPaymentAnnually(formatCurrency(text.trimStart()));
@@ -2114,7 +2017,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 </Text>
                 <SelectorButton
                   label={getLabel(generalConditionOptions, generalCondition)}
-                  placeholder={t("FixedAssets.SelectGeneralConditionIsRequired")}
+                  placeholder={t("FixedAssets.SelectGeneralCondition")}
                   onPress={() => {
                     Keyboard.dismiss();
                     setModalGeneralCondition(true);

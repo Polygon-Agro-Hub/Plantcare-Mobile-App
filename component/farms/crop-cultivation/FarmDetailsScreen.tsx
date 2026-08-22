@@ -8,6 +8,7 @@ import {
   Alert,
   RefreshControl,
   Modal,
+  BackHandler,
 } from "react-native";
 import {
   useFocusEffect,
@@ -66,7 +67,6 @@ const CropCard: React.FC<CropCardProps> = ({
   varietyNameEnglish,
   onPress,
   progress,
-
   certificateStatus = "pending",
 }) => {
   const isBlocked = certificateStatus === "pending";
@@ -86,24 +86,29 @@ const CropCard: React.FC<CropCardProps> = ({
     <TouchableOpacity
       onPress={handlePress}
       activeOpacity={0.7}
-      className="my-2"
       style={{
         width: "100%",
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "white",
+        marginVertical: 8,
+        borderRadius: 9,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        opacity: isBlocked ? 0.6 : 1,
       }}
     >
       <View
-        className={`bg-white rounded-xl p-4 border-2 ${
-          isBlocked ? "border-[#EFEFEF]" : "border-[#EFEFEF]"
-        } flex-row items-center justify-between relative`}
         style={{
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
-          opacity: isBlocked ? 0.6 : 1,
+          backgroundColor: "#FFFFFF",
+          padding: 16,
+          borderWidth: 2,
+          borderColor: "#EFEFEF",
+          borderRadius: 9,
+          overflow: "hidden",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          position: "relative",
         }}
       >
         {isBlocked && (
@@ -163,9 +168,9 @@ const CropCard: React.FC<CropCardProps> = ({
               return `${percentage.toFixed(2)}%`;
             }}
             textStyle={{
-              fontSize: 12,
+              fontSize: 10,
               color: isBlocked ? "#999" : "#4caf50",
-              fontWeight: "bold"
+              fontWeight: "bold",
             }}
           />
         </View>
@@ -350,6 +355,20 @@ const FarmDetailsScreen = () => {
       return null;
     }
   };
+
+   useFocusEffect(
+      React.useCallback(() => {
+        const onBackPress = () => {
+          navigation.navigate("Main", { screen: "MyCultivation" })
+          return true;
+        };
+        const subscription = BackHandler.addEventListener(
+          "hardwareBackPress",
+          onBackPress,
+        );
+        return () => subscription.remove();
+      }, [navigation]),
+    );
 
   const _fetchCertificateStatuses = async (
     token: string,

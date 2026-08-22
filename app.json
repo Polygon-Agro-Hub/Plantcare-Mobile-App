@@ -17,7 +17,7 @@
       "versionCode": 18,
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "softwareKeyboardLayoutMode": "pan",
+      "softwareKeyboardLayoutMode": "resize",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/public/favicon.png",
         "backgroundColor": "#ffffff"
@@ -68,6 +68,7 @@
         "NSCameraUsageDescription": "Camera access is required to scan documents and capture images.",
         "NSMicrophoneUsageDescription": "Microphone access is required for in-app communication.",
         "NSPhotoLibraryUsageDescription": "Photo library access is required to upload related images.",
+        "NSPhotoLibraryAddUsageDescription": "Allow GoviCare to save the QR code to your device.",
         "NSLocationWhenInUseUsageDescription": "Location access is required to track activity.",
         "NSUserTrackingUsageDescription": "Tracking is used to improve app experience.",
         "NSUserNotificationUsageDescription": "Notifications are used to send important updates.",
@@ -125,20 +126,19 @@
         "expo-media-library",
         {
           "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
-          "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
+          "savePhotosPermission": "Allow $(PRODUCT_NAME) to save the QR code to your device.",
           "isAccessMediaLocationEnabled": true
         }
       ],
       "expo-image-picker",
-      "expo-location",
-      "expo-tracking-transparency"
+      "expo-location"
     ],
     "extra": {
       "router": {
         "origin": false
       },
       "eas": {
-        "projectId": "0e03cacc-a139-45fd-9407-3936e86b20ea"
+        "projectId": "68d9936b-3a8e-44af-be66-862f318c517a"
       }
     }
   }

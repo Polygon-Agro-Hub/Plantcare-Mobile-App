@@ -1016,7 +1016,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                         {t("CurrentAssets.Brand")} *
                       </Text>
                       <TextInput
-                        placeholder={t("CurrentAssets.SelectBrand")}
+                        placeholder={t("CurrentAssets.Brand")}
                         placeholderTextColor="#6B7280"
                         value={brand}
                         onChangeText={(text) => {
@@ -1165,7 +1165,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   : ""
               }
               editable={false}
-              className="bg-[#F4F4F4] px-4 rounded-3xl text-sm h-[50px] mt-2 text-gray-500"
+              className="bg-[#F4F4F4] px-4 rounded-3xl text-sm h-[50px] mt-2 text-balck"
               style={{ fontSize: 14 }}
             />
           </View>
@@ -1234,7 +1234,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               placeholderTextColor="#6B7280"
               value={warranty}
               keyboardType="numeric"
-              className="bg-[#F4F4F4] px-4 rounded-3xl text-sm h-[50px] mt-2 text-gray-500"
+              className="bg-[#F4F4F4] px-4 rounded-3xl text-sm h-[50px] mt-2 text-black"
               style={{ fontSize: 14 }}
               editable={false}
             />

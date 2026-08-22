@@ -352,13 +352,13 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                 </View>
 
                 {activeMenuId === item.id && (
-                  <View className="absolute top-12 right-6 bg-white rounded-lg border border-gray-200 shadow-lg z-10">
+                  <View className="absolute top-10 right-6 bg-white rounded-lg border border-gray-200 shadow-lg z-10">
                     {isOwnComment && (
                       <TouchableOpacity
                         onPress={() => handleEditComment(item.id)}
                         className="rounded-lg py-2 px-4"
                       >
-                        <Text className="text-[16px]">
+                        <Text className="text-[14px]">
                           {t("PublicForum.Edit")}
                         </Text>
                       </TouchableOpacity>
@@ -368,7 +368,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                       onPress={() => handleDeleteComment(item.id)}
                       className="rounded-lg py-2 px-4"
                     >
-                      <Text className="text-[16px] text-red-600">
+                      <Text className="text-[14px] text-red-600">
                         {t("Main.Delete")}
                       </Text>
                     </TouchableOpacity>

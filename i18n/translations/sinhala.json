@@ -12,6 +12,7 @@
     "GoBack": "ආපසු යන්න",
     "Continue": "දිගටම කරගෙන යන්න",
     "Search...": "සොයන්න...",
+    "Search": "සොයන්න",
     "Loading...": "පූරණය වෙමින්...",
     "TypeHere": "--මෙතැන ටයිප් කරන්න--",
     "NoInternetConnection": "අන්තර්ජාල සම්බන්ධතාවයක් නැත.",
@@ -414,6 +415,7 @@
     "EnterFarmNameHere": "ගොවිපල නම මෙතැන ඇතුළත් කරන්න",
     "SearchDistrict": "දිස්ත්‍රික්කය සොයන්න",
     "SearchCountry":"රට සොයන්න...",
+    "NoCountriesFound":"රටවල් හමු නොවීය.",
     "EnterPlotNumberHere": "භූමි අංකය මෙතැන ඇතුළත් කරන්න",
     "EnterStreetName": "වීදි නම ඇතුළත් කරන්න",
     "EnterCityName": "නගරයේ නම ඇතුළත් කරන්න",
@@ -480,6 +482,7 @@
     "Crops": "භෝග",
     "MyCultivation": "මගේ වගාව",
     "SelectAFarmToManageYourCultivationAndAssets": "ඔබගේ වගාව සහ වත්කම් කළමනාකරණය කිරීමට ගොවිපලක් තෝරන්න",
+    "StaffMemberUpdated":"කාර්ය මණ්ඩල සාමාජිකයා සාර්ථකව යාවත්කාලීන කර ඇත.",
     "Assets": "වත්කම්",
     "Cultivation": "වගාව",
     "StaffMember": "කාර්ය මණ්ඩල සාමාජික -",
@@ -531,7 +534,8 @@
     "RENEW": "අලුත් කිරීම",
     "PRO": "PRO",
     "ID":"හැඳුනුම්පත",
-    "StaffMemberHasBeenUpdatedSuccessfully":"කාර්ය මණ්ඩල සාමාජිකයා සාර්ථකව යාවත්කාලීන කර ඇත."
+    "StaffMemberHasBeenUpdatedSuccessfully":"කාර්ය මණ්ඩල සාමාජිකයා සාර්ථකව යාවත්කාලීන කර ඇත.",
+    "CompletionRemovedSuccessfully":"සම්පූර්ණ කිරීම සාර්ථකව ඉවත් කරන ලදී"
   },
   "SelectCrop": {
     "Description": "විස්තරය",
@@ -618,7 +622,8 @@
     "GAPCertification": "හොඳ කෘෂිකාර්මික පිළිවෙත් සහතිකය",
     "CheckingValidity": "වලංගු භාවය පරීක්ෂා කරමින්...",
     "CertificateExpired": "සහතිකය කල් ඉකුත් වී ඇත",
-    "NoActiveCertificate": "සක්‍රිය සහතිකයක් නොමැත"
+    "NoActiveCertificate": "සක්‍රිය සහතිකයක් නොමැත",
+    "GrantPermission":"අවසර දෙන්න"
   },
   "Manager": {
     "ManageWorkers": "කම්කරුවන් කළමනාකරණය කරන්න",
@@ -812,10 +817,12 @@
     "SelectAssetIsRequired": "වත්කම තෝරාගැනීම අවශ්‍ය වේ",
     "AssetType": "වත්කම් වර්ගය",
     "SelectAssetTypeIsRequired": "වත්කම් වර්ගය තෝරාගැනීම අවශ්‍ය වේ",
+    "SelectType":"වර්ගය තෝරන්න",
     "AssetAddSuccessfuly": "වත්කම සාර්ථකව එක් කරන ලදී!",
     "NumberOfUnits": "ඒකක ගණන",
     "NumberOfUnitsIsRequired": "ඒකක ගණන අවශ්‍ය වේ",
     "UnitPrice": "ඒකක මිල (රු.)",
+    "UnitPrices":"ඒකක මිල",
     "UnitPriceIsRequired": "ඒකක මිල අවශ්‍ය වේ",
     "TotalPrice": "මුළු මිල (රු.)",
     "warranty": "වගකීම",
@@ -871,6 +878,8 @@
     "EnterAnnualPermitFee": "වාර්ෂික බලපත්‍ර ගාස්තුව ඇතුළත් කරන්න (රු.)",
     "NoAssetsAvailableForThisCategory": "මෙම කාණ්ඩය සඳහා වත්කම් නොමැත",
     "SelectOwnershipCategoryIsRequired": "හිමිකාරිත්ව කාණ්ඩය තෝරාගැනීම අවශ්‍ය වේ",
+    "SelectOwnership":"හිමිකාරිත්වය තෝරන්න",
+    "SelectGeneralCondition":"සාමාන්‍ය තත්ත්වය තෝරන්න",
     "OwnBuildingWithTitleOwnership": "අයිතිකරුගේ ගොඩනැගිල්ල (අයිතිවාසිකම් සහිත)",
     "LeasedBuilding": "කුලියට ගත් ගොඩනැගිල්ල",
     "NoToolsSelected": "මෙවලම් කිසිවක් තෝරාගෙන නැත",
@@ -1089,7 +1098,8 @@
     "OutOf": "න්",
     "Photo": "ඡායාරූපය",
     "Photos": "ඡායාරූප",
-    "You": "ඔබ"
+    "You": "ඔබ",
+    "Owner": "හිමිකරු"
   },
   "PublicForum": {
     "StartANewDiscussion": "නව සාකච්ඡාවක් ආරම්භ කරන්න",

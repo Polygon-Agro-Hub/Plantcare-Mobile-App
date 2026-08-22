@@ -17,10 +17,9 @@ import { RootStackParamList } from "../types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import LottieView from "lottie-react-native";
 import NoData from "../common/NoData";
 import { useSelector } from "react-redux";
-import { selectUserPersonal } from "@/store/userSlice";
+import { selectUserPersonal, selectUserData } from "@/store/userSlice";
 import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../common/CustomHeader";
 import LoadingPage from "../common/LoadingPage";
@@ -57,6 +56,19 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
   );
   const { t } = useTranslation();
   const userPersonalData = useSelector(selectUserPersonal);
+  const userData = useSelector(selectUserData);
+
+  const isStaffRole =
+    userData?.role === "Supervisor" ||
+    userData?.role === "Manager" ||
+    userData?.role === "Laborer" ||
+    userData?.role === "Laboror";
+
+  useEffect(() => {
+    if (isStaffRole) {
+      navigation.navigate("EngProfile");
+    }
+  }, [isStaffRole]);
 
   const [profile, setProfile] = useState<{
     firstName: string;

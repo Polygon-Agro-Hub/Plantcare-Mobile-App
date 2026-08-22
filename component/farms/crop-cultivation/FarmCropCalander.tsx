@@ -23,7 +23,8 @@ import moment from "moment";
 import { environment } from "@/environment/environment";
 import i18n from "@/i18n/i18n";
 import { useTranslation } from "react-i18next";
-import CultivatedLandModal from "../../crop-cultivation/CultivatedLandModal";
+import * as ImageManipulator from "expo-image-manipulator";
+import CultivatedLandModal from "../../common/CultivatedLandModal";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -298,6 +299,17 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
     });
   };
 
+  // Closes the certification modal and navigates back to FarmDetailsScreen.
+  // Used by the chevron back button and the hardware back button so the
+  // modal never stays mounted/visible after navigating away.
+  const closeModalAndGoToFarmDetails = () => {
+    setCertificationModalVisible(false);
+    navigation.navigate("Main", {
+      screen: "FarmDetailsScreen",
+      params: { farmId: farmId },
+    });
+  };
+
   const completeTask = async (globalIndex: number, currentCrop: CropItem) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -341,6 +353,71 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
         msg = error.response.data.message;
       }
       Alert.alert(t("Main.Sorry"), msg, [{ text: t("Main.OK") }]);
+    }
+  };
+
+  const handleUploadCalendarTaskImage = async (
+    imageUri: string,
+    crop: CropItem,
+    globalIndex: number,
+    isLastImage: boolean,
+  ) => {
+    try {
+      setLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+
+      const manipResult = await ImageManipulator.manipulateAsync(
+        imageUri,
+        [{ resize: { width: 800 } }],
+        { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG },
+      );
+
+      const fileName = manipResult.uri.split("/").pop();
+      const fileType = fileName?.split(".").pop()
+        ? `image/${fileName.split(".").pop()}`
+        : "image/jpeg";
+
+      const formData = new FormData();
+      formData.append("image", {
+        uri: manipResult.uri,
+        name: fileName,
+        type: fileType,
+      } as any);
+      formData.append("slaveId", crop.id);
+      formData.append("farmId", farmId.toString());
+      formData.append("onCulscropID", crop.onCulscropID.toString());
+
+      await axios.post(
+        `${environment.API_BASE_URL}api/auth/calendar-tasks/upload-image`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+          timeout: 60000,
+        },
+      );
+
+      setTasksWithImages((prev) => new Set(prev).add(crop.id));
+
+      if (isLastImage) {
+        await completeTask(globalIndex, crop);
+        Alert.alert(
+          t("Main.Success"),
+          t("CropCalender.TaskStatusUpdatedSuccessfully"),
+          [{ text: t("Main.OK") }],
+        );
+      }
+    } catch (error: any) {
+      console.error("Error uploading calendar task image:", error);
+      Alert.alert(
+        t("Main.Error"),
+        t("CropCalender.UploadRetryFailed"),
+        [{ text: t("Main.OK") }],
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -895,6 +972,11 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
   useFocusEffect(
     useCallback(() => {
       const handleBackPress = () => {
+        // If the certification modal is open, close it as part of
+        // navigating back so it doesn't stay mounted/visible.
+        if (certificationModalVisible) {
+          setCertificationModalVisible(false);
+        }
         navigation.navigate("Main", {
           screen: "FarmDetailsScreen",
           params: { farmId: farmId },
@@ -906,7 +988,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
         handleBackPress,
       );
       return () => subscription.remove();
-    }, [navigation]),
+    }, [navigation, certificationModalVisible, farmId]),
   );
 
   const SkeletonLoader = () => {
@@ -983,7 +1065,12 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
             uri: taskImage.image,
             title: `Task ${crop.taskIndex} - Photo ${index + 1}`,
             description: crop.taskDescriptionEnglish,
-            uploadedBy: taskImage.uploadedBy,
+            uploadedBy:
+              taskImage.uploadedBy ||
+              taskImage.userName ||
+              taskImage.name ||
+              taskImage.uploaderName ||
+              taskImage.user_name,
             createdAt: taskImage.createdAt,
             from: "crop",
           }),
@@ -1050,7 +1137,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
           animationType="slide"
           transparent={true}
           visible={certificationModalVisible}
-          onRequestClose={handleReject}
+          onRequestClose={closeModalAndGoToFarmDetails}
           className="mt-20"
           statusBarTranslucent={false}
         >
@@ -1064,14 +1151,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
           >
             <View className="bg-white rounded-b-3xl shadow-2xl">
               <View className="flex-row items-center justify-between px-5 pt-4 pb-4 ">
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate("Main", {
-                      screen: "FarmDetailsScreen",
-                      params: { farmId: farmId },
-                    })
-                  }
-                >
+                <TouchableOpacity onPress={closeModalAndGoToFarmDetails}>
                   <Ionicons
                     name="chevron-back-outline"
                     size={30}
@@ -1083,13 +1163,14 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
                 </Text>
                 <View>
                   <TouchableOpacity
-                    onPress={() =>
+                    onPress={() => {
+                      setCertificationModalVisible(false);
                       navigation.navigate("CropEnrol", {
                         status: "edit",
                         onCulscropID: crops[0]?.onCulscropID,
                         cropId,
-                      })
-                    }
+                      });
+                    }}
                   >
                     <Ionicons name="pencil" size={20} color="black" />
                   </TouchableOpacity>
@@ -1133,29 +1214,24 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
       {isCultivatedLandModalVisible && pendingImageCrop && (
         <CultivatedLandModal
           visible={isCultivatedLandModalVisible}
-          onClose={async (success) => {
+          onClose={() => {
             setCultivatedLandModalVisible(false);
-            const { crop, globalIndex } = pendingImageCrop;
             setPendingImageCrop(null);
-
-            if (success) {
-              await completeTask(globalIndex, crop);
-
-              setTasksWithImages((prev) => new Set(prev).add(crop.id));
-            } else {
-              Alert.alert(
-                t("Main.Sorry"),
-                t(
-                  "CropCalender.YouMustUploadTheRequiredImagesToCompleteThisTask",
-                ),
-                [{ text: t("Main.OK") }],
-              );
-            }
           }}
-          cropId={pendingImageCrop.crop.id}
-          farmId={farmId}
-          onCulscropID={pendingImageCrop.crop.onCulscropID}
-          requiredImages={pendingImageCrop.crop.reqImages}
+          onCaptureImage={async (imageUri, isLastImage) => {
+            const { crop, globalIndex } = pendingImageCrop;
+            if (isLastImage) {
+              setCultivatedLandModalVisible(false);
+              setPendingImageCrop(null);
+            }
+            await handleUploadCalendarTaskImage(
+              imageUri,
+              crop,
+              globalIndex,
+              isLastImage,
+            );
+          }}
+          requiredImages={pendingImageCrop.crop.reqImages || 1}
         />
       )}
 

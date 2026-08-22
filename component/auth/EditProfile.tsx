@@ -507,7 +507,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
 
                 <View className="mb-4">
                   <Text className="text-[#070707] text-sm mb-2">
-                    {t("AddressDetails.Streetname")}
+                    {t("AddressDetails.StreetName")}
                   </Text>
                   <View className={inputStyle}>
                     <TextInput
