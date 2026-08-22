@@ -12,6 +12,7 @@
     "GoBack": "திரும்பிச் செல்லுங்கள்",
     "Continue": "தொடரவும்",
     "Search...": "தேடுங்கள்...",
+    "Search": "தேடுங்கள்",
     "Loading...": "ஏற்றுகிறது...",
     "TypeHere": "--இங்கே தட்டச்சு செய்யவும்--",
     "NoInternetConnection": "இணைய இணைப்பு இல்லை.",
@@ -414,6 +415,7 @@
     "EnterFarmNameHere": "பண்ணை பெயரை இங்கே உள்ளிடவும்",
     "SearchDistrict": "மாவட்டத்தைத் தேடுங்கள்",
     "SearchCountry":"நாட்டைத் தேடு...",
+    "NoCountriesFound":"நாடுகள் எதுவும் காணப்படவில்லை",
     "EnterPlotNumberHere": "மனை எண்ணை இங்கே உள்ளிடவும்",
     "EnterStreetName": "தெரு பெயரை உள்ளிடவும்",
     "EnterCityName": "நகரத்தின் பெயரை உள்ளிடவும்",
@@ -480,6 +482,7 @@
     "Crops": "பயிர்கள்",
     "MyCultivation": "எனது சாகுபடி",
     "SelectAFarmToManageYourCultivationAndAssets": "உங்கள் சாகுபடி மற்றும் சொத்துக்களை நிர்வகிக்க ஒரு பண்ணையைத் தேர்ந்தெடுக்கவும்",
+    "StaffMemberUpdated":"பணியாளர் வெற்றிகரமாகப் புதுப்பிக்கப்பட்டார்.",
     "Assets": "சொத்துக்கள்",
     "Cultivation": "சாகுபடி",
     "StaffMember": "ஊழியர் -",
@@ -531,7 +534,8 @@
     "RENEW": "புதுப்பி",
     "PRO": "புரோ",
     "ID":"ஐடி",
-    "StaffMemberHasBeenUpdatedSuccessfully":"பணியாளர் வெற்றிகரமாகப் புதுப்பிக்கப்பட்டார்."
+    "StaffMemberHasBeenUpdatedSuccessfully":"பணியாளர் வெற்றிகரமாகப் புதுப்பிக்கப்பட்டார்.",
+    "CompletionRemovedSuccessfully":"நிறைவு வெற்றிகரமாக நீக்கப்பட்டது"
   },
   "SelectCrop": {
     "Description": "விளக்கம்",
@@ -618,7 +622,8 @@
     "GAPCertification": "GAP சான்றிதழ்",
     "CheckingValidity": "செல்லுபடியை சரிபார்க்கிறது...",
     "CertificateExpired": "சான்றிதழ் காலாவதியானது",
-    "NoActiveCertificate": "செயலில் உள்ள சான்றிதழ் இல்லை"
+    "NoActiveCertificate": "செயலில் உள்ள சான்றிதழ் இல்லை",
+    "GrantPermission":"அனுமதியை வழங்கு"
   },
   "Manager": {
     "ManageWorkers": "தொழிலாளர்களை நிர்வகிக்கவும்",
@@ -812,10 +817,12 @@
     "SelectAssetIsRequired": "சொத்தைத் தேர்ந்தெடுப்பது கட்டாயம்",
     "AssetType": "சொத்து வகை",
     "SelectAssetTypeIsRequired": "சொத்து வகையைத் தேர்ந்தெடுப்பது கட்டாயம்",
+    "SelectType":"வகையைத் தேர்ந்தெடுக்கவும்",
     "AssetAddSuccessfuly": "சொத்து வெற்றிகரமாகச் சேர்க்கப்பட்டது!",
     "NumberOfUnits": "அலகுகளின் எண்ணிக்கை",
     "NumberOfUnitsIsRequired": "அலகுகளின் எண்ணிக்கை கட்டாயம்",
     "UnitPrice": "அலகு விலை (ரூ.)",
+    "UnitPrices":"அலகு விலை",
     "UnitPriceIsRequired": "அலகு விலை கட்டாயம்",
     "TotalPrice": "மொத்த விலை (ரூ.)",
     "warranty": "உத்தரவாதம்",
@@ -871,6 +878,8 @@
     "EnterAnnualPermitFee": "வருடாந்திர அனுமதிக் கட்டணத்தை உள்ளிடவும் (ரூ.)",
     "NoAssetsAvailableForThisCategory": "இந்த வகைக்கு கிடைக்கக்கூடிய சொத்துக்கள் எதுவும் இல்லை",
     "SelectOwnershipCategoryIsRequired": "உரிமை வகையைத் தேர்ந்தெடுப்பது கட்டாயம்",
+    "SelectOwnership":"உரிமையைத் தேர்ந்தெடுக்கவும்",
+    "SelectGeneralCondition":"பொதுவான நிலையைத் தேர்ந்தெடுக்கவும்",
     "OwnBuildingWithTitleOwnership": "சொந்தக் கட்டிடம் (உரிமைப் பத்திரத்துடன்)",
     "LeasedBuilding": "குத்தகைக்கு விடப்பட்ட கட்டிடம்",
     "NoToolsSelected": "கருவிகள் எதுவும் தேர்ந்தெடுக்கப்படவில்லை",
@@ -1089,7 +1098,8 @@
     "OutOf": "லிருந்து",
     "Photo": "புகைப்படம்",
     "Photos": "புகைப்படங்கள்",
-    "You": "நீங்கள்"
+    "You": "நீங்கள்",
+    "Owner": "உரிமையாளர்"
   },
   "PublicForum": {
     "StartANewDiscussion": "புதிய விவாதத்தைத் தொடங்குங்கள்",

@@ -21,6 +21,8 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-nat
 import { MaterialIcons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 import { useFocusEffect } from "@react-navigation/native";
+import { useSelector } from "react-redux";
+import { selectUserData } from "@/store/userSlice";
 import GlobalSearchModal from "../common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
 import LoadingPage from "../common/LoadingPage";
@@ -45,6 +47,19 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const userData = useSelector(selectUserData);
+  const isStaffRole =
+    userData?.role === "Supervisor" ||
+    userData?.role === "Manager" ||
+    userData?.role === "Laborer" ||
+    userData?.role === "Laboror";
+
+  useEffect(() => {
+    if (isStaffRole) {
+      navigation.navigate("EngProfile");
+    }
+  }, [isStaffRole]);
 
   const selectedCategoryLabel =
     Category.find((c) => c.value === selectedCategory)?.label ?? null;

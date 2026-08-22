@@ -7,11 +7,13 @@ import {
   Image,
   Alert,
   Platform,
+  BackHandler,
 } from "react-native";
 import axios from "axios";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp, useRoute } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import { environment } from "@/environment/environment";
 import { RootStackParamList } from "../types/types";
 import * as Print from "expo-print";
@@ -21,7 +23,6 @@ import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 import CustomHeader from "../common/CustomHeader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import LottieView from "lottie-react-native";
 import LoadingPage from "../common/LoadingPage";
 
 const api = axios.create({
@@ -145,6 +146,8 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
   const [crops, setCrops] = useState<Crop[]>([]);
 
   const { t } = useTranslation();
+
+
 
   const calculateTotalSum = (cropsData: Crop[]): number => {
     return (cropsData || []).reduce((sum: number, crop: Crop) => {
@@ -625,6 +628,20 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
     }
     return {};
   };
+
+    useFocusEffect(
+      React.useCallback(() => {
+        const onBackPress = () => {
+         navigation.goBack();
+          return true;
+        };
+        const subscription = BackHandler.addEventListener(
+          "hardwareBackPress",
+          onBackPress,
+        );
+        return () => subscription.remove();
+      }, [navigation]),
+    );
 
   if (loading) {
     return (

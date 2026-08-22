@@ -310,7 +310,7 @@ const AddMemberDetails: React.FC = () => {
       ) {
         setPhoneValidationErrors((prev) => ({
           ...prev,
-          [index]: t("Farms.DuplicateNumbersAreNotAllowed"),
+          [index]: t("Farms.DuplicateNumbersAreNotAllowed."),
         }));
       } else if (formattedText[0] !== "7") {
         setPhoneValidationErrors((prev) => ({

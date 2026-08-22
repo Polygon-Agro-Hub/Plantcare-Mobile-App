@@ -119,8 +119,8 @@ const OwnerQRcode: React.FC<QRcodeProps> = ({ navigation }) => {
       const fileUri = `${FileSystem.documentDirectory}QRcode_${Date.now()}.png`;
       const response = await FileSystem.downloadAsync(QR, fileUri);
 
-      const asset = await MediaLibrary.createAssetAsync(response.uri);
-      await MediaLibrary.createAlbumAsync("Download", asset, false);
+      // Save directly to media library
+      await MediaLibrary.createAssetAsync(response.uri);
 
       Alert.alert(t("Main.Success"), t("QRcode.YourQRCodeHasBeenSavedToYourGallery"), [
         { text: t("Main.OK") },

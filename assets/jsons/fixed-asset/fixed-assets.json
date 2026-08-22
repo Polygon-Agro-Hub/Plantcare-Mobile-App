@@ -173,21 +173,21 @@
     { "labelKey": "FixedAssets.Singer", "value": "Singer" },
     { "labelKey": "FixedAssets.INGCO", "value": "INGCO" },
     { "labelKey": "FixedAssets.Jinasena", "value": "Jinasena" },
-    { "labelKey": "FixedAssets.other", "value": "Other" }
+    { "labelKey": "FixedAssets.Other", "value": "Other" }
   ],
 
   "assetTypesForAssets": {
     "Tractors": [
       { "labelKey": "FixedAssets.2WD", "value": "2WD" },
       { "labelKey": "FixedAssets.4WD", "value": "4WD" },
-      { "labelKey": "FixedAssets.other", "value": "Other" }
+      { "labelKey": "FixedAssets.Other", "value": "Other" }
     ],
     "Transplanter": [
       {
         "labelKey": "FixedAssets.Paddytransplanter",
         "value": "Paddy transplanter"
       },
-      { "labelKey": "FixedAssets.other", "value": "Other" }
+      { "labelKey": "FixedAssets.Other", "value": "Other" }
     ],
     "Harvesting Equipment": [
       {
@@ -205,7 +205,7 @@
       },
       { "labelKey": "FixedAssets.Paddyharvester", "value": "Paddy harvester" },
       { "labelKey": "FixedAssets.Maizeharvester", "value": "Maize harvester" },
-      { "labelKey": "FixedAssets.other", "value": "Other" }
+      { "labelKey": "FixedAssets.Other", "value": "Other" }
     ],
     "Cleaning, Grading and Weighing Equipment": [
       { "labelKey": "FixedAssets.Seperator", "value": "Seperator" },
@@ -221,7 +221,7 @@
         "labelKey": "FixedAssets.DestonerMachine",
         "value": "Destoner Machine"
       },
-      { "labelKey": "FixedAssets.other", "value": "Other" }
+      { "labelKey": "FixedAssets.Other", "value": "Other" }
     ],
     "Sprayers": [
       {
@@ -242,7 +242,7 @@
         "labelKey": "FixedAssets.PressureSprayer",
         "value": "Pressure Sprayer"
       },
-      { "labelKey": "FixedAssets.other", "value": "Other" }
+      { "labelKey": "FixedAssets.Other", "value": "Other" }
     ]
   },
 
@@ -286,14 +286,14 @@
       { "labelKey": "FixedAssets.Kartar", "value": "Kartar" },
       { "labelKey": "FixedAssets.Shakthiman", "value": "Shakthiman" },
       { "labelKey": "FixedAssets.Ginhua", "value": "Ginhua" },
-      { "labelKey": "FixedAssets.other", "value": "Other" }
+      { "labelKey": "FixedAssets.Other", "value": "Other" }
     ],
     "Rotavator": [
       {
         "labelKey": "FixedAssets.ShaktimanRotavator",
         "value": "Shaktiman Fighter Rotavator"
       },
-      { "labelKey": "FixedAssets.other", "value": "Other" }
+      { "labelKey": "FixedAssets.Other", "value": "Other" }
     ],
     "Combine Harvesters": [
       {
@@ -308,7 +308,7 @@
         "labelKey": "FixedAssets.KubotaDC70G",
         "value": "Kubota DC-70G Plus Combine Harvester - Hayleys"
       },
-      { "labelKey": "FixedAssets.other", "value": "Other" }
+      { "labelKey": "FixedAssets.Other", "value": "Other" }
     ],
     "Transplanter": [
       {
@@ -321,7 +321,7 @@
       },
       { "labelKey": "FixedAssets.ARBOS", "value": "ARBOS" },
       { "labelKey": "FixedAssets.NationalTransplanter", "value": "National" },
-      { "labelKey": "FixedAssets.other", "value": "Other" }
+      { "labelKey": "FixedAssets.Other", "value": "Other" }
     ],
     "Tillage Equipment": [
       {
@@ -349,11 +349,11 @@
       { "labelKey": "FixedAssets.Browns", "value": "Browns" },
       { "labelKey": "FixedAssets.Hayles", "value": "Hayles" },
       { "labelKey": "FixedAssets.Dimo", "value": "Dimo" },
-      { "labelKey": "FixedAssets.other", "value": "Other" }
+      { "labelKey": "FixedAssets.Other", "value": "Other" }
     ],
     "Sowing Equipment": [
       { "labelKey": "FixedAssets.Dimo", "value": "Seed Sowing Machine - ME" },
-      { "labelKey": "FixedAssets.other", "value": "Other" }
+      { "labelKey": "FixedAssets.Other", "value": "Other" }
     ],
     "Harvesting Equipment": [
       {
@@ -378,7 +378,7 @@
       { "labelKey": "FixedAssets.TAF360", "value": "360 TAF" },
       { "labelKey": "FixedAssets.AGRIUNNION", "value": "AGRIUNNION" },
       { "labelKey": "FixedAssets.Kartar", "value": "KARTAR" },
-      { "labelKey": "FixedAssets.other", "value": "Other" }
+      { "labelKey": "FixedAssets.Other", "value": "Other" }
     ],
     "Threshers, Reaper, Binders": [
       {
@@ -389,7 +389,7 @@
         "labelKey": "FixedAssets.MultiCropCutter",
         "value": "Multi Crop Cutter Thresher - ME"
       },
-      { "labelKey": "FixedAssets.other", "value": "Other" }
+      { "labelKey": "FixedAssets.Other", "value": "Other" }
     ],
     "Cleaning, Grading and Weighing Equipment": [
       {
@@ -422,7 +422,7 @@
       },
       { "labelKey": "FixedAssets.Browns", "value": "Browns" },
       { "labelKey": "FixedAssets.Hayles", "value": "Hayles" },
-      { "labelKey": "FixedAssets.other", "value": "Other" }
+      { "labelKey": "FixedAssets.Other", "value": "Other" }
     ],
     "Weeding": [
       {
@@ -433,7 +433,7 @@
       { "labelKey": "FixedAssets.Browns", "value": "Browns" },
       { "labelKey": "FixedAssets.Hayles", "value": "Hayles" },
       { "labelKey": "FixedAssets.Dimo", "value": "Dimo" },
-      { "labelKey": "FixedAssets.other", "value": "Other" }
+      { "labelKey": "FixedAssets.Other", "value": "Other" }
     ],
     "Sprayers": [
       {
@@ -456,7 +456,7 @@
         "labelKey": "FixedAssets.TractorMountedSprayer",
         "value": "Tractor Mounted Sprayer - ME"
       },
-      { "labelKey": "FixedAssets.other", "value": "Other" }
+      { "labelKey": "FixedAssets.Other", "value": "Other" }
     ],
     "Shelling and Grinding Machine": [
       {
@@ -467,7 +467,7 @@
         "labelKey": "FixedAssets.MaizeCoenThresher",
         "value": "Maize Coen Thresher - ME"
       },
-      { "labelKey": "FixedAssets.other", "value": "Other" }
+      { "labelKey": "FixedAssets.Other", "value": "Other" }
     ],
     "Sowing": [
       {
@@ -478,7 +478,7 @@
         "labelKey": "FixedAssets.TractorMountedSpray",
         "value": "Tractor Mounted Sprayer"
       },
-      { "labelKey": "FixedAssets.other", "value": "Other" }
+      { "labelKey": "FixedAssets.Other", "value": "Other" }
     ]
   }
 }

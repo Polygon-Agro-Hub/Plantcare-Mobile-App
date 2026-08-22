@@ -26,6 +26,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../../common/CustomHeader";
 import GlobalSearchModal from "@/component/common/GlobalSearchModal";
 import LoadingPage from "@/component/common/LoadingPage";
+import CustomDatePicker from "../../common/CustomDatePicker";
 
 type FarmCropEnrollRouteProp = RouteProp<RootStackParamList, "FarmCropEnroll">;
 
@@ -548,30 +549,36 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
     </View>
   );
 
-  const renderDatePicker = () =>
-    showDatePicker &&
-    (Platform.OS === "ios" ? (
-      <View className="justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100 rounded-lg">
-        <DateTimePicker
-          value={startDate}
-          mode="date"
-          display="inline"
-          style={{ width: 320, height: 260 }}
-          maximumDate={new Date()}
-          minimumDate={minDate}
-          onChange={onChangeDate}
-        />
-      </View>
-    ) : (
-      <DateTimePicker
+const renderDatePicker = () => {
+  if (!showDatePicker) return null;
+
+  if (Platform.OS === "ios") {
+    return (
+      <CustomDatePicker
+        visible={showDatePicker}
+        onClose={() => setShowDatePicker(false)}
         value={startDate}
-        mode="date"
-        display="default"
-        maximumDate={new Date()}
+        onConfirm={(date) => onChangeDate(null, date)}
         minimumDate={minDate}
-        onChange={onChangeDate}
+        maximumDate={new Date()}
+        title={t("Cropenroll.SelectStartDate")}
+        cancelText={t("Main.Cancel")}
+        confirmText={t("Main.OK")}
       />
-    ));
+    );
+  }
+
+  return (
+    <DateTimePicker
+      value={startDate}
+      mode="date"
+      display="default"
+      maximumDate={new Date()}
+      minimumDate={minDate}
+      onChange={onChangeDate}
+    />
+  );
+};
 
   return (
     <KeyboardAvoidingView
@@ -630,7 +637,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
                 disabled={isLoading}
               >
                 <Text className="text-white text-lg font-bold">
-                  {t("Main.Search...")}
+                  {t("Main.Search")}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -676,7 +683,7 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
           </View>
         ) : (
           <View className="px-6">
-            <Text className="mt-8">{t("Main.Extent")}</Text>
+            <Text className="mt-8">{t("Farms.Extent")}</Text>
             {renderExtentInputs()}
             {renderDatePicker()}
 

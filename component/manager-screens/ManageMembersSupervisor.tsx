@@ -321,6 +321,7 @@ const ManageMembersSupervisor = () => {
           </View>
 
           <View className="flex-row justify-center items-center flex-wrap px-4">
+              <Text className="text-sm text-gray-600 mx-1">•</Text>
             <Text className="text-sm text-gray-600 mx-1">
               {stats.laborerCount} {t("Farms.Laborer")}
               {stats.laborerCount !== 1 ? "s" : ""}
