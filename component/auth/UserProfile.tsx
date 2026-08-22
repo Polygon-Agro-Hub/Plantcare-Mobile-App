@@ -436,7 +436,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
 
-          {!isLaborer && (
+          {!isStaffRole && (
             <>
               <View className="h-0.5 bg-[#D2D2D2] my-4" />
 
@@ -452,7 +452,9 @@ const UserProfile: React.FC<UserProfileProps> = ({ navigation }) => {
                 </Text>
                 <MaterialIcons
                   name={
-                    isLanguageDropdownOpen ? "arrow-drop-up" : "arrow-drop-down"
+                    isComplaintDropdownOpen
+                      ? "arrow-drop-up"
+                      : "arrow-drop-down"
                   }
                   size={24}
                   color="#666"

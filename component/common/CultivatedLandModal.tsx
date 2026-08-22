@@ -10,6 +10,7 @@ import {
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import { useTranslation } from "react-i18next";
 import { Entypo } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export interface CultivatedLandModalProps {
   visible: boolean;
@@ -28,6 +29,7 @@ function CameraScreen({
 }: {
   onClose: (capturedImageUri: string | null) => void;
 }) {
+  const insets = useSafeAreaInsets();
   const [facing, setFacing] = useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
   const [camera, setCamera] = useState<CameraView | null>(null);
@@ -75,18 +77,22 @@ function CameraScreen({
         onPress={() => onClose(null)}
         style={{
           position: "absolute",
-          top: 50,
-          left: 20,
+          top: insets.top > 0 ? insets.top + 12 : 16,
+          left: 16,
           zIndex: 1000,
-          backgroundColor: "rgba(0,0,0,0.5)",
-          borderRadius: 20,
-          width: 40,
-          height: 40,
-          alignItems: "center",
-          justifyContent: "center",
         }}
+        className="items-start"
       >
-        <Entypo name="chevron-left" size={24} color="white" />
+        <Entypo
+          name="chevron-left"
+          size={25}
+          color="black"
+          style={{
+            backgroundColor: "#F6F6F6CC",
+            borderRadius: 50,
+            padding: 10,
+          }}
+        />
       </TouchableOpacity>
 
       <View
