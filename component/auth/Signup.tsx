@@ -67,12 +67,14 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
   const nicInputRef = useRef<TextInput>(null);
   const { t, i18n } = useTranslation();
 
-  const districtItems = districtData.map((d) => ({
-    label: t(d.translationKey),
-    value: d.name,
-    districtId: d.id,
-    districtName: d.name,
-  }));
+  const districtItems = districtData
+    .map((d) => ({
+      label: t(d.translationKey),
+      value: d.name,
+      districtId: d.id,
+      districtName: d.name,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
 
   useEffect(() => {
     const selectedLanguage = t("Main.LNG");

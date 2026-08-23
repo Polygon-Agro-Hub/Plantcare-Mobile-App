@@ -141,12 +141,15 @@ const CropCard: React.FC<CropCardProps> = ({
             showsText={true}
             formatText={() => {
               const percentage = progress * 100;
+              if (percentage >= 100 || progress >= 1) {
+                return "100%";
+              }
               if (percentage > 0 && percentage < 0.01) {
                 return "0.01%";
               }
               return `${percentage.toFixed(2)}%`;
             }}
-            textStyle={{ fontSize: 12,fontWeight: "bold" }}
+            textStyle={{ fontSize: 10, color: "#4caf50", fontWeight: "bold" }}
           />
         </View>
       </TouchableOpacity>

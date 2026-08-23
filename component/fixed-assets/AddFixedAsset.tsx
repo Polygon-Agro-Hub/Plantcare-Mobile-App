@@ -320,6 +320,13 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
   // Today at 23:59:59.999 — using this (instead of `new Date()`, which carries
   // the exact current time) as the picker ceiling is what guarantees "today"
   // is always selectable, on both Android and iOS.
+    const getStartOfTomorrow = (): Date => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  };
+
   const getEndOfToday = (): Date => {
     const d = new Date();
     d.setHours(23, 59, 59, 999);
@@ -341,6 +348,15 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
   };
 
   const applyExpireDate = (date: Date) => {
+    if (date <= getEndOfToday()) {
+      Alert.alert(
+        t("FixedAssets.sorry"),
+        t("FixedAssets.WarrantyExpireDateMustBeInTheFuture") ||
+          "Warranty expire date must be in the future.",
+        [{ text: t("Main.OK") }],
+      );
+      return;
+    }
     if (purchasedDate && date < purchasedDate) {
       Alert.alert(
         t("FixedAssets.sorry"),
@@ -1122,15 +1138,28 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 {assetType === "Other" && (
                   <View className="mt-4">
                     <Text className="text-sm">{t("FixedAssets.MentionOther")}</Text>
-                    <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
-                      placeholder={t("FixedAssets.MentionOther")}
-                      value={mentionOther}
-                      onChangeText={(text) => {
-                        setMentionOther(text.replace(/^\s+/, ""));
-                        clearError("mentionOther");
+                    <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
+                      <TextInput
+                        className="text-black w-full text-sm"
+                        placeholderTextColor="#6B7280"
+                        style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
                       }}
-                    />
+                        placeholder={t("FixedAssets.MentionOther")}
+                        value={mentionOther}
+                        onChangeText={(text) => {
+                          setMentionOther(text.replace(/^\s+/, ""));
+                          clearError("mentionOther");
+                        }}
+                      />
+                    </View>
                     <ErrorText field="mentionOther" />
                   </View>
                 )}
@@ -1158,15 +1187,28 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.MentionOtherBrandName")}
                     </Text>
-                    <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
-                      placeholder={t("FixedAssets.EnterBrandName")}
-                      value={customBrand}
-                      onChangeText={(text) => {
-                        setCustomBrand(text.replace(/^\s+/, ""));
-                        clearError("customBrand");
+                    <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
+                      <TextInput
+                        className="text-black w-full text-sm"
+                        placeholderTextColor="#6B7280"
+                        style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
                       }}
-                    />
+                        placeholder={t("FixedAssets.EnterBrandName")}
+                        value={customBrand}
+                        onChangeText={(text) => {
+                          setCustomBrand(text.replace(/^\s+/, ""));
+                          clearError("customBrand");
+                        }}
+                      />
+                    </View>
                     <ErrorText field="customBrand" />
                   </View>
                 )}
@@ -1175,42 +1217,68 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 <Text className="text-[#070707] text-sm mt-2">
                   {t("FixedAssets.NumberOfUnits")} *
                 </Text>
-                <TextInput
-                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
-                  placeholder={t("FixedAssets.NumberOfUnits")}
-                  value={numberOfUnits}
-                  onChangeText={(text) => {
-                    setNumberOfUnits(text.replace(/[-.*#+]/g, "").trimStart());
-                    clearError("numberOfUnits");
-                  }}
-                  keyboardType="numeric"
-                />
+                <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
+                  <TextInput
+                    className="text-black w-full text-sm"
+                    placeholderTextColor="#6B7280"
+                    style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
+                      }}
+                    placeholder={t("FixedAssets.NumberOfUnits")}
+                    value={numberOfUnits}
+                    onChangeText={(text) => {
+                      setNumberOfUnits(text.replace(/[-.*#+]/g, "").trimStart());
+                      clearError("numberOfUnits");
+                    }}
+                    keyboardType="numeric"
+                  />
+                </View>
                 <ErrorText field="numberOfUnits" />
 
                 {/* Unit price */}
                 <Text className="text-[#070707] text-sm mt-2">
                   {t("FixedAssets.UnitPrice")} *
                 </Text>
-                <TextInput
-                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
-                  placeholder={t("FixedAssets.UnitPrices")}
-                  value={unitPrice}
-                  onChangeText={(text) => {
-                    let cleaned = text.replace(/[^0-9.]/g, "");
-                    const parts = cleaned.split(".");
-                    if (parts.length > 2)
-                      cleaned = parts[0] + "." + parts.slice(1).join("");
-                    const intPart = (parts[0] || "").replace(
-                      /\B(?=(\d{3})+(?!\d))/g,
-                      ",",
-                    );
-                    const formatted =
-                      parts.length === 2 ? intPart + "." + parts[1] : intPart;
-                    setUnitPrice(formatted);
-                    clearError("unitPrice");
-                  }}
-                  keyboardType="numeric"
-                />
+                <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
+                  <TextInput
+                    className="text-black w-full text-sm"
+                    placeholderTextColor="#6B7280"
+                    style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
+                      }}
+                    placeholder={t("FixedAssets.UnitPrices")}
+                    value={unitPrice}
+                    onChangeText={(text) => {
+                      let cleaned = text.replace(/[^0-9.]/g, "");
+                      const parts = cleaned.split(".");
+                      if (parts.length > 2)
+                        cleaned = parts[0] + "." + parts.slice(1).join("");
+                      const intPart = (parts[0] || "").replace(
+                        /\B(?=(\d{3})+(?!\d))/g,
+                        ",",
+                      );
+                      const formatted =
+                        parts.length === 2 ? intPart + "." + parts[1] : intPart;
+                      setUnitPrice(formatted);
+                      clearError("unitPrice");
+                    }}
+                    keyboardType="numeric"
+                  />
+                </View>
                 <ErrorText field="unitPrice" />
 
                 {/* Total price */}
@@ -1286,7 +1354,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       setShowPicker={setShowExpireDatePicker}
                       onConfirm={applyExpireDate}
                       onChangeAndroid={onChangeExpireDateAndroid}
-                      minimumDate={purchasedDate || undefined}
+                      minimumDate={getStartOfTomorrow()}
                       maximumDate={maxDate}
                       modalTitle={t("FixedAssets.WarrantyExpireDate")}
                     />
@@ -1318,20 +1386,33 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 <Text className="text-[#070707] text-sm mt-2">
                   {t("FixedAssets.LandName")} *
                 </Text>
-                <TextInput
-                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
-                  placeholder={t("FixedAssets.EnterLandName")}
-                  value={landName}
-                  maxLength={20}
-                  autoCapitalize="sentences"
-                  onChangeText={(text) => {
-                    const trimmed = text.replace(/^\s+/, "");
-                    const capitalized =
-                      trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
-                    setLandName(capitalized.slice(0, 20));
-                    clearError("landName");
-                  }}
-                />
+                <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
+                  <TextInput
+                    className="text-black w-full text-sm"
+                    placeholderTextColor="#6B7280"
+                    style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
+                      }}
+                    placeholder={t("FixedAssets.EnterLandName")}
+                    value={landName}
+                    maxLength={20}
+                    autoCapitalize="sentences"
+                    onChangeText={(text) => {
+                      const trimmed = text.replace(/^\s+/, "");
+                      const capitalized =
+                        trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+                      setLandName(capitalized.slice(0, 20));
+                      clearError("landName");
+                    }}
+                  />
+                </View>
                 <ErrorText field="landName" />
                 <Text className="text-[#070707] text-sm mt-2">
                   {t("FixedAssets.Extent")} *
@@ -1359,15 +1440,28 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       className="flex-row items-center gap-2"
                     >
                       <Text className="text-[#070707] text-sm mt-2 mr-2">{label}</Text>
-                      <TextInput
-                        className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-20 mt-2 mb-2 text-sm" placeholderTextColor="#585858"
-                        value={val}
-                        onChangeText={(text) =>
-                          setter(text.replace(/[-.*#+]/g, ""))
-                        }
-                        keyboardType="numeric"
-                        placeholder={label}
-                      />
+                      <View className="bg-[#F4F4F4] px-3 w-20 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
+                        <TextInput
+                          className="text-black w-full text-sm"
+                          placeholderTextColor="#6B7280"
+                          style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
+                      }}
+                          value={val}
+                          onChangeText={(text) =>
+                            setter(text.replace(/[-.*#+]/g, ""))
+                          }
+                          keyboardType="numeric"
+                          placeholder={label}
+                        />
+                      </View>
                     </View>
                   ))}
                 </View>
@@ -1393,16 +1487,29 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.EstimatedValue")} *
                     </Text>
-                    <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
-                      placeholder={t("FixedAssets.EnterEstimatedValue")}
-                      value={estimateValue}
-                      onChangeText={(text) => {
-                        setEstimatedValue(formatCurrency(text.trimStart()));
-                        clearError("estimateValue");
+                    <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
+                      <TextInput
+                        className="text-black w-full text-sm"
+                        placeholderTextColor="#6B7280"
+                        style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
                       }}
-                      keyboardType="numeric"
-                    />
+                        placeholder={t("FixedAssets.EnterEstimatedValue")}
+                        value={estimateValue}
+                        onChangeText={(text) => {
+                          setEstimatedValue(formatCurrency(text.trimStart()));
+                          clearError("estimateValue");
+                        }}
+                        keyboardType="numeric"
+                      />
+                    </View>
                     <ErrorText field="estimateValue" />
                   </View>
                 )}
@@ -1433,53 +1540,92 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       <Text className="w-[20%] text-right pr-2 text-sm">
                         {t("FixedAssets.Years")}
                       </Text>
-                      <TextInput
-                        className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
-                        value={durationYears}
-                        onChangeText={(text) => {
-                          setDurationYears(
-                            text.replace(/[-.*#+]/g, "").trimStart(),
-                          );
-                          clearError("duration");
-                        }}
-                        keyboardType="numeric"
-                        placeholder={t("FixedAssets.Years")}
-                      />
+                      <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2 justify-center">
+                        <TextInput
+                          className="text-black w-full text-sm"
+                          placeholderTextColor="#6B7280"
+                          style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
+                      }}
+                          value={durationYears}
+                          onChangeText={(text) => {
+                            setDurationYears(
+                              text.replace(/[-.*#+]/g, "").trimStart(),
+                            );
+                            clearError("duration");
+                          }}
+                          keyboardType="numeric"
+                          placeholder={t("FixedAssets.Years")}
+                        />
+                      </View>
                       <Text className="w-[20%] text-right pr-2 text-sm">
                         {t("FixedAssets.Months")}
                       </Text>
-                      <TextInput
-                        className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
-                        value={durationMonths}
-                        onChangeText={(text) => {
-                          const cleaned = text
-                            .replace(/[-.*#+]/g, "")
-                            .trimStart();
-                          const num = parseInt(cleaned, 10);
-                          if (cleaned === "" || (num >= 0 && num <= 12))
-                            setDurationMonths(cleaned);
-                          clearError("duration");
-                        }}
-                        keyboardType="numeric"
-                        maxLength={2}
-                        placeholder={t("FixedAssets.Months")}
-                      />
+                      <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2 justify-center">
+                        <TextInput
+                          className="text-black w-full text-sm"
+                          placeholderTextColor="#6B7280"
+                          style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
+                      }}
+                          value={durationMonths}
+                          onChangeText={(text) => {
+                            const cleaned = text
+                              .replace(/[-.*#+]/g, "")
+                              .trimStart();
+                            const num = parseInt(cleaned, 10);
+                            if (cleaned === "" || (num >= 0 && num <= 12))
+                              setDurationMonths(cleaned);
+                            clearError("duration");
+                          }}
+                          keyboardType="numeric"
+                          maxLength={2}
+                          placeholder={t("FixedAssets.Months")}
+                        />
+                      </View>
                     </View>
                     <ErrorText field="duration" />
 
                     <Text className="pb-2 mt-4 text-sm">
                       {t("FixedAssets.AnnualLeaseAmount")} *
                     </Text>
-                    <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
-                      value={leastAmountAnnually}
-                      onChangeText={(text) => {
-                        setLeastAmountAnnually(formatCurrency(text));
-                        clearError("leastAmountAnnually");
+                    <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
+                      <TextInput
+                        className="text-black w-full text-sm"
+                        placeholderTextColor="#6B7280"
+                        style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
                       }}
-                      keyboardType="numeric"
-                      placeholder={t("FixedAssets.EnterAnnualLeasedAmount")}
-                    />
+                        value={leastAmountAnnually}
+                        onChangeText={(text) => {
+                          setLeastAmountAnnually(formatCurrency(text));
+                          clearError("leastAmountAnnually");
+                        }}
+                        keyboardType="numeric"
+                        placeholder={t("FixedAssets.EnterAnnualLeasedAmount")}
+                      />
+                    </View>
                     <ErrorText field="leastAmountAnnually" />
                   </View>
                 )}
@@ -1505,16 +1651,29 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.PermitFeeAnnuallyLKR")} *
                     </Text>
-                    <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
-                      placeholder={t("FixedAssets.EnterAnnualPermitFee")}
-                      value={permitFeeAnnually}
-                      onChangeText={(text) => {
-                        setPermitFeeAnnually(formatCurrency(text.trimStart()));
-                        clearError("permitFeeAnnually");
+                    <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
+                      <TextInput
+                        className="text-black w-full text-sm"
+                        placeholderTextColor="#6B7280"
+                        style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
                       }}
-                      keyboardType="numeric"
-                    />
+                        placeholder={t("FixedAssets.EnterAnnualPermitFee")}
+                        value={permitFeeAnnually}
+                        onChangeText={(text) => {
+                          setPermitFeeAnnually(formatCurrency(text.trimStart()));
+                          clearError("permitFeeAnnually");
+                        }}
+                        keyboardType="numeric"
+                      />
+                    </View>
                     <ErrorText field="permitFeeAnnually" />
                   </View>
                 )}
@@ -1525,16 +1684,29 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     <Text className="pb-2 text-sm">
                       {t("FixedAssets.AnnualPaymentFee")} *
                     </Text>
-                    <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
-                      value={paymentAnnually}
-                      onChangeText={(text) => {
-                        setPaymentAnnually(formatCurrency(text.trimStart()));
-                        clearError("paymentAnnually");
+                    <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
+                      <TextInput
+                        className="text-black w-full text-sm"
+                        placeholderTextColor="#6B7280"
+                        style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
                       }}
-                      keyboardType="numeric"
-                      placeholder={t("FixedAssets.EnterAnnualPaymentFee")}
-                    />
+                        value={paymentAnnually}
+                        onChangeText={(text) => {
+                          setPaymentAnnually(formatCurrency(text.trimStart()));
+                          clearError("paymentAnnually");
+                        }}
+                        keyboardType="numeric"
+                        placeholder={t("FixedAssets.EnterAnnualPaymentFee")}
+                      />
+                    </View>
                     <ErrorText field="paymentAnnually" />
                   </View>
                 )}
@@ -1613,15 +1785,28 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.MentionOtherDetails")}
                     </Text>
-                    <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
-                      value={othertool}
-                      onChangeText={(text) => {
-                        setOthertool(text.replace(/^\s+/, ""));
-                        clearError("othertool");
+                    <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
+                      <TextInput
+                        className="text-black w-full text-sm"
+                        placeholderTextColor="#6B7280"
+                        style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
                       }}
-                      placeholder={t("FixedAssets.MentionOtherDetails")}
-                    />
+                        value={othertool}
+                        onChangeText={(text) => {
+                          setOthertool(text.replace(/^\s+/, ""));
+                          clearError("othertool");
+                        }}
+                        placeholder={t("FixedAssets.MentionOtherDetails")}
+                      />
+                    </View>
                     <ErrorText field="othertool" />
                   </View>
                 )}
@@ -1645,14 +1830,27 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.MentionOtherBrandName")}
                     </Text>
-                    <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
-                      placeholder={t("FixedAssets.EnterBrandName")}
-                      value={customBrand}
-                      onChangeText={(text) =>
-                        setCustomBrand(text.replace(/^\s+/, ""))
-                      }
-                    />
+                    <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
+                      <TextInput
+                        className="text-black w-full text-sm"
+                        placeholderTextColor="#6B7280"
+                        style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
+                      }}
+                        placeholder={t("FixedAssets.EnterBrandName")}
+                        value={customBrand}
+                        onChangeText={(text) =>
+                          setCustomBrand(text.replace(/^\s+/, ""))
+                        }
+                      />
+                    </View>
                     <ErrorText field="customBrand" />
                   </View>
                 )}
@@ -1661,31 +1859,57 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 <Text className="text-[#070707] text-sm mt-2">
                   {t("FixedAssets.NumberOfUnits")} *
                 </Text>
-                <TextInput
-                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
-                  placeholder={t("FixedAssets.NumberOfUnitsIsRequired")}
-                  value={numberOfUnits}
-                  onChangeText={(text) =>
-                    setNumberOfUnits(text.replace(/[-.*#+]/g, "").trimStart())
-                  }
-                  keyboardType="numeric"
-                />
+                <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
+                  <TextInput
+                    className="text-black w-full text-sm"
+                    placeholderTextColor="#6B7280"
+                    style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
+                      }}
+                    placeholder={t("FixedAssets.NumberOfUnitsIsRequired")}
+                    value={numberOfUnits}
+                    onChangeText={(text) =>
+                      setNumberOfUnits(text.replace(/[-.*#+]/g, "").trimStart())
+                    }
+                    keyboardType="numeric"
+                  />
+                </View>
                 <ErrorText field="numberOfUnits" />
 
                 <Text className="text-[#070707] text-sm mt-2">
                   {t("FixedAssets.UnitPrice")} *
                 </Text>
-                <TextInput
-                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
-                  placeholder={t("FixedAssets.UnitPriceIsRequired")}
-                  value={unitPrice}
-                  onChangeText={(text) => {
-                    const digits = text.replace(/[^0-9]/g, "");
-                    setUnitPrice(digits.replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                    clearError("unitPrice");
-                  }}
-                  keyboardType="numeric"
-                />
+                <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
+                  <TextInput
+                    className="text-black w-full text-sm"
+                    placeholderTextColor="#6B7280"
+                    style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
+                      }}
+                    placeholder={t("FixedAssets.UnitPriceIsRequired")}
+                    value={unitPrice}
+                    onChangeText={(text) => {
+                      const digits = text.replace(/[^0-9]/g, "");
+                      setUnitPrice(digits.replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                      clearError("unitPrice");
+                    }}
+                    keyboardType="numeric"
+                  />
+                </View>
                 <ErrorText field="unitPrice" />
 
                 <Text className="text-[#070707] text-sm mt-2">
@@ -1760,7 +1984,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       setShowPicker={setShowExpireDatePicker}
                       onConfirm={applyExpireDate}
                       onChangeAndroid={onChangeExpireDateAndroid}
-                      minimumDate={purchasedDate || undefined}
+                      minimumDate={getStartOfTomorrow()}
                       maximumDate={maxDate}
                       modalTitle={t("FixedAssets.WarrantyExpireDate")}
                     />
@@ -1809,38 +2033,64 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 <Text className="text-[#070707] text-sm mt-2">
                   {t("FixedAssets.BuildingName")} *
                 </Text>
-                <TextInput
-                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
-                  placeholder={t("FixedAssets.EnterBuildingName")}
-                  value={buildingName}
-                  onChangeText={(text) => {
-                    const trimmed = text.replace(/^\s+/, "");
-                    const capitalized =
-                      trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
-                    setBuildingName(capitalized);
-                    clearError("buildingName");
-                  }}
-                />
+                <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
+                  <TextInput
+                    className="text-black w-full text-sm"
+                    placeholderTextColor="#6B7280"
+                    style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
+                      }}
+                    placeholder={t("FixedAssets.EnterBuildingName")}
+                    value={buildingName}
+                    onChangeText={(text) => {
+                      const trimmed = text.replace(/^\s+/, "");
+                      const capitalized =
+                        trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+                      setBuildingName(capitalized);
+                      clearError("buildingName");
+                    }}
+                  />
+                </View>
                 <ErrorText field="buildingName" />
 
                 {/* Floor area */}
                 <Text className="text-[#070707] text-sm mt-2">
                   {t("FixedAssets.FloorArea")} *
                 </Text>
-                <TextInput
-                  className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
-                  placeholder={t("FixedAssets.EnterFloorArea")}
-                  value={floorArea}
-                  onChangeText={(text) => {
-                    let cleaned = text.replace(/[^0-9.]/g, "").trimStart();
-                    const parts = cleaned.split(".");
-                    if (parts.length > 2)
-                      cleaned = parts[0] + "." + parts.slice(1).join("");
-                    setFloorArea(cleaned);
-                    clearError("floorArea");
-                  }}
-                  keyboardType="numeric"
-                />
+                <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
+                  <TextInput
+                    className="text-black w-full text-sm"
+                    placeholderTextColor="#6B7280"
+                    style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
+                      }}
+                    placeholder={t("FixedAssets.EnterFloorArea")}
+                    value={floorArea}
+                    onChangeText={(text) => {
+                      let cleaned = text.replace(/[^0-9.]/g, "").trimStart();
+                      const parts = cleaned.split(".");
+                      if (parts.length > 2)
+                        cleaned = parts[0] + "." + parts.slice(1).join("");
+                      setFloorArea(cleaned);
+                      clearError("floorArea");
+                    }}
+                    keyboardType="numeric"
+                  />
+                </View>
                 <ErrorText field="floorArea" />
 
                 {/* Ownership */}
@@ -1863,16 +2113,29 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.EstimatedBuildingValue")} *
                     </Text>
-                    <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
-                      placeholder={t("FixedAssets.EnterEstimatedValue")}
-                      value={estimateValue}
-                      onChangeText={(text) => {
-                        setEstimatedValue(formatCurrency(text.trimStart()));
-                        clearError("estimateValue");
+                    <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
+                      <TextInput
+                        className="text-black w-full text-sm"
+                        placeholderTextColor="#6B7280"
+                        style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
                       }}
-                      keyboardType="numeric"
-                    />
+                        placeholder={t("FixedAssets.EnterEstimatedValue")}
+                        value={estimateValue}
+                        onChangeText={(text) => {
+                          setEstimatedValue(formatCurrency(text.trimStart()));
+                          clearError("estimateValue");
+                        }}
+                        keyboardType="numeric"
+                      />
+                    </View>
                     <ErrorText field="estimateValue" />
                   </View>
                 )}
@@ -1897,13 +2160,24 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.Duration")} *
                     </Text>
-                    <View className="flex-row items-center justify-between">
-                      <View className="flex-row items-center">
-                        <Text className="w-[20%] text-right pr-2 text-sm">
-                          {t("FixedAssets.Years")}
-                        </Text>
+                    <View className="items-center flex-row justify-center">
+                      <Text className="w-[20%] text-right pr-2 text-sm">
+                        {t("FixedAssets.Years")}
+                      </Text>
+                      <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2 justify-center">
                         <TextInput
-                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
+                          className="text-black w-full text-sm"
+                          placeholderTextColor="#6B7280"
+                          style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
+                      }}
                           value={durationYears}
                           onChangeText={(text) => {
                             setDurationYears(
@@ -1914,11 +2188,24 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                           keyboardType="numeric"
                           placeholder={t("FixedAssets.Years")}
                         />
-                        <Text className="w-[20%] text-right pr-2 text-sm">
-                          {t("FixedAssets.Months")}
-                        </Text>
+                      </View>
+                      <Text className="w-[20%] text-right pr-2 text-sm">
+                        {t("FixedAssets.Months")}
+                      </Text>
+                      <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2 justify-center">
                         <TextInput
-                          className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] w-[30%] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
+                          className="text-black w-full text-sm"
+                          placeholderTextColor="#6B7280"
+                          style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
+                      }}
                           value={durationMonths}
                           onChangeText={(text) => {
                             const cleaned = text
@@ -1940,18 +2227,31 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.AnnualLeaseAmount")} *
                     </Text>
-                    <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
-                      value={leastAmountAnnually}
-                      onChangeText={(text) => {
-                        setLeastAmountAnnually(
-                          formatCurrency(text.trimStart()),
-                        );
-                        clearError("leastAmountAnnually");
+                    <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
+                      <TextInput
+                        className="text-black w-full text-sm"
+                        placeholderTextColor="#6B7280"
+                        style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
                       }}
-                      keyboardType="numeric"
-                      placeholder={t("FixedAssets.EnterAnnualLeasedAmount")}
-                    />
+                        value={leastAmountAnnually}
+                        onChangeText={(text) => {
+                          setLeastAmountAnnually(
+                            formatCurrency(text.trimStart()),
+                          );
+                          clearError("leastAmountAnnually");
+                        }}
+                        keyboardType="numeric"
+                        placeholder={t("FixedAssets.EnterAnnualLeasedAmount")}
+                      />
+                    </View>
                     <ErrorText field="leastAmountAnnually" />
                   </View>
                 )}
@@ -1977,16 +2277,29 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     <Text className="text-[#070707] text-sm mt-2">
                       {t("FixedAssets.AnnualPermitFee")} *
                     </Text>
-                    <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
-                      value={permitFeeAnnually}
-                      onChangeText={(text) => {
-                        setPermitFeeAnnually(formatCurrency(text.trimStart()));
-                        clearError("permitFeeAnnually");
+                    <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
+                      <TextInput
+                        className="text-black w-full text-sm"
+                        placeholderTextColor="#6B7280"
+                        style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
                       }}
-                      keyboardType="numeric"
-                      placeholder={t("FixedAssets.EnterAnnualPermitFee")}
-                    />
+                        value={permitFeeAnnually}
+                        onChangeText={(text) => {
+                          setPermitFeeAnnually(formatCurrency(text.trimStart()));
+                          clearError("permitFeeAnnually");
+                        }}
+                        keyboardType="numeric"
+                        placeholder={t("FixedAssets.EnterAnnualPermitFee")}
+                      />
+                    </View>
                     <ErrorText field="permitFeeAnnually" />
                   </View>
                 )}
@@ -1997,16 +2310,29 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     <Text className="pb-2 text-sm">
                       {t("FixedAssets.AnnualPaymentFee")} *
                     </Text>
-                    <TextInput
-                      className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 text-sm" placeholderTextColor="#585858"
-                      value={paymentAnnually}
-                      onChangeText={(text) => {
-                        setPaymentAnnually(formatCurrency(text.trimStart()));
-                        clearError("paymentAnnually");
+                    <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
+                      <TextInput
+                        className="text-black w-full text-sm"
+                        placeholderTextColor="#6B7280"
+                        style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
                       }}
-                      keyboardType="numeric"
-                      placeholder={t("FixedAssets.EnterAnnualPaymentFee")}
-                    />
+                        value={paymentAnnually}
+                        onChangeText={(text) => {
+                          setPaymentAnnually(formatCurrency(text.trimStart()));
+                          clearError("paymentAnnually");
+                        }}
+                        keyboardType="numeric"
+                        placeholder={t("FixedAssets.EnterAnnualPaymentFee")}
+                      />
+                    </View>
                     <ErrorText field="paymentAnnually" />
                   </View>
                 )}

@@ -9,6 +9,7 @@ import {
   RefreshControl,
   BackHandler,
   Image,
+  Modal,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -37,6 +38,8 @@ import * as ScreenCapture from "expo-screen-capture";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../services/reducxStore";
 import ImageViewerModal from "../common/ImageViewerModal";
+import LocationAccess from "../permission/LocationAccess";
+import * as FileSystem from "expo-file-system/legacy";
 
 let Notifications: any = null;
 try {
@@ -142,6 +145,11 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const [tasksWithImages, setTasksWithImages] = useState<Set<string>>(
     new Set(),
   );
+  const [showLocationAccess, setShowLocationAccess] = useState<boolean>(false);
+  const [pendingLocationTask, setPendingLocationTask] = useState<{
+    globalIndex: number;
+    crop: CropItem;
+  } | null>(null);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -296,8 +304,89 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     }
   };
 
+  const handleLocationPermissionGranted = async () => {
+    setShowLocationAccess(false);
+    if (pendingLocationTask) {
+      const { globalIndex, crop } = pendingLocationTask;
+      setPendingLocationTask(null);
+      await completeTask(globalIndex, crop);
+    }
+  };
+
+  const handleLocationIconPress = async (
+    currentCrop: CropItem,
+    globalIndex?: number,
+  ): Promise<boolean> => {
+    try {
+      const { status } = await Location.getForegroundPermissionsAsync();
+      if (status !== "granted") {
+        if (globalIndex !== undefined) {
+          setPendingLocationTask({ globalIndex, crop: currentCrop });
+        }
+        setShowLocationAccess(true);
+        return false;
+      }
+
+      setLoading(true);
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+
+      if (!location) {
+        setLoading(false);
+        Alert.alert(
+          t("Main.Error"),
+          t(
+            "Farms.UnableToFetchLocationAfterMultipleAttemptsPleaseTryAgainLater",
+          ),
+          [{ text: t("Main.OK") }],
+        );
+        return false;
+      }
+
+      const token = await AsyncStorage.getItem("userToken");
+      await axios.post(
+        `${environment.API_BASE_URL}api/crop/geo-location`,
+        {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          taskId: currentCrop.id,
+          onCulscropID: currentCrop.onCulscropID,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      return true;
+    } catch (error) {
+      console.error("Error processing location data:", error);
+      Alert.alert(
+        t("Main.Error"),
+        t(
+          "Farms.UnableToFetchLocationAfterMultipleAttemptsPleaseTryAgainLater",
+        ),
+        [{ text: t("Main.OK") }],
+      );
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const completeTask = async (globalIndex: number, currentCrop: CropItem) => {
     try {
+      if (currentCrop.taskIndex === 1) {
+        const locationSuccess = await handleLocationIconPress(
+          currentCrop,
+          globalIndex,
+        );
+        if (!locationSuccess) {
+          return false;
+        }
+      }
+
       const token = await AsyncStorage.getItem("userToken");
       await axios.post(
         `${environment.API_BASE_URL}api/crop/update-slave`,
@@ -325,20 +414,18 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       const newLastCompletedIndex = updatedChecked.lastIndexOf(true);
       setLastCompletedIndex(newLastCompletedIndex);
 
-      if (currentCrop.taskIndex === 1) {
-        await handleLocationIconPress(currentCrop);
-      }
-
       if (globalIndex < crops.length - 1) {
         registerForPushNotificationsAsync();
         await scheduleDailyNotification();
       }
+      return true;
     } catch (error: any) {
       let msg = t("Main.SomethingWentWrongPleaseTryAgainlater");
       if (error.response?.data?.message?.includes("You need to wait 6 hours")) {
         msg = error.response.data.message;
       }
       Alert.alert(t("Main.Sorry"), msg, [{ text: t("Main.OK") }]);
+      return false;
     }
   };
 
@@ -358,32 +445,32 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG },
       );
 
-      const fileName = manipResult.uri.split("/").pop();
-      const fileType = fileName?.split(".").pop()
-        ? `image/${fileName.split(".").pop()}`
-        : "image/jpeg";
-
-      const formData = new FormData();
-      formData.append("image", {
-        uri: manipResult.uri,
-        name: fileName,
-        type: fileType,
-      } as any);
-      formData.append("slaveId", crop.id);
-      formData.append("farmId", farmId.toString());
-      formData.append("onCulscropID", crop.onCulscropID.toString());
-
-      await axios.post(
+      const uploadResult = await FileSystem.uploadAsync(
         `${environment.API_BASE_URL}api/auth/calendar-tasks/upload-image`,
-        formData,
+        manipResult.uri,
         {
+          httpMethod: "POST",
+          uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+          fieldName: "image",
           headers: {
-            "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
-          timeout: 60000,
+          parameters: {
+            slaveId: crop.id ? crop.id.toString() : "",
+            farmId: farmId ? farmId.toString() : "",
+            onCulscropID: crop.onCulscropID ? crop.onCulscropID.toString() : "",
+          },
         },
       );
+
+      if (uploadResult.status < 200 || uploadResult.status >= 300) {
+        let errMessage = "Upload failed";
+        try {
+          const parsed = JSON.parse(uploadResult.body);
+          if (parsed.message) errMessage = parsed.message;
+        } catch (_) {}
+        throw new Error(errMessage);
+      }
 
       setTasksWithImages((prev) => new Set(prev).add(crop.id));
 
@@ -870,76 +957,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     }
   }, [crops]);
 
-  const handleLocationIconPress = async (currentCrop: CropItem) => {
-    setLoading(true);
 
-    const maxRetries = 3;
-    const delayBetweenRetries = 2000;
-
-    const delay = (ms: number) =>
-      new Promise((resolve) => setTimeout(resolve, ms));
-
-    const getLocationWithRetry = async (
-      retries: number,
-    ): Promise<Location.LocationObject | null> => {
-      try {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
-          throw new Error("Location permission denied");
-        }
-
-        const location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.High,
-        });
-        return location;
-      } catch (error) {
-        console.error(`Attempt failed. Retries left: ${retries}`, error);
-
-        if (retries > 0) {
-          await delay(delayBetweenRetries);
-          return getLocationWithRetry(retries - 1);
-        } else {
-          return null;
-        }
-      }
-    };
-
-    try {
-      const location = await getLocationWithRetry(maxRetries);
-
-      if (!location) {
-        Alert.alert(
-          t("Main.Error"),
-          t(
-            "Farms.UnableToFetchLocationAfterMultipleAttemptsPleaseTryAgainLater",
-          ),
-          [{ text: t("Main.OK") }],
-        );
-        setLoading(false);
-        return;
-      }
-
-      const token = await AsyncStorage.getItem("userToken");
-      const response = await axios.post(
-        `${environment.API_BASE_URL}api/crop/geo-location`,
-        {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          taskId: currentCrop.id,
-          onCulscropID: currentCrop.onCulscropID,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-    } catch (error) {
-      console.error("Error processing location data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const SkeletonLoader = () => {
     const rectHeight = hp("30%");
@@ -1324,6 +1342,25 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
               setSelectedImageIndex(0);
             }}
           />
+
+          {/* Location Access Modal */}
+          <Modal
+            visible={showLocationAccess}
+            animationType="slide"
+            onRequestClose={() => {
+              setShowLocationAccess(false);
+              setPendingLocationTask(null);
+            }}
+          >
+            <LocationAccess
+              navigation={navigation as any}
+              onPermissionGranted={handleLocationPermissionGranted}
+              onClose={() => {
+                setShowLocationAccess(false);
+                setPendingLocationTask(null);
+              }}
+            />
+          </Modal>
           {startIndex + tasksPerPage < crops.length && (
             <TouchableOpacity
               className="py-2 pb-8 px-4 flex-row items-center justify-center"

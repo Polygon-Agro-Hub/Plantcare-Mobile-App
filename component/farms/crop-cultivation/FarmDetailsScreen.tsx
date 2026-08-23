@@ -162,6 +162,9 @@ const CropCard: React.FC<CropCardProps> = ({
             showsText={true}
             formatText={() => {
               const percentage = progress * 100;
+              if (percentage >= 100 || progress >= 1) {
+                return "100%";
+              }
               if (percentage > 0 && percentage < 0.01) {
                 return "0.01%";
               }
@@ -837,7 +840,7 @@ const FarmDetailsScreen = () => {
 
       {showMenu && (
         <View
-          className="absolute right-0 border border-[#A49B9B] top-[30px] bg-white rounded-lg shadow-lg p-2 z-20 w-24"
+          className="absolute right-0 border border-[#A49B9B] top-[30px] bg-white rounded-lg shadow-lg p-2 z-20 w-40"
           style={{
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 2 },
@@ -1115,12 +1118,14 @@ const FarmDetailsScreen = () => {
 
         <View className="mt-6 w-full px-0">
           {crops.length === 0 ? (
-            <NoData
-              text={
-                t("MyCrop.NoOngoingCultivationsYet") ||
-                "No ongoing cultivations yet"
-              }
-            />
+            <View className="py-4 justify-center items-center">
+              <NoData
+                text={
+                  t("MyCrop.NoOngoingCultivationsYet") ||
+                  "No ongoing cultivations yet"
+                }
+              />
+            </View>
           ) : (
             <View
               style={{
@@ -1158,38 +1163,53 @@ const FarmDetailsScreen = () => {
         </View>
       </ScrollView>
 
-      <View>
-        <TouchableOpacity
-          className="absolute bottom-20 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
-          onPress={() => {
-            if (membership.toLowerCase() === "basic" && cropCount >= 3) {
-              Alert.alert(
-                t("Main.Sorry"),
-                t("Farms.You only have 3 free crop enrollments for now"),
-                [{ text: t("Main.OK") }],
-              );
-              return;
-            }
-            if (
-              (membership.toLowerCase() === "pro" &&
+      {/* Hide Add Crop button if Basic member already has 3 or more crops */}
+      {!(
+        (!membership ||
+          membership.toLowerCase() === "basic" ||
+          (membership.toLowerCase() === "pro" &&
+            renewalData?.needsRenewal === true)) &&
+        (cropCount >= 3 || crops.length >= 3)
+      ) && (
+        <View>
+          <TouchableOpacity
+            className="absolute bottom-20 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
+            onPress={() => {
+              const currentCropCount = Math.max(cropCount, crops.length);
+              const isBasic =
+                !membership ||
+                membership.toLowerCase() === "basic" ||
+                (membership.toLowerCase() === "pro" &&
+                  renewalData?.needsRenewal === true);
+
+              if (isBasic && currentCropCount >= 3) {
+                Alert.alert(
+                  t("Main.Sorry"),
+                  t("Farms.You only have 3 free crop enrollments for now"),
+                  [{ text: t("Main.OK") }],
+                );
+                return;
+              }
+              if (
+                membership.toLowerCase() === "pro" &&
                 renewalData?.needsRenewal === true &&
-                (farmData?.farmIndex ?? 0) > 1) ||
-              (farmData?.farmIndex === 1 && cropCount >= 3)
-            ) {
-              navigation.navigate("AddNewFarmUnloackPro" as any);
-            } else {
-              navigation.navigate("AddNewCrop", { farmId });
-            }
-          }}
-          accessibilityLabel="Add new asset"
-          accessibilityRole="button"
-        >
-          <Image
-            className="w-[20px] h-[20px]"
-            source={require("../../../assets/images/farms/plus-white.webp")}
-          />
-        </TouchableOpacity>
-      </View>
+                (farmData?.farmIndex ?? 0) > 1
+              ) {
+                navigation.navigate("AddNewFarmUnloackPro" as any);
+              } else {
+                navigation.navigate("AddNewCrop", { farmId });
+              }
+            }}
+            accessibilityLabel="Add new asset"
+            accessibilityRole="button"
+          >
+            <Image
+              className="w-[20px] h-[20px]"
+              source={require("../../../assets/images/farms/plus-white.webp")}
+            />
+          </TouchableOpacity>
+        </View>
+      )}
 
       <Modal
         visible={showCertificationModal}

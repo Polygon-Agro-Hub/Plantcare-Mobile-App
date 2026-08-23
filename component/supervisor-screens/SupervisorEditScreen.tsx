@@ -590,7 +590,7 @@ const SupervisorEditScreen: React.FC<SupervisorEditScreenProps> = ({
             <Text className="text-gray-900 text-base">{t("Farms.Role")}</Text>
             <View className="bg-gray-100 px-4 h-[50px] rounded-3xl justify-center">
               <Text className="text-base text-gray-700">
-                {t("Farms.Worker")}
+                {t("Farms.FarmLaborer") || t("Farms.Laborer") || "Farm Laborer"}
               </Text>
             </View>
           </View>

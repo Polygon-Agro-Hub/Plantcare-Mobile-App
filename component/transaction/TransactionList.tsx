@@ -190,17 +190,23 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
           <LoadingPage fullScreen />
         </View>
       ) : (
-        <View className="flex-1 ">
-          <View className="px-6">
-          <Text className="font-medium text-base text-gray-600 mb-2">
-            {t("TransactionList.All")} (
-            {String(transactions.length).padStart(2, "0")})
-          </Text>
-          </View>
+        <View className="flex-1">
+          {transactions.length > 0 && (
+            <View className="px-6">
+              <Text className="font-medium text-base text-gray-600 mb-2">
+                {t("TransactionList.All")} (
+                {String(transactions.length).padStart(2, "0")})
+              </Text>
+            </View>
+          )}
           <FlatList
             data={transactions}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={{ paddingVertical: 8, paddingBottom: 40 }}
+            contentContainerStyle={
+              transactions.length === 0
+                ? { flexGrow: 1, justifyContent: "center", alignItems: "center" }
+                : { paddingVertical: 8, paddingBottom: 40 }
+            }
             className="px-6"
             refreshControl={
               <RefreshControl

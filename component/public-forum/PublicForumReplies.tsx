@@ -456,7 +456,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
               disabled={newComment.trim() === "" || submitting}
               style={{
                 height: 44,
-                minWidth: 64,
+                width: 130,
                 borderRadius: 10,
                 justifyContent: "center",
                 alignItems: "center",
@@ -473,7 +473,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
               ) : (
                 <Text style={{ color: "white", fontWeight: "600" }}>
                   {editingCommentId
-                    ? t("Main.Update")
+                    ? t("PublicForum.Change") || "Change"
                     : t("PublicForum.Send")}
                 </Text>
               )}

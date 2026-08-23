@@ -111,6 +111,8 @@
     "SoilData": "පාංශු දත්ත"
   },
   "Profile": {
+    "Profile": "පැතිකඩ",
+    "ViewProfile": "පැතිකඩ බලන්න",
     "Call": "අමතන්න",
     "Logout": "ඉවත් වන්න",
     "LanguageSettings": "භාෂා සැකසුම්",
@@ -128,6 +130,7 @@
   },
   "EditProfile": {
     "EditProfile": "පැතිකඩ සංස්කරණය කරන්න",
+    "ViewProfile": "පැතිකඩ බලන්න",
     "FirstNameAndLastNameCannotBeEmpty": "මුල් නම සහ අවසන් නම හිස් විය නොහැක.",
     "YourProfileHasBeenUpdatedSuccessfully": "ඔබගේ පැතිකඩ සාර්ථකව යාවත්කාලීන කර ඇත!",
     "FailedToUpdateProfileTryAgainLater": "පැතිකඩ යාවත්කාලීන කිරීමට අසමත් විය. පසුව නැවත උත්සාහ කරන්න.",
@@ -314,7 +317,7 @@
     "ReEnterAccountNumber": "ගිණුම් අංකය නැවත ඇතුළත් කරන්න",
     "SelectBankName": "බැංකුවේ නම තෝරන්න",
     "SelectBranchName": "ශාඛාවේ නම තෝරන්න",
-    "SelectBankFirst":"කරුණාකර පළමුව බැංකුවක් තෝරන්න."
+    "SelectBankFirst": "කරුණාකර පළමුව බැංකුවක් තෝරන්න."
   },
   "QRcode": {
     "MyQRCode": "මගේ QR කේතය",
@@ -414,8 +417,8 @@
     "SelectCountryCode": "රටේ කේතය තෝරන්න",
     "EnterFarmNameHere": "ගොවිපල නම මෙතැන ඇතුළත් කරන්න",
     "SearchDistrict": "දිස්ත්‍රික්කය සොයන්න",
-    "SearchCountry":"රට සොයන්න...",
-    "NoCountriesFound":"රටවල් හමු නොවීය.",
+    "SearchCountry": "රට සොයන්න...",
+    "NoCountriesFound": "රටවල් හමු නොවීය.",
     "EnterPlotNumberHere": "භූමි අංකය මෙතැන ඇතුළත් කරන්න",
     "EnterStreetName": "වීදි නම ඇතුළත් කරන්න",
     "EnterCityName": "නගරයේ නම ඇතුළත් කරන්න",
@@ -452,21 +455,30 @@
     "Manager": "කළමනාකරු",
     "Supervisor": "අධීක්ෂක",
     "Worker": "කම්කරු",
+    "Owner": "හිමිකරු",
+    "FarmManager": "ගොවිපල කළමනාකරු",
+    "FarmSupervisor": "ගොවිපල අධීක්ෂක",
+    "FarmLaborer": "ගොවිපල කම්කරු",
+    "FarmOwner": "ගොවිපල හිමිකරු",
     "CreateYourFirstFarmForFree": "ඔබගේ පළමු ගොවිපල නොමිලේ සාදන්න!",
     "SimplifyFarmManagementLikeNeverBefore": "ගොවිපල කළමනාකරණය මීට පෙර නොතිබූ තරම් සරල කරන්න.",
     "GetStarted": "ආරම්භ කරන්න",
     "PleaseEnterTheNumberOfStaff": "කරුණාකර කාර්ය මණ්ඩල සංඛ්‍යාව ඇතුළත් කරන්න",
     "LoginCredentialsCannotExceedTheTotalNumberOfStaff": "පිවිසුම් අක්තපත්‍ර මුළු කාර්ය මණ්ඩල සංඛ්‍යාව ඉක්මවිය නොහැක",
     "NoOfStaffLoginRequired": "පිවිසුම් අවශ්‍ය කාර්ය මණ්ඩල සංඛ්‍යාව",
+    "NoLoginCredentialsRequired": "පිවිසුම් අක්තපත්‍ර අවශ්‍ය නොවේ",
+    "You have indicated that no staff members need login credentials. The farm will be saved directly.": "කිසිදු කාර්ය මණ්ඩල සාමාජිකයෙකුට පිවිසුම් අක්තපත්‍ර අවශ්‍ය නොවන බව ඔබ සඳහන් කර ඇත. ගොවිපල සෘජුවම සුරැකෙනු ඇත.",
+    "Please enter the number of login credentials needed": "කරුණාකර අවශ්‍ය පිවිසුම් අක්තපත්‍ර ගණන ඇතුළත් කරන්න",
+    "Staff numbers cannot be negative": "කාර්ය මණ්ඩල සංඛ්‍යාව සෘණ අගයක් විය නොහැක",
+    "Missing farm details. Please go back and complete all steps.": "ගොවිපල විස්තර අසම්පූර්ණයි. කරුණාකර ආපසු ගොස් සියලු පියවර සම්පූර්ණ කරන්න.",
     "TotalNumberOfStaffWorking": "වැඩ කරන මුළු කාර්ය මණ්ඩල සංඛ්‍යාව",
     "HowManyStaffWillBe": "GoviCare භාවිතා කරන සේවකයන් කී \nදෙනෙක් සිටීද?",
     "NumberOfLoginCredentialsNeeded": "අවශ්‍ය පිවිසුම් අක්තපත්‍ර ගණන",
     "AddStaff": "කාර්ය මණ්ඩලය එක් කරන්න",
-    "NoLoginCredentialsRequired": "පිවිසුම් අක්තපත්‍ර අවශ්‍ය නොවේ",
     "StaffMembersHasBeenAddedSuccessfully": "කාර්ය මණ්ඩල සාමාජිකයින් සාර්ථකව එක් කරන ලදී!",
     "FailedToAddStaffMemberPleaseTryAgain": "කාර්ය මණ්ඩල සාමාජිකයා එක් කිරීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
     "NetworkErrorPleaseCheckYourConnection": "ජාල දෝෂයකි. කරුණාකර ඔබගේ සම්බන්ධතාවය පරීක්ෂා කරන්න.",
-    "AddNewStaffMember": "නව කාර්ය මණ්ඩල සාමාජිකයෙකු එක් කරන්න",
+    "AddNewStaffMember": "නව සාමාජික ලියාපදිංචිය",
     "FailedToFetchFarmData": "ගොවිපල දත්ත ලබා ගැනීමට අසමත් විය",
     "FarmNotFoundPleaseCheckTheFarmID": "ගොවිපල හමු නොවීය. කරුණාකර ගොවිපල හැඳුනුම්පත පරීක්ෂා කරන්න.",
     "PleaseEnterAFarmName": "කරුණාකර ගොවිපල නමක් ඇතුළත් කරන්න",
@@ -482,7 +494,7 @@
     "Crops": "භෝග",
     "MyCultivation": "මගේ වගාව",
     "SelectAFarmToManageYourCultivationAndAssets": "ඔබගේ වගාව සහ වත්කම් කළමනාකරණය කිරීමට ගොවිපලක් තෝරන්න",
-    "StaffMemberUpdated":"කාර්ය මණ්ඩල සාමාජිකයා සාර්ථකව යාවත්කාලීන කර ඇත.",
+    "StaffMemberUpdated": "කාර්ය මණ්ඩල සාමාජිකයා සාර්ථකව යාවත්කාලීන කර ඇත.",
     "Assets": "වත්කම්",
     "Cultivation": "වගාව",
     "StaffMember": "කාර්ය මණ්ඩල සාමාජික -",
@@ -533,9 +545,9 @@
     "BASIC": "මූලික",
     "RENEW": "අලුත් කිරීම",
     "PRO": "PRO",
-    "ID":"හැඳුනුම්පත",
-    "StaffMemberHasBeenUpdatedSuccessfully":"කාර්ය මණ්ඩල සාමාජිකයා සාර්ථකව යාවත්කාලීන කර ඇත.",
-    "CompletionRemovedSuccessfully":"සම්පූර්ණ කිරීම සාර්ථකව ඉවත් කරන ලදී"
+    "ID": "හැඳුනුම්පත",
+    "StaffMemberHasBeenUpdatedSuccessfully": "කාර්ය මණ්ඩල සාමාජිකයා සාර්ථකව යාවත්කාලීන කර ඇත.",
+    "CompletionRemovedSuccessfully": "සම්පූර්ණ කිරීම සාර්ථකව ඉවත් කරන ලදී"
   },
   "SelectCrop": {
     "Description": "විස්තරය",
@@ -623,7 +635,8 @@
     "CheckingValidity": "වලංගු භාවය පරීක්ෂා කරමින්...",
     "CertificateExpired": "සහතිකය කල් ඉකුත් වී ඇත",
     "NoActiveCertificate": "සක්‍රිය සහතිකයක් නොමැත",
-    "GrantPermission":"අවසර දෙන්න"
+    "GrantPermission": "අවසර දෙන්න",
+    "UploadRetryFailed": "ඡායාරූපය උඩුගත කිරීම අසාර්ථක විය. කරුණාකර නැවත උත්සාහ කරන්න."
   },
   "Manager": {
     "ManageWorkers": "කම්කරුවන් කළමනාකරණය කරන්න",
@@ -707,10 +720,10 @@
     "GeneratedPDFFileNotFound": "ජනනය කරන ලද PDF ගොනුව හමු නොවීය",
     "FailedToSharePDFFile": "PDF ගොනුව බෙදාගැනීමට අසමත් විය",
     "NoTransactionsFound": "ගනුදෙනු කිසිවක් හමු නොවීය",
-    "Delivered on":"බෙදා හරින ලද්දේ",
-    "of Items":"අයිතම වලින්",
-    "Info":"තොරතුරු",
-    "UseTheSave":"බාගැනීම් වලට සුරැකීමට 'ගොනු වලට සුරකින්න' විකල්පය භාවිතා කරන්න."
+    "Delivered on": "බෙදා හරින ලද්දේ",
+    "of Items": "අයිතම වලින්",
+    "Info": "තොරතුරු",
+    "UseTheSave": "බාගැනීම් වලට සුරැකීමට 'ගොනු වලට සුරකින්න' විකල්පය භාවිතා කරන්න."
   },
   "EarnCertificate": {
     "EarnACertificate": "සහතිකයක් ලබා ගන්න",
@@ -817,17 +830,20 @@
     "SelectAssetIsRequired": "වත්කම තෝරාගැනීම අවශ්‍ය වේ",
     "AssetType": "වත්කම් වර්ගය",
     "SelectAssetTypeIsRequired": "වත්කම් වර්ගය තෝරාගැනීම අවශ්‍ය වේ",
-    "SelectType":"වර්ගය තෝරන්න",
+    "SelectType": "වර්ගය තෝරන්න",
     "AssetAddSuccessfuly": "වත්කම සාර්ථකව එක් කරන ලදී!",
     "NumberOfUnits": "ඒකක ගණන",
     "NumberOfUnitsIsRequired": "ඒකක ගණන අවශ්‍ය වේ",
     "UnitPrice": "ඒකක මිල (රු.)",
-    "UnitPrices":"ඒකක මිල",
+    "UnitPrices": "ඒකක මිල",
     "UnitPriceIsRequired": "ඒකක මිල අවශ්‍ය වේ",
     "TotalPrice": "මුළු මිල (රු.)",
+    "Warranty": "වගකීම",
     "warranty": "වගකීම",
     "SelectWarrantyIsRequired": "වගකීම තෝරාගැනීම අවශ්‍ය වේ",
     "Yes": "ඔව්",
+    "yes": "ඔව්",
+    "No": "නැහැ",
     "no": "නැහැ",
     "Status": "වගකීම් තත්ත්වය",
     "PurchasedDate": "මිලදී ගත් දිනය",
@@ -856,13 +872,13 @@
     "AnnualLeaseAmountIsRequired": "වාර්ෂික කුලී මුදල (රු.) අවශ්‍ය වේ",
     "IssuedDate": "නිකුත් කළ දිනය",
     "IssuedDateIsRequired": "නිකුත් කළ දිනය අවශ්‍ය වේ",
-     "enterPermitFeeAnnuallyLKR":"වාර්ෂික බලපත්‍ර ගාස්තුව අවශ්‍ය වේ.",
+    "enterPermitFeeAnnuallyLKR": "වාර්ෂික බලපත්‍ර ගාස්තුව අවශ්‍ය වේ.",
     "AnnualPermitFee": "වාර්ෂික බලපත්‍ර ගාස්තුව (රු.)",
     "AnnualPermitFeeIsRequired": "වාර්ෂික බලපත්‍ර ගාස්තුව (රු.) අවශ්‍ය වේ",
     "AnnualPaymentFee": "වාර්ෂික ගෙවීමේ ගාස්තුව (රු.)",
     "AnnualPaymentFeeIsRequired": "වාර්ෂික ගෙවීමේ ගාස්තුව (රු.) අවශ්‍ය වේ",
     "IsTheLandFenced": "ඉඩම වැටක් සහිතද?",
-    "PleaseSelectAnOption":"කරුණාකර විකල්පයක් තෝරන්න.",
+    "PleaseSelectAnOption": "කරුණාකර විකල්පයක් තෝරන්න.",
     "DoesTheLandHavePerennialCrops": "ඉඩමේ බහු වාර්ෂික භෝග තිබේද?",
     "MentionOtherDetails": "වෙනත් විස්තර සඳහන් කරන්න",
     "MentionOther": "වෙනත් සඳහන් කරන්න",
@@ -878,8 +894,8 @@
     "EnterAnnualPermitFee": "වාර්ෂික බලපත්‍ර ගාස්තුව ඇතුළත් කරන්න (රු.)",
     "NoAssetsAvailableForThisCategory": "මෙම කාණ්ඩය සඳහා වත්කම් නොමැත",
     "SelectOwnershipCategoryIsRequired": "හිමිකාරිත්ව කාණ්ඩය තෝරාගැනීම අවශ්‍ය වේ",
-    "SelectOwnership":"හිමිකාරිත්වය තෝරන්න",
-    "SelectGeneralCondition":"සාමාන්‍ය තත්ත්වය තෝරන්න",
+    "SelectOwnership": "හිමිකාරිත්වය තෝරන්න",
+    "SelectGeneralCondition": "සාමාන්‍ය තත්ත්වය තෝරන්න",
     "OwnBuildingWithTitleOwnership": "අයිතිකරුගේ ගොඩනැගිල්ල (අයිතිවාසිකම් සහිත)",
     "LeasedBuilding": "කුලියට ගත් ගොඩනැගිල්ල",
     "NoToolsSelected": "මෙවලම් කිසිවක් තෝරාගෙන නැත",
@@ -1091,7 +1107,8 @@
     "MaizeCoenThresher": "බඩඉරිඟු මඩින යන්ත්‍රය - එම්.ඊ",
     "SteelSeedSowing": "වානේ සහ ප්ලාස්ටික් බීජ වපුරන යන්ත්‍රය",
     "TractorMountedSpray": "ට්‍රැක්ටරයට සම්බන්ධ ඉසින යන්ත්‍රය",
-     "PermitFeeAnnuallyLKR": "වාර්ෂික බලපත්‍ර ගාස්තුව (රු.)"
+    "PermitFeeAnnuallyLKR": "වාර්ෂික බලපත්‍ර ගාස්තුව (රු.)",
+    "WarrantyExpireDateMustBeInTheFuture": "වගකීම් කල් ඉකුත්වීමේ දිනය අනාගත දිනයක් විය යුතුය."
   },
   "ImageViewerModal": {
     "UploadedBy": "උඩුගත කළේ :",
@@ -1104,7 +1121,7 @@
   "PublicForum": {
     "StartANewDiscussion": "නව සාකච්ඡාවක් ආරම්භ කරන්න",
     "LoadingComments": "අදහස් පූරණය වෙමින්...",
-    "Reply":"පිළිතුර",
+    "Reply": "පිළිතුර",
     "Replies": "පිළිතුරු",
     "PublicForum": "පොදු සංසදය",
     "WriteAComment": "අදහසක් ලියන්න...",
@@ -1149,7 +1166,8 @@
     "NotHaveAnyCommentYet": "තවමත් කිසිදු අදහසක් නැත",
     "SeeMore": "තවත් බලන්න",
     "SeeLess": "අඩුවෙන් බලන්න",
-    "Maximum250charactersAllowed": "උපරිම අක්ෂර 250 කට අවසර ඇත."
+    "Maximum250charactersAllowed": "උපරිම අක්ෂර 250 කට අවසර ඇත.",
+    "Change": "වෙනස් කරන්න"
   },
   "Govicapital": {
     "HowCanWeHelpYou": "අපට ඔබට උදව් කළ හැක්කේ කෙසේද?",
@@ -1269,7 +1287,7 @@
     "FailedToFetchFarmCropsPleaseTryAgain": "ගොවිපල භෝග ලබා ගැනීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
     "FailedToFetchFarmsPleaseTryAgain": "ගොවිපල ලබා ගැනීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
     "FailedToFetchServicesPleaseTryAgain": "සේවා ලබා ගැනීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
-    "SearchFarm":"ගොවිපල සොයන්න"
+    "SearchFarm": "ගොවිපල සොයන්න"
   },
   "RequestHistory": {
     "YouHaveNoRequestsAddedYet": "--ඔබ තවමත් කිසිදු ඉල්ලීමක් එකතු කර නැත--",
@@ -1300,7 +1318,7 @@
       "Sun": "ඉරිදා",
       "Mon": "සඳුදා",
       "Tue": "අඟහ",
-      "Wed": "බදා",
+      "Wed": "බදාදා",
       "Thu": "බ්‍රහස්",
       "Fri": "සිකු",
       "Sat": "සෙන"
@@ -1346,7 +1364,27 @@
     "Year": "වර්ෂය",
     "Month": "මාසය",
     "Day": "දිනය",
-    "SelectedDate": "තෝරාගත් දිනය"
+    "SelectedDate": "තෝරාගත් දිනය",
+    "ConfirmSubmission": "ඉදිරිපත් කිරීම තහවුරු කරන්න",
+    "AreYouSureYouWantToSubmitThisPensionRequest": "මෙම විශ්‍රාම වැටුප් ඉල්ලීම ඉදිරිපත් කිරීමට ඔබට අවශ්‍ය බව විශ්වාසද?",
+    "Yes": "ඔව්",
+    "No": "නැත",
+    "PensionRequestSubmittedSuccessfully": "ඔබගේ විශ්‍රාම වැටුප් ඉල්ලීම සාර්ථකව ඉදිරිපත් කරන ලදී!",
+    "FailedToSubmitRequest": "ඉල්ලීම ඉදිරිපත් කිරීමට අසමත් විය",
+    "PleaseEnterSuccessorsFullName": "කරුණාකර අනුප්‍රාප්තිකයාගේ සම්පූර්ණ නම ඇතුළත් කරන්න",
+    "PleaseSelectRelationship": "කරුණාකර සම්බන්ධතාවය තෝරන්න",
+    "PleaseSelectSuccessorsDateOfBirth": "කරුණාකර අනුප්‍රාප්තිකයාගේ උපන් දිනය තෝරන්න",
+    "PleaseEnterSuccessorsNICNumber": "කරුණාකර අනුප්‍රාප්තිකයාගේ ජාතික හැඳුනුම්පත් අංකය ඇතුළත් කරන්න",
+    "InvalidNICMessage": "අනුප්‍රාප්තිකයාගේ ජාතික හැඳුනුම්පත ඉලක්කම් 9ක් සහ V/v/X/x (උදා: 123456789V) හෝ ඉලක්කම් 12ක් (උදා: 199912345678) විය යුතුය",
+    "PleaseUploadSuccessorsNICFrontImage": "කරුණාකර අනුප්‍රාප්තිකයාගේ ජාතික හැඳුනුම්පතේ ඉදිරිපස රූපය උඩුගත කරන්න",
+    "PleaseUploadSuccessorsNICBackImage": "කරුණාකර අනුප්‍රාප්තිකයාගේ ජාතික හැඳුනුම්පතේ පසුපස රූපය උඩුගත කරන්න",
+    "PleaseUploadSuccessorsBirthCertificateFrontImage": "කරුණාකර අනුප්‍රාප්තිකයාගේ උප්පැන්න සහතිකයේ ඉදිරිපස රූපය උඩුගත කරන්න",
+    "PleaseUploadSuccessorsBirthCertificateBackImage": "කරුණාකර අනුප්‍රාප්තිකයාගේ උප්පැන්න සහතිකයේ පසුපස රූපය උඩුගත කරන්න"
+  },
+  "GoviPensionInformation": {
+    "ApplyForPension": "විශ්‍රාම වැටුප සඳහා අයදුම් කරන්න",
+    "YouAreNotEligibleYet": "ඔබ තවමත් සුදුසුකම් ලබා නැත.",
+    "YouNeedToSuccessfullyCompleteAtLeastOneEnrolledCultivation": "විශ්‍රාම වැටුප් ක්‍රමය සඳහා සුදුසුකම් ලැබීමට ඔබ අවම වශයෙන් එක් ලියාපදිංචි වගාවක් සාර්ථකව සම්පූර්ණ කළ යුතුය."
   },
   "GoviPensionStatus": {
     "StayTuned": "රැඳී සිටින්න!",
@@ -1403,7 +1441,7 @@
     "NoCropsFound": "භෝග හමු නොවීය",
     "SelectAreaUnit": "ප්‍රදේශ ඒකකය තෝරන්න",
     "Hectares": "හෙක්ටයාර්",
-    "Acres":"අක්කර",
+    "Acres": "අක්කර",
     "SearchUnits...": "ඒකක සොයන්න...",
     "NoUnitsFound": "ඒකක හමු නොවීය",
     "AreaMustBeGreaterThan0": "ප්‍රදේශය 0 ට වඩා වැඩි විය යුතුය.",
@@ -1433,7 +1471,7 @@
   "SoilFertilizerCalculators": {
     "Soil&FertilizerCalculators": "පාංශු සහ පොහොර ගණක යන්ත්‍ර",
     "Fertilizer": "පොහොර",
-    "FertilizerRequirement":"පොහොර අවශ්‍යතාවය",
+    "FertilizerRequirement": "පොහොර අවශ්‍යතාවය",
     "NPKRatio": "NPK අනුපාතය",
     "LimeRequirement": "දෙහි අවශ්‍යතාවය",
     "CompostMixing": "කොම්පොස්ට් මිශ්‍ර කිරීම",
@@ -1548,9 +1586,9 @@
     "ViewMyInvoice": "මගේ ඉන්වොයිසිය බලන්න",
     "Payment Failed": "ගෙවීම අසාර්ථකයි!"
   },
-  "OrderHistory":{
-    "My Orders":"මගේ ඇණවුම්",
-    "All":"සියල්ල",
-    "No Previous Orders":"පෙර ඇණවුම් නැත"
+  "OrderHistory": {
+    "My Orders": "මගේ ඇණවුම්",
+    "All": "සියල්ල",
+    "No Previous Orders": "පෙර ඇණවුම් නැත"
   }
 }
