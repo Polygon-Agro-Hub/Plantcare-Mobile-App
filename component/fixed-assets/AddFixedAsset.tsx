@@ -208,11 +208,33 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
     }, []),
   );
 
-  const formatDate = (date: Date): string => {
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, "0");
-    const d = String(date.getDate()).padStart(2, "0");
-    return `${y}-${m}-${d}`;
+  const parseDate = (dateStr: string | Date | null | undefined): Date | null => {
+    if (!dateStr) return null;
+    if (dateStr instanceof Date) return dateStr;
+    const parts = dateStr.split("T")[0].split("-");
+    if (parts.length === 3) {
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const day = parseInt(parts[2], 10);
+      return new Date(year, month, day);
+    }
+    const d = new Date(dateStr);
+    return isNaN(d.getTime()) ? null : d;
+  };
+
+  const formatDate = (date: Date | string | null | undefined): string => {
+    if (!date) return "";
+    if (typeof date === "string") {
+      if (/^\d{4}-\d{2}-\d{2}/.test(date)) {
+        return date.split("T")[0];
+      }
+    }
+    const d = typeof date === "string" ? parseDate(date) : date;
+    if (!d || isNaN(d.getTime())) return "";
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
   };
 
   useFocusEffect(
@@ -743,11 +765,11 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
       warranty,
       issuedDate:
         category === "Building and Infrastructures"
-          ? (lbissuedDate ?? null)
-          : (issuedDate ?? null),
-      purchaseDate: updatedPurchaseDate,
-      expireDate: updatedExpireDate,
-      startDate,
+          ? (lbissuedDate ? formatDate(lbissuedDate) : null)
+          : (issuedDate ? formatDate(issuedDate) : null),
+      purchaseDate: updatedPurchaseDate ? formatDate(updatedPurchaseDate) : null,
+      expireDate: updatedExpireDate ? formatDate(updatedExpireDate) : null,
+      startDate: startDate ? formatDate(startDate) : null,
       durationYears: updatedDurationYears,
       durationMonths: updatedDurationMonths,
       leastAmountAnnually: cleanNumber(leastAmountAnnually),

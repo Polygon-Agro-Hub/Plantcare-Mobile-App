@@ -603,7 +603,7 @@
     "YouCantChangeTheStatusBackToPendingOnce1HourHasPassedAfterMarkingItAsCompleted": "You can’t change the status back to pending once 1 hour has passed after marking it as completed.",
     "TaskStatusUpdatedSuccessfully": "Task status updated successfully!",
     "YouHave": "You have",
-    "DaysRemainingUntilTheNextUpdate": "{{date}} days remaining until the next update.",
+    "DaysRemainingUntilTheNextUpdate": "You have {{date}} days remaining until the next update.",
     "WatchVideo": "Watch Video",
     "SeePhotos": "See Photos",
     "LoadingCameraPermission": "Loading camera permissions...",

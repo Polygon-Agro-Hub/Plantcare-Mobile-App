@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Modal,
   View,
@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  Platform,
+  ActivityIndicator,
 } from "react-native";
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import { useTranslation } from "react-i18next";
@@ -32,22 +34,48 @@ function CameraScreen({
   const insets = useSafeAreaInsets();
   const [facing, setFacing] = useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
-  const [camera, setCamera] = useState<CameraView | null>(null);
+  const cameraRef = useRef<CameraView>(null);
   const [isCameraReady, setIsCameraReady] = useState(false);
+  const [isTakingPhoto, setIsTakingPhoto] = useState(false);
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (permission?.granted === false) {
+    if (permission && !permission.granted && permission.canAskAgain) {
       requestPermission();
     }
   }, [permission]);
 
-  if (permission === null) {
+  if (!permission) {
     return (
       <View className="flex-1 justify-center items-center bg-black">
-        <Text className="text-white text-lg mb-4">
-          {t("CropCalender.LoadingCameraPermission")}
+        <ActivityIndicator size="large" color="#2AAD7A" />
+        <Text className="text-white text-base mt-4">
+          {t("CropCalender.LoadingCameraPermission") || "Loading camera permissions..."}
         </Text>
+      </View>
+    );
+  }
+
+  if (!permission.granted) {
+    return (
+      <View className="flex-1 justify-center items-center bg-black px-6">
+        <Text className="text-white text-base text-center mb-6">
+          Camera permission is required to capture task photos.
+        </Text>
+        <TouchableOpacity
+          onPress={requestPermission}
+          className="bg-[#2AAD7A] px-8 py-3 rounded-full mb-4"
+          activeOpacity={0.8}
+        >
+          <Text className="text-black font-semibold text-base">Grant Permission</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => onClose(null)}
+          className="bg-gray-800 px-8 py-3 rounded-full"
+          activeOpacity={0.8}
+        >
+          <Text className="text-white text-base">{t("Main.Cancel")}</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -57,9 +85,18 @@ function CameraScreen({
   };
 
   const captureImage = async () => {
-    if (camera && isCameraReady) {
-      const photo = await camera.takePictureAsync();
-      onClose(photo?.uri ?? null);
+    if (cameraRef.current && isCameraReady && !isTakingPhoto) {
+      try {
+        setIsTakingPhoto(true);
+        const photo = await cameraRef.current.takePictureAsync({
+          quality: 0.8,
+        });
+        setIsTakingPhoto(false);
+        onClose(photo?.uri ?? null);
+      } catch (err) {
+        console.error("Camera capture error:", err);
+        setIsTakingPhoto(false);
+      }
     }
   };
 
@@ -68,7 +105,7 @@ function CameraScreen({
       <CameraView
         style={{ flex: 1 }}
         facing={facing}
-        ref={(ref) => setCamera(ref)}
+        ref={cameraRef}
         onCameraReady={() => setIsCameraReady(true)}
       />
 
@@ -82,6 +119,7 @@ function CameraScreen({
           zIndex: 1000,
         }}
         className="items-start"
+        activeOpacity={0.7}
       >
         <Entypo
           name="chevron-left"
@@ -98,7 +136,7 @@ function CameraScreen({
       <View
         style={{
           position: "absolute",
-          bottom: 50,
+          bottom: insets.bottom > 0 ? insets.bottom + 20 : 40,
           left: 0,
           right: 0,
           flexDirection: "row",
@@ -114,34 +152,39 @@ function CameraScreen({
             backgroundColor: "#2AAD7A",
             padding: 16,
             borderRadius: 50,
-            marginBottom: 12,
             flex: 1,
             alignItems: "center",
             justifyContent: "center",
           }}
+          activeOpacity={0.8}
         >
-          <Text style={{ color: "black", textAlign: "center" }}>
+          <Text style={{ color: "black", fontWeight: "600", textAlign: "center" }}>
             {t("CropCalender.FlipCamera")}
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           onPress={captureImage}
+          disabled={isTakingPhoto || !isCameraReady}
           style={{
-            backgroundColor: "#2AAD7A",
+            backgroundColor: isTakingPhoto || !isCameraReady ? "#9AE6B4" : "#2AAD7A",
             padding: 16,
             borderRadius: 50,
-            marginBottom: 12,
             flex: 1,
             alignItems: "center",
             justifyContent: "center",
           }}
+          activeOpacity={0.8}
         >
-          <Text
-            style={{ color: "black", fontWeight: "600", textAlign: "center" }}
-          >
-            {t("CropCalender.Capture")}
-          </Text>
+          {isTakingPhoto ? (
+            <ActivityIndicator size="small" color="#000" />
+          ) : (
+            <Text
+              style={{ color: "black", fontWeight: "600", textAlign: "center" }}
+            >
+              {t("CropCalender.Capture")}
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
     </View>
@@ -216,20 +259,80 @@ export default function CultivatedLandModal({
     }
   };
 
+  if (!visible) return null;
+
   return (
-    <>
-      {/* Initial Modal Dialog */}
-      {/* Initial Modal Dialog */}
-      <Modal
-        transparent={true}
-        visible={visible && !showCamera && !capturedImage}
-        onRequestClose={onClose}
-        animationType="fade"
-      >
+    <Modal
+      transparent={!showCamera}
+      visible={visible}
+      onRequestClose={() => {
+        if (showCamera) {
+          setShowCamera(false);
+        } else if (capturedImage) {
+          setCapturedImage(null);
+        } else {
+          onClose();
+        }
+      }}
+      animationType={showCamera ? "slide" : "fade"}
+    >
+      {showCamera ? (
+        /* Camera View */
+        <CameraScreen onClose={handleCameraClose} />
+      ) : capturedImage ? (
+        /* Image Preview View */
         <View className="flex-1 justify-center items-center bg-black/50 px-6">
           <View className="bg-white rounded-2xl p-6 shadow-lg items-center w-full">
-            {/* Close (X) button removed from top-right */}
+            <Text className="text-lg font-semibold mb-2">
+              {t("CropCalender.ImagePreview")}
+            </Text>
+            <Image
+              source={{ uri: capturedImage }}
+              style={{ width: 250, height: 250, marginBottom: 20 }}
+              resizeMode="contain"
+            />
 
+            <View className="gap-4 w-full">
+              {isButtonEnabled ? (
+                <Text className="text-center font-semibold">
+                  {t("CropCalender.ReadyToSubmit")}
+                </Text>
+              ) : (
+                <Text className="text-gray-600 text-center text-lg">
+                  {countdown} {t("CropCalender.Seconds")}
+                </Text>
+              )}
+
+              <TouchableOpacity
+                className={`py-2 px-6 rounded-full h-[50px] items-center justify-center ${
+                  isButtonEnabled ? "bg-black" : "bg-gray-400"
+                }`}
+                onPress={handleConfirmImage}
+                disabled={!isButtonEnabled}
+              >
+                <Text className="text-white text-base text-center">
+                  {t("CropCalender.Submit")}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                className="border-2 border-black bg-white py-2 px-6 rounded-full h-[50px] items-center justify-center"
+                onPress={() => {
+                  setCapturedImage(null);
+                  setShowCamera(true);
+                }}
+              >
+                <Text className="text-black text-base text-center">
+                  {t("CropCalender.RetakePreviousPhoto")}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      ) : (
+        /* Initial Instructions Dialog */
+        <View className="flex-1 justify-center items-center bg-black/50 px-6">
+          <View className="bg-white rounded-2xl p-6 shadow-lg items-center w-full">
             <View className="bg-gray-200 p-4 rounded-full mb-4">
               <Image
                 source={require("../../assets/images/crop-cultivation/camera.webp")}
@@ -287,7 +390,6 @@ export default function CultivatedLandModal({
               </Text>
             </TouchableOpacity>
 
-            {/* New gray Close button below Open Camera */}
             <TouchableOpacity
               className="bg-gray-300 py-2 px-6 rounded-full h-[50px] items-center justify-center w-full"
               onPress={onClose}
@@ -296,77 +398,7 @@ export default function CultivatedLandModal({
             </TouchableOpacity>
           </View>
         </View>
-      </Modal>
-
-      {/* Camera Screen Modal */}
-      {showCamera && (
-        <Modal
-          transparent={true}
-          visible={showCamera}
-          onRequestClose={() => setShowCamera(false)}
-          animationType="slide"
-        >
-          <CameraScreen onClose={handleCameraClose} />
-        </Modal>
       )}
-
-      {/* Image Preview Screen Modal */}
-      {capturedImage && (
-        <Modal
-          transparent={true}
-          visible={capturedImage !== null}
-          onRequestClose={() => setCapturedImage(null)}
-          animationType="slide"
-        >
-          <View className="flex-1 justify-center items-center bg-black/50 px-6">
-            <View className="bg-white rounded-2xl p-6 shadow-lg items-center w-full">
-              <Text className="text-lg font-semibold mb-2">
-                {t("CropCalender.ImagePreview")}
-              </Text>
-              <Image
-                source={{ uri: capturedImage }}
-                style={{ width: 250, height: 250, marginBottom: 20 }}
-              />
-
-              <View className="gap-4 w-full">
-                {isButtonEnabled ? (
-                  <Text className="text-center font-semibold">
-                    {t("CropCalender.ReadyToSubmit")}
-                  </Text>
-                ) : (
-                  <Text className="text-gray-600 text-center text-lg">
-                    {countdown} {t("CropCalender.Seconds")}
-                  </Text>
-                )}
-
-                <TouchableOpacity
-                  className={`py-2 px-6 rounded-full h-[50px] items-center justify-center ${
-                    isButtonEnabled ? "bg-black" : "bg-gray-400"
-                  }`}
-                  onPress={handleConfirmImage}
-                  disabled={!isButtonEnabled}
-                >
-                  <Text className="text-white text-base text-center">
-                    {t("CropCalender.Submit")}
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  className="border-2 border-black bg-white py-2 px-6 rounded-full h-[50px] items-center justify-center"
-                  onPress={() => {
-                    setCapturedImage(null);
-                    setShowCamera(true);
-                  }}
-                >
-                  <Text className="text-black text-base text-center">
-                    {t("CropCalender.RetakePreviousPhoto")}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
-      )}
-    </>
+    </Modal>
   );
 }
