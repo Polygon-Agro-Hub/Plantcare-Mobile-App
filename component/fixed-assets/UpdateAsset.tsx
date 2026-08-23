@@ -356,6 +356,35 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
     return isValid;
   };
 
+  const parseDate = (dateStr: string | Date | null | undefined): Date | null => {
+    if (!dateStr) return null;
+    if (dateStr instanceof Date) return dateStr;
+    const parts = dateStr.split("T")[0].split("-");
+    if (parts.length === 3) {
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const day = parseInt(parts[2], 10);
+      return new Date(year, month, day);
+    }
+    const d = new Date(dateStr);
+    return isNaN(d.getTime()) ? null : d;
+  };
+
+  const formatDate = (date: Date | string | null | undefined): string => {
+    if (!date) return "";
+    if (typeof date === "string") {
+      if (/^\d{4}-\d{2}-\d{2}/.test(date)) {
+        return date.split("T")[0];
+      }
+    }
+    const d = typeof date === "string" ? parseDate(date) : date;
+    if (!d || isNaN(d.getTime())) return "";
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  };
+
   const getStartOfTomorrow = (): Date => {
     const d = new Date();
     d.setDate(d.getDate() + 1);
@@ -401,7 +430,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
   ) => {
     if (selectedDate) {
       if (validatePurchaseDate(selectedDate, toolId)) {
-        const formattedDate = selectedDate.toISOString().split("T")[0];
+        const formattedDate = formatDate(selectedDate);
         handleInputChange(
           toolId,
           "ownershipDetails.purchaseDate",
@@ -419,7 +448,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
   ) => {
     if (selectedDate) {
       if (validateExpireDate(selectedDate, toolId)) {
-        const formattedDate = selectedDate.toISOString().split("T")[0];
+        const formattedDate = formatDate(selectedDate);
         handleInputChange(toolId, "ownershipDetails.expireDate", formattedDate);
       }
     }
@@ -1043,15 +1072,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <Text
                             className={`flex-1 text-sm ${!updatedDetails[tool.id]?.ownershipDetails?.startDate ? "text-[#6B7280]" : "text-black"}`}
                           >
-                            {updatedDetails[tool.id]?.ownershipDetails
-                              ?.startDate
-                              ? new Date(
-                                  updatedDetails[tool.id].ownershipDetails
-                                    .startDate,
-                                )
-                                  .toISOString()
-                                  .split("T")[0]
-                              : t("FixedAssets.LeaseStartDate")}
+                            {updatedDetails[tool.id]?.ownershipDetails?.startDate
+    ? formatDate(updatedDetails[tool.id].ownershipDetails.startDate)
+    : t("FixedAssets.LeaseStartDate")}
                           </Text>
                           <EvilIcons
                             name="calendar"
@@ -1068,20 +1091,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <CustomDatePicker
                             visible={showStartDatePicker}
                             onClose={() => setShowStartDatePicker(false)}
-                            value={
-                              updatedDetails[tool.id]?.ownershipDetails
-                                ?.startDate
-                                ? new Date(
-                                    updatedDetails[tool.id].ownershipDetails
-                                      .startDate,
-                                  )
-                                : null
-                            }
+                            value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.startDate)}
                             onConfirm={(date) => {
                               handleInputChange(
                                 tool.id,
                                 "ownershipDetails.startDate",
-                                date.toISOString().split("T")[0],
+                                formatDate(date),
                               );
                             }}
                             maximumDate={new Date()}
@@ -1090,15 +1105,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         ) : (
                           showStartDatePicker && (
                             <DateTimePicker
-                              value={
-                                updatedDetails[tool.id]?.ownershipDetails
-                                  ?.startDate
-                                  ? new Date(
-                                      updatedDetails[tool.id].ownershipDetails
-                                        .startDate,
-                                    )
-                                  : new Date()
-                              }
+                              value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.startDate) || new Date()}
                               mode="date"
                               display="default"
                               onChange={(event, selectedDate) => {
@@ -1107,7 +1114,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                   handleInputChange(
                                     tool.id,
                                     "ownershipDetails.startDate",
-                                    selectedDate.toISOString().split("T")[0],
+                                    formatDate(selectedDate),
                                   );
                               }}
                               maximumDate={new Date()}
@@ -1249,15 +1256,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <Text
                             className={`flex-1 text-sm ${!updatedDetails[tool.id]?.ownershipDetails?.issuedDate ? "text-[#6B7280]" : "text-black"}`}
                           >
-                            {updatedDetails[tool.id]?.ownershipDetails
-                              ?.issuedDate
-                              ? new Date(
-                                  updatedDetails[tool.id].ownershipDetails
-                                    .issuedDate,
-                                )
-                                  .toISOString()
-                                  .split("T")[0]
-                              : t("FixedAssets.IssuedDate")}
+                            {updatedDetails[tool.id]?.ownershipDetails?.issuedDate
+    ? formatDate(updatedDetails[tool.id].ownershipDetails.issuedDate)
+    : t("FixedAssets.IssuedDate")}
                           </Text>
                           <EvilIcons
                             name="calendar"
@@ -1274,20 +1275,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <CustomDatePicker
                             visible={showStartDatePicker}
                             onClose={() => setShowStartDatePicker(false)}
-                            value={
-                              updatedDetails[tool.id]?.ownershipDetails
-                                ?.issuedDate
-                                ? new Date(
-                                    updatedDetails[tool.id].ownershipDetails
-                                      .issuedDate,
-                                  )
-                                : null
-                            }
+                            value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.issuedDate)}
                             onConfirm={(date) => {
                               handleInputChange(
                                 tool.id,
                                 "ownershipDetails.issuedDate",
-                                date.toISOString().split("T")[0],
+                                formatDate(date),
                               );
                             }}
                             maximumDate={new Date()}
@@ -1296,15 +1289,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         ) : (
                           showStartDatePicker && (
                             <DateTimePicker
-                              value={
-                                updatedDetails[tool.id]?.ownershipDetails
-                                  ?.issuedDate
-                                  ? new Date(
-                                      updatedDetails[tool.id].ownershipDetails
-                                        .issuedDate,
-                                    )
-                                  : new Date()
-                              }
+                              value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.issuedDate) || new Date()}
                               mode="date"
                               display="default"
                               onChange={(event, selectedDate) => {
@@ -1313,7 +1298,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                   handleInputChange(
                                     tool.id,
                                     "ownershipDetails.issuedDate",
-                                    selectedDate.toISOString().split("T")[0],
+                                    formatDate(selectedDate),
                                   );
                               }}
                               maximumDate={new Date()}
@@ -1718,15 +1703,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <Text
                             className={`flex-1 text-sm ${!updatedDetails[tool.id]?.ownershipDetails?.startDate ? "text-[#6B7280]" : "text-black"}`}
                           >
-                            {updatedDetails[tool.id]?.ownershipDetails
-                              ?.startDate
-                              ? new Date(
-                                  updatedDetails[tool.id].ownershipDetails
-                                    .startDate,
-                                )
-                                  .toISOString()
-                                  .split("T")[0]
-                              : t("FixedAssets.LeaseStartDate")}
+                            {updatedDetails[tool.id]?.ownershipDetails?.startDate
+    ? formatDate(updatedDetails[tool.id].ownershipDetails.startDate)
+    : t("FixedAssets.LeaseStartDate")}
                           </Text>
                           <EvilIcons
                             name="calendar"
@@ -1743,20 +1722,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <CustomDatePicker
                             visible={showStartDatePicker}
                             onClose={() => setShowStartDatePicker(false)}
-                            value={
-                              updatedDetails[tool.id]?.ownershipDetails
-                                ?.startDate
-                                ? new Date(
-                                    updatedDetails[tool.id].ownershipDetails
-                                      .startDate,
-                                  )
-                                : null
-                            }
+                            value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.startDate)}
                             onConfirm={(date) => {
                               handleInputChange(
                                 tool.id,
                                 "ownershipDetails.startDate",
-                                date.toISOString().split("T")[0],
+                                formatDate(date),
                               );
                             }}
                             maximumDate={new Date()}
@@ -1765,15 +1736,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         ) : (
                           showStartDatePicker && (
                             <DateTimePicker
-                              value={
-                                updatedDetails[tool.id]?.ownershipDetails
-                                  ?.startDate
-                                  ? new Date(
-                                      updatedDetails[tool.id].ownershipDetails
-                                        .startDate,
-                                    )
-                                  : new Date()
-                              }
+                              value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.startDate) || new Date()}
                               mode="date"
                               display="default"
                               onChange={(event, selectedDate) => {
@@ -1782,7 +1745,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                   handleInputChange(
                                     tool.id,
                                     "ownershipDetails.startDate",
-                                    selectedDate.toISOString().split("T")[0],
+                                    formatDate(selectedDate),
                                   );
                               }}
                               maximumDate={new Date()}
@@ -1927,15 +1890,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <Text
                             className={`flex-1 text-sm ${!updatedDetails[tool.id]?.ownershipDetails?.issuedDate ? "text-[#6B7280]" : "text-black"}`}
                           >
-                            {updatedDetails[tool.id]?.ownershipDetails
-                              ?.issuedDate
-                              ? new Date(
-                                  updatedDetails[tool.id].ownershipDetails
-                                    .issuedDate,
-                                )
-                                  .toISOString()
-                                  .split("T")[0]
-                              : t("FixedAssets.IssuedDate")}
+                            {updatedDetails[tool.id]?.ownershipDetails?.issuedDate
+    ? formatDate(updatedDetails[tool.id].ownershipDetails.issuedDate)
+    : t("FixedAssets.IssuedDate")}
                           </Text>
                           <EvilIcons
                             name="calendar"
@@ -1952,20 +1909,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <CustomDatePicker
                             visible={showStartDatePicker}
                             onClose={() => setShowStartDatePicker(false)}
-                            value={
-                              updatedDetails[tool.id]?.ownershipDetails
-                                ?.issuedDate
-                                ? new Date(
-                                    updatedDetails[tool.id].ownershipDetails
-                                      .issuedDate,
-                                  )
-                                : null
-                            }
+                            value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.issuedDate)}
                             onConfirm={(date) => {
                               handleInputChange(
                                 tool.id,
                                 "ownershipDetails.issuedDate",
-                                date.toISOString().split("T")[0],
+                                formatDate(date),
                               );
                             }}
                             maximumDate={new Date()}
@@ -1974,15 +1923,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         ) : (
                           showStartDatePicker && (
                             <DateTimePicker
-                              value={
-                                updatedDetails[tool.id]?.ownershipDetails
-                                  ?.issuedDate
-                                  ? new Date(
-                                      updatedDetails[tool.id].ownershipDetails
-                                        .issuedDate,
-                                    )
-                                  : new Date()
-                              }
+                              value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.issuedDate) || new Date()}
                               mode="date"
                               display="default"
                               onChange={(event, selectedDate) => {
@@ -1991,7 +1932,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                                   handleInputChange(
                                     tool.id,
                                     "ownershipDetails.issuedDate",
-                                    selectedDate.toISOString().split("T")[0],
+                                    formatDate(selectedDate),
                                   );
                               }}
                               maximumDate={new Date()}
@@ -2459,15 +2400,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <Text
                             className={`flex-1 text-sm ${!updatedDetails[tool.id]?.ownershipDetails?.purchaseDate ? "text-[#6B7280]" : "text-black"}`}
                           >
-                            {updatedDetails[tool.id]?.ownershipDetails
-                              ?.purchaseDate
-                              ? new Date(
-                                  updatedDetails[tool.id].ownershipDetails
-                                    .purchaseDate,
-                                )
-                                  .toISOString()
-                                  .split("T")[0]
-                              : t("FixedAssets.PurchasedDate")}
+                            {updatedDetails[tool.id]?.ownershipDetails?.purchaseDate
+    ? formatDate(updatedDetails[tool.id].ownershipDetails.purchaseDate)
+    : t("FixedAssets.PurchasedDate")}
                           </Text>
                           <EvilIcons
                             name="calendar"
@@ -2484,15 +2419,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <CustomDatePicker
                             visible={showPurchaseDatePicker}
                             onClose={() => setShowPurchaseDatePicker(false)}
-                            value={
-                              updatedDetails[tool.id]?.ownershipDetails
-                                ?.purchaseDate
-                                ? new Date(
-                                    updatedDetails[tool.id].ownershipDetails
-                                      .purchaseDate,
-                                  )
-                                : null
-                            }
+                            value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.purchaseDate)}
                             onConfirm={(date) => {
                               handlePurchaseDateChange(tool.id, date);
                             }}
@@ -2502,15 +2429,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         ) : (
                           showPurchaseDatePicker && (
                             <DateTimePicker
-                              value={
-                                updatedDetails[tool.id]?.ownershipDetails
-                                  ?.purchaseDate
-                                  ? new Date(
-                                      updatedDetails[tool.id].ownershipDetails
-                                        .purchaseDate,
-                                    )
-                                  : new Date()
-                              }
+                              value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.purchaseDate) || new Date()}
                               mode="date"
                               display="default"
                               onChange={(event, selectedDate) => {
@@ -2544,15 +2463,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <Text
                             className={`flex-1 text-sm ${!updatedDetails[tool.id]?.ownershipDetails?.expireDate ? "text-[#6B7280]" : "text-black"}`}
                           >
-                            {updatedDetails[tool.id]?.ownershipDetails
-                              ?.expireDate
-                              ? new Date(
-                                  updatedDetails[tool.id].ownershipDetails
-                                    .expireDate,
-                                )
-                                  .toISOString()
-                                  .split("T")[0]
-                              : t("FixedAssets.WarrantyExpireDate")}
+                            {updatedDetails[tool.id]?.ownershipDetails?.expireDate
+    ? formatDate(updatedDetails[tool.id].ownershipDetails.expireDate)
+    : t("FixedAssets.WarrantyExpireDate")}
                           </Text>
                           <EvilIcons
                             name="calendar"
@@ -2569,15 +2482,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <CustomDatePicker
                             visible={showExpireDatePicker}
                             onClose={() => setShowExpireDatePicker(false)}
-                            value={
-                              updatedDetails[tool.id]?.ownershipDetails
-                                ?.expireDate
-                                ? new Date(
-                                    updatedDetails[tool.id].ownershipDetails
-                                      .expireDate,
-                                  )
-                                : null
-                            }
+                            value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.expireDate)}
                             onConfirm={(date) => {
                               handleExpireDateChange(tool.id, date);
                             }}
@@ -2587,15 +2492,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         ) : (
                           showExpireDatePicker && (
                             <DateTimePicker
-                              value={
-                                updatedDetails[tool.id]?.ownershipDetails
-                                  ?.expireDate
-                                  ? new Date(
-                                      updatedDetails[tool.id].ownershipDetails
-                                        .expireDate,
-                                    )
-                                  : new Date()
-                              }
+                              value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.expireDate) || new Date()}
                               mode="date"
                               display="default"
                               onChange={(event, selectedDate) => {
@@ -2938,15 +2835,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <Text
                             className={`flex-1 text-sm ${!updatedDetails[tool.id]?.ownershipDetails?.purchaseDate ? "text-[#6B7280]" : "text-black"}`}
                           >
-                            {updatedDetails[tool.id]?.ownershipDetails
-                              ?.purchaseDate
-                              ? new Date(
-                                  updatedDetails[tool.id].ownershipDetails
-                                    .purchaseDate,
-                                )
-                                  .toISOString()
-                                  .split("T")[0]
-                              : t("FixedAssets.PurchasedDate")}
+                            {updatedDetails[tool.id]?.ownershipDetails?.purchaseDate
+    ? formatDate(updatedDetails[tool.id].ownershipDetails.purchaseDate)
+    : t("FixedAssets.PurchasedDate")}
                           </Text>
                           <EvilIcons
                             name="calendar"
@@ -2963,15 +2854,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <CustomDatePicker
                             visible={showPurchaseDatePicker}
                             onClose={() => setShowPurchaseDatePicker(false)}
-                            value={
-                              updatedDetails[tool.id]?.ownershipDetails
-                                ?.purchaseDate
-                                ? new Date(
-                                    updatedDetails[tool.id].ownershipDetails
-                                      .purchaseDate,
-                                  )
-                                : null
-                            }
+                            value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.purchaseDate)}
                             onConfirm={(date) => {
                               handlePurchaseDateChange(tool.id, date);
                             }}
@@ -2981,15 +2864,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         ) : (
                           showPurchaseDatePicker && (
                             <DateTimePicker
-                              value={
-                                updatedDetails[tool.id]?.ownershipDetails
-                                  ?.purchaseDate
-                                  ? new Date(
-                                      updatedDetails[tool.id].ownershipDetails
-                                        .purchaseDate,
-                                    )
-                                  : new Date()
-                              }
+                              value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.purchaseDate) || new Date()}
                               mode="date"
                               display="default"
                               onChange={(event, selectedDate) => {
@@ -3023,15 +2898,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <Text
                             className={`flex-1 text-sm ${!updatedDetails[tool.id]?.ownershipDetails?.expireDate ? "text-[#6B7280]" : "text-black"}`}
                           >
-                            {updatedDetails[tool.id]?.ownershipDetails
-                              ?.expireDate
-                              ? new Date(
-                                  updatedDetails[tool.id].ownershipDetails
-                                    .expireDate,
-                                )
-                                  .toISOString()
-                                  .split("T")[0]
-                              : t("FixedAssets.WarrantyExpireDate")}
+                            {updatedDetails[tool.id]?.ownershipDetails?.expireDate
+    ? formatDate(updatedDetails[tool.id].ownershipDetails.expireDate)
+    : t("FixedAssets.WarrantyExpireDate")}
                           </Text>
                           <EvilIcons
                             name="calendar"
@@ -3066,15 +2935,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         ) : (
                           showExpireDatePicker && (
                             <DateTimePicker
-                              value={
-                                updatedDetails[tool.id]?.ownershipDetails
-                                  ?.expireDate
-                                  ? new Date(
-                                      updatedDetails[tool.id].ownershipDetails
-                                        .expireDate,
-                                    )
-                                  : new Date()
-                              }
+                              value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.expireDate) || new Date()}
                               mode="date"
                               display="default"
                               onChange={(event, selectedDate) => {

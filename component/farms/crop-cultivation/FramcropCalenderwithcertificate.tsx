@@ -542,7 +542,6 @@ const FramcropCalenderwithcertificate: React.FC<
           {
             resize: {
               width: 1024,
-              height: 1024,
             },
           },
         ],
@@ -1218,24 +1217,20 @@ const FramcropCalenderwithcertificate: React.FC<
       const remainingDays = Math.ceil(remainingTime / (24 * 60 * 60 * 1000));
 
       if (remainingDays > 0) {
-        updateMessage = `${t("CropCalender.YouHave")} ${t(
-          "CropCalender.DaysRemainingUntilTheNextUpdate",
-          {
-            date: remainingDays,
-          },
-        )}`;
+        updateMessage = t("CropCalender.DaysRemainingUntilTheNextUpdate", {
+          date: remainingDays,
+          count: remainingDays,
+        });
 
         Alert.alert(t("Main.Sorry"), updateMessage, [{ text: t("Main.OK") }]);
         return;
       }
 
       if (!updateMessage) {
-        updateMessage = `${t("CropCalender.YouHave")} ${t(
-          "CropCalender.DaysRemainingUntilTheNextUpdate",
-          {
-            date: remainingDays,
-          },
-        )}`;
+        updateMessage = t("CropCalender.DaysRemainingUntilTheNextUpdate", {
+          date: remainingDays,
+          count: remainingDays,
+        });
       }
     } else {
       updateMessage = t("CropCalender.noCropData");
