@@ -323,6 +323,11 @@ const UserProfile: React.FC<UserProfileProps> = ({ navigation }) => {
                     {profile.phoneNumber}
                   </Text>
                 )}
+                <View className="mt-1 self-start px-2.5 py-0.5 bg-[#EDF7EE] rounded-full">
+                  <Text className="text-xs text-[#2E7D32] font-semibold">
+                    {t("Farms.FarmLaborer") || t("Farms.Laborer") || "Farm Laborer"}
+                  </Text>
+                </View>
               </View>
             </View>
           )}

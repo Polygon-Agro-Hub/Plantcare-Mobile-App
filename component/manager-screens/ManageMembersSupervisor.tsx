@@ -26,6 +26,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { useTranslation } from "react-i18next";
+import i18n from "@/i18n/i18n";
 import ContentLoader, {
   Rect,
   Circle as LoaderCircle,
@@ -203,26 +204,46 @@ const ManageMembersSupervisor = () => {
   }, [farmId]);
 
   const handleEditMember = (member: StaffMember) => {
-    Alert.alert("Edit Member", `Edit ${member.firstName} ${member.lastName}?`, [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Edit",
-        onPress: () => {
-          navigation.navigate("SupervisorEditScreen", {
-            staffMemberId: member.id,
-            farmId: farmId,
-            farmName: farmName,
-          });
+    Alert.alert(
+      t("Farms.EditMember") || "Edit Member",
+      `${t("Farms.Edit") || "Edit"} ${member.firstName} ${member.lastName}?`,
+      [
+        { text: t("Main.Cancel") || "Cancel", style: "cancel" },
+        {
+          text: t("Farms.Edit") || "Edit",
+          onPress: () => {
+            navigation.navigate("SupervisorEditScreen", {
+              staffMemberId: member.id,
+              farmId: farmId,
+              farmName: farmName,
+            });
+          },
         },
-      },
-    ]);
+      ]
+    );
   };
 
   const getRoleDisplayName = (role: string) => {
-    if (role === "Supervisor") return "Farm Supervisor";
-    if (role === "Laborer") return "Farm Laborer";
-    if (role === "Manager") return "Farm Manager";
-    return role;
+    if (!role) return "";
+    const normalized = role.toLowerCase().replace(/[\s_-]/g, "");
+    if (normalized === "supervisor" || normalized === "farmsupervisor") {
+      return t("Farms.FarmSupervisor") || t("Farms.Supervisor") || "Farm Supervisor";
+    }
+    if (
+      normalized === "laborer" ||
+      normalized === "farmlaborer" ||
+      normalized === "laboror" ||
+      normalized === "farmlaboror"
+    ) {
+      return t("Farms.FarmLaborer") || t("Farms.Laborer") || "Farm Laborer";
+    }
+    if (normalized === "manager" || normalized === "farmmanager") {
+      return t("Farms.FarmManager") || t("Farms.Manager") || "Farm Manager";
+    }
+    if (normalized === "owner" || normalized === "farmowner") {
+      return t("Farms.FarmOwner") || t("Farms.Owner") || "Farm Owner";
+    }
+    return t(`Farms.${role}`) || role;
   };
 
   useFocusEffect(
@@ -287,6 +308,7 @@ const ManageMembersSupervisor = () => {
 
       <ScrollView
         className="flex-1"
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -321,10 +343,9 @@ const ManageMembersSupervisor = () => {
           </View>
 
           <View className="flex-row justify-center items-center flex-wrap px-4">
-              <Text className="text-sm text-gray-600 mx-1">•</Text>
+            <Text className="text-sm text-gray-600 mx-1">•</Text>
             <Text className="text-sm text-gray-600 mx-1">
               {stats.laborerCount} {t("Farms.Laborer")}
-              {stats.laborerCount !== 1 ? "s" : ""}
             </Text>
             <Text className="text-sm text-gray-600 mx-1">•</Text>
             <Text className="text-sm text-gray-600 mx-1">
@@ -333,12 +354,19 @@ const ManageMembersSupervisor = () => {
           </View>
         </View>
 
-        <View className="px-5 mt-6">
+        <View className="px-5 mt-6 flex-1">
           {loading ? (
             <SkeletonLoader />
           ) : staff.filter((member) => member.role === "Laborer").length ===
             0 ? (
-              <NoData text={t("Farms.NoLaborersFoundForThisFarm") || "No laborers found for this farm"} />
+            <View className="flex-1 justify-center items-center py-10">
+              <NoData
+                text={
+                  t("Farms.NoLaborersFoundForThisFarm") ||
+                  "No laborers found for this farm"
+                }
+              />
+            </View>
           ) : (
             staff
               .filter((member) => member.role === "Laborer")

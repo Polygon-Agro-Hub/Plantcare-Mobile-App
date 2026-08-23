@@ -382,8 +382,11 @@ const MyCultivation = () => {
           />
         }
       >
-        <View style={{ paddingVertical: 10 }}>
-          <Text className="text-center text-[#5B5B5B] text-sm -mt-4">
+        <View className="pt-3 pb-3">
+          <Text
+            className="text-center text-[#5B5B5B] text-sm px-2"
+            style={{ lineHeight: 22 }}
+          >
             {t("Farms.SelectAFarmToManageYourCultivationAndAssets")}
           </Text>
         </View>
@@ -391,7 +394,9 @@ const MyCultivation = () => {
         {loading ? (
           <LoadingPage fullScreen />
         ) : farms.length === 0 ? (
+          <View className="flex-1 justify-center items-center py-12">
             <NoData text={t("MyCrop.NoFarmCultivationsYet") || "No farm cultivations yet"} />
+          </View>
         ) : (
           <View>{farms.map((farm, index) => renderFarmItem(farm, index))}</View>
         )}

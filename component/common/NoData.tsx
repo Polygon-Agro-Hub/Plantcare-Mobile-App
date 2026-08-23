@@ -8,18 +8,14 @@ interface NoDataProps {
 
 const NoData: React.FC<NoDataProps> = ({ text }) => {
   return (
-    <View
-      style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
-      className="justify-center items-center px-4"
-      pointerEvents="none"
-    >
+    <View className="justify-center items-center w-full">
       <LottieView
         source={require("@/assets/jsons/common/no-data.json")}
         autoPlay
         loop
-        style={{ width: 200, height: 200 }}
+        style={{ width: 160, height: 160 }}
       />
-      <Text className="text-[#7A9BC9] text-base text-center">
+      <Text className="text-[#7A9BC9] text-base text-center font-medium  px-4">
         {text}
       </Text>
     </View>

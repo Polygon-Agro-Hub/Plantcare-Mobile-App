@@ -17,6 +17,7 @@ import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import Entypo from "@expo/vector-icons/Entypo";
 import { RootStackParamList } from "../types/types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -384,95 +385,113 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
               }
             />
           ) : (
-            crops.map((crop) => (
-              <View key={crop.id} style={{ position: "relative" }}>
-                {crop.isBlock === 1 && (
-                  <FontAwesome
-                    name="lock"
-                    size={20}
-                    color="#000"
-                    style={{
-                      position: "absolute",
-                      top: 10,
-                      left: 10,
-                      zIndex: 10,
-                    }}
-                  />
-                )}
-
+            crops.map((crop) => {
+              const isBlocked = crop.isBlock === 1;
+              return (
                 <TouchableOpacity
-                  onPress={
-                    crop.isBlock === 1 ? undefined : () => handleCropPress(crop)
-                  }
+                  key={crop.id}
+                  onPress={isBlocked ? undefined : () => handleCropPress(crop)}
+                  activeOpacity={0.7}
                   style={{
                     width: "100%",
-                    padding: 16,
-                    borderRadius: 12,
-                    marginBottom: 12,
-                    flexDirection: "row",
-                    alignItems: "center",
+                    marginVertical: 8,
+                    borderRadius: 9,
                     shadowColor: "#000",
                     shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.3,
+                    shadowOpacity: 0.1,
                     shadowRadius: 4,
-                    backgroundColor: "white",
-                    opacity: crop.isBlock === 1 ? 0.6 : 1,
-                    position: "relative",
-
-                    elevation: 4,
+                    opacity: isBlocked ? 0.6 : 1,
                   }}
                 >
-                  <Image
-                    source={{
-                      uri:
-                        typeof crop.image === "string"
-                          ? crop.image
-                          : formatImage(crop.image),
-                    }}
-                    style={{ width: 80, height: 80, borderRadius: 8 }}
-                    resizeMode="contain"
-                  />
-
-                  <Text
-                    style={{
-                      fontSize: 15,
-                      fontWeight: "600",
-                      marginLeft: 0,
-                      flex: 1,
-                      textAlign: "center",
-                      color: "#333",
-                    }}
-                  >
-                    {language === "si"
-                      ? crop.varietyNameSinhala
-                      : language === "ta"
-                        ? crop.varietyNameTamil
-                        : crop.varietyNameEnglish}
-                  </Text>
-
                   <View
-                    style={{ alignItems: "center", justifyContent: "center" }}
+                    style={{
+                      backgroundColor: "#FFFFFF",
+                      padding: 16,
+                      borderWidth: 2,
+                      borderColor: "#EFEFEF",
+                      borderRadius: 9,
+                      overflow: "hidden",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      position: "relative",
+                    }}
                   >
-                    <Progress.Circle
-                      size={60}
-                      progress={crop.progress}
-                      thickness={4}
-                      color="#4caf50"
-                      unfilledColor="#ddd"
-                      showsText={true}
-                      formatText={() => {
-                        const percentage = crop.progress * 100;
-                        if (percentage > 0 && percentage < 0.01) {
-                          return "0.01%";
-                        }
-                        return `${percentage.toFixed(2)}%`;
+                    {isBlocked && (
+                      <View className="absolute top-1 left-1 z-10 rounded-full w-6 h-6 items-center justify-center">
+                        <Entypo name="lock" size={20} color="black" />
+                      </View>
+                    )}
+
+                    <Image
+                      source={{
+                        uri:
+                          typeof crop.image === "string"
+                            ? crop.image
+                            : formatImage(crop.image),
                       }}
-                      textStyle={{ fontSize: 12, fontWeight: "bold" }}
+                      style={{
+                        width: 70,
+                        height: 70,
+                        borderRadius: 8,
+                        opacity: isBlocked ? 0.5 : 1,
+                        marginStart: 10,
+                      }}
+                      resizeMode="contain"
                     />
+
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        fontWeight: "600",
+                        marginLeft: 0,
+                        flex: 1,
+                        textAlign: "center",
+                        color: isBlocked ? "#999" : "#333",
+                      }}
+                    >
+                      {language === "si"
+                        ? crop.varietyNameSinhala
+                        : language === "ta"
+                          ? crop.varietyNameTamil
+                          : crop.varietyNameEnglish}
+                    </Text>
+
+                    <View
+                      style={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginTop: 5,
+                      }}
+                    >
+                      <Progress.Circle
+                        size={60}
+                        progress={crop.progress}
+                        thickness={4}
+                        color={isBlocked ? "#ccc" : "#4caf50"}
+                        unfilledColor="#ddd"
+                        showsText={true}
+                        formatText={() => {
+                          const percentage = crop.progress * 100;
+                          if (percentage >= 100 || crop.progress >= 1) {
+                            return "100%";
+                          }
+                          if (percentage > 0 && percentage < 0.01) {
+                            return "0.01%";
+                          }
+                          return `${percentage.toFixed(2)}%`;
+                        }}
+                        textStyle={{
+                          fontSize: 10,
+                          color: isBlocked ? "#999" : "#4caf50",
+                          fontWeight: "bold",
+                        }}
+                      />
+                    </View>
                   </View>
                 </TouchableOpacity>
-              </View>
-            ))
+              );
+            })
           )}
         </View>
 

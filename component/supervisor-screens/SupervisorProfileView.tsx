@@ -50,7 +50,7 @@ const SupervisorProfileView: React.FC<SupervisorProfileViewProps> = ({
       {/* Header */}
 
       <CustomHeader
-        title={t("EditProfile.EditProfile")}
+        title={t("Profile.ViewProfile") || "View Profile"}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
       />
@@ -69,7 +69,7 @@ const SupervisorProfileView: React.FC<SupervisorProfileViewProps> = ({
           </View>
           <View className="mt-2 px-3 py-0.5 bg-[#E6F7F5] rounded-full">
             <Text className="text-xs text-[#00A896] font-semibold">
-              Supervisor
+              {t("Farms.FarmSupervisor") || t("Farms.Supervisor") || "Supervisor"}
             </Text>
           </View>
         </View>

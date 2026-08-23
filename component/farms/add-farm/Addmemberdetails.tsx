@@ -416,20 +416,20 @@ const AddMemberDetails: React.FC = () => {
         {
           text: t("Main.OK"),
           onPress: () => {
+            const targetFarmId = lastCreatedFarmId;
+            const targetRegCode = registrationCode;
             dispatch(clearSubmitState());
-            alertShownRef.current = false;
-            setTimeout(() => {
-              navigation.navigate("EarnCertificate", {
-                farmId: lastCreatedFarmId,
-                registrationCode: registrationCode || undefined,
-              });
-            }, 100);
+            navigation.navigate("EarnCertificate", {
+              farmId: targetFarmId,
+              registrationCode: targetRegCode || undefined,
+            });
           },
         },
       ]);
     }
     if (submitError) {
-      Alert.alert("Error", submitError, [
+      alertShownRef.current = false;
+      Alert.alert(t("Main.Error") || "Error", submitError, [
         {
           text: t("Main.OK"),
           onPress: () => dispatch(clearSubmitState()),
@@ -447,6 +447,9 @@ const AddMemberDetails: React.FC = () => {
   ]);
 
   const handleSaveFarm = async () => {
+    if (isSubmitting || submitSuccess || alertShownRef.current) {
+      return;
+    }
     dispatch(clearSubmitState());
 
     if (Object.values(phoneErrors).some(Boolean)) {
@@ -745,11 +748,13 @@ const AddMemberDetails: React.FC = () => {
 
           {/* Staff forms */}
           {staff.map((member, index) => (
-            <View key={index} className=" gap-4 mt-6">
-              <Text className="font-semibold text-[#5A5A5A]">
-                {`${t("Farms.StaffMember")} ${index + 1}`}
-              </Text>
-              <View className="w-full h-0.5 bg-[#AFAFAF] mx-2" />
+            <View key={index} className="gap-6 mt-6">
+              <View>
+                <Text className="font-semibold text-[#5A5A5A] mb-2">
+                  {`${t("Farms.StaffMember")} ${index + 1}`}
+                </Text>
+                <View className="w-full h-0.5 bg-[#AFAFAF]" />
+              </View>
 
               {/* Role */}
               <View>
@@ -759,7 +764,7 @@ const AddMemberDetails: React.FC = () => {
                 <TouchableOpacity
                   onPress={() => openModal(index, "role")}
                   disabled={isSubmitting}
-                  className="bg-[#F4F4F4] rounded-3xl px-4 flex-row items-center justify-between h-[50px]"
+                  className="bg-[#F4F4F4] p-3 rounded-3xl flex-row items-center justify-between h-[50px]"
                 >
                   <Text
                     style={{
@@ -787,19 +792,16 @@ const AddMemberDetails: React.FC = () => {
                 <Text className="text-[#070707] font-medium mb-2">
                   {t("Inputs.FirstName")}
                 </Text>
-                <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center">
-                  <TextInput
-                    value={member.firstName}
-                    onChangeText={(text) =>
-                      handleNameChange(index, "firstName", text)
-                    }
-                    placeholder={t("Farms.EnterFirstName")}
-                    placeholderTextColor="#9CA3AF"
-                    className="text-gray-800 text-base w-full"
-                    style={{ paddingVertical: 0 }}
-                    editable={!isSubmitting}
-                  />
-                </View>
+                <TextInput
+                  value={member.firstName}
+                  onChangeText={(text) =>
+                    handleNameChange(index, "firstName", text)
+                  }
+                  placeholder={t("Farms.EnterFirstName")}
+                  placeholderTextColor="#9CA3AF"
+                  className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
+                  editable={!isSubmitting}
+                />
                 {firstNameErrors[index] && (
                   <Text className="text-red-500 text-sm mt-1 ml-3">
                     {firstNameErrors[index]}
@@ -812,19 +814,16 @@ const AddMemberDetails: React.FC = () => {
                 <Text className="text-[#070707] font-medium mb-2">
                   {t("Inputs.LastName")}
                 </Text>
-                <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center">
-                  <TextInput
-                    value={member.lastName}
-                    onChangeText={(text) =>
-                      handleNameChange(index, "lastName", text)
-                    }
-                    placeholder={t("Farms.EnterLastName")}
-                    placeholderTextColor="#9CA3AF"
-                    className="text-gray-800 text-base w-full"
-                    style={{ paddingVertical: 0 }}
-                    editable={!isSubmitting}
-                  />
-                </View>
+                <TextInput
+                  value={member.lastName}
+                  onChangeText={(text) =>
+                    handleNameChange(index, "lastName", text)
+                  }
+                  placeholder={t("Farms.EnterLastName")}
+                  placeholderTextColor="#9CA3AF"
+                  className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
+                  editable={!isSubmitting}
+                />
                 {lastNameErrors[index] && (
                   <Text className="text-red-500 text-sm mt-1 ml-3">
                     {lastNameErrors[index]}
@@ -858,21 +857,16 @@ const AddMemberDetails: React.FC = () => {
                   </TouchableOpacity>
 
                   {/* Phone input */}
-                  <View className="flex-1 bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
-                    <TextInput
-                      className="text-gray-800 text-base w-full"
-                      style={{ paddingVertical: 0 }}
-                      placeholder="7X XXXXXXX"
-                      value={member.phone}
-                      onChangeText={(text) => handlePhoneChange(text, index)}
-                      placeholderTextColor="#585858"
-                      keyboardType="phone-pad"
-                      maxLength={9}
-                      underlineColorAndroid="transparent"
-                      cursorColor="#141415ff"
-                      editable={!isSubmitting}
-                    />
-                  </View>
+                  <TextInput
+                    className="flex-1 bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
+                    placeholder="7X XXXXXXX"
+                    value={member.phone}
+                    onChangeText={(text) => handlePhoneChange(text, index)}
+                    placeholderTextColor="#585858"
+                    keyboardType="phone-pad"
+                    maxLength={9}
+                    editable={!isSubmitting}
+                  />
                 </View>
 
                 {checkingNumber[index] && (
@@ -900,19 +894,16 @@ const AddMemberDetails: React.FC = () => {
                 <Text className="text-[#070707] font-medium mb-2">
                   {t("Farms.NIC")}
                 </Text>
-                <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center">
-                  <TextInput
-                    value={member.nic}
-                    onChangeText={(text) => handleNicChange(index, text)}
-                    placeholder={t("Farms.EnterNIC")}
-                    placeholderTextColor="#9CA3AF"
-                    className="text-gray-800 text-base w-full"
-                    style={{ paddingVertical: 0 }}
-                    editable={!isSubmitting}
-                    autoCapitalize="characters"
-                    maxLength={12}
-                  />
-                </View>
+                <TextInput
+                  value={member.nic}
+                  onChangeText={(text) => handleNicChange(index, text)}
+                  placeholder={t("Farms.EnterNIC")}
+                  placeholderTextColor="#9CA3AF"
+                  className="bg-[#F4F4F4] p-3 rounded-3xl h-[50px] text-gray-800"
+                  editable={!isSubmitting}
+                  autoCapitalize="characters"
+                  maxLength={12}
+                />
                 {checkingNIC[index] && (
                   <View className="flex-row items-center mt-1">
                     <ActivityIndicator size="small" color="#2563EB" />
@@ -962,6 +953,8 @@ const AddMemberDetails: React.FC = () => {
               activeOpacity={0.8}
               className={`w-full h-[50px] rounded-3xl justify-center items-center shadow-lg elevation-6 ${
                 isSubmitting ||
+                submitSuccess ||
+                alertShownRef.current ||
                 Object.values(checkingNumber).includes(true) ||
                 Object.values(checkingNIC).includes(true)
                   ? "bg-[#9CA3AF]"
@@ -970,6 +963,8 @@ const AddMemberDetails: React.FC = () => {
               onPress={handleSaveFarm}
               disabled={
                 isSubmitting ||
+                submitSuccess ||
+                alertShownRef.current ||
                 Object.values(checkingNumber).includes(true) ||
                 Object.values(checkingNIC).includes(true)
               }

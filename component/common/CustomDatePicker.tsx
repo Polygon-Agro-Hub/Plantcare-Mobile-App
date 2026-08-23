@@ -45,12 +45,42 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   // Update calendar view when modal opens or value changes
   useEffect(() => {
     if (visible) {
-      const activeDate = value ? new Date(value) : today;
+      let activeDate = value ? new Date(value) : today;
+      if (minimumDate) {
+        const minMidnight = new Date(
+          minimumDate.getFullYear(),
+          minimumDate.getMonth(),
+          minimumDate.getDate(),
+        );
+        const activeMidnight = new Date(
+          activeDate.getFullYear(),
+          activeDate.getMonth(),
+          activeDate.getDate(),
+        );
+        if (activeMidnight < minMidnight) {
+          activeDate = minMidnight;
+        }
+      }
+      if (maximumDate) {
+        const maxMidnight = new Date(
+          maximumDate.getFullYear(),
+          maximumDate.getMonth(),
+          maximumDate.getDate(),
+        );
+        const activeMidnight = new Date(
+          activeDate.getFullYear(),
+          activeDate.getMonth(),
+          activeDate.getDate(),
+        );
+        if (activeMidnight > maxMidnight) {
+          activeDate = maxMidnight;
+        }
+      }
       setCurrentMonth(activeDate.getMonth());
       setCurrentYear(activeDate.getFullYear());
       setSelectedDate(activeDate);
     }
-  }, [visible, value, today]);
+  }, [visible, value, today, minimumDate, maximumDate]);
 
   const monthNames = [
     "January", "February", "March", "April", "May", "June",
@@ -122,6 +152,7 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   };
 
   const handleConfirm = () => {
+    if (isDayDisabled(selectedDate)) return;
     onConfirm(selectedDate);
     onClose();
   };
@@ -202,7 +233,14 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
               <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
                 <Text style={styles.cancelText}>{cancelText || "Cancel"}</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={handleConfirm} style={styles.confirmButton}>
+              <TouchableOpacity
+                onPress={handleConfirm}
+                disabled={isDayDisabled(selectedDate)}
+                style={[
+                  styles.confirmButton,
+                  isDayDisabled(selectedDate) && { opacity: 0.4 },
+                ]}
+              >
                 <Text style={styles.confirmText}>{confirmText || "OK"}</Text>
               </TouchableOpacity>
             </View>

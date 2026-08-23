@@ -162,15 +162,17 @@ const AddNewFarmSecondDetails = () => {
   );
 
   React.useEffect(() => {
-    if (submitSuccess) {
+    if (submitSuccess && lastCreatedFarmId) {
       Alert.alert(t("Main.Success"), t("Farms.FarmSavedSuccessfully"), [
         {
           text: t("Main.OK"),
           onPress: () => {
+            const targetFarmId = lastCreatedFarmId;
+            const targetRegCode = registrationCode;
             dispatch(clearSubmitState());
             navigation.navigate("EarnCertificate", {
-              farmId: lastCreatedFarmId,
-              registrationCode: registrationCode || undefined,
+              farmId: targetFarmId,
+              registrationCode: targetRegCode || undefined,
             });
           },
         },
@@ -178,14 +180,22 @@ const AddNewFarmSecondDetails = () => {
     }
 
     if (submitError) {
-      Alert.alert("Error", submitError, [
+      Alert.alert(t("Main.Error") || "Error", submitError, [
         {
           text: t("Main.OK"),
           onPress: () => dispatch(clearSubmitState()),
         },
       ]);
     }
-  }, [submitSuccess, submitError, dispatch, navigation]);
+  }, [
+    submitSuccess,
+    submitError,
+    lastCreatedFarmId,
+    registrationCode,
+    dispatch,
+    navigation,
+    t,
+  ]);
 
   const saveFarmDirectly = async () => {
     dispatch(clearSubmitState());

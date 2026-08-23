@@ -111,6 +111,8 @@
     "SoilData": "Soil Data"
   },
   "Profile": {
+    "Profile": "Profile",
+    "ViewProfile": "View Profile",
     "Call": "Call",
     "Logout": "Logout",
     "LanguageSettings": "Language Settings",
@@ -128,6 +130,7 @@
   },
   "EditProfile": {
     "EditProfile": "Edit Profile",
+    "ViewProfile": "View Profile",
     "FirstNameAndLastNameCannotBeEmpty": "First name and last name cannot be empty.",
     "YourProfileHasBeenUpdatedSuccessfully": "Your profile has been updated successfully!",
     "FailedToUpdateProfileTryAgainLater": "Failed to update profile. Try again later.",
@@ -314,7 +317,7 @@
     "ReEnterAccountNumber": "Re-enter Account Number",
     "SelectBankName": "Select Bank Name",
     "SelectBranchName": "Select Branch Name",
-    "SelectBankFirst":"Please select a bank first."
+    "SelectBankFirst": "Please select a bank first."
   },
   "QRcode": {
     "MyQRCode": "My QR Code",
@@ -414,8 +417,8 @@
     "SelectCountryCode": "Select Country Code",
     "EnterFarmNameHere": "Enter Farm Name Here",
     "SearchDistrict": "Search district",
-    "SearchCountry":"Search country...",
-    "NoCountriesFound":"No countries found",
+    "SearchCountry": "Search country...",
+    "NoCountriesFound": "No countries found",
     "EnterPlotNumberHere": "Enter Plot Number Here",
     "EnterStreetName": "Enter Street Name",
     "EnterCityName": "Enter City Name",
@@ -452,17 +455,26 @@
     "Manager": "Manager",
     "Supervisor": "Supervisor",
     "Worker": "Laborer",
+    "Owner": "Owner",
+    "FarmManager": "Farm Manager",
+    "FarmSupervisor": "Farm Supervisor",
+    "FarmLaborer": "Farm Laborer",
+    "FarmOwner": "Farm Owner",
     "CreateYourFirstFarmForFree": "Create Your First Farm For Free!",
     "SimplifyFarmManagementLikeNeverBefore": "Simplify farm management like never before.",
     "GetStarted": "Get Started",
     "PleaseEnterTheNumberOfStaff": "Please enter the number of staff",
     "LoginCredentialsCannotExceedTheTotalNumberOfStaff": "Login credentials cannot exceed the total number of staff",
     "NoOfStaffLoginRequired": "No of Staff Login Required",
+    "NoLoginCredentialsRequired": "No Login Credentials Required",
+    "You have indicated that no staff members need login credentials. The farm will be saved directly.": "You have indicated that no staff members need login credentials. The farm will be saved directly.",
+    "Please enter the number of login credentials needed": "Please enter the number of login credentials needed",
+    "Staff numbers cannot be negative": "Staff numbers cannot be negative",
+    "Missing farm details. Please go back and complete all steps.": "Missing farm details. Please go back and complete all steps.",
     "TotalNumberOfStaffWorking": "Total number of staff working",
     "HowManyStaffWillBe": "How many staff who will be\nusing the app?",
     "NumberOfLoginCredentialsNeeded": "Number of login credentials needed",
     "AddStaff": "Add Staff",
-    "NoLoginCredentialsRequired": "No Login Credentials Required",
     "StaffMembersHasBeenAddedSuccessfully": "Staff members has been added successfully!",
     "FailedToAddStaffMemberPleaseTryAgain": "Failed to add staff member. Please try again.",
     "NetworkErrorPleaseCheckYourConnection": "Network error. Please check your connection.",
@@ -482,7 +494,7 @@
     "Crops": "Crops",
     "MyCultivation": "My Cultivation",
     "SelectAFarmToManageYourCultivationAndAssets": "Select a farm to manage your cultivation and assets",
-    "StaffMemberUpdated":"Staff member has been updated successfully",
+    "StaffMemberUpdated": "Staff member has been updated successfully",
     "Assets": "Assets",
     "Cultivation": "Cultivation",
     "StaffMember": "Staff Member -",
@@ -533,9 +545,9 @@
     "BASIC": "BASIC",
     "RENEW": "RENEW",
     "PRO": "PRO",
-    "ID":"ID",
-    "StaffMemberHasBeenUpdatedSuccessfully":"Staff member has been updated successfully",
-    "CompletionRemovedSuccessfully":"Completion removed successfully"
+    "ID": "ID",
+    "StaffMemberHasBeenUpdatedSuccessfully": "Staff member has been updated successfully",
+    "CompletionRemovedSuccessfully": "Completion removed successfully"
   },
   "SelectCrop": {
     "Description": "Description",
@@ -623,7 +635,8 @@
     "CheckingValidity": "Checking validity...",
     "CertificateExpired": "Certificate Expired",
     "NoActiveCertificate": "No active certificate",
-    "GrantPermission":"Grant Permission"
+    "GrantPermission": "Grant Permission",
+    "UploadRetryFailed": "Image upload failed. Please try again."
   },
   "Manager": {
     "ManageWorkers": "Manage Workers",
@@ -707,10 +720,10 @@
     "GeneratedPDFFileNotFound": "Generated PDF file not found",
     "FailedToSharePDFFile": "Failed to share PDF file",
     "NoTransactionsFound": "No transactions found",
-    "Delivered on":"Delivered on",
-    "of Items":"of Items",
-    "Info":"Info",
-    "UseTheSave":"Use the 'Save to Files' option to save to Downloads"
+    "Delivered on": "Delivered on",
+    "of Items": "of Items",
+    "Info": "Info",
+    "UseTheSave": "Use the 'Save to Files' option to save to Downloads"
   },
   "EarnCertificate": {
     "EarnACertificate": "Earn a Certificate",
@@ -817,17 +830,20 @@
     "SelectAssetIsRequired": "Select Asset is required",
     "AssetType": "Asset Type",
     "SelectAssetTypeIsRequired": "Select Asset Type is required",
-    "SelectType":"Select Type",
+    "SelectType": "Select Type",
     "AssetAddSuccessfuly": "Asset added successfully!",
     "NumberOfUnits": "Number of Units",
     "NumberOfUnitsIsRequired": "Number of units is required",
     "UnitPrice": "Unit Price (LKR)",
-    "UnitPrices":"Unit Price",
+    "UnitPrices": "Unit Price",
     "UnitPriceIsRequired": "Unit price is required",
     "TotalPrice": "Total Price (LKR)",
     "Warranty": "Warranty",
+    "warranty": "Warranty",
     "SelectWarrantyIsRequired": "Select Warranty is required",
+    "Yes": "Yes",
     "yes": "Yes",
+    "No": "No",
     "no": "No",
     "Status": "Warranty Status",
     "PurchasedDate": "Purchased Date",
@@ -856,13 +872,13 @@
     "AnnualLeaseAmountIsRequired": "Annual Lease Amount (LKR) is required",
     "IssuedDate": "Issued Date",
     "IssuedDateIsRequired": "Issued Date is required",
-    "enterPermitFeeAnnuallyLKR":"Permit Annually Fee is required",
+    "enterPermitFeeAnnuallyLKR": "Permit Annually Fee is required",
     "AnnualPermitFee": "Annual Permit Fee (LKR)",
     "AnnualPermitFeeIsRequired": "Annual Permit Fee (LKR) is required",
     "AnnualPaymentFee": "Annual Payment Fee (LKR)",
     "AnnualPaymentFeeIsRequired": "Annual Payment Fee (LKR) is required",
     "IsTheLandFenced": "Is the land fenced?",
-    "PleaseSelectAnOption":"Please select an option",
+    "PleaseSelectAnOption": "Please select an option",
     "DoesTheLandHavePerennialCrops": "Does the land have perennial crops?",
     "MentionOtherDetails": "Mention Other details",
     "MentionOther": "Mention Other",
@@ -878,8 +894,8 @@
     "EnterAnnualPermitFee": "Enter Annual Permit Fee (LKR)",
     "NoAssetsAvailableForThisCategory": "No assets available for this category",
     "SelectOwnershipCategoryIsRequired": "Select Ownership Category is required",
-    "SelectOwnership":"Select Ownership",
-    "SelectGeneralCondition":"Select General Condition",
+    "SelectOwnership": "Select Ownership",
+    "SelectGeneralCondition": "Select General Condition",
     "OwnBuildingWithTitleOwnership": "Own Building (with title ownership)",
     "LeasedBuilding": "Leased Building",
     "NoToolsSelected": "No Tools Selected",
@@ -1091,7 +1107,8 @@
     "MaizeCoenThresher": "Maize Coen Thresher - ME",
     "SteelSeedSowing": "Steel and Plastic Seed Sowing Machine",
     "TractorMountedSpray": "Tractor Mounted Sprayer",
-    "PermitFeeAnnuallyLKR": "Permit Fee Annually (LKR)"
+    "PermitFeeAnnuallyLKR": "Permit Fee Annually (LKR)",
+    "WarrantyExpireDateMustBeInTheFuture": "Warranty expire date must be in the future."
   },
   "ImageViewerModal": {
     "UploadedBy": "Uploaded By :",
@@ -1105,7 +1122,7 @@
     "StartANewDiscussion": "Start a new discussion",
     "LoadingComments": "Loading comments...",
     "Replies": "replies",
-    "Reply":"reply",
+    "Reply": "reply",
     "PublicForum": "Public Forum",
     "WriteAComment": "Write a comment...",
     "Title": "Title",
@@ -1149,7 +1166,8 @@
     "NotHaveAnyCommentYet": "Not have any comment yet",
     "SeeMore": "See More",
     "SeeLess": "See Less",
-    "Maximum250charactersAllowed": "Maximum 250 characters allowed."
+    "Maximum250charactersAllowed": "Maximum 250 characters allowed.",
+    "Change": "Change"
   },
   "Govicapital": {
     "HowCanWeHelpYou": "How can we help you?",
@@ -1269,7 +1287,7 @@
     "FailedToFetchFarmCropsPleaseTryAgain": "Failed to fetch farm crops. Please try again.",
     "FailedToFetchFarmsPleaseTryAgain": "Failed to fetch farms. Please try again.",
     "FailedToFetchServicesPleaseTryAgain": "Failed to fetch services. Please try again.",
-    "SearchFarm":"Search Farm"
+    "SearchFarm": "Search Farm"
   },
   "RequestHistory": {
     "YouHaveNoRequestsAddedYet": "--You have no requests added yet--",
@@ -1346,7 +1364,27 @@
     "Year": "Year",
     "Month": "Month",
     "Day": "Day",
-    "SelectedDate": "Selected Date"
+    "SelectedDate": "Selected Date",
+    "ConfirmSubmission": "Confirm Submission",
+    "AreYouSureYouWantToSubmitThisPensionRequest": "Are you sure you want to submit this pension request?",
+    "Yes": "Yes",
+    "No": "No",
+    "PensionRequestSubmittedSuccessfully": "Your pension request has been submitted successfully!",
+    "FailedToSubmitRequest": "Failed to submit request",
+    "PleaseEnterSuccessorsFullName": "Please enter successor's full name",
+    "PleaseSelectRelationship": "Please select relationship",
+    "PleaseSelectSuccessorsDateOfBirth": "Please select successor's date of birth",
+    "PleaseEnterSuccessorsNICNumber": "Please enter successor's NIC number",
+    "InvalidNICMessage": "Successor's NIC must be either 9 digits followed by V/v/X/x (e.g., 123456789V) or 12 digits (e.g., 199912345678)",
+    "PleaseUploadSuccessorsNICFrontImage": "Please upload successor's NIC front image",
+    "PleaseUploadSuccessorsNICBackImage": "Please upload successor's NIC back image",
+    "PleaseUploadSuccessorsBirthCertificateFrontImage": "Please upload successor's birth certificate front image",
+    "PleaseUploadSuccessorsBirthCertificateBackImage": "Please upload successor's birth certificate back image"
+  },
+  "GoviPensionInformation": {
+    "ApplyForPension": "Apply for Pension",
+    "YouAreNotEligibleYet": "You are not eligible yet.",
+    "YouNeedToSuccessfullyCompleteAtLeastOneEnrolledCultivation": "You need to successfully complete at least one enrolled cultivation to qualify for the pension scheme."
   },
   "GoviPensionStatus": {
     "StayTuned": "Stay Tuned!",
@@ -1403,7 +1441,7 @@
     "NoCropsFound": "No crops found",
     "SelectAreaUnit": "Select Area Unit",
     "Hectares": "Hectares",
-    "Acres":"Acres",
+    "Acres": "Acres",
     "SearchUnits...": "Search units...",
     "NoUnitsFound": "No units found",
     "AreaMustBeGreaterThan0": "Area must be greater than 0.",
@@ -1433,7 +1471,7 @@
   "SoilFertilizerCalculators": {
     "Soil&FertilizerCalculators": "Soil & Fertilizer Calculators",
     "Fertilizer": "Fertilizer",
-    "FertilizerRequirement":"Fertilizer Requirement",
+    "FertilizerRequirement": "Fertilizer Requirement",
     "NPKRatio": "NPK Ratio",
     "LimeRequirement": "Lime Requirement",
     "CompostMixing": "Compost Mixing",
@@ -1548,9 +1586,9 @@
     "ViewMyInvoice": "View My Invoice",
     "Payment Failed": "Payment Failed!"
   },
-  "OrderHistory":{
-    "My Orders":"My Orders",
-    "All":"All",
-    "No Previous Orders":"No Previous Orders"
+  "OrderHistory": {
+    "My Orders": "My Orders",
+    "All": "All",
+    "No Previous Orders": "No Previous Orders"
   }
 }
