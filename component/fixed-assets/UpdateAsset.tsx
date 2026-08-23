@@ -339,19 +339,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
     return errors;
   };
 
-  const validateToolFields = (
-    toolId: string,
-    toolDetails: any,
-    category: string,
-  ) => {
-    const errors = validateField(toolId, toolDetails, category);
-    setFieldErrors((prev) => ({
-      ...prev,
-      [toolId]: errors,
-    }));
-    return Object.keys(errors).length === 0;
-  };
-
   const validateAllTools = () => {
     let isValid = true;
     const newErrors: ToolErrors = {};
@@ -500,11 +487,6 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
   const cleanNumber = (value: string) =>
     value ? value.replace(/,/g, "") : "0";
-
-  const formatInt = (text: string) => {
-    const digits = text.replace(/[^0-9]/g, "");
-    return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  };
 
   const handleInputChange = (toolId: any, field: any, value: any) => {
     setUpdatedDetails((prevDetails: any) => {
@@ -790,7 +772,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <CustomHeader
-        title={`${translateCategory(category)} ${t("FixedAssets.Edit")}`}
+        title={translateCategory(category)}
         navigation={navigation as any}
         onBackPress={() => navigation.goBack()}
       />
@@ -1371,7 +1353,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       {t("FixedAssets.Type")} *
                     </Text>
                     <DropdownTrigger
-                      value={updatedDetails[tool.id]?.type ?? ""}
+                      value={getLabel(
+                        assetTypesForBuilding,
+                        updatedDetails[tool.id]?.type ?? "",
+                      )}
                       placeholder={t("FixedAssets.selectType")}
                       onPress={() => {
                         clearFieldError(tool.id, "type");
@@ -1498,7 +1483,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       {t("FixedAssets.GeneralCondition")} *
                     </Text>
                     <DropdownTrigger
-                      value={updatedDetails[tool.id]?.generalCondition ?? ""}
+                      value={getLabel(
+                        generalConditionOptions,
+                        updatedDetails[tool.id]?.generalCondition ?? "",
+                      )}
                       placeholder={t(
                         "FixedAssets.SelectGeneralConditionIsRequired",
                       )}
@@ -1909,7 +1897,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       {t("FixedAssets.Asset")} *
                     </Text>
                     <DropdownTrigger
-                      value={updatedDetails[tool.id]?.asset ?? ""}
+                      value={getLabel(
+                        Machineasset,
+                        updatedDetails[tool.id]?.asset ?? "",
+                      )}
                       placeholder={t("FixedAssets.SelectAssetIsRequired")}
                       onPress={() => {
                         clearFieldError(tool.id, "asset");
@@ -1948,7 +1939,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           {t("FixedAssets.AssetType")} *
                         </Text>
                         <DropdownTrigger
-                          value={updatedDetails[tool.id]?.assetType ?? ""}
+                          value={getLabel(
+                            assetTypesForAssets[
+                              updatedDetails[tool.id]?.asset || selectedAsset || ""
+                            ],
+                            updatedDetails[tool.id]?.assetType ?? "",
+                          )}
                           placeholder={t(
                             "FixedAssets.SelectAssetTypeIsRequired",
                           )}
@@ -2429,7 +2425,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       {t("FixedAssets.Asset")} *
                     </Text>
                     <DropdownTrigger
-                      value={updatedDetails[tool.id]?.asset ?? ""}
+                      value={getLabel(
+                        ToolAssets,
+                        updatedDetails[tool.id]?.asset ?? "",
+                      )}
                       placeholder={t("FixedAssets.SelectAssetIsRequired")}
                       onPress={() => {
                         clearFieldError(tool.id, "asset");

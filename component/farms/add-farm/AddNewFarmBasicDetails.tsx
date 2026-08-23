@@ -72,10 +72,12 @@ const AddNewFarmBasicDetails: React.FC = () => {
   const [districtModalVisible, setDistrictModalVisible] = useState(false);
   const { t } = useTranslation();
 
-  const districtItems = districtData.map((item) => ({
-    label: t(`District.${item.name}`),
-    value: item.name,
-  }));
+  const districtItems = districtData
+    .map((item) => ({
+      label: t(item.translationKey || `District.${item.name}`),
+      value: item.name,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
 
   useFocusEffect(
     useCallback(() => {

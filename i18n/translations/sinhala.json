@@ -466,7 +466,7 @@
     "StaffMembersHasBeenAddedSuccessfully": "කාර්ය මණ්ඩල සාමාජිකයින් සාර්ථකව එක් කරන ලදී!",
     "FailedToAddStaffMemberPleaseTryAgain": "කාර්ය මණ්ඩල සාමාජිකයා එක් කිරීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
     "NetworkErrorPleaseCheckYourConnection": "ජාල දෝෂයකි. කරුණාකර ඔබගේ සම්බන්ධතාවය පරීක්ෂා කරන්න.",
-    "AddNewStaffMember": "නව කාර්ය මණ්ඩල සාමාජිකයෙකු එක් කරන්න",
+    "AddNewStaffMember": "නව සාමාජික ලියාපදිංචිය",
     "FailedToFetchFarmData": "ගොවිපල දත්ත ලබා ගැනීමට අසමත් විය",
     "FarmNotFoundPleaseCheckTheFarmID": "ගොවිපල හමු නොවීය. කරුණාකර ගොවිපල හැඳුනුම්පත පරීක්ෂා කරන්න.",
     "PleaseEnterAFarmName": "කරුණාකර ගොවිපල නමක් ඇතුළත් කරන්න",
@@ -623,7 +623,8 @@
     "CheckingValidity": "වලංගු භාවය පරීක්ෂා කරමින්...",
     "CertificateExpired": "සහතිකය කල් ඉකුත් වී ඇත",
     "NoActiveCertificate": "සක්‍රිය සහතිකයක් නොමැත",
-    "GrantPermission":"අවසර දෙන්න"
+    "GrantPermission": "අවසර දෙන්න",
+    "UploadRetryFailed": "ඡායාරූපය උඩුගත කිරීම අසාර්ථක විය. කරුණාකර නැවත උත්සාහ කරන්න."
   },
   "Manager": {
     "ManageWorkers": "කම්කරුවන් කළමනාකරණය කරන්න",
@@ -1300,7 +1301,7 @@
       "Sun": "ඉරිදා",
       "Mon": "සඳුදා",
       "Tue": "අඟහ",
-      "Wed": "බදා",
+      "Wed": "බදාදා",
       "Thu": "බ්‍රහස්",
       "Fri": "සිකු",
       "Sat": "සෙන"

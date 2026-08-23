@@ -623,7 +623,8 @@
     "CheckingValidity": "செல்லுபடியை சரிபார்க்கிறது...",
     "CertificateExpired": "சான்றிதழ் காலாவதியானது",
     "NoActiveCertificate": "செயலில் உள்ள சான்றிதழ் இல்லை",
-    "GrantPermission":"அனுமதியை வழங்கு"
+    "GrantPermission": "அனுமதியை வழங்கு",
+    "UploadRetryFailed": "புகைப்படத்தைப் பதிவேற்ற முடியவில்லை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்."
   },
   "Manager": {
     "ManageWorkers": "தொழிலாளர்களை நிர்வகிக்கவும்",

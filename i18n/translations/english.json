@@ -623,7 +623,8 @@
     "CheckingValidity": "Checking validity...",
     "CertificateExpired": "Certificate Expired",
     "NoActiveCertificate": "No active certificate",
-    "GrantPermission":"Grant Permission"
+    "GrantPermission": "Grant Permission",
+    "UploadRetryFailed": "Image upload failed. Please try again."
   },
   "Manager": {
     "ManageWorkers": "Manage Workers",

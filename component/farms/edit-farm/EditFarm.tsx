@@ -105,9 +105,10 @@ const EditFarm: React.FC<EditFarmProps> = ({
         return districtData
           .filter((item) => item && typeof item === "object" && item.name)
           .map((item) => ({
-            label: String(t(`District.${item.name}`)),
+            label: String(t(item.translationKey || `District.${item.name}`)),
             value: String(item.name),
-          }));
+          }))
+          .sort((a, b) => a.label.localeCompare(b.label));
       }
       return [];
     } catch (err) {

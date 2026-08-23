@@ -63,12 +63,14 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
   const dispatch = useDispatch();
   const userPersonalData = useSelector(selectUserPersonal);
 
-  const districtItems = districtData.map((d) => ({
-    label: t(d.translationKey),
-    value: d.name,
-    districtId: d.id,
-    districtName: d.name,
-  }));
+  const districtItems = districtData
+    .map((d) => ({
+      label: t(d.translationKey),
+      value: d.name,
+      districtId: d.id,
+      districtName: d.name,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
 
   useFocusEffect(
     React.useCallback(() => {

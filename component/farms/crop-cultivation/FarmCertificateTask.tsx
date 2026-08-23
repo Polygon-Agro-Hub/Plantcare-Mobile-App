@@ -10,8 +10,10 @@ import {
   Image,
   RefreshControl,
   BackHandler,
+  Platform,
 } from "react-native";
 import { Ionicons, AntDesign, Entypo } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImageManipulator from "expo-image-manipulator";
 import {
   useFocusEffect,
@@ -716,19 +718,22 @@ const FarmCertificateTask: React.FC = () => {
                   pointerEvents="box-none"
                   style={{
                     position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: [{ translateX: -15 }, { translateY: -15 }],
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    justifyContent: "center",
+                    alignItems: "center",
                     zIndex: 150,
                   }}
                 >
                   <TouchableOpacity
                     onPress={() => handleViewUploadedImage(item)}
-                    style={{ padding: 5 }}
+                    activeOpacity={0.7}
                   >
                     <Image
                       source={require("../../../assets/images/crop-cultivation/viewimage.webp")}
-                      style={{ width: 30, height: 30 }}
+                      style={{ width: 32, height: 32 }}
                       resizeMode="contain"
                     />
                   </TouchableOpacity>
@@ -765,27 +770,43 @@ const FarmCertificateTask: React.FC = () => {
         animationType="fade"
         onRequestClose={() => setImageModalVisible(false)}
       >
-        <View className="flex-1 bg-[#FFFFFF] justify-center items-center">
-          <TouchableOpacity
-            onPress={() => setImageModalVisible(false)}
-            className="absolute top-10 right-5 z-10 bg-black/50 rounded-full p-2"
-          >
-            <Ionicons name="close" size={20} color="white" />
-          </TouchableOpacity>
+        <View className="flex-1 bg-white">
+          <CustomHeader
+            title=""
+            showBackButton={false}
+            transparent={true}
+            headerStyle={{ paddingTop: Platform.OS === "ios" ? 54 : 12 }}
+            rightComponent={
+              <TouchableOpacity onPress={() => setImageModalVisible(false)}>
+                <Ionicons
+                  name="close"
+                  size={25}
+                  color="black"
+                  style={{
+                    backgroundColor: "#F6F6F6CC",
+                    borderRadius: 50,
+                    padding: 10,
+                  }}
+                />
+              </TouchableOpacity>
+            }
+          />
 
-          <Text className="text-black text-center px-4 py-2 rounded-lg">
-            {isStaff
-              ? `${t("ImageViewerModal.UploadedBy")} ${t("ImageViewerModal.Owner") || "Owner"}`
-              : t("Farms.UploadedByYou")}
-          </Text>
+          <View className="flex-1 justify-center items-center px-4">
+            <Text className="text-black text-center px-4 py-2 rounded-lg mb-2">
+              {isStaff
+                ? `${t("ImageViewerModal.UploadedBy")} ${t("ImageViewerModal.Owner") || "Owner"}`
+                : t("Farms.UploadedByYou")}
+            </Text>
 
-          {selectedImage && (
-            <Image
-              source={{ uri: selectedImage }}
-              className="w-full h-2/3"
-              resizeMode="contain"
-            />
-          )}
+            {selectedImage && (
+              <Image
+                source={{ uri: selectedImage }}
+                className="w-full h-2/3"
+                resizeMode="contain"
+              />
+            )}
+          </View>
         </View>
       </Modal>
     </View>

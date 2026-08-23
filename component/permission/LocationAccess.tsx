@@ -31,6 +31,7 @@ type LocationAccessNavigationProp = StackNavigationProp<
 interface LocationAccessProps {
   navigation: LocationAccessNavigationProp;
   onPermissionGranted?: () => void;
+  onClose?: () => void;
   returnScreen?: keyof RootStackParamList;
 }
 
@@ -40,6 +41,7 @@ const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const LocationAccess: React.FC<LocationAccessProps> = ({
   navigation,
   onPermissionGranted,
+  onClose,
   returnScreen = "Main",
 }) => {
   const { t, i18n } = useTranslation();
@@ -53,7 +55,11 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.goBack();
+        if (onClose) {
+          onClose();
+        } else {
+          navigation.goBack();
+        }
         return true;
       };
       const subscription = BackHandler.addEventListener(
@@ -61,7 +67,7 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
         onBackPress,
       );
       return () => subscription.remove();
-    }, [navigation]),
+    }, [navigation, onClose]),
   );
 
   const requestLocationPermission = async () => {
@@ -109,7 +115,7 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
       <CustomHeader
         title=""
         navigation={navigation}
-        onBackPress={() => navigation.goBack()}
+        onBackPress={onClose ? onClose : () => navigation.goBack()}
         transparent
       />
 
