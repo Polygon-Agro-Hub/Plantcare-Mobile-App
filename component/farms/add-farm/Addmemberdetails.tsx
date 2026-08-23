@@ -416,20 +416,20 @@ const AddMemberDetails: React.FC = () => {
         {
           text: t("Main.OK"),
           onPress: () => {
+            const targetFarmId = lastCreatedFarmId;
+            const targetRegCode = registrationCode;
             dispatch(clearSubmitState());
-            alertShownRef.current = false;
-            setTimeout(() => {
-              navigation.navigate("EarnCertificate", {
-                farmId: lastCreatedFarmId,
-                registrationCode: registrationCode || undefined,
-              });
-            }, 100);
+            navigation.navigate("EarnCertificate", {
+              farmId: targetFarmId,
+              registrationCode: targetRegCode || undefined,
+            });
           },
         },
       ]);
     }
     if (submitError) {
-      Alert.alert("Error", submitError, [
+      alertShownRef.current = false;
+      Alert.alert(t("Main.Error") || "Error", submitError, [
         {
           text: t("Main.OK"),
           onPress: () => dispatch(clearSubmitState()),
@@ -447,6 +447,9 @@ const AddMemberDetails: React.FC = () => {
   ]);
 
   const handleSaveFarm = async () => {
+    if (isSubmitting || submitSuccess || alertShownRef.current) {
+      return;
+    }
     dispatch(clearSubmitState());
 
     if (Object.values(phoneErrors).some(Boolean)) {
@@ -950,6 +953,8 @@ const AddMemberDetails: React.FC = () => {
               activeOpacity={0.8}
               className={`w-full h-[50px] rounded-3xl justify-center items-center shadow-lg elevation-6 ${
                 isSubmitting ||
+                submitSuccess ||
+                alertShownRef.current ||
                 Object.values(checkingNumber).includes(true) ||
                 Object.values(checkingNIC).includes(true)
                   ? "bg-[#9CA3AF]"
@@ -958,6 +963,8 @@ const AddMemberDetails: React.FC = () => {
               onPress={handleSaveFarm}
               disabled={
                 isSubmitting ||
+                submitSuccess ||
+                alertShownRef.current ||
                 Object.values(checkingNumber).includes(true) ||
                 Object.values(checkingNIC).includes(true)
               }

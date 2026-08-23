@@ -18,6 +18,7 @@ import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 
 interface GoviPensionInformationProps {
   navigation: StackNavigationProp<any>;
@@ -28,6 +29,7 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
   navigation,
 }) => {
+  const { t } = useTranslation();
   const [currentSection, setCurrentSection] = useState(0);
   const flatListRef = useRef<FlatList>(null);
 
@@ -268,7 +270,8 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
             <ActivityIndicator color="#ffffff" />
           ) : (
             <Text className="text-white text-xl font-bold text-center">
-              Apply for Pension
+              {t("GoviPensionInformation.ApplyForPension") ||
+                "Apply for Pension"}
             </Text>
           )}
         </TouchableOpacity>
@@ -300,12 +303,15 @@ const GoviPensionInformation: React.FC<GoviPensionInformationProps> = ({
             </View>
 
             <Text className="text-base font-bold text-[#353535] text-center mb-2">
-              You are not eligible yet.
+              {t("GoviPensionInformation.YouAreNotEligibleYet") ||
+                "You are not eligible yet."}
             </Text>
 
             <Text className="text-sm text-[#555555] text-center leading-5">
-              You need to successfully complete at least one enrolled
-              cultivation to qualify for the pension scheme.
+              {t(
+                "GoviPensionInformation.YouNeedToSuccessfullyCompleteAtLeastOneEnrolledCultivation",
+              ) ||
+                "You need to successfully complete at least one enrolled cultivation to qualify for the pension scheme."}
             </Text>
           </View>
         </View>

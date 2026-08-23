@@ -840,7 +840,7 @@ const FarmDetailsScreen = () => {
 
       {showMenu && (
         <View
-          className="absolute right-0 border border-[#A49B9B] top-[30px] bg-white rounded-lg shadow-lg p-2 z-20 w-24"
+          className="absolute right-0 border border-[#A49B9B] top-[30px] bg-white rounded-lg shadow-lg p-2 z-20 w-40"
           style={{
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 2 },

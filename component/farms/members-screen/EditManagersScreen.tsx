@@ -24,9 +24,11 @@ import { environment } from "@/environment/environment";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 import ImageData from "@/assets/jsons/farm/farm-image.json";
+import districtData from "@/assets/jsons/common/district.json";
 import CustomHeader from "@/component/common/CustomHeader";
 import { MaterialIcons } from "@expo/vector-icons";
 import LoadingPage from "@/component/common/LoadingPage";
+import NoData from "@/component/common/NoData";
 
 type EditManagersScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -187,6 +189,47 @@ const EditManagersScreen = () => {
     });
   };
 
+  const getDistrictLabel = (districtValue: string | undefined): string => {
+    if (!districtValue) return "";
+    const trimmed = String(districtValue).trim();
+
+    const numericId = Number(trimmed);
+    if (!isNaN(numericId)) {
+      const found = districtData.find((d) => d.id === numericId);
+      if (found) return t(found.translationKey);
+    }
+
+    const foundByName = districtData.find(
+      (d) => d.name.toLowerCase() === trimmed.toLowerCase(),
+    );
+    if (foundByName) return t(foundByName.translationKey);
+
+    return t(`District.${trimmed}`) || trimmed;
+  };
+
+  const getRoleDisplayName = (role: string) => {
+    if (!role) return "";
+    const normalized = role.toLowerCase().replace(/[\s_-]/g, "");
+    if (normalized === "supervisor" || normalized === "farmsupervisor") {
+      return t("Farms.FarmSupervisor") || t("Farms.Supervisor") || "Farm Supervisor";
+    }
+    if (
+      normalized === "laborer" ||
+      normalized === "farmlaborer" ||
+      normalized === "laboror" ||
+      normalized === "farmlaboror"
+    ) {
+      return t("Farms.FarmLaborer") || t("Farms.Laborer") || "Farm Laborer";
+    }
+    if (normalized === "manager" || normalized === "farmmanager") {
+      return t("Farms.FarmManager") || t("Farms.Manager") || "Farm Manager";
+    }
+    if (normalized === "owner" || normalized === "farmowner") {
+      return t("Farms.FarmOwner") || t("Farms.Owner") || "Farm Owner";
+    }
+    return t(`Farms.${role}`) || role;
+  };
+
   const getMembershipDisplay = () => {
     if (!membership) {
       return {
@@ -271,7 +314,7 @@ const EditManagersScreen = () => {
         />
       </View>
 
-      <View className="bg-white px-6s">
+      <View className="bg-white px-6">
         <View className="items-center">
           <View className="flex-row items-center ">
             <Text className="font-bold text-xl text-gray-900 mr-3">
@@ -296,7 +339,7 @@ const EditManagersScreen = () => {
             <Text className="text-gray-700 text-xl font-medium"> {t("Farms.ID")} : {regCode}</Text>
           </View>
           <Text className="text-gray-600 text-sm mb-1 mt-2">
-            {farmData?.district}
+            {getDistrictLabel(farmData?.district)}
           </Text>
 
           <Text className="text-gray-600 text-sm">
@@ -331,7 +374,7 @@ const EditManagersScreen = () => {
                       {staff.firstName} {staff.lastName}
                     </Text>
                     <Text className="text-sm text-gray-600">
-                      {t("Farms.Farm")} {staff.role}
+                      {getRoleDisplayName(staff.role)}
                     </Text>
                     <Text className="text-sm text-gray-500">
                       {staff.phoneCode} {staff.phoneNumber}
@@ -351,10 +394,12 @@ const EditManagersScreen = () => {
         )}
 
         {staffData.length === 0 && (
-          <View className="items-center mt-12">
-            <Text className="text-gray-500 text-center">
-              {t("Farms.NoStaffMembersFound")}
-            </Text>
+          <View className="flex-1 justify-center items-center py-12">
+            <NoData
+              text={
+                t("Farms.NoStaffMembersFound") || "No staff members found"
+              }
+            />
           </View>
         )}
       </ScrollView>

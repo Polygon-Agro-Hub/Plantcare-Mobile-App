@@ -79,8 +79,14 @@ const ManagerAddStaff: React.FC<ManagerAddStaffProps> = ({
   const { t } = useTranslation();
 
   const roleItems = [
-    { label: t("Farms.Supervisor"), value: "Supervisor" },
-    { label: t("Farms.Worker"), value: "Laborer" },
+    {
+      label: t("Farms.FarmSupervisor") || t("Farms.Supervisor") || "Farm Supervisor",
+      value: "Supervisor",
+    },
+    {
+      label: t("Farms.FarmLaborer") || t("Farms.Laborer") || "Farm Laborer",
+      value: "Laborer",
+    },
   ];
 
   const getAuthToken = async () => {
