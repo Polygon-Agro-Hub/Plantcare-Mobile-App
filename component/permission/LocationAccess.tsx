@@ -161,7 +161,7 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
               }}
             >
               <Text className="text-black font-extrabold text-lg tracking-wider">
-                Allow
+                {t("LocationAccess.Allow")}
               </Text>
             </LinearGradient>
           </TouchableOpacity>

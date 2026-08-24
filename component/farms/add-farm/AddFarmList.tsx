@@ -385,7 +385,7 @@ const AddFarmList = () => {
         {loading ? (
           <LoadingPage fullScreen />
         ) : farms.length === 0 ? (
-            <NoData text={t("ReportHistory.NoComplaintsFound") || "No complaints found"} />
+            <NoData text={t("RequestHistory.NoFarmAvailable") } />
         ) : (
           <>
             <View>

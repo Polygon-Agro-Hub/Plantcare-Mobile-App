@@ -116,8 +116,12 @@ const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
       }`}
       onPress={() => handleItemPress(item.value)}
     >
-      <Text className="text-base text-gray-800">{item.label}</Text>
-      {isSelected && <MaterialIcons name="check" size={20} color="#21202B" />}
+      <Text className="text-base text-gray-800 flex-1 mr-3">{item.label}</Text>
+      {isSelected && (
+        <View className="ml-1 justify-center items-center">
+          <MaterialIcons name="check" size={20} color="#21202B" />
+        </View>
+      )}
     </TouchableOpacity>
   );
 

@@ -242,13 +242,19 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
       />
       {/* Loading State */}
       {loading ? (
-        <View className="flex-1 justify-center items-center bg-white">
+        <View className="flex-1 mb-20 justify-center items-center bg-white">
           <LoadingPage fullScreen />
         </View>
       ) : investmentRequests.length === 0 ? (
         /* Empty State */
         <ScrollView
-          contentContainerStyle={{ flex: 1 }}
+          className="flex-1 mb-24"
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            marginBottom:25
+          }}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}

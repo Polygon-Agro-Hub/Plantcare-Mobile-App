@@ -502,8 +502,12 @@ const AssertsFixedView: React.FC<Props> = ({ navigation, route }) => {
 
           {/* Tool list */}
           <ScrollView
-            className="p-4 px-6"
-            contentContainerStyle={{ paddingBottom: 100 }}
+            className="p-4 px-6 mb-20"
+            contentContainerStyle={
+              tools.length === 0
+                ? { flexGrow: 1, justifyContent: "center", alignItems: "center" }
+                : { paddingBottom: 100 }
+            }
           >
             {tools.length > 0 ? (
               tools.map((tool) => (

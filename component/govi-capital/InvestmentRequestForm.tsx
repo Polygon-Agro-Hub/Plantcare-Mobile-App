@@ -8,6 +8,7 @@ import {
   ScrollView,
   Alert,
   Platform,
+  KeyboardAvoidingView,
 } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import * as ImagePicker from "expo-image-picker";
@@ -371,6 +372,12 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
 
   return (
     <View className="flex-1 bg-white">
+        <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+              style={{ flex: 1, backgroundColor: "white" }}
+              enabled
+            >
       <CustomHeader
         title={t("Govicapital.InvestmentRequest")}
         navigation={navigation}
@@ -380,7 +387,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
         ref={scrollViewRef}
         className="flex-1 px-6"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 250 }}
+        contentContainerStyle={{ paddingBottom: 50 }}
         nestedScrollEnabled={true}
       >
         {/* Crop Selection with GlobalSearchModal */}
@@ -701,6 +708,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
           </TouchableOpacity>
         </View>
       </ScrollView>
+      </KeyboardAvoidingView>
 
       {/* Global Search Modal for Crop Selection */}
       <GlobalSearchModal
