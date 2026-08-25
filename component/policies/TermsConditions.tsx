@@ -84,7 +84,7 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
           {t("Terms&Condisions.ProhibitedUses")}
         </Text>
         <Text className="text-sm text-gray-700 mt-1">
-          {t("Terms&Condisions.ProhibitedUsesText")}
+          {t("Terms&Condisions.ProhibitedUsesTxt")}
         </Text>
         <View>
           <Text className="text-sm text-gray-700 mt-4">

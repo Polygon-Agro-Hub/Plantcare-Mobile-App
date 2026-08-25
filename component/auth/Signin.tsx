@@ -12,6 +12,7 @@ import {
   BackHandler,
   Dimensions,
   TextInput,
+  SafeAreaView,
 } from "react-native";
 import React, { useState } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -260,196 +261,209 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-      style={{ flex: 1, backgroundColor: "white" }}
-      enabled
-    >
-      <CustomHeader
-        title=""
-        navigation={navigation}
-        onBackPress={() => navigation.navigate("Lanuage")}
-      />
-
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+    <View style={{ flex: 1, backgroundColor: "white" }}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        style={{ flex: 1, backgroundColor: "white" }}
+        enabled
       >
-        <View className="flex-1 bg-white justify-center">
-          <View className="items-center justify-center px-4">
-            <Image
-              source={sign}
-              resizeMode="contain"
-              style={{ height: dynamicStyles.imageHeight, width: "100%" }}
-            />
+        <CustomHeader
+          title=""
+          navigation={navigation}
+          onBackPress={() => navigation.navigate("Lanuage")}
+        />
 
-            <Text
-              className="pt-10 font-semibold text-center"
-              style={
-                i18n.language === "si" || i18n.language === "ta"
-                  ? { fontSize: 18 }
-                  : { fontSize: 25 }
-              }
-            >
-              {t("SignIn.Welcome")}
-            </Text>
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            backgroundColor: "white",
+            justifyContent: "center",
+          }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View className="flex-1 bg-white justify-center">
+            <View className="items-center justify-center px-4">
+              <Image
+                source={sign}
+                resizeMode="contain"
+                style={{ height: dynamicStyles.imageHeight, width: "100%" }}
+              />
 
-            <Text
-              className="pt-4 text-center w-full px-8"
-              style={
-                i18n.language === "si"
-                  ? { fontSize: 12 }
-                  : i18n.language === "ta"
-                    ? { fontSize: 14 }
-                    : { fontSize: 16 }
-              }
-            >
-              {t("SignIn.EnterYourPhoneNumberOfYourLoginID")}
-            </Text>
-          </View>
+              <Text
+                className="pt-10 font-semibold text-center"
+                style={
+                  i18n.language === "si" || i18n.language === "ta"
+                    ? { fontSize: 18 }
+                    : { fontSize: 25 }
+                }
+              >
+                {t("SignIn.Welcome")}
+              </Text>
 
-          <View className="px-6 pt-8 pb-8">
-            <View className="flex">
-              <View className="flex w-full">
-                <View className="flex-row items-center gap-2 w-full">
-                  {/* Country Picker */}
-                  <TouchableOpacity
-                    onPress={() => setCountryModalVisible(true)}
-                    className="border border-[#D5D5D5] rounded-3xl flex-row items-center justify-center px-3 gap-1 h-[50px]"
-                    style={{ flex: 3 }}
-                  >
-                    <Text style={{ fontSize: 20 }}>{selectedCountryFlag}</Text>
-                    <Text className="text-sm text-gray-700">
-                      {selectedCountryCode}
-                    </Text>
-                    <MaterialIcons
-                      name="arrow-drop-down"
-                      size={24}
-                      color="#666"
-                    />
-                  </TouchableOpacity>
-
-                  {/* Phone Input */}
-                  <View
-                    className="flex-row items-center border border-[#D5D5D5] rounded-3xl bg-white h-[50px]"
-                    style={{ flex: 7 }}
-                  >
-                    <TextInput
-                      className="flex-1 px-4"
-                      placeholder={t("Inputs.PhoneNumber")}
-                      value={phonenumber}
-                      onChangeText={handlePhoneNumberChange}
-                      keyboardType="phone-pad"
-                      maxLength={10}
-                      autoFocus
-                      underlineColorAndroid="transparent"
-                      cursorColor="#141415ff"
-                    />
-
-                    {isValid &&
-                      phonenumber.replace(/[^0-9]/g, "").length === 9 && (
-                        <View
-                          className="mr-3"
-                          style={{
-                            width: wp(6),
-                            height: wp(6),
-                            borderRadius: wp(3.5),
-                            backgroundColor: "#0FC7B2",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          <AntDesign name="check" size={wp(3)} color="#fff" />
-                        </View>
-                      )}
-                  </View>
-                </View>
-              </View>
-
-              {/* Error */}
-              {error && (
-                <Text className="text-red-500 mt-2" style={{ fontSize: wp(3) }}>
-                  {error}
-                </Text>
-              )}
+              <Text
+                className="pt-4 text-center w-full px-8"
+                style={
+                  i18n.language === "si"
+                    ? { fontSize: 12 }
+                    : i18n.language === "ta"
+                      ? { fontSize: 14 }
+                      : { fontSize: 16 }
+                }
+              >
+                {t("SignIn.EnterYourPhoneNumberOfYourLoginID")}
+              </Text>
             </View>
 
-            <View className="mt-8 w-full px-6">
-              <TouchableOpacity
-                onPress={handleLogin}
-                disabled={isButtonDisabled}
-                activeOpacity={0.8}
-                className="w-full rounded-3xl h-[50px] overflow-hidden shadow-lg elevation-6"
-              >
-                {isButtonDisabled ? (
-                  <View className="items-center">
-                  <View className=" h-full bg-[#9CA3AF] justify-center items-center"
-                     style={{
-                        borderRadius: 999,
-                        height: 50,
-                        width: SCREEN_HEIGHT > 900 ? 260 : 220,
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                  >
-                    <Text className="text-white font-semibold text-center text-lg">
-                      {t("SignIn.SignIn")}
-                    </Text>
-                  </View>
-                  </View>
-                ) : (
-                  <View className="items-center">
-                    <LinearGradient
-                      colors={["#0FC7B2", "#10A37D"]}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 0 }}
-                      className="w-full h-full justify-center items-center"
-                      style={{
-                        borderRadius: 999,
-                        height: 50,
-                        width: SCREEN_HEIGHT > 900 ? 260 : 220,
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
+            <View className="px-6 pt-8 pb-8">
+              <View className="flex">
+                <View className="flex w-full">
+                  <View className="flex-row items-center gap-2 w-full">
+                    {/* Country Picker */}
+                    <TouchableOpacity
+                      onPress={() => setCountryModalVisible(true)}
+                      className="border border-[#D5D5D5] rounded-3xl flex-row items-center justify-center px-3 gap-1 h-[50px]"
+                      style={{ flex: 3 }}
                     >
-                      {isLoading ? (
-                        <ActivityIndicator size="small" color="#fff" />
-                      ) : (
+                      <Text style={{ fontSize: 20 }}>
+                        {selectedCountryFlag}
+                      </Text>
+                      <Text className="text-sm text-gray-700">
+                        {selectedCountryCode}
+                      </Text>
+                      <MaterialIcons
+                        name="arrow-drop-down"
+                        size={24}
+                        color="#666"
+                      />
+                    </TouchableOpacity>
+
+                    {/* Phone Input */}
+                    <View
+                      className="flex-row items-center border border-[#D5D5D5] rounded-3xl bg-white h-[50px]"
+                      style={{ flex: 7 }}
+                    >
+                      <TextInput
+                        className="flex-1 px-4"
+                        placeholder={t("Inputs.PhoneNumber")}
+                        value={phonenumber}
+                        onChangeText={handlePhoneNumberChange}
+                        keyboardType="phone-pad"
+                        maxLength={10}
+                        autoFocus
+                        underlineColorAndroid="transparent"
+                        cursorColor="#141415ff"
+                      />
+
+                      {isValid &&
+                        phonenumber.replace(/[^0-9]/g, "").length === 9 && (
+                          <View
+                            className="mr-3"
+                            style={{
+                              width: wp(6),
+                              height: wp(6),
+                              borderRadius: wp(3.5),
+                              backgroundColor: "#0FC7B2",
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            <AntDesign name="check" size={wp(3)} color="#fff" />
+                          </View>
+                        )}
+                    </View>
+                  </View>
+                </View>
+
+                {/* Error */}
+                {error && (
+                  <Text
+                    className="text-red-500 mt-2"
+                    style={{ fontSize: wp(3) }}
+                  >
+                    {error}
+                  </Text>
+                )}
+              </View>
+
+              <View className="mt-8 w-full px-6">
+                <TouchableOpacity
+                  onPress={handleLogin}
+                  disabled={isButtonDisabled}
+                  activeOpacity={0.8}
+                  className="w-full rounded-3xl h-[50px] overflow-hidden shadow-lg elevation-6"
+                >
+                  {isButtonDisabled ? (
+                    <View className="items-center">
+                      <View
+                        className="h-full bg-[#9CA3AF] justify-center items-center"
+                        style={{
+                          borderRadius: 999,
+                          height: 50,
+                          width: SCREEN_HEIGHT > 900 ? 260 : 220,
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
                         <Text className="text-white font-semibold text-center text-lg">
                           {t("SignIn.SignIn")}
                         </Text>
-                      )}
-                    </LinearGradient>
-                  </View>
-                )}
-              </TouchableOpacity>
-
-              {/* Signup Link */}
-              <View className="mt-6 flex-row justify-center items-center ">
-                <Text className="font-bold text-[#3F3F3F] mr-2">
-                  {t("SignIn.DontHaveAnAccount")}
-                </Text>
-
-                <TouchableOpacity
-                  onPress={async () => {
-                    try {
-                      await AsyncStorage.removeItem("@user_language");
-                      navigation.navigate("Signup");
-                    } catch (error) {
-                      console.error("Error clearing language:", error);
-                    }
-                  }}
-                >
-                  <Text className="text-[#0085FF] font-semibold underline">
-                    {t("SignIn.SignUpHere")}
-                  </Text>
+                      </View>
+                    </View>
+                  ) : (
+                    <View className="items-center">
+                      <LinearGradient
+                        colors={["#0FC7B2", "#10A37D"]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                        className="w-full h-full justify-center items-center"
+                        style={{
+                          borderRadius: 999,
+                          height: 50,
+                          width: SCREEN_HEIGHT > 900 ? 260 : 220,
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {isLoading ? (
+                          <ActivityIndicator size="small" color="#fff" />
+                        ) : (
+                          <Text className="text-white font-semibold text-center text-lg">
+                            {t("SignIn.SignIn")}
+                          </Text>
+                        )}
+                      </LinearGradient>
+                    </View>
+                  )}
                 </TouchableOpacity>
+
+                {/* Signup Link */}
+                <View className="mt-6 flex-row justify-center items-center">
+                  <Text className="font-bold text-[#3F3F3F] mr-2">
+                    {t("SignIn.DontHaveAnAccount")}
+                  </Text>
+
+                  <TouchableOpacity
+                    onPress={async () => {
+                      try {
+                        await AsyncStorage.removeItem("@user_language");
+                        navigation.navigate("Signup");
+                      } catch (error) {
+                        console.error("Error clearing language:", error);
+                      }
+                    }}
+                  >
+                    <Text className="text-[#0085FF] font-semibold underline">
+                      {t("SignIn.SignUpHere")}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       {/* Country Code Modal */}
       <GlobalSearchModal
@@ -463,7 +477,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
         searchKeys={["label", "countryName", "dialCode"]}
         multiSelect={false}
       />
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 

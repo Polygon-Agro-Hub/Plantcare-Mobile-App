@@ -26,11 +26,6 @@ import axios from "axios";
 import * as Progress from "react-native-progress";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
-import LottieView from "lottie-react-native";
 import ImageData from "@/assets/jsons/farm/farm-image.json";
 import LoadingPage from "@/component/common/LoadingPage";
 import CustomHeader from "../../common/CustomHeader";
@@ -1118,7 +1113,7 @@ const FarmDetailsScreen = () => {
 
         <View className="mt-6 w-full px-0">
           {crops.length === 0 ? (
-            <View className="py-4 justify-center items-center">
+            <View className="py-4 mt-8 justify-center items-center">
               <NoData
                 text={
                   t("MyCrop.NoOngoingCultivationsYet") ||

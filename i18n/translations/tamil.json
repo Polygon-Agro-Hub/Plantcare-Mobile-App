@@ -293,8 +293,8 @@
     "AssistanceWheneverYouNeedIt": "உங்களுக்குத் தேவையான போதெல்லாம் உதவி",
     "IAgreeToTheTerms&Conditions": "நான் விதிமுறைகள் மற்றும் நிபந்தனைகளை ஏற்கிறேன்",
     "ReceiveFairMarketPricesForYourCrops": "உங்கள் பயிர்களுக்கு நியாயமான சந்தை விலைகளைப் பெறுங்கள்",
-    "EasilySellYourHarvestDirectlyToPolygonAgro": "உங்கள் அறுவடையை நேரடியாக Polygon Agro விற்கு எளிதாக விற்கவும்",
-    "ActivateYourMembershipAsAnPolygonAgroRegisteredFarmer": "Polygon Agro பதிவுபெற்ற விவசாயியாக உங்கள் உறுப்பினரைச் செயல்படுத்துங்கள்.",
+    "EasilySellYourHarvestDirectlyToPolygonAgro": "உங்கள் அறுவடையை நேரடியாக Polygon விற்கு எளிதாக விற்கவும்",
+    "ActivateYourMembershipAsAnPolygonAgroRegisteredFarmer": "Polygon பதிவுபெற்ற விவசாயியாக உங்கள் உறுப்பினரைச் செயல்படுத்துங்கள்.",
     "ToObtainAccessToYourUniqueQRCodePleaseRegisterAsAMemberByEnteringYourBankDetailsThisCodeWillEnsureSmoothTransactionsAndSecurePaymentsDirectlyToYourBankAtOurCollectionCentres": "உங்கள் தனித்துவமான QR குறியீட்டிற்கான அணுகலைப் பெற, தயவுசெய்து உங்கள் வங்கி விவரங்களை உள்ளிட்டு உறுப்பினராகப் பதிவு செய்யவும். இந்தக் குறியீடு, எங்கள் சேகரிப்பு மையங்களில் சுமூகமான பரிவர்த்தனைகள் மற்றும் உங்கள் வங்கிக்கு நேரடியாகப் பாதுகாப்பான கொடுப்பனவுகளை உறுதி செய்யும்."
   },
   "BankDetails": {
@@ -1286,7 +1286,7 @@
     "YourInspectionRequestHasBeenSubmittedSuccessfully": "Your inspection request has been submitted successfully!",
     "FailedToFetchFarmCropsPleaseTryAgain": "Failed to fetch farm crops. Please try again.",
     "FailedToFetchFarmsPleaseTryAgain": "Failed to fetch farms. Please try again.",
-    "FailedToFetchServicesPleaseTryAgain": "Failed to fetch services. Please try again.",
+    "FailedToFetchServicesPleaseTryAgain": "தற்சமயம் பரிசோதனை சேவைகள் எதுவும் வழங்கப்படவில்லை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.",
     "SearchFarm": "Search Farm"
   },
   "RequestHistory": {

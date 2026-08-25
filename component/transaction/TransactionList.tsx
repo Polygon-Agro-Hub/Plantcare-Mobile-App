@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   FlatList,
   RefreshControl,
+  ScrollView,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
@@ -15,11 +16,6 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
-import LottieView from "lottie-react-native";
 import CustomHeader from "../common/CustomHeader";
 import NoData from "../common/NoData";
 import LoadingPage from "../common/LoadingPage";
@@ -204,7 +200,11 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
             keyExtractor={(item) => item.id}
             contentContainerStyle={
               transactions.length === 0
-                ? { flexGrow: 1, justifyContent: "center", alignItems: "center" }
+                ? {
+                    flexGrow: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }
                 : { paddingVertical: 8, paddingBottom: 40 }
             }
             className="px-6"
@@ -283,12 +283,28 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
               </TouchableOpacity>
             )}
             ListEmptyComponent={
-              <NoData
-                text={
-                  t("TransactionList.NoTransactionsFound") ||
-                  "No transactions found"
+              <ScrollView
+                className="flex-1 mb-24"
+                contentContainerStyle={{
+                  flexGrow: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginBottom: 25,
+                }}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
                 }
-              />
+              >
+                <NoData
+                  text={
+                    t("TransactionList.NoTransactionsFound") ||
+                    "No transactions found"
+                  }
+                />
+              </ScrollView>
             }
           />
         </View>

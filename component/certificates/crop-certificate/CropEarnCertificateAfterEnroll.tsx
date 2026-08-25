@@ -257,6 +257,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
       ) : (
         <ScrollView
           className="flex-1 px-4"
+          contentContainerStyle={{ flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
         >
           {filteredCertificates.length > 0 && (
