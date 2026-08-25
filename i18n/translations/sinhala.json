@@ -160,7 +160,7 @@
     "ResearchAndDevelopment": "පර්යේෂණ සහ සංවර්ධනය:",
     "ResearchAndDevelopmentText": "යෙදුම් විශේෂාංග සහ පරිශීලක අත්දැකීම් ඇතුළු අපගේ සේවා වැඩිදියුණු කිරීමට අපි එකතු කළ දත්ත භාවිතා කරමු.",
     "InformationSharingandDisclosure": "තොරතුරු බෙදාගැනීම සහ හෙළිදරව් කිරීම",
-    "InformationSharingandDisclosureText": "අපි මෙම රහස්‍යතා ප්‍රතිපත්තියේ විස්තර කර ඇති පරිදි හැ Ausnahme, අපි ඔබගේ පුද්ගලික තොරතුරු තෙවන පාර්ශ්වයන් සමඟ බෙදා නොගනිමු.",
+    "InformationSharingandDisclosureText": "මෙම රහස්‍යතා ප්‍රතිපත්තියේ විස්තර කර ඇති පරිදි හැර, අපි ඔබගේ පුද්ගලික තොරතුරු තෙවන පාර්ශවයන් සමඟ බෙදා නොගනිමු.",
     "ServiceProviders": "සේවා සපයන්නන්:",
     "ServiceProvidersText": "යෙදුම් ක්‍රියාකාරීත්වය, දත්ත විශ්ලේෂණය සහ කාලගුණ වාර්තා සේවා සඳහා අපට සහාය වන විශ්වාසදායී තෙවන පාර්ශ්ව සපයන්නන් සමඟ අපි ඔබගේ තොරතුරු බෙදා ගත හැක.",
     "LegalRequirements": "නීතිමය අවශ්‍යතා:",
@@ -293,8 +293,8 @@
     "AssistanceWheneverYouNeedIt": "ඔබට අවශ්‍ය ඕනෑම වේලාවක සහාය",
     "IAgreeToTheTerms&Conditions": "මම නියමයන් සහ කොන්දේසි වලට එකඟ වෙමි",
     "ReceiveFairMarketPricesForYourCrops": "ඔබගේ භෝග සඳහා සාධාරණ වෙළඳපල මිල ලබා ගන්න",
-    "EasilySellYourHarvestDirectlyToPolygonAgro": "ඔබගේ අස්වැන්න පහසුවෙන් කෙලින්ම Polygon Agro වෙත විකුණන්න",
-    "ActivateYourMembershipAsAnPolygonAgroRegisteredFarmer": "Polygon Agro ලියාපදිංචි ගොවියෙකු ලෙස ඔබගේ සාමාජිකත්වය සක්‍රිය කරන්න.",
+    "EasilySellYourHarvestDirectlyToPolygonAgro": "ඔබගේ අස්වැන්න පහසුවෙන් කෙලින්ම Polygon වෙත විකුණන්න",
+    "ActivateYourMembershipAsAnPolygonAgroRegisteredFarmer": "Polygon ලියාපදිංචි ගොවියෙකු ලෙස ඔබගේ සාමාජිකත්වය සක්‍රිය කරන්න.",
     "ToObtainAccessToYourUniqueQRCodePleaseRegisterAsAMemberByEnteringYourBankDetailsThisCodeWillEnsureSmoothTransactionsAndSecurePaymentsDirectlyToYourBankAtOurCollectionCentres": "ඔබගේ අද්විතීය QR කේතයට ප්‍රවේශය ලබා ගැනීමට, කරුණාකර ඔබගේ බැංකු විස්තර ඇතුළත් කර සාමාජිකයෙකු ලෙස ලියාපදිංචි වන්න. මෙම කේතය අපගේ එකතු කිරීමේ මධ්‍යස්ථානවලදී සුමට ගනුදෙනු සහ ඔබගේ බැංකුවට සෘජුවම ආරක්ෂිත ගෙවීම් සහතික කරනු ඇත."
   },
   "BankDetails": {
@@ -1286,7 +1286,7 @@
     "YourInspectionRequestHasBeenSubmittedSuccessfully": "ඔබගේ පරීක්ෂා ඉල්ලීම සාර්ථකව ඉදිරිපත් කර ඇත!",
     "FailedToFetchFarmCropsPleaseTryAgain": "ගොවිපල භෝග ලබා ගැනීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
     "FailedToFetchFarmsPleaseTryAgain": "ගොවිපල ලබා ගැනීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
-    "FailedToFetchServicesPleaseTryAgain": "සේවා ලබා ගැනීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
+    "FailedToFetchServicesPleaseTryAgain": "මේ මොහොතේ පරීක්ෂණ සේවා නොමැත. කරුණාකර නැවත උත්සාහ කරන්න",
     "SearchFarm": "ගොවිපල සොයන්න"
   },
   "RequestHistory": {

@@ -1154,101 +1154,81 @@ const FramcropCalenderwithcertificate: React.FC<
     }
   };
 
-  const handleCheck = async (i: number) => {
-    const globalIndex = startIndex + i;
-    const currentCrop = crops[globalIndex];
-    const PreviousCrop = crops[globalIndex - 1];
-    const NextCrop = crops[globalIndex + 1];
-    await AsyncStorage.removeItem(`uploadCompleted-${currentCrop.id}`);
-    await AsyncStorage.removeItem("nextCropUpdate");
+const handleCheck = async (i: number) => {
+  const globalIndex = startIndex + i;
+  const currentCrop = crops[globalIndex];
 
-    if (globalIndex > 0 && !checked[globalIndex - 1]) {
-      return;
-    }
+  if (!currentCrop) return;
 
-    const newStatus = checked[globalIndex] ? "pending" : "completed";
+  // If the task is already completed, this tap means "remove completion" —
+  // confirm first, same as the certificate task removal flow.
+  if (checked[globalIndex]) {
+    Alert.alert(
+      t("CropCalender.ConfirmRemove"),
+      t("CropCalender.AreYouSureYouWantToRemoveThisTask"),
+      [
+        { text: t("Main.Cancel"), style: "cancel" },
+        {
+          text: t("Main.OK"),
+          onPress: async () => {
+            await performCheckToggle(i);
+          },
+        },
+      ],
+    );
+    return;
+  }
 
-    if (!checked[globalIndex] && currentCrop.reqImages > 0) {
-      setLastCompletedIndex(globalIndex);
-      setCultivatedLandModalVisible(true);
-      return;
-    }
+  // Marking a task as complete — no confirmation needed, proceed directly.
+  await performCheckToggle(i);
+};
 
-    let updateMessage = "";
+const performCheckToggle = async (i: number) => {
+  const globalIndex = startIndex + i;
+  const currentCrop = crops[globalIndex];
+  const PreviousCrop = crops[globalIndex - 1];
+  const NextCrop = crops[globalIndex + 1];
+  await AsyncStorage.removeItem(`uploadCompleted-${currentCrop.id}`);
+  await AsyncStorage.removeItem("nextCropUpdate");
 
-    if (newStatus === "pending" && updateMessage) {
-      await cancelScheduledNotification();
-    }
+  if (globalIndex > 0 && !checked[globalIndex - 1]) {
+    return;
+  }
 
-    if (PreviousCrop && currentCrop) {
-      let PreviousCropDate;
-      if (new Date(PreviousCrop.createdAt) < new Date()) {
-        PreviousCropDate = new Date(PreviousCrop.startingDate);
-      } else {
-        PreviousCropDate = new Date(PreviousCrop.createdAt);
-      }
+  const newStatus = checked[globalIndex] ? "pending" : "completed";
 
-      const TaskDays = currentCrop.days;
-      const CurrentDate = new Date();
+  let updateMessage = "";
 
-      const nextCropUpdate = new Date(
-        PreviousCropDate.getTime() + TaskDays * 24 * 60 * 60 * 1000,
-      );
+  if (newStatus === "pending" && updateMessage) {
+    await cancelScheduledNotification();
+  }
 
-      const nextCropUpdate2 = new Date(
-        CurrentDate.getTime() + TaskDays * 24 * 60 * 60 * 1000,
-      );
-
-      if (PreviousCrop) {
-        const data = {
-          taskID: globalIndex + 1,
-          date: nextCropUpdate.toISOString(),
-        };
-        await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
-      } else {
-        const data = {
-          taskID: globalIndex + 1,
-          date: nextCropUpdate2.toISOString(),
-        };
-        await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
-      }
-
-      const remainingTime = nextCropUpdate.getTime() - CurrentDate.getTime();
-      const remainingDays = Math.ceil(remainingTime / (24 * 60 * 60 * 1000));
-
-      if (remainingDays > 0) {
-        updateMessage = t("CropCalender.DaysRemainingUntilTheNextUpdate", {
-          date: remainingDays,
-          count: remainingDays,
-        });
-
-        Alert.alert(t("Main.Sorry"), updateMessage, [{ text: t("Main.OK") }]);
-        return;
-      }
-
-      if (!updateMessage) {
-        updateMessage = t("CropCalender.DaysRemainingUntilTheNextUpdate", {
-          date: remainingDays,
-          count: remainingDays,
-        });
-      }
+  if (PreviousCrop && currentCrop) {
+    let PreviousCropDate;
+    if (new Date(PreviousCrop.createdAt) < new Date()) {
+      PreviousCropDate = new Date(PreviousCrop.startingDate);
     } else {
-      updateMessage = t("CropCalender.noCropData");
+      PreviousCropDate = new Date(PreviousCrop.createdAt);
     }
-    if (currentCrop.taskIndex === 1 && newStatus === "completed") {
-      const locationSuccess = await handleLocationIconPress(
-        currentCrop,
-        globalIndex,
-      );
-      if (!locationSuccess) {
-        return;
-      }
-      const TaskDays = NextCrop?.days || 0;
-      const CurrentDate = new Date();
 
-      const nextCropUpdate2 = new Date(
-        CurrentDate.getTime() + TaskDays * 24 * 60 * 60 * 1000,
-      );
+    const TaskDays = currentCrop.days;
+    const CurrentDate = new Date();
+
+    const nextCropUpdate = new Date(
+      PreviousCropDate.getTime() + TaskDays * 24 * 60 * 60 * 1000,
+    );
+
+    const nextCropUpdate2 = new Date(
+      CurrentDate.getTime() + TaskDays * 24 * 60 * 60 * 1000,
+    );
+
+    if (PreviousCrop) {
+      const data = {
+        taskID: globalIndex + 1,
+        date: nextCropUpdate.toISOString(),
+      };
+      await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
+    } else {
       const data = {
         taskID: globalIndex + 1,
         date: nextCropUpdate2.toISOString(),
@@ -1256,76 +1236,126 @@ const FramcropCalenderwithcertificate: React.FC<
       await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
     }
 
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      await axios.post(
-        `${environment.API_BASE_URL}api/crop/update-slave`,
-        {
-          id: currentCrop.id,
-          status: newStatus,
+    const remainingTime = nextCropUpdate.getTime() - CurrentDate.getTime();
+    const remainingDays = Math.ceil(remainingTime / (24 * 60 * 60 * 1000));
+
+    if (remainingDays > 0) {
+      updateMessage = t("CropCalender.DaysRemainingUntilTheNextUpdate", {
+        date: remainingDays,
+        count: remainingDays,
+      });
+
+      Alert.alert(t("Main.Sorry"), updateMessage, [{ text: t("Main.OK") }]);
+      return;
+    }
+
+    if (!updateMessage) {
+      updateMessage = t("CropCalender.DaysRemainingUntilTheNextUpdate", {
+        date: remainingDays,
+        count: remainingDays,
+      });
+    }
+  } else {
+    updateMessage = t("CropCalender.noCropData");
+  }
+
+  if (currentCrop.taskIndex === 1 && newStatus === "completed") {
+    const locationSuccess = await handleLocationIconPress(
+      currentCrop,
+      globalIndex,
+    );
+    if (!locationSuccess) {
+      return;
+    }
+    const TaskDays = NextCrop?.days || 0;
+    const CurrentDate = new Date();
+
+    const nextCropUpdate2 = new Date(
+      CurrentDate.getTime() + TaskDays * 24 * 60 * 60 * 1000,
+    );
+    const data = {
+      taskID: globalIndex + 1,
+      date: nextCropUpdate2.toISOString(),
+    };
+    await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
+  }
+
+  if (!checked[globalIndex] && currentCrop.reqImages > 0) {
+    setLastCompletedIndex(globalIndex);
+    setCultivatedLandModalVisible(true);
+    return;
+  }
+
+  try {
+    const token = await AsyncStorage.getItem("userToken");
+    await axios.post(
+      `${environment.API_BASE_URL}api/crop/update-slave`,
+      {
+        id: currentCrop.id,
+        status: newStatus,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      },
+    );
 
-      const updatedChecked = [...checked];
-      updatedChecked[globalIndex] = !updatedChecked[globalIndex];
-      setChecked(updatedChecked);
+    const updatedChecked = [...checked];
+    updatedChecked[globalIndex] = !updatedChecked[globalIndex];
+    setChecked(updatedChecked);
 
-      const updatedTimestamps = [...timestamps];
-      if (updatedChecked[globalIndex]) {
-        const now = moment().toISOString();
-        updatedTimestamps[globalIndex] = now;
-        setTimestamps(updatedTimestamps);
+    const updatedTimestamps = [...timestamps];
+    if (updatedChecked[globalIndex]) {
+      const now = moment().toISOString();
+      updatedTimestamps[globalIndex] = now;
+      setTimestamps(updatedTimestamps);
 
-        await AsyncStorage.setItem(`taskTimestamp_${globalIndex}`, now);
-      } else {
-        updatedTimestamps[globalIndex] = "";
-        setTimestamps(updatedTimestamps);
+      await AsyncStorage.setItem(`taskTimestamp_${globalIndex}`, now);
+    } else {
+      updatedTimestamps[globalIndex] = "";
+      setTimestamps(updatedTimestamps);
 
-        await AsyncStorage.removeItem(`taskTimestamp_${globalIndex}`);
-      }
+      await AsyncStorage.removeItem(`taskTimestamp_${globalIndex}`);
+    }
 
-      const newLastCompletedIndex = updatedChecked.lastIndexOf(true);
-      setLastCompletedIndex(newLastCompletedIndex);
+    const newLastCompletedIndex = updatedChecked.lastIndexOf(true);
+    setLastCompletedIndex(newLastCompletedIndex);
 
-      if (globalIndex < crops.length - 1) {
-        if (newStatus === "completed") {
-          registerForPushNotificationsAsync();
-          await scheduleDailyNotification();
-        }
-      }
-
-      if (updatedChecked[globalIndex] && currentCrop.reqImages > 0) {
-        setCultivatedLandModalVisible(true);
-      }
-    } catch (error: any) {
-      if (
-        error.response &&
-        error.response.data.message.includes(
-          "You cannot change the status back to pending after 1 hour",
-        )
-      ) {
-        Alert.alert(
-          t("Main.Sorry"),
-          t(
-            "CropCalender.YouCantChangeTheStatusBackToPendingOnce1HourHasPassedAfterMarkingItAsCompleted",
-          ),
-          [{ text: t("Main.OK") }],
-        );
-      } else if (
-        error.response &&
-        error.response.data.message.includes("You need to wait 6 hours")
-      ) {
-        Alert.alert(t("Main.Sorry"), updateMessage, [{ text: t("Main.OK") }]);
-      } else {
-        Alert.alert(t("Main.Sorry"), updateMessage, [{ text: t("Main.OK") }]);
+    if (globalIndex < crops.length - 1) {
+      if (newStatus === "completed") {
+        registerForPushNotificationsAsync();
+        await scheduleDailyNotification();
       }
     }
-  };
+
+    if (updatedChecked[globalIndex] && currentCrop.reqImages > 0) {
+      setCultivatedLandModalVisible(true);
+    }
+  } catch (error: any) {
+    if (
+      error.response &&
+      error.response.data.message.includes(
+        "You cannot change the status back to pending after 1 hour",
+      )
+    ) {
+      Alert.alert(
+        t("Main.Sorry"),
+        t(
+          "CropCalender.YouCantChangeTheStatusBackToPendingOnce1HourHasPassedAfterMarkingItAsCompleted",
+        ),
+        [{ text: t("Main.OK") }],
+      );
+    } else if (
+      error.response &&
+      error.response.data.message.includes("You need to wait 6 hours")
+    ) {
+      Alert.alert(t("Main.Sorry"), updateMessage, [{ text: t("Main.OK") }]);
+    } else {
+      Alert.alert(t("Main.Sorry"), updateMessage, [{ text: t("Main.OK") }]);
+    }
+  }
+};
 
   const checkTasksWithImages = async () => {
     if (crops.length === 0) return;

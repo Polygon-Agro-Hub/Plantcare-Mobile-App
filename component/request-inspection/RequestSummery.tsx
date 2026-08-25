@@ -372,7 +372,7 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
           title={t("RequestSummary.RequestSummary")}
           showBackButton={true}
           navigation={navigation}
-          onBackPress={() => navigation.goBack()}
+          onBackPress={() => navigation.navigate("RequestHistory")}
         />
 
         <ScrollView showsVerticalScrollIndicator={false} className="flex-1">

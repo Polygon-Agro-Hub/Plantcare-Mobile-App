@@ -374,7 +374,7 @@ const MyCultivation = () => {
         key={refreshKey}
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
-        className="px-6 bg-white"
+        className="px-6 bg-white mb-20"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -394,7 +394,7 @@ const MyCultivation = () => {
         {loading ? (
           <LoadingPage fullScreen />
         ) : farms.length === 0 ? (
-          <View className="flex-1 justify-center items-center py-12">
+          <View className="flex-1 justify-center items-center mb-24">
             <NoData text={t("MyCrop.NoFarmCultivationsYet") || "No farm cultivations yet"} />
           </View>
         ) : (

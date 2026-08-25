@@ -349,7 +349,7 @@ const EditManagersScreen = () => {
       </View>
 
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
         className="px-6 mb-10"
       >

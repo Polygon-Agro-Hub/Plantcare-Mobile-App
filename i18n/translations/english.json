@@ -293,8 +293,8 @@
     "AssistanceWheneverYouNeedIt": "Assistance whenever you need it",
     "IAgreeToTheTerms&Conditions": "I agree to the Terms & Conditions",
     "ReceiveFairMarketPricesForYourCrops": "Receive fair market prices for your crops",
-    "EasilySellYourHarvestDirectlyToPolygonAgro": "Easily sell your harvest directly to Polygon Agro",
-    "ActivateYourMembershipAsAnPolygonAgroRegisteredFarmer": "Activate your membership as an Polygon Agro registered Farmer.",
+    "EasilySellYourHarvestDirectlyToPolygonAgro": "Easily sell your harvest directly to Polygon",
+    "ActivateYourMembershipAsAnPolygonAgroRegisteredFarmer": "Activate your membership as an Polygon registered Farmer.",
     "ToObtainAccessToYourUniqueQRCodePleaseRegisterAsAMemberByEnteringYourBankDetailsThisCodeWillEnsureSmoothTransactionsAndSecurePaymentsDirectlyToYourBankAtOurCollectionCentres": "To obtain access to your unique QR code, please register as a member by entering your bank details. This code will ensure smooth transactions and secure payments directly to your bank at our collection centres."
   },
   "BankDetails": {
@@ -1286,7 +1286,7 @@
     "YourInspectionRequestHasBeenSubmittedSuccessfully": "Your inspection request has been submitted successfully!",
     "FailedToFetchFarmCropsPleaseTryAgain": "Failed to fetch farm crops. Please try again.",
     "FailedToFetchFarmsPleaseTryAgain": "Failed to fetch farms. Please try again.",
-    "FailedToFetchServicesPleaseTryAgain": "Failed to fetch services. Please try again.",
+    "FailedToFetchServicesPleaseTryAgain": "No inspection services are available at the moment. Please try again.",
     "SearchFarm": "Search Farm"
   },
   "RequestHistory": {
