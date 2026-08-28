@@ -228,6 +228,16 @@
     "UnableToRequestLocationPermissionPleaseTryAgain": "ස්ථාන අවසරය ඉල්ලීමට නොහැක. කරුණාකර නැවත උත්සාහ කරන්න.",
     "LocationAccessIsRequiredPleaseEnableItInSettings": "ස්ථාන ප්‍රවේශය අවශ්‍ය වේ. කරුණාකර එය සැකසුම් තුළ සක්‍රිය කරන්න."
   },
+  "CameraAccess": {
+    "Allow": "ඉඩ දෙන්න",
+    "OpenSettings": "සැකසුම් විවෘත කරන්න",
+    "Requesting...": "ඉල්ලමින්...",
+    "CameraAccess": "කැමරා ප්‍රවේශය",
+    "PermissionDenied": "අවසර ප්‍රතික්ෂේප කරන ලදී",
+    "EnableCameraAccessToCapturePhotos": "ඡායාරූප ගැනීමට සහ ලේඛන පරිලෝකනය කිරීමට කැමරා ප්‍රවේශය සක්‍රිය කරන්න.",
+    "UnableToRequestCameraPermissionPleaseTryAgain": "කැමරා අවසරය ඉල්ලීමට නොහැක. කරුණාකර නැවත උත්සාහ කරන්න.",
+    "CameraAccessIsRequiredPleaseEnableItInSettings": "කැමරා ප්‍රවේශය අවශ්‍ය වේ. කරුණාකර එය සැකසුම් තුළ සක්‍රිය කරන්න."
+  },
   "WeatherForecast": {
     "Wind": "සුළඟ",
     "Humidity": "ආර්ද්‍රතාවය",

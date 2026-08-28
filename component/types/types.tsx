@@ -83,7 +83,7 @@ export type RootStackParamList = {
     toolId: any;
     selectedTools: number[];
   };
-  CropEnrol: { cropId: string; status: string; onCulscropID: number };
+  CropEnrol: { cropId: string; status: string; onCulscropID: number, farmId :number };
 
   MembershipScreen: undefined;
   ComplainForm: undefined;
@@ -394,6 +394,7 @@ CartScreen: {
     adressLoaction:string;
   };
   LocationAccess: undefined;
+  CameraAccess:undefined;
   OrderHistory:undefined;
   InvoiceScreen:{
     orderId:Number

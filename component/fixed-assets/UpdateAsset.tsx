@@ -356,7 +356,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
     return isValid;
   };
 
-  const parseDate = (dateStr: string | Date | null | undefined): Date | null => {
+  const parseDate = (
+    dateStr: string | Date | null | undefined,
+  ): Date | null => {
     if (!dateStr) return null;
     if (dateStr instanceof Date) return dateStr;
     const parts = dateStr.split("T")[0].split("-");
@@ -844,21 +846,23 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       <TextInput
                         className="text-black w-full text-sm"
                         style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                          fontSize: 12,
+                          paddingVertical: 0,
+                          paddingTop: 0,
+                          paddingBottom: 0,
+                          textAlign: "left",
+                          ...(Platform.OS === "android"
+                            ? { textAlignVertical: "center" }
+                            : {}),
+                        }}
                         placeholder={t("FixedAssets.EnterLandName")}
                         value={updatedDetails[tool.id]?.landName ?? ""}
                         onChangeText={(text) => {
-                        const trimmed = text.replace(/^\s+/, "");
-                        const capitalized =
-                        trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
-                        handleInputChange(tool.id, "landName", capitalized);
-                        clearFieldError(tool.id, "landName");
+                          const trimmed = text.replace(/^\s+/, "");
+                          const capitalized =
+                            trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+                          handleInputChange(tool.id, "landName", capitalized);
+                          clearFieldError(tool.id, "landName");
                         }}
                         placeholderTextColor="#6B7280"
                       />
@@ -880,24 +884,26 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         <TextInput
                           className="text-black w-full text-sm"
                           style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                            fontSize: 12,
+                            paddingVertical: 0,
+                            paddingTop: 0,
+                            paddingBottom: 0,
+                            textAlign: "left",
+                            ...(Platform.OS === "android"
+                              ? { textAlignVertical: "center" }
+                              : {}),
+                          }}
                           placeholder={t("FixedAssets.ha")}
                           value={
-                          updatedDetails[tool.id]?.extentha?.toString() ?? ""
+                            updatedDetails[tool.id]?.extentha?.toString() ?? ""
                           }
                           onChangeText={(text) => {
-                          handleInputChange(
-                          tool.id,
-                          "extentha",
-                          text.replace(/[-*#.]/g, ""),
-                          );
-                          clearFieldError(tool.id, "extent");
+                            handleInputChange(
+                              tool.id,
+                              "extentha",
+                              text.replace(/[-*#.]/g, ""),
+                            );
+                            clearFieldError(tool.id, "extent");
                           }}
                           placeholderTextColor="#6B7280"
                           keyboardType="numeric"
@@ -910,24 +916,26 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         <TextInput
                           className="text-black w-full text-sm"
                           style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                            fontSize: 12,
+                            paddingVertical: 0,
+                            paddingTop: 0,
+                            paddingBottom: 0,
+                            textAlign: "left",
+                            ...(Platform.OS === "android"
+                              ? { textAlignVertical: "center" }
+                              : {}),
+                          }}
                           placeholder={t("FixedAssets.ac")}
                           value={
-                          updatedDetails[tool.id]?.extentac?.toString() ?? ""
+                            updatedDetails[tool.id]?.extentac?.toString() ?? ""
                           }
                           onChangeText={(text) => {
-                          handleInputChange(
-                          tool.id,
-                          "extentac",
-                          text.replace(/[-*#.]/g, ""),
-                          );
-                          clearFieldError(tool.id, "extent");
+                            handleInputChange(
+                              tool.id,
+                              "extentac",
+                              text.replace(/[-*#.]/g, ""),
+                            );
+                            clearFieldError(tool.id, "extent");
                           }}
                           keyboardType="numeric"
                           placeholderTextColor="#6B7280"
@@ -940,24 +948,26 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         <TextInput
                           className="text-black w-full text-sm"
                           style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                            fontSize: 12,
+                            paddingVertical: 0,
+                            paddingTop: 0,
+                            paddingBottom: 0,
+                            textAlign: "left",
+                            ...(Platform.OS === "android"
+                              ? { textAlignVertical: "center" }
+                              : {}),
+                          }}
                           placeholder={t("FixedAssets.p")}
                           value={
-                          updatedDetails[tool.id]?.extentp?.toString() ?? ""
+                            updatedDetails[tool.id]?.extentp?.toString() ?? ""
                           }
                           onChangeText={(text) => {
-                          handleInputChange(
-                          tool.id,
-                          "extentp",
-                          text.replace(/[-*#.]/g, ""),
-                          );
-                          clearFieldError(tool.id, "extent");
+                            handleInputChange(
+                              tool.id,
+                              "extentp",
+                              text.replace(/[-*#.]/g, ""),
+                            );
+                            clearFieldError(tool.id, "extent");
                           }}
                           keyboardType="numeric"
                           placeholderTextColor="#6B7280"
@@ -1022,27 +1032,29 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <TextInput
                             className="text-black w-full text-sm"
                             style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                              fontSize: 12,
+                              paddingVertical: 0,
+                              paddingTop: 0,
+                              paddingBottom: 0,
+                              textAlign: "left",
+                              ...(Platform.OS === "android"
+                                ? { textAlignVertical: "center" }
+                                : {}),
+                            }}
                             placeholder={t("FixedAssets.EstimatedValue")}
                             value={formatDecimal(
-                            updatedDetails[
-                            tool.id
-                            ]?.ownershipDetails?.estimateValue?.toString() ??
-                            "",
+                              updatedDetails[
+                                tool.id
+                              ]?.ownershipDetails?.estimateValue?.toString() ??
+                                "",
                             )}
                             onChangeText={(text) => {
-                            handleInputChange(
-                            tool.id,
-                            "ownershipDetails.estimateValue",
-                            formatDecimal(text),
-                            );
-                            clearFieldError(tool.id, "estimateValue");
+                              handleInputChange(
+                                tool.id,
+                                "ownershipDetails.estimateValue",
+                                formatDecimal(text),
+                              );
+                              clearFieldError(tool.id, "estimateValue");
                             }}
                             keyboardType="numeric"
                             placeholderTextColor="#6B7280"
@@ -1072,9 +1084,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <Text
                             className={`flex-1 text-sm ${!updatedDetails[tool.id]?.ownershipDetails?.startDate ? "text-[#6B7280]" : "text-black"}`}
                           >
-                            {updatedDetails[tool.id]?.ownershipDetails?.startDate
-    ? formatDate(updatedDetails[tool.id].ownershipDetails.startDate)
-    : t("FixedAssets.LeaseStartDate")}
+                            {updatedDetails[tool.id]?.ownershipDetails
+                              ?.startDate
+                              ? formatDate(
+                                  updatedDetails[tool.id].ownershipDetails
+                                    .startDate,
+                                )
+                              : t("FixedAssets.LeaseStartDate")}
                           </Text>
                           <EvilIcons
                             name="calendar"
@@ -1091,7 +1107,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <CustomDatePicker
                             visible={showStartDatePicker}
                             onClose={() => setShowStartDatePicker(false)}
-                            value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.startDate)}
+                            value={parseDate(
+                              updatedDetails[tool.id]?.ownershipDetails
+                                ?.startDate,
+                            )}
                             onConfirm={(date) => {
                               handleInputChange(
                                 tool.id,
@@ -1105,7 +1124,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         ) : (
                           showStartDatePicker && (
                             <DateTimePicker
-                              value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.startDate) || new Date()}
+                              value={
+                                parseDate(
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.startDate,
+                                ) || new Date()
+                              }
                               mode="date"
                               display="default"
                               onChange={(event, selectedDate) => {
@@ -1133,28 +1157,30 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             <TextInput
                               className="text-black w-full text-sm"
                               style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                                fontSize: 12,
+                                paddingVertical: 0,
+                                paddingTop: 0,
+                                paddingBottom: 0,
+                                textAlign: "left",
+                                ...(Platform.OS === "android"
+                                  ? { textAlignVertical: "center" }
+                                  : {}),
+                              }}
                               placeholder={t("FixedAssets.Years")}
                               keyboardType="numeric"
                               value={
-                              updatedDetails[
-                              tool.id
-                              ]?.ownershipDetails?.durationYears?.toString() ??
-                              ""
+                                updatedDetails[
+                                  tool.id
+                                ]?.ownershipDetails?.durationYears?.toString() ??
+                                ""
                               }
                               onChangeText={(value) => {
-                              handleInputChange(
-                              tool.id,
-                              "ownershipDetails.durationYears",
-                              value.replace(/[-*#.+]/g, "").trimStart(),
-                              );
-                              clearFieldError(tool.id, "duration");
+                                handleInputChange(
+                                  tool.id,
+                                  "ownershipDetails.durationYears",
+                                  value.replace(/[-*#.+]/g, "").trimStart(),
+                                );
+                                clearFieldError(tool.id, "duration");
                               }}
                               placeholderTextColor="#6B7280"
                             />
@@ -1166,28 +1192,30 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             <TextInput
                               className="text-black w-full text-sm"
                               style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                                fontSize: 12,
+                                paddingVertical: 0,
+                                paddingTop: 0,
+                                paddingBottom: 0,
+                                textAlign: "left",
+                                ...(Platform.OS === "android"
+                                  ? { textAlignVertical: "center" }
+                                  : {}),
+                              }}
                               placeholder={t("FixedAssets.Months")}
                               keyboardType="numeric"
                               value={
-                              updatedDetails[
-                              tool.id
-                              ]?.ownershipDetails?.durationMonths?.toString() ??
-                              ""
+                                updatedDetails[
+                                  tool.id
+                                ]?.ownershipDetails?.durationMonths?.toString() ??
+                                ""
                               }
                               onChangeText={(value) => {
-                              handleInputChange(
-                              tool.id,
-                              "ownershipDetails.durationMonths",
-                              value.replace(/[-*#.+]/g, "").trimStart(),
-                              );
-                              clearFieldError(tool.id, "duration");
+                                handleInputChange(
+                                  tool.id,
+                                  "ownershipDetails.durationMonths",
+                                  value.replace(/[-*#.+]/g, "").trimStart(),
+                                );
+                                clearFieldError(tool.id, "duration");
                               }}
                               placeholderTextColor="#6B7280"
                             />
@@ -1206,27 +1234,31 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <TextInput
                             className="text-black w-full text-sm"
                             style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
-                            placeholder={t("FixedAssets.EnterAnnualLeasedAmount")}
+                              fontSize: 12,
+                              paddingVertical: 0,
+                              paddingTop: 0,
+                              paddingBottom: 0,
+                              textAlign: "left",
+                              ...(Platform.OS === "android"
+                                ? { textAlignVertical: "center" }
+                                : {}),
+                            }}
+                            placeholder={t(
+                              "FixedAssets.EnterAnnualLeasedAmount",
+                            )}
                             value={formatDecimal(
-                            updatedDetails[
-                            tool.id
-                            ]?.ownershipDetails?.leastAmountAnnually?.toString() ??
-                            "",
+                              updatedDetails[
+                                tool.id
+                              ]?.ownershipDetails?.leastAmountAnnually?.toString() ??
+                                "",
                             )}
                             onChangeText={(text) => {
-                            handleInputChange(
-                            tool.id,
-                            "ownershipDetails.leastAmountAnnually",
-                            formatDecimal(text),
-                            );
-                            clearFieldError(tool.id, "leastAmountAnnually");
+                              handleInputChange(
+                                tool.id,
+                                "ownershipDetails.leastAmountAnnually",
+                                formatDecimal(text),
+                              );
+                              clearFieldError(tool.id, "leastAmountAnnually");
                             }}
                             keyboardType="numeric"
                             placeholderTextColor="#6B7280"
@@ -1256,9 +1288,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <Text
                             className={`flex-1 text-sm ${!updatedDetails[tool.id]?.ownershipDetails?.issuedDate ? "text-[#6B7280]" : "text-black"}`}
                           >
-                            {updatedDetails[tool.id]?.ownershipDetails?.issuedDate
-    ? formatDate(updatedDetails[tool.id].ownershipDetails.issuedDate)
-    : t("FixedAssets.IssuedDate")}
+                            {updatedDetails[tool.id]?.ownershipDetails
+                              ?.issuedDate
+                              ? formatDate(
+                                  updatedDetails[tool.id].ownershipDetails
+                                    .issuedDate,
+                                )
+                              : t("FixedAssets.IssuedDate")}
                           </Text>
                           <EvilIcons
                             name="calendar"
@@ -1275,7 +1311,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <CustomDatePicker
                             visible={showStartDatePicker}
                             onClose={() => setShowStartDatePicker(false)}
-                            value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.issuedDate)}
+                            value={parseDate(
+                              updatedDetails[tool.id]?.ownershipDetails
+                                ?.issuedDate,
+                            )}
                             onConfirm={(date) => {
                               handleInputChange(
                                 tool.id,
@@ -1289,7 +1328,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         ) : (
                           showStartDatePicker && (
                             <DateTimePicker
-                              value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.issuedDate) || new Date()}
+                              value={
+                                parseDate(
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.issuedDate,
+                                ) || new Date()
+                              }
                               mode="date"
                               display="default"
                               onChange={(event, selectedDate) => {
@@ -1313,27 +1357,29 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <TextInput
                             className="text-black w-full text-sm"
                             style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                              fontSize: 12,
+                              paddingVertical: 0,
+                              paddingTop: 0,
+                              paddingBottom: 0,
+                              textAlign: "left",
+                              ...(Platform.OS === "android"
+                                ? { textAlignVertical: "center" }
+                                : {}),
+                            }}
                             placeholder={t("FixedAssets.EnterAnnualPermitFee")}
                             value={formatDecimal(
-                            updatedDetails[
-                            tool.id
-                            ]?.ownershipDetails?.permitFeeAnnually?.toString() ??
-                            "",
+                              updatedDetails[
+                                tool.id
+                              ]?.ownershipDetails?.permitFeeAnnually?.toString() ??
+                                "",
                             )}
                             onChangeText={(text) => {
-                            handleInputChange(
-                            tool.id,
-                            "ownershipDetails.permitFeeAnnually",
-                            formatDecimal(text),
-                            );
-                            clearFieldError(tool.id, "permitFeeAnnually");
+                              handleInputChange(
+                                tool.id,
+                                "ownershipDetails.permitFeeAnnually",
+                                formatDecimal(text),
+                              );
+                              clearFieldError(tool.id, "permitFeeAnnually");
                             }}
                             keyboardType="numeric"
                             placeholderTextColor="#6B7280"
@@ -1357,27 +1403,29 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <TextInput
                             className="text-black w-full text-sm"
                             style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                              fontSize: 12,
+                              paddingVertical: 0,
+                              paddingTop: 0,
+                              paddingBottom: 0,
+                              textAlign: "left",
+                              ...(Platform.OS === "android"
+                                ? { textAlignVertical: "center" }
+                                : {}),
+                            }}
                             placeholder={t("FixedAssets.EnterAnnualPaymentFee")}
                             value={formatDecimal(
-                            updatedDetails[
-                            tool.id
-                            ]?.ownershipDetails?.paymentAnnually?.toString() ??
-                            "",
+                              updatedDetails[
+                                tool.id
+                              ]?.ownershipDetails?.paymentAnnually?.toString() ??
+                                "",
                             )}
                             onChangeText={(text) => {
-                            handleInputChange(
-                            tool.id,
-                            "ownershipDetails.paymentAnnually",
-                            formatDecimal(text),
-                            );
-                            clearFieldError(tool.id, "paymentAnnually");
+                              handleInputChange(
+                                tool.id,
+                                "ownershipDetails.paymentAnnually",
+                                formatDecimal(text),
+                              );
+                              clearFieldError(tool.id, "paymentAnnually");
                             }}
                             keyboardType="numeric"
                             placeholderTextColor="#6B7280"
@@ -1392,7 +1440,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     )}
 
                     {/* Land Fenced */}
-                    <Text className="text-[#070707] text-sm mt-2">
+                    <Text className="text-[#070707] text-sm mt-2 mb-2">
                       {t("FixedAssets.IsTheLandFenced")} *
                     </Text>
                     <View className="flex-row justify-around mb-1">
@@ -1419,7 +1467,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                     </View>
 
                     {/* Perennial Crops */}
-                    <Text className="text-[#070707] text-sm mt-2">
+                    <Text className="text-[#070707] text-sm mt-2 mb-2">
                       {t("FixedAssets.DoesTheLandHavePerennialCrops")} *
                     </Text>
                     <View className="flex-row justify-around mb-1">
@@ -1491,21 +1539,27 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       <TextInput
                         className="text-black w-full text-sm"
                         style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                          fontSize: 12,
+                          paddingVertical: 0,
+                          paddingTop: 0,
+                          paddingBottom: 0,
+                          textAlign: "left",
+                          ...(Platform.OS === "android"
+                            ? { textAlignVertical: "center" }
+                            : {}),
+                        }}
                         placeholder={t("FixedAssets.EnterBuildingName")}
                         value={updatedDetails[tool.id]?.buildingName ?? ""}
                         onChangeText={(text) => {
-                        const trimmed = text.replace(/^\s+/, "");
-                        const capitalized =
-                        trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
-                        handleInputChange(tool.id, "buildingName", capitalized);
-                        clearFieldError(tool.id, "buildingName");
+                          const trimmed = text.replace(/^\s+/, "");
+                          const capitalized =
+                            trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+                          handleInputChange(
+                            tool.id,
+                            "buildingName",
+                            capitalized,
+                          );
+                          clearFieldError(tool.id, "buildingName");
                         }}
                         placeholderTextColor="#6B7280"
                       />
@@ -1524,24 +1578,26 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       <TextInput
                         className="text-black w-full text-sm"
                         style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                          fontSize: 12,
+                          paddingVertical: 0,
+                          paddingTop: 0,
+                          paddingBottom: 0,
+                          textAlign: "left",
+                          ...(Platform.OS === "android"
+                            ? { textAlignVertical: "center" }
+                            : {}),
+                        }}
                         placeholder={t("FixedAssets.FloorArea")}
                         value={
-                        updatedDetails[tool.id]?.floorArea?.toString() ?? ""
+                          updatedDetails[tool.id]?.floorArea?.toString() ?? ""
                         }
                         onChangeText={(text) => {
-                        handleInputChange(
-                        tool.id,
-                        "floorArea",
-                        formatDecimal(text),
-                        );
-                        clearFieldError(tool.id, "floorArea");
+                          handleInputChange(
+                            tool.id,
+                            "floorArea",
+                            formatDecimal(text),
+                          );
+                          clearFieldError(tool.id, "floorArea");
                         }}
                         placeholderTextColor="#6B7280"
                         keyboardType="numeric"
@@ -1652,27 +1708,29 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <TextInput
                             className="text-black w-full text-sm"
                             style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                              fontSize: 12,
+                              paddingVertical: 0,
+                              paddingTop: 0,
+                              paddingBottom: 0,
+                              textAlign: "left",
+                              ...(Platform.OS === "android"
+                                ? { textAlignVertical: "center" }
+                                : {}),
+                            }}
                             placeholder={t("FixedAssets.EstimatedValue")}
                             value={formatDecimal(
-                            updatedDetails[
-                            tool.id
-                            ]?.ownershipDetails?.estimateValue?.toString() ??
-                            "",
+                              updatedDetails[
+                                tool.id
+                              ]?.ownershipDetails?.estimateValue?.toString() ??
+                                "",
                             )}
                             onChangeText={(text) => {
-                            handleInputChange(
-                            tool.id,
-                            "ownershipDetails.estimateValue",
-                            formatDecimal(text),
-                            );
-                            clearFieldError(tool.id, "estimateValue");
+                              handleInputChange(
+                                tool.id,
+                                "ownershipDetails.estimateValue",
+                                formatDecimal(text),
+                              );
+                              clearFieldError(tool.id, "estimateValue");
                             }}
                             keyboardType="numeric"
                             placeholderTextColor="#6B7280"
@@ -1703,9 +1761,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <Text
                             className={`flex-1 text-sm ${!updatedDetails[tool.id]?.ownershipDetails?.startDate ? "text-[#6B7280]" : "text-black"}`}
                           >
-                            {updatedDetails[tool.id]?.ownershipDetails?.startDate
-    ? formatDate(updatedDetails[tool.id].ownershipDetails.startDate)
-    : t("FixedAssets.LeaseStartDate")}
+                            {updatedDetails[tool.id]?.ownershipDetails
+                              ?.startDate
+                              ? formatDate(
+                                  updatedDetails[tool.id].ownershipDetails
+                                    .startDate,
+                                )
+                              : t("FixedAssets.LeaseStartDate")}
                           </Text>
                           <EvilIcons
                             name="calendar"
@@ -1722,7 +1784,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <CustomDatePicker
                             visible={showStartDatePicker}
                             onClose={() => setShowStartDatePicker(false)}
-                            value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.startDate)}
+                            value={parseDate(
+                              updatedDetails[tool.id]?.ownershipDetails
+                                ?.startDate,
+                            )}
                             onConfirm={(date) => {
                               handleInputChange(
                                 tool.id,
@@ -1736,7 +1801,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         ) : (
                           showStartDatePicker && (
                             <DateTimePicker
-                              value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.startDate) || new Date()}
+                              value={
+                                parseDate(
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.startDate,
+                                ) || new Date()
+                              }
                               mode="date"
                               display="default"
                               onChange={(event, selectedDate) => {
@@ -1764,28 +1834,30 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             <TextInput
                               className="text-black w-full text-sm"
                               style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                                fontSize: 12,
+                                paddingVertical: 0,
+                                paddingTop: 0,
+                                paddingBottom: 0,
+                                textAlign: "left",
+                                ...(Platform.OS === "android"
+                                  ? { textAlignVertical: "center" }
+                                  : {}),
+                              }}
                               placeholder={t("FixedAssets.Years")}
                               keyboardType="numeric"
                               value={
-                              updatedDetails[
-                              tool.id
-                              ]?.ownershipDetails?.durationYears?.toString() ??
-                              ""
+                                updatedDetails[
+                                  tool.id
+                                ]?.ownershipDetails?.durationYears?.toString() ??
+                                ""
                               }
                               onChangeText={(value) => {
-                              handleInputChange(
-                              tool.id,
-                              "ownershipDetails.durationYears",
-                              value.replace(/[-*#.+]/g, "").trimStart(),
-                              );
-                              clearFieldError(tool.id, "duration");
+                                handleInputChange(
+                                  tool.id,
+                                  "ownershipDetails.durationYears",
+                                  value.replace(/[-*#.+]/g, "").trimStart(),
+                                );
+                                clearFieldError(tool.id, "duration");
                               }}
                               placeholderTextColor="#6B7280"
                             />
@@ -1797,28 +1869,30 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             <TextInput
                               className="text-black w-full text-sm"
                               style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                                fontSize: 12,
+                                paddingVertical: 0,
+                                paddingTop: 0,
+                                paddingBottom: 0,
+                                textAlign: "left",
+                                ...(Platform.OS === "android"
+                                  ? { textAlignVertical: "center" }
+                                  : {}),
+                              }}
                               placeholder={t("FixedAssets.Months")}
                               keyboardType="numeric"
                               value={
-                              updatedDetails[
-                              tool.id
-                              ]?.ownershipDetails?.durationMonths?.toString() ??
-                              ""
+                                updatedDetails[
+                                  tool.id
+                                ]?.ownershipDetails?.durationMonths?.toString() ??
+                                ""
                               }
                               onChangeText={(value) => {
-                              handleInputChange(
-                              tool.id,
-                              "ownershipDetails.durationMonths",
-                              value.replace(/[-*#.+]/g, "").trimStart(),
-                              );
-                              clearFieldError(tool.id, "duration");
+                                handleInputChange(
+                                  tool.id,
+                                  "ownershipDetails.durationMonths",
+                                  value.replace(/[-*#.+]/g, "").trimStart(),
+                                );
+                                clearFieldError(tool.id, "duration");
                               }}
                               placeholderTextColor="#6B7280"
                             />
@@ -1837,27 +1911,31 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <TextInput
                             className="text-black w-full text-sm"
                             style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
-                            placeholder={t("FixedAssets.EnterAnnualLeasedAmount")}
+                              fontSize: 12,
+                              paddingVertical: 0,
+                              paddingTop: 0,
+                              paddingBottom: 0,
+                              textAlign: "left",
+                              ...(Platform.OS === "android"
+                                ? { textAlignVertical: "center" }
+                                : {}),
+                            }}
+                            placeholder={t(
+                              "FixedAssets.EnterAnnualLeasedAmount",
+                            )}
                             value={formatDecimal(
-                            updatedDetails[
-                            tool.id
-                            ]?.ownershipDetails?.leastAmountAnnually?.toString() ??
-                            "",
+                              updatedDetails[
+                                tool.id
+                              ]?.ownershipDetails?.leastAmountAnnually?.toString() ??
+                                "",
                             )}
                             onChangeText={(text) => {
-                            handleInputChange(
-                            tool.id,
-                            "ownershipDetails.leastAmountAnnually",
-                            formatDecimal(text),
-                            );
-                            clearFieldError(tool.id, "leastAmountAnnually");
+                              handleInputChange(
+                                tool.id,
+                                "ownershipDetails.leastAmountAnnually",
+                                formatDecimal(text),
+                              );
+                              clearFieldError(tool.id, "leastAmountAnnually");
                             }}
                             keyboardType="numeric"
                             placeholderTextColor="#6B7280"
@@ -1890,9 +1968,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <Text
                             className={`flex-1 text-sm ${!updatedDetails[tool.id]?.ownershipDetails?.issuedDate ? "text-[#6B7280]" : "text-black"}`}
                           >
-                            {updatedDetails[tool.id]?.ownershipDetails?.issuedDate
-    ? formatDate(updatedDetails[tool.id].ownershipDetails.issuedDate)
-    : t("FixedAssets.IssuedDate")}
+                            {updatedDetails[tool.id]?.ownershipDetails
+                              ?.issuedDate
+                              ? formatDate(
+                                  updatedDetails[tool.id].ownershipDetails
+                                    .issuedDate,
+                                )
+                              : t("FixedAssets.IssuedDate")}
                           </Text>
                           <EvilIcons
                             name="calendar"
@@ -1909,7 +1991,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <CustomDatePicker
                             visible={showStartDatePicker}
                             onClose={() => setShowStartDatePicker(false)}
-                            value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.issuedDate)}
+                            value={parseDate(
+                              updatedDetails[tool.id]?.ownershipDetails
+                                ?.issuedDate,
+                            )}
                             onConfirm={(date) => {
                               handleInputChange(
                                 tool.id,
@@ -1923,7 +2008,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         ) : (
                           showStartDatePicker && (
                             <DateTimePicker
-                              value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.issuedDate) || new Date()}
+                              value={
+                                parseDate(
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.issuedDate,
+                                ) || new Date()
+                              }
                               mode="date"
                               display="default"
                               onChange={(event, selectedDate) => {
@@ -1947,27 +2037,29 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <TextInput
                             className="text-black w-full text-sm"
                             style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                              fontSize: 12,
+                              paddingVertical: 0,
+                              paddingTop: 0,
+                              paddingBottom: 0,
+                              textAlign: "left",
+                              ...(Platform.OS === "android"
+                                ? { textAlignVertical: "center" }
+                                : {}),
+                            }}
                             placeholder={t("FixedAssets.PermitFeeAnnuallyLKR")}
                             value={formatDecimal(
-                            updatedDetails[
-                            tool.id
-                            ]?.ownershipDetails?.permitFeeAnnually?.toString() ??
-                            "",
+                              updatedDetails[
+                                tool.id
+                              ]?.ownershipDetails?.permitFeeAnnually?.toString() ??
+                                "",
                             )}
                             onChangeText={(text) => {
-                            handleInputChange(
-                            tool.id,
-                            "ownershipDetails.permitFeeAnnually",
-                            formatDecimal(text),
-                            );
-                            clearFieldError(tool.id, "permitFeeAnnually");
+                              handleInputChange(
+                                tool.id,
+                                "ownershipDetails.permitFeeAnnually",
+                                formatDecimal(text),
+                              );
+                              clearFieldError(tool.id, "permitFeeAnnually");
                             }}
                             keyboardType="numeric"
                             placeholderTextColor="#6B7280"
@@ -1992,27 +2084,29 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <TextInput
                             className="text-black w-full text-sm"
                             style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                              fontSize: 12,
+                              paddingVertical: 0,
+                              paddingTop: 0,
+                              paddingBottom: 0,
+                              textAlign: "left",
+                              ...(Platform.OS === "android"
+                                ? { textAlignVertical: "center" }
+                                : {}),
+                            }}
                             placeholder={t("FixedAssets.EnterAnnualPaymentFee")}
                             value={formatDecimal(
-                            updatedDetails[
-                            tool.id
-                            ]?.ownershipDetails?.paymentAnnually?.toString() ??
-                            "",
+                              updatedDetails[
+                                tool.id
+                              ]?.ownershipDetails?.paymentAnnually?.toString() ??
+                                "",
                             )}
                             onChangeText={(text) => {
-                            handleInputChange(
-                            tool.id,
-                            "ownershipDetails.paymentAnnually",
-                            formatDecimal(text),
-                            );
-                            clearFieldError(tool.id, "paymentAnnually");
+                              handleInputChange(
+                                tool.id,
+                                "ownershipDetails.paymentAnnually",
+                                formatDecimal(text),
+                              );
+                              clearFieldError(tool.id, "paymentAnnually");
                             }}
                             keyboardType="numeric"
                             placeholderTextColor="#6B7280"
@@ -2078,7 +2172,9 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         <DropdownTrigger
                           value={getLabel(
                             assetTypesForAssets[
-                              updatedDetails[tool.id]?.asset || selectedAsset || ""
+                              updatedDetails[tool.id]?.asset ||
+                                selectedAsset ||
+                                ""
                             ],
                             updatedDetails[tool.id]?.assetType ?? "",
                           )}
@@ -2121,22 +2217,24 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <TextInput
                             className="text-black w-full text-sm"
                             style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                              fontSize: 12,
+                              paddingVertical: 0,
+                              paddingTop: 0,
+                              paddingBottom: 0,
+                              textAlign: "left",
+                              ...(Platform.OS === "android"
+                                ? { textAlignVertical: "center" }
+                                : {}),
+                            }}
                             placeholder={t("FixedAssets.MentionOtherDetails")}
                             value={updatedDetails[tool.id]?.mentionOther ?? ""}
                             onChangeText={(value) => {
-                            handleInputChange(
-                            tool.id,
-                            "mentionOther",
-                            value.replace(/^\s+/, ""),
-                            );
-                            clearFieldError(tool.id, "mentionOther");
+                              handleInputChange(
+                                tool.id,
+                                "mentionOther",
+                                value.replace(/^\s+/, ""),
+                              );
+                              clearFieldError(tool.id, "mentionOther");
                             }}
                             placeholderTextColor="#6B7280"
                           />
@@ -2151,8 +2249,8 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
 
                     {/* Brand */}
                     {updatedDetails[tool.id]?.asset &&
-                    brandTypesForAssets[updatedDetails[tool.id]?.asset]?.length >
-                      0 ? (
+                    brandTypesForAssets[updatedDetails[tool.id]?.asset]
+                      ?.length > 0 ? (
                       <>
                         <Text className="text-[#070707] text-sm mt-2">
                           {t("FixedAssets.Brand")} *
@@ -2203,22 +2301,26 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               <TextInput
                                 className="text-black w-full text-sm"
                                 style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                                  fontSize: 12,
+                                  paddingVertical: 0,
+                                  paddingTop: 0,
+                                  paddingBottom: 0,
+                                  textAlign: "left",
+                                  ...(Platform.OS === "android"
+                                    ? { textAlignVertical: "center" }
+                                    : {}),
+                                }}
                                 placeholder={t("FixedAssets.EnterBrandName")}
-                                value={updatedDetails[tool.id]?.customBrand ?? ""}
+                                value={
+                                  updatedDetails[tool.id]?.customBrand ?? ""
+                                }
                                 onChangeText={(value) => {
-                                handleInputChange(
-                                tool.id,
-                                "customBrand",
-                                value.replace(/^\s+/, ""),
-                                );
-                                clearFieldError(tool.id, "customBrand");
+                                  handleInputChange(
+                                    tool.id,
+                                    "customBrand",
+                                    value.replace(/^\s+/, ""),
+                                  );
+                                  clearFieldError(tool.id, "customBrand");
                                 }}
                                 placeholderTextColor="#6B7280"
                               />
@@ -2240,23 +2342,25 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <TextInput
                             className="text-black w-full text-sm"
                             style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                              fontSize: 12,
+                              paddingVertical: 0,
+                              paddingTop: 0,
+                              paddingBottom: 0,
+                              textAlign: "left",
+                              ...(Platform.OS === "android"
+                                ? { textAlignVertical: "center" }
+                                : {}),
+                            }}
                             placeholder={t("FixedAssets.SelectBrand")}
                             value={updatedDetails[tool.id]?.brand ?? ""}
                             editable={true}
                             onChangeText={(value) => {
-                            handleInputChange(
-                            tool.id,
-                            "brand",
-                            value.replace(/^\s+/, ""),
-                            );
-                            clearFieldError(tool.id, "brand");
+                              handleInputChange(
+                                tool.id,
+                                "brand",
+                                value.replace(/^\s+/, ""),
+                              );
+                              clearFieldError(tool.id, "brand");
                             }}
                             placeholderTextColor="#6B7280"
                           />
@@ -2276,24 +2380,27 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       <TextInput
                         className="text-black w-full text-sm"
                         style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                          fontSize: 12,
+                          paddingVertical: 0,
+                          paddingTop: 0,
+                          paddingBottom: 0,
+                          textAlign: "left",
+                          ...(Platform.OS === "android"
+                            ? { textAlignVertical: "center" }
+                            : {}),
+                        }}
                         placeholder={t("FixedAssets.NumberOfUnits")}
                         value={
-                        updatedDetails[tool.id]?.numberOfUnits?.toString() ?? ""
+                          updatedDetails[tool.id]?.numberOfUnits?.toString() ??
+                          ""
                         }
                         onChangeText={(text) => {
-                        handleInputChange(
-                        tool.id,
-                        "numberOfUnits",
-                        text.replace(/[^0-9]/g, ""),
-                        );
-                        clearFieldError(tool.id, "numberOfUnits");
+                          handleInputChange(
+                            tool.id,
+                            "numberOfUnits",
+                            text.replace(/[^0-9]/g, ""),
+                          );
+                          clearFieldError(tool.id, "numberOfUnits");
                         }}
                         keyboardType="numeric"
                         placeholderTextColor="#6B7280"
@@ -2312,24 +2419,26 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       <TextInput
                         className="text-black w-full text-sm"
                         style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                          fontSize: 12,
+                          paddingVertical: 0,
+                          paddingTop: 0,
+                          paddingBottom: 0,
+                          textAlign: "left",
+                          ...(Platform.OS === "android"
+                            ? { textAlignVertical: "center" }
+                            : {}),
+                        }}
                         placeholder={t("FixedAssets.UnitPrice")}
                         value={formatDecimal(
-                        updatedDetails[tool.id]?.unitPrice?.toString() ?? "",
+                          updatedDetails[tool.id]?.unitPrice?.toString() ?? "",
                         )}
                         onChangeText={(text) => {
-                        handleInputChange(
-                        tool.id,
-                        "unitPrice",
-                        formatDecimal(text),
-                        );
-                        clearFieldError(tool.id, "unitPrice");
+                          handleInputChange(
+                            tool.id,
+                            "unitPrice",
+                            formatDecimal(text),
+                          );
+                          clearFieldError(tool.id, "unitPrice");
                         }}
                         keyboardType="numeric"
                         placeholderTextColor="#6B7280"
@@ -2400,9 +2509,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <Text
                             className={`flex-1 text-sm ${!updatedDetails[tool.id]?.ownershipDetails?.purchaseDate ? "text-[#6B7280]" : "text-black"}`}
                           >
-                            {updatedDetails[tool.id]?.ownershipDetails?.purchaseDate
-    ? formatDate(updatedDetails[tool.id].ownershipDetails.purchaseDate)
-    : t("FixedAssets.PurchasedDate")}
+                            {updatedDetails[tool.id]?.ownershipDetails
+                              ?.purchaseDate
+                              ? formatDate(
+                                  updatedDetails[tool.id].ownershipDetails
+                                    .purchaseDate,
+                                )
+                              : t("FixedAssets.PurchasedDate")}
                           </Text>
                           <EvilIcons
                             name="calendar"
@@ -2419,7 +2532,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <CustomDatePicker
                             visible={showPurchaseDatePicker}
                             onClose={() => setShowPurchaseDatePicker(false)}
-                            value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.purchaseDate)}
+                            value={parseDate(
+                              updatedDetails[tool.id]?.ownershipDetails
+                                ?.purchaseDate,
+                            )}
                             onConfirm={(date) => {
                               handlePurchaseDateChange(tool.id, date);
                             }}
@@ -2429,7 +2545,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         ) : (
                           showPurchaseDatePicker && (
                             <DateTimePicker
-                              value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.purchaseDate) || new Date()}
+                              value={
+                                parseDate(
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.purchaseDate,
+                                ) || new Date()
+                              }
                               mode="date"
                               display="default"
                               onChange={(event, selectedDate) => {
@@ -2463,9 +2584,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <Text
                             className={`flex-1 text-sm ${!updatedDetails[tool.id]?.ownershipDetails?.expireDate ? "text-[#6B7280]" : "text-black"}`}
                           >
-                            {updatedDetails[tool.id]?.ownershipDetails?.expireDate
-    ? formatDate(updatedDetails[tool.id].ownershipDetails.expireDate)
-    : t("FixedAssets.WarrantyExpireDate")}
+                            {updatedDetails[tool.id]?.ownershipDetails
+                              ?.expireDate
+                              ? formatDate(
+                                  updatedDetails[tool.id].ownershipDetails
+                                    .expireDate,
+                                )
+                              : t("FixedAssets.WarrantyExpireDate")}
                           </Text>
                           <EvilIcons
                             name="calendar"
@@ -2482,7 +2607,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <CustomDatePicker
                             visible={showExpireDatePicker}
                             onClose={() => setShowExpireDatePicker(false)}
-                            value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.expireDate)}
+                            value={parseDate(
+                              updatedDetails[tool.id]?.ownershipDetails
+                                ?.expireDate,
+                            )}
                             onConfirm={(date) => {
                               handleExpireDateChange(tool.id, date);
                             }}
@@ -2492,7 +2620,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         ) : (
                           showExpireDatePicker && (
                             <DateTimePicker
-                              value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.expireDate) || new Date()}
+                              value={
+                                parseDate(
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.expireDate,
+                                ) || new Date()
+                              }
                               mode="date"
                               display="default"
                               onChange={(event, selectedDate) => {
@@ -2596,22 +2729,24 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <TextInput
                             className="text-black w-full text-sm"
                             style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                              fontSize: 12,
+                              paddingVertical: 0,
+                              paddingTop: 0,
+                              paddingBottom: 0,
+                              textAlign: "left",
+                              ...(Platform.OS === "android"
+                                ? { textAlignVertical: "center" }
+                                : {}),
+                            }}
                             placeholder={t("FixedAssets.MentionOtherDetails")}
                             value={updatedDetails[tool.id]?.mentionOther ?? ""}
                             onChangeText={(value) => {
-                            handleInputChange(
-                            tool.id,
-                            "mentionOther",
-                            value.replace(/^\s+/, ""),
-                            );
-                            clearFieldError(tool.id, "mentionOther");
+                              handleInputChange(
+                                tool.id,
+                                "mentionOther",
+                                value.replace(/^\s+/, ""),
+                              );
+                              clearFieldError(tool.id, "mentionOther");
                             }}
                             placeholderTextColor="#6B7280"
                           />
@@ -2672,22 +2807,24 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <TextInput
                             className="text-black w-full text-sm"
                             style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                              fontSize: 12,
+                              paddingVertical: 0,
+                              paddingTop: 0,
+                              paddingBottom: 0,
+                              textAlign: "left",
+                              ...(Platform.OS === "android"
+                                ? { textAlignVertical: "center" }
+                                : {}),
+                            }}
                             placeholder={t("FixedAssets.EnterBrandName")}
                             value={updatedDetails[tool.id]?.customBrand ?? ""}
                             onChangeText={(value) => {
-                            handleInputChange(
-                            tool.id,
-                            "customBrand",
-                            value.replace(/^\s+/, ""),
-                            );
-                            clearFieldError(tool.id, "customBrand");
+                              handleInputChange(
+                                tool.id,
+                                "customBrand",
+                                value.replace(/^\s+/, ""),
+                              );
+                              clearFieldError(tool.id, "customBrand");
                             }}
                             placeholderTextColor="#6B7280"
                           />
@@ -2707,24 +2844,27 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       <TextInput
                         className="text-black w-full text-sm"
                         style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                          fontSize: 12,
+                          paddingVertical: 0,
+                          paddingTop: 0,
+                          paddingBottom: 0,
+                          textAlign: "left",
+                          ...(Platform.OS === "android"
+                            ? { textAlignVertical: "center" }
+                            : {}),
+                        }}
                         placeholder={t("FixedAssets.NumberOfUnits")}
                         value={
-                        updatedDetails[tool.id]?.numberOfUnits?.toString() ?? ""
+                          updatedDetails[tool.id]?.numberOfUnits?.toString() ??
+                          ""
                         }
                         onChangeText={(text) => {
-                        handleInputChange(
-                        tool.id,
-                        "numberOfUnits",
-                        text.replace(/[^0-9]/g, ""),
-                        );
-                        clearFieldError(tool.id, "numberOfUnits");
+                          handleInputChange(
+                            tool.id,
+                            "numberOfUnits",
+                            text.replace(/[^0-9]/g, ""),
+                          );
+                          clearFieldError(tool.id, "numberOfUnits");
                         }}
                         keyboardType="numeric"
                         placeholderTextColor="#6B7280"
@@ -2743,24 +2883,26 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       <TextInput
                         className="text-black w-full text-sm"
                         style={{
-  fontSize: 14,
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  textAlign: "left",
-  ...(Platform.OS === "android" ? { textAlignVertical: "center" } : {}),
-}}
+                          fontSize: 12,
+                          paddingVertical: 0,
+                          paddingTop: 0,
+                          paddingBottom: 0,
+                          textAlign: "left",
+                          ...(Platform.OS === "android"
+                            ? { textAlignVertical: "center" }
+                            : {}),
+                        }}
                         placeholder={t("FixedAssets.UnitPrice")}
                         value={formatDecimal(
-                        updatedDetails[tool.id]?.unitPrice?.toString() ?? "",
+                          updatedDetails[tool.id]?.unitPrice?.toString() ?? "",
                         )}
                         onChangeText={(text) => {
-                        handleInputChange(
-                        tool.id,
-                        "unitPrice",
-                        formatDecimal(text),
-                        );
-                        clearFieldError(tool.id, "unitPrice");
+                          handleInputChange(
+                            tool.id,
+                            "unitPrice",
+                            formatDecimal(text),
+                          );
+                          clearFieldError(tool.id, "unitPrice");
                         }}
                         keyboardType="numeric"
                         placeholderTextColor="#6B7280"
@@ -2835,9 +2977,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <Text
                             className={`flex-1 text-sm ${!updatedDetails[tool.id]?.ownershipDetails?.purchaseDate ? "text-[#6B7280]" : "text-black"}`}
                           >
-                            {updatedDetails[tool.id]?.ownershipDetails?.purchaseDate
-    ? formatDate(updatedDetails[tool.id].ownershipDetails.purchaseDate)
-    : t("FixedAssets.PurchasedDate")}
+                            {updatedDetails[tool.id]?.ownershipDetails
+                              ?.purchaseDate
+                              ? formatDate(
+                                  updatedDetails[tool.id].ownershipDetails
+                                    .purchaseDate,
+                                )
+                              : t("FixedAssets.PurchasedDate")}
                           </Text>
                           <EvilIcons
                             name="calendar"
@@ -2854,7 +3000,10 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <CustomDatePicker
                             visible={showPurchaseDatePicker}
                             onClose={() => setShowPurchaseDatePicker(false)}
-                            value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.purchaseDate)}
+                            value={parseDate(
+                              updatedDetails[tool.id]?.ownershipDetails
+                                ?.purchaseDate,
+                            )}
                             onConfirm={(date) => {
                               handlePurchaseDateChange(tool.id, date);
                             }}
@@ -2864,7 +3013,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         ) : (
                           showPurchaseDatePicker && (
                             <DateTimePicker
-                              value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.purchaseDate) || new Date()}
+                              value={
+                                parseDate(
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.purchaseDate,
+                                ) || new Date()
+                              }
                               mode="date"
                               display="default"
                               onChange={(event, selectedDate) => {
@@ -2898,9 +3052,13 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                           <Text
                             className={`flex-1 text-sm ${!updatedDetails[tool.id]?.ownershipDetails?.expireDate ? "text-[#6B7280]" : "text-black"}`}
                           >
-                            {updatedDetails[tool.id]?.ownershipDetails?.expireDate
-    ? formatDate(updatedDetails[tool.id].ownershipDetails.expireDate)
-    : t("FixedAssets.WarrantyExpireDate")}
+                            {updatedDetails[tool.id]?.ownershipDetails
+                              ?.expireDate
+                              ? formatDate(
+                                  updatedDetails[tool.id].ownershipDetails
+                                    .expireDate,
+                                )
+                              : t("FixedAssets.WarrantyExpireDate")}
                           </Text>
                           <EvilIcons
                             name="calendar"
@@ -2935,7 +3093,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         ) : (
                           showExpireDatePicker && (
                             <DateTimePicker
-                              value={parseDate(updatedDetails[tool.id]?.ownershipDetails?.expireDate) || new Date()}
+                              value={
+                                parseDate(
+                                  updatedDetails[tool.id]?.ownershipDetails
+                                    ?.expireDate,
+                                ) || new Date()
+                              }
                               mode="date"
                               display="default"
                               onChange={(event, selectedDate) => {

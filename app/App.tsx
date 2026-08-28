@@ -155,6 +155,7 @@ import GoviShopLoadingScreen from "@/component/govi-shop/GoviShopLoading";
 import ExploreShopsScreen from "@/component/govi-shop/ExploreShops";
 import GoviShopProfileScreen from "@/component/govi-shop/GoviShopProfileScreen";
 import LocationAccess from "@/component/permission/LocationAccess";
+import CameraAccess from "@/component/permission/CameraAccess";
 import ViewProduct from "@/component/govi-shop/ViewProduct";
 import SoilGridsScreen from "@/component/soil-grids/SoilGridsScreen";
 import CartScreen from "@/component/govi-shop/CartScreen";
@@ -716,6 +717,10 @@ function AppContent() {
             <Stack.Screen
               name="LocationAccess"
               component={LocationAccess as any}
+            />
+            <Stack.Screen
+              name="CameraAccess"
+              component={CameraAccess as any}
             />
             <Stack.Screen name="CheckoutScreen" component={CheckoutScreen as any} />
             <Stack.Screen name="ViewProduct" component={ViewProduct as any} />

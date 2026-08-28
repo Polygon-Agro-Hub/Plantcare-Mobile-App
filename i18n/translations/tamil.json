@@ -228,6 +228,16 @@
     "UnableToRequestLocationPermissionPleaseTryAgain": "இருப்பிட அனுமதியைக் கோர முடியவில்லை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.",
     "LocationAccessIsRequiredPleaseEnableItInSettings": "இருப்பிட அணுகல் தேவை. தயவுசெய்து அமைப்புகளில் அதை இயக்கவும்."
   },
+  "CameraAccess": {
+    "Allow": "அனுமதி",
+    "OpenSettings": "அமைப்புகளைத் திறக்கவும்",
+    "Requesting...": "கோருகிறது...",
+    "CameraAccess": "கேமரா அணுகல்",
+    "PermissionDenied": "அனுமதி மறுக்கப்பட்டது",
+    "EnableCameraAccessToCapturePhotos": "புகைப்படங்களை எடுக்க கேமரா அணுகலை இயக்கவும்.",
+    "UnableToRequestCameraPermissionPleaseTryAgain": "கேமரா அனுமதியைக் கோர முடியவில்லை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.",
+    "CameraAccessIsRequiredPleaseEnableItInSettings": "கேமரா அணுகல் தேவை. தயவுசெய்து அமைப்புகளில் அதை இயக்கவும்."
+  },
   "WeatherForecast": {
     "Wind": "காற்று",
     "Humidity": "ஈரப்பதம்",
