@@ -228,6 +228,16 @@
     "UnableToRequestLocationPermissionPleaseTryAgain": "Unable to request location permission. Please try again.",
     "LocationAccessIsRequiredPleaseEnableItInSettings": "Location access is required. Please enable it in settings."
   },
+  "CameraAccess": {
+    "Allow": "Allow",
+    "OpenSettings": "Open Settings",
+    "Requesting...": "Requesting...",
+    "CameraAccess": "Camera Access",
+    "PermissionDenied": "Permission Denied",
+    "EnableCameraAccessToCapturePhotos": "Enable access to the camera to take photos.",
+    "UnableToRequestCameraPermissionPleaseTryAgain": "Unable to request camera permission. Please try again.",
+    "CameraAccessIsRequiredPleaseEnableItInSettings": "Camera access is required. Please enable it in settings."
+  },
   "WeatherForecast": {
     "Wind": "Wind",
     "Humidity": "Humidity",

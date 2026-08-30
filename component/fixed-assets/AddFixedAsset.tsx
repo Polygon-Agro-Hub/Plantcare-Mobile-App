@@ -92,7 +92,10 @@ const SelectorButton = ({
 
 const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
   const route = useRoute();
-  const { farmId, farmName } = (route.params || {}) as { farmId?: number; farmName?: string };
+  const { farmId, farmName } = (route.params || {}) as {
+    farmId?: number;
+    farmName?: string;
+  };
   const user = useSelector(
     (state: RootState) => state.user.userData,
   ) as UserData | null;
@@ -100,8 +103,14 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
 
   const getCategoryLabel = (val: string) => {
     const item = assetData.categoryOptions.find((c: any) => c.value === val);
-    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
-    return item ? (item.translations[lang] || item.translations["en"]) : val;
+    const lang = i18n.language
+      ? i18n.language.startsWith("si")
+        ? "si"
+        : i18n.language.startsWith("ta")
+          ? "ta"
+          : "en"
+      : "en";
+    return item ? item.translations[lang] || item.translations["en"] : val;
   };
 
   const toOptions = (raw: RawOption[]) =>
@@ -208,7 +217,9 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
     }, []),
   );
 
-  const parseDate = (dateStr: string | Date | null | undefined): Date | null => {
+  const parseDate = (
+    dateStr: string | Date | null | undefined,
+  ): Date | null => {
     if (!dateStr) return null;
     if (dateStr instanceof Date) return dateStr;
     const parts = dateStr.split("T")[0].split("-");
@@ -342,7 +353,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
   // Today at 23:59:59.999 — using this (instead of `new Date()`, which carries
   // the exact current time) as the picker ceiling is what guarantees "today"
   // is always selectable, on both Android and iOS.
-    const getStartOfTomorrow = (): Date => {
+  const getStartOfTomorrow = (): Date => {
     const d = new Date();
     d.setDate(d.getDate() + 1);
     d.setHours(0, 0, 0, 0);
@@ -549,7 +560,9 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
         onPress={onOpen}
         className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2 mb-2"
       >
-        <Text className={`text-sm flex-1 ${!value ? "text-[#6B7280]" : "text-black"}`}>
+        <Text
+          className={`text-sm flex-1 ${!value ? "text-[#6B7280]" : "text-black"}`}
+        >
           {value ? formatDate(value) : placeholder}
         </Text>
         <EvilIcons name="calendar" size={28} color="#5e5d5d" />
@@ -607,24 +620,32 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
   const submitData = async () => {
     const newErrors: { [key: string]: string } = {};
 
-    if (!farmId && !selectedFarm) newErrors.selectedFarm = t("Farms.SelectFarmIsRequired");
-    if (!category) newErrors.category = t("FixedAssets.SelectCategoryIsRequired");
+    if (!farmId && !selectedFarm)
+      newErrors.selectedFarm = t("Farms.SelectFarmIsRequired");
+    if (!category)
+      newErrors.category = t("FixedAssets.SelectCategoryIsRequired");
 
     if (category === "Building and Infrastructures") {
       if (!type) newErrors.type = t("FixedAssets.SelectAssetTypeIsRequired");
-      if (!floorArea) newErrors.floorArea = t("FixedAssets.FloorAreaIsRequired");
+      if (!floorArea)
+        newErrors.floorArea = t("FixedAssets.FloorAreaIsRequired");
       if (!buildingName)
         newErrors.buildingName = t("FixedAssets.BuildingNameIsRequired");
       if (!ownership)
-        newErrors.ownership = t("FixedAssets.SelectOwnershipCategoryIsRequired");
+        newErrors.ownership = t(
+          "FixedAssets.SelectOwnershipCategoryIsRequired",
+        );
       if (!generalCondition)
-        newErrors.generalCondition = t("FixedAssets.SelectGeneralConditionIsRequired");
+        newErrors.generalCondition = t(
+          "FixedAssets.SelectGeneralConditionIsRequired",
+        );
       if (ownership === "Own Building (with title ownership)" && !estimateValue)
         newErrors.estimateValue = t(
           "FixedAssets.EstimatedBuildingValueIsRequired",
         );
       if (ownership === "Leased Building") {
-        if (!startDate) newErrors.startDate = t("FixedAssets.StartDateIsRequired");
+        if (!startDate)
+          newErrors.startDate = t("FixedAssets.StartDateIsRequired");
         if (!durationYears && !durationMonths)
           newErrors.duration = t("FixedAssets.DurationIsRequired");
         if (!leastAmountAnnually)
@@ -636,7 +657,9 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
         if (!lbissuedDate)
           newErrors.lbissuedDate = t("FixedAssets.IssuedDateIsRequired");
         if (!permitFeeAnnually)
-          newErrors.permitFeeAnnually = t("FixedAssets.AnnualPermitFeeIsRequired");
+          newErrors.permitFeeAnnually = t(
+            "FixedAssets.AnnualPermitFeeIsRequired",
+          );
       }
       if (ownership === "Shared / No Ownership" && !paymentAnnually)
         newErrors.paymentAnnually = t("FixedAssets.AnnualPaymentFeeIsRequired");
@@ -644,13 +667,16 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
 
     if (category === "Land") {
       if (!landownership)
-        newErrors.landownership = t("FixedAssets.SelectOwnershipCategoryIsRequired");
+        newErrors.landownership = t(
+          "FixedAssets.SelectOwnershipCategoryIsRequired",
+        );
       const nonZeroExtent = [extentha, extentac, extentp].filter(
         (f) => f && f !== "0",
       );
       if (nonZeroExtent.length === 0)
         newErrors.extent = t("FixedAssets.AtLeastOneExtentTypeIsRequired");
-      if (!landFenced) newErrors.landFenced = t("FixedAssets.PleaseSelectAnOption");
+      if (!landFenced)
+        newErrors.landFenced = t("FixedAssets.PleaseSelectAnOption");
       if (!landName) newErrors.landName = t("FixedAssets.LandNameIsRequired");
       if (!perennialCrop)
         newErrors.perennialCrop = t("FixedAssets.PleaseSelectAnOption");
@@ -659,7 +685,8 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
           "FixedAssets.EstimatedBuildingValueIsRequired",
         );
       if (landownership === "Lease") {
-        if (!startDate) newErrors.startDate = t("FixedAssets.StartDateIsRequired");
+        if (!startDate)
+          newErrors.startDate = t("FixedAssets.StartDateIsRequired");
         const nonZeroDuration = [durationYears, durationMonths].filter(
           (f) => f && f !== "0",
         );
@@ -698,7 +725,8 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
         newErrors.customBrand = t("FixedAssets.MentionOtherBrandName");
       if (!numberOfUnits)
         newErrors.numberOfUnits = t("FixedAssets.NumberOfUnitsIsRequired");
-      if (!unitPrice) newErrors.unitPrice = t("FixedAssets.UnitPriceIsRequired");
+      if (!unitPrice)
+        newErrors.unitPrice = t("FixedAssets.UnitPriceIsRequired");
       if (!warranty) newErrors.warranty = t("FixedAssets.PleaseSelectAnOption");
       if (warranty === "yes" && !purchasedDate)
         newErrors.purchasedDate = t("FixedAssets.PurchasedDateIsRequired");
@@ -707,7 +735,8 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
     }
 
     if (category === "Tools") {
-      if (!assetname) newErrors.assetname = t("FixedAssets.SelectAssetIsRequired");
+      if (!assetname)
+        newErrors.assetname = t("FixedAssets.SelectAssetIsRequired");
       if (assetname === "Other" && !othertool)
         newErrors.othertool = t("FixedAssets.MentionOtherDetails");
       if (!toolbrand) newErrors.toolbrand = t("FixedAssets.SelectBrand");
@@ -715,7 +744,8 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
         newErrors.customBrand = t("FixedAssets.MentionOtherBrandName");
       if (!numberOfUnits)
         newErrors.numberOfUnits = t("FixedAssets.NumberOfUnitsIsRequired");
-      if (!unitPrice) newErrors.unitPrice = t("FixedAssets.UnitPriceIsRequired");
+      if (!unitPrice)
+        newErrors.unitPrice = t("FixedAssets.UnitPriceIsRequired");
       if (!warranty) newErrors.warranty = t("FixedAssets.PleaseSelectAnOption");
       if (warranty === "yes" && !purchasedDate)
         newErrors.purchasedDate = t("FixedAssets.PurchasedDateIsRequired");
@@ -765,9 +795,15 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
       warranty,
       issuedDate:
         category === "Building and Infrastructures"
-          ? (lbissuedDate ? formatDate(lbissuedDate) : null)
-          : (issuedDate ? formatDate(issuedDate) : null),
-      purchaseDate: updatedPurchaseDate ? formatDate(updatedPurchaseDate) : null,
+          ? lbissuedDate
+            ? formatDate(lbissuedDate)
+            : null
+          : issuedDate
+            ? formatDate(issuedDate)
+            : null,
+      purchaseDate: updatedPurchaseDate
+        ? formatDate(updatedPurchaseDate)
+        : null,
       expireDate: updatedExpireDate ? formatDate(updatedExpireDate) : null,
       startDate: startDate ? formatDate(startDate) : null,
       durationYears: updatedDurationYears,
@@ -790,25 +826,21 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
         formData,
         { headers: { Authorization: `Bearer ${token}` } },
       );
-      Alert.alert(
-        t("Main.Success"),
-        t("FixedAssets.AssetAddSuccessfuly"),
-        [
-          {
-            text: t("Main.OK"),
-            onPress: () => {
-              if (farmId) {
-                navigation.navigate("Main", {
-                  screen: "fixedDashboard",
-                  params: { farmId, farmName },
-                } as any);
-              } else {
-                navigation.navigate("fixedDashboard");
-              }
-            },
+      Alert.alert(t("Main.Success"), t("FixedAssets.AssetAddSuccessfuly"), [
+        {
+          text: t("Main.OK"),
+          onPress: () => {
+            if (farmId) {
+              navigation.navigate("Main", {
+                screen: "fixedDashboard",
+                params: { farmId, farmName },
+              } as any);
+            } else {
+              navigation.navigate("fixedDashboard");
+            }
           },
-        ],
-      );
+        },
+      ]);
       setLoading(false);
     } catch (error: any) {
       console.error("Error submitting data:", error);
@@ -830,7 +862,6 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
       style={{ flex: 1 }}
     >
       <View style={{ flex: 1 }}>
-
         {/* Farm */}
         <GlobalSearchModal
           visible={modalFarm}
@@ -879,7 +910,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
             clearError("category");
           }}
           searchPlaceholder={t("Main.Search...")}
-          noResultsText = "No category found"
+          noResultsText="No category found"
         />
 
         {/* Machine asset */}
@@ -896,7 +927,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
             clearError("asset");
           }}
           searchPlaceholder={t("Main.Search...")}
-          noResultsText = "No assets found"
+          noResultsText="No assets found"
         />
 
         {/* Asset type (Machine) */}
@@ -948,7 +979,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
               clearError("landownership");
             }}
             searchPlaceholder={t("Main.Search...")}
-            noResultsText = "No ownership found"
+            noResultsText="No ownership found"
           />
         )}
 
@@ -966,7 +997,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
               clearError("assetname");
             }}
             searchPlaceholder={t("Main.Search...")}
-            noResultsText = "No assets found"
+            noResultsText="No assets found"
           />
         )}
 
@@ -983,7 +1014,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
               clearError("toolbrand");
             }}
             searchPlaceholder={t("Main.Search...")}
-            noResultsText = "No brand found"
+            noResultsText="No brand found"
           />
         )}
 
@@ -1016,7 +1047,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
               clearError("ownership");
             }}
             searchPlaceholder={t("Main.Search...")}
-            noResultsText = "No ownership found"
+            noResultsText="No ownership found"
           />
         )}
 
@@ -1159,21 +1190,23 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
 
                 {assetType === "Other" && (
                   <View className="mt-4">
-                    <Text className="text-sm">{t("FixedAssets.MentionOther")}</Text>
+                    <Text className="text-sm">
+                      {t("FixedAssets.MentionOther")}
+                    </Text>
                     <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
                       <TextInput
                         className="text-black w-full text-sm"
                         placeholderTextColor="#6B7280"
                         style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                          fontSize: 12,
+                          paddingVertical: 0,
+                          paddingTop: 0,
+                          paddingBottom: 0,
+                          textAlign: "left",
+                          ...(Platform.OS === "android"
+                            ? { textAlignVertical: "center" }
+                            : {}),
+                        }}
                         placeholder={t("FixedAssets.MentionOther")}
                         value={mentionOther}
                         onChangeText={(text) => {
@@ -1214,15 +1247,15 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         className="text-black w-full text-sm"
                         placeholderTextColor="#6B7280"
                         style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                          fontSize: 12,
+                          paddingVertical: 0,
+                          paddingTop: 0,
+                          paddingBottom: 0,
+                          textAlign: "left",
+                          ...(Platform.OS === "android"
+                            ? { textAlignVertical: "center" }
+                            : {}),
+                        }}
                         placeholder={t("FixedAssets.EnterBrandName")}
                         value={customBrand}
                         onChangeText={(text) => {
@@ -1244,19 +1277,21 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     className="text-black w-full text-sm"
                     placeholderTextColor="#6B7280"
                     style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                      fontSize: 12,
+                      paddingVertical: 0,
+                      paddingTop: 0,
+                      paddingBottom: 0,
+                      textAlign: "left",
+                      ...(Platform.OS === "android"
+                        ? { textAlignVertical: "center" }
+                        : {}),
+                    }}
                     placeholder={t("FixedAssets.NumberOfUnits")}
                     value={numberOfUnits}
                     onChangeText={(text) => {
-                      setNumberOfUnits(text.replace(/[-.*#+]/g, "").trimStart());
+                      setNumberOfUnits(
+                        text.replace(/[-.*#+]/g, "").trimStart(),
+                      );
                       clearError("numberOfUnits");
                     }}
                     keyboardType="numeric"
@@ -1273,15 +1308,15 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     className="text-black w-full text-sm"
                     placeholderTextColor="#6B7280"
                     style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                      fontSize: 12,
+                      paddingVertical: 0,
+                      paddingTop: 0,
+                      paddingBottom: 0,
+                      textAlign: "left",
+                      ...(Platform.OS === "android"
+                        ? { textAlignVertical: "center" }
+                        : {}),
+                    }}
                     placeholder={t("FixedAssets.UnitPrices")}
                     value={unitPrice}
                     onChangeText={(text) => {
@@ -1311,19 +1346,21 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   <Text className="text-sm">
                     {totalPrice
                       ? (() => {
-                        const parts = totalPrice.toFixed(2).split(".");
-                        return (
-                          parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-                          "." +
-                          parts[1]
-                        );
-                      })()
+                          const parts = totalPrice.toFixed(2).split(".");
+                          return (
+                            parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+                            "." +
+                            parts[1]
+                          );
+                        })()
                       : "0.00"}
                   </Text>
                 </View>
 
                 {/* Warranty */}
-                <Text className="text-[#070707] text-sm mt-2">{t("FixedAssets.Warranty")}</Text>
+                <Text className="text-[#070707] text-sm mt-2">
+                  {t("FixedAssets.Warranty")}
+                </Text>
                 <View className="flex-row mt-2 mb-4 justify-around">
                   {["yes", "no"].map((w) => (
                     <TouchableOpacity
@@ -1332,8 +1369,9 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       className="flex-row items-center"
                     >
                       <View
-                        className={`w-5 h-5 rounded-full ${warranty === w ? "bg-green-500" : "bg-gray-400"
-                          }`}
+                        className={`w-5 h-5 rounded-full ${
+                          warranty === w ? "bg-green-500" : "bg-gray-400"
+                        }`}
                       />
                       <Text className="ml-2 text-sm">
                         {w === "yes"
@@ -1413,15 +1451,15 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     className="text-black w-full text-sm"
                     placeholderTextColor="#6B7280"
                     style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                      fontSize: 12,
+                      paddingVertical: 0,
+                      paddingTop: 0,
+                      paddingBottom: 0,
+                      textAlign: "left",
+                      ...(Platform.OS === "android"
+                        ? { textAlignVertical: "center" }
+                        : {}),
+                    }}
                     placeholder={t("FixedAssets.EnterLandName")}
                     value={landName}
                     maxLength={20}
@@ -1457,25 +1495,24 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       setter: setExtentp,
                     },
                   ].map(({ label, val, setter }) => (
-                    <View
-                      key={label}
-                      className="flex-row items-center gap-2"
-                    >
-                      <Text className="text-[#070707] text-sm mt-2 mr-2">{label}</Text>
+                    <View key={label} className="flex-row items-center gap-2">
+                      <Text className="text-[#070707] text-sm mt-2 mr-2">
+                        {label}
+                      </Text>
                       <View className="bg-[#F4F4F4] px-3 w-20 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
                         <TextInput
                           className="text-black w-full text-sm"
                           placeholderTextColor="#6B7280"
                           style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                            fontSize: 12,
+                            paddingVertical: 0,
+                            paddingTop: 0,
+                            paddingBottom: 0,
+                            textAlign: "left",
+                            ...(Platform.OS === "android"
+                              ? { textAlignVertical: "center" }
+                              : {}),
+                          }}
                           value={val}
                           onChangeText={(text) =>
                             setter(text.replace(/[-.*#+]/g, ""))
@@ -1514,15 +1551,15 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         className="text-black w-full text-sm"
                         placeholderTextColor="#6B7280"
                         style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                          fontSize: 12,
+                          paddingVertical: 0,
+                          paddingTop: 0,
+                          paddingBottom: 0,
+                          textAlign: "left",
+                          ...(Platform.OS === "android"
+                            ? { textAlignVertical: "center" }
+                            : {}),
+                        }}
                         placeholder={t("FixedAssets.EnterEstimatedValue")}
                         value={estimateValue}
                         onChangeText={(text) => {
@@ -1567,15 +1604,15 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                           className="text-black w-full text-sm"
                           placeholderTextColor="#6B7280"
                           style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                            fontSize: 12,
+                            paddingVertical: 0,
+                            paddingTop: 0,
+                            paddingBottom: 0,
+                            textAlign: "left",
+                            ...(Platform.OS === "android"
+                              ? { textAlignVertical: "center" }
+                              : {}),
+                          }}
                           value={durationYears}
                           onChangeText={(text) => {
                             setDurationYears(
@@ -1595,15 +1632,15 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                           className="text-black w-full text-sm"
                           placeholderTextColor="#6B7280"
                           style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                            fontSize: 12,
+                            paddingVertical: 0,
+                            paddingTop: 0,
+                            paddingBottom: 0,
+                            textAlign: "left",
+                            ...(Platform.OS === "android"
+                              ? { textAlignVertical: "center" }
+                              : {}),
+                          }}
                           value={durationMonths}
                           onChangeText={(text) => {
                             const cleaned = text
@@ -1630,15 +1667,15 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         className="text-black w-full text-sm"
                         placeholderTextColor="#6B7280"
                         style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                          fontSize: 12,
+                          paddingVertical: 0,
+                          paddingTop: 0,
+                          paddingBottom: 0,
+                          textAlign: "left",
+                          ...(Platform.OS === "android"
+                            ? { textAlignVertical: "center" }
+                            : {}),
+                        }}
                         value={leastAmountAnnually}
                         onChangeText={(text) => {
                           setLeastAmountAnnually(formatCurrency(text));
@@ -1678,19 +1715,21 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         className="text-black w-full text-sm"
                         placeholderTextColor="#6B7280"
                         style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                          fontSize: 12,
+                          paddingVertical: 0,
+                          paddingTop: 0,
+                          paddingBottom: 0,
+                          textAlign: "left",
+                          ...(Platform.OS === "android"
+                            ? { textAlignVertical: "center" }
+                            : {}),
+                        }}
                         placeholder={t("FixedAssets.EnterAnnualPermitFee")}
                         value={permitFeeAnnually}
                         onChangeText={(text) => {
-                          setPermitFeeAnnually(formatCurrency(text.trimStart()));
+                          setPermitFeeAnnually(
+                            formatCurrency(text.trimStart()),
+                          );
                           clearError("permitFeeAnnually");
                         }}
                         keyboardType="numeric"
@@ -1711,15 +1750,15 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         className="text-black w-full text-sm"
                         placeholderTextColor="#6B7280"
                         style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                          fontSize: 12,
+                          paddingVertical: 0,
+                          paddingTop: 0,
+                          paddingBottom: 0,
+                          textAlign: "left",
+                          ...(Platform.OS === "android"
+                            ? { textAlignVertical: "center" }
+                            : {}),
+                        }}
                         value={paymentAnnually}
                         onChangeText={(text) => {
                           setPaymentAnnually(formatCurrency(text.trimStart()));
@@ -1746,8 +1785,9 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         className="flex-row items-center"
                       >
                         <View
-                          className={`w-5 h-5 rounded-full ${landFenced === v ? "bg-green-500" : "bg-gray-400"
-                            }`}
+                          className={`w-5 h-5 rounded-full ${
+                            landFenced === v ? "bg-green-500" : "bg-gray-400"
+                          }`}
                         />
                         <Text className="ml-2 text-sm">
                           {v === "yes"
@@ -1771,8 +1811,9 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         className="flex-row items-center"
                       >
                         <View
-                          className={`w-5 h-5 rounded-full ${perennialCrop === v ? "bg-green-500" : "bg-gray-400"
-                            }`}
+                          className={`w-5 h-5 rounded-full ${
+                            perennialCrop === v ? "bg-green-500" : "bg-gray-400"
+                          }`}
                         />
                         <Text className="ml-2 text-sm">
                           {v === "yes"
@@ -1789,7 +1830,9 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
 
             {category === "Tools" && (
               <View className="flex-1">
-                <Text className="text-[#070707] text-sm mt-2">{t("FixedAssets.Asset")} *</Text>
+                <Text className="text-[#070707] text-sm mt-2">
+                  {t("FixedAssets.Asset")} *
+                </Text>
                 <View className="rounded-full mt-2">
                   <SelectorButton
                     label={getLabel(assetOptions, assetname)}
@@ -1812,15 +1855,15 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         className="text-black w-full text-sm"
                         placeholderTextColor="#6B7280"
                         style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                          fontSize: 12,
+                          paddingVertical: 0,
+                          paddingTop: 0,
+                          paddingBottom: 0,
+                          textAlign: "left",
+                          ...(Platform.OS === "android"
+                            ? { textAlignVertical: "center" }
+                            : {}),
+                        }}
                         value={othertool}
                         onChangeText={(text) => {
                           setOthertool(text.replace(/^\s+/, ""));
@@ -1857,15 +1900,15 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         className="text-black w-full text-sm"
                         placeholderTextColor="#6B7280"
                         style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                          fontSize: 12,
+                          paddingVertical: 0,
+                          paddingTop: 0,
+                          paddingBottom: 0,
+                          textAlign: "left",
+                          ...(Platform.OS === "android"
+                            ? { textAlignVertical: "center" }
+                            : {}),
+                        }}
                         placeholder={t("FixedAssets.EnterBrandName")}
                         value={customBrand}
                         onChangeText={(text) =>
@@ -1886,15 +1929,15 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     className="text-black w-full text-sm"
                     placeholderTextColor="#6B7280"
                     style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                      fontSize: 12,
+                      paddingVertical: 0,
+                      paddingTop: 0,
+                      paddingBottom: 0,
+                      textAlign: "left",
+                      ...(Platform.OS === "android"
+                        ? { textAlignVertical: "center" }
+                        : {}),
+                    }}
                     placeholder={t("FixedAssets.NumberOfUnitsIsRequired")}
                     value={numberOfUnits}
                     onChangeText={(text) =>
@@ -1913,20 +1956,22 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     className="text-black w-full text-sm"
                     placeholderTextColor="#6B7280"
                     style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                      fontSize: 12,
+                      paddingVertical: 0,
+                      paddingTop: 0,
+                      paddingBottom: 0,
+                      textAlign: "left",
+                      ...(Platform.OS === "android"
+                        ? { textAlignVertical: "center" }
+                        : {}),
+                    }}
                     placeholder={t("FixedAssets.UnitPriceIsRequired")}
                     value={unitPrice}
                     onChangeText={(text) => {
                       const digits = text.replace(/[^0-9]/g, "");
-                      setUnitPrice(digits.replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                      setUnitPrice(
+                        digits.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+                      );
                       clearError("unitPrice");
                     }}
                     keyboardType="numeric"
@@ -1941,19 +1986,21 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   <Text className="text-black text-sm">
                     {totalPrice
                       ? (() => {
-                        const parts = totalPrice.toFixed(2).split(".");
-                        return (
-                          parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-                          "." +
-                          parts[1]
-                        );
-                      })()
+                          const parts = totalPrice.toFixed(2).split(".");
+                          return (
+                            parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+                            "." +
+                            parts[1]
+                          );
+                        })()
                       : "0.00"}
                   </Text>
                 </View>
 
                 {/* Warranty */}
-                <Text className="text-[#070707] text-sm mt-2">{t("FixedAssets.Warranty")}</Text>
+                <Text className="text-[#070707] text-sm mt-2">
+                  {t("FixedAssets.Warranty")}
+                </Text>
                 <View className="flex-row justify-around mt-2 mb-5">
                   {["yes", "no"].map((w) => (
                     <TouchableOpacity
@@ -1962,8 +2009,9 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                       className="flex-row items-center"
                     >
                       <View
-                        className={`w-5 h-5 rounded-full ${warranty === w ? "bg-green-500" : "bg-gray-400"
-                          }`}
+                        className={`w-5 h-5 rounded-full ${
+                          warranty === w ? "bg-green-500" : "bg-gray-400"
+                        }`}
                       />
                       <Text className="ml-2 text-sm">
                         {w === "yes"
@@ -2060,15 +2108,15 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     className="text-black w-full text-sm"
                     placeholderTextColor="#6B7280"
                     style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                      fontSize: 12,
+                      paddingVertical: 0,
+                      paddingTop: 0,
+                      paddingBottom: 0,
+                      textAlign: "left",
+                      ...(Platform.OS === "android"
+                        ? { textAlignVertical: "center" }
+                        : {}),
+                    }}
                     placeholder={t("FixedAssets.EnterBuildingName")}
                     value={buildingName}
                     onChangeText={(text) => {
@@ -2091,15 +2139,15 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     className="text-black w-full text-sm"
                     placeholderTextColor="#6B7280"
                     style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                      fontSize: 12,
+                      paddingVertical: 0,
+                      paddingTop: 0,
+                      paddingBottom: 0,
+                      textAlign: "left",
+                      ...(Platform.OS === "android"
+                        ? { textAlignVertical: "center" }
+                        : {}),
+                    }}
                     placeholder={t("FixedAssets.EnterFloorArea")}
                     value={floorArea}
                     onChangeText={(text) => {
@@ -2140,15 +2188,15 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         className="text-black w-full text-sm"
                         placeholderTextColor="#6B7280"
                         style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                          fontSize: 12,
+                          paddingVertical: 0,
+                          paddingTop: 0,
+                          paddingBottom: 0,
+                          textAlign: "left",
+                          ...(Platform.OS === "android"
+                            ? { textAlignVertical: "center" }
+                            : {}),
+                        }}
                         placeholder={t("FixedAssets.EnterEstimatedValue")}
                         value={estimateValue}
                         onChangeText={(text) => {
@@ -2165,7 +2213,9 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 {/* Leased Building */}
                 {ownership === "Leased Building" && (
                   <View className="mt-4">
-                    <Text className="pb-2 text-sm">{t("FixedAssets.LeaseStartDate")} *</Text>
+                    <Text className="pb-2 text-sm">
+                      {t("FixedAssets.LeaseStartDate")} *
+                    </Text>
                     <DateField
                       value={startDate}
                       placeholder={t("FixedAssets.SelectDate")}
@@ -2191,15 +2241,15 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                           className="text-black w-full text-sm"
                           placeholderTextColor="#6B7280"
                           style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                            fontSize: 12,
+                            paddingVertical: 0,
+                            paddingTop: 0,
+                            paddingBottom: 0,
+                            textAlign: "left",
+                            ...(Platform.OS === "android"
+                              ? { textAlignVertical: "center" }
+                              : {}),
+                          }}
                           value={durationYears}
                           onChangeText={(text) => {
                             setDurationYears(
@@ -2219,15 +2269,15 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                           className="text-black w-full text-sm"
                           placeholderTextColor="#6B7280"
                           style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                            fontSize: 12,
+                            paddingVertical: 0,
+                            paddingTop: 0,
+                            paddingBottom: 0,
+                            textAlign: "left",
+                            ...(Platform.OS === "android"
+                              ? { textAlignVertical: "center" }
+                              : {}),
+                          }}
                           value={durationMonths}
                           onChangeText={(text) => {
                             const cleaned = text
@@ -2254,15 +2304,15 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         className="text-black w-full text-sm"
                         placeholderTextColor="#6B7280"
                         style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                          fontSize: 12,
+                          paddingVertical: 0,
+                          paddingTop: 0,
+                          paddingBottom: 0,
+                          textAlign: "left",
+                          ...(Platform.OS === "android"
+                            ? { textAlignVertical: "center" }
+                            : {}),
+                        }}
                         value={leastAmountAnnually}
                         onChangeText={(text) => {
                           setLeastAmountAnnually(
@@ -2304,18 +2354,20 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         className="text-black w-full text-sm"
                         placeholderTextColor="#6B7280"
                         style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                          fontSize: 12,
+                          paddingVertical: 0,
+                          paddingTop: 0,
+                          paddingBottom: 0,
+                          textAlign: "left",
+                          ...(Platform.OS === "android"
+                            ? { textAlignVertical: "center" }
+                            : {}),
+                        }}
                         value={permitFeeAnnually}
                         onChangeText={(text) => {
-                          setPermitFeeAnnually(formatCurrency(text.trimStart()));
+                          setPermitFeeAnnually(
+                            formatCurrency(text.trimStart()),
+                          );
                           clearError("permitFeeAnnually");
                         }}
                         keyboardType="numeric"
@@ -2337,15 +2389,15 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         className="text-black w-full text-sm"
                         placeholderTextColor="#6B7280"
                         style={{
-                        fontSize: 14,
-                        paddingVertical: 0,
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        textAlign: "left",
-                        ...(Platform.OS === "android"
-                          ? { textAlignVertical: "center" }
-                          : {}),
-                      }}
+                          fontSize: 12,
+                          paddingVertical: 0,
+                          paddingTop: 0,
+                          paddingBottom: 0,
+                          textAlign: "left",
+                          ...(Platform.OS === "android"
+                            ? { textAlignVertical: "center" }
+                            : {}),
+                        }}
                         value={paymentAnnually}
                         onChangeText={(text) => {
                           setPaymentAnnually(formatCurrency(text.trimStart()));
@@ -2376,25 +2428,25 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
             )}
 
             {/* Submit */}
-          <TouchableOpacity
-            onPress={submitData}
-            className="bg-[#353535] rounded-3xl h-[50px] justify-center items-center m-6"
-            style={{
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.3,
-              shadowRadius: 4.65,
-              elevation: 8,
-            }}
-          >
-            {loading ? (
-              <ActivityIndicator size="small" color="#fff" />
-            ) : (
-              <Text className="text-white text-center font-semibold text-lg">
-                {t("FixedAssets.AddAsset")}
-              </Text>
-            )}
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={submitData}
+              className="bg-[#353535] rounded-3xl h-[50px] justify-center items-center m-6"
+              style={{
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.3,
+                shadowRadius: 4.65,
+                elevation: 8,
+              }}
+            >
+              {loading ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Text className="text-white text-center font-semibold text-lg">
+                  {t("FixedAssets.AddAsset")}
+                </Text>
+              )}
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </View>

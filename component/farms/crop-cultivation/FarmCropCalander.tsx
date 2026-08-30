@@ -1186,6 +1186,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
                         status: "edit",
                         onCulscropID: crops[0]?.onCulscropID,
                         cropId,
+                        farmId
                       });
                     }}
                   >
@@ -1280,6 +1281,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
                   status: "edit",
                   onCulscropID: crops[0]?.onCulscropID,
                   cropId,
+                  farmId
                 })
               }
             >
