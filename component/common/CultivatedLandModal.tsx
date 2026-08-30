@@ -13,6 +13,7 @@ import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import { useTranslation } from "react-i18next";
 import { Entypo } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import CameraAccess from "../permission/CameraAccess";
 
 export interface CultivatedLandModalProps {
   visible: boolean;
@@ -58,25 +59,14 @@ function CameraScreen({
 
   if (!permission.granted) {
     return (
-      <View className="flex-1 justify-center items-center bg-black px-6">
-        <Text className="text-white text-base text-center mb-6">
-          Camera permission is required to capture task photos.
-        </Text>
-        <TouchableOpacity
-          onPress={requestPermission}
-          className="bg-[#2AAD7A] px-8 py-3 rounded-full mb-4"
-          activeOpacity={0.8}
-        >
-          <Text className="text-black font-semibold text-base">Grant Permission</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => onClose(null)}
-          className="bg-gray-800 px-8 py-3 rounded-full"
-          activeOpacity={0.8}
-        >
-          <Text className="text-white text-base">{t("Main.Cancel")}</Text>
-        </TouchableOpacity>
-      </View>
+      <CameraAccess
+        // Re-run the hook's own request so its `permission` state updates
+        // and this screen re-renders into the live camera view.
+        onPermissionGranted={() => {
+          requestPermission();
+        }}
+        onClose={() => onClose(null)}
+      />
     );
   }
 

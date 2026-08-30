@@ -143,8 +143,6 @@ const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
             flex: 1,
             marginLeft: 8,
             fontSize: 16,
-            // iOS fix: explicit height + paddingVertical:0 prevents text clipping
-            // (descenders like g, j, y, f, p, q getting cut off)
             height: 50,
             paddingVertical: 0,
             includeFontPadding: false,

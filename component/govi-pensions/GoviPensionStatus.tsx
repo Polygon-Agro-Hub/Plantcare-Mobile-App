@@ -40,6 +40,17 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
   const { t } = useTranslation();
   const [currentStatus, setCurrentStatus] = useState<StatusType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [language, setLanguage] = useState("en");
+
+
+  useEffect(() => {
+  const loadLanguage = async () => {
+    const storedLang = await AsyncStorage.getItem("@user_language");
+    if (storedLang) setLanguage(storedLang);
+  };
+  loadLanguage();
+}, []);
+
 
   useEffect(() => {
     fetchPensionStatus();
@@ -204,9 +215,13 @@ const GoviPensionStatus: React.FC<GoviPensionStatusProps> = ({
 
         {/* Status Title */}
         <View className="items-center mb-6">
-          <Text className="text-4xl font-semibold text-black">
-            {config.title}
-          </Text>
+         <Text
+  className={`font-semibold text-black ${
+    language === "si" || language === "ta" ? "text-2xl" : "text-4xl"
+  }`}
+>
+  {config.title}
+</Text>
         </View>
 
         {/* Status Content */}
