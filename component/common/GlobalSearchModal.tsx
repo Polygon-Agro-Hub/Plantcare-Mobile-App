@@ -25,6 +25,7 @@ interface GlobalSearchModalProps {
   searchKeys?: string[];
   showSearch?: boolean;
   isLoading?: boolean;
+  placeholderTextColor?: string;
 }
 
 const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
@@ -42,6 +43,7 @@ const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
   searchKeys = ["label"],
   showSearch = true,
   isLoading = false,
+  placeholderTextColor = "#7F7F7F",
 }) => {
   const [searchValue, setSearchValue] = useState("");
   const [filteredData, setFilteredData] = useState(data);
@@ -114,8 +116,12 @@ const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
       }`}
       onPress={() => handleItemPress(item.value)}
     >
-      <Text className="text-base text-gray-800">{item.label}</Text>
-      {isSelected && <MaterialIcons name="check" size={20} color="#21202B" />}
+      <Text className="text-base text-gray-800 flex-1 mr-3">{item.label}</Text>
+      {isSelected && (
+        <View className="ml-1 justify-center items-center">
+          <MaterialIcons name="check" size={20} color="#21202B" />
+        </View>
+      )}
     </TouchableOpacity>
   );
 
@@ -130,15 +136,13 @@ const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
           placeholder={searchPlaceholder}
           value={searchValue}
           onChangeText={setSearchValue}
-          placeholderTextColor="#7F7F7F"
+          placeholderTextColor={placeholderTextColor}
           autoCapitalize="none"
           autoCorrect={false}
           style={{
             flex: 1,
             marginLeft: 8,
             fontSize: 16,
-            // iOS fix: explicit height + paddingVertical:0 prevents text clipping
-            // (descenders like g, j, y, f, p, q getting cut off)
             height: 50,
             paddingVertical: 0,
             includeFontPadding: false,

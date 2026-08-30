@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   FlatList,
   RefreshControl,
+  ScrollView,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
@@ -15,11 +16,6 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
-import LottieView from "lottie-react-native";
 import CustomHeader from "../common/CustomHeader";
 import NoData from "../common/NoData";
 import LoadingPage from "../common/LoadingPage";
@@ -190,14 +186,28 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
           <LoadingPage fullScreen />
         </View>
       ) : (
-        <View className="flex-1 px-6">
-          <Text className="font-medium text-base text-gray-600 mb-2">
-            {t("TransactionList.All")} ({transactions.length})
-          </Text>
+        <View className="flex-1">
+          {transactions.length > 0 && (
+            <View className="px-6">
+              <Text className="font-medium text-base text-gray-600 mb-2">
+                {t("TransactionList.All")} (
+                {String(transactions.length).padStart(2, "0")})
+              </Text>
+            </View>
+          )}
           <FlatList
             data={transactions}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={{ paddingVertical: 8, paddingBottom: 40 }}
+            contentContainerStyle={
+              transactions.length === 0
+                ? {
+                    flexGrow: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }
+                : { paddingVertical: 8, paddingBottom: 40 }
+            }
+            className="px-6"
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
@@ -211,7 +221,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
             ListFooterComponent={renderFooter}
             renderItem={({ item }) => (
               <TouchableOpacity
-                className="flex-row justify-between items-center p-4 bg-white border border-gray-200 mt-2"
+                className="flex-row justify-between  items-center p-5 bg-white border border-gray-200 mt-2"
                 style={{
                   shadowColor: "#000",
                   shadowOffset: { width: 0, height: 2 },
@@ -252,7 +262,9 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                     <Text className="text-gray-800 ">
                       # {t("TransactionList.of Items")}
                     </Text>
-                    <Text className="text-gray-800 ml-2">: {item.itemCount}</Text>
+                    <Text className="text-gray-800 ml-2">
+                      : {item.itemCount}
+                    </Text>
                   </View>
                   <View className="flex-row">
                     <Text className="text-gray-800 ">
@@ -271,7 +283,28 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
               </TouchableOpacity>
             )}
             ListEmptyComponent={
-              <NoData text={t("TransactionList.NoTransactionsFound") || "No transactions found"} />
+              <ScrollView
+                className="flex-1 mb-24"
+                contentContainerStyle={{
+                  flexGrow: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginBottom: 25,
+                }}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+              >
+                <NoData
+                  text={
+                    t("TransactionList.NoTransactionsFound") ||
+                    "No transactions found"
+                  }
+                />
+              </ScrollView>
             }
           />
         </View>

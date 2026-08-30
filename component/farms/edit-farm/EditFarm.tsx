@@ -9,6 +9,7 @@ import {
   Modal,
   Alert,
   BackHandler,
+  Platform,
 } from "react-native";
 import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import ImageData from "@/assets/jsons/farm/farm-image.json";
@@ -105,9 +106,10 @@ const EditFarm: React.FC<EditFarmProps> = ({
         return districtData
           .filter((item) => item && typeof item === "object" && item.name)
           .map((item) => ({
-            label: String(t(`District.${item.name}`)),
+            label: String(t(item.translationKey || `District.${item.name}`)),
             value: String(item.name),
-          }));
+          }))
+          .sort((a, b) => a.label.localeCompare(b.label));
       }
       return [];
     } catch (err) {
@@ -426,9 +428,24 @@ const EditFarm: React.FC<EditFarmProps> = ({
         },
       );
 
-      Alert.alert(t("Main.Success"), t("Farms.FarmUpdatedSuccessfully"), [
-        { text: t("Main.OK"), onPress: () => navigation.goBack() },
-      ]);
+     Alert.alert(t("Main.Success"), t("Farms.FarmUpdatedSuccessfully"), [
+  {
+    text: t("Main.OK"),
+    onPress: () => {
+      if (fromScreen === "FarmDetailsScreen") {
+        navigation.navigate("Main", {
+          screen: "FarmDetailsScreen",
+          params: { farmId },
+        });
+      } else {
+        navigation.navigate("Main", {
+          screen: "AddFarmList",
+          params: { farmId: farmId },
+        });
+      }
+    },
+  },
+]);
     } catch (err: any) {
       console.error("Error updating farm:", err);
 
@@ -589,47 +606,83 @@ const EditFarm: React.FC<EditFarmProps> = ({
               <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center gap-2">
                   <Text className="font-semibold">{t("Farms.ha")}</Text>
-                  <TextInput
-                    className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
-                    value={extentha}
-                    onChangeText={(text) =>
-                      setExtentha(validateNumericInput(text))
-                    }
-                    keyboardType="numeric"
-                    placeholder="0"
-                    placeholderTextColor="#9CA3AF"
-                    maxLength={5}
-                  />
+                  <View className="bg-[#F4F4F4] px-3 w-20 rounded-3xl h-[50px] justify-center">
+                    <TextInput
+                      className="text-black w-full"
+                      style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
+                      }}
+                      value={extentha}
+                      onChangeText={(text) =>
+                        setExtentha(validateNumericInput(text))
+                      }
+                      keyboardType="numeric"
+                      placeholder="0"
+                      placeholderTextColor="#9CA3AF"
+                      maxLength={5}
+                    />
+                  </View>
                 </View>
 
                 <View className="flex-row items-center gap-2">
                   <Text className="font-semibold">{t("Farms.ac")}</Text>
-                  <TextInput
-                    className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
-                    value={extentac}
-                    onChangeText={(text) =>
-                      setExtentac(validateNumericInput(text))
-                    }
-                    keyboardType="numeric"
-                    placeholder="0"
-                    placeholderTextColor="#9CA3AF"
-                    maxLength={5}
-                  />
+                  <View className="bg-[#F4F4F4] px-3 w-20 rounded-3xl h-[50px] justify-center">
+                    <TextInput
+                      className="text-black w-full"
+                      style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
+                      }}
+                      value={extentac}
+                      onChangeText={(text) =>
+                        setExtentac(validateNumericInput(text))
+                      }
+                      keyboardType="numeric"
+                      placeholder="0"
+                      placeholderTextColor="#9CA3AF"
+                      maxLength={5}
+                    />
+                  </View>
                 </View>
 
                 <View className="flex-row items-center gap-2">
                   <Text className="font-semibold">{t("Farms.p")}</Text>
-                  <TextInput
-                    className="bg-[#F4F4F4] p-2 w-20 px-4 rounded-3xl h-[50px] text-center"
-                    value={extentp}
-                    onChangeText={(text) =>
-                      setExtentp(validateNumericInput(text))
-                    }
-                    keyboardType="numeric"
-                    placeholder="0"
-                    placeholderTextColor="#9CA3AF"
-                    maxLength={5}
-                  />
+                  <View className="bg-[#F4F4F4] px-3 w-20 rounded-3xl h-[50px] justify-center">
+                    <TextInput
+                      className="text-black w-full"
+                      style={{
+                        fontSize: 14,
+                        paddingVertical: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        textAlign: "left",
+                        ...(Platform.OS === "android"
+                          ? { textAlignVertical: "center" }
+                          : {}),
+                      }}
+                      value={extentp}
+                      onChangeText={(text) =>
+                        setExtentp(validateNumericInput(text))
+                      }
+                      keyboardType="numeric"
+                      placeholder="0"
+                      placeholderTextColor="#9CA3AF"
+                      maxLength={5}
+                    />
+                  </View>
                 </View>
               </View>
             </View>
@@ -708,7 +761,7 @@ const EditFarm: React.FC<EditFarmProps> = ({
             <View>
               <View className="flex-row justify-between items-center mb-2">
                 <Text className="text-[#070707] font-medium">
-                  {t("Farms.NumberOfStaff")} *
+                  {t("Farms.NumberOfStaff")} 
                 </Text>
               </View>
               <TextInput

@@ -87,23 +87,11 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
   const getRoleText = (role: string) => {
     switch (role) {
       case "Manager":
-        return selectedLanguage === "si"
-          ? "කළමනාකරු"
-          : selectedLanguage === "ta"
-            ? "மேலாளர்"
-            : t("Farms.Manager");
+        return t("Farms.FarmManager") || t("Farms.Manager") || "Farm Manager";
       case "Supervisor":
-        return selectedLanguage === "si"
-          ? "අධීක්ෂක"
-          : selectedLanguage === "ta"
-            ? "மேற்பார்வையாளர்"
-            : t("Farms.Supervisor");
+        return t("Farms.FarmSupervisor") || t("Farms.Supervisor") || "Farm Supervisor";
       case "Laborer":
-        return selectedLanguage === "si"
-          ? "කම්කරුවා"
-          : selectedLanguage === "ta"
-            ? "தொழிலாளி"
-            : t("Farms.Worker");
+        return t("Farms.FarmLaborer") || t("Farms.Laborer") || "Farm Laborer";
       default:
         return role;
     }

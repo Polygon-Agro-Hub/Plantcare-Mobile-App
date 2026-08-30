@@ -133,14 +133,23 @@ const CropCard: React.FC<CropCardProps> = ({
 
         <View style={{ alignItems: "center", justifyContent: "center" }}>
           <Progress.Circle
-            size={50}
+            size={60}
             progress={progress}
             thickness={4}
             color="#4caf50"
             unfilledColor="#ddd"
             showsText={true}
-            formatText={() => `${Math.round(progress * 100)}%`}
-            textStyle={{ fontSize: 12 }}
+            formatText={() => {
+              const percentage = progress * 100;
+              if (percentage >= 100 || progress >= 1) {
+                return "100%";
+              }
+              if (percentage > 0 && percentage < 0.01) {
+                return "0.01%";
+              }
+              return `${percentage.toFixed(2)}%`;
+            }}
+            textStyle={{ fontSize: 10, color: "#4caf50", fontWeight: "bold" }}
           />
         </View>
       </TouchableOpacity>
@@ -324,8 +333,6 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      
-
       <CustomHeader
         title={t("Farms.Cultivation")}
         navigation={navigation}
@@ -346,11 +353,16 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
           });
         }}
       />
-      <View className="border border-[0.5px] border-gray-200" />
+      <View className=" border-[0.5px] border-gray-200" />
       {loading ? (
         <SkeletonLoader />
       ) : crops.length === 0 ? (
-          <NoData text={t("MyCrop.YouHaveNotEnrolledAnyCropsYet") || "You have not enrolled any crops yet"} />
+        <NoData
+          text={
+            t("MyCrop.YouHaveNotEnrolledAnyCropsYet") ||
+            "You have not enrolled any crops yet"
+          }
+        />
       ) : (
         <ScrollView
           contentContainerStyle={{ padding: 16 }}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,9 +7,7 @@ import {
   Alert,
   BackHandler,
   Dimensions,
-  StatusBar,
   Linking,
-  Platform,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -20,31 +18,33 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { LinearGradient } from "expo-linear-gradient";
-import * as Location from "expo-location";
+import { Camera } from "expo-camera";
 import CustomHeader from "../common/CustomHeader";
 
-type LocationAccessNavigationProp = StackNavigationProp<
+type CameraAccessNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "LocationAccess"
+  "CameraAccess"
 >;
 
-interface LocationAccessProps {
-  navigation: LocationAccessNavigationProp;
+interface CameraAccessProps {
+  // Optional now: when this is used standalone (e.g. embedded in a modal
+  // instead of as a navigator screen), there's no navigation prop to pass.
+  navigation?: CameraAccessNavigationProp;
   onPermissionGranted?: () => void;
   onClose?: () => void;
   returnScreen?: keyof RootStackParamList;
 }
 
-const locationImage = require("../../assets/images/permission/location.webp");
+const cameraImage = require("../../assets/images/permission/camera.webp");
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-const LocationAccess: React.FC<LocationAccessProps> = ({
+const CameraAccess: React.FC<CameraAccessProps> = ({
   navigation,
   onPermissionGranted,
   onClose,
   returnScreen = "Main",
 }) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const screenWidth = Dimensions.get("window").width;
   const [isLoading, setIsLoading] = useState(false);
 
@@ -52,14 +52,18 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
     imageHeight: screenWidth < 400 ? wp(55) : wp(50),
   };
 
+  const handleBack = () => {
+    if (onClose) {
+      onClose();
+    } else if (navigation) {
+      navigation.goBack();
+    }
+  };
+
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        if (onClose) {
-          onClose();
-        } else {
-          navigation.goBack();
-        }
+        handleBack();
         return true;
       };
       const subscription = BackHandler.addEventListener(
@@ -70,40 +74,39 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
     }, [navigation, onClose]),
   );
 
-  const requestLocationPermission = async () => {
+  const requestCameraPermission = async () => {
     setIsLoading(true);
     try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
+      const { status } = await Camera.requestCameraPermissionsAsync();
 
       if (status === "granted") {
-        // If callback is provided, call it, otherwise navigate normally
         if (onPermissionGranted) {
           onPermissionGranted();
-        } else {
+        } else if (navigation) {
           navigation.navigate(returnScreen as any);
         }
       } else if (status === "denied") {
         Alert.alert(
-          t("LocationAccess.PermissionDenied") || "Permission Denied",
+          t("CameraAccess.PermissionDenied") || "Permission Denied",
           t(
-            "LocationAccess.LocationAccessIsRequiredPleaseEnableItInSettings",
-          ) || "Location access is required. Please enable it in settings.",
+            "CameraAccess.CameraAccessIsRequiredPleaseEnableItInSettings",
+          ) || "Camera access is required. Please enable it in settings.",
           [
-            { text: t("Main.Cancel"), style: "cancel" },
+            { text: t("Main.Cancel") || "Cancel", style: "cancel" },
             {
-              text: t("LocationAccess.OpenSettings") || "Open Settings",
+              text: t("CameraAccess.OpenSettings") || "Open Settings",
               onPress: () => Linking.openSettings(),
             },
           ],
         );
       }
     } catch (error) {
-      console.error("Error requesting location permission:", error);
+      console.error("Error requesting camera permission:", error);
       Alert.alert(
         t("Main.Error") || "Error",
-        t("LocationAccess.UnableToRequestLocationPermissionPleaseTryAgain") ||
-          "Unable to request location permission. Please try again.",
-        [{ text: t("Main.OK") }],
+        t("CameraAccess.UnableToRequestCameraPermissionPleaseTryAgain") ||
+          "Unable to request camera permission. Please try again.",
+        [{ text: t("Main.OK") || "OK" }],
       );
     } finally {
       setIsLoading(false);
@@ -112,42 +115,41 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
 
   return (
     <View className="flex-1 bg-black">
-      <View className="mt-5">
       <CustomHeader
         title=""
         navigation={navigation}
-        onBackPress={onClose ? onClose : () => navigation.goBack()}
+        onBackPress={handleBack}
         transparent
       />
-      </View>
 
       <View className="flex-1 justify-center">
         <View className="items-center justify-center px-4">
-          {/* Location Image */}
+          {/* Camera Image */}
           <View className="mb-8">
             <Image
-              source={locationImage}
+              source={cameraImage}
               className="w-44 h-44"
               resizeMode="contain"
+              style={{ height: dynamicStyles.imageHeight }}
             />
           </View>
 
           {/* Title */}
           <Text className="text-white text-3xl font-extrabold mb-3 text-center tracking-wide">
-            {t("LocationAccess.LocationAccess")}
+            {t("CameraAccess.CameraAccess") || "Camera Access"}
           </Text>
 
           {/* Description */}
           <Text className="text-gray-400 text-center mb-10 px-6 text-base leading-6">
-            {t(
-              "LocationAccess.EnableLocationAccessToAccessLocationInformation",
-            )}
+            {t("CameraAccess.EnableCameraAccessToCapturePhotos") ||
+              "Enable camera access to capture photos and scan documents."}
           </Text>
 
           {/* Allow Button */}
           <TouchableOpacity
-            onPress={requestLocationPermission}
+            onPress={requestCameraPermission}
             activeOpacity={0.8}
+            disabled={isLoading}
           >
             <LinearGradient
               colors={["#009570", "#19D7B7"]}
@@ -163,7 +165,9 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
               }}
             >
               <Text className="text-black font-extrabold text-lg tracking-wider">
-                {t("LocationAccess.Allow")}
+                {isLoading
+                  ? t("CameraAccess.Requesting...") || "Requesting..."
+                  : t("CameraAccess.Allow") || "Allow"}
               </Text>
             </LinearGradient>
           </TouchableOpacity>
@@ -173,4 +177,4 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
   );
 };
 
-export default LocationAccess;
+export default CameraAccess;

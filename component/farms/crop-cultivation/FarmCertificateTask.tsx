@@ -10,8 +10,10 @@ import {
   Image,
   RefreshControl,
   BackHandler,
+  Platform,
 } from "react-native";
-import { Ionicons, AntDesign } from "@expo/vector-icons";
+import { Ionicons, AntDesign, Entypo } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImageManipulator from "expo-image-manipulator";
 import {
   useFocusEffect,
@@ -22,12 +24,14 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import moment from "moment";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/services/reducxStore";
 import CustomHeader from "../../common/CustomHeader";
 import LoadingPage from "@/component/common/LoadingPage";
+import CultivatedLandModal from "../../common/CultivatedLandModal";
 
 interface QuestionnaireItem {
   id: number;
@@ -60,101 +64,6 @@ interface CertificateStatus {
 type FarmCertificateTaskNavigationProp =
   NativeStackNavigationProp<RootStackParamList>;
 
-function CameraScreen({
-  onClose,
-}: {
-  onClose: (capturedImageUri: string | null) => void;
-}) {
-  const [facing, setFacing] = useState<CameraType>("back");
-  const [permission, requestPermission] = useCameraPermissions();
-  const [camera, setCamera] = useState<CameraView | null>(null);
-  const [isCameraReady, setIsCameraReady] = useState(false);
-  const { t } = useTranslation();
-
-  useEffect(() => {
-    if (permission?.granted === false) {
-      requestPermission();
-    }
-  }, [permission]);
-
-  if (permission === null) {
-    return (
-      <View className="flex-1 justify-center items-center bg-black">
-        <Text className="text-white text-lg mb-4">
-          {t("CropCalender.loadingCameraPermission")}
-        </Text>
-      </View>
-    );
-  }
-
-  const toggleCameraFacing = () => {
-    setFacing((current) => (current === "back" ? "front" : "back"));
-  };
-
-  const captureImage = async () => {
-    if (camera && isCameraReady) {
-      const photo = await camera.takePictureAsync();
-      onClose(photo?.uri ?? null);
-    }
-  };
-
-  return (
-    <View style={{ flex: 1, backgroundColor: "black" }}>
-      <CameraView
-        style={{ flex: 1 }}
-        facing={facing}
-        ref={(ref) => setCamera(ref)}
-        onCameraReady={() => setIsCameraReady(true)}
-      />
-      <View
-        style={{
-          position: "absolute",
-          bottom: 50,
-          left: 0,
-          right: 0,
-          flexDirection: "row",
-          justifyContent: "center",
-          paddingHorizontal: 24,
-          gap: 16,
-          zIndex: 1000,
-        }}
-      >
-        <TouchableOpacity
-          onPress={toggleCameraFacing}
-          style={{
-            backgroundColor: "#2AAD7A",
-            padding: 16,
-            borderRadius: 50,
-            marginBottom: 12,
-            flex: 1,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text style={{ color: "black", textAlign: "center" }}>{t("CropCalender.FlipCamera")}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={captureImage}
-          style={{
-            backgroundColor: "#2AAD7A",
-            padding: 16,
-            borderRadius: 50,
-            marginBottom: 12,
-            flex: 1,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text style={{ color: "black", fontWeight: "600", textAlign: "center" }}>
-            {t("CropCalender.Capture")}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-}
-
 const FarmCertificateTask: React.FC = () => {
   const route = useRoute();
   const navigation = useNavigation<FarmCertificateTaskNavigationProp>();
@@ -168,6 +77,13 @@ const FarmCertificateTask: React.FC = () => {
     srtNameTamil?: string;
   };
   const { t } = useTranslation();
+  const user = useSelector((state: RootState) => state.user.userData);
+  const userRole = (user?.role || "").toLowerCase();
+  const isStaff =
+    userRole === "manager" ||
+    userRole === "supervisor" ||
+    userRole === "laborer" ||
+    userRole === "laboror";
 
   const [certificateStatus, setCertificateStatus] =
     useState<CertificateStatus | null>(null);
@@ -182,30 +98,8 @@ const FarmCertificateTask: React.FC = () => {
   const [language, setLanguage] = useState("en");
 
   const [showCameraModal, setShowCameraModal] = useState(false);
-  const [showCamera, setShowCamera] = useState(false);
   const [selectedQuestion, setSelectedQuestion] =
     useState<QuestionnaireItem | null>(null);
-  const [capturedImage, setCapturedImage] = useState<string | null>(null);
-  const [countdown, setCountdown] = useState(3);
-  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
-
-  useEffect(() => {
-    if (capturedImage) {
-      setIsButtonEnabled(false);
-      setCountdown(3);
-      const timer = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            setIsButtonEnabled(true);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [capturedImage]);
 
   const fetchCertificateStatus = async () => {
     try {
@@ -274,10 +168,7 @@ const FarmCertificateTask: React.FC = () => {
       }
     } catch (err) {
       console.error("Error fetching certificate status:", err);
-      Alert.alert(
-        t("Main.Error"),
-        t("Farms.FailedToFetchCertificateTasks"),
-      );
+      Alert.alert(t("Main.Error"), t("Farms.FailedToFetchCertificateTasks"));
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -298,32 +189,43 @@ const FarmCertificateTask: React.FC = () => {
         (item.type === "Photo Proof" && item.uploadImage !== null);
 
       if (isCompleted) {
-        if (item.doneDate) {
-          const sriLankaOffset = 5.5 * 60 * 60 * 1000;
-          const currentTime = Date.now();
-          const storedTime = new Date(item.doneDate).getTime();
+        // If doneDate is missing on an already-completed item, we can't verify
+        // when it was completed, so default to locked (cannot remove) instead
+        // of allowing an unrestricted unclick. This keeps Tick Off items
+        // consistent with Photo Proof items after a refetch from the server.
+        if (!item.doneDate) {
+          Alert.alert(
+            t("Farms.CannotRemove"),
+            t("Farms.CompletionCannotBeRemovedAfter1Hour"),
+            [{ text: t("Main.OK") }],
+          );
+          return;
+        }
 
-          let timeDifferenceRaw = currentTime - storedTime;
+        const sriLankaOffset = 5.5 * 60 * 60 * 1000;
+        const currentTime = Date.now();
+        const storedTime = new Date(item.doneDate).getTime();
 
-          let completionTime = storedTime;
-          let needsAdjustment = false;
+        let timeDifferenceRaw = currentTime - storedTime;
 
-          if (timeDifferenceRaw < 0 || timeDifferenceRaw > 4 * 60 * 60 * 1000) {
-            completionTime = storedTime - sriLankaOffset;
-            needsAdjustment = true;
-          }
+        let completionTime = storedTime;
+        let needsAdjustment = false;
 
-          const timeDifference = currentTime - completionTime;
-          const oneHourInMs = 60 * 60 * 1000;
+        if (timeDifferenceRaw < 0 || timeDifferenceRaw > 4 * 60 * 60 * 1000) {
+          completionTime = storedTime - sriLankaOffset;
+          needsAdjustment = true;
+        }
 
-          if (timeDifference > oneHourInMs) {
-            Alert.alert(
-              t("Farms.CannotRemove"),
-              t("Farms.CompletionCannotBeRemovedAfter1Hour"),
-              [{ text: t("Main.OK") }],
-            );
-            return;
-          }
+        const timeDifference = currentTime - completionTime;
+        const oneHourInMs = 60 * 60 * 1000;
+
+        if (timeDifference > oneHourInMs) {
+          Alert.alert(
+            t("Farms.CannotRemove"),
+            t("Farms.CompletionCannotBeRemovedAfter1Hour"),
+            [{ text: t("Main.OK") }],
+          );
+          return;
         }
 
         Alert.alert(
@@ -371,10 +273,10 @@ const FarmCertificateTask: React.FC = () => {
             (prevItem) =>
               prevItem.id === item.id
                 ? {
-                  ...prevItem,
-                  tickResult: 1,
-                  doneDate: new Date().toISOString(),
-                }
+                    ...prevItem,
+                    tickResult: 1,
+                    doneDate: new Date().toISOString(),
+                  }
                 : prevItem,
           );
 
@@ -402,7 +304,10 @@ const FarmCertificateTask: React.FC = () => {
       }
     } catch (error) {
       console.error("Error updating questionnaire item:", error);
-      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"));
+      Alert.alert(
+        t("Main.Error"),
+        t("Main.SomethingWentWrongPleaseTryAgainlater"),
+      );
       setUploadingImageForItem(null);
     }
   };
@@ -434,11 +339,11 @@ const FarmCertificateTask: React.FC = () => {
             (prevItem) =>
               prevItem.id === item.id
                 ? {
-                  ...prevItem,
-                  uploadImage: null,
-                  tickResult: null,
-                  doneDate: null,
-                }
+                    ...prevItem,
+                    uploadImage: null,
+                    tickResult: null,
+                    doneDate: null,
+                  }
                 : prevItem,
           );
 
@@ -462,7 +367,7 @@ const FarmCertificateTask: React.FC = () => {
 
         Alert.alert(
           t("Main.Success"),
-          t("Farms.Completion removed successfully"),
+          t("Farms.CompletionRemovedSuccessfully"),
         );
       } else {
         throw new Error("Invalid response from server");
@@ -486,26 +391,27 @@ const FarmCertificateTask: React.FC = () => {
     }
   };
 
-  const handleSubmitPhoto = async () => {
-    if (!capturedImage || !selectedQuestion) return;
 
+
+  const handleUploadQuestionnairePhoto = async (
+    imageUri: string,
+    question: QuestionnaireItem,
+  ) => {
     try {
-      setUploadingImageForItem(selectedQuestion.id);
+      setUploadingImageForItem(question.id);
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
         Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"));
-        setUploadingImageForItem(null);
         return;
       }
 
       const manipulatedImage = await ImageManipulator.manipulateAsync(
-        capturedImage,
+        imageUri,
         [
           {
             resize: {
               width: 1024,
-              height: 1024,
             },
           },
         ],
@@ -516,7 +422,7 @@ const FarmCertificateTask: React.FC = () => {
         },
       );
 
-      const fileName = `questionnaire_${selectedQuestion.id}_${Date.now()}.jpg`;
+      const fileName = `questionnaire_${question.id}_${Date.now()}.jpg`;
       const fileType = "image/jpeg";
 
       const formData = new FormData();
@@ -525,12 +431,12 @@ const FarmCertificateTask: React.FC = () => {
         type: fileType,
         name: fileName,
       } as any);
-      formData.append("itemId", selectedQuestion.id.toString());
-      formData.append("slaveId", selectedQuestion.slaveId.toString());
+      formData.append("itemId", question.id.toString());
+      formData.append("slaveId", question.slaveId.toString());
       formData.append("farmId", farmId.toString());
 
       const response = await axios.post(
-        `${environment.API_BASE_URL}api/certificate/questionnaire-item/upload-image/${selectedQuestion.id}`,
+        `${environment.API_BASE_URL}api/certificate/questionnaire-item/upload-image/${question.id}`,
         formData,
         {
           headers: {
@@ -542,41 +448,8 @@ const FarmCertificateTask: React.FC = () => {
       );
 
       if (response.data.success) {
-        if (certificateStatus) {
-          const updatedItems = certificateStatus.questionnaireItems.map(
-            (prevItem) =>
-              prevItem.id === selectedQuestion.id
-                ? {
-                  ...prevItem,
-                  uploadImage: response.data.imageUrl,
-                  doneDate: new Date().toISOString(),
-                }
-                : prevItem,
-          );
-
-          const isAllCompleted = updatedItems.every(
-            (item: QuestionnaireItem) => {
-              if (item.type === "Tick Off") {
-                return item.tickResult === 1;
-              } else if (item.type === "Photo Proof") {
-                return item.uploadImage !== null;
-              }
-              return true;
-            },
-          );
-
-          setCertificateStatus({
-            ...certificateStatus,
-            questionnaireItems: updatedItems,
-            isAllCompleted: isAllCompleted,
-          });
-        }
-
         Alert.alert(t("Main.Success"), t("Farms.TaskCompleteSuccessfully"));
-
-        setShowCameraModal(false);
-        setCapturedImage(null);
-        setSelectedQuestion(null);
+        await fetchCertificateStatus();
       }
     } catch (error: any) {
       console.error("Error uploading questionnaire image:", error);
@@ -595,14 +468,6 @@ const FarmCertificateTask: React.FC = () => {
       Alert.alert(t("Main.Error"), errorMessage);
     } finally {
       setUploadingImageForItem(null);
-    }
-  };
-
-  const handleCameraClose = (imageUri: string | null) => {
-    setShowCamera(false);
-    if (imageUri) {
-      setCapturedImage(imageUri);
-      setShowCameraModal(true);
     }
   };
 
@@ -737,16 +602,18 @@ const FarmCertificateTask: React.FC = () => {
                     let validityText = t("Farms.ValidFor") + " ";
 
                     if (time.months > 0) {
-                      validityText += `${time.months} ${time.months === 1 ? t("Farms.Month") : t("Farms.Months")
-                        }`;
+                      validityText += `${time.months} ${
+                        time.months === 1 ? t("Farms.Month") : t("Farms.Months")
+                      }`;
                     }
 
                     if (time.days > 0) {
                       if (time.months > 0) {
                         validityText += " ";
                       }
-                      validityText += `${time.days} ${time.days === 1 ? t("Farms.Day") : t("Farms.Days")
-                        }`;
+                      validityText += `${time.days} ${
+                        time.days === 1 ? t("Farms.Day") : t("Farms.Days")
+                      }`;
                     }
 
                     return (
@@ -757,10 +624,11 @@ const FarmCertificateTask: React.FC = () => {
                   }
                 })()}
                 <Text
-                  className={`mt-1 font-medium ${certificateStatus.isAllCompleted
-                    ? "text-green-700"
-                    : "text-[#FF0000]"
-                    }`}
+                  className={`mt-1 font-medium ${
+                    certificateStatus.isAllCompleted
+                      ? "text-green-700"
+                      : "text-[#FF0000]"
+                  }`}
                 >
                   {certificateStatus.isAllCompleted
                     ? t("Farms.AllCompleted")
@@ -790,24 +658,26 @@ const FarmCertificateTask: React.FC = () => {
           return (
             <View
               key={item.id}
-              className={`rounded-2xl p-4 mb-3 border shadow-sm ${isPhotoProof && isCompleted && item.uploadImage
-                ? "bg-[#4B5563CC] border-[#4B5563CC]"
-                : "bg-white border-[#EFEFEF]"
-                }`}
+              className={`rounded-2xl p-4 mb-3 border shadow-sm ${
+                isPhotoProof && isCompleted && item.uploadImage
+                  ? "bg-[#4B5563CC] border-[#4B5563CC]"
+                  : "bg-white border-[#EFEFEF]"
+              }`}
               style={{
                 shadowColor: "#000000",
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.25,
-                shadowRadius: 4
+                shadowRadius: 4,
               }}
             >
               <View className="flex-row justify-between items-start mb-3">
                 <View className="flex-1 mr-3">
                   <Text
-                    className={`font-medium text-sm mb-1 ${isPhotoProof && isCompleted && item.uploadImage
-                      ? "text-gray-900"
-                      : "text-gray-900"
-                      }`}
+                    className={`font-medium text-sm mb-1 ${
+                      isPhotoProof && isCompleted && item.uploadImage
+                        ? "text-gray-900"
+                        : "text-gray-900"
+                    }`}
                   >
                     {language === "si"
                       ? item.qSinhala
@@ -822,10 +692,11 @@ const FarmCertificateTask: React.FC = () => {
                   <TouchableOpacity
                     onPress={() => handleQuestionnaireCheck(item)}
                     disabled={uploadingImageForItem === item.id}
-                    className={`w-8 h-8 rounded-full items-center justify-center ${isCompleted
-                      ? "bg-[#00A896] border-2 border-[#00A896]"
-                      : "bg-white border-2 border-[#00A896]"
-                      }`}
+                    className={`w-8 h-8 rounded-full items-center justify-center ${
+                      isCompleted
+                        ? "bg-[#00A896] border-2 border-[#00A896]"
+                        : "bg-white border-2 border-[#00A896]"
+                    }`}
                   >
                     {uploadingImageForItem === item.id ? (
                       <ActivityIndicator
@@ -843,12 +714,13 @@ const FarmCertificateTask: React.FC = () => {
 
               {isPhotoProof && isCompleted && item.uploadImage && (
                 <View
+                  pointerEvents="box-none"
                   style={{
                     position: "absolute",
                     top: 0,
-                    bottom: 0,
                     left: 0,
                     right: 0,
+                    bottom: 0,
                     justifyContent: "center",
                     alignItems: "center",
                     zIndex: 150,
@@ -856,16 +728,11 @@ const FarmCertificateTask: React.FC = () => {
                 >
                   <TouchableOpacity
                     onPress={() => handleViewUploadedImage(item)}
-                    style={{
-                      padding: 8,
-                    }}
+                    activeOpacity={0.7}
                   >
                     <Image
                       source={require("../../../assets/images/crop-cultivation/viewimage.webp")}
-                      style={{
-                        width: 30,
-                        height: 30,
-                      }}
+                      style={{ width: 32, height: 32 }}
                       resizeMode="contain"
                     />
                   </TouchableOpacity>
@@ -877,140 +744,22 @@ const FarmCertificateTask: React.FC = () => {
       </ScrollView>
 
       {/* Camera Modal */}
-      <Modal
-        visible={showCameraModal && !capturedImage}
-        animationType="fade"
-        transparent
-        onRequestClose={() => {
-          setShowCameraModal(false);
-          setSelectedQuestion(null);
-        }}
-      >
-        <View className="flex-1 bg-black/50 justify-center items-center px-6">
-          <View className="bg-white rounded-2xl p-8 items-center w-full">
-            <View className="p-2 bg-[#F6F6F6] rounded-xl">
-              <Ionicons name="camera" size={45} color="#000" />
-            </View>
-
-            <Text className="text-lg font-semibold mt-2 text-center">
-              {t("Farms.ClickAPhoto")}
-            </Text>
-
-            <Text className="text-gray-500 text-center mt-2 mb-6">
-              {t(
-                "Farms.PleaseTakeAPhotoOfTheCompletedWorkInTheField.",
-              )}
-            </Text>
-
-            <TouchableOpacity
-              onPress={() => setShowCamera(true)}
-              className="bg-black py-2 px-6 rounded-full h-[50px] items-center justify-center w-full"
-            >
-              <Text className="text-white text-base">
-                {t("CropCalender.OpenCamera")}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => {
-                setShowCameraModal(false);
-                setSelectedQuestion(null);
-              }}
-              className="mt-4"
-            >
-              <Text className="text-gray-400 text-sm">Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Camera Screen Modal */}
-      <Modal visible={showCamera} animationType="slide" transparent={false}>
-        <CameraScreen
-          onClose={(imageUri) => {
-            handleCameraClose(imageUri);
-          }}
-        />
-      </Modal>
-
-      {capturedImage && (
-        <Modal
-          visible={capturedImage !== null}
-          animationType="fade"
-          transparent
-          onRequestClose={() => {
-            setCapturedImage(null);
+      {showCameraModal && selectedQuestion && (
+        <CultivatedLandModal
+          visible={showCameraModal}
+          onClose={() => {
             setShowCameraModal(false);
+            setSelectedQuestion(null);
           }}
-        >
-          <View className="flex-1 bg-black/50 justify-center items-center px-6">
-            <View className="bg-white rounded-2xl p-6 shadow-lg items-center w-full">
-              <Text className="text-lg font-semibold mb-2">
-                {t("CropCalender.ImagePreview")}
-              </Text>
-
-              <Image
-                source={{ uri: capturedImage }}
-                style={{ width: 250, height: 250, marginBottom: 20 }}
-                resizeMode="contain"
-                className="mt-2"
-              />
-
-              <View className="gap-4 w-full">
-                {isButtonEnabled ? (
-                  <Text className="text-center font-semibold">
-                    {t("Farms.ReadyToSubmit")}
-                  </Text>
-                ) : (
-                  <Text className="text-gray-600 text-center text-lg">
-                    {countdown} {t("Farms.Seconds")}
-                  </Text>
-                )}
-
-                <TouchableOpacity
-                  onPress={handleSubmitPhoto}
-                  className={`py-2 px-6 rounded-full h-[50px] items-center justify-center ${
-                    isButtonEnabled ? "bg-[#353535]" : "bg-gray-400"
-                  }`}
-                  disabled={
-                    uploadingImageForItem === selectedQuestion?.id ||
-                    !isButtonEnabled
-                  }
-                >
-                  {uploadingImageForItem === selectedQuestion?.id ? (
-                    <ActivityIndicator size="small" color="#fff" />
-                  ) : (
-                    <Text className="text-white text-base text-center">
-                      {t("Farms.Submit")}
-                    </Text>
-                  )}
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => setShowCamera(true)}
-                  className="border-2 border-black bg-white py-2 px-6 rounded-full h-[50px] items-center justify-center"
-                >
-                  <Text className="text-black text-base text-center">
-                    {t("Farms.RetakePreviousPhoto")}
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => {
-                    setCapturedImage(null);
-                    setShowCameraModal(false);
-                    setSelectedQuestion(null);
-                  }}
-                  className="items-center mt-2"
-                >
-                  <Text className="text-gray-400 text-sm">
-                    {t("Main.Cancel")}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
+          onCaptureImage={async (imageUri) => {
+            const currentQ = selectedQuestion;
+            setShowCameraModal(false);
+            setSelectedQuestion(null);
+            await handleUploadQuestionnairePhoto(imageUri, currentQ);
+          }}
+          title={t("Farms.ClickAPhoto")}
+          subtitle={t("Farms.PleaseTakeAPhotoOfTheCompletedWorkInTheField.")}
+        />
       )}
 
       {/* Image Viewer Modal */}
@@ -1020,25 +769,43 @@ const FarmCertificateTask: React.FC = () => {
         animationType="fade"
         onRequestClose={() => setImageModalVisible(false)}
       >
-        <View className="flex-1 bg-[#FFFFFF] justify-center items-center">
-          <TouchableOpacity
-            onPress={() => setImageModalVisible(false)}
-            className="absolute top-10 right-5 z-10 bg-black/50 rounded-full p-2"
-          >
-            <Ionicons name="close" size={20} color="white" />
-          </TouchableOpacity>
+        <View className="flex-1 bg-white">
+          <CustomHeader
+            title=""
+            showBackButton={false}
+            transparent={true}
+            headerStyle={{ paddingTop: Platform.OS === "ios" ? 54 : 12 }}
+            rightComponent={
+              <TouchableOpacity onPress={() => setImageModalVisible(false)}>
+                <Ionicons
+                  name="close"
+                  size={25}
+                  color="black"
+                  style={{
+                    backgroundColor: "#F6F6F6CC",
+                    borderRadius: 50,
+                    padding: 10,
+                  }}
+                />
+              </TouchableOpacity>
+            }
+          />
 
-          <Text className="text-black text-center px-4 py-2 rounded-lg">
-            {t("Farms.UploadedByYou")}
-          </Text>
+          <View className="flex-1 justify-center items-center px-4">
+            <Text className="text-black text-center px-4 py-2 rounded-lg mb-2">
+              {isStaff
+                ? `${t("ImageViewerModal.UploadedBy")} ${t("ImageViewerModal.Owner") || "Owner"}`
+                : t("Farms.UploadedByYou")}
+            </Text>
 
-          {selectedImage && (
-            <Image
-              source={{ uri: selectedImage }}
-              className="w-full h-2/3"
-              resizeMode="contain"
-            />
-          )}
+            {selectedImage && (
+              <Image
+                source={{ uri: selectedImage }}
+                className="w-full h-2/3"
+                resizeMode="contain"
+              />
+            )}
+          </View>
         </View>
       </Modal>
     </View>

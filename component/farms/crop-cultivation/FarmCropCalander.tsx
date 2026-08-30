@@ -23,7 +23,8 @@ import moment from "moment";
 import { environment } from "@/environment/environment";
 import i18n from "@/i18n/i18n";
 import { useTranslation } from "react-i18next";
-import CultivatedLandModal from "../../crop-cultivation/CultivatedLandModal";
+import * as ImageManipulator from "expo-image-manipulator";
+import CultivatedLandModal from "../../common/CultivatedLandModal";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -38,10 +39,12 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../../../services/reducxStore";
 import ImageViewerModal from "../../common/ImageViewerModal";
 import CustomHeader from "@/component/common/CustomHeader";
+import LocationAccess from "../../permission/LocationAccess";
+import * as FileSystem from "expo-file-system/legacy";
 
 let Notifications: any = null;
 try {
-  if (Constants.appOwnership !== 'expo') {
+  if (Constants.appOwnership !== "expo") {
     Notifications = require("expo-notifications");
     Notifications.setNotificationHandler({
       handleNotification: async () => ({
@@ -132,6 +135,10 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
     useState(false);
 
   const [refreshing, setRefreshing] = useState(false);
+  const [pendingImageCrop, setPendingImageCrop] = useState<{
+    crop: CropItem;
+    globalIndex: number;
+  } | null>(null);
 
   const [startIndex, setStartIndex] = useState(0);
   const [showediticon, setShowEditIcon] = useState(false);
@@ -149,6 +156,11 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
   );
   const [certificationModalVisible, setCertificationModalVisible] =
     useState(false);
+  const [showLocationAccess, setShowLocationAccess] = useState<boolean>(false);
+  const [pendingLocationTask, setPendingLocationTask] = useState<{
+    globalIndex: number;
+    crop: CropItem;
+  } | null>(null);
 
   useEffect(() => {
     loadLanguage();
@@ -234,9 +246,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
         errorMessage = error.message;
       }
 
-      Alert.alert(t("Main.Error"), errorMessage, [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(t("Main.Error"), errorMessage, [{ text: t("Main.OK") }]);
     } finally {
       setTimeout(() => {
         setLoading(false);
@@ -294,6 +304,207 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
       cropId: ongoingCropId,
       farmId: farmId,
     });
+  };
+
+  // Closes the certification modal and navigates back to FarmDetailsScreen.
+  // Used by the chevron back button and the hardware back button so the
+  // modal never stays mounted/visible after navigating away.
+  const closeModalAndGoToFarmDetails = () => {
+    setCertificationModalVisible(false);
+    navigation.navigate("Main", {
+      screen: "FarmDetailsScreen",
+      params: { farmId: farmId },
+    });
+  };
+
+  const handleLocationPermissionGranted = async () => {
+    setShowLocationAccess(false);
+    if (pendingLocationTask) {
+      const { globalIndex, crop } = pendingLocationTask;
+      setPendingLocationTask(null);
+      await completeTask(globalIndex, crop);
+    }
+  };
+
+  const handleLocationIconPress = async (
+    currentCrop: CropItem,
+    globalIndex?: number,
+  ): Promise<boolean> => {
+    try {
+      const { status } = await Location.getForegroundPermissionsAsync();
+      if (status !== "granted") {
+        if (globalIndex !== undefined) {
+          setPendingLocationTask({ globalIndex, crop: currentCrop });
+        }
+        setShowLocationAccess(true);
+        return false;
+      }
+
+      setLoading(true);
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+
+      if (!location) {
+        setLoading(false);
+        Alert.alert(
+          t("Main.Error"),
+          t(
+            "Farms.UnableToFetchLocationAfterMultipleAttemptsPleaseTryAgainLater",
+          ),
+          [{ text: t("Main.OK") }],
+        );
+        return false;
+      }
+
+      const token = await AsyncStorage.getItem("userToken");
+      await axios.post(
+        `${environment.API_BASE_URL}api/crop/geo-location`,
+        {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          taskId: currentCrop.id,
+          onCulscropID: currentCrop.onCulscropID,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      return true;
+    } catch (error) {
+      console.error("Error processing location data:", error);
+      Alert.alert(
+        t("Main.Error"),
+        t(
+          "Farms.UnableToFetchLocationAfterMultipleAttemptsPleaseTryAgainLater",
+        ),
+        [{ text: t("Main.OK") }],
+      );
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const completeTask = async (globalIndex: number, currentCrop: CropItem) => {
+    try {
+      if (currentCrop.taskIndex === 1) {
+        const locationSuccess = await handleLocationIconPress(
+          currentCrop,
+          globalIndex,
+        );
+        if (!locationSuccess) {
+          return false;
+        }
+      }
+
+      const token = await AsyncStorage.getItem("userToken");
+      await axios.post(
+        `${environment.API_BASE_URL}api/crop/update-slave`,
+        {
+          id: currentCrop.id,
+          status: "completed",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const updatedChecked = [...checked];
+      updatedChecked[globalIndex] = true;
+      setChecked(updatedChecked);
+
+      const now = moment().toISOString();
+      const updatedTimestamps = [...timestamps];
+      updatedTimestamps[globalIndex] = now;
+      setTimestamps(updatedTimestamps);
+      await AsyncStorage.setItem(`taskTimestamp_${globalIndex}`, now);
+
+      const newLastCompletedIndex = updatedChecked.lastIndexOf(true);
+      setLastCompletedIndex(newLastCompletedIndex);
+
+      if (globalIndex < crops.length - 1) {
+        registerForPushNotificationsAsync();
+        await scheduleDailyNotification();
+      }
+      return true;
+    } catch (error: any) {
+      let msg = t("Main.SomethingWentWrongPleaseTryAgainlater");
+      if (error.response?.data?.message?.includes("You need to wait 6 hours")) {
+        msg = error.response.data.message;
+      }
+      Alert.alert(t("Main.Sorry"), msg, [{ text: t("Main.OK") }]);
+      return false;
+    }
+  };
+
+  const handleUploadCalendarTaskImage = async (
+    imageUri: string,
+    crop: CropItem,
+    globalIndex: number,
+    isLastImage: boolean,
+  ) => {
+    try {
+      setLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+
+      const manipResult = await ImageManipulator.manipulateAsync(
+        imageUri,
+        [{ resize: { width: 800 } }],
+        { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG },
+      );
+
+      const uploadResult = await FileSystem.uploadAsync(
+        `${environment.API_BASE_URL}api/auth/calendar-tasks/upload-image`,
+        manipResult.uri,
+        {
+          httpMethod: "POST",
+          uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+          fieldName: "image",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          parameters: {
+            slaveId: crop.id ? crop.id.toString() : "",
+            farmId: farmId ? farmId.toString() : "",
+            onCulscropID: crop.onCulscropID ? crop.onCulscropID.toString() : "",
+          },
+        },
+      );
+
+      if (uploadResult.status < 200 || uploadResult.status >= 300) {
+        let errMessage = "Upload failed";
+        try {
+          const parsed = JSON.parse(uploadResult.body);
+          if (parsed.message) errMessage = parsed.message;
+        } catch (_) {}
+        throw new Error(errMessage);
+      }
+
+      setTasksWithImages((prev) => new Set(prev).add(crop.id));
+
+      if (isLastImage) {
+        await completeTask(globalIndex, crop);
+        Alert.alert(
+          t("Main.Success"),
+          t("CropCalender.TaskStatusUpdatedSuccessfully"),
+          [{ text: t("Main.OK") }],
+        );
+      }
+    } catch (error: any) {
+      console.error("Error uploading calendar task image:", error);
+      Alert.alert(
+        t("Main.Error"),
+        t("CropCalender.UploadRetryFailed"),
+        [{ text: t("Main.OK") }],
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const fetchFarmCertificate = async (farmId: number) => {
@@ -383,9 +594,11 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
 
       setTimestamps(new Array(response.data.length).fill(""));
     } catch (error) {
-      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(
+        t("Main.Error"),
+        t("Main.SomethingWentWrongPleaseTryAgainlater"),
+        [{ text: t("Main.OK") }],
+      );
     }
   };
 
@@ -417,161 +630,99 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
 
     const newStatus = checked[globalIndex] ? "pending" : "completed";
 
-    let updateMessage = "";
+    if (newStatus === "pending") {
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        await axios.post(
+          `${environment.API_BASE_URL}api/crop/update-slave`,
+          { id: currentCrop.id, status: "pending" },
+          { headers: { Authorization: `Bearer ${token}` } },
+        );
 
-    if (newStatus === "pending" && updateMessage) {
-      await cancelScheduledNotification();
+        const updatedChecked = [...checked];
+        updatedChecked[globalIndex] = false;
+        setChecked(updatedChecked);
+
+        const updatedTimestamps = [...timestamps];
+        updatedTimestamps[globalIndex] = "";
+        setTimestamps(updatedTimestamps);
+        await AsyncStorage.removeItem(`taskTimestamp_${globalIndex}`);
+
+        setLastCompletedIndex(updatedChecked.lastIndexOf(true));
+        await cancelScheduledNotification();
+      } catch (error: any) {
+        Alert.alert(
+          t("Main.Sorry"),
+          error.response?.data?.message?.includes(
+            "You cannot change the status back to pending after 1 hour",
+          )
+            ? t(
+                "CropCalender.YouCantChangeTheStatusBackToPendingOnce1HourHasPassedAfterMarkingItAsCompleted",
+              )
+            : t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
+      }
+      return;
     }
 
+    let updateMessage = "";
+
     if (PreviousCrop && currentCrop) {
-      let PreviousCropDate;
-      if (new Date(PreviousCrop.createdAt) < new Date()) {
-        PreviousCropDate = new Date(PreviousCrop.startingDate);
-      } else {
-        PreviousCropDate = new Date(PreviousCrop.createdAt);
-      }
+      let PreviousCropDate =
+        new Date(PreviousCrop.createdAt) < new Date()
+          ? new Date(PreviousCrop.startingDate)
+          : new Date(PreviousCrop.createdAt);
 
       const TaskDays = currentCrop.days;
       const CurrentDate = new Date();
-
       const nextCropUpdate = new Date(
         PreviousCropDate.getTime() + TaskDays * 24 * 60 * 60 * 1000,
       );
-
       const nextCropUpdate2 = new Date(
         CurrentDate.getTime() + TaskDays * 24 * 60 * 60 * 1000,
       );
 
-      if (PreviousCrop) {
-        const data = {
-          taskID: globalIndex + 1,
-          date: nextCropUpdate.toISOString(),
-        };
-        await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
-      } else {
-        const data = {
-          taskID: globalIndex + 1,
-          date: nextCropUpdate2.toISOString(),
-        };
-        await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
-      }
+      const data = {
+        taskID: globalIndex + 1,
+        date: (PreviousCrop ? nextCropUpdate : nextCropUpdate2).toISOString(),
+      };
+      await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
 
       const remainingTime = nextCropUpdate.getTime() - CurrentDate.getTime();
       const remainingDays = Math.ceil(remainingTime / (24 * 60 * 60 * 1000));
 
       if (remainingDays > 0) {
-        updateMessage = `${t("CropCalender.YouHave")} ${t(
-          "CropCalender.DaysRemainingUntilTheNextUpdate",
-          {
-            date: remainingDays,
-          },
-        )}`;
-
-        Alert.alert(t("Main.Sorry"), updateMessage, [
-          { text: t("Main.OK") },
-        ]);
+        updateMessage = t("CropCalender.DaysRemainingUntilTheNextUpdate", {
+          date: remainingDays,
+          count: remainingDays,
+        });
+        Alert.alert(t("Main.Sorry"), updateMessage, [{ text: t("Main.OK") }]);
         return;
       }
-
-      if (!updateMessage) {
-        updateMessage = `${t("CropCalender.YouHave")} ${t(
-          "CropCalender.DaysRemainingUntilTheNextUpdate",
-          {
-            date: remainingDays,
-          },
-        )}`;
-      }
-    } else {
-      updateMessage = t("CropCalender.noCropData");
     }
-    if (currentCrop.taskIndex === 1 && newStatus === "completed") {
+
+    if (currentCrop.taskIndex === 1) {
       const TaskDays = NextCrop.days;
-      const CurrentDate = new Date();
-
       const nextCropUpdate2 = new Date(
-        CurrentDate.getTime() + TaskDays * 24 * 60 * 60 * 1000,
+        Date.now() + TaskDays * 24 * 60 * 60 * 1000,
       );
-      const data = {
-        taskID: globalIndex + 1,
-        date: nextCropUpdate2.toISOString(),
-      };
-      await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
+      await AsyncStorage.setItem(
+        "nextCropUpdate",
+        JSON.stringify({
+          taskID: globalIndex + 1,
+          date: nextCropUpdate2.toISOString(),
+        }),
+      );
     }
 
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      await axios.post(
-        `${environment.API_BASE_URL}api/crop/update-slave`,
-        {
-          id: currentCrop.id,
-          status: newStatus,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      const updatedChecked = [...checked];
-      updatedChecked[globalIndex] = !updatedChecked[globalIndex];
-      setChecked(updatedChecked);
-
-      const updatedTimestamps = [...timestamps];
-      if (updatedChecked[globalIndex]) {
-        const now = moment().toISOString();
-        updatedTimestamps[globalIndex] = now;
-        setTimestamps(updatedTimestamps);
-
-        await AsyncStorage.setItem(`taskTimestamp_${globalIndex}`, now);
-      } else {
-        updatedTimestamps[globalIndex] = "";
-        setTimestamps(updatedTimestamps);
-
-        await AsyncStorage.removeItem(`taskTimestamp_${globalIndex}`);
-      }
-
-      const newLastCompletedIndex = updatedChecked.lastIndexOf(true);
-      setLastCompletedIndex(newLastCompletedIndex);
-
-      if (currentCrop.taskIndex === 1 && newStatus === "completed") {
-        await handleLocationIconPress(currentCrop);
-      }
-      if (globalIndex < crops.length - 1) {
-        if (newStatus === "completed") {
-          registerForPushNotificationsAsync();
-          await scheduleDailyNotification();
-        }
-      }
-
-      if (updatedChecked[globalIndex] && currentCrop.reqImages > 0) {
-        setCultivatedLandModalVisible(true);
-      }
-    } catch (error: any) {
-      if (
-        error.response &&
-        error.response.data.message.includes(
-          "You cannot change the status back to pending after 1 hour",
-        )
-      ) {
-        Alert.alert(
-          t("Main.Sorry"),
-          t("CropCalender.YouCantChangeTheStatusBackToPendingOnce1HourHasPassedAfterMarkingItAsCompleted"),
-          [{ text: t("Main.OK") }],
-        );
-      } else if (
-        error.response &&
-        error.response.data.message.includes("You need to wait 6 hours")
-      ) {
-        Alert.alert(t("Main.Sorry"), updateMessage, [
-          { text: t("Main.OK") },
-        ]);
-      } else {
-        Alert.alert(t("Main.Sorry"), updateMessage, [
-          { text: t("Main.OK") },
-        ]);
-      }
+    if (currentCrop.reqImages > 0) {
+      setPendingImageCrop({ crop: currentCrop, globalIndex });
+      setCultivatedLandModalVisible(true);
+      return;
     }
+
+    await completeTask(globalIndex, currentCrop);
   };
 
   const checkTasksWithImages = async () => {
@@ -833,78 +984,16 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
     }
   }, [crops]);
 
-  const handleLocationIconPress = async (currentCrop: CropItem) => {
-    setLoading(true);
 
-    const maxRetries = 3;
-    const delayBetweenRetries = 2000;
-
-    const delay = (ms: number) =>
-      new Promise((resolve) => setTimeout(resolve, ms));
-
-    const getLocationWithRetry = async (
-      retries: number,
-    ): Promise<Location.LocationObject | null> => {
-      try {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
-          throw new Error("Location permission denied");
-        }
-
-        const location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.High,
-        });
-        return location;
-      } catch (error) {
-        console.error(`Attempt failed. Retries left: ${retries}`, error);
-
-        if (retries > 0) {
-          await delay(delayBetweenRetries);
-          return getLocationWithRetry(retries - 1);
-        } else {
-          return null;
-        }
-      }
-    };
-
-    try {
-      const location = await getLocationWithRetry(maxRetries);
-
-      if (!location) {
-        Alert.alert(
-          t("Main.Error"),
-          t("Farms.UnableToFetchLocationAfterMultipleAttemptsPleaseTryAgainLater"),
-          [{ text: t("Main.OK") }],
-        );
-        setLoading(false);
-        return;
-      }
-
-      const token = await AsyncStorage.getItem("userToken");
-      const response = await axios.post(
-        `${environment.API_BASE_URL}api/crop/geo-location`,
-        {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          taskId: currentCrop.id,
-          onCulscropID: currentCrop.onCulscropID,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-    } catch (error) {
-      console.error("Error processing location data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useFocusEffect(
     useCallback(() => {
       const handleBackPress = () => {
+        // If the certification modal is open, close it as part of
+        // navigating back so it doesn't stay mounted/visible.
+        if (certificationModalVisible) {
+          setCertificationModalVisible(false);
+        }
         navigation.navigate("Main", {
           screen: "FarmDetailsScreen",
           params: { farmId: farmId },
@@ -916,7 +1005,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
         handleBackPress,
       );
       return () => subscription.remove();
-    }, [navigation]),
+    }, [navigation, certificationModalVisible, farmId]),
   );
 
   const SkeletonLoader = () => {
@@ -967,11 +1056,9 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(
-          t("Main.Error"),
-          t("Farms.NoAuthenticationTokenFound"),
-          [{ text: t("Main.OK") }],
-        );
+        Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"), [
+          { text: t("Main.OK") },
+        ]);
         setLoading(false);
         return;
       }
@@ -995,7 +1082,12 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
             uri: taskImage.image,
             title: `Task ${crop.taskIndex} - Photo ${index + 1}`,
             description: crop.taskDescriptionEnglish,
-            uploadedBy: taskImage.uploadedBy,
+            uploadedBy:
+              taskImage.uploadedBy ||
+              taskImage.userName ||
+              taskImage.name ||
+              taskImage.uploaderName ||
+              taskImage.user_name,
             createdAt: taskImage.createdAt,
             from: "crop",
           }),
@@ -1007,7 +1099,10 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
       } else {
         Alert.alert(
           t("CropCalender.No Images Yet"),
-          t("CropCalender.YouHaventUploadedAnyImagesForTaskYetCompleteThisTaskByTakingPhotosToTrackYourProgress", { taskIndex: crop.taskIndex }),
+          t(
+            "CropCalender.YouHaventUploadedAnyImagesForTaskYetCompleteThisTaskByTakingPhotosToTrackYourProgress",
+            { taskIndex: crop.taskIndex },
+          ),
           [
             {
               text: t("Main.OK"),
@@ -1054,14 +1149,12 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
 
   return (
     <View className="flex-1">
-      
-
       {!hasCertificate && (
         <Modal
           animationType="slide"
           transparent={true}
           visible={certificationModalVisible}
-          onRequestClose={handleReject}
+          onRequestClose={closeModalAndGoToFarmDetails}
           className="mt-20"
           statusBarTranslucent={false}
         >
@@ -1075,14 +1168,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
           >
             <View className="bg-white rounded-b-3xl shadow-2xl">
               <View className="flex-row items-center justify-between px-5 pt-4 pb-4 ">
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate("Main", {
-                      screen: "FarmDetailsScreen",
-                      params: { farmId: farmId },
-                    })
-                  }
-                >
+                <TouchableOpacity onPress={closeModalAndGoToFarmDetails}>
                   <Ionicons
                     name="chevron-back-outline"
                     size={30}
@@ -1094,13 +1180,15 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
                 </Text>
                 <View>
                   <TouchableOpacity
-                    onPress={() =>
+                    onPress={() => {
+                      setCertificationModalVisible(false);
                       navigation.navigate("CropEnrol", {
                         status: "edit",
                         onCulscropID: crops[0]?.onCulscropID,
                         cropId,
-                      })
-                    }
+                        farmId
+                      });
+                    }}
                   >
                     <Ionicons name="pencil" size={20} color="black" />
                   </TouchableOpacity>
@@ -1141,24 +1229,29 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
         </Modal>
       )}
 
-      {isCultivatedLandModalVisible &&
-        lastCompletedIndex !== null &&
-        crops[lastCompletedIndex] && (
-          <CultivatedLandModal
-            visible={isCultivatedLandModalVisible}
-            onClose={(success) => {
+      {isCultivatedLandModalVisible && pendingImageCrop && (
+        <CultivatedLandModal
+          visible={isCultivatedLandModalVisible}
+          onClose={() => {
+            setCultivatedLandModalVisible(false);
+            setPendingImageCrop(null);
+          }}
+          onCaptureImage={async (imageUri, isLastImage) => {
+            const { crop, globalIndex } = pendingImageCrop;
+            if (isLastImage) {
               setCultivatedLandModalVisible(false);
-              if (success && lastCompletedIndex !== null) {
-                const cropId = crops[lastCompletedIndex].id;
-                setTasksWithImages((prev) => new Set(prev).add(cropId));
-              }
-            }}
-            cropId={crops[lastCompletedIndex].id}
-            farmId={farmId}
-            onCulscropID={crops[lastCompletedIndex].onCulscropID}
-            requiredImages={crops[lastCompletedIndex].reqImages}
-          />
-        )}
+              setPendingImageCrop(null);
+            }
+            await handleUploadCalendarTaskImage(
+              imageUri,
+              crop,
+              globalIndex,
+              isLastImage,
+            );
+          }}
+          requiredImages={pendingImageCrop.crop.reqImages || 1}
+        />
+      )}
 
       <View style={{ position: "relative" }}>
         <CustomHeader
@@ -1188,6 +1281,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
                   status: "edit",
                   onCulscropID: crops[0]?.onCulscropID,
                   cropId,
+                  farmId
                 })
               }
             >
@@ -1225,13 +1319,14 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
           {currentTasks.map((crop, index) => (
             <View
               key={index}
-              className={`flex-1 m-6 mb-[-10] shadow border-gray-200 border-[1px] rounded-[15px] ${checked[startIndex + index] &&
+              className={`flex-1 m-6 mb-[-10] shadow border-gray-200 border-[1px] rounded-[15px] ${
+                checked[startIndex + index] &&
                 (user?.role === "Owner" ||
                   user?.role === "Manager" ||
                   user?.role === "Supervisor")
-                ? "bg-gray-600/80"
-                : "bg-white"
-                }`}
+                  ? "bg-gray-600/80"
+                  : "bg-white"
+              }`}
             >
               <View className="flex-row">
                 <View>
@@ -1253,8 +1348,8 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
                       style={{
                         borderWidth:
                           checked[startIndex + index] ||
-                            (lastCompletedIndex !== null &&
-                              startIndex + index === lastCompletedIndex + 1)
+                          (lastCompletedIndex !== null &&
+                            startIndex + index === lastCompletedIndex + 1)
                             ? 0
                             : 2,
                         borderColor: "#00A896",
@@ -1266,7 +1361,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
                         backgroundColor: checked[startIndex + index]
                           ? "#00A896"
                           : lastCompletedIndex !== null &&
-                            startIndex + index === lastCompletedIndex + 1
+                              startIndex + index === lastCompletedIndex + 1
                             ? "black"
                             : "transparent",
                       }}
@@ -1278,7 +1373,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
                           checked[startIndex + index]
                             ? "white"
                             : lastCompletedIndex !== null &&
-                              startIndex + index === lastCompletedIndex + 1
+                                startIndex + index === lastCompletedIndex + 1
                               ? "white"
                               : "black"
                         }
@@ -1384,6 +1479,25 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
               setSelectedImageIndex(0);
             }}
           />
+
+          {/* Location Access Modal */}
+          <Modal
+            visible={showLocationAccess}
+            animationType="slide"
+            onRequestClose={() => {
+              setShowLocationAccess(false);
+              setPendingLocationTask(null);
+            }}
+          >
+            <LocationAccess
+              navigation={navigation as any}
+              onPermissionGranted={handleLocationPermissionGranted}
+              onClose={() => {
+                setShowLocationAccess(false);
+                setPendingLocationTask(null);
+              }}
+            />
+          </Modal>
           {startIndex + tasksPerPage < crops.length && (
             <TouchableOpacity
               className="py-2 pb-8 px-4 flex-row items-center justify-center"

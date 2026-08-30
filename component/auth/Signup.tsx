@@ -11,6 +11,7 @@ import {
   Keyboard,
   ActivityIndicator,
   BackHandler,
+  SafeAreaView,
 } from "react-native";
 import { Platform } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -67,12 +68,14 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
   const nicInputRef = useRef<TextInput>(null);
   const { t, i18n } = useTranslation();
 
-  const districtItems = districtData.map((d) => ({
-    label: t(d.translationKey),
-    value: d.name,
-    districtId: d.id,
-    districtName: d.name,
-  }));
+  const districtItems = districtData
+    .map((d) => ({
+      label: t(d.translationKey),
+      value: d.name,
+      districtId: d.id,
+      districtName: d.name,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
 
   useEffect(() => {
     const selectedLanguage = t("Main.LNG");
@@ -86,7 +89,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
     React.useCallback(() => {
       const onBackPress = () => {
         AsyncStorage.removeItem("@user_language");
-        navigation.navigate("Lanuage");
+        navigation.navigate("Signin");
         return true;
       };
       const subscription = BackHandler.addEventListener(
@@ -356,11 +359,11 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
 
       let otpMessage = "";
       if (i18n.language === "en") {
-        otpMessage = `Thank you for joining Polygon Agro!\nYour GoviCare OTP is {{code}}`;
+        otpMessage = `Thank you for joining Polygon Holdings!\nYour GoviCare OTP is {{code}}`;
       } else if (i18n.language === "si") {
-        otpMessage = `Polygon Agro සමඟ සම්බන්ධ වීම ගැන ඔබට ස්තූතියි!\nඔබේ GoviCare OTP මුරපදය {{code}} වේ.`;
+        otpMessage = `Polygon Holdings සමඟ සම්බන්ධ වීම ගැන ඔබට ස්තූතියි!\nඔබේ GoviCare OTP මුරපදය {{code}} වේ.`;
       } else if (i18n.language === "ta") {
-        otpMessage = `Polygon Agro ல் இணைந்ததற்கு நன்றி!\nஉங்கள் GoviCare OTP {{code}} ஆகும்.`;
+        otpMessage = `Polygon Holdings ல் இணைந்ததற்கு நன்றி!\nஉங்கள் GoviCare OTP {{code}} ஆகும்.`;
       }
 
       const otpResponse = await axios.post(
@@ -413,59 +416,175 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-      style={{ flex: 1, backgroundColor: "white" }}
-      enabled
-    >
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        keyboardShouldPersistTaps="handled"
+    <View style={{ flex: 1, backgroundColor: "white" }}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        style={{ flex: 1, backgroundColor: "white" }}
+        enabled
       >
-        <Image
-          source={Top}
-          className="w-[100%] -mt-[45%] absolute"
-          resizeMode="contain"
-        />
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <Image
+            source={Top}
+            className="w-[100%] -mt-[45%] absolute"
+            resizeMode="contain"
+          />
 
-        <View style={{ flex: 1, zIndex: 2 }}>
-          <View className="pt-0">
-            <CustomHeader
-              title={""}
-              navigation={navigation}
-              onBackPress={async () => {
-                try {
-                  await AsyncStorage.removeItem("@user_language");
-                  navigation.navigate("Signin");
-                } catch (e) {
-                  console.error("Error clearing language:", e);
-                }
-              }}
-              transparent
-            />
-          </View>
+          <View style={{ flex: 1, zIndex: 2 }}>
+            <View className="pt-0">
+              <CustomHeader
+                title={""}
+                navigation={navigation}
+                onBackPress={async () => {
+                  try {
+                    await AsyncStorage.removeItem("@user_language");
+                    navigation.navigate("Signin");
+                  } catch (e) {
+                    console.error("Error clearing language:", e);
+                  }
+                }}
+                transparent
+              />
+            </View>
 
-          <View className="flex-1 items-center">
-            <Text className="font-bold text-[24px]">
-              {t("SignUp.CreateAccount")}
-            </Text>
+            <View className="flex-1 items-center">
+              <Text className="font-bold text-[24px]">
+                {t("SignUp.CreateAccount")}
+              </Text>
 
-            <View className="flex-1 w-full px-6">
-              <View className="pt-6">
-                <Text className="text-[#070707] text-sm mb-2">
-                  {t("Inputs.MobileNumber")}
-                </Text>
-                <View className="mt-2 flex-row items-center gap-2">
+              <View className="flex-1 w-full px-6">
+                <View className="pt-6">
+                  <Text className="text-[#070707] text-sm mb-2">
+                    {t("Inputs.MobileNumber")}
+                  </Text>
+                  <View className="mt-2 flex-row items-center gap-2">
+                    <TouchableOpacity
+                      onPress={() => {
+                        Keyboard.dismiss();
+                        setCountryModalVisible(true);
+                      }}
+                      className="bg-[#F4F4F4] rounded-3xl flex-row items-center justify-center px-3 h-[50px] min-w-[100px]"
+                    >
+                      <Text className="text-[18px]">{selectedCountryFlag}</Text>
+                      <Text className="text-[#333] text-center text-[13px] ml-1">
+                        {selectedCountryCode}
+                      </Text>
+                      <MaterialIcons
+                        name="arrow-drop-down"
+                        size={24}
+                        color="#666"
+                      />
+                    </TouchableOpacity>
+
+                    <TextInput
+                      placeholder={t("7X XXXXXXX")}
+                      value={mobileNumber}
+                      onChangeText={handleMobileNumberChange}
+                      keyboardType="phone-pad"
+                      maxLength={10}
+                      placeholderTextColor="#585858"
+                      autoFocus
+                      className="flex-1 bg-[#F4F4F4] rounded-3xl py-3 px-4 h-[50px]"
+                      underlineColorAndroid="transparent"
+                      cursorColor="#141415ff"
+                    />
+                  </View>
+                </View>
+
+                {error ? (
+                  <Text className="text-red-500 text-[12px] mt-2">{error}</Text>
+                ) : null}
+
+                <View>
+                  <Text className="text-[#070707] text-sm mt-2">
+                    {t("Inputs.FirstName")}
+                  </Text>
+                  <TextInput
+                    placeholder={t("SignUp.EnterFirstNameHere")}
+                    placeholderTextColor="#585858"
+                    underlineColorAndroid="transparent"
+                    cursorColor="#141415ff"
+                    value={firstName}
+                    onChangeText={(text) =>
+                      handleFirstNameChange(
+                        text.replace(/\b\w/g, (c) => c.toUpperCase()),
+                      )
+                    }
+                    maxLength={20}
+                    autoComplete="given-name"
+                    className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px]"
+                  />
+
+                  {firstNameError ? (
+                    <Text className="text-red-500 text-[12px] mb-4">
+                      {firstNameError}
+                    </Text>
+                  ) : null}
+
+                  <Text className="text-[#070707] text-sm mt-2">
+                    {t("Inputs.LastName")}
+                  </Text>
+                  <TextInput
+                    placeholder={t("SignUp.EnterLastNameHere")}
+                    value={lastName}
+                    placeholderTextColor="#585858"
+                    underlineColorAndroid="transparent"
+                    cursorColor="#141415ff"
+                    onChangeText={(text) =>
+                      handleLastNameChange(
+                        text.replace(/\b\w/g, (c) => c.toUpperCase()),
+                      )
+                    }
+                    maxLength={20}
+                    autoComplete="family-name"
+                    className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px]"
+                  />
+
+                  {lastNameError ? (
+                    <Text className="text-red-500 text-[12px] mb-4">
+                      {lastNameError}
+                    </Text>
+                  ) : null}
+
+                  <Text className="text-[#070707] text-sm mt-2">
+                    {t("Inputs.NICNumber")}
+                  </Text>
+                  <TextInput
+                    ref={nicInputRef}
+                    placeholder={t("SignUp.EnterNICHere")}
+                    value={nic}
+                    underlineColorAndroid="transparent"
+                    cursorColor="#141415ff"
+                    maxLength={12}
+                    onChangeText={handleNicChange}
+                    placeholderTextColor="#585858"
+                    className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px]"
+                  />
+                  {ere ? (
+                    <Text className="text-red-500 text-[12px] mb-4">{ere}</Text>
+                  ) : null}
+
+                  <Text className="text-[#070707] text-sm mt-2">
+                    {t("SignUp.District")}
+                  </Text>
                   <TouchableOpacity
                     onPress={() => {
                       Keyboard.dismiss();
-                      setCountryModalVisible(true);
+                      setDistrictModalVisible(true);
                     }}
-                    className="bg-[#F4F4F4] rounded-3xl flex-row items-center justify-center px-3 h-[50px] min-w-[100px]"
+                    className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px] flex-row items-center justify-between"
                   >
-                    <Text className="text-[18px]">{selectedCountryFlag}</Text>
-                    <Text className="text-[#333] text-center text-[13px] ml-1">
-                      {selectedCountryCode}
+                    <Text
+                      className="text-[14px] flex-1"
+                      style={{ color: district ? "#070707" : "#585858" }}
+                    >
+                      {district
+                        ? (districtItems.find((d) => d.value === district)
+                            ?.label ?? district)
+                        : t("SignUp.SelectYourDistrict")}
                     </Text>
                     <MaterialIcons
                       name="arrow-drop-down"
@@ -473,302 +592,194 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
                       color="#666"
                     />
                   </TouchableOpacity>
-
-                  <TextInput
-                    placeholder={t("7X XXXXXXX")}
-                    value={mobileNumber}
-                    onChangeText={handleMobileNumberChange}
-                    keyboardType="phone-pad"
-                    maxLength={10}
-                    placeholderTextColor="#585858"
-                    autoFocus
-                    className="flex-1 bg-[#F4F4F4] rounded-3xl py-3 px-4 h-[50px]"
-                    underlineColorAndroid="transparent"
-                    cursorColor="#141415ff"
-                  />
                 </View>
-              </View>
 
-              {error ? (
-                <Text className="text-red-500 text-[12px] mt-2">{error}</Text>
-              ) : null}
-
-              <View>
-                <Text className="text-[#070707] text-sm mt-2">
-                  {t("Inputs.FirstName")}
-                </Text>
-                <TextInput
-                  placeholder={t("SignUp.EnterFirstNameHere")}
-                  placeholderTextColor="#585858"
-                  underlineColorAndroid="transparent"
-                  cursorColor="#141415ff"
-                  value={firstName}
-                  onChangeText={(text) =>
-                    handleFirstNameChange(
-                      text.replace(/\b\w/g, (c) => c.toUpperCase()),
-                    )
-                  }
-                  maxLength={20}
-                  autoComplete="given-name"
-                  className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px]"
-                />
-
-                {firstNameError ? (
-                  <Text className="text-red-500 text-[12px] mb-4">
-                    {firstNameError}
-                  </Text>
-                ) : null}
-
-                <Text className="text-[#070707] text-sm mt-2">
-                  {t("Inputs.LastName")}
-                </Text>
-                <TextInput
-                  placeholder={t("SignUp.EnterLastNameHere")}
-                  value={lastName}
-                  placeholderTextColor="#585858"
-                  underlineColorAndroid="transparent"
-                  cursorColor="#141415ff"
-                  onChangeText={(text) =>
-                    handleLastNameChange(
-                      text.replace(/\b\w/g, (c) => c.toUpperCase()),
-                    )
-                  }
-                  maxLength={20}
-                  autoComplete="family-name"
-                  className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px]"
-                />
-
-                {lastNameError ? (
-                  <Text className="text-red-500 text-[12px] mb-4">
-                    {lastNameError}
-                  </Text>
-                ) : null}
-
-                <Text className="text-[#070707] text-sm mt-2">
-                  {t("Inputs.NICNumber")}
-                </Text>
-                <TextInput
-                  ref={nicInputRef}
-                  placeholder={t("SignUp.EnterNICHere")}
-                  value={nic}
-                  underlineColorAndroid="transparent"
-                  cursorColor="#141415ff"
-                  maxLength={12}
-                  onChangeText={handleNicChange}
-                  placeholderTextColor="#585858"
-                  className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px]"
-                />
-                {ere ? (
-                  <Text className="text-red-500 text-[12px] mb-4">{ere}</Text>
-                ) : null}
-
-                <Text className="text-[#070707] text-sm mt-2">
-                  {t("SignUp.District")}
-                </Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    Keyboard.dismiss();
-                    setDistrictModalVisible(true);
-                  }}
-                  className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px] flex-row items-center justify-between"
-                >
-                  <Text
-                    className="text-[14px] flex-1"
-                    style={{ color: district ? "#070707" : "#585858" }}
-                  >
-                    {district
-                      ? (districtItems.find((d) => d.value === district)
-                          ?.label ?? district)
-                      : t("SignUp.SelectYourDistrict")}
-                  </Text>
-                  <MaterialIcons
-                    name="arrow-drop-down"
-                    size={24}
-                    color="#666"
-                  />
-                </TouchableOpacity>
-              </View>
-
-              <View className="flex items-center justify-center mt-6">
-                {language === "en" ||
-                (language !== "si" && language !== "ta") ? (
-                  <View className="flex-row justify-center flex-wrap">
-                    <Text className="text-sm text-black font-thin">See </Text>
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("TermsConditions")}
-                    >
-                      <Text className="text-sm text-black font-bold underline">
-                        Terms & Conditions
-                      </Text>
-                    </TouchableOpacity>
-                    <Text className="text-sm text-black font-thin"> and </Text>
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("PrivacyPolicy")}
-                    >
-                      <Text className="text-sm text-black font-bold underline">
-                        Privacy Policy
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                ) : language === "si" ? (
-                  <View className="flex-row justify-center flex-wrap">
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("TermsConditions")}
-                    >
-                      <Text
-                        className="text-black font-bold underline"
-                        style={{ fontSize: adjustFontSize(12) }}
+                <View className="flex items-center justify-center mt-6">
+                  {language === "en" ||
+                  (language !== "si" && language !== "ta") ? (
+                    <View className="flex-row justify-center flex-wrap">
+                      <Text className="text-sm text-black font-thin">See </Text>
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate("TermsConditions")}
                       >
-                        නියමයන් සහ කොන්දේසි
+                        <Text className="text-sm text-black font-bold underline">
+                          Terms & Conditions
+                        </Text>
+                      </TouchableOpacity>
+                      <Text className="text-sm text-black font-thin">
+                        {" "}
+                        and{" "}
                       </Text>
-                    </TouchableOpacity>
-                    <Text
-                      className="text-black font-thin"
-                      style={{
-                        fontSize: adjustFontSize(12),
-                        marginHorizontal: 2,
-                      }}
-                    >
-                      {""} සහ
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("PrivacyPolicy")}
-                    >
-                      <Text
-                        className="text-black font-bold underline"
-                        style={{ fontSize: adjustFontSize(12) }}
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate("PrivacyPolicy")}
                       >
-                        {""} රහස්‍යතා ප්‍රතිපත්තිය
-                      </Text>
-                    </TouchableOpacity>
-                    <Text
-                      className="text-black font-thin"
-                      style={{ fontSize: adjustFontSize(12), marginLeft: 2 }}
-                    >
-                      {""} බලන්න
-                    </Text>
-                  </View>
-                ) : (
-                  <View className="flex-row justify-center flex-wrap">
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("TermsConditions")}
-                    >
-                      <Text
-                        className="text-black font-bold"
-                        style={{ fontSize: adjustFontSize(12) }}
+                        <Text className="text-sm text-black font-bold underline">
+                          Privacy Policy
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  ) : language === "si" ? (
+                    <View className="flex-row justify-center flex-wrap">
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate("TermsConditions")}
                       >
-                        விதிமுறைகள் மற்றும் நிபந்தனைகள்
-                      </Text>
-                    </TouchableOpacity>
-                    <Text
-                      className="text-black font-thin"
-                      style={{
-                        fontSize: adjustFontSize(12),
-                        marginHorizontal: 2,
-                      }}
-                    >
-                      {""} மற்றும்
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("PrivacyPolicy")}
-                    >
+                        <Text
+                          className="text-black font-bold underline"
+                          style={{ fontSize: adjustFontSize(12) }}
+                        >
+                          නියමයන් සහ කොන්දේසි
+                        </Text>
+                      </TouchableOpacity>
                       <Text
-                        className="text-black font-bold"
-                        style={{ fontSize: adjustFontSize(12) }}
+                        className="text-black font-thin"
+                        style={{
+                          fontSize: adjustFontSize(12),
+                          marginHorizontal: 2,
+                        }}
                       >
-                        {""} தனியுரிமைக் கொள்கை
+                        {""} සහ
                       </Text>
-                    </TouchableOpacity>
-                    <Text
-                      className="text-black font-thin"
-                      style={{ fontSize: adjustFontSize(12), marginLeft: 2 }}
-                    >
-                      {""} பார்க்க
-                    </Text>
-                  </View>
-                )}
-              </View>
-
-              <View className="flex-row items-center justify-center p-6">
-                <Checkbox
-                  value={isChecked}
-                  onValueChange={setIsChecked}
-                  color={isChecked ? "#00A896" : undefined}
-                />
-                <Text
-                  className="text-[#282828] ml-2 font-semibold"
-                  style={{ fontSize: adjustFontSize(12) }}
-                >
-                  {t("Membership.IAgreeToTheTerms&Conditions")}
-                </Text>
-              </View>
-              <View className="mt-8 w-full px-6">
-                <TouchableOpacity
-                  onPress={handleRegister}
-                  disabled={isButtonDisabled || !isChecked}
-                  activeOpacity={0.8}
-                  className={`w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 ${
-                    isButtonDisabled || !isChecked
-                      ? "bg-[#9CA3AF]"
-                      : "bg-[#353535]"
-                  }`}
-                >
-                  {isLoading ? (
-                    <ActivityIndicator size="small" color="#fff" />
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate("PrivacyPolicy")}
+                      >
+                        <Text
+                          className="text-black font-bold underline"
+                          style={{ fontSize: adjustFontSize(12) }}
+                        >
+                          {""} රහස්‍යතා ප්‍රතිපත්තිය
+                        </Text>
+                      </TouchableOpacity>
+                      <Text
+                        className="text-black font-thin"
+                        style={{ fontSize: adjustFontSize(12), marginLeft: 2 }}
+                      >
+                        {""} බලන්න
+                      </Text>
+                    </View>
                   ) : (
-                    <Text className="text-white text-center font-semibold text-lg">
-                      {t("SignUp.SignUp")}
-                    </Text>
+                    <View className="flex-row justify-center flex-wrap">
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate("TermsConditions")}
+                      >
+                        <Text
+                          className="text-black font-bold"
+                          style={{ fontSize: adjustFontSize(12) }}
+                        >
+                          விதிமுறைகள் மற்றும் நிபந்தனைகள்
+                        </Text>
+                      </TouchableOpacity>
+                      <Text
+                        className="text-black font-thin"
+                        style={{
+                          fontSize: adjustFontSize(12),
+                          marginHorizontal: 2,
+                        }}
+                      >
+                        {""} மற்றும்
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate("PrivacyPolicy")}
+                      >
+                        <Text
+                          className="text-black font-bold"
+                          style={{ fontSize: adjustFontSize(12) }}
+                        >
+                          {""} தனியுரிமைக் கொள்கை
+                        </Text>
+                      </TouchableOpacity>
+                      <Text
+                        className="text-black font-thin"
+                        style={{ fontSize: adjustFontSize(12), marginLeft: 2 }}
+                      >
+                        {""} பார்க்க
+                      </Text>
+                    </View>
                   )}
-                </TouchableOpacity>
-              </View>
-              <View className="flex-row items-center justify-center mt-4">
-                <Text className="font-bold text-black">
-                  {t("SignUp.AlreadyHaveAnAccount")}{" "}
-                </Text>
-                <TouchableOpacity onPress={() => navigation.navigate("Signin")}>
-                  <Text className="text-[#0085FF] font-semibold underline">
-                    {t("SignUp.SignInHere")}
+                </View>
+
+                <View className="flex-row items-center justify-center p-6">
+                  <Checkbox
+                    value={isChecked}
+                    onValueChange={setIsChecked}
+                    color={isChecked ? "#00A896" : undefined}
+                  />
+                  <Text
+                    className="text-[#282828] ml-2 font-semibold"
+                    style={{ fontSize: adjustFontSize(12) }}
+                  >
+                    {t("Membership.IAgreeToTheTerms&Conditions")}
                   </Text>
-                </TouchableOpacity>
+                </View>
+                <View className="mt-8 w-full px-6">
+                  <TouchableOpacity
+                    onPress={handleRegister}
+                    disabled={isButtonDisabled || !isChecked}
+                    activeOpacity={0.8}
+                    className={`w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 ${
+                      isButtonDisabled || !isChecked
+                        ? "bg-[#9CA3AF]"
+                        : "bg-[#353535]"
+                    }`}
+                  >
+                    {isLoading ? (
+                      <ActivityIndicator size="small" color="#fff" />
+                    ) : (
+                      <Text className="text-white text-center font-semibold text-lg">
+                        {t("SignUp.SignUp")}
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+                </View>
+                <View className="flex-row items-center justify-center mt-4">
+                  <Text className="font-bold text-black">
+                    {t("SignUp.AlreadyHaveAnAccount")}{" "}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("Signin")}
+                  >
+                    <Text className="text-[#0085FF] font-semibold underline">
+                      {t("SignUp.SignInHere")}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </View>
-        </View>
 
-        <Image
-          source={Bottom}
-          className="w-full h-[120px] -mt-[60px]"
-          resizeMode="stretch"
+          <Image
+            source={Bottom}
+            className="w-full h-[120px] -mt-[60px]"
+            resizeMode="stretch"
+          />
+        </ScrollView>
+
+        <GlobalSearchModal
+          visible={countryModalVisible}
+          onClose={() => setCountryModalVisible(false)}
+          title={t("Select Country Code")}
+          data={countryItems}
+          selectedItems={[selectedCountryCode]}
+          onSelect={handleCountrySelect}
+          searchPlaceholder={t("Search country or dial code...")}
+          searchKeys={["label", "countryName", "dialCode"]}
+          multiSelect={false}
+          noResultsText="No country found"
         />
-      </ScrollView>
 
-      <GlobalSearchModal
-        visible={countryModalVisible}
-        onClose={() => setCountryModalVisible(false)}
-        title={t("Select Country Code")}
-        data={countryItems}
-        selectedItems={[selectedCountryCode]}
-        onSelect={handleCountrySelect}
-        searchPlaceholder={t("Search country or dial code...")}
-        searchKeys={["label", "countryName", "dialCode"]}
-        multiSelect={false}
-        noResultsText="No country found"
-      />
-
-      <GlobalSearchModal
-        visible={districtModalVisible}
-        onClose={() => setDistrictModalVisible(false)}
-        title={t("SignUp.SelectYourDistrict")}
-        data={districtItems}
-        selectedItems={district ? [district] : []}
-        onSelect={handleDistrictSelect}
-        searchPlaceholder={t("Main.Search...")}
-        searchKeys={["label", "districtName"]}
-        multiSelect={false}
-        noResultsText="No district found"
-      />
-    </KeyboardAvoidingView>
+        <GlobalSearchModal
+          visible={districtModalVisible}
+          onClose={() => setDistrictModalVisible(false)}
+          title={t("SignUp.SelectYourDistrict")}
+          data={districtItems}
+          selectedItems={district ? [district] : []}
+          onSelect={handleDistrictSelect}
+          searchPlaceholder={t("Main.Search...")}
+          searchKeys={["label", "districtName"]}
+          multiSelect={false}
+          noResultsText="No district found"
+        />
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 

@@ -24,6 +24,7 @@ import store, { RootState } from "@/services/reducxStore";
 import NetInfo from "@react-native-community/netinfo";
 import { useTranslation } from "react-i18next";
 import * as SplashScreen from "expo-splash-screen";
+import { requestTrackingIfNeeded } from "@/utils/ios/trackingPermissions";
 import Splash from "../component/auth/Splash";
 import Lanuage from "../component/common/Lanuage";
 import Signin from "@/component/auth/Signin";
@@ -90,7 +91,6 @@ import LabororDashbord from "@/component/laboror-screens/LabororDashbord";
 import OwnerQRcode from "@/component/laboror-screens/OwnerQRcode";
 import ManagerProfileView from "@/component/manager-screens/ManagerProfileView";
 import SupervisorProfileView from "@/component/supervisor-screens/SupervisorProfileView";
-
 import FarmCurrectAssetRemove from "@/component/farms/current-asset/FarmCurrectAssetRemove";
 import FarmCropCalander from "@/component/farms/crop-cultivation/FarmCropCalander";
 import ManagerDashbord from "@/component/manager-screens/ManagerDashbord";
@@ -155,6 +155,7 @@ import GoviShopLoadingScreen from "@/component/govi-shop/GoviShopLoading";
 import ExploreShopsScreen from "@/component/govi-shop/ExploreShops";
 import GoviShopProfileScreen from "@/component/govi-shop/GoviShopProfileScreen";
 import LocationAccess from "@/component/permission/LocationAccess";
+import CameraAccess from "@/component/permission/CameraAccess";
 import ViewProduct from "@/component/govi-shop/ViewProduct";
 import SoilGridsScreen from "@/component/soil-grids/SoilGridsScreen";
 import CartScreen from "@/component/govi-shop/CartScreen";
@@ -322,6 +323,9 @@ function AppContent() {
     SplashScreen.hideAsync().catch((err) => {
       console.warn("Failed to hide splash screen:", err);
     });
+
+    // Request iOS AppTrackingTransparency permission if needed (iOS only)
+    requestTrackingIfNeeded();
   }, []);
 
   useEffect(() => {
@@ -713,6 +717,10 @@ function AppContent() {
             <Stack.Screen
               name="LocationAccess"
               component={LocationAccess as any}
+            />
+            <Stack.Screen
+              name="CameraAccess"
+              component={CameraAccess as any}
             />
             <Stack.Screen name="CheckoutScreen" component={CheckoutScreen as any} />
             <Stack.Screen name="ViewProduct" component={ViewProduct as any} />

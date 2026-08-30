@@ -344,13 +344,13 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
     const days = Math.floor(hours / 24);
 
     if (seconds < 60) {
-      return "Just now";
+      return "දැන්";
     } else if (minutes < 60) {
-      return `${minutes} min${minutes > 1 ? "s" : ""} ago`;
+      return `විනාඩි ${minutes} කට පෙර`;
     } else if (hours < 24) {
-      return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+      return `පැය ${hours} කට පෙර`;
     } else if (days < 7) {
-      return `${days} day${days > 1 ? "s" : ""} ago`;
+      return `දින ${days} කට පෙර`;
     } else {
       const language = i18n.language || "en";
       return postDate.toLocaleDateString(language, {
@@ -623,13 +623,13 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
     );
   };
   const title = (
-    <View className="flex-row items-center gap-2 pr-6">
+    <View className="flex-1 flex-row items-center justify-center gap-2">
       <MaterialCommunityIcons
         name="message-processing"
         size={18}
         color="black"
       />
-      <Text className="text-lg font-semibold">
+      <Text className="text-lg font-semibold text-center">
         {t("PublicForum.PublicForum")}
       </Text>
     </View>

@@ -607,7 +607,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation, route }) => {
                       </View>
                       <View>
                         <Text>
-                          {t("CurrentAssets.Rs")}
+                          {t("CurrentAssets.Rs")}. {" "}
                           {Number(asset.totalSum).toLocaleString("en-US", {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
@@ -652,7 +652,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation, route }) => {
                         </View>
                         <View className="flex-row items-center">
                           <Text>
-                            {t("CurrentAssets.Rs")}
+                            {t("CurrentAssets.Rs")}. {" "}
                             {Number(asset.totalSum).toLocaleString("en-US", {
                               minimumFractionDigits: 2,
                               maximumFractionDigits: 2,
@@ -675,7 +675,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation, route }) => {
                             </Text>
                             <Text className="w-[20px]"></Text>
                           </View>
-                          <View className="border-b border-[#5C5C5C] border-b-[0.8px] mt-[-5%]"></View>
+                          <View className=" border-[#5C5C5C] border-b-[0.8px] mt-[-5%]"></View>
 
                           {asset.items && asset.items.length > 0 ? (
                             asset.items.map((item, itemIndex) => (
@@ -882,7 +882,7 @@ const CurrentAssert: React.FC<CurrentAssetProps> = ({ navigation, route }) => {
                       {t("CurrentAssets.TotalAmount")}
                     </Text>
                     <View className="bg-[#F6F6F6] rounded-full px-3 h-[50px] justify-center">
-                      <Text className="text-sm font-semibold" numberOfLines={1}>
+                      <Text className="text-sm " numberOfLines={1}>
                         {t("CurrentAssets.Rs")}.{" "}
                         {(
                           updateQuantity * parseFloat(updateUnitPrice || "0")

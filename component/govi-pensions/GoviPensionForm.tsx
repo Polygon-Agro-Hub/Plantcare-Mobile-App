@@ -590,35 +590,40 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
 
       if (response.data.status) {
         Alert.alert(
-          "Success",
-          "Your pension request has been submitted successfully!",
+          t("Main.Success") || "Success",
+          t("GoviPensionForm.PensionRequestSubmittedSuccessfully") ||
+            "Your pension request has been submitted successfully!",
           [
             {
-              text: "OK",
+              text: t("Main.OK") || "OK",
               onPress: () => navigation.navigate("GoviPensionStatus"),
             },
           ],
         );
       } else {
         Alert.alert(
-          "Error",
-          response.data.message || "Failed to submit request",
+          t("Main.Error") || "Error",
+          response.data.message ||
+            t("GoviPensionForm.FailedToSubmitRequest") ||
+            "Failed to submit request",
         );
       }
     } catch (error: any) {
       console.error("Error submitting pension request:", error);
       let errorMessage =
+        t("Main.SomethingWentWrongPleaseTryAgainlater") ||
         "An error occurred while submitting your request. Please try again.";
       if (error.response) {
         errorMessage =
           error.response.data?.message || error.response.statusText;
       } else if (error.request) {
         errorMessage =
+          t("Main.NoInternetConnection") ||
           "No response from server. Please check your internet connection.";
       } else {
         errorMessage = error.message || errorMessage;
       }
-      Alert.alert("Error", errorMessage);
+      Alert.alert(t("Main.Error") || "Error", errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -628,73 +633,99 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
     const isOver18 = isSuccessorOver18();
 
     if (!formData.successorFullName.trim()) {
-      Alert.alert("Validation Error", "Please enter successor's full name");
+      Alert.alert(
+        t("Main.Error") || "Validation Error",
+        t("GoviPensionForm.PleaseEnterSuccessorsFullName") ||
+          "Please enter successor's full name",
+      );
       return;
     }
     if (!formData.successorRelationship) {
-      Alert.alert("Validation Error", "Please select relationship");
+      Alert.alert(
+        t("Main.Error") || "Validation Error",
+        t("GoviPensionForm.PleaseSelectRelationship") ||
+          "Please select relationship",
+      );
       return;
     }
     if (!formData.successorDateOfBirth) {
       Alert.alert(
-        "Validation Error",
-        "Please select successor's date of birth",
+        t("Main.Error") || "Validation Error",
+        t("GoviPensionForm.PleaseSelectSuccessorsDateOfBirth") ||
+          "Please select successor's date of birth",
       );
       return;
     }
     if (isOver18) {
       if (!formData.successorNicNumber.trim()) {
-        Alert.alert("Validation Error", "Please enter successor's NIC number");
+        Alert.alert(
+          t("Main.Error") || "Validation Error",
+          t("GoviPensionForm.PleaseEnterSuccessorsNICNumber") ||
+            "Please enter successor's NIC number",
+        );
         return;
       }
       if (!validateNIC(formData.successorNicNumber)) {
         Alert.alert(
-          "Invalid NIC",
-          "Successor's NIC must be either 9 digits followed by V/v/X/x (e.g., 123456789V) or 12 digits (e.g., 199912345678)",
+          t("Main.Error") || "Invalid NIC",
+          t("GoviPensionForm.InvalidNICMessage") ||
+            "Successor's NIC must be either 9 digits followed by V/v/X/x (e.g., 123456789V) or 12 digits (e.g., 199912345678)",
         );
         return;
       }
       if (!formData.successorNicFrontImage) {
         Alert.alert(
-          "Validation Error",
-          "Please upload successor's NIC front image",
+          t("Main.Error") || "Validation Error",
+          t("GoviPensionForm.PleaseUploadSuccessorsNICFrontImage") ||
+            "Please upload successor's NIC front image",
         );
         return;
       }
       if (!formData.successorNicBackImage) {
         Alert.alert(
-          "Validation Error",
-          "Please upload successor's NIC back image",
+          t("Main.Error") || "Validation Error",
+          t("GoviPensionForm.PleaseUploadSuccessorsNICBackImage") ||
+            "Please upload successor's NIC back image",
         );
         return;
       }
     } else {
       if (!formData.successorBirthCertFrontImage) {
         Alert.alert(
-          "Validation Error",
-          "Please upload successor's birth certificate front image",
+          t("Main.Error") || "Validation Error",
+          t("GoviPensionForm.PleaseUploadSuccessorsBirthCertificateFrontImage") ||
+            "Please upload successor's birth certificate front image",
         );
         return;
       }
       if (!formData.successorBirthCertBackImage) {
         Alert.alert(
-          "Validation Error",
-          "Please upload successor's birth certificate back image",
+          t("Main.Error") || "Validation Error",
+          t("GoviPensionForm.PleaseUploadSuccessorsBirthCertificateBackImage") ||
+            "Please upload successor's birth certificate back image",
         );
         return;
       }
     }
     if (!isFormComplete()) {
-      Alert.alert("Error", "Please complete all required fields");
+      Alert.alert(
+        t("Main.Error") || "Error",
+        t("Main.PleaseFillAllRequiredFields") ||
+          "Please complete all required fields",
+      );
       return;
     }
 
     Alert.alert(
-      "Confirm Submission",
-      "Are you sure you want to submit this pension request?",
+      t("GoviPensionForm.ConfirmSubmission") || "Confirm Submission",
+      t("GoviPensionForm.AreYouSureYouWantToSubmitThisPensionRequest") ||
+        "Are you sure you want to submit this pension request?",
       [
-        { text: "No", style: "cancel" },
-        { text: "Yes", onPress: () => submitPensionRequest() },
+        { text: t("GoviPensionForm.No") || "No", style: "cancel" },
+        {
+          text: t("GoviPensionForm.Yes") || "Yes",
+          onPress: () => submitPensionRequest(),
+        },
       ],
     );
   };
@@ -867,7 +898,7 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
         {/* Successor Full Name */}
         <View className="mb-5 mt-4">
           <Text className="text-[#070707] mb-2">
-            {t("GoviPensionForm.Successor's Full Name")} *
+            {t("GoviPensionForm.SuccessorsFullName")} *
           </Text>
           <TextInput
             value={formData.successorFullName}

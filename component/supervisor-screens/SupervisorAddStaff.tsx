@@ -421,7 +421,7 @@ const SupervisorAddStaff: React.FC<SupervisorAddStaffProps> = ({
             <Text className="text-gray-900 text-base">{t("Farms.Role")}</Text>
             <View className="bg-gray-100 px-4 py-3 rounded-full">
               <Text className="text-base text-gray-700">
-                {t("Farms.Worker")}
+                {t("Farms.FarmLaborer") || t("Farms.Laborer") || "Farm Laborer"}
               </Text>
             </View>
           </View>

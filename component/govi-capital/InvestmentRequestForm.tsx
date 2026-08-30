@@ -8,6 +8,8 @@ import {
   ScrollView,
   Alert,
   Platform,
+  KeyboardAvoidingView,
+  BackHandler,
 } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import * as ImagePicker from "expo-image-picker";
@@ -22,6 +24,7 @@ import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { RootStackParamList } from "../types/types";
 import CustomHeader from "../common/CustomHeader";
 import GlobalSearchModal from "../common/GlobalSearchModal";
+import CustomDatePicker from "../common/CustomDatePicker";
 
 type InvestmentRequestFormNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -84,6 +87,22 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
       updateDropdownItems();
     }
   }, [i18n.language]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.navigate("InvestmentAndLoan");
+        return true;
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
+      );
+
+      return () => backHandler.remove();
+    }, [navigation]),
+  );
 
   const fetchCrops = async () => {
     setLoadingCrops(true);
@@ -207,10 +226,9 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
   };
 
   const onDateChange = (event: any, selectedDate?: Date) => {
-    const currentDate = selectedDate || startDate;
-    setShowDatePicker(Platform.OS === "ios");
-    if (currentDate) {
-      setStartDate(currentDate);
+    setShowDatePicker(false);
+    if (selectedDate) {
+      setStartDate(selectedDate);
     }
   };
 
@@ -371,323 +389,347 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
 
   return (
     <View className="flex-1 bg-white">
-      <CustomHeader
-        title={t("Govicapital.InvestmentRequest")}
-        navigation={navigation}
-        onBackPress={() => navigation.goBack()}
-      />
-      <ScrollView
-        ref={scrollViewRef}
-        className="flex-1 px-6"
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 20 }}
-        nestedScrollEnabled={true}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        style={{ flex: 1, backgroundColor: "white" }}
+        enabled
       >
-        {/* Crop Selection with GlobalSearchModal */}
-        <View className="mb-5">
-          <Text className="text-[#070707] mb-2">{t("Govicapital.Crop")} *</Text>
-          <TouchableOpacity
-            onPress={() => setModalVisible(true)}
-            className="bg-[#F4F4F4] rounded-full px-4 h-[50px] flex-row justify-between items-center border border-[#F4F4F4]"
-            disabled={loadingCrops}
-          >
-            <Text
-              className={`text-sm ${selectedCrop ? "text-gray-900" : "text-gray-400"}`}
-            >
-              {loadingCrops ? "Loading crops..." : getSelectedCropLabel()}
+        <CustomHeader
+          title={t("Govicapital.InvestmentRequest")}
+          navigation={navigation}
+          onBackPress={() => navigation.goBack()}
+        />
+        <ScrollView
+          ref={scrollViewRef}
+          className="flex-1 px-6"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 50 }}
+          nestedScrollEnabled={true}
+        >
+          {/* Crop Selection with GlobalSearchModal */}
+          <View className="mb-5">
+            <Text className="text-[#070707] mb-2">
+              {t("Govicapital.Crop")} *
             </Text>
+            <TouchableOpacity
+              onPress={() => setModalVisible(true)}
+              className="bg-[#F4F4F4] rounded-full px-4 h-[50px] flex-row justify-between items-center border border-[#F4F4F4]"
+              disabled={loadingCrops}
+            >
+              <Text
+                className={`text-sm ${selectedCrop ? "text-gray-900" : "text-gray-400"}`}
+              >
+                {loadingCrops ? "Loading crops..." : getSelectedCropLabel()}
+              </Text>
 
-            <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
-          </TouchableOpacity>
-        </View>
+              <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
+            </TouchableOpacity>
+          </View>
 
-        {/* Cultivation Extent - 3 Inputs */}
-        <View className="mb-5">
-          <Text className="text-[#070707] mb-2">
-            {t("Govicapital.CultivationExtent")} *
-          </Text>
-          <View className="flex-row items-center justify-between">
-            <View className="flex-row items-center gap-2">
-              <TextInput
-                className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
-                style={{ color: '#000000' }} 
-                value={extentha}
-                onChangeText={(text) => {
-                  const validatedText = validateNumericInput(text);
-                  setExtentha(validatedText);
-                }}
-                keyboardType="numeric"
-                placeholder="0"
-                placeholderTextColor="#000000"
-              />
-              <Text className="text-sm">{t("Govicapital.ha")}</Text>
-            </View>
+          {/* Cultivation Extent - 3 Inputs */}
+          <View className="mb-5">
+            <Text className="text-[#070707] mb-2">
+              {t("Govicapital.CultivationExtent")} *
+            </Text>
+            <View className="flex-row items-center justify-between">
+              <View className="flex-row items-center gap-2">
+                <TextInput
+                  className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
+                  style={{ color: "#000000" }}
+                  value={extentha}
+                  onChangeText={(text) => {
+                    const validatedText = validateNumericInput(text);
+                    setExtentha(validatedText);
+                  }}
+                  keyboardType="numeric"
+                  placeholder="0"
+                  placeholderTextColor="#9CA3AF"
+                />
+                <Text className="text-sm">{t("Govicapital.ha")}</Text>
+              </View>
 
-            <View className="flex-row items-center gap-2">
-              <TextInput
-                className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
-                style={{ color: '#000000' }} 
-                value={extentac}
-                onChangeText={(text) => {
-                  const validatedText = validateNumericInput(text);
-                  setExtentac(validatedText);
-                }}
-                keyboardType="numeric"
-                placeholder="0"
-                placeholderTextColor="#000000"
-              />
-              <Text className="text-sm">{t("Govicapital.ac")}</Text>
-            </View>
+              <View className="flex-row items-center gap-2">
+                <TextInput
+                  className="bg-[#F4F4F4] p-2 px-4 w-20 rounded-3xl h-[50px] text-center"
+                  style={{ color: "#000000" }}
+                  value={extentac}
+                  onChangeText={(text) => {
+                    const validatedText = validateNumericInput(text);
+                    setExtentac(validatedText);
+                  }}
+                  keyboardType="numeric"
+                  placeholder="0"
+                  placeholderTextColor="#9CA3AF"
+                />
+                <Text className="text-sm">{t("Govicapital.ac")}</Text>
+              </View>
 
-            <View className="flex-row items-center gap-2">
-              <TextInput
-                className="bg-[#F4F4F4] p-2 w-20 px-4 rounded-3xl h-[50px] text-center"
-                style={{ color: '#000000' }} 
-                value={extentp}
-                onChangeText={(text) => {
-                  const validatedText = validateNumericInput(text);
-                  setExtentp(validatedText);
-                }}
-                keyboardType="numeric"
-                placeholder="0"
-                placeholderTextColor="#000000"
-              />
-              <Text className="text-sm">{t("Govicapital.p")}</Text>
+              <View className="flex-row items-center gap-2">
+                <TextInput
+                  className="bg-[#F4F4F4] p-2 w-20 px-4 rounded-3xl h-[50px] text-center"
+                  style={{ color: "#000000" }}
+                  value={extentp}
+                  onChangeText={(text) => {
+                    const validatedText = validateNumericInput(text);
+                    setExtentp(validatedText);
+                  }}
+                  keyboardType="numeric"
+                  placeholder="0"
+                  placeholderTextColor="#9CA3AF"
+                />
+                <Text className="text-sm">{t("Govicapital.p")}</Text>
+              </View>
             </View>
           </View>
-        </View>
 
-        {/* Expected Investment */}
-        <View className="mb-5">
-          <Text className="text-[#070707] mb-2">
-            {t("Govicapital.ExpectedInvestmentRs")} *
-          </Text>
-          <TextInput
-            value={formatWithCommas(investment)}
-            onChangeText={(text) => {
-              const stripped = text.replace(/,/g, "");
-              const validated = validateNumericInput(stripped);
-              setInvestment(validated);
-            }}
-            placeholder="0.00"
-            style={{ color: '#000000' }} 
-            placeholderTextColor="#000000"
-            keyboardType="numeric"
-            className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
-          />
-        </View>
+          {/* Expected Investment */}
+          <View className="mb-5">
+            <Text className="text-[#070707] mb-2">
+              {t("Govicapital.ExpectedInvestmentRs")} *
+            </Text>
+            <TextInput
+              value={formatWithCommas(investment)}
+              onChangeText={(text) => {
+                const stripped = text.replace(/,/g, "");
+                const validated = validateNumericInput(stripped);
+                setInvestment(validated);
+              }}
+              placeholder="0.00"
+              style={{ color: "#000000" }}
+              placeholderTextColor="#9CA3AF"
+              keyboardType="numeric"
+              className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
+            />
+          </View>
 
-        {/* Expected Yield */}
-        <View className="mb-5">
-          <Text className="text-[#070707] mb-2">
-            {t("Govicapital.ExpectedYieldkg")} *
-          </Text>
-          <TextInput
-            value={expectedYield}
-            onChangeText={(text) => {
-              const validatedText = validateNumericInput(text);
-              setExpectedYield(validatedText);
-            }}
-            placeholder={t("Main.TypeHere")}
-            style={{ color: '#000000' }} 
-            placeholderTextColor="#000000"
-            keyboardType="numeric"
-            className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
-          />
-        </View>
+          {/* Expected Yield */}
+          <View className="mb-5">
+            <Text className="text-[#070707] mb-2">
+              {t("Govicapital.ExpectedYieldkg")} *
+            </Text>
+            <TextInput
+              value={expectedYield}
+              onChangeText={(text) => {
+                const validatedText = validateNumericInput(text);
+                setExpectedYield(validatedText);
+              }}
+              placeholder={t("Main.TypeHere")}
+              style={{ color: "#000000" }}
+              placeholderTextColor="#9CA3AF"
+              keyboardType="numeric"
+              className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
+            />
+          </View>
 
-        {/* Expected Start Date with Calendar */}
-        <View className="mb-5">
-          <Text className="text-[#070707] mb-2">
-            {t("Govicapital.ExpectedStartDate")} *
-          </Text>
-          <TouchableOpacity
-            onPress={() => setShowDatePicker(true)}
-            className="bg-[#F4F4F4] rounded-full px-4 h-[50px] flex-row justify-between items-center border border-[#F4F4F4]"
-          >
-            <Text
-              className={`text-sm ${startDate ? "text-gray-900" : "text-gray-400"}`}
+          {/* Expected Start Date with Calendar */}
+          <View className="mb-5">
+            <Text className="text-[#070707] mb-2">
+              {t("Govicapital.ExpectedStartDate")} *
+            </Text>
+            <TouchableOpacity
+              onPress={() => setShowDatePicker(true)}
+              className="bg-[#F4F4F4] rounded-full px-4 h-[50px] flex-row justify-between items-center border border-[#F4F4F4]"
             >
-              {startDate ? formatDate(startDate) : t("Govicapital.SelectDate")}
-            </Text>
-            <MaterialCommunityIcons
-              name="calendar-blank"
-              size={22}
-              color="#6B7280"
-            />
-          </TouchableOpacity>
+              <Text
+                className={`text-sm ${startDate ? "text-gray-900" : "text-gray-400"}`}
+              >
+                {startDate
+                  ? formatDate(startDate)
+                  : t("Govicapital.SelectDate")}
+              </Text>
+              <MaterialCommunityIcons
+                name="calendar-blank"
+                size={22}
+                color="#6B7280"
+              />
+            </TouchableOpacity>
 
-          {showDatePicker && (
-            <DateTimePicker
-              value={startDate || new Date()}
-              mode="date"
-              display={Platform.OS === "ios" ? "spinner" : "default"}
-              onChange={onDateChange}
-              minimumDate={new Date()}
-            />
-          )}
-        </View>
-
-        {/* NIC Front Image */}
-        <View className="mb-5">
-          <Text className="text-[#070707] mb-2">
-            {t("Govicapital.NICFrontImage")} *
-          </Text>
-
-          {nicFrontImage ? (
-            <View className="mb-3">
-              <View className="relative">
-                <Image
-                  source={{ uri: nicFrontImage }}
-                  className="w-full h-48 rounded-lg"
-                  resizeMode="cover"
+            {Platform.OS === "ios" ? (
+              <CustomDatePicker
+                visible={showDatePicker}
+                onClose={() => setShowDatePicker(false)}
+                value={startDate}
+                onConfirm={(date) => setStartDate(date)}
+                minimumDate={new Date()}
+                title={t("Govicapital.ExpectedStartDate")}
+                cancelText={t("Main.Cancel")}
+                confirmText={t("Main.Continue")}
+              />
+            ) : (
+              showDatePicker && (
+                <DateTimePicker
+                  value={startDate || new Date()}
+                  mode="date"
+                  display="default"
+                  onChange={onDateChange}
+                  minimumDate={new Date()}
                 />
-                <TouchableOpacity
-                  onPress={() => setNicFrontImage(null)}
-                  className="absolute right-2 top-2 rounded-3xl h-[50px] items-center justify-center"
-                >
-                  <Ionicons name="close-circle" size={28} color="red" />
-                </TouchableOpacity>
+              )
+            )}
+          </View>
+
+          {/* NIC Front Image */}
+          <View className="mb-5">
+            <Text className="text-[#070707] mb-2">
+              {t("Govicapital.NICFrontImage")} *
+            </Text>
+
+            {nicFrontImage ? (
+              <View className="mb-3">
+                <View className="relative">
+                  <Image
+                    source={{ uri: nicFrontImage }}
+                    className="w-full h-48 rounded-lg"
+                    resizeMode="cover"
+                  />
+                  <TouchableOpacity
+                    onPress={() => setNicFrontImage(null)}
+                    className="absolute right-2 top-2 rounded-3xl h-[50px] items-center justify-center"
+                  >
+                    <Ionicons name="close-circle" size={28} color="red" />
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-          ) : null}
+            ) : null}
 
-          <TouchableOpacity
-            onPress={() => pickImageFromGallery("front")}
-            className="bg-white border border-gray-300 rounded-full px-6 h-[50px] flex-row justify-center items-center"
-          >
-            <FontAwesome6 name="cloud-arrow-up" size={14} color="black" />
-            <Text className="text-gray-900 ml-2 font-medium ">
-              {nicFrontImage
-                ? t("Govicapital.ReUploadImage")
-                : t("Govicapital.UploadImage")}
+            <TouchableOpacity
+              onPress={() => pickImageFromGallery("front")}
+              className="bg-white border border-gray-300 rounded-full px-6 h-[50px] flex-row justify-center items-center"
+            >
+              <FontAwesome6 name="cloud-arrow-up" size={14} color="black" />
+              <Text className="text-gray-900 ml-2 font-medium ">
+                {nicFrontImage
+                  ? t("Govicapital.ReUploadImage")
+                  : t("Govicapital.UploadImage")}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* NIC Back Image */}
+          <View className="mb-6">
+            <Text className="text-[#070707] mb-2">
+              {t("Govicapital.NICBackImage")} *
             </Text>
-          </TouchableOpacity>
-        </View>
 
-        {/* NIC Back Image */}
-        <View className="mb-6">
-          <Text className="text-[#070707] mb-2">
-            {t("Govicapital.NICBackImage")} *
-          </Text>
-
-          {nicBackImage ? (
-            <View className="mb-3">
-              <View className="relative">
-                <Image
-                  source={{ uri: nicBackImage }}
-                  className="w-full h-48 rounded-lg"
-                  resizeMode="cover"
-                />
-                <TouchableOpacity
-                  onPress={() => setNicBackImage(null)}
-                  className="absolute right-2 top-2 rounded-3xl h-[50px] items-center justify-center"
-                >
-                  <Ionicons name="close-circle" size={28} color="red" />
-                </TouchableOpacity>
+            {nicBackImage ? (
+              <View className="mb-3">
+                <View className="relative">
+                  <Image
+                    source={{ uri: nicBackImage }}
+                    className="w-full h-48 rounded-lg"
+                    resizeMode="cover"
+                  />
+                  <TouchableOpacity
+                    onPress={() => setNicBackImage(null)}
+                    className="absolute right-2 top-2 rounded-3xl h-[50px] items-center justify-center"
+                  >
+                    <Ionicons name="close-circle" size={28} color="red" />
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-          ) : null}
+            ) : null}
 
-          <TouchableOpacity
-            onPress={() => pickImageFromGallery("back")}
-            className="bg-white border border-gray-300 rounded-full px-6 h-[50px] flex-row justify-center items-center"
-          >
-            <FontAwesome6 name="cloud-arrow-up" size={14} color="black" />
-            <Text className="text-gray-900 ml-2 font-medium">
-              {nicBackImage
-                ? t("Govicapital.ReUploadImage")
-                : t("Govicapital.UploadImage")}
+            <TouchableOpacity
+              onPress={() => pickImageFromGallery("back")}
+              className="bg-white border border-gray-300 rounded-full px-6 h-[50px] flex-row justify-center items-center"
+            >
+              <FontAwesome6 name="cloud-arrow-up" size={14} color="black" />
+              <Text className="text-gray-900 ml-2 font-medium">
+                {nicBackImage
+                  ? t("Govicapital.ReUploadImage")
+                  : t("Govicapital.UploadImage")}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Land’s Plot Number */}
+          <View className="mb-5">
+            <Text className="text-[#070707] mb-2">
+              {t("Govicapital.LandsPlotNumber")} *
             </Text>
-          </TouchableOpacity>
-        </View>
+            <TextInput
+              value={plotNumber}
+              onChangeText={(text) => setPlotNumber(text.trimStart())}
+              placeholder={t("Govicapital.Eg10B")}
+              style={{ color: "#000000" }}
+              placeholderTextColor="#9CA3AF"
+              className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
+            />
+          </View>
 
-        {/* Land’s Plot Number */}
-        <View className="mb-5">
-          <Text className="text-[#070707] mb-2">
-            {t("Govicapital.LandsPlotNumber")} *
-          </Text>
-          <TextInput
-            value={plotNumber}
-            onChangeText={(text) => setPlotNumber(text.trimStart())}
-            placeholder={t("Govicapital.Eg10B")}
-            style={{ color: '#000000' }} 
-            placeholderTextColor="#000000"
-            className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
-          />
-        </View>
-
-        {/*Land’s Street Name */}
-        <View className="mb-5">
-          <Text className="text-[#070707] mb-2">
-            {t("Govicapital.LandsStreetName")} *
-          </Text>
-          <TextInput
-            value={streetName}
-            onChangeText={(text) => setStreetName(text.trimStart())}
-            placeholder={t("Main.TypeHere")}
-            style={{ color: '#000000' }} 
-            placeholderTextColor="#000000"
-            className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
-          />
-        </View>
-
-        {/* Land’s City */}
-        <View className="mb-5">
-          <Text className="text-[#070707] mb-2">
-            {t("Govicapital.LandsCity")} *
-          </Text>
-          <TextInput
-            value={landCity}
-            onChangeText={(text) => {
-              const trimmed = text.trimStart();
-              const capitalized =
-                trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
-              setLandCity(capitalized);
-            }}
-            placeholder={t("Main.TypeHere")}
-            style={{ color: '#000000' }} 
-            placeholderTextColor="#000000"
-            className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
-          />
-        </View>
-
-        {/* Buttons */}
-        <View className="mb-8 mt-4">
-          <TouchableOpacity
-            onPress={handleCancel}
-            className="bg-gray-200 rounded-3xl justify-center h-[50px] mb-3"
-            style={{
-              shadowColor: "#000000",
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.25,
-              shadowRadius: 4,
-              elevation: 4,
-            }}
-          >
-            <Text className="text-gray-500 text-center font-medium text-lg">
-              {t("Main.Cancel")}
+          {/*Land’s Street Name */}
+          <View className="mb-5">
+            <Text className="text-[#070707] mb-2">
+              {t("Govicapital.LandsStreetName")} *
             </Text>
-          </TouchableOpacity>
+            <TextInput
+              value={streetName}
+              onChangeText={(text) => setStreetName(text.trimStart())}
+              placeholder={t("Main.TypeHere")}
+              style={{ color: "#000000" }}
+              placeholderTextColor="#9CA3AF"
+              className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
+            />
+          </View>
 
-          <TouchableOpacity
-            onPress={handleContinue}
-            className={`rounded-3xl h-[50px] mt-2 justify-center ${isFormValid() ? "bg-black" : "bg-gray-400"}`}
-            disabled={!isFormValid()}
-            style={{
-              shadowColor: "#000000",
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.25,
-              shadowRadius: 4,
-              elevation: 4,
-            }}
-          >
-            <Text className="text-white text-center font-medium text-lg">
-              {t("Main.Continue")}
+          {/* Land’s City */}
+          <View className="mb-5">
+            <Text className="text-[#070707] mb-2">
+              {t("Govicapital.LandsCity")} *
             </Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+            <TextInput
+              value={landCity}
+              onChangeText={(text) => {
+                const trimmed = text.trimStart();
+                const capitalized =
+                  trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+                setLandCity(capitalized);
+              }}
+              placeholder={t("Main.TypeHere")}
+              style={{ color: "#000000" }}
+              placeholderTextColor="#9CA3AF"
+              className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-gray-900 text-sm border border-[#F4F4F4]"
+            />
+          </View>
+
+          {/* Buttons */}
+          <View className="mb-8 mt-4">
+            <TouchableOpacity
+              onPress={handleCancel}
+              className="bg-gray-200 rounded-3xl justify-center h-[50px] mb-3"
+              style={{
+                shadowColor: "#000000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+                elevation: 4,
+              }}
+            >
+              <Text className="text-gray-500 text-center font-medium text-lg">
+                {t("Main.Cancel")}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={handleContinue}
+              className={`rounded-3xl h-[50px] mt-2 justify-center ${isFormValid() ? "bg-black" : "bg-gray-400"}`}
+              disabled={!isFormValid()}
+              style={{
+                shadowColor: "#000000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+                elevation: 4,
+              }}
+            >
+              <Text className="text-white text-center font-medium text-lg">
+                {t("Main.Continue")}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       {/* Global Search Modal for Crop Selection */}
       <GlobalSearchModal
@@ -699,7 +741,7 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
         onSelect={handleCropSelect}
         searchPlaceholder={t("Govicapital.SearchCrop")}
         doneButtonText={t("Govicapital.Done")}
-        noResultsText={t("Govicapital.No crops found")}
+        noResultsText={t("CropPlanningCalculators.NoCropsFound")}
         multiSelect={false}
         isLoading={loadingCrops}
         searchKeys={["label"]}

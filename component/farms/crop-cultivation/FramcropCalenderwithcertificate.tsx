@@ -25,7 +25,7 @@ import { environment } from "@/environment/environment";
 import i18n from "@/i18n/i18n";
 import { useTranslation } from "react-i18next";
 import * as ImageManipulator from "expo-image-manipulator";
-import CultivatedLandModal from "../../crop-cultivation/CultivatedLandModal";
+import CultivatedLandModal from "../../common/CultivatedLandModal";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -37,8 +37,10 @@ import * as Device from "expo-device";
 import Constants from "expo-constants";
 import * as ScreenCapture from "expo-screen-capture";
 import ImageViewerModal from "../../common/ImageViewerModal";
-import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import CustomHeader from "@/component/common/CustomHeader";
+import LocationAccess from "../../permission/LocationAccess";
+import * as FileSystem from "expo-file-system/legacy";
+import { Entypo } from "@expo/vector-icons";
 
 let Notifications: any = null;
 try {
@@ -150,141 +152,6 @@ interface CertificateData {
   questionnaireItems: QuestionnaireItem[];
 }
 
-function CameraScreen({
-  onClose,
-}: {
-  onClose: (capturedImageUri: string | null) => void;
-}) {
-  const [facing, setFacing] = useState<CameraType>("back");
-  const [permission, requestPermission] = useCameraPermissions();
-  const [camera, setCamera] = useState<CameraView | null>(null);
-  const [isCameraReady, setIsCameraReady] = useState(false);
-  const { t } = useTranslation();
-
-  useEffect(() => {
-    if (permission?.granted === false) {
-      requestPermission();
-    }
-  }, [permission]);
-
-  if (permission === null) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "black",
-        }}
-      >
-        <Text style={{ color: "white", fontSize: 18, marginBottom: 16 }}>
-          {t("CropCalender.loadingCameraPermission")}
-        </Text>
-      </View>
-    );
-  }
-
-  if (!permission.granted) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "black",
-        }}
-      >
-        <Text
-          style={{
-            color: "white",
-            fontSize: 16,
-            marginBottom: 16,
-            textAlign: "center",
-            paddingHorizontal: 24,
-          }}
-        >
-          {t("CropCalender.loadingCameraPermission")}
-        </Text>
-        <TouchableOpacity
-          onPress={requestPermission}
-          style={{ backgroundColor: "#26D041", padding: 14, borderRadius: 50 }}
-        >
-          <Text style={{ color: "black", fontWeight: "600" }}>
-            {t("CropCalender.GrantPermission")}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
-  const toggleCameraFacing = () => {
-    setFacing((current) => (current === "back" ? "front" : "back"));
-  };
-
-  const captureImage = async () => {
-    if (camera && isCameraReady) {
-      const photo = await camera.takePictureAsync();
-      onClose(photo?.uri ?? null);
-    }
-  };
-
-  return (
-    <View style={{ flex: 1, backgroundColor: "black" }}>
-      <CameraView
-        style={{ flex: 1 }}
-        facing={facing}
-        ref={(ref) => setCamera(ref)}
-        onCameraReady={() => setIsCameraReady(true)}
-      />
-      <View
-        style={{
-          position: "absolute",
-          bottom: 50,
-          left: 0,
-          right: 0,
-          flexDirection: "row",
-          justifyContent: "center",
-          paddingHorizontal: 24,
-          gap: 16,
-          zIndex: 1000,
-        }}
-      >
-        <TouchableOpacity
-          onPress={toggleCameraFacing}
-          style={{
-            backgroundColor: "#2AAD7A",
-            padding: 16,
-            borderRadius: 50,
-            marginBottom: 12,
-            flex: 1,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text style={{ color: "black", textAlign: "center" }}>{t("CropCalender.FlipCamera")}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={captureImage}
-          style={{
-            backgroundColor: "#2AAD7A",
-            padding: 16,
-            borderRadius: 50,
-            marginBottom: 12,
-            flex: 1,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text style={{ color: "black", fontWeight: "600", textAlign: "center" }}>
-            {t("CropCalender.Capture")}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-}
-
 const FramcropCalenderwithcertificate: React.FC<
   FramcropCalenderwithcertificateProps
 > = ({ navigation, route }) => {
@@ -301,6 +168,10 @@ const FramcropCalenderwithcertificate: React.FC<
   const [loading, setLoading] = useState<boolean>(true);
   const [isCultivatedLandModalVisible, setCultivatedLandModalVisible] =
     useState(false);
+  const [pendingImageCrop, setPendingImageCrop] = useState<{
+    crop: CropItem;
+    globalIndex: number;
+  } | null>(null);
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -315,6 +186,12 @@ const FramcropCalenderwithcertificate: React.FC<
   const [tasksWithImages, setTasksWithImages] = useState<Set<string>>(
     new Set(),
   );
+  const [showLocationAccess, setShowLocationAccess] = useState<boolean>(false);
+  const [pendingLocationTask, setPendingLocationTask] = useState<{
+    globalIndex?: number;
+    crop: CropItem;
+    fromImageUpload?: boolean;
+  } | null>(null);
   const [certificateData, setCertificateData] =
     useState<CertificateData | null>(null);
   const [certificateLoading, setCertificateLoading] = useState<boolean>(true);
@@ -332,30 +209,8 @@ const FramcropCalenderwithcertificate: React.FC<
   const [showCertificationModal, setShowCertificationModal] = useState(false);
 
   const [showCameraModal, setShowCameraModal] = useState(false);
-  const [showCamera, setShowCamera] = useState(false);
   const [selectedQuestion, setSelectedQuestion] =
     useState<QuestionnaireItem | null>(null);
-  const [capturedImage, setCapturedImage] = useState<string | null>(null);
-  const [countdown, setCountdown] = useState(3);
-  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
-
-  useEffect(() => {
-    if (capturedImage) {
-      setIsButtonEnabled(false);
-      setCountdown(3);
-      const timer = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            setIsButtonEnabled(true);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [capturedImage]);
 
   const showCertificationLockAlert = () => {
     setShowCertificationModal(true);
@@ -387,14 +242,10 @@ const FramcropCalenderwithcertificate: React.FC<
       const enableScreenCapture = async () => {
         await ScreenCapture.allowScreenCaptureAsync();
       };
-      const fetchData = async () => {
-        await fetchCropswithoutload();
-      };
       disableScreenCapture();
 
       return () => {
         enableScreenCapture();
-        fetchData();
       };
     }, []),
   );
@@ -420,6 +271,7 @@ const FramcropCalenderwithcertificate: React.FC<
     React.useCallback(() => {
       return () => {
         setCultivatedLandModalVisible(false);
+        setPendingImageCrop(null);
       };
     }, []),
   );
@@ -647,7 +499,7 @@ const FramcropCalenderwithcertificate: React.FC<
 
         Alert.alert(
           t("Main.Success"),
-          t("Farms.Completion removed successfully"),
+          t("Farms.CompletionRemovedSuccessfully"),
         );
       } else {
         throw new Error("Invalid response from server");
@@ -671,11 +523,12 @@ const FramcropCalenderwithcertificate: React.FC<
     }
   };
 
-  const handleSubmitPhoto = async () => {
-    if (!capturedImage || !selectedQuestion) return;
-
+  const handleUploadQuestionnairePhoto = async (
+    imageUri: string,
+    question: QuestionnaireItem,
+  ) => {
     try {
-      setUploadingImageForItem(selectedQuestion.id);
+      setUploadingImageForItem(question.id);
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
@@ -685,12 +538,11 @@ const FramcropCalenderwithcertificate: React.FC<
       }
 
       const manipulatedImage = await ImageManipulator.manipulateAsync(
-        capturedImage,
+        imageUri,
         [
           {
             resize: {
               width: 1024,
-              height: 1024,
             },
           },
         ],
@@ -701,7 +553,7 @@ const FramcropCalenderwithcertificate: React.FC<
         },
       );
 
-      const fileName = `questionnaire_${selectedQuestion.id}_${Date.now()}.jpg`;
+      const fileName = `questionnaire_${question.id}_${Date.now()}.jpg`;
       const fileType = "image/jpeg";
 
       const formData = new FormData();
@@ -710,12 +562,12 @@ const FramcropCalenderwithcertificate: React.FC<
         type: fileType,
         name: fileName,
       } as any);
-      formData.append("itemId", selectedQuestion.id.toString());
-      formData.append("slaveId", selectedQuestion.slaveId.toString());
+      formData.append("itemId", question.id.toString());
+      formData.append("slaveId", question.slaveId.toString());
       formData.append("farmId", farmId.toString());
 
       const response = await axios.post(
-        `${environment.API_BASE_URL}api/certificate/questionnaire-item/upload-image/${selectedQuestion.id}`,
+        `${environment.API_BASE_URL}api/certificate/questionnaire-item/upload-image/${question.id}`,
         formData,
         {
           headers: {
@@ -728,7 +580,7 @@ const FramcropCalenderwithcertificate: React.FC<
 
       if (response.data.success) {
         const updatedItems = questionnaireItems.map((prevItem) =>
-          prevItem.id === selectedQuestion.id
+          prevItem.id === question.id
             ? {
                 ...prevItem,
                 uploadImage: response.data.imageUrl,
@@ -742,21 +594,11 @@ const FramcropCalenderwithcertificate: React.FC<
         const isComplete = checkCertificationCompletion(updatedItems);
         setAreCertificationTasksComplete(isComplete);
 
-        const pending = updatedItems.filter((item) => {
-          if (item.type === "Tick Off") return item.tickResult !== 1;
-          if (item.type === "Photo Proof") return item.uploadImage === null;
-          return false;
-        });
-
         Alert.alert(
           t("Main.Success"),
           t("CropCalender.CertificateTaskCompletedSuccessfully"),
           [{ text: t("Main.OK") }],
         );
-
-        setShowCameraModal(false);
-        setCapturedImage(null);
-        setSelectedQuestion(null);
       }
     } catch (error: any) {
       console.error("Error uploading questionnaire image:", error);
@@ -776,11 +618,272 @@ const FramcropCalenderwithcertificate: React.FC<
     }
   };
 
-  const handleCameraClose = (imageUri: string | null) => {
-    setShowCamera(false);
-    if (imageUri) {
-      setCapturedImage(imageUri);
-      setShowCameraModal(true);
+  const completeTaskFromImage = async (crop: CropItem) => {
+    try {
+      const locationSuccess = await handleLocationIconPress(
+        crop,
+        undefined,
+        true,
+      );
+      if (!locationSuccess) return;
+
+      const token = await AsyncStorage.getItem("userToken");
+      await axios.post(
+        `${environment.API_BASE_URL}api/crop/update-slave`,
+        {
+          id: crop.id,
+          status: "completed",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const cropIndex = crops.findIndex((c) => c.id === crop.id);
+      if (cropIndex !== -1) {
+        const updatedChecked = [...checked];
+        updatedChecked[cropIndex] = true;
+        setChecked(updatedChecked);
+
+        const now = moment().toISOString();
+        const updatedTimestamps = [...timestamps];
+        updatedTimestamps[cropIndex] = now;
+        setTimestamps(updatedTimestamps);
+        await AsyncStorage.setItem(`taskTimestamp_${cropIndex}`, now);
+
+        setLastCompletedIndex(cropIndex);
+      }
+
+      await fetchCropswithoutload();
+      Alert.alert(
+        t("Main.Success"),
+        t("CropCalender.TaskStatusUpdatedSuccessfully"),
+        [{ text: t("Main.OK") }],
+      );
+    } catch (error) {
+      console.error("Error completing task from image:", error);
+    }
+  };
+
+  const completeTaskDirect = async (
+    globalIndex: number,
+    currentCrop: CropItem,
+  ) => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      await axios.post(
+        `${environment.API_BASE_URL}api/crop/update-slave`,
+        {
+          id: currentCrop.id,
+          status: "completed",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const updatedChecked = [...checked];
+      updatedChecked[globalIndex] = true;
+      setChecked(updatedChecked);
+
+      const now = moment().toISOString();
+      const updatedTimestamps = [...timestamps];
+      updatedTimestamps[globalIndex] = now;
+      setTimestamps(updatedTimestamps);
+      await AsyncStorage.setItem(`taskTimestamp_${globalIndex}`, now);
+
+      const newLastCompletedIndex = updatedChecked.lastIndexOf(true);
+      setLastCompletedIndex(newLastCompletedIndex);
+
+      if (globalIndex < crops.length - 1) {
+        registerForPushNotificationsAsync();
+        await scheduleDailyNotification();
+      }
+    } catch (error) {
+      console.error("Error completing task:", error);
+    }
+  };
+
+  const handleLocationPermissionGranted = async () => {
+    setShowLocationAccess(false);
+    if (pendingLocationTask) {
+      const { globalIndex, crop, fromImageUpload } = pendingLocationTask;
+      setPendingLocationTask(null);
+      if (fromImageUpload) {
+        await completeTaskFromImage(crop);
+      } else if (globalIndex !== undefined) {
+        await completeTaskDirect(globalIndex, crop);
+      }
+    }
+  };
+
+  const handleLocationIconPress = async (
+    currentCrop: CropItem,
+    globalIndex?: number,
+    fromImageUpload?: boolean,
+  ): Promise<boolean> => {
+    try {
+      const { status } = await Location.getForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setPendingLocationTask({
+          globalIndex,
+          crop: currentCrop,
+          fromImageUpload,
+        });
+        setShowLocationAccess(true);
+        return false;
+      }
+
+      setLoading(true);
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+
+      if (!location) {
+        setLoading(false);
+        Alert.alert(
+          t("Main.Error"),
+          t(
+            "Farms.UnableToFetchLocationAfterMultipleAttemptsPleaseTryAgainLater",
+          ),
+          [{ text: t("Main.OK") }],
+        );
+        return false;
+      }
+
+      const token = await AsyncStorage.getItem("userToken");
+      await axios.post(
+        `${environment.API_BASE_URL}api/crop/geo-location`,
+        {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          taskId: currentCrop.id,
+          onCulscropID: currentCrop.onCulscropID,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      return true;
+    } catch (error) {
+      console.error("Error processing location data:", error);
+      Alert.alert(
+        t("Main.Error"),
+        t(
+          "Farms.UnableToFetchLocationAfterMultipleAttemptsPleaseTryAgainLater",
+        ),
+        [{ text: t("Main.OK") }],
+      );
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUploadCalendarTaskImage = async (
+    imageUri: string,
+    crop: CropItem,
+    isLastImage: boolean,
+  ) => {
+    try {
+      setLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+
+      const manipResult = await ImageManipulator.manipulateAsync(
+        imageUri,
+        [{ resize: { width: 800 } }],
+        { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG },
+      );
+
+      const uploadResult = await FileSystem.uploadAsync(
+        `${environment.API_BASE_URL}api/auth/calendar-tasks/upload-image`,
+        manipResult.uri,
+        {
+          httpMethod: "POST",
+          uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+          fieldName: "image",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          parameters: {
+            slaveId: crop.id ? crop.id.toString() : "",
+            farmId: farmId ? farmId.toString() : "",
+            onCulscropID: crop.onCulscropID ? crop.onCulscropID.toString() : "",
+          },
+        },
+      );
+
+      if (uploadResult.status < 200 || uploadResult.status >= 300) {
+        let errMessage = "Upload failed";
+        try {
+          const parsed = JSON.parse(uploadResult.body);
+          if (parsed.message) errMessage = parsed.message;
+        } catch (_) {}
+        throw new Error(errMessage);
+      }
+
+      setTasksWithImages((prev) => new Set(prev).add(crop.id));
+
+      if (isLastImage) {
+        if (crop.taskIndex === 1) {
+          const locationSuccess = await handleLocationIconPress(
+            crop,
+            undefined,
+            true,
+          );
+          if (!locationSuccess) {
+            return;
+          }
+        }
+
+        await axios.post(
+          `${environment.API_BASE_URL}api/crop/update-slave`,
+          {
+            id: crop.id,
+            status: "completed",
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        const cropIndex = crops.findIndex((c) => c.id === crop.id);
+        if (cropIndex !== -1) {
+          const updatedChecked = [...checked];
+          updatedChecked[cropIndex] = true;
+          setChecked(updatedChecked);
+
+          const now = moment().toISOString();
+          const updatedTimestamps = [...timestamps];
+          updatedTimestamps[cropIndex] = now;
+          setTimestamps(updatedTimestamps);
+          await AsyncStorage.setItem(`taskTimestamp_${cropIndex}`, now);
+
+          setLastCompletedIndex(cropIndex);
+        }
+
+        await fetchCropswithoutload();
+        Alert.alert(
+          t("Main.Success"),
+          t("CropCalender.TaskStatusUpdatedSuccessfully"),
+          [{ text: t("Main.OK") }],
+        );
+      }
+    } catch (error: any) {
+      console.error("Error uploading calendar task image:", error);
+      Alert.alert(t("Main.Error"), t("CropCalender.UploadRetryFailed"), [
+        { text: t("Main.OK") },
+      ]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -1053,6 +1156,35 @@ const FramcropCalenderwithcertificate: React.FC<
   const handleCheck = async (i: number) => {
     const globalIndex = startIndex + i;
     const currentCrop = crops[globalIndex];
+
+    if (!currentCrop) return;
+
+    // If the task is already completed, this tap means "remove completion" —
+    // confirm first, same as the certificate task removal flow.
+    if (checked[globalIndex]) {
+      Alert.alert(
+        t("CropCalender.ConfirmRemove"),
+        t("CropCalender.AreYouSureYouWantToRemoveThisTask"),
+        [
+          { text: t("Main.Cancel"), style: "cancel" },
+          {
+            text: t("Main.OK"),
+            onPress: async () => {
+              await performCheckToggle(i);
+            },
+          },
+        ],
+      );
+      return;
+    }
+
+    // Marking a task as complete — no confirmation needed, proceed directly.
+    await performCheckToggle(i);
+  };
+
+  const performCheckToggle = async (i: number) => {
+    const globalIndex = startIndex + i;
+    const currentCrop = crops[globalIndex];
     const PreviousCrop = crops[globalIndex - 1];
     const NextCrop = crops[globalIndex + 1];
     await AsyncStorage.removeItem(`uploadCompleted-${currentCrop.id}`);
@@ -1107,32 +1239,34 @@ const FramcropCalenderwithcertificate: React.FC<
       const remainingDays = Math.ceil(remainingTime / (24 * 60 * 60 * 1000));
 
       if (remainingDays > 0) {
-        updateMessage = `${t("CropCalender.YouHave")} ${t(
-          "CropCalender.DaysRemainingUntilTheNextUpdate",
-          {
-            date: remainingDays,
-          },
-        )}`;
+        updateMessage = t("CropCalender.DaysRemainingUntilTheNextUpdate", {
+          date: remainingDays,
+          count: remainingDays,
+        });
 
-        Alert.alert(t("Main.Sorry"), updateMessage, [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(t("Main.Sorry"), updateMessage, [{ text: t("Main.OK") }]);
         return;
       }
 
       if (!updateMessage) {
-        updateMessage = `${t("CropCalender.YouHave")} ${t(
-          "CropCalender.DaysRemainingUntilTheNextUpdate",
-          {
-            date: remainingDays,
-          },
-        )}`;
+        updateMessage = t("CropCalender.DaysRemainingUntilTheNextUpdate", {
+          date: remainingDays,
+          count: remainingDays,
+        });
       }
     } else {
       updateMessage = t("CropCalender.noCropData");
     }
+
     if (currentCrop.taskIndex === 1 && newStatus === "completed") {
-      const TaskDays = NextCrop.days;
+      const locationSuccess = await handleLocationIconPress(
+        currentCrop,
+        globalIndex,
+      );
+      if (!locationSuccess) {
+        return;
+      }
+      const TaskDays = NextCrop?.days || 0;
       const CurrentDate = new Date();
 
       const nextCropUpdate2 = new Date(
@@ -1143,6 +1277,12 @@ const FramcropCalenderwithcertificate: React.FC<
         date: nextCropUpdate2.toISOString(),
       };
       await AsyncStorage.setItem("nextCropUpdate", JSON.stringify(data));
+    }
+
+    if (!checked[globalIndex] && currentCrop.reqImages > 0) {
+      setPendingImageCrop({ crop: currentCrop, globalIndex });
+      setCultivatedLandModalVisible(true);
+      return;
     }
 
     try {
@@ -1179,20 +1319,13 @@ const FramcropCalenderwithcertificate: React.FC<
       }
 
       const newLastCompletedIndex = updatedChecked.lastIndexOf(true);
-      setLastCompletedIndex(newLastCompletedIndex);
+      setLastCompletedIndex(newLastCompletedIndex === -1 ? null : newLastCompletedIndex);
 
-      if (currentCrop.taskIndex === 1 && newStatus === "completed") {
-        await handleLocationIconPress(currentCrop);
-      }
       if (globalIndex < crops.length - 1) {
         if (newStatus === "completed") {
           registerForPushNotificationsAsync();
           await scheduleDailyNotification();
         }
-      }
-
-      if (updatedChecked[globalIndex] && currentCrop.reqImages > 0) {
-        setCultivatedLandModalVisible(true);
       }
     } catch (error: any) {
       if (
@@ -1203,20 +1336,18 @@ const FramcropCalenderwithcertificate: React.FC<
       ) {
         Alert.alert(
           t("Main.Sorry"),
-          t("CropCalender.YouCantChangeTheStatusBackToPendingOnce1HourHasPassedAfterMarkingItAsCompleted"),
+          t(
+            "CropCalender.YouCantChangeTheStatusBackToPendingOnce1HourHasPassedAfterMarkingItAsCompleted",
+          ),
           [{ text: t("Main.OK") }],
         );
       } else if (
         error.response &&
         error.response.data.message.includes("You need to wait 6 hours")
       ) {
-        Alert.alert(t("Main.Sorry"), updateMessage, [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(t("Main.Sorry"), updateMessage, [{ text: t("Main.OK") }]);
       } else {
-        Alert.alert(t("Main.Sorry"), updateMessage, [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(t("Main.Sorry"), updateMessage, [{ text: t("Main.OK") }]);
       }
     }
   };
@@ -1461,73 +1592,6 @@ const FramcropCalenderwithcertificate: React.FC<
     }
   }, [crops]);
 
-  const handleLocationIconPress = async (currentCrop: CropItem) => {
-    setLoading(true);
-
-    const maxRetries = 3;
-    const delayBetweenRetries = 2000;
-
-    const delay = (ms: number) =>
-      new Promise((resolve) => setTimeout(resolve, ms));
-
-    const getLocationWithRetry = async (
-      retries: number,
-    ): Promise<Location.LocationObject | null> => {
-      try {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
-          throw new Error("Location permission denied");
-        }
-
-        const location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.High,
-        });
-        return location;
-      } catch (error) {
-        if (retries > 0) {
-          await delay(delayBetweenRetries);
-          return getLocationWithRetry(retries - 1);
-        } else {
-          return null;
-        }
-      }
-    };
-
-    try {
-      const location = await getLocationWithRetry(maxRetries);
-
-      if (!location) {
-        Alert.alert(
-          t("Main.Error"),
-          t("Farms.UnableToFetchLocationAfterMultipleAttemptsPleaseTryAgainLater"),
-          [{ text: t("Main.OK") }],
-        );
-        setLoading(false);
-        return;
-      }
-
-      const token = await AsyncStorage.getItem("userToken");
-      const response = await axios.post(
-        `${environment.API_BASE_URL}api/crop/geo-location`,
-        {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          taskId: currentCrop.id,
-          onCulscropID: currentCrop.onCulscropID,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-    } catch (error) {
-      console.error("Error processing location data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const SkeletonLoader = () => {
     const rectHeight = hp("30%");
     const gap = hp("4%");
@@ -1601,7 +1665,12 @@ const FramcropCalenderwithcertificate: React.FC<
             uri: taskImage.image,
             title: `Task ${crop.taskIndex} - Photo ${index + 1}`,
             description: crop.taskDescriptionEnglish,
-            uploadedBy: taskImage.uploadedBy,
+            uploadedBy:
+              taskImage.uploadedBy ||
+              taskImage.userName ||
+              taskImage.name ||
+              taskImage.uploaderName ||
+              taskImage.user_name,
             createdAt: taskImage.createdAt,
           }),
         );
@@ -1612,7 +1681,10 @@ const FramcropCalenderwithcertificate: React.FC<
       } else {
         Alert.alert(
           t("CropCalender.No Images Yet"),
-          t("CropCalender.YouHaventUploadedAnyImagesForTaskYetCompleteThisTaskByTakingPhotosToTrackYourProgress", { taskIndex: crop.taskIndex }),
+          t(
+            "CropCalender.YouHaventUploadedAnyImagesForTaskYetCompleteThisTaskByTakingPhotosToTrackYourProgress",
+            { taskIndex: crop.taskIndex },
+          ),
           [
             {
               text: t("Main.OK"),
@@ -1662,20 +1734,28 @@ const FramcropCalenderwithcertificate: React.FC<
 
   return (
     <View className="flex-1 bg-gray-50">
-      
-
-      {isCultivatedLandModalVisible &&
-        lastCompletedIndex !== null &&
-        crops[lastCompletedIndex] && (
-          <CultivatedLandModal
-            visible={isCultivatedLandModalVisible}
-            onClose={() => setCultivatedLandModalVisible(false)}
-            cropId={crops[lastCompletedIndex].id}
-            farmId={Number(farmId)}
-            onCulscropID={crops[lastCompletedIndex].onCulscropID}
-            requiredImages={0}
-          />
-        )}
+      {isCultivatedLandModalVisible && pendingImageCrop && (
+        <CultivatedLandModal
+          visible={isCultivatedLandModalVisible}
+          onClose={() => {
+            setCultivatedLandModalVisible(false);
+            setPendingImageCrop(null);
+          }}
+          onCaptureImage={async (imageUri, isLastImage) => {
+            const { crop } = pendingImageCrop;
+            if (isLastImage) {
+              setCultivatedLandModalVisible(false);
+              setPendingImageCrop(null);
+            }
+            await handleUploadCalendarTaskImage(
+              imageUri,
+              crop,
+              isLastImage,
+            );
+          }}
+          requiredImages={pendingImageCrop.crop.reqImages || 1}
+        />
+      )}
 
       <View style={{ position: "relative" }}>
         <CustomHeader
@@ -1704,6 +1784,7 @@ const FramcropCalenderwithcertificate: React.FC<
                 status: "edit",
                 onCulscropID: crops[0]?.onCulscropID,
                 cropId,
+              farmId: Number(farmId),
               })
             }
           >
@@ -1757,7 +1838,7 @@ const FramcropCalenderwithcertificate: React.FC<
           <View>
             <Image
               source={require("../../../assets/images/farms/star-certificate.webp")}
-              className="w-8 h-8"
+              className="w-14 h-16"
               resizeMode="contain"
             />
           </View>
@@ -1902,7 +1983,10 @@ const FramcropCalenderwithcertificate: React.FC<
                                         : language === "ta"
                                           ? item.qTamil
                                           : item.qEnglish,
-                                    uploadedBy: t("ImageViewerModal.You"),
+                                    uploadedBy:
+                                      (item as any).uploadedBy ||
+                                      (item as any).userName ||
+                                      "Owner",
                                     from: "certificate",
                                   },
                                 ]);
@@ -2292,142 +2376,42 @@ const FramcropCalenderwithcertificate: React.FC<
         }}
       />
 
-      {/* Camera Modal */}
+      {/* Location Access Modal */}
       <Modal
-        visible={showCameraModal && !capturedImage}
-        animationType="fade"
-        transparent
+        visible={showLocationAccess}
+        animationType="slide"
         onRequestClose={() => {
-          setShowCameraModal(false);
-          setSelectedQuestion(null);
+          setShowLocationAccess(false);
+          setPendingLocationTask(null);
         }}
       >
-        <View className="flex-1 bg-black/50 justify-center items-center px-6">
-          <View className="bg-white rounded-2xl p-8 items-center w-full">
-            <View className="p-2 bg-[#F6F6F6] rounded-xl">
-              <Ionicons name="camera" size={45} color="#000" />
-            </View>
-
-            <Text className="text-lg font-semibold mt-2 text-center">
-              {t("Farms.ClickAPhoto")}
-            </Text>
-
-            <Text className="text-gray-500 text-center mt-2 mb-6">
-              {t(
-                "Farms.PleaseTakeAPhotoOfTheCompletedWorkInTheField",
-              )}
-            </Text>
-
-            <TouchableOpacity
-              onPress={() => setShowCamera(true)}
-              className="bg-black py-2 px-6 rounded-full h-[50px] items-center justify-center w-full"
-            >
-              <Text className="text-white text-base">
-                {t("CropCalender.OpenCamera")}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => {
-                setShowCameraModal(false);
-                setSelectedQuestion(null);
-              }}
-              className="mt-4"
-            >
-              <Text className="text-gray-400 text-sm">{t("Main.Cancel")}</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Camera Screen Modal */}
-      <Modal visible={showCamera} animationType="slide" transparent={false}>
-        <CameraScreen
-          onClose={(imageUri) => {
-            handleCameraClose(imageUri);
+        <LocationAccess
+          navigation={navigation as any}
+          onPermissionGranted={handleLocationPermissionGranted}
+          onClose={() => {
+            setShowLocationAccess(false);
+            setPendingLocationTask(null);
           }}
         />
       </Modal>
 
-      {/* Image Preview Modal (after capture) */}
-      {capturedImage && (
-        <Modal
-          visible={capturedImage !== null}
-          animationType="fade"
-          transparent
-          onRequestClose={() => {
-            setCapturedImage(null);
+      {/* Questionnaire Item Camera Modal */}
+      {showCameraModal && selectedQuestion && (
+        <CultivatedLandModal
+          visible={showCameraModal}
+          onClose={() => {
             setShowCameraModal(false);
+            setSelectedQuestion(null);
           }}
-        >
-          <View className="flex-1 bg-black/50 justify-center items-center px-6">
-            <View className="bg-white rounded-2xl p-6 shadow-lg items-center w-full">
-              <Text className="text-lg font-semibold mb-2">
-                {t("CropCalender.ImagePreview")}
-              </Text>
-
-              <Image
-                source={{ uri: capturedImage }}
-                style={{ width: 250, height: 250, marginBottom: 20 }}
-                resizeMode="contain"
-                className="mt-2"
-              />
-
-              <View className="gap-4 w-full">
-                {isButtonEnabled ? (
-                  <Text className="text-center font-semibold">
-                    {t("Farms.ReadyToSubmit")}
-                  </Text>
-                ) : (
-                  <Text className="text-gray-600 text-center text-lg">
-                    {countdown} {t("Farms.Seconds")}
-                  </Text>
-                )}
-
-                <TouchableOpacity
-                  onPress={handleSubmitPhoto}
-                  className={`py-2 px-6 rounded-full h-[50px] items-center justify-center ${
-                    isButtonEnabled ? "bg-[#353535]" : "bg-gray-400"
-                  }`}
-                  disabled={
-                    uploadingImageForItem === selectedQuestion?.id ||
-                    !isButtonEnabled
-                  }
-                >
-                  {uploadingImageForItem === selectedQuestion?.id ? (
-                    <ActivityIndicator size="small" color="#fff" />
-                  ) : (
-                    <Text className="text-white text-base text-center">
-                      {t("Farms.Submit")}
-                    </Text>
-                  )}
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => setShowCamera(true)}
-                  className="border-2 border-black bg-white py-2 px-6 rounded-full h-[50px] items-center justify-center"
-                >
-                  <Text className="text-black text-base text-center">
-                    {t("Farms.RetakePreviousPhoto")}
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => {
-                    setCapturedImage(null);
-                    setShowCameraModal(false);
-                    setSelectedQuestion(null);
-                  }}
-                  className="items-center mt-2"
-                >
-                  <Text className="text-gray-400 text-sm">
-                    {t("Main.Cancel")}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
+          onCaptureImage={(imageUri) => {
+            const currentQ = selectedQuestion;
+            setShowCameraModal(false);
+            setSelectedQuestion(null);
+            handleUploadQuestionnairePhoto(imageUri, currentQ);
+          }}
+          title={t("Farms.ClickAPhoto")}
+          subtitle={t("Farms.PleaseTakeAPhotoOfTheCompletedWorkInTheField.")}
+        />
       )}
     </View>
   );

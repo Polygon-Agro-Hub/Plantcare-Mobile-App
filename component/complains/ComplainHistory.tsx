@@ -17,10 +17,9 @@ import { RootStackParamList } from "../types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import LottieView from "lottie-react-native";
 import NoData from "../common/NoData";
 import { useSelector } from "react-redux";
-import { selectUserPersonal } from "@/store/userSlice";
+import { selectUserPersonal, selectUserData } from "@/store/userSlice";
 import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../common/CustomHeader";
 import LoadingPage from "../common/LoadingPage";
@@ -57,6 +56,19 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
   );
   const { t } = useTranslation();
   const userPersonalData = useSelector(selectUserPersonal);
+  const userData = useSelector(selectUserData);
+
+  const isStaffRole =
+    userData?.role === "Supervisor" ||
+    userData?.role === "Manager" ||
+    userData?.role === "Laborer" ||
+    userData?.role === "Laboror";
+
+  useEffect(() => {
+    if (isStaffRole) {
+      navigation.navigate("EngProfile");
+    }
+  }, [isStaffRole]);
 
   const [profile, setProfile] = useState<{
     firstName: string;
@@ -144,9 +156,11 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
       setSelectedComplain(complain);
       setModalVisible(true);
     } else {
-      Alert.alert(t("Main.Sorry"), t("ReportHistory.NoResponseYetForThisComplaint"), [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(
+        t("Main.Sorry"),
+        t("ReportHistory.NoResponseYetForThisComplaint"),
+        [{ text: t("Main.OK") }],
+      );
     }
   };
 
@@ -165,9 +179,17 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
         />
 
         {loading ? (
-          <LoadingPage fullScreen />
+          <View className="flex-1 mb-20 justify-center items-center bg-[#F9F9FA]">
+            <LoadingPage fullScreen backgroundColor="#F9F9FA" />
+          </View>
         ) : complains.length === 0 ? (
-            <NoData text={t("ReportHistory.NoComplaintsFound") || "No complaints found"} />
+          <View className="flex-1 mb-20 bg-[#F9F9FA]">
+            <NoData
+              text={
+                t("ReportHistory.NoComplaintsFound") || "No complaints found"
+              }
+            />
+          </View>
         ) : (
           <ScrollView
             className="flex-1 px-6"
@@ -260,7 +282,7 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
                   {language === "si"
                     ? `හිතවත් ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nඅපි ඔබට කාරුණිකව දැනුම් දෙන්න කැමතියි ඔබගේ පැමිණිල්ල විසඳා ගෙන ඇත.\n\n${complainReply || "Loading..."}\n\nඔබට තවත් ගැටළු හෝ ප්‍රශ්න තිබේ නම්, කරුණාකර අප හා සම්බන්ධ වන්න. ඔබේ ඉවසීම සහ අවබෝධය වෙනුවෙන් ස්තූතියි.\n\nමෙයට,\nPolygon Customer Support Team`
                     : language === "ta"
-                      ? `அன்புள்ள ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nநாங்கள் உங்கள் புகாரை தீர்க்கப்பட்டதாக தெரிவித்ததில் மகிழ்ச்சி அடைகிறோம்\n\n${complainReply || "Loading..."}\n\nஉங்களுக்கு மேலும் ஏதேனும் சிக்கல்கள் அல்லது கேள்விகள் இருந்தால், தயவுசெய்து எங்களைத் தொடர்பு கொள்ளவும். உங்கள் பொறுமைக்கும் புரிதலுக்கும் நன்றி.\n\nஇதற்கு,\nPolygon Agro Customer Support Team`
+                      ? `அன்புள்ள ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nநாங்கள் உங்கள் புகாரை தீர்க்கப்பட்டதாக தெரிவித்ததில் மகிழ்ச்சி அடைகிறோம்\n\n${complainReply || "Loading..."}\n\nஉங்களுக்கு மேலும் ஏதேனும் சிக்கல்கள் அல்லது கேள்விகள் இருந்தால், தயவுசெய்து எங்களைத் தொடர்பு கொள்ளவும். உங்கள் பொறுமைக்கும் புரிதலுக்கும் நன்றி.\n\nஇதற்கு,\nPolygon Customer Support Team`
                       : `Dear ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nWe are pleased to inform you that your complaint has been resolved\n\n${complainReply || "Loading..."}\n\nIf you have any further concerns or questions, feel free to reach out.\nThank you for your patience and understanding.\n\nSincerely,\nPolygon Customer Support Team`}
                 </Text>
                 {selectedComplain?.replyTime && (

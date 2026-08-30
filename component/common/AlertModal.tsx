@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { View, Text, Modal, Animated, TouchableOpacity, Alert } from "react-native";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
+import { useTranslation } from "react-i18next";
 
 interface AlertModalProps {
   visible: boolean;
@@ -32,6 +33,7 @@ export const AlertModal: React.FC<AlertModalProps> = ({
   autoClose = true,
   showOkButton,
 }) => {
+  const { t } = useTranslation();
   const isOkButtonVisible = showOkButton !== undefined ? showOkButton : !autoClose;
   const loadingBarWidth = useRef(new Animated.Value(1)).current; // 1 = 100%
 
@@ -149,7 +151,9 @@ export const AlertModal: React.FC<AlertModalProps> = ({
                 activeOpacity={0.8}
                 className="bg-[#10A37D] py-3 px-6 rounded-full flex-row items-center justify-center gap-x-2 shadow-md"
               >
-                <Text className="text-white font-bold text-base">OK</Text>
+                <Text className="text-white font-bold text-base">
+                  {t("Main.OK") || "OK"}
+                </Text>
               </TouchableOpacity>
             )}
           </View>
@@ -206,7 +210,14 @@ Alert.alert = (title, message, buttons, options) => {
   if (hasMultipleButtons) {
     originalAlert(title, message, buttons, options);
   } else {
-    const isSuccess = title && title.toLowerCase().includes("success");
+    const titleStr = (title || "").toString().toLowerCase().trim();
+    const isSuccess =
+      titleStr.includes("success") ||
+      titleStr.includes("සාර්ථක") ||
+      titleStr.includes("வெற்றி") ||
+      titleStr.includes("saved") ||
+      titleStr.includes("done") ||
+      titleStr.includes("completed");
     const type = isSuccess ? "success" : "error";
 
     const onCloseCallback = () => {

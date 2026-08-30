@@ -21,6 +21,8 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-nat
 import { MaterialIcons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 import { useFocusEffect } from "@react-navigation/native";
+import { useSelector } from "react-redux";
+import { selectUserData } from "@/store/userSlice";
 import GlobalSearchModal from "../common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
 import LoadingPage from "../common/LoadingPage";
@@ -45,6 +47,19 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const userData = useSelector(selectUserData);
+  const isStaffRole =
+    userData?.role === "Supervisor" ||
+    userData?.role === "Manager" ||
+    userData?.role === "Laborer" ||
+    userData?.role === "Laboror";
+
+  useEffect(() => {
+    if (isStaffRole) {
+      navigation.navigate("EngProfile");
+    }
+  }, [isStaffRole]);
 
   const selectedCategoryLabel =
     Category.find((c) => c.value === selectedCategory)?.label ?? null;
@@ -296,7 +311,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
                 className="w-full h-52 border border-[#F4F4F4] rounded-lg p-3 bg-[#F4F4F4] mb-8 text-gray-800"
                 placeholder={t("ReportComplaint.KindlySubmitYourComplaintHere")}
                 style={{ color: '#000000', textAlignVertical: "top" }} 
-                placeholderTextColor="#000000"
+                placeholderTextColor="#9CA3AF" 
                 multiline
                 value={complain}
                 onChangeText={(text) => setComplain(text)}
@@ -335,6 +350,7 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
         searchPlaceholder={t("Main.Search...")}
         multiSelect={false}
         noResultsText="No category found"
+        placeholderTextColor="#000000"
       />
     </KeyboardAvoidingView>
   );

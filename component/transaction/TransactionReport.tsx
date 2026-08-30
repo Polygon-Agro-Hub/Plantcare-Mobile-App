@@ -7,11 +7,13 @@ import {
   Image,
   Alert,
   Platform,
+  BackHandler,
 } from "react-native";
 import axios from "axios";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp, useRoute } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import { environment } from "@/environment/environment";
 import { RootStackParamList } from "../types/types";
 import * as Print from "expo-print";
@@ -21,7 +23,6 @@ import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 import CustomHeader from "../common/CustomHeader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import LottieView from "lottie-react-native";
 import LoadingPage from "../common/LoadingPage";
 
 const api = axios.create({
@@ -88,6 +89,50 @@ interface Crop {
   createdAt: string;
 }
 
+// Single source of truth for the "Received Items" table.
+// Both the header row and every data row read widths/keys from here,
+// so they can never drift apart from one another.
+type ColumnKey =
+  | "cropName"
+  | "variety"
+  | "grade"
+  | "unitPrice"
+  | "quantity"
+  | "subTotal";
+
+interface ColumnDef {
+  key: ColumnKey;
+  label: string;
+  width: number;
+  numeric?: boolean;
+}
+
+const COLUMNS: ColumnDef[] = [
+  { key: "cropName", label: "TransactionList.CropName", width: 96 },
+  { key: "variety", label: "TransactionList.Variety", width: 96 },
+  { key: "grade", label: "TransactionList.Grade", width: 80 },
+  {
+    key: "unitPrice",
+    label: "TransactionList.UnitPriceRs",
+    width: 96,
+    numeric: true,
+  },
+  {
+    key: "quantity",
+    label: "TransactionList.Quantitykg",
+    width: 96,
+    numeric: true,
+  },
+  {
+    key: "subTotal",
+    label: "TransactionList.SubTotalRs",
+    width: 96,
+    numeric: true,
+  },
+];
+
+const BORDER_COLOR = "#d1d5db"; // tailwind gray-300, matches the outer border
+
 const TransactionReport: React.FC<TransactionReportProps> = ({
   navigation,
 }) => {
@@ -101,6 +146,8 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
   const [crops, setCrops] = useState<Crop[]>([]);
 
   const { t } = useTranslation();
+
+
 
   const calculateTotalSum = (cropsData: Crop[]): number => {
     return (cropsData || []).reduce((sum: number, crop: Crop) => {
@@ -135,7 +182,48 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
     return formatNumberWithCommas(value);
   };
 
-  const selectedDate = transactionDate || new Date().toISOString().slice(0, 10);
+  // Resolves the display value for a given column + crop row,
+  // respecting the current i18next language for translated fields.
+  const getCellValue = (col: ColumnDef, crop: Crop): string => {
+    switch (col.key) {
+      case "cropName":
+        return i18next.language === "si"
+          ? crop.cropNameSinhala || "-"
+          : i18next.language === "ta"
+            ? crop.cropNameTamil || "-"
+            : crop.cropName || "-";
+      case "variety":
+        return i18next.language === "si"
+          ? crop.varietyNameSinhala || "-"
+          : i18next.language === "ta"
+            ? crop.varietyNameTamil || "-"
+            : crop.variety || "-";
+      case "grade":
+        return crop.grade || "-";
+      case "unitPrice":
+        return formatNumber(crop.unitPrice);
+      case "quantity":
+        return formatNumber(crop.quantity);
+      case "subTotal":
+        return formatNumber(crop.subTotal);
+      default:
+        return "-";
+    }
+  };
+
+  // `transactionDate` may arrive as a plain "YYYY-MM-DD" string or as a
+  // full ISO timestamp (e.g. "2026-08-11T18:30:00.00Z") depending on the
+  // caller. Always normalize down to just the date portion so it's safe
+  // to use in filenames (colons in a timestamp get mangled into "/" on
+  // iOS) and consistent for display/API calls.
+  const toDateOnly = (value: string): string => {
+    const match = value.match(/^\d{4}-\d{2}-\d{2}/);
+    return match ? match[0] : value.slice(0, 10);
+  };
+
+  const selectedDate = transactionDate
+    ? toDateOnly(transactionDate)
+    : new Date().toISOString().slice(0, 10);
 
   useEffect(() => {
     fetchDetails();
@@ -272,7 +360,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
             font-weight: bold; margin: 15px 0 5px 0; text-align: center;
             background-color: #D6E6F4; padding: 8px; border: 1px solid #000; font-size: 16px;
           }
-          table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+          table { width: 100%; border-collapse: collapse; margin-bottom: 15px; table-layout: fixed; }
           th {
             background-color: #fff; text-align: center; padding: 8px;
             border: 1px solid #000; font-weight: bold; font-size: 12px;
@@ -369,7 +457,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         <div class="total-row">
           <div class="total-box">
             <div class="total-label">${t("TransactionList.FullTotalRs")} </div>
-            <div class="total-value">: Rs. ${formatNumberWithCommas(total)}</div>
+            <div class="total-value"> Rs. ${formatNumberWithCommas(total)}</div>
           </div>
         </div>
 
@@ -394,6 +482,17 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
     }
   };
 
+  // Copies the freshly generated PDF (which has an auto-generated,
+  // non-descriptive filename from expo-print) to a file whose name we
+  // control. Both Android and iOS now go through this so the filename
+  // that shows up in the native share/save sheet is always
+  // GRN_{invoiceNumber}_{transactionDate}.pdf on both platforms.
+  const buildNamedPdfCopy = async (uri: string, fileName: string) => {
+    const destPath = `${(FileSystem as any).cacheDirectory}${fileName}`;
+    await FileSystem.copyAsync({ from: uri, to: destPath });
+    return destPath;
+  };
+
   const handleDownloadPDF = async () => {
     try {
       const uri = await generatePDF();
@@ -406,15 +505,12 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         return;
       }
 
-      const date = new Date().toISOString().slice(0, 10);
-      const fileName = `GRN_${crops.length > 0 ? crops[0].invoiceNumber : "N/A"}_${date}.pdf`;
+      const fileName = `GRN_${crops.length > 0 ? crops[0].invoiceNumber : "N/A"}_${selectedDate}.pdf`;
+      const namedFilePath = await buildNamedPdfCopy(uri, fileName);
 
       if (Platform.OS === "android") {
-        const tempFilePath = `${(FileSystem as any).cacheDirectory}${fileName}`;
-        await FileSystem.copyAsync({ from: uri, to: tempFilePath });
-
         if (await Sharing.isAvailableAsync()) {
-          await Sharing.shareAsync(tempFilePath, {
+          await Sharing.shareAsync(namedFilePath, {
             dialogTitle: t("Save GRN Report"),
             mimeType: "application/pdf",
             UTI: "com.adobe.pdf",
@@ -428,7 +524,11 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         }
       } else if (Platform.OS === "ios") {
         if (await Sharing.isAvailableAsync()) {
-          await Sharing.shareAsync(uri, {
+          // Share the renamed copy (not the raw `uri` from expo-print) so
+          // the filename iOS shows in the share sheet / "Save to Files"
+          // matches GRN_{invoiceNumber}_{date}.pdf instead of the
+          // auto-generated name expo-print assigns.
+          await Sharing.shareAsync(namedFilePath, {
             dialogTitle: t("TransactionList.Save GRN Report"),
             mimeType: "application/pdf",
             UTI: "com.adobe.pdf",
@@ -436,7 +536,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
           Alert.alert(
             t("TransactionList.Info"),
             t(
-              'TransactionList.Use the "Save to Files" option to save to Downloads',
+              'TransactionList.UseTheSave',
             ),
             [{ text: t("Main.OK") }],
           );
@@ -479,9 +579,6 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         return;
       }
 
-      const fileName = `PurchaseReport_${crops.length > 0 ? crops[0].invoiceNumber : "N/A"}_${selectedDate}.pdf`;
-      const newUri = `${(FileSystem as any).cacheDirectory}${fileName}`;
-
       const fileInfo = await FileSystem.getInfoAsync(uri);
       if (!fileInfo.exists) {
         Alert.alert(
@@ -492,8 +589,13 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         return;
       }
 
-      await FileSystem.copyAsync({ from: uri, to: newUri });
-      await Sharing.shareAsync(newUri, {
+      // Use the same GRN_{invoiceNumber}_{date} naming convention as the
+      // download flow, so Share produces a consistently named file on
+      // both Android and iOS.
+      const fileName = `GRN_${crops.length > 0 ? crops[0].invoiceNumber : "N/A"}_${selectedDate}.pdf`;
+      const namedFilePath = await buildNamedPdfCopy(uri, fileName);
+
+      await Sharing.shareAsync(namedFilePath, {
         mimeType: "application/pdf",
         dialogTitle: "Share Purchase Report",
         UTI: "com.adobe.pdf",
@@ -526,6 +628,20 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
     }
     return {};
   };
+
+    useFocusEffect(
+      React.useCallback(() => {
+        const onBackPress = () => {
+         navigation.goBack();
+          return true;
+        };
+        const subscription = BackHandler.addEventListener(
+          "hardwareBackPress",
+          onBackPress,
+        );
+        return () => subscription.remove();
+      }, [navigation]),
+    );
 
   if (loading) {
     return (
@@ -619,6 +735,13 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         </View>
 
         {/* Received Items Table */}
+        {/*
+          Fix: borders are now drawn on the wrapping `View` for each cell
+          (which always stretches to the row's full height) instead of on
+          the `Text` node itself (whose box only wraps its own content).
+          A single COLUMNS array drives both the header and the data rows
+          so widths can never drift apart between them.
+        */}
         <View className="mb-4">
           <Text
             className="font-bold text-sm mb-3"
@@ -630,53 +753,51 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
             <View>
               {/* Header Row */}
               <View className="flex-row bg-gray-200">
-                {[
-                  t("TransactionList.CropName"),
-                  t("TransactionList.Variety"),
-                  t("TransactionList.Grade"),
-                  t("TransactionList.UnitPriceRs"),
-                  t("TransactionList.Quantitykg"),
-                  t("TransactionList.SubTotalRs"),
-                ].map((header, i, arr) => (
-                  <Text
-                    key={header}
-                    className={`w-24 p-2 font-bold ${i < arr.length - 1 ? "border-r border-gray-300" : ""} ${i === 2 ? "w-20" : ""}`}
-                    style={getTextStyle(i18next.language)}
+                {COLUMNS.map((col, i) => (
+                  <View
+                    key={col.key}
+                    style={{
+                      width: col.width,
+                      borderRightWidth: i < COLUMNS.length - 1 ? 1 : 0,
+                      borderColor: BORDER_COLOR,
+                      padding: 8,
+                    }}
                   >
-                    {header}
-                  </Text>
+                    <Text
+                      className="font-bold"
+                      style={getTextStyle(i18next.language)}
+                    >
+                      {t(col.label)}
+                    </Text>
+                  </View>
                 ))}
               </View>
 
               {/* Data Rows */}
               {crops.map((crop, index) => (
-                <View key={`${crop.id}-${index}`} className="flex-row">
-                  <Text className="w-24 p-2 border-t border-r border-gray-300">
-                    {i18next.language === "si"
-                      ? crop.cropNameSinhala || "-"
-                      : i18next.language === "ta"
-                        ? crop.cropNameTamil || "-"
-                        : crop.cropName || "-"}
-                  </Text>
-                  <Text className="w-24 p-2 border-t border-r border-gray-300">
-                    {i18next.language === "si"
-                      ? crop.varietyNameSinhala || "-"
-                      : i18next.language === "ta"
-                        ? crop.varietyNameTamil || "-"
-                        : crop.variety || "-"}
-                  </Text>
-                  <Text className="w-20 p-2 border-t border-r border-gray-300">
-                    {crop.grade || "-"}
-                  </Text>
-                  <Text className="w-24 p-2 border-t border-r border-gray-300 text-right">
-                    {formatNumber(crop.unitPrice)}
-                  </Text>
-                  <Text className="w-24 p-2 border-t border-r border-gray-300 text-right">
-                    {formatNumber(crop.quantity)}
-                  </Text>
-                  <Text className="w-24 p-2 border-t border-gray-300 text-right">
-                    {formatNumber(crop.subTotal)}
-                  </Text>
+                <View
+                  key={`${crop.id}-${index}`}
+                  className="flex-row"
+                  style={{ borderTopWidth: 1, borderColor: BORDER_COLOR }}
+                >
+                  {COLUMNS.map((col, i) => (
+                    <View
+                      key={col.key}
+                      style={{
+                        width: col.width,
+                        borderRightWidth: i < COLUMNS.length - 1 ? 1 : 0,
+                        borderColor: BORDER_COLOR,
+                        padding: 8,
+                      }}
+                    >
+                      <Text
+                        numberOfLines={1}
+                        style={col.numeric ? { textAlign: "right" } : undefined}
+                      >
+                        {getCellValue(col, crop)}
+                      </Text>
+                    </View>
+                  ))}
                 </View>
               ))}
             </View>

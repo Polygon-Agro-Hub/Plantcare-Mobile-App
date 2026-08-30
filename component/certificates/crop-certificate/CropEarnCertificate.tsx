@@ -80,7 +80,7 @@ const CropEarnCertificate: React.FC = () => {
   const getMonthLabel = (timeline: string) => {
     const months = parseInt(timeline);
     return months === 1
-      ? t("EarnCertificate.month")
+      ? t("EarnCertificate.Month")
       : t("EarnCertificate.Months");
   };
 
@@ -299,6 +299,7 @@ const CropEarnCertificate: React.FC = () => {
       ) : (
         <ScrollView
           className="flex-1 px-4"
+          contentContainerStyle={{ flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
         >
           {filteredCertificates.length > 0 && (
@@ -359,7 +360,7 @@ const CropEarnCertificate: React.FC = () => {
               />
           )}
 
-          {filteredCertificates.length > 0 && (
+          {!searchQuery && (
             <TouchableOpacity
               onPress={handleProceedWithout}
               className="bg-[#F3F3F5] rounded-3xl h-[50px] justify-center px-6 mt-6 mb-8 shadow-sm"

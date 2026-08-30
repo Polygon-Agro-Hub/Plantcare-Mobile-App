@@ -48,7 +48,7 @@ const ManagerProfileView: React.FC<ManagerProfileViewProps> = ({
   return (
     <View className="flex-1 bg-white">
       <CustomHeader
-        title={t("EditProfile.EditProfile")}
+        title={t("Profile.ViewProfile") || "View Profile"}
         navigation={navigation}
         onBackPress={() => navigation.goBack()}
       />
@@ -67,7 +67,7 @@ const ManagerProfileView: React.FC<ManagerProfileViewProps> = ({
           </View>
           <View className="mt-2 px-3 py-0.5 bg-[#EDF7EE] rounded-full">
             <Text className="text-xs text-[#2E7D32] font-semibold">
-              Manager
+              {t("Farms.FarmManager") || t("Farms.Manager") || "Manager"}
             </Text>
           </View>
         </View>

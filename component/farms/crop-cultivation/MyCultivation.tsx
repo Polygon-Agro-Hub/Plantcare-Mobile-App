@@ -374,18 +374,19 @@ const MyCultivation = () => {
         key={refreshKey}
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
-        className="px-6 bg-white"
+        className="px-6 bg-white mb-20"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            colors={["#FDCF3F"]}
-            tintColor="#FDCF3F"
           />
         }
       >
-        <View style={{ paddingVertical: 10 }}>
-          <Text className="text-center text-[#5B5B5B] text-sm -mt-4">
+        <View className="pt-3 pb-3">
+          <Text
+            className="text-center text-[#5B5B5B] text-sm px-2"
+            style={{ lineHeight: 22 }}
+          >
             {t("Farms.SelectAFarmToManageYourCultivationAndAssets")}
           </Text>
         </View>
@@ -393,7 +394,9 @@ const MyCultivation = () => {
         {loading ? (
           <LoadingPage fullScreen />
         ) : farms.length === 0 ? (
+          <View className="flex-1 justify-center items-center mb-24">
             <NoData text={t("MyCrop.NoFarmCultivationsYet") || "No farm cultivations yet"} />
+          </View>
         ) : (
           <View>{farms.map((farm, index) => renderFarmItem(farm, index))}</View>
         )}

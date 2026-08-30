@@ -5,11 +5,10 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
-  StatusBar,
-  Platform,
   Alert,
   RefreshControl,
   Modal,
+  BackHandler,
 } from "react-native";
 import {
   useFocusEffect,
@@ -27,11 +26,6 @@ import axios from "axios";
 import * as Progress from "react-native-progress";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
-import LottieView from "lottie-react-native";
 import ImageData from "@/assets/jsons/farm/farm-image.json";
 import LoadingPage from "@/component/common/LoadingPage";
 import CustomHeader from "../../common/CustomHeader";
@@ -68,7 +62,6 @@ const CropCard: React.FC<CropCardProps> = ({
   varietyNameEnglish,
   onPress,
   progress,
-
   certificateStatus = "pending",
 }) => {
   const isBlocked = certificateStatus === "pending";
@@ -88,23 +81,29 @@ const CropCard: React.FC<CropCardProps> = ({
     <TouchableOpacity
       onPress={handlePress}
       activeOpacity={0.7}
-      className="my-2"
       style={{
         width: "100%",
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "white",
+        marginVertical: 8,
+        borderRadius: 9,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        opacity: isBlocked ? 0.6 : 1,
       }}
     >
       <View
-        className={`bg-white rounded-xl p-4 border-2 ${isBlocked ? "border-[#EFEFEF]" : "border-[#EFEFEF]"
-          } flex-row items-center justify-between relative`}
         style={{
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
-          opacity: isBlocked ? 0.6 : 1,
+          backgroundColor: "#FFFFFF",
+          padding: 16,
+          borderWidth: 2,
+          borderColor: "#EFEFEF",
+          borderRadius: 9,
+          overflow: "hidden",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          position: "relative",
         }}
       >
         {isBlocked && (
@@ -150,7 +149,7 @@ const CropCard: React.FC<CropCardProps> = ({
           }}
         >
           <Progress.Circle
-            size={50}
+            size={60}
             progress={progress}
             thickness={4}
             color={isBlocked ? "#ccc" : "#4caf50"}
@@ -158,14 +157,18 @@ const CropCard: React.FC<CropCardProps> = ({
             showsText={true}
             formatText={() => {
               const percentage = progress * 100;
-              if (percentage > 0 && percentage < 1) {
-                return "1%";
+              if (percentage >= 100 || progress >= 1) {
+                return "100%";
               }
-              return `${Math.floor(percentage)}%`;
+              if (percentage > 0 && percentage < 0.01) {
+                return "0.01%";
+              }
+              return `${percentage.toFixed(2)}%`;
             }}
             textStyle={{
-              fontSize: 12,
-              color: isBlocked ? "#999" : "#333",
+              fontSize: 10,
+              color: isBlocked ? "#999" : "#4caf50",
+              fontWeight: "bold",
             }}
           />
         </View>
@@ -351,6 +354,20 @@ const FarmDetailsScreen = () => {
     }
   };
 
+   useFocusEffect(
+      React.useCallback(() => {
+        const onBackPress = () => {
+          navigation.navigate("Main", { screen: "MyCultivation" })
+          return true;
+        };
+        const subscription = BackHandler.addEventListener(
+          "hardwareBackPress",
+          onBackPress,
+        );
+        return () => subscription.remove();
+      }, [navigation]),
+    );
+
   const _fetchCertificateStatuses = async (
     token: string,
   ): Promise<MultipleCertificateStatus[]> => {
@@ -525,11 +542,9 @@ const FarmDetailsScreen = () => {
       try {
         const token = await AsyncStorage.getItem("userToken");
         if (!token) {
-          Alert.alert(
-            t("Main.Error"),
-            t("Farms.NoAuthenticationTokenFound"),
-            [{ text: t("Main.OK") }],
-          );
+          Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"), [
+            { text: t("Main.OK") },
+          ]);
           return;
         }
 
@@ -736,11 +751,9 @@ const FarmDetailsScreen = () => {
       setPageLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(
-          t("Main.Error"),
-          t("Farms.NoAuthenticationTokenFound"),
-          [{ text: t("Main.OK") }],
-        );
+        Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"), [
+          { text: t("Main.OK") },
+        ]);
         return;
       }
       await axios.delete(
@@ -822,7 +835,7 @@ const FarmDetailsScreen = () => {
 
       {showMenu && (
         <View
-          className="absolute right-0 border border-[#A49B9B] top-[30px] bg-white rounded-lg shadow-lg p-2 z-20 w-24"
+          className="absolute right-0 border border-[#A49B9B] top-[30px] bg-white rounded-lg shadow-lg p-2 z-20 w-40"
           style={{
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 2 },
@@ -880,9 +893,7 @@ const FarmDetailsScreen = () => {
           className="w-28 h-28 rounded-full border-2 border-gray-200"
           resizeMode="cover"
           accessible
-          accessibilityLabel={
-            farmData?.farmName || farmBasicDetails?.farmName
-          }
+          accessibilityLabel={farmData?.farmName || farmBasicDetails?.farmName}
         />
       </View>
 
@@ -1054,16 +1065,18 @@ const FarmDetailsScreen = () => {
                           }
                           let validityText = t("Farms.ValidFor") + " ";
                           if (remainingTime.months > 0)
-                            validityText += `${remainingTime.months} ${remainingTime.months === 1
-                              ? t("Farms.Month")
-                              : t("Farms.Months")
-                              }`;
+                            validityText += `${remainingTime.months} ${
+                              remainingTime.months === 1
+                                ? t("Farms.Month")
+                                : t("Farms.Months")
+                            }`;
                           if (remainingTime.days > 0) {
                             if (remainingTime.months > 0) validityText += " ";
-                            validityText += `${remainingTime.days} ${remainingTime.days === 1
-                              ? t("Farms.Day")
-                              : t("Farms.Days")
-                              }`;
+                            validityText += `${remainingTime.days} ${
+                              remainingTime.days === 1
+                                ? t("Farms.Day")
+                                : t("Farms.Days")
+                            }`;
                           }
                           return (
                             <Text className="text-gray-600 text-sm mt-1">
@@ -1072,10 +1085,11 @@ const FarmDetailsScreen = () => {
                           );
                         })()}
                         <Text
-                          className={`text-sm font-medium mt-1 ${certificate.isAllCompleted
-                            ? "text-[#00A896]"
-                            : "text-red-500"
-                            }`}
+                          className={`text-sm font-medium mt-1 ${
+                            certificate.isAllCompleted
+                              ? "text-[#00A896]"
+                              : "text-red-500"
+                          }`}
                         >
                           {certificate.isAllCompleted
                             ? t("Farms.AllCompleted")
@@ -1099,7 +1113,14 @@ const FarmDetailsScreen = () => {
 
         <View className="mt-6 w-full px-0">
           {crops.length === 0 ? (
-            <NoData text={t("MyCrop.NoOngoingCultivationsYet") || "No ongoing cultivations yet"} />
+            <View className="py-4 mt-8 justify-center items-center">
+              <NoData
+                text={
+                  t("MyCrop.NoOngoingCultivationsYet") ||
+                  "No ongoing cultivations yet"
+                }
+              />
+            </View>
           ) : (
             <View
               style={{
@@ -1137,38 +1158,53 @@ const FarmDetailsScreen = () => {
         </View>
       </ScrollView>
 
-      <View>
-        <TouchableOpacity
-          className="absolute bottom-20 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
-          onPress={() => {
-            if (membership.toLowerCase() === "basic" && cropCount >= 3) {
-              Alert.alert(
-                t("Main.Sorry"),
-                t("Farms.You only have 3 free crop enrollments for now"),
-                [{ text: t("Main.OK") }],
-              );
-              return;
-            }
-            if (
-              (membership.toLowerCase() === "pro" &&
+      {/* Hide Add Crop button if Basic member already has 3 or more crops */}
+      {!(
+        (!membership ||
+          membership.toLowerCase() === "basic" ||
+          (membership.toLowerCase() === "pro" &&
+            renewalData?.needsRenewal === true)) &&
+        (cropCount >= 3 || crops.length >= 3)
+      ) && (
+        <View>
+          <TouchableOpacity
+            className="absolute bottom-20 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
+            onPress={() => {
+              const currentCropCount = Math.max(cropCount, crops.length);
+              const isBasic =
+                !membership ||
+                membership.toLowerCase() === "basic" ||
+                (membership.toLowerCase() === "pro" &&
+                  renewalData?.needsRenewal === true);
+
+              if (isBasic && currentCropCount >= 3) {
+                Alert.alert(
+                  t("Main.Sorry"),
+                  t("Farms.You only have 3 free crop enrollments for now"),
+                  [{ text: t("Main.OK") }],
+                );
+                return;
+              }
+              if (
+                membership.toLowerCase() === "pro" &&
                 renewalData?.needsRenewal === true &&
-                (farmData?.farmIndex ?? 0) > 1) ||
-              (farmData?.farmIndex === 1 && cropCount >= 3)
-            ) {
-              navigation.navigate("AddNewFarmUnloackPro" as any);
-            } else {
-              navigation.navigate("AddNewCrop", { farmId });
-            }
-          }}
-          accessibilityLabel="Add new asset"
-          accessibilityRole="button"
-        >
-          <Image
-            className="w-[20px] h-[20px]"
-            source={require("../../../assets/images/farms/plus-white.webp")}
-          />
-        </TouchableOpacity>
-      </View>
+                (farmData?.farmIndex ?? 0) > 1
+              ) {
+                navigation.navigate("AddNewFarmUnloackPro" as any);
+              } else {
+                navigation.navigate("AddNewCrop", { farmId });
+              }
+            }}
+            accessibilityLabel="Add new asset"
+            accessibilityRole="button"
+          >
+            <Image
+              className="w-[20px] h-[20px]"
+              source={require("../../../assets/images/farms/plus-white.webp")}
+            />
+          </TouchableOpacity>
+        </View>
+      )}
 
       <Modal
         visible={showCertificationModal}
@@ -1269,9 +1305,7 @@ const FarmDetailsScreen = () => {
                 className="px-6 py-2 bg-[#D9D9D9] rounded-full"
               >
                 <View className="justify-center items-center">
-                  <Text className="text-gray-700">
-                    {t("Main.GoBack")}
-                  </Text>
+                  <Text className="text-gray-700">{t("Main.GoBack")}</Text>
                 </View>
               </TouchableOpacity>
             </View>

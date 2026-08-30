@@ -57,11 +57,6 @@ const LaborCostCalculatorScreen: React.FC<LaborCostProps> = ({
     setShowValidation(true);
 
     if (!numberOfWorkers || !dailyWage || !workdays) {
-      Alert.alert(
-        t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("Main.PleaseFillAllRequiredFields") ||
-        "Please fill all required fields.",
-      );
       return;
     }
 
@@ -113,7 +108,7 @@ const LaborCostCalculatorScreen: React.FC<LaborCostProps> = ({
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
-        title={t("EconomicCostCalendars.LaborCost")}
+        title={`${t("EconomicCostCalendars.LaborCost")} ${t("Calculator.Calculator")}`}
         icon={require("@/assets/images/farm-cal/economic-cost-calculators/labor-cost-icon.webp")}
         onBack={() => navigation.goBack()}
       />

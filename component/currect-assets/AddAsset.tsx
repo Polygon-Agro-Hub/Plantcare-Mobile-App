@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   View,
   Text,
@@ -9,14 +9,17 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   BackHandler,
-  StatusBar,
   Platform,
   Keyboard,
+  Modal,
+  TouchableWithoutFeedback,
 } from "react-native";
 import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
@@ -25,6 +28,7 @@ import type { RootState } from "@/services/reducxStore";
 import { RootStackParamList } from "../types/types";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
+import CustomDatePicker from "../common/CustomDatePicker";
 import { MaterialIcons } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
 
@@ -51,12 +55,6 @@ interface ModalState {
   unit: boolean;
 }
 
-const UNIT_OPTIONS = [
-  { label: "ml", value: "ml" },
-  { label: "kg", value: "kg" },
-  { label: "l", value: "l" },
-];
-
 const INITIAL_ERRORS = {
   selectedFarm: "",
   selectedCategory: "",
@@ -74,6 +72,13 @@ const INITIAL_ERRORS = {
 
 const preventLeadingSpace = (text: string): string => text.replace(/^\s+/, "");
 
+const formatLocalDate = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 interface UserData {
   role: string;
 }
@@ -90,11 +95,12 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
   const scrollViewRef = useRef<ScrollView>(null);
   const { t, i18n } = useTranslation();
-  const unitOptions = [
+
+  const unitOptions = useMemo(() => [
     { label: t("CurrentAssets.ml"), value: "ml" },
     { label: t("CurrentAssets.kg"), value: "kg" },
     { label: t("CurrentAssets.l"), value: "l" },
-  ];
+  ], [t]);
 
   const [assets, setAssets] = useState<any[]>([]);
   const [brands, setBrands] = useState<string[]>([]);
@@ -123,18 +129,116 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     brand: false,
     unit: false,
   });
+
+  // Date picker modal visibility (Android shows the native dialog directly,
+  // iOS shows it inside a Modal with an inline calendar + Cancel/OK)
   const [showPurchaseDatePicker, setShowPurchaseDatePicker] = useState(false);
   const [showExpireDatePicker, setShowExpireDatePicker] = useState(false);
 
+  // Temp values held while the iOS inline picker is open, committed on OK
+  const [tempPurchaseDate, setTempPurchaseDate] = useState<Date>(new Date());
+  const [tempExpireDate, setTempExpireDate] = useState<Date>(new Date());
+
   const [fieldErrors, setFieldErrors] = useState(INITIAL_ERRORS);
 
-  const openModal = (key: keyof ModalState) =>
-    setModals((m) => ({ ...m, [key]: true }));
-  const closeModal = (key: keyof ModalState) =>
-    setModals((m) => ({ ...m, [key]: false }));
+  // Date helper functions - defined first
+  const getDateOnly = useCallback((date: Date): Date => {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  }, []);
 
-  const clearError = (key: keyof typeof INITIAL_ERRORS) =>
-    setFieldErrors((prev) => ({ ...prev, [key]: "" }));
+  const parseLocalDate = useCallback((dateStr: string): Date => {
+    if (!dateStr) return new Date();
+    const parts = dateStr.split("-").map(Number);
+    if (parts.length === 3 && !parts.some(isNaN)) {
+      return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
+    return new Date();
+  }, []);
+
+  const addDays = useCallback((date: Date, days: number): Date => {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
+  }, []);
+
+  const getMaximumDate = useCallback(() => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() + 100);
+    return d;
+  }, []);
+
+  const getPurchaseMaximumDate = useCallback((): Date => {
+    const d = new Date();
+    d.setHours(23, 59, 59, 999);
+    return d;
+  }, []);
+
+  const getExpireMinimumDate = useCallback((): Date => {
+    return purchaseDate ? addDays(parseLocalDate(purchaseDate), 1) : new Date();
+  }, [purchaseDate, addDays, parseLocalDate]);
+
+  const clampDate = useCallback((date: Date, min?: Date, max?: Date): Date => {
+    let result = getDateOnly(date);
+
+    if (min) {
+      const minDate = getDateOnly(min);
+      if (result.getTime() < minDate.getTime()) {
+        result = new Date(minDate);
+      }
+    }
+
+    if (max) {
+      const maxDate = getDateOnly(max);
+      if (result.getTime() > maxDate.getTime()) {
+        result = new Date(maxDate);
+      }
+    }
+
+    return result;
+  }, [getDateOnly]);
+
+  const getExpirePickerValue = useCallback((): Date => {
+    const minDate = getExpireMinimumDate();
+
+    if (expireDate) {
+      const parsedExpire = parseLocalDate(expireDate);
+      return parsedExpire < minDate ? minDate : parsedExpire;
+    }
+
+    return minDate;
+  }, [expireDate, getExpireMinimumDate, parseLocalDate]);
+
+  // Memoized date parameters for iOS DateTimePickers to prevent reference changes on every render
+  const purchaseMinimumDate = useMemo(() => new Date(2000, 0, 1), []);
+  const purchaseMaximumDate = useMemo(() => {
+    const max = getPurchaseMaximumDate();
+    return new Date(max.getFullYear(), max.getMonth(), max.getDate(), 23, 59, 59, 999);
+  }, [getPurchaseMaximumDate]);
+
+  const clampedPurchaseDate = useMemo(() => {
+    return clampDate(tempPurchaseDate, purchaseMinimumDate, purchaseMaximumDate);
+  }, [tempPurchaseDate, purchaseMinimumDate, purchaseMaximumDate, clampDate]);
+
+  const expireMinimumDate = useMemo(() => {
+    const min = getExpireMinimumDate();
+    return new Date(min.getFullYear(), min.getMonth(), min.getDate());
+  }, [purchaseDate, getExpireMinimumDate]);
+
+  const expireMaximumDate = useMemo(() => {
+    const max = getMaximumDate();
+    return new Date(max.getFullYear(), max.getMonth(), max.getDate());
+  }, [getMaximumDate]);
+
+  const clampedExpireDate = useMemo(() => {
+    return clampDate(tempExpireDate, expireMinimumDate, expireMaximumDate);
+  }, [tempExpireDate, expireMinimumDate, expireMaximumDate, clampDate]);
+
+  const openModal = useCallback((key: keyof ModalState) =>
+    setModals((m) => ({ ...m, [key]: true })), []);
+
+  const closeModal = useCallback((key: keyof ModalState) =>
+    setModals((m) => ({ ...m, [key]: false })), []);
+
+  const clearError = useCallback((key: keyof typeof INITIAL_ERRORS) =>
+    setFieldErrors((prev) => ({ ...prev, [key]: "" })), []);
 
   const statusMapping: Record<string, string> = {
     [t("CurrentAssets.Expired")]: "Expired",
@@ -144,7 +248,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const cleanNumber = (value: string) =>
     value ? parseFloat(value.replace(/,/g, "")) : 0;
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setSelectedFarm("");
     setSelectedCategory("");
     setSelectedAsset("");
@@ -170,7 +274,9 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       brand: false,
       unit: false,
     });
-  };
+    setShowPurchaseDatePicker(false);
+    setShowExpireDatePicker(false);
+  }, []);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -194,11 +300,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     const unsubscribe = navigation.addListener("focus", () => {
       resetForm();
       setExistingAssets([]);
-
       scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: false });
     });
     return unsubscribe;
-  }, [navigation]);
+  }, [navigation, resetForm]);
 
   useEffect(() => {
     if (numberOfUnits && unitPrice) {
@@ -207,37 +312,28 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     }
   }, [numberOfUnits, unitPrice]);
 
+  // Keep expire date valid whenever purchase date changes
   useEffect(() => {
-    if (selectedCategory && selectedAsset && batchNum && volume && unit) {
-      const assetToCheck =
-        selectedAsset === "Other" && customAsset ? customAsset : selectedAsset;
-      const brandToCheck =
-        selectedCategory === "Livestock for sale" ? "" : brand;
+    if (purchaseDate) {
+      const minExpireDate = addDays(parseLocalDate(purchaseDate), 1);
 
-      if (
-        assetToCheck &&
-        (selectedCategory === "Livestock for sale" || brandToCheck)
-      ) {
-        checkDuplicate(selectedCategory, assetToCheck, brandToCheck, batchNum);
+      if (expireDate && parseLocalDate(expireDate) < minExpireDate) {
+        const newExpireDate = formatLocalDate(minExpireDate);
+        setExpireDate(newExpireDate);
+        calculateWarranty(purchaseDate, newExpireDate);
+        setStatus(
+          parseLocalDate(newExpireDate) < new Date()
+            ? t("CurrentAssets.Expired")
+            : t("CurrentAssets.Valid"),
+        );
       }
-    } else {
-      console.error("Add Asset Error");
     }
-  }, [
-    selectedCategory,
-    selectedAsset,
-    customAsset,
-    brand,
-    batchNum,
-    volume,
-    unit,
-    existingAssets,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [purchaseDate]);
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       fetchExistingAssets();
-
       scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: false });
     }, [farmId]),
   );
@@ -248,7 +344,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     }
   }, [farmId]);
 
-  const fetchExistingAssets = async () => {
+  const fetchExistingAssets = useCallback(async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) return;
@@ -264,9 +360,9 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     } catch (error) {
       console.error("Error fetching existing assets:", error);
     }
-  };
+  }, [farmId]);
 
-  const fetchFarmData = async () => {
+  const fetchFarmData = useCallback(async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) return;
@@ -285,27 +381,27 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     } catch (error) {
       console.error("Error fetching farms:", error);
     }
-  };
+  }, []);
 
-  const handleCategoryChange = (category: string) => {
+  const handleCategoryChange = useCallback((category: string) => {
     setSelectedCategory(category);
     const assetsJson = require("@/assets/jsons/current-asset/current-asset.json");
     setAssets(assetsJson[category] || []);
     setSelectedAsset("");
     setBrand("");
     setBrands([]);
-  };
+  }, []);
 
-  const handleAssetChange = (asset: string) => {
+  const handleAssetChange = useCallback((asset: string) => {
     setSelectedAsset(asset);
     const selected = assets.find((a) => a.asset === asset);
     if (selected) {
       setBrands(selected.brands || []);
       setBrand("");
     }
-  };
+  }, [assets]);
 
-  const checkDuplicate = (
+  const checkDuplicate = useCallback((
     category: string,
     asset: string,
     brand: string,
@@ -319,29 +415,35 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         item.batchNum.toString() === batchNum.toString(),
     );
     return !!duplicate;
-  };
+  }, [existingAssets]);
 
-  const handleDateChange = (
-    event: any,
-    selectedDate: any,
-    type: "purchase" | "expire",
-  ) => {
-    const currentDate = selectedDate || new Date();
-    const dateString = currentDate.toISOString().slice(0, 10);
+  const calculateWarranty = useCallback((purchase: string, expire: string) => {
+    const diffTime = parseLocalDate(expire).getTime() - parseLocalDate(purchase).getTime();
+    const diffMonths = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 30));
+    setWarranty(diffMonths > 0 ? diffMonths.toString() : "0");
+  }, [parseLocalDate]);
 
-    if (type === "purchase") {
-      if (new Date(dateString) > new Date()) {
-        Alert.alert(
-          t("Main.Sorry"),
-          t("CurrentAssets.PurchaseDateMustNotBeInTheFuture"),
-          [{ text: t("Main.OK") }],
-        );
-        return;
-      }
-      setPurchaseDate(dateString);
-      setShowPurchaseDatePicker(false);
+  // ---- Purchase date: apply a chosen date (from Android dialog or iOS OK) ----
+  const applyPurchaseDate = useCallback((rawDate: Date) => {
+    const currentDate = getDateOnly(rawDate);
+    const todayOnly = getDateOnly(new Date());
 
-      if (expireDate && new Date(dateString) > new Date(expireDate)) {
+    if (currentDate > todayOnly) {
+      Alert.alert(
+        t("Main.Sorry"),
+        t("CurrentAssets.PurchaseDateMustNotBeInTheFuture"),
+        [{ text: t("Main.OK") }],
+      );
+      return;
+    }
+
+    const dateString = formatLocalDate(currentDate);
+    setPurchaseDate(dateString);
+    clearError("purchaseDate");
+
+    if (expireDate) {
+      const expireDateObj = parseLocalDate(expireDate);
+      if (expireDateObj <= currentDate) {
         Alert.alert(
           t("Main.Sorry"),
           t("CurrentAssets.ExpirationDateMustBeAfterPurchaseDate"),
@@ -350,79 +452,143 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         setExpireDate("");
         setWarranty("");
         setStatus("");
-      } else if (expireDate) {
+      } else {
         calculateWarranty(dateString, expireDate);
         setStatus(
-          new Date(expireDate) < new Date()
+          expireDateObj < new Date()
             ? t("CurrentAssets.Expired")
             : t("CurrentAssets.Valid"),
         );
-      }
-    } else {
-      if (new Date(dateString) < new Date(purchaseDate)) {
-        Alert.alert(
-          t("Main.Sorry"),
-          t("CurrentAssets.ExpirationDateMustBeAfterPurchaseDate"),
-          [{ text: t("Main.OK") }],
-        );
-        return;
-      }
-      setExpireDate(dateString);
-      setShowExpireDatePicker(false);
-      if (purchaseDate) {
-        setStatus(
-          new Date(dateString) < new Date()
-            ? t("CurrentAssets.Expired")
-            : t("CurrentAssets.Valid"),
-        );
-        calculateWarranty(purchaseDate, dateString);
       }
     }
-  };
+  }, [expireDate, getDateOnly, parseLocalDate, calculateWarranty, clearError, t]);
 
-  const calculateWarranty = (purchase: string, expire: string) => {
-    const diffTime = new Date(expire).getTime() - new Date(purchase).getTime();
-    const diffMonths = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 30));
-    setWarranty(diffMonths > 0 ? diffMonths.toString() : "0");
-  };
+  // ---- Expire date: apply a chosen date (from Android dialog or iOS OK) ----
+  const applyExpireDate = useCallback((rawDate: Date) => {
+    const currentDate = getDateOnly(rawDate);
+    const purchaseDateObj = purchaseDate ? parseLocalDate(purchaseDate) : null;
 
-  const handleBatchNumChange = (text: string) => {
+    if (purchaseDateObj && currentDate <= purchaseDateObj) {
+      Alert.alert(
+        t("Main.Sorry"),
+        t("CurrentAssets.ExpirationDateMustBeAfterPurchaseDate"),
+        [{ text: t("Main.OK") }],
+      );
+      return;
+    }
+
+    const dateString = formatLocalDate(currentDate);
+    setExpireDate(dateString);
+    clearError("expireDate");
+
+    if (purchaseDate) {
+      setStatus(
+        currentDate < new Date()
+          ? t("CurrentAssets.Expired")
+          : t("CurrentAssets.Valid"),
+      );
+      calculateWarranty(purchaseDate, dateString);
+    }
+  }, [purchaseDate, getDateOnly, parseLocalDate, calculateWarranty, clearError, t]);
+
+  // ---- Open handlers ----
+  const handleOpenPurchasePicker = useCallback(() => {
+    Keyboard.dismiss();
+    clearError("purchaseDate");
+    const initial = purchaseDate
+      ? clampDate(parseLocalDate(purchaseDate), undefined, getPurchaseMaximumDate())
+      : clampDate(new Date(), undefined, getPurchaseMaximumDate());
+    setTempPurchaseDate(initial);
+    setShowExpireDatePicker(false);
+    if (Platform.OS === "ios") {
+      setTimeout(() => {
+        setShowPurchaseDatePicker(true);
+      }, 300);
+    } else {
+      setShowPurchaseDatePicker(true);
+    }
+  }, [purchaseDate, parseLocalDate, clampDate, getPurchaseMaximumDate, clearError]);
+
+  const handleOpenExpirePicker = useCallback(() => {
+    Keyboard.dismiss();
+    clearError("expireDate");
+    const minDate = getExpireMinimumDate();
+    const maxDate = getMaximumDate();
+    const initial = clampDate(getExpirePickerValue(), minDate, maxDate);
+    setTempExpireDate(initial);
+    setShowPurchaseDatePicker(false);
+    if (Platform.OS === "ios") {
+      setTimeout(() => {
+        setShowExpireDatePicker(true);
+      }, 300);
+    } else {
+      setShowExpireDatePicker(true);
+    }
+  }, [getExpireMinimumDate, getMaximumDate, getExpirePickerValue, clampDate, clearError]);
+
+  // ---- Android onChange (dialog closes itself after pick) ----
+  const onChangePurchaseDateAndroid = useCallback((
+    event: DateTimePickerEvent,
+    selectedDate?: Date,
+  ) => {
+    setShowPurchaseDatePicker(false);
+    if (event.type === "set" && selectedDate) {
+      applyPurchaseDate(selectedDate);
+    }
+  }, [applyPurchaseDate]);
+
+  const onChangeExpireDateAndroid = useCallback((
+    event: DateTimePickerEvent,
+    selectedDate?: Date,
+  ) => {
+    setShowExpireDatePicker(false);
+    if (event.type === "set" && selectedDate) {
+      applyExpireDate(selectedDate);
+    }
+  }, [applyExpireDate]);
+
+  // ---- iOS confirm (Modal OK button) ----
+  const onConfirmPurchaseDateIOS = useCallback(() => {
+    applyPurchaseDate(tempPurchaseDate);
+    setShowPurchaseDatePicker(false);
+  }, [applyPurchaseDate, tempPurchaseDate]);
+
+  const onConfirmExpireDateIOS = useCallback(() => {
+    applyExpireDate(tempExpireDate);
+    setShowExpireDatePicker(false);
+  }, [applyExpireDate, tempExpireDate]);
+
+  const handleBatchNumChange = useCallback((text: string) => {
     clearError("batchNum");
     setBatchNum(preventLeadingSpace(text.replace(/[-.*#]/g, "")));
-  };
-  const handleVolumeChange = (text: string) => {
+  }, [clearError]);
+
+  const handleVolumeChange = useCallback((text: string) => {
     clearError("volume");
-
     const sanitized = text.replace(/[^0-9.]/g, "");
-
     const parts = sanitized.split(".");
     if (parts.length > 2) return;
-
     if (parts[1] !== undefined && parts[1].length > 2) return;
-
     setVolume(sanitized);
-  };
-  const handleNumOfUnitsChange = (text: string) => {
+  }, [clearError]);
+
+  const handleNumOfUnitsChange = useCallback((text: string) => {
     clearError("numberOfUnits");
     setNumberOfUnits(text.replace(/[^0-9.]/g, ""));
-  };
-  const handleUnitPriceChange = (text: string) => {
+  }, [clearError]);
+
+  const handleUnitPriceChange = useCallback((text: string) => {
     clearError("unitPrice");
-
     const sanitized = text.replace(/[^0-9.]/g, "");
-
     const parts = sanitized.split(".");
     if (parts.length > 2) return;
-
     if (parts[1] !== undefined && parts[1].length > 2) return;
-
     const intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     const formatted = parts.length === 2 ? `${intPart}.${parts[1]}` : intPart;
-
     setUnitPrice(formatted);
-  };
+  }, [clearError]);
 
-  const handleAddAsset = async () => {
+  const handleAddAsset = useCallback(async () => {
     const isBrandRequired = selectedCategory !== "Livestock for sale";
     const assetToCheck =
       selectedAsset === "Other" ? customAsset : selectedAsset;
@@ -590,14 +756,14 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       );
       scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
     }
-  };
+  }, [
+    selectedCategory, selectedAsset, customAsset, brand, batchNum,
+    volume, unit, numberOfUnits, unitPrice, purchaseDate, expireDate,
+    warranty, status, selectedFarm, farmId, farmName, checkDuplicate,
+    cleanNumber, statusMapping, t, navigation
+  ]);
 
   const shouldShowBrandField = selectedCategory !== "Livestock for sale";
-  const getMaximumDate = () => {
-    const d = new Date();
-    d.setFullYear(d.getFullYear() + 100);
-    return d;
-  };
 
   if (loading) {
     return (
@@ -615,7 +781,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const categoryData = require("@/assets/jsons/current-asset/categories.json");
   const assetTranslationData = require("@/assets/jsons/current-asset/assets-translations.json");
 
-  const getCategoryLabel = (val: string) => {
+  const getCategoryLabel = useCallback((val: string) => {
     const item = categoryData.find((c: any) => c.value === val);
     const lang = i18n.language
       ? i18n.language.startsWith("si")
@@ -625,9 +791,9 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           : "en"
       : "en";
     return item ? item.translations[lang] || item.translations["en"] : val;
-  };
+  }, [i18n.language]);
 
-  const getAssetLabel = (val: string) => {
+  const getAssetLabel = useCallback((val: string) => {
     if (val === "Other") return t("CurrentAssets.Other");
     const item = assetTranslationData.find((a: any) => a.value === val);
     const lang = i18n.language
@@ -638,7 +804,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           : "en"
       : "en";
     return item ? item.translations[lang] || item.translations["en"] : val;
-  };
+  }, [i18n.language, t]);
 
   const categoryItems = categoryData.map((item: any) => ({
     label: getCategoryLabel(item.value),
@@ -652,7 +818,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
   const brandItems = brands.map((b) => ({ label: b, value: b }));
 
-  const PickerTrigger = ({
+  const PickerTrigger = useCallback(({
     label,
     placeholder,
     onPress,
@@ -685,7 +851,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         <Text className="text-red-500 text-xs mt-1 ml-2">{error}</Text>
       ) : null}
     </View>
-  );
+  ), []);
 
   return (
     <KeyboardAvoidingView
@@ -850,7 +1016,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                         {t("CurrentAssets.Brand")} *
                       </Text>
                       <TextInput
-                        placeholder={t("CurrentAssets.SelectBrand")}
+                        placeholder={t("CurrentAssets.Brand")}
                         placeholderTextColor="#6B7280"
                         value={brand}
                         onChangeText={(text) => {
@@ -938,6 +1104,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               </Text>
             ) : null}
           </View>
+
           {/* Number of Units */}
           <View className="mt-2 mb-2">
             <Text className="text-[#070707] text-sm">
@@ -998,7 +1165,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                   : ""
               }
               editable={false}
-              className="bg-[#F4F4F4] px-4 rounded-3xl text-sm h-[50px] mt-2 text-gray-500"
+              className="bg-[#F4F4F4] px-4 rounded-3xl text-sm h-[50px] mt-2 text-balck"
               style={{ fontSize: 14 }}
             />
           </View>
@@ -1009,10 +1176,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               {t("CurrentAssets.PurchaseDate")} *
             </Text>
             <TouchableOpacity
-              onPress={() => {
-                clearError("purchaseDate");
-                setShowPurchaseDatePicker((p) => !p);
-              }}
+              onPress={handleOpenPurchasePicker}
               className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2"
             >
               <Text
@@ -1031,28 +1195,6 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 {fieldErrors.purchaseDate}
               </Text>
             ) : null}
-
-            {showPurchaseDatePicker &&
-              (Platform.OS === "ios" ? (
-                <View className="justify-center items-center z-50 bg-[#F4F4F4] rounded-lg">
-                  <DateTimePicker
-                    value={purchaseDate ? new Date(purchaseDate) : new Date()}
-                    mode="date"
-                    display="inline"
-                    style={{ width: 320, height: 260, padding: 4 }}
-                    maximumDate={new Date()}
-                    onChange={(e, d) => handleDateChange(e, d, "purchase")}
-                  />
-                </View>
-              ) : (
-                <DateTimePicker
-                  value={purchaseDate ? new Date(purchaseDate) : new Date()}
-                  mode="date"
-                  display="default"
-                  maximumDate={new Date()}
-                  onChange={(e, d) => handleDateChange(e, d, "purchase")}
-                />
-              ))}
           </View>
 
           {/* Expire Date */}
@@ -1061,10 +1203,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               {t("CurrentAssets.ExpireDate")} *
             </Text>
             <TouchableOpacity
-              onPress={() => {
-                clearError("expireDate");
-                setShowExpireDatePicker((p) => !p);
-              }}
+              onPress={handleOpenExpirePicker}
               className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2"
             >
               <Text
@@ -1083,38 +1222,6 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 {fieldErrors.expireDate}
               </Text>
             ) : null}
-
-            {showExpireDatePicker &&
-              (Platform.OS === "ios" ? (
-                <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
-                  <DateTimePicker
-                    value={expireDate ? new Date(expireDate) : new Date()}
-                    mode="date"
-                    display="inline"
-                    style={{ width: 320, height: 260, padding: 4 }}
-                    minimumDate={
-                      purchaseDate
-                        ? new Date(new Date(purchaseDate).getTime() + 86400000)
-                        : new Date()
-                    }
-                    maximumDate={getMaximumDate()}
-                    onChange={(e, d) => handleDateChange(e, d, "expire")}
-                  />
-                </View>
-              ) : (
-                <DateTimePicker
-                  value={expireDate ? new Date(expireDate) : new Date()}
-                  mode="date"
-                  minimumDate={
-                    purchaseDate
-                      ? new Date(new Date(purchaseDate).getTime() + 86400000)
-                      : new Date()
-                  }
-                  maximumDate={getMaximumDate()}
-                  display="default"
-                  onChange={(e, d) => handleDateChange(e, d, "expire")}
-                />
-              ))}
           </View>
 
           {/* Warranty  */}
@@ -1127,7 +1234,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               placeholderTextColor="#6B7280"
               value={warranty}
               keyboardType="numeric"
-              className="bg-[#F4F4F4] px-4 rounded-3xl text-sm h-[50px] mt-2 text-gray-500"
+              className="bg-[#F4F4F4] px-4 rounded-3xl text-sm h-[50px] mt-2 text-black"
               style={{ fontSize: 14 }}
               editable={false}
             />
@@ -1180,6 +1287,62 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      {/* Purchase Date Picker */}
+      {Platform.OS === "android" ? (
+        showPurchaseDatePicker && (
+          <DateTimePicker
+            value={
+              purchaseDate
+                ? clampDate(parseLocalDate(purchaseDate), undefined, getPurchaseMaximumDate())
+                : clampDate(new Date(), undefined, getPurchaseMaximumDate())
+            }
+            mode="date"
+            display="default"
+            onChange={onChangePurchaseDateAndroid}
+            maximumDate={getPurchaseMaximumDate()}
+            minimumDate={new Date(2000, 0, 1)}
+          />
+        )
+      ) : (
+        <CustomDatePicker
+          visible={showPurchaseDatePicker}
+          onClose={() => setShowPurchaseDatePicker(false)}
+          value={clampedPurchaseDate}
+          onConfirm={applyPurchaseDate}
+          minimumDate={purchaseMinimumDate}
+          maximumDate={purchaseMaximumDate}
+          title={t("CurrentAssets.PurchaseDate")}
+          cancelText={t("Main.Cancel", "Cancel")}
+          confirmText={t("Main.OK")}
+        />
+      )}
+
+      {/* Expire Date Picker */}
+      {Platform.OS === "android" ? (
+        showExpireDatePicker && (
+          <DateTimePicker
+            value={clampDate(getExpirePickerValue(), getExpireMinimumDate(), getMaximumDate())}
+            mode="date"
+            display="default"
+            onChange={onChangeExpireDateAndroid}
+            minimumDate={getExpireMinimumDate()}
+            maximumDate={getMaximumDate()}
+          />
+        )
+      ) : (
+        <CustomDatePicker
+          visible={showExpireDatePicker}
+          onClose={() => setShowExpireDatePicker(false)}
+          value={clampedExpireDate}
+          onConfirm={applyExpireDate}
+          minimumDate={expireMinimumDate}
+          maximumDate={expireMaximumDate}
+          title={t("CurrentAssets.ExpireDate")}
+          cancelText={t("Main.Cancel", "Cancel")}
+          confirmText={t("Main.OK")}
+        />
+      )}
 
       {/* GlobalSearchModals */}
       <GlobalSearchModal
