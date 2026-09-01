@@ -400,7 +400,7 @@ function AppContent() {
         edges={["top", "right", "left"]}
       >
         <NavigationContainer ref={navigationRef}>
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Navigator screenOptions={{ headerShown: false, gestureEnabled: false  }}>
             <Stack.Screen name="Splash" component={Splash} />
             <Stack.Screen name="Lanuage" component={Lanuage} />
             <Stack.Screen name="Signin" component={Signin} />

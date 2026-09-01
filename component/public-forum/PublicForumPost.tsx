@@ -57,14 +57,16 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
   );
 
   const handleImagePick = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert(
-        t("Main.Sorry"),
-        t("PublicForum.WeNeedAccessToYourCameraToContinuePleaseEnablePermissions"),
-        [{ text: t("Main.OK") }],
-      );
-      return;
+    if (Platform.OS === "ios") {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          t("Main.Sorry"),
+          t("PublicForum.WeNeedAccessToYourCameraToContinuePleaseEnablePermissions"),
+          [{ text: t("Main.OK") }],
+        );
+        return;
+      }
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({

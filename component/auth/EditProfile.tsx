@@ -221,14 +221,16 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
   };
 
   const pickImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert(
-        t("EditProfile.PermissionDenied"),
-        t("EditProfile.PleaseAllowAccessToYourGalleryToProceed"),
-        [{ text: t("Main.OK") }],
-      );
-      return;
+    if (Platform.OS === "ios") {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          t("EditProfile.PermissionDenied"),
+          t("EditProfile.PleaseAllowAccessToYourGalleryToProceed"),
+          [{ text: t("Main.OK") }],
+        );
+        return;
+      }
     }
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,

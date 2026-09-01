@@ -20,6 +20,7 @@ import { useTranslation } from "react-i18next";
 import type { NativeEventSubscription } from "react-native";
 import CustomHeader from "../common/CustomHeader";
 import LoadingPage from "../common/LoadingPage";
+import NoData from "../common/NoData";
 
 type QRcodeNavigationPrps = StackNavigationProp<
   RootStackParamList,
@@ -37,7 +38,11 @@ const OwnerQRcode: React.FC<QRcodeProps> = ({ navigation }) => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const handleBackButton = () => {
-    navigation.navigate("LabororEngProfile" as any);
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.navigate("LabororEngProfile" as any);
+    }
     return true;
   };
 
@@ -175,40 +180,32 @@ const OwnerQRcode: React.FC<QRcodeProps> = ({ navigation }) => {
   }
 
   return (
-    <ScrollView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       <CustomHeader
         title={t("QRcode.QRCode")}
         showBackButton={true}
         navigation={navigation}
-        onBackPress={() => navigation.navigate("LabororEngProfile" as any)}
+        onBackPress={handleBackButton}
       />
 
-      <View className="items-center mb-4 mt-20">
-        {QR ? (
-          <View className="bg-white p-6 rounded-xl border-2 border-black">
-            <Image
-              source={{ uri: `${QR}` }}
-              style={{
-                width: dynamicStyles.qrSize,
-                height: dynamicStyles.qrSize,
-                resizeMode: "contain",
-              }}
-            />
+      {QR ? (
+        <ScrollView className="flex-1" contentContainerStyle={{ flexGrow: 1 }}>
+          <View className="items-center mb-4 mt-20">
+            <View className="bg-white p-6 rounded-xl border-2 border-black">
+              <Image
+                source={{ uri: `${QR}` }}
+                style={{
+                  width: dynamicStyles.qrSize,
+                  height: dynamicStyles.qrSize,
+                  resizeMode: "contain",
+                }}
+              />
+            </View>
           </View>
-        ) : (
-          <View className="items-center justify-center">
-            <Text className=" text-center mt-4 p-2 gap-y-4 max-w-[80%] leading-7 text-gray-500 ">
-              {t("QRcode.YourFarmOwnerHasNotRegisteredForAQRcodeYet")}
-            </Text>
-          </View>
-        )}
-      </View>
 
-      <View className="flex-row justify-center gap-6 mb-20 mt-2">
-        {QR && (
-          <>
+          <View className="flex-row justify-center gap-6 mb-20 mt-2">
             <TouchableOpacity
-              className="bg-[#1E1E1E] w-24 h-20 rounded-lg items-center justify-center flex-col mt-5 ml-6 "
+              className="bg-[#1E1E1E] w-24 h-20 rounded-lg items-center justify-center flex-col mt-5 ml-6"
               onPress={downloadQRcode}
             >
               <MaterialIcons name="download" size={24} color="white" />
@@ -217,7 +214,7 @@ const OwnerQRcode: React.FC<QRcodeProps> = ({ navigation }) => {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              className="bg-[#1E1E1E] w-24 h-20 rounded-lg items-center justify-center flex-col  mt-5 ml-5"
+              className="bg-[#1E1E1E] w-24 h-20 rounded-lg items-center justify-center flex-col mt-5 ml-5"
               onPress={shareQRcode}
             >
               <MaterialIcons name="share" size={24} color="white" />
@@ -225,10 +222,16 @@ const OwnerQRcode: React.FC<QRcodeProps> = ({ navigation }) => {
                 {t("QRcode.Share")}
               </Text>
             </TouchableOpacity>
-          </>
-        )}
-      </View>
-    </ScrollView>
+          </View>
+        </ScrollView>
+      ) : (
+        <View className="flex-1 justify-center items-center px-4">
+          <NoData
+            text={t("QRcode.YourFarmOwnerHasNotRegisteredForAQRCodeYet")}
+          />
+        </View>
+      )}
+    </View>
   );
 };
 

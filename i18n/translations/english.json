@@ -341,8 +341,8 @@
     "YourQRCodeHasBeenSavedToYourGallery": "Your QR Code has been saved to your gallery.",
     "UnableToSaveQRCodePleaseTryAgain": "Unable to save QR code. Please try again.",
     "ThisDeviceDoesNotSupportSharingQRCodes": "This device does not support sharing QR codes.",
-    "UnableToShareQRCodePleaseTryAgainLater": "Unable to share QR code. Please try again later.",
-    "YourFarmOwnerHasNotRegisteredForAQRCodeYet": "Your Farm owner has not registered for a QR Code yet.",
+    "YourFarmOwnerHasNotRegisteredForAQRCodeYet": "Your farm owner has not registered for a QR code yet.",
+    "YourFarmOwnerHasNotRegisteredForAQRcodeYet": "Your farm owner has not registered for a QR code yet.",
     "ToObtainAccessToYourUniqueQRCodePleaseRegisterAsAMemberByEnteringYourBankDetailsThisCodeWillEnsureSmoothTransactionsAndSecurePaymentsDirectlyToYourBankAtOurCollectionCentres": "To obtain access to your unique QR code, please register as a member by entering your bank details. This code will ensure smooth transactions and secure payments directly to your bank at our collection centres."
   },
   "ReportComplaint": {

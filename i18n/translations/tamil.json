@@ -341,8 +341,8 @@
     "YourQRCodeHasBeenSavedToYourGallery": "உங்கள் QR குறியீடு உங்கள் கேலரியில் சேமிக்கப்பட்டது.",
     "UnableTSaveQRCodePleaseTryAgain": "QR குறியீட்டைச் சேமிக்க முடியவில்லை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.",
     "ThisDeviceDoesNotSupportSharingQRCodes": "இந்தச் சாதனம் QR குறியீடுகளைப் பகிர்வதை ஆதரிக்காது.",
-    "UnableToShareQRCodePleaseTryAgainLater": "QR குறியீட்டைப் பகிர முடியவில்லை. தயவுசெய்து பின்னர் மீண்டும் முயற்சிக்கவும்.",
     "YourFarmOwnerHasNotRegisteredForAQRCodeYet": "உங்கள் பண்ணை உரிமையாளர் இன்னும் QR குறியீட்டிற்குப் பதிவு செய்யவில்லை.",
+    "YourFarmOwnerHasNotRegisteredForAQRcodeYet": "உங்கள் பண்ணை உரிமையாளர் இன்னும் QR குறியீட்டிற்குப் பதிவு செய்யவில்லை.",
     "ToObtainAccessToYourUniqueQRCodePleaseRegisterAsAMemberByEnteringYourBankDetailsThisCodeWillEnsureSmoothTransactionsAndSecurePaymentsDirectlyToYourBankAtOurCollectionCentres": "உங்கள் தனித்துவமான QR குறியீட்டிற்கான அணுகலைப் பெற, தயவுசெய்து உங்கள் வங்கி விவரங்களை உள்ளிட்டு உறுப்பினராகப் பதிவு செய்யவும். இந்தக் குறியீடு, எங்கள் சேகரிப்பு மையங்களில் சுமூகமான பரிவர்த்தனைகள் மற்றும் உங்கள் வங்கிக்கு நேரடியாகப் பாதுகாப்பான கொடுப்பனவுகளை உறுதி செய்யும்."
   },
   "ReportComplaint": {
