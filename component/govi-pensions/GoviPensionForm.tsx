@@ -12,6 +12,7 @@ import {
   BackHandler,
   Modal,
   Keyboard,
+  Platform,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
@@ -369,13 +370,15 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
   };
 
   const requestPermission = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert(
-        "Permission Denied",
-        "Sorry, we need camera roll permissions to upload images!",
-      );
-      return false;
+    if (Platform.OS === "ios") {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission Denied",
+          "Sorry, we need camera roll permissions to upload images!",
+        );
+        return false;
+      }
     }
     return true;
   };

@@ -71,14 +71,16 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
   );
 
   const handleImagePick = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert(
-        t("PublicForum.sorry"),
-        t("PublicForum.WeNeedAccessToYourCameraToContinuePleaseEnablePermissions"),
-        [{ text: t("Main.OK") }],
-      );
-      return;
+    if (Platform.OS === "ios") {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          t("PublicForum.sorry"),
+          t("PublicForum.WeNeedAccessToYourCameraToContinuePleaseEnablePermissions"),
+          [{ text: t("Main.OK") }],
+        );
+        return;
+      }
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({

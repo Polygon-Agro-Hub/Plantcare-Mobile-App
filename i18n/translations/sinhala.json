@@ -341,8 +341,8 @@
     "YourQRCodeHasBeenSavedToYourGallery": "ඔබගේ QR කේතය ඔබගේ ගැලරියට සුරකින ලදී.",
     "UnableTSaveQRCodePleaseTryAgain": "QR කේතය සුරැකීමට නොහැක. කරුණාකර නැවත උත්සාහ කරන්න.",
     "ThisDeviceDoesNotSupportSharingQRCodes": "මෙම උපාංගය QR කේත බෙදාගැනීමට සහාය නොදක්වයි.",
-    "UnableToShareQRCodePleaseTryAgainLater": "QR කේතය බෙදාගැනීමට නොහැක. කරුණාකර පසුව නැවත උත්සාහ කරන්න.",
     "YourFarmOwnerHasNotRegisteredForAQRCodeYet": "ඔබගේ ගොවිපල හිමිකරු තවමත් QR කේතයක් සඳහා ලියාපදිංචි වී නොමැත.",
+    "YourFarmOwnerHasNotRegisteredForAQRcodeYet": "ඔබගේ ගොවිපල හිමිකරු තවමත් QR කේතයක් සඳහා ලියාපදිංචි වී නොමැත.",
     "ToObtainAccessToYourUniqueQRCodePleaseRegisterAsAMemberByEnteringYourBankDetailsThisCodeWillEnsureSmoothTransactionsAndSecurePaymentsDirectlyToYourBankAtOurCollectionCentres": "ඔබගේ අද්විතීය QR කේතයට ප්‍රවේශය ලබා ගැනීමට, කරුණාකර ඔබගේ බැංකු විස්තර ඇතුළත් කර සාමාජිකයෙකු ලෙස ලියාපදිංචි වන්න. මෙම කේතය අපගේ එකතු කිරීමේ මධ්‍යස්ථානවලදී සුමට ගනුදෙනු සහ ඔබගේ බැංකුවට සෘජුවම ආරක්ෂිත ගෙවීම් සහතික කරනු ඇත."
   },
   "ReportComplaint": {

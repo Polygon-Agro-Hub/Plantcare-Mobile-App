@@ -233,13 +233,15 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
   };
 
   const requestPermission = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert(
-        "Permission Denied",
-        "Sorry, we need camera roll permissions to upload images!",
-      );
-      return false;
+    if (Platform.OS === "ios") {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission Denied",
+          "Sorry, we need camera roll permissions to upload images!",
+        );
+        return false;
+      }
     }
     return true;
   };
