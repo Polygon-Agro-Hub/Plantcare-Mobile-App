@@ -141,14 +141,14 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
       setEditingCommentId(null);
       setContentHeight(MIN_INPUT_HEIGHT);
       dismissKeyboard();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error with comment:", error);
-      Alert.alert(
-        t("Main.Sorry"),
-        editingCommentId
+      const errorMsg =
+        error?.response?.data?.message ||
+        (editingCommentId
           ? t("PublicForum.FailedToUpdatePost")
-          : t("PublicForum.FailedToAddComment"),
-      );
+          : t("PublicForum.FailedToAddComment"));
+      Alert.alert(t("Main.Sorry"), errorMsg);
     } finally {
       setSubmitting(false);
     }

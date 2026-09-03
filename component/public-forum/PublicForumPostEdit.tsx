@@ -174,10 +174,12 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
           },
         ]);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating post:", error);
-
-      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+      const errorMsg =
+        error?.response?.data?.message ||
+        t("Main.SomethingWentWrongPleaseTryAgainlater");
+      Alert.alert(t("Main.Error"), errorMsg, [
         { text: t("Main.OK") },
       ]);
     } finally {

@@ -200,10 +200,13 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       setPostImageUri(null);
       setLoading(false);
       navigation.navigate("PublicForum" as any);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating post:", error);
       setLoading(false);
-      Alert.alert(t("Main.Sorry"), t("PublicForum.FailedToCreateThePostPleaseTryAgain"), [
+      const errorMsg =
+        error?.response?.data?.message ||
+        t("PublicForum.FailedToCreateThePostPleaseTryAgain");
+      Alert.alert(t("Main.Sorry"), errorMsg, [
         { text: t("Main.OK") },
       ]);
     } finally {
