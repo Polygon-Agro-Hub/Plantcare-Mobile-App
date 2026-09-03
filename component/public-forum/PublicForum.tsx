@@ -296,8 +296,11 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
             : post,
         ),
       );
-    } catch (error) {
-      Alert.alert(t("Main.Sorry"), t("PublicForum.FailedToAddComment"), [
+    } catch (error: any) {
+      const errorMsg =
+        error?.response?.data?.message ||
+        t("PublicForum.FailedToAddComment");
+      Alert.alert(t("Main.Sorry"), errorMsg, [
         { text: t("Main.OK") },
       ]);
     }
