@@ -88,7 +88,8 @@
     "PleaseEnterAValid9DigitMobileNumberExcludeTheLeadingZero": "කරුණාකර වලංගු ඉලක්කම් 9 ක ජංගම දුරකථන අංකයක් ඇතුළත් කරන්න (ඉදිරියෙන් ඇති ශුන්‍යය බැහැර කරන්න).",
     "TheNICNumberYouEnteredIsAlreadyRegisteredPleaseCheckYourDetailsOrLogIn": "ඔබ ඇතුළත් කළ ජාතික හැඳුනුම්පත් අංකය දැනටමත් ලියාපදිංචි කර ඇත, කරුණාකර ඔබගේ විස්තර පරීක්ෂා කරන්න හෝ පුරන්න.",
     "BothThePhoneNumberAndNICNumberEnteredAreAlreadyRegisteredPleaseLogInInstead": "ඔබ ඇතුළත් කළ දුරකථන අංකය සහ ජාතික හැඳුනුම්පත් අංකය දෙකම දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර ඒ වෙනුවට පුරන්න.",
-    "ThePhoneNumberYouEnteredIsAlreadyRegisteredPleaseUseADifferentNumberOrLogIn": "ඔබ ඇතුළත් කළ දුරකථන අංකය දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් අංකයක් භාවිතා කරන්න හෝ පුරන්න"
+    "ThePhoneNumberYouEnteredIsAlreadyRegisteredPleaseUseADifferentNumberOrLogIn": "ඔබ ඇතුළත් කළ දුරකථන අංකය දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් අංකයක් භාවිතා කරන්න හෝ පුරන්න",
+    "NoCountryFound":"රටක් හමු නොවීය."
   },
   "SignIn": {
     "SignIn": "පුරන්න",
@@ -220,13 +221,23 @@
   },
   "LocationAccess": {
     "Allow": "ඉඩ දෙන්න",
+    "AgreeAndContinue": "එකඟ වී ඉදිරියට යන්න",
+    "NotNow": "දැන් නොවේ",
     "OpenSettings": "සැකසුම් විවෘත කරන්න",
     "Requesting...": "ඉල්ලමින්...",
     "LocationAccess": "ස්ථාන ප්‍රවේශය",
+    "LocationPermission": "ස්ථාන අවසරය",
+    "ProminentDisclosureTitle": "GoviCare ස්ථාන දත්ත භාවිතා කරන්නේ ඇයි",
+    "ProminentDisclosureIntro": "පහත සඳහන් ප්‍රධාන කෘෂිකාර්මික විශේෂාංග සක්‍රීය කිරීමට GoviCare ඔබගේ උපාංගයේ ස්ථාන දත්ත රැස් කර භාවිතා කරයි:",
+    "FeatureWeatherTitle": "කාලගුණය සහ කෘෂිකාර්මික අනාවැකි",
+    "FeatureWeatherDesc": "ඔබගේ ගොවිපල ප්‍රදේශය සඳහා නිවැරදි තත්‍ය කාලීන කාලගුණ අනාවැකි සහ වර්ෂාපතන අනතුරු ඇඟවීම් ලබා දෙයි.",
+    "FeatureCropTitle": "ගොවිපල සහ බෝග ක්‍රියාකාරකම් සටහන් කිරීම",
+    "FeatureCropDesc": "බෝග වගා කටයුතු සහ ගොවිපල කළමනාකරණ වාර්තා සඳහා නිශ්චිත භූගෝලීය ඛණ්ඩාංක සටහන් කර සිතියම්ගත කරයි.",
+    "DisclosureFooter": "ඔබගේ ස්ථාන දත්ත වෙත ප්‍රවේශ වන්නේ මෙම විශේෂාංග භාවිතා කරන අතරතුර පමණක් වන අතර අපගේ රහස්‍යතා ප්‍රතිපත්තියට අනුව ආරක්ෂිතව හසුරුවනු ලැබේ. අපි ඔබගේ ස්ථාන දත්ත විකුණන්නේ හෝ පසුබිම් ලුහුබැඳීම සඳහා භාවිතා කරන්නේ නැත.",
     "PermissionDenied": "අවසර ප්‍රතික්ෂේප කරන ලදී",
-    "EnableLocationAccessToAccessLocationInformation": "ස්ථාන තොරතුරු වෙත ප්‍රවේශ වීමට ස්ථාන ප්‍රවේශය සක්‍රිය කරන්න.",
+    "EnableLocationAccessToAccessLocationInformation": "දේශීය කාලගුණ අනාවැකි ලබා ගැනීමට සහ බෝග ක්‍රියාකාරකම් නිවැරදිව සටහන් කිරීමට ස්ථාන ප්‍රවේශය සක්‍රිය කරන්න.",
     "UnableToRequestLocationPermissionPleaseTryAgain": "ස්ථාන අවසරය ඉල්ලීමට නොහැක. කරුණාකර නැවත උත්සාහ කරන්න.",
-    "LocationAccessIsRequiredPleaseEnableItInSettings": "ස්ථාන ප්‍රවේශය අවශ්‍ය වේ. කරුණාකර එය සැකසුම් තුළ සක්‍රිය කරන්න."
+    "LocationAccessIsRequiredPleaseEnableItInSettings": "මෙම විශේෂාංගය සඳහා ස්ථාන ප්‍රවේශය අවශ්‍ය වේ. කරුණාකර එය සැකසුම් තුළ සක්‍රිය කරන්න."
   },
   "CameraAccess": {
     "Allow": "ඉඩ දෙන්න",
@@ -1118,7 +1129,10 @@
     "SteelSeedSowing": "වානේ සහ ප්ලාස්ටික් බීජ වපුරන යන්ත්‍රය",
     "TractorMountedSpray": "ට්‍රැක්ටරයට සම්බන්ධ ඉසින යන්ත්‍රය",
     "PermitFeeAnnuallyLKR": "වාර්ෂික බලපත්‍ර ගාස්තුව (රු.)",
-    "WarrantyExpireDateMustBeInTheFuture": "වගකීම් කල් ඉකුත්වීමේ දිනය අනාගත දිනයක් විය යුතුය."
+    "WarrantyExpireDateMustBeInTheFuture": "වගකීම් කල් ඉකුත්වීමේ දිනය අනාගත දිනයක් විය යුතුය.",
+    "NoAssetTypeFound":"වත්කම් වර්ගයක් හමු නොවීය",
+    "NoBrandFound":"වෙළඳ නාමයක් හමු නොවීය",
+    "NoTypeFound":"වර්ගයක් හමු නොවීය."
   },
   "ImageViewerModal": {
     "UploadedBy": "උඩුගත කළේ :",

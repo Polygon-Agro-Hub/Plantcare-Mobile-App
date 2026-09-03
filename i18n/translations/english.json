@@ -88,7 +88,8 @@
     "PleaseEnterAValid9DigitMobileNumberExcludeTheLeadingZero": "Please enter a valid 9-digit mobile number (exclude the leading zero).",
     "TheNICNumberYouEnteredIsAlreadyRegisteredPleaseCheckYourDetailsOrLogIn": "The NIC number you entered is already registered, please check your details or log in.",
     "BothThePhoneNumberAndNICNumberEnteredAreAlreadyRegisteredPleaseLogInInstead": "Both the phone number and NIC number entered are already registered. Please log in instead.",
-    "ThePhoneNumberYouEnteredIsAlreadyRegisteredPleaseUseADifferentNumberOrLogIn": "The phone number you entered is already registered. Please use a different number or log in"
+    "ThePhoneNumberYouEnteredIsAlreadyRegisteredPleaseUseADifferentNumberOrLogIn": "The phone number you entered is already registered. Please use a different number or log in",
+    "NoCountryFound":"No country found"
   },
   "SignIn": {
     "SignIn": "Sign in",
@@ -220,13 +221,23 @@
   },
   "LocationAccess": {
     "Allow": "Allow",
+    "AgreeAndContinue": "Agree & Continue",
+    "NotNow": "Not Now",
     "OpenSettings": "Open Settings",
     "Requesting...": "Requesting...",
     "LocationAccess": "Location Access",
+    "LocationPermission": "Location Permission",
+    "ProminentDisclosureTitle": "Why GoviCare Uses Location Data",
+    "ProminentDisclosureIntro": "GoviCare collects and uses your device's location data to enable the following core agricultural features:",
+    "FeatureWeatherTitle": "Hyperlocal Weather & Agricultural Forecasts",
+    "FeatureWeatherDesc": "Deliver precise real-time weather forecasts, rain predictions, and temperature warnings for your specific farm area.",
+    "FeatureCropTitle": "Farm & Crop Activity Logging",
+    "FeatureCropDesc": "Record and map exact geographical coordinates for crop cultivation tasks and farm management records.",
+    "DisclosureFooter": "Your location data is only accessed while using these features and is handled securely according to our Privacy Policy. We do not sell your location data or use it for background tracking.",
     "PermissionDenied": "Permission Denied",
-    "EnableLocationAccessToAccessLocationInformation": "Enable location access to access location information.",
+    "EnableLocationAccessToAccessLocationInformation": "Enable location access to receive local weather forecasts and log crop activities accurately.",
     "UnableToRequestLocationPermissionPleaseTryAgain": "Unable to request location permission. Please try again.",
-    "LocationAccessIsRequiredPleaseEnableItInSettings": "Location access is required. Please enable it in settings."
+    "LocationAccessIsRequiredPleaseEnableItInSettings": "Location access is required for this feature. Please enable it in your device settings."
   },
   "CameraAccess": {
     "Allow": "Allow",
@@ -1118,7 +1129,10 @@
     "SteelSeedSowing": "Steel and Plastic Seed Sowing Machine",
     "TractorMountedSpray": "Tractor Mounted Sprayer",
     "PermitFeeAnnuallyLKR": "Permit Fee Annually (LKR)",
-    "WarrantyExpireDateMustBeInTheFuture": "Warranty expire date must be in the future."
+    "WarrantyExpireDateMustBeInTheFuture": "Warranty expire date must be in the future.",
+    "NoAssetTypeFound":"No asset type found",
+    "NoBrandFound":"No brand found",
+    "NoTypeFound":"No type found"
   },
   "ImageViewerModal": {
     "UploadedBy": "Uploaded By :",

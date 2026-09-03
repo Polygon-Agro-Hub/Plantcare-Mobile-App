@@ -347,6 +347,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                       <TextInput
                         className="flex-1 px-4"
                         placeholder={t("Inputs.PhoneNumber")}
+                        placeholderTextColor="#585858"
                         value={phonenumber}
                         onChangeText={handlePhoneNumberChange}
                         keyboardType="phone-pad"
@@ -476,6 +477,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
         searchPlaceholder={t("Search country or dial code...")}
         searchKeys={["label", "countryName", "dialCode"]}
         multiSelect={false}
+        noResultsText={t("SignUp.NoCountryFound")}
       />
     </View>
   );

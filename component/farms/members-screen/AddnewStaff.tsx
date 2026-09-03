@@ -476,8 +476,8 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
               <Text
                 className={
                   selectedRole
-                    ? "text-gray-700 text-base"
-                    : "text-gray-400 text-base"
+                    ? "text-gray-700 text-sm"
+                    : "text-gray-400 text-sm"
                 }
               >
                 {selectedRole
@@ -516,7 +516,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
                 style={{
                   flex: 1,
                   marginLeft: 8,
-                  fontSize: 16,
+                  fontSize: 12,
                   height: 50,
                   paddingVertical: 0,
                   includeFontPadding: false,
@@ -541,7 +541,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
                 style={{
                   flex: 1,
                   marginLeft: 8,
-                  fontSize: 16,
+                  fontSize: 12,
                   height: 50,
                   paddingVertical: 0,
                   includeFontPadding: false,
@@ -565,7 +565,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
                 <Text className="text-[18px]">
                   {selectedCountry?.emoji ?? "🇱🇰"}
                 </Text>
-                <Text className="text-[#333] text-center text-[13px] ml-1">
+                <Text className="text-[#333] text-center text-[12px] ml-1">
                   {countryCode}
                 </Text>
                 <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
@@ -577,7 +577,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
                   style={{
                     flex: 1,
                     marginLeft: 8,
-                    fontSize: 16,
+                    fontSize: 12,
                     height: 50,
                     paddingVertical: 0,
                     includeFontPadding: false,
@@ -590,6 +590,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
                   underlineColorAndroid="transparent"
                   cursorColor="#141415ff"
                   editable={!isSubmitting}
+                  placeholderTextColor="#9CA3AF"
                 />
               </View>
             </View>
@@ -625,7 +626,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
               searchKeys={["label"]}
               showSearch={true}
               multiSelect={false}
-              noResultsText="No country found"
+              noResultsText={t("SignUp.NoCountryFound")}
             />
           </View>
 
@@ -642,7 +643,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
                 style={{
                   flex: 1,
                   marginLeft: 8,
-                  fontSize: 16,
+                  fontSize: 12,
                   height: 50,
                   paddingVertical: 0,
                   includeFontPadding: false,

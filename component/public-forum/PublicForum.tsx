@@ -167,11 +167,9 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
             setPosts([]);
           }
         } catch (error) {
-          Alert.alert(
-            t("Main.Sorry"),
-            t("PublicForum.FailedToRefreshPosts"),
-            [{ text: t("Main.OK") }],
-          );
+          Alert.alert(t("Main.Sorry"), t("PublicForum.FailedToRefreshPosts"), [
+            { text: t("Main.OK") },
+          ]);
         } finally {
           setRefreshing(false);
         }
@@ -248,11 +246,9 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
         setPosts([]);
       }
     } catch (error) {
-      Alert.alert(
-        t("Main.Sorry"),
-        t("PublicForum.FailedToRefreshPosts"),
-        [{ text: t("Main.OK") }],
-      );
+      Alert.alert(t("Main.Sorry"), t("PublicForum.FailedToRefreshPosts"), [
+        { text: t("Main.OK") },
+      ]);
     } finally {
       setRefreshing(false);
     }
@@ -269,11 +265,9 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
     try {
       const replyMessage = comment[postId] || "";
       if (replyMessage.trim() === "") {
-        Alert.alert(
-          t("Main.Sorry"),
-          t("PublicForum.CommentCannotBeEmpty"),
-          [{ text: t("Main.OK") }],
-        );
+        Alert.alert(t("Main.Sorry"), t("PublicForum.CommentCannotBeEmpty"), [
+          { text: t("Main.OK") },
+        ]);
         return;
       }
       const replyId = "";
@@ -527,14 +521,14 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
               style={{ marginLeft: dynamicStyles.imageMarginLeft }}
             >
               <Text
-  className="text-[#939393] text-sm underline"
-  style={{ marginLeft: dynamicStyles.textMarginLeft }}
->
-  {item.replyCount}{" "}
-  {Number(item.replyCount) === 1
-    ? t("PublicForum.Reply")
-    : t("PublicForum.Replies")}
-</Text>
+                className="text-[#939393] text-sm underline"
+                style={{ marginLeft: dynamicStyles.textMarginLeft }}
+              >
+                {item.replyCount}{" "}
+                {Number(item.replyCount) === 1
+                  ? t("PublicForum.Reply")
+                  : t("PublicForum.Replies")}
+              </Text>
             </TouchableOpacity>
 
             <View className="flex-row items-center relative">
@@ -549,7 +543,8 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
                 onContentSizeChange={handleContentSizeChange}
                 style={{
                   flex: 1,
-                  paddingHorizontal: 12,
+                  paddingLeft: 12,
+                  paddingRight: 44, // reserve space so text never renders under the send icon
                   fontSize: 16,
                   height: 50,
                   paddingVertical: 0,
@@ -558,7 +553,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
                 }}
               />
               <TouchableOpacity
-                className="absolute right-4 justify-center items-center "
+                className="absolute right-4 justify-center items-center"
                 onPress={() => handleCommentSubmit(item.id)}
                 disabled={!comment[item.id]?.trim()}
               >

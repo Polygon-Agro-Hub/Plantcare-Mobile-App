@@ -1029,7 +1029,7 @@ const AddMemberDetails: React.FC = () => {
         searchKeys={["label", "dialCode"]}
         multiSelect={false}
         doneButtonText={t("Main.OK")}
-        noResultsText="No country found"
+        noResultsText={t("SignUp.NoCountryFound")}
       />
     </KeyboardAvoidingView>
   );

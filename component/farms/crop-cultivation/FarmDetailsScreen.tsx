@@ -160,6 +160,9 @@ const CropCard: React.FC<CropCardProps> = ({
               if (percentage >= 100 || progress >= 1) {
                 return "100%";
               }
+              if (percentage === 0) {
+                return "0%";
+              }
               if (percentage > 0 && percentage < 0.01) {
                 return "0.01%";
               }
@@ -354,19 +357,19 @@ const FarmDetailsScreen = () => {
     }
   };
 
-   useFocusEffect(
-      React.useCallback(() => {
-        const onBackPress = () => {
-          navigation.navigate("Main", { screen: "MyCultivation" })
-          return true;
-        };
-        const subscription = BackHandler.addEventListener(
-          "hardwareBackPress",
-          onBackPress,
-        );
-        return () => subscription.remove();
-      }, [navigation]),
-    );
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.navigate("Main", { screen: "MyCultivation" });
+        return true;
+      };
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
+      );
+      return () => subscription.remove();
+    }, [navigation]),
+  );
 
   const _fetchCertificateStatuses = async (
     token: string,
@@ -835,7 +838,7 @@ const FarmDetailsScreen = () => {
 
       {showMenu && (
         <View
-          className="absolute right-0 border border-[#A49B9B] top-[30px] bg-white rounded-lg shadow-lg p-2 z-20 w-40"
+          className="absolute right-0 border border-[#A49B9B] top-[30px] bg-white rounded-lg shadow-lg p-1 z-20 w-24"
           style={{
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 2 },
@@ -846,11 +849,11 @@ const FarmDetailsScreen = () => {
         >
           <TouchableOpacity
             onPress={handleEditFarm}
-            className="py-1 px-2 items-center justify-center"
+            className="py-0.5 px-1.5 items-center justify-center"
             accessibilityLabel="Edit farm"
             accessibilityRole="button"
           >
-            <Text className="text-sm text-gray-700 text-center font-medium">
+            <Text className="text-xs text-gray-700 text-center font-medium">
               {t("Farms.Edit")}
             </Text>
           </TouchableOpacity>

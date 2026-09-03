@@ -21,7 +21,6 @@ import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import NetInfo from "@react-native-community/netinfo";
 import { BackHandler } from "react-native";
-import DashboardSkeleton from "@/skeletons/DashboardSkeleton";
 import { useDispatch } from "react-redux";
 import { setAssetData } from "../../store/assetSlice";
 import { setUserData, setUserPersonalData } from "../../store/userSlice";
@@ -54,7 +53,7 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
   const [isConnected, setIsConnected] = useState(true);
-  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
 
   const scrollViewRef = useRef<ScrollView>(null);
@@ -133,7 +132,7 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
     checkTokenExpiration();
   }, [navigation]);
 
-  const fetchProfileData = async () => {
+  const fetchProfileData = async (isManualRefresh = false) => {
     const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
     try {
@@ -150,9 +149,11 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
       const data = await response.json();
 
       if (!data.user || !data.user.firstName) {
-        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error"),
+          t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
         navigation.navigate("Signin");
         return;
       }
@@ -160,19 +161,21 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
       setUser(data.user);
       dispatch(setUserData(data.usermembership));
       dispatch(setUserPersonalData(data.user));
-      setTimeout(() => setLoading(false), 300);
     } catch (error) {
-      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(
+        t("Main.Error"),
+        t("Main.SomethingWentWrongPleaseTryAgainlater"),
+        [{ text: t("Main.OK") }],
+      );
       navigation.navigate("Signin");
+    } finally {
+      if (isManualRefresh) setRefreshing(false);
     }
   };
 
   const handleRefresh = async () => {
-    setLoading(true);
-    await fetchProfileData();
-    setLoading(false);
+    setRefreshing(true);
+    await fetchProfileData(true);
   };
 
   useFocusEffect(
@@ -236,12 +239,8 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
 
   const actionRows = chunkArray(actionItems, 2);
 
-  if (loading) return <DashboardSkeleton />;
-
   return (
     <View className="flex-1 bg-white">
-      
-
       <View style={{ flexDirection: "row" }} className="mb-2">
         <TouchableOpacity
           onPress={() => navigation.navigate("LabororEngProfile")}
@@ -305,7 +304,7 @@ const ManagerDashbord: React.FC<ManagerDashbordProps> = ({ navigation }) => {
       <ScrollView
         ref={scrollViewRef}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={handleRefresh} />
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
         showsVerticalScrollIndicator={false}
       >

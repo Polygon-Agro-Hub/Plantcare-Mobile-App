@@ -14,6 +14,7 @@ import {
   BackHandler,
   Dimensions,
   StyleSheet,
+  Modal,
 } from "react-native";
 import * as Location from "expo-location";
 import { Ionicons, Entypo, AntDesign, FontAwesome6 } from "@expo/vector-icons";
@@ -315,7 +316,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
 
   const handleLocationIconPress = async () => {
     try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
+      const { status } = await Location.getForegroundPermissionsAsync();
       if (status === "granted") {
         setHasLocationPermission(true);
         setShowLocationAccess(false);
@@ -342,10 +343,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
       }
     } catch (error) {
       console.error("Error getting current location:", error);
-      Alert.alert(
-        t("Main.Error"),
-        t("WeatherForecast.UnableToFetchCurrentLocation"),
-      );
+      setShowLocationAccess(true);
     }
   };
 
@@ -502,16 +500,6 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
       setRefreshing(false);
     }
   };
-
-  if (showLocationAccess) {
-    return (
-      <LocationAccess
-        navigation={navigation as any}
-        onPermissionGranted={handlePermissionGranted}
-        returnScreen="WeatherForecast"
-      />
-    );
-  }
 
   return (
     <View style={{ flex: 1 }} className="bg-white">
@@ -824,6 +812,28 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
           </ScrollView>
         )}
       </View>
+
+      {/* Location Access Full-Screen Modal (covers bottom tab bar) */}
+      <Modal
+        visible={showLocationAccess}
+        animationType="slide"
+        statusBarTranslucent
+        onRequestClose={() => {
+          setShowLocationAccess(false);
+        }}
+      >
+        <LocationAccess
+          navigation={navigation as any}
+          onPermissionGranted={() => {
+            setShowLocationAccess(false);
+            handlePermissionGranted();
+          }}
+          onClose={() => {
+            setShowLocationAccess(false);
+          }}
+          returnScreen="WeatherForecast"
+        />
+      </Modal>
     </View>
   );
 };

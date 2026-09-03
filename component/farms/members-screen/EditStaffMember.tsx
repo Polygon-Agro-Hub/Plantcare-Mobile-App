@@ -674,7 +674,7 @@ const handleLastNameChange = (text: string) => {
               searchKeys={["label"]}
               showSearch={true}
               multiSelect={false}
-              noResultsText="No country found"
+              noResultsText={t("SignUp.NoCountryFound")}
             />
           </View>
 
