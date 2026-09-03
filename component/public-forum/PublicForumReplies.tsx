@@ -144,10 +144,12 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
     } catch (error: any) {
       console.error("Error with comment:", error);
       const errorMsg =
-        error?.response?.data?.message ||
-        (editingCommentId
-          ? t("PublicForum.FailedToUpdatePost")
-          : t("PublicForum.FailedToAddComment"));
+        error?.response?.data?.code === "PROFANITY_DETECTED"
+          ? t("PublicForum.ProhibitedLanguageDetected")
+          : error?.response?.data?.message ||
+            (editingCommentId
+              ? t("PublicForum.FailedToUpdatePost")
+              : t("PublicForum.FailedToAddComment"));
       Alert.alert(t("Main.Sorry"), errorMsg);
     } finally {
       setSubmitting(false);

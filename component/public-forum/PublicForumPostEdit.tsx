@@ -177,8 +177,10 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
     } catch (error: any) {
       console.error("Error updating post:", error);
       const errorMsg =
-        error?.response?.data?.message ||
-        t("Main.SomethingWentWrongPleaseTryAgainlater");
+        error?.response?.data?.code === "PROFANITY_DETECTED"
+          ? t("PublicForum.ProhibitedLanguageDetected")
+          : error?.response?.data?.message ||
+            t("Main.SomethingWentWrongPleaseTryAgainlater");
       Alert.alert(t("Main.Error"), errorMsg, [
         { text: t("Main.OK") },
       ]);

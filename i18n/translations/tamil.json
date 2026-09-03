@@ -359,6 +359,7 @@
   "ReportComplaint": {
     "ComplaintAddedSuccessfully": "புகார் வெற்றிகரமாகச் சேர்க்கப்பட்டது!",
     "FailedToAddAComplaintPleaseTryAgain": "புகாரைச் சேர்க்கத் தவறியது. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.",
+    "ProhibitedLanguageDetected": "உங்கள் புகாரில் தடைசெய்யப்பட்ட அல்லது தகாத வார்த்தைகள் உள்ளன. தயவுசெய்து அவற்றை நீக்கிவிட்டு மீண்டும் முயற்சிக்கவும்.",
     "TellUsThe": "எங்களிடம் கூறுங்கள்",
     "Problem": "சிக்கல்",
     "SelectComplaintCategory": "புகார் வகையைத் தேர்ந்தெடுக்கவும்",
@@ -1166,6 +1167,7 @@
     "ViewMore": "மேலும் காண்க",
     "CommentCannotBeEmpty": "கருத்து காலியாக இருக்க முடியாது!",
     "FailedToAddComment": "கருத்தைச் சேர்க்கத் தவறியது",
+    "ProhibitedLanguageDetected": "உங்கள் செய்தியில் தடைசெய்யப்பட்ட அல்லது தகாத வார்த்தைகள் உள்ளன. தயவுசெய்து அவற்றை நீக்கிவிட்டு மீண்டும் முயற்சிக்கவும்.",
     "FailedToRefreshPosts": "பதிவுகளைப் புதுப்பிக்கத் தவறியது.",
     "DescriptionIsRequired": "விளக்கம் தேவை",
     "NoResultsFoundForYourSearch": "உங்கள் தேடலுக்கு முடிவுகள் எதுவும் கிடைக்கவில்லை",

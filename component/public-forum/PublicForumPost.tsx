@@ -204,8 +204,10 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       console.error("Error creating post:", error);
       setLoading(false);
       const errorMsg =
-        error?.response?.data?.message ||
-        t("PublicForum.FailedToCreateThePostPleaseTryAgain");
+        error?.response?.data?.code === "PROFANITY_DETECTED"
+          ? t("PublicForum.ProhibitedLanguageDetected")
+          : error?.response?.data?.message ||
+            t("PublicForum.FailedToCreateThePostPleaseTryAgain");
       Alert.alert(t("Main.Sorry"), errorMsg, [
         { text: t("Main.OK") },
       ]);

@@ -197,11 +197,24 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
         );
         setIsLoading(false);
       }
-    } catch (error) {
-      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
+    } catch (error: any) {
+      setIsLoading(false);
+      if (error?.response?.data?.code === "PROFANITY_DETECTED") {
+        Alert.alert(
+          t("Main.Sorry"),
+          t("ReportComplaint.ProhibitedLanguageDetected") ||
+            error?.response?.data?.message ||
+            "Your complaint contains prohibited language.",
+          [{ text: t("Main.OK") }],
+        );
+        return;
+      }
+      const errorMsg =
+        error?.response?.data?.message ||
+        t("Main.SomethingWentWrongPleaseTryAgainlater");
+      Alert.alert(t("Main.Error"), errorMsg, [
         { text: t("Main.OK") },
       ]);
-      setIsLoading(false);
     }
   };
 

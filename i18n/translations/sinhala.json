@@ -359,6 +359,7 @@
   "ReportComplaint": {
     "ComplaintAddedSuccessfully": "පැමිණිල්ල සාර්ථකව එක් කරන ලදී!",
     "FailedToAddAComplaintPleaseTryAgain": "පැමිණිල්ලක් එක් කිරීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
+    "ProhibitedLanguageDetected": "ඔබගේ පැමිණිල්ලේ නුසුදුසු හෝ තහනම් වචන අඩංගු වේ. කරුණාකර ඒවා ඉවත් කර නැවත උත්සාහ කරන්න.",
     "TellUsThe": "අපට කියන්න",
     "Problem": "ගැටලුව",
     "SelectComplaintCategory": "පැමිණිලි කාණ්ඩය තෝරන්න",
@@ -1166,6 +1167,7 @@
     "ViewMore": "තවත් බලන්න",
     "CommentCannotBeEmpty": "අදහස හිස් විය නොහැක!",
     "FailedToAddComment": "අදහස එක් කිරීමට අසමත් විය",
+    "ProhibitedLanguageDetected": "ඔබගේ පණිවිඩයේ නුසුදුසු හෝ තහනම් වචන අඩංගු වේ. කරුණාකර ඒවා ඉවත් කර නැවත උත්සාහ කරන්න.",
     "FailedToRefreshPosts": "පළ කිරීම් නැවුම් කිරීමට අසමත් විය.",
     "DescriptionIsRequired": "විස්තරය අවශ්‍ය වේ",
     "NoResultsFoundForYourSearch": "ඔබගේ සෙවීම සඳහා ප්‍රතිඵල කිසිවක් හමු නොවීය",
