@@ -359,6 +359,7 @@
   "ReportComplaint": {
     "ComplaintAddedSuccessfully": "Complaint added successfully!",
     "FailedToAddAComplaintPleaseTryAgain": "Failed to add a complaint. Please try again.",
+    "ProhibitedLanguageDetected": "Your complaint contains prohibited or inappropriate language. Please remove it and try again.",
     "TellUsThe": "Tell us the",
     "Problem": "Problem",
     "SelectComplaintCategory": "Select Complaint Category",
@@ -1166,6 +1167,7 @@
     "ViewMore": "View More",
     "CommentCannotBeEmpty": "Comment cannot be empty!",
     "FailedToAddComment": "Failed to add comment",
+    "ProhibitedLanguageDetected": "Your message contains prohibited or inappropriate language. Please remove it and try again.",
     "FailedToRefreshPosts": "Failed to refresh posts.",
     "DescriptionIsRequired": "Description is required",
     "NoResultsFoundForYourSearch": "No results found for your search",

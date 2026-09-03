@@ -298,8 +298,10 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
       );
     } catch (error: any) {
       const errorMsg =
-        error?.response?.data?.message ||
-        t("PublicForum.FailedToAddComment");
+        error?.response?.data?.code === "PROFANITY_DETECTED"
+          ? t("PublicForum.ProhibitedLanguageDetected")
+          : error?.response?.data?.message ||
+            t("PublicForum.FailedToAddComment");
       Alert.alert(t("Main.Sorry"), errorMsg, [
         { text: t("Main.OK") },
       ]);
