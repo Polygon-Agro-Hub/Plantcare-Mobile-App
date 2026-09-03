@@ -754,6 +754,46 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
     }
   };
 
+  const RadioOption = ({
+    label,
+    selected,
+    onPress,
+  }: {
+    label: string;
+    selected: boolean;
+    onPress: () => void;
+  }) => (
+    <TouchableOpacity
+      onPress={onPress}
+      style={{ flexDirection: "row", alignItems: "center", marginLeft: 24 }}
+      activeOpacity={0.7}
+    >
+      <View
+        style={{
+          width: 20,
+          height: 20,
+          borderRadius: 10,
+          borderWidth: 2,
+          borderColor: selected ? "#0021F5" : "#9CA3AF",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {selected && (
+          <View
+            style={{
+              width: 10,
+              height: 10,
+              borderRadius: 5,
+              backgroundColor: "#0021F5",
+            }}
+          />
+        )}
+      </View>
+      <Text className="ml-2 text-sm text-black">{label}</Text>
+    </TouchableOpacity>
+  );
+
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
@@ -2204,6 +2244,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             }
                           }}
                           searchPlaceholder={t("Main.Search...")}
+                          noResultsText={t("FixedAssets.NoAssetTypeFound")}
                         />
                       </>
                     )}
@@ -2215,16 +2256,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         </Text>
                         <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
                           <TextInput
-                            className="text-black w-full text-sm"
                             style={{
+                              flex: 1,
                               fontSize: 12,
+                              height: 50,
                               paddingVertical: 0,
-                              paddingTop: 0,
-                              paddingBottom: 0,
-                              textAlign: "left",
-                              ...(Platform.OS === "android"
-                                ? { textAlignVertical: "center" }
-                                : {}),
+                              includeFontPadding: false,
                             }}
                             placeholder={t("FixedAssets.MentionOtherDetails")}
                             value={updatedDetails[tool.id]?.mentionOther ?? ""}
@@ -2289,7 +2326,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             }
                           }}
                           searchPlaceholder={t("Main.Search...")}
-                          noResultsText="No brand found"
+                          noResultsText={t("FixedAssets.NoBrandFound")}
                         />
 
                         {updatedDetails[tool.id]?.brand === "Other" && (
@@ -2299,16 +2336,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             </Text>
                             <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
                               <TextInput
-                                className="text-black w-full text-sm"
                                 style={{
+                                  flex: 1,
                                   fontSize: 12,
+                                  height: 50,
                                   paddingVertical: 0,
-                                  paddingTop: 0,
-                                  paddingBottom: 0,
-                                  textAlign: "left",
-                                  ...(Platform.OS === "android"
-                                    ? { textAlignVertical: "center" }
-                                    : {}),
+                                  includeFontPadding: false,
                                 }}
                                 placeholder={t("FixedAssets.EnterBrandName")}
                                 value={
@@ -2466,32 +2499,30 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                       </Text>
                     ) : null}
 
-                    <Text className="text-[#070707] text-sm mt-2">
-                      {t("FixedAssets.Warranty")} *
-                    </Text>
-                    <View className="flex-row justify-around mb-4">
-                      {["yes", "no"].map((val) => (
-                        <TouchableOpacity
-                          key={val}
+                    <View className="flex-row items-center justify-between px-4 mt-4 mb-4">
+                      <Text className="text-[#070707] text-sm">
+                        {t("FixedAssets.Warranty")} *
+                      </Text>
+                      <View className="flex-row items-center">
+                        <RadioOption
+                          label={t("FixedAssets.yes")}
+                          selected={updatedDetails[tool.id]?.warranty === "yes"}
                           onPress={() => {
-                            handleInputChange(tool.id, "warranty", val);
+                            handleInputChange(tool.id, "warranty", "yes");
                             clearFieldError(tool.id, "purchaseDate");
                             clearFieldError(tool.id, "expireDate");
                           }}
-                          className="flex-row items-center mt-2"
-                        >
-                          <View
-                            className={`w-5 h-5 rounded-full ${
-                              updatedDetails[tool.id]?.warranty === val
-                                ? "bg-green-500"
-                                : "bg-gray-400"
-                            }`}
-                          />
-                          <Text className="ml-2 text-sm text-[#070707]">
-                            {t(`FixedAssets.${val}`)}
-                          </Text>
-                        </TouchableOpacity>
-                      ))}
+                        />
+                        <RadioOption
+                          label={t("FixedAssets.no")}
+                          selected={updatedDetails[tool.id]?.warranty === "no"}
+                          onPress={() => {
+                            handleInputChange(tool.id, "warranty", "no");
+                            clearFieldError(tool.id, "purchaseDate");
+                            clearFieldError(tool.id, "expireDate");
+                          }}
+                        />
+                      </View>
                     </View>
 
                     {updatedDetails[tool.id]?.warranty === "yes" && (
@@ -2727,16 +2758,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         </Text>
                         <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
                           <TextInput
-                            className="text-black w-full text-sm"
                             style={{
+                              flex: 1,
                               fontSize: 12,
+                              height: 50,
                               paddingVertical: 0,
-                              paddingTop: 0,
-                              paddingBottom: 0,
-                              textAlign: "left",
-                              ...(Platform.OS === "android"
-                                ? { textAlignVertical: "center" }
-                                : {}),
+                              includeFontPadding: false,
                             }}
                             placeholder={t("FixedAssets.MentionOtherDetails")}
                             value={updatedDetails[tool.id]?.mentionOther ?? ""}
@@ -2805,16 +2832,12 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         </Text>
                         <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
                           <TextInput
-                            className="text-black w-full text-sm"
                             style={{
+                              flex: 1,
                               fontSize: 12,
+                              height: 50,
                               paddingVertical: 0,
-                              paddingTop: 0,
-                              paddingBottom: 0,
-                              textAlign: "left",
-                              ...(Platform.OS === "android"
-                                ? { textAlignVertical: "center" }
-                                : {}),
+                              includeFontPadding: false,
                             }}
                             placeholder={t("FixedAssets.EnterBrandName")}
                             value={updatedDetails[tool.id]?.customBrand ?? ""}
@@ -2934,32 +2957,30 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                         : ""}
                     </Text>
 
-                    <Text className="text-[#070707] text-sm mt-2">
-                      {t("FixedAssets.Warranty")} *
-                    </Text>
-                    <View className="flex-row justify-around mb-4">
-                      {["yes", "no"].map((val) => (
-                        <TouchableOpacity
-                          key={val}
+                    <View className="flex-row items-center justify-between px-4 mt-4 mb-4">
+                      <Text className="text-[#070707] text-sm">
+                        {t("FixedAssets.Warranty")} *
+                      </Text>
+                      <View className="flex-row items-center">
+                        <RadioOption
+                          label={t("FixedAssets.yes")}
+                          selected={updatedDetails[tool.id]?.warranty === "yes"}
                           onPress={() => {
-                            handleInputChange(tool.id, "warranty", val);
+                            handleInputChange(tool.id, "warranty", "yes");
                             clearFieldError(tool.id, "purchaseDate");
                             clearFieldError(tool.id, "expireDate");
                           }}
-                          className="flex-row items-center mt-2"
-                        >
-                          <View
-                            className={`w-5 h-5 rounded-full ${
-                              updatedDetails[tool.id]?.warranty === val
-                                ? "bg-green-500"
-                                : "bg-gray-400"
-                            }`}
-                          />
-                          <Text className="ml-2 text-sm text-[#070707]">
-                            {t(`FixedAssets.${val}`)}
-                          </Text>
-                        </TouchableOpacity>
-                      ))}
+                        />
+                        <RadioOption
+                          label={t("FixedAssets.no")}
+                          selected={updatedDetails[tool.id]?.warranty === "no"}
+                          onPress={() => {
+                            handleInputChange(tool.id, "warranty", "no");
+                            clearFieldError(tool.id, "purchaseDate");
+                            clearFieldError(tool.id, "expireDate");
+                          }}
+                        />
+                      </View>
                     </View>
 
                     {updatedDetails[tool.id]?.warranty === "yes" && (

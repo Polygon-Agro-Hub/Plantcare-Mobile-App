@@ -224,7 +224,13 @@ const EarnCertificate: React.FC = () => {
       <View className="bg-white px-6 pb-4 shadow-sm">
         <View className="bg-[#F6F6F6CC] rounded-3xl h-[50px] flex-row items-center px-4">
           <TextInput
-            className="flex-1 text-lg text-gray-700"
+            style={{
+              flex: 1,
+              fontSize: 14,
+              height: 50,
+              paddingVertical: 0,
+              includeFontPadding: false,
+            }}
             placeholder={t("Main.Search...")}
             placeholderTextColor="#9CA3AF"
             value={searchQuery}

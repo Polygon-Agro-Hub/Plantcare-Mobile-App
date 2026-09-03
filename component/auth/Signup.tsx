@@ -469,7 +469,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
                       className="bg-[#F4F4F4] rounded-3xl flex-row items-center justify-center px-3 h-[50px] min-w-[100px]"
                     >
                       <Text className="text-[18px]">{selectedCountryFlag}</Text>
-                      <Text className="text-[#333] text-center text-[13px] ml-1">
+                      <Text className="text-[#333] text-center text-[12px] ml-1">
                         {selectedCountryCode}
                       </Text>
                       <MaterialIcons
@@ -489,6 +489,9 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
                       autoFocus
                       className="flex-1 bg-[#F4F4F4] rounded-3xl py-3 px-4 h-[50px]"
                       underlineColorAndroid="transparent"
+                      style={{
+                        fontSize:12
+                      }}
                       cursorColor="#141415ff"
                     />
                   </View>
@@ -515,6 +518,9 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
                     }
                     maxLength={20}
                     autoComplete="given-name"
+                    style={{
+                      fontSize:12
+                    }}
                     className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px]"
                   />
 
@@ -532,6 +538,9 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
                     value={lastName}
                     placeholderTextColor="#585858"
                     underlineColorAndroid="transparent"
+                    style={{
+                      fontSize:12
+                    }}
                     cursorColor="#141415ff"
                     onChangeText={(text) =>
                       handleLastNameChange(
@@ -558,6 +567,9 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
                     value={nic}
                     underlineColorAndroid="transparent"
                     cursorColor="#141415ff"
+                    style={{
+                      fontSize:12
+                    }}
                     maxLength={12}
                     onChangeText={handleNicChange}
                     placeholderTextColor="#585858"
@@ -578,7 +590,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
                     className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px] flex-row items-center justify-between"
                   >
                     <Text
-                      className="text-[14px] flex-1"
+                      className="text-[12px] flex-1"
                       style={{ color: district ? "#070707" : "#585858" }}
                     >
                       {district
@@ -763,7 +775,7 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
           searchPlaceholder={t("Search country or dial code...")}
           searchKeys={["label", "countryName", "dialCode"]}
           multiSelect={false}
-          noResultsText="No country found"
+          noResultsText={t("SignUp.NoCountryFound")}
         />
 
         <GlobalSearchModal

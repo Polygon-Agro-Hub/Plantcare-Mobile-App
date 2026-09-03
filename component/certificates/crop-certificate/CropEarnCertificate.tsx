@@ -104,11 +104,9 @@ const CropEarnCertificate: React.FC = () => {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Alert.alert(
-          t("Farms.Error"),
-          t("Farms.NoAuthenticationTokenFound"),
-          [{ text: t("Main.OK") }],
-        );
+        Alert.alert(t("Farms.Error"), t("Farms.NoAuthenticationTokenFound"), [
+          { text: t("Main.OK") },
+        ]);
         return;
       }
 
@@ -132,15 +130,15 @@ const CropEarnCertificate: React.FC = () => {
       if (err.response?.status === 404) {
         Alert.alert(
           t("Main.Error"),
-          t(
-            "EarnCertificate.NoCertificatesAvailableForCropsAtTheMoment",
-          ),
+          t("EarnCertificate.NoCertificatesAvailableForCropsAtTheMoment"),
           [{ text: t("Main.OK") }],
         );
       } else {
-        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error"),
+          t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
       }
     } finally {
       setLoading(false);
@@ -259,8 +257,6 @@ const CropEarnCertificate: React.FC = () => {
       className="bg-white"
       style={{ flex: 1 }}
     >
-      
-
       <CustomHeader
         title={t("EarnCertificate.EarnACertificate")}
         navigation={navigation}
@@ -278,7 +274,13 @@ const CropEarnCertificate: React.FC = () => {
       <View className="bg-white px-4 pb-4 shadow-sm">
         <View className="bg-[#F6F6F6CC] rounded-3xl h-[50px] flex-row items-center px-4">
           <TextInput
-            className="flex-1 text-lg text-gray-700"
+            style={{
+              flex: 1,
+              fontSize: 14,
+              height: 50,
+              paddingVertical: 0,
+              includeFontPadding: false,
+            }}
             placeholder={t("Main.Search...")}
             placeholderTextColor="#9CA3AF"
             value={searchQuery}
@@ -304,9 +306,7 @@ const CropEarnCertificate: React.FC = () => {
         >
           {filteredCertificates.length > 0 && (
             <Text className="text-center text-gray-600 text-sm mb-3 mr-3 ml-3">
-              {t(
-                "EarnCertificate.JustClickOnTheCertificateYouWantToApplyFor",
-              )}
+              {t("EarnCertificate.JustClickOnTheCertificateYouWantToApplyFor")}
             </Text>
           )}
 
@@ -351,13 +351,13 @@ const CropEarnCertificate: React.FC = () => {
               </TouchableOpacity>
             ))
           ) : (
-              <NoData
-                text={
-                  searchQuery
-                    ? "No certificates found matching your search"
-                    : "No certificates available"
-                }
-              />
+            <NoData
+              text={
+                searchQuery
+                  ? "No certificates found matching your search"
+                  : "No certificates available"
+              }
+            />
           )}
 
           {!searchQuery && (

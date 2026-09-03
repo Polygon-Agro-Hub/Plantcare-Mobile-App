@@ -88,7 +88,8 @@
     "PleaseEnterAValid9DigitMobileNumberExcludeTheLeadingZero": "தயவுசெய்து சரியான 9 இலக்க கைப்பேசி எண்ணை உள்ளிடவும் (முன்னொட்டு பூஜ்ஜியத்தை விலக்கவும்).",
     "TheNICNumberYouEnteredIsAlreadyRegisteredPleaseCheckYourDetailsOrLogIn": "நீங்கள் உள்ளிட்ட தேசிய அடையாள அட்டை எண் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளது, தயவுசெய்து உங்கள் விவரங்களைச் சரிபார்க்கவும் அல்லது உள்நுழையவும்.",
     "BothThePhoneNumberAndNICNumberEnteredAreAlreadyRegisteredPleaseLogInInstead": "நீங்கள் உள்ளிட்ட தொலைபேசி எண் மற்றும் தேசிய அடையாள அட்டை எண் இரண்டும் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளன. அதற்குப் பதிலாக தயவுசெய்து உள்நுழையவும்.",
-    "ThePhoneNumberYouEnteredIsAlreadyRegisteredPleaseUseADifferentNumberOrLogIn": "நீங்கள் உள்ளிட்ட தொலைபேசி எண் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளது. தயவுசெய்து வேறு எண்ணைப் பயன்படுத்தவும் அல்லது உள்நுழையவும்"
+    "ThePhoneNumberYouEnteredIsAlreadyRegisteredPleaseUseADifferentNumberOrLogIn": "நீங்கள் உள்ளிட்ட தொலைபேசி எண் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளது. தயவுசெய்து வேறு எண்ணைப் பயன்படுத்தவும் அல்லது உள்நுழையவும்",
+    "NoCountryFound":"நாடு எதுவும் காணப்படவில்லை"
   },
   "SignIn": {
     "SignIn": "உள்நுழைக",
@@ -1118,7 +1119,10 @@
     "Warranty": "உத்தரவாதம்",
     "yes": "ஆம்",
     "No": "இல்லை",
-    "WarrantyExpireDateMustBeInTheFuture": "உத்தரவாத காலாவதி தேதி எதிர்கால தேதியாக இருக்க வேண்டும்."
+    "WarrantyExpireDateMustBeInTheFuture": "உத்தரவாத காலாவதி தேதி எதிர்கால தேதியாக இருக்க வேண்டும்.",
+    "NoAssetTypeFound":"சொத்து வகை எதுவும் காணப்படவில்லை",
+    "NoBrandFound":"எந்த பிராண்டும் காணப்படவில்லை",
+    "NoTypeFound":"வகை எதுவும் காணப்படவில்லை"
   },
   "ImageViewerModal": {
     "UploadedBy": "பதிவேற்றியவர் :",

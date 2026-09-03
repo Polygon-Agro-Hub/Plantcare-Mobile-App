@@ -144,6 +144,9 @@ const CropCard: React.FC<CropCardProps> = ({
               if (percentage >= 100 || progress >= 1) {
                 return "100%";
               }
+              if (percentage === 0) {
+                return "0%";
+              }
               if (percentage > 0 && percentage < 0.01) {
                 return "0.01%";
               }

@@ -497,11 +497,9 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
       }
     } catch (error: any) {
       console.error("Error uploading calendar task image:", error);
-      Alert.alert(
-        t("Main.Error"),
-        t("CropCalender.UploadRetryFailed"),
-        [{ text: t("Main.OK") }],
-      );
+      Alert.alert(t("Main.Error"), t("CropCalender.UploadRetryFailed"), [
+        { text: t("Main.OK") },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -984,8 +982,6 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
     }
   }, [crops]);
 
-
-
   useFocusEffect(
     useCallback(() => {
       const handleBackPress = () => {
@@ -1162,7 +1158,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
             className="flex-1 justify-start"
             style={{
               paddingTop:
-                Platform.OS === "android" ? StatusBar.currentHeight || 0 : 30,
+                Platform.OS === "android" ? StatusBar.currentHeight || 0 : 60, // was 60
               backgroundColor: "rgba(0, 0, 0, 0.5)",
             }}
           >
@@ -1186,7 +1182,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
                         status: "edit",
                         onCulscropID: crops[0]?.onCulscropID,
                         cropId,
-                        farmId
+                        farmId,
                       });
                     }}
                   >
@@ -1281,7 +1277,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
                   status: "edit",
                   onCulscropID: crops[0]?.onCulscropID,
                   cropId,
-                  farmId
+                  farmId,
                 })
               }
             >

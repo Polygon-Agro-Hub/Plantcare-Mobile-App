@@ -88,7 +88,8 @@
     "PleaseEnterAValid9DigitMobileNumberExcludeTheLeadingZero": "Please enter a valid 9-digit mobile number (exclude the leading zero).",
     "TheNICNumberYouEnteredIsAlreadyRegisteredPleaseCheckYourDetailsOrLogIn": "The NIC number you entered is already registered, please check your details or log in.",
     "BothThePhoneNumberAndNICNumberEnteredAreAlreadyRegisteredPleaseLogInInstead": "Both the phone number and NIC number entered are already registered. Please log in instead.",
-    "ThePhoneNumberYouEnteredIsAlreadyRegisteredPleaseUseADifferentNumberOrLogIn": "The phone number you entered is already registered. Please use a different number or log in"
+    "ThePhoneNumberYouEnteredIsAlreadyRegisteredPleaseUseADifferentNumberOrLogIn": "The phone number you entered is already registered. Please use a different number or log in",
+    "NoCountryFound":"No country found"
   },
   "SignIn": {
     "SignIn": "Sign in",
@@ -1118,7 +1119,10 @@
     "SteelSeedSowing": "Steel and Plastic Seed Sowing Machine",
     "TractorMountedSpray": "Tractor Mounted Sprayer",
     "PermitFeeAnnuallyLKR": "Permit Fee Annually (LKR)",
-    "WarrantyExpireDateMustBeInTheFuture": "Warranty expire date must be in the future."
+    "WarrantyExpireDateMustBeInTheFuture": "Warranty expire date must be in the future.",
+    "NoAssetTypeFound":"No asset type found",
+    "NoBrandFound":"No brand found",
+    "NoTypeFound":"No type found"
   },
   "ImageViewerModal": {
     "UploadedBy": "Uploaded By :",
