@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,20 +7,18 @@ import {
   Alert,
   BackHandler,
   Dimensions,
-  StatusBar,
   Linking,
+  ScrollView,
   Platform,
+  StatusBar,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import { useTranslation } from "react-i18next";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
+import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import CustomHeader from "../common/CustomHeader";
 
 type LocationAccessNavigationProp = StackNavigationProp<
@@ -44,22 +42,23 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
   onClose,
   returnScreen = "Main",
 }) => {
-  const { t, i18n } = useTranslation();
-  const screenWidth = Dimensions.get("window").width;
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
 
-  const dynamicStyles = {
-    imageHeight: screenWidth < 400 ? wp(55) : wp(50),
+  const handleDenyOrClose = () => {
+    if (onClose) {
+      onClose();
+    } else if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.navigate(returnScreen as any);
+    }
   };
 
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        if (onClose) {
-          onClose();
-        } else {
-          navigation.goBack();
-        }
+        handleDenyOrClose();
         return true;
       };
       const subscription = BackHandler.addEventListener(
@@ -67,7 +66,7 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
         onBackPress,
       );
       return () => subscription.remove();
-    }, [navigation, onClose]),
+    }, [navigation, onClose, returnScreen]),
   );
 
   const requestLocationPermission = async () => {
@@ -76,7 +75,6 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
       const { status } = await Location.requestForegroundPermissionsAsync();
 
       if (status === "granted") {
-        // If callback is provided, call it, otherwise navigate normally
         if (onPermissionGranted) {
           onPermissionGranted();
         } else {
@@ -87,9 +85,13 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
           t("LocationAccess.PermissionDenied") || "Permission Denied",
           t(
             "LocationAccess.LocationAccessIsRequiredPleaseEnableItInSettings",
-          ) || "Location access is required. Please enable it in settings.",
+          ) || "Location access is required for this feature. Please enable it in settings.",
           [
-            { text: t("Main.Cancel"), style: "cancel" },
+            {
+              text: t("LocationAccess.NotNow") || "Not Now",
+              style: "cancel",
+              onPress: handleDenyOrClose,
+            },
             {
               text: t("LocationAccess.OpenSettings") || "Open Settings",
               onPress: () => Linking.openSettings(),
@@ -111,64 +113,137 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
   };
 
   return (
-    <View className="flex-1 bg-black">
-      <View className="mt-5">
-      <CustomHeader
-        title=""
-        navigation={navigation}
-        onBackPress={onClose ? onClose : () => navigation.goBack()}
-        transparent
-      />
+    <View className="flex-1 bg-[#121212]">
+      <View
+        style={{
+          paddingTop:
+            Platform.OS === "android"
+              ? (StatusBar.currentHeight ? StatusBar.currentHeight + 10 : 36)
+              : 48,
+        }}
+      >
+        <CustomHeader
+          title=""
+          navigation={navigation}
+          onBackPress={handleDenyOrClose}
+          transparent
+        />
       </View>
 
-      <View className="flex-1 justify-center">
-        <View className="items-center justify-center px-4">
-          {/* Location Image */}
-          <View className="mb-8">
-            <Image
-              source={locationImage}
-              className="w-44 h-44"
-              resizeMode="contain"
+      <ScrollView
+        className="flex-1 px-5"
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 32 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View className="items-center justify-center mt-2 mb-4">
+          <Image
+            source={locationImage}
+            className="w-28 h-28"
+            resizeMode="contain"
+          />
+        </View>
+
+        {/* Title */}
+        <Text className="text-white text-2xl font-bold text-center mb-2">
+          {t("LocationAccess.ProminentDisclosureTitle")}
+        </Text>
+
+        {/* Intro */}
+        <Text className="text-gray-300 text-sm text-center mb-5 leading-5">
+          {t("LocationAccess.ProminentDisclosureIntro")}
+        </Text>
+
+        {/* Feature 1: Weather */}
+        <View className="bg-[#1E1E1E] p-4 rounded-xl mb-3 border border-gray-800 flex-row items-start">
+          <View className="bg-[#009570]/20 p-2.5 rounded-lg mr-3 mt-0.5">
+            <MaterialCommunityIcons
+              name="weather-partly-cloudy"
+              size={24}
+              color="#19D7B7"
             />
           </View>
+          <View className="flex-1">
+            <Text className="text-white font-semibold text-base mb-1">
+              {t("LocationAccess.FeatureWeatherTitle")}
+            </Text>
+            <Text className="text-gray-400 text-xs leading-4">
+              {t("LocationAccess.FeatureWeatherDesc")}
+            </Text>
+          </View>
+        </View>
 
-          {/* Title */}
-          <Text className="text-white text-3xl font-extrabold mb-3 text-center tracking-wide">
-            {t("LocationAccess.LocationAccess")}
+        {/* Feature 2: Farm / Crop Tracking */}
+        <View className="bg-[#1E1E1E] p-4 rounded-xl mb-4 border border-gray-800 flex-row items-start">
+          <View className="bg-[#009570]/20 p-2.5 rounded-lg mr-3 mt-0.5">
+            <MaterialCommunityIcons
+              name="sprout"
+              size={24}
+              color="#19D7B7"
+            />
+          </View>
+          <View className="flex-1">
+            <Text className="text-white font-semibold text-base mb-1">
+              {t("LocationAccess.FeatureCropTitle")}
+            </Text>
+            <Text className="text-gray-400 text-xs leading-4">
+              {t("LocationAccess.FeatureCropDesc")}
+            </Text>
+          </View>
+        </View>
+
+        {/* Privacy Note */}
+        <View className="bg-[#1A2621] p-3 rounded-lg mb-6 border border-[#009570]/30 flex-row items-start">
+          <Ionicons
+            name="shield-checkmark-outline"
+            size={18}
+            color="#19D7B7"
+            style={{ marginTop: 2, marginRight: 8 }}
+          />
+          <Text className="text-gray-300 text-xs flex-1 leading-4">
+            {t("LocationAccess.DisclosureFooter")}
           </Text>
+        </View>
 
-          {/* Description */}
-          <Text className="text-gray-400 text-center mb-10 px-6 text-base leading-6">
-            {t(
-              "LocationAccess.EnableLocationAccessToAccessLocationInformation",
-            )}
-          </Text>
-
-          {/* Allow Button */}
+        {/* Action Buttons */}
+        <View className="items-center w-full mt-auto">
           <TouchableOpacity
             onPress={requestLocationPermission}
             activeOpacity={0.8}
+            disabled={isLoading}
+            className="w-full mb-3"
+            style={{ borderRadius: 999, overflow: "hidden" }}
           >
             <LinearGradient
               colors={["#009570", "#19D7B7"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
-              className="py-4 items-center justify-center"
               style={{
+                height: 52,
                 borderRadius: 999,
-                height: 50,
-                width: SCREEN_HEIGHT > 900 ? 260 : 220,
                 alignItems: "center",
                 justifyContent: "center",
+                width: "100%",
               }}
             >
-              <Text className="text-black font-extrabold text-lg tracking-wider">
-                {t("LocationAccess.Allow")}
+              <Text className="text-black font-extrabold text-base tracking-wide">
+                {isLoading
+                  ? t("LocationAccess.Requesting...") || "Requesting..."
+                  : t("LocationAccess.AgreeAndContinue")}
               </Text>
             </LinearGradient>
           </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={handleDenyOrClose}
+            activeOpacity={0.7}
+            className="py-2.5 px-6 items-center justify-center"
+          >
+            <Text className="text-gray-400 font-semibold text-sm">
+              {t("LocationAccess.NotNow")}
+            </Text>
+          </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 };
