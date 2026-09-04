@@ -6,16 +6,9 @@
     "orientation": "portrait",
     "icon": "./assets/images/public/favicon.png",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/images/public/favicon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#26D041"
-    },
     "android": {
       "package": "com.polygonagro.GoviCare",
       "versionCode": 20,
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "resize",
       "adaptiveIcon": {
@@ -84,7 +77,6 @@
       "favicon": "./assets/images/public/favicon.png"
     },
     "plugins": [
-      "expo-router",
       [
         "expo-build-properties",
         {
@@ -98,7 +90,7 @@
             "extraProguardRules": "-keep class expo.modules.** { *; }\n-keep class expo.** { *; }"
           },
           "ios": {
-            "deploymentTarget": "15.1"
+            "deploymentTarget": "16.4"
           }
         }
       ],
@@ -134,14 +126,19 @@
         }
       ],
       "expo-image-picker",
-      "expo-location"
+      "expo-location",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/public/favicon.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#26D041"
+        }
+      ]
     ],
     "extra": {
-      "router": {
-        "origin": false
-      },
       "eas": {
-        "projectId": "7b568c8c-a047-4aad-82ee-e8e65606a1f4"
+        "projectId": "f4f862f6-4cab-48b0-b03e-817ecdfaaa73"
       }
     }
   }
