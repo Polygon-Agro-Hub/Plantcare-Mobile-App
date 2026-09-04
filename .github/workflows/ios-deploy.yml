@@ -78,6 +78,23 @@ jobs:
         run: npm ci
 
       # ─────────────────────────────────────────────────────────────────
+      # STEP 4b: Apply patches (expo-modules-jsi RuntimeScheduler fix)
+      # patch-package should already run via postinstall, but we run it
+      # explicitly here as a safety net to ensure the Swift 6 Clang fix
+      # is applied before expo prebuild and pod install.
+      # ─────────────────────────────────────────────────────────────────
+      - name: "🩹 Apply node_modules patches"
+        run: |
+          npx patch-package
+          # Verify the fix is in place — fail fast if not
+          if grep -q "SWIFT_RETURNS_RETAINED" node_modules/expo-modules-jsi/apple/Sources/ExpoModulesJSI-Cxx/include/RuntimeScheduler.h; then
+            echo "❌ Patch NOT applied — SWIFT_RETURNS_RETAINED still present!"
+            exit 1
+          else
+            echo "✅ Patch applied — SWIFT_RETURNS_RETAINED removed from RuntimeScheduler.h"
+          fi
+
+      # ─────────────────────────────────────────────────────────────────
       # STEP 5a: Write DEV environment (dev-main branch only)
       # Overwrites environment/environment.ts with DEV API URL before building.
       # This does NOT change the committed file — only the build-time file.
