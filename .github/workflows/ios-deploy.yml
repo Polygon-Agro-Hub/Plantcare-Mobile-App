@@ -232,9 +232,18 @@ jobs:
         if: failure()
         run: |
           echo "==================== SEARCHING FOR XCODE COMPILER/LINKER ERRORS ===================="
-          find /Users/runner/Library/Logs/gym -type f -name "*.log" -exec grep -E "(error:|fatal error:|FAILED|\*\* ARCHIVE FAILED \*\*)" {} + -B 2 -A 5 || true
-          echo "==================== LAST 150 LINES OF GYM LOG ===================="
-          find /Users/runner/Library/Logs/gym -type f -name "*.log" -exec tail -n 150 {} + || true
+          for logfile in /Users/runner/Library/Logs/gym/*.log; do
+            if [ -f "$logfile" ]; then
+              echo ">>> Errors from: $logfile <<<"
+              grep -C 3 -i -E "(error:|fatal error:|clang: error|ld: error|\*\* ARCHIVE FAILED \*\*)" "$logfile" | head -n 120 || true
+            fi
+          done
+          echo "==================== TAIL OF GYM LOG ===================="
+          for logfile in /Users/runner/Library/Logs/gym/*.log; do
+            if [ -f "$logfile" ]; then
+              tail -n 60 "$logfile" || true
+            fi
+          done
 
       - name: "📤 Upload Xcode/Gym build log on failure"
         if: failure()
