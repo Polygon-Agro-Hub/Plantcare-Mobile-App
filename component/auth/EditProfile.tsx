@@ -264,7 +264,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
 
     if (!trimmedFirstName && !trimmedLastName) {
       Alert.alert(
-       t("Main.Sorry"),
+        t("Main.Sorry"),
         t("EditProfile.FirstNameAndLastNameCannotBeEmpty"),
         [{ text: t("Main.OK") }],
       );
@@ -446,6 +446,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                   </Text>
                   <View className={inputStyle}>
                     <TextInput
+                      placeholder={t("AddressDetails.EnterFirstName") || "Enter First Name"}
                       value={firstName}
                       onChangeText={setFirstName}
                       maxLength={20}
@@ -459,6 +460,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                   </Text>
                   <View className={inputStyle}>
                     <TextInput
+                      placeholder={t("AddressDetails.EnterLastName") || "Enter Last Name"}
                       value={lastName}
                       onChangeText={setLastName}
                       maxLength={20}
@@ -567,7 +569,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                     >
                       {district
                         ? (districtItems.find((d) => d.value === district)
-                            ?.label ?? district)
+                          ?.label ?? district)
                         : t("FixedAssets.SelectDistrict")}
                     </Text>
                     <MaterialIcons
@@ -583,9 +585,8 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                     onPress={handleSave}
                     disabled={isLoading}
                     activeOpacity={0.8}
-                    className={`w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 ${
-                      isLoading ? "bg-[#9CA3AF]" : "bg-[#353535]"
-                    }`}
+                    className={`w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 ${isLoading ? "bg-[#9CA3AF]" : "bg-[#353535]"
+                      }`}
                   >
                     {isLoading ? (
                       <ActivityIndicator size="small" color="#fff" />

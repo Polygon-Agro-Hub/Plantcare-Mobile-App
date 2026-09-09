@@ -256,7 +256,7 @@ const EditFarm: React.FC<EditFarmProps> = ({
     if (!hasExtentValue) {
       Alert.alert(
         t("Main.Sorry"),
-        t("Farms.Please enter at least one extent value"),
+        t("Farms.PleaseEnterAtLeastOneExtentValue"),
         [{ text: t("Main.OK") }],
       );
       return false;
@@ -428,24 +428,24 @@ const EditFarm: React.FC<EditFarmProps> = ({
         },
       );
 
-     Alert.alert(t("Main.Success"), t("Farms.FarmUpdatedSuccessfully"), [
-  {
-    text: t("Main.OK"),
-    onPress: () => {
-      if (fromScreen === "FarmDetailsScreen") {
-        navigation.navigate("Main", {
-          screen: "FarmDetailsScreen",
-          params: { farmId },
-        });
-      } else {
-        navigation.navigate("Main", {
-          screen: "AddFarmList",
-          params: { farmId: farmId },
-        });
-      }
-    },
-  },
-]);
+      Alert.alert(t("Main.Success"), t("Farms.FarmUpdatedSuccessfully"), [
+        {
+          text: t("Main.OK"),
+          onPress: () => {
+            if (fromScreen === "FarmDetailsScreen") {
+              navigation.navigate("Main", {
+                screen: "FarmDetailsScreen",
+                params: { farmId },
+              });
+            } else {
+              navigation.navigate("Main", {
+                screen: "AddFarmList",
+                params: { farmId: farmId },
+              });
+            }
+          },
+        },
+      ]);
     } catch (err: any) {
       console.error("Error updating farm:", err);
 
@@ -477,6 +477,11 @@ const EditFarm: React.FC<EditFarmProps> = ({
           message = message.replace(
             /"farmImage"/g,
             `"${t("Farms.Farm Image")}"`,
+          );
+          // Translate common backend validation message
+          message = message.replace(
+            /is not allowed to be empty/g,
+            t("Farms.NotAllowedToBeEmpty"),
           );
           errorMessage = message;
         } else if (err.response.status === 400) {
@@ -541,7 +546,7 @@ const EditFarm: React.FC<EditFarmProps> = ({
         nestedScrollEnabled={true}
         keyboardShouldPersistTaps="handled"
       >
-        
+
 
         <CustomHeader
           title={t("Farms.EditFarm")}
@@ -761,7 +766,7 @@ const EditFarm: React.FC<EditFarmProps> = ({
             <View>
               <View className="flex-row justify-between items-center mb-2">
                 <Text className="text-[#070707] font-medium">
-                  {t("Farms.NumberOfStaff")} 
+                  {t("Farms.NumberOfStaff")}
                 </Text>
               </View>
               <TextInput

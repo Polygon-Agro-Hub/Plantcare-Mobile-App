@@ -741,7 +741,7 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
       setIsLoading(false);
 
       if (error.response?.status === 409) {
-        Alert.alert("Duplicate Name", error.response.data.message, [
+        Alert.alert(t("AddFixedAsset.DuplicateName"), error.response.data.message, [
           { text: t("Main.OK") },
         ]);
       } else {

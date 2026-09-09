@@ -436,7 +436,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
               {item.userName}{" "}
               {((item.staffId !== null && item.staffId === userId) ||
                 (item.staffId === null && item.userId === userId)) &&
-                " (You)"}
+                t("PublicForum.You")}
             </Text>
           </View>
           <View className="flex-row items-center gap-3">

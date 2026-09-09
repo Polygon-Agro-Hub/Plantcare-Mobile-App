@@ -885,7 +885,13 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
     } catch (error: any) {
       console.error("Error submitting data:", error);
       setLoading(false);
-      Alert.alert("Duplicate Name", error.response.data.message, [
+       const message = error.response.data.message;
+
+  const translatedMessage = message.replace(
+    /^A building asset with the name "(.*?)" already exists$/,
+    (_:any, name: string) => t("AddFixedAsset.BuildingAssetAlreadyExists", { name })
+  );
+      Alert.alert(t("AddFixedAsset.DuplicateName"), translatedMessage, [
         { text: t("Main.OK") },
       ]);
     }
