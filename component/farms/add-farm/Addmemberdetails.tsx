@@ -325,7 +325,9 @@ const AddMemberDetails: React.FC = () => {
       } else if (!validateSriLankanPhoneNumber(formattedText)) {
         setPhoneValidationErrors((prev) => ({
           ...prev,
-          [index]: t("Farms.Please enter a valid phone number"),
+          [index]:
+            t("Farms.PleaseEnterAValidPhoneNumber") ||
+            t("Farms.Please enter a valid phone number"),
         }));
       }
     }
@@ -503,7 +505,7 @@ const AddMemberDetails: React.FC = () => {
           )
         ) {
           duplicatePhoneErrors[index] = t(
-            "Farms.This phone number is already used by another staff member",
+            "Farms.ThisPhoneNumberIsAlreadyRegistered",
           );
           hasDuplicatePhones = true;
         }
@@ -532,9 +534,7 @@ const AddMemberDetails: React.FC = () => {
       }));
       Alert.alert(
         t("Main.Sorry"),
-        t(
-          "Farms.Duplicate phone numbers found. Please use unique phone numbers for each staff member.",
-        ),
+        t("Farms.DuplicatePhoneNumbersFoundPleaseUseUnique"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -543,9 +543,7 @@ const AddMemberDetails: React.FC = () => {
       setNicErrors((prev) => ({ ...prev, ...duplicateNicErrors }));
       Alert.alert(
         t("Main.Sorry"),
-        t(
-          "Farms.Duplicate NIC numbers found. Please use unique NIC numbers for each staff member.",
-        ),
+        t("Farms.DuplicateNICNumbersFoundPleaseUseUnique"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -579,7 +577,9 @@ const AddMemberDetails: React.FC = () => {
         newPhoneErrors[i] = t("Farms.PleaseEnterPhoneNumber");
         hasErrors = true;
       } else if (!validateSriLankanPhoneNumber(phone)) {
-        newPhoneErrors[i] = t("Farms.Please enter a valid phone number");
+        newPhoneErrors[i] =
+          t("Farms.PleaseEnterAValidPhoneNumber") ||
+          t("Farms.Please enter a valid phone number");
         hasErrors = true;
       }
       if (!role) {
@@ -603,7 +603,10 @@ const AddMemberDetails: React.FC = () => {
     if (!farmBasicDetails || !farmSecondDetails) {
       Alert.alert(
         t("Main.Sorry"),
-        t("Farms.Missing farm details. Please go back and complete all steps."),
+        t("Farms.MissingFarmDetailsPleaseGoBack") ||
+          t(
+            "Farms.Missing farm details. Please go back and complete all steps.",
+          ),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -630,8 +633,10 @@ const AddMemberDetails: React.FC = () => {
     field: "firstName" | "lastName",
     text: string,
   ) => {
+    // Block special characters and numbers; allow Latin, Sinhala, Tamil letters and spaces
+    const filtered = text.replace(/[^a-zA-Z\u0D80-\u0DFF\u0B80-\u0BFF ]/g, "");
     // Strip leading spaces, but allow spaces elsewhere (e.g. "Anne Marie")
-    const sanitized = text.replace(/^\s+/, "");
+    const sanitized = filtered.replace(/^\s+/, "");
     updateStaff(index, field, sanitized);
   };
 
@@ -935,9 +940,12 @@ const AddMemberDetails: React.FC = () => {
             >
               <Text
                 className="text-[#84868B] text-center font-semibold text-lg"
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.7}
                 style={[
                   i18n.language === "si"
-                    ? { fontSize: 16 }
+                    ? { fontSize: 15 }
                     : i18n.language === "ta"
                       ? { fontSize: 13 }
                       : { fontSize: 16 },

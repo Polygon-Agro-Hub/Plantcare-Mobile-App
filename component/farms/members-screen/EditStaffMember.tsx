@@ -25,13 +25,17 @@ import countryData from "@/assets/jsons/common/country-flag.json";
 import CustomHeader from "../../common/CustomHeader";
 import GlobalSearchModal from "../../common/GlobalSearchModal";
 import LoadingPage from "@/component/common/LoadingPage";
+import { useSelector } from "react-redux";
+import { RootState } from "@/services/reducxStore";
 
 type RouteParams = {
   farmId: number;
   staffMemberId?: number;
-  membership: string;
-  renew: string;
-  regCode: string;
+  membership?: string;
+  renew?: string;
+  regCode?: string;
+  farmName?: string;
+  imageId?: string;
 };
 
 interface EditStaffMemberProps {
@@ -57,7 +61,8 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
   navigation,
   route,
 }) => {
-  const { farmId, staffMemberId, membership, renew, regCode } = route.params;
+  const { farmId, staffMemberId, membership = "", renew = "", regCode = "", farmName = "", imageId = "" } = route.params;
+  const userRole = useSelector((state: RootState) => state.user.userData?.role);
   const { t } = useTranslation();
   const selectedLanguage = i18n.language;
 
@@ -97,16 +102,33 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
     }
   };
 
-  const roleItems = [
-    { label: getRoleText("Manager"), value: "Manager" },
-    { label: getRoleText("Supervisor"), value: "Supervisor" },
-    { label: getRoleText("Laborer"), value: "Laborer" },
-  ];
+  const roleItems = React.useMemo(() => {
+    if (userRole === "Supervisor") {
+      return [{ label: getRoleText("Laborer"), value: "Laborer" }];
+    }
+    if (userRole === "Manager") {
+      return [
+        { label: getRoleText("Supervisor"), value: "Supervisor" },
+        { label: getRoleText("Laborer"), value: "Laborer" },
+      ];
+    }
+    return [
+      { label: getRoleText("Manager"), value: "Manager" },
+      { label: getRoleText("Supervisor"), value: "Supervisor" },
+      { label: getRoleText("Laborer"), value: "Laborer" },
+    ];
+  }, [userRole, selectedLanguage]);
 
-  const countryModalData = countryData.map((country) => ({
-    label: `${country.emoji}  ${country.name}  (${country.dial_code})`,
-    value: country.dial_code,
-  }));
+  const countryModalData = countryData.map((country) => {
+    const key = country.name.replace(/\s+/g, "");
+    const translatedName = t(`Country.${key}`, country.name);
+    return {
+      label: `${country.emoji}  ${translatedName}  (${country.dial_code})`,
+      value: country.dial_code,
+      countryName: country.name,
+      translatedCountryName: translatedName,
+    };
+  });
 
   const selectedCountry = countryData.find((c) => c.dial_code === countryCode);
 
@@ -127,13 +149,19 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
   const formatPhoneInput = (text: string): string =>
     text.replace(/\D/g, "").slice(0, 9);
 
-  const handleFirstNameChange = (text: string) => {
-  setFirstName(text.replace(/^\s+/, ""));
-};
+  const stripLeadingSpaces = (text: string): string => {
+    return text.replace(/^\s+/, "").replace(/\s{2,}/g, " ");
+  };
 
-const handleLastNameChange = (text: string) => {
-  setLastName(text.replace(/^\s+/, ""));
-};
+  const handleFirstNameChange = (text: string) => {
+    const filtered = text.replace(/[^a-zA-Z\u0D80-\u0DFF\u0B80-\u0BFF ]/g, "");
+    setFirstName(stripLeadingSpaces(filtered));
+  };
+
+  const handleLastNameChange = (text: string) => {
+    const filtered = text.replace(/[^a-zA-Z\u0D80-\u0DFF\u0B80-\u0BFF ]/g, "");
+    setLastName(stripLeadingSpaces(filtered));
+  };
 
   const checkPhoneNumber = async (fullNumber: string) => {
     if (!fullNumber || fullNumber.length < 10) {
@@ -379,6 +407,8 @@ const handleLastNameChange = (text: string) => {
           membership,
           renew,
           regCode,
+          farmName,
+          imageId,
         });
         return true;
       };
@@ -387,7 +417,7 @@ const handleLastNameChange = (text: string) => {
         handleBackPress,
       );
       return () => subscription.remove();
-    }, [navigation]),
+    }, [navigation, staffMemberId, farmId, membership, renew, regCode, farmName, imageId]),
   );
 
   const handleSave = async () => {
@@ -427,6 +457,8 @@ const handleLastNameChange = (text: string) => {
                 membership,
                 renew,
                 regCode,
+                farmName,
+                imageId,
               }),
           },
         ],
@@ -471,6 +503,8 @@ const handleLastNameChange = (text: string) => {
               membership,
               renew,
               regCode,
+              farmName,
+              imageId,
             }),
         },
       ]);
@@ -500,9 +534,7 @@ const handleLastNameChange = (text: string) => {
         keyboardShouldPersistTaps="handled"
       >
         <CustomHeader
-          title={t("Farms.EditSelectedRoleDetails", {
-            selectedRole: getRoleText(selectedRole),
-          })}
+          title={t("Farms.EditMemberDetails") || "Edit Member Details"}
           navigation={navigation}
           onBackPress={() =>
             navigation.navigate("EditManagersScreen", {
@@ -511,6 +543,8 @@ const handleLastNameChange = (text: string) => {
               membership,
               renew,
               regCode,
+              farmName,
+              imageId,
             })
           }
         />
@@ -520,15 +554,16 @@ const handleLastNameChange = (text: string) => {
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.Role")}</Text>
             <TouchableOpacity
-              onPress={() => !isSubmitting && setRoleModalVisible(true)}
+              onPress={() => !isSubmitting && userRole !== "Supervisor" && setRoleModalVisible(true)}
               className="bg-gray-100 px-4 rounded-3xl flex-row items-center justify-between h-[50px]"
-              activeOpacity={0.7}
+              activeOpacity={userRole === "Supervisor" ? 1 : 0.7}
+              disabled={userRole === "Supervisor" || isSubmitting}
             >
               <Text
                 className={
                   selectedRole
-                    ? "text-gray-700 text-base"
-                    : "text-gray-400 text-base"
+                    ? "text-gray-700 text-sm"
+                    : "text-gray-400 text-sm"
                 }
               >
                 {selectedRole
@@ -557,20 +592,23 @@ const handleLastNameChange = (text: string) => {
             </Text>
             <View className="bg-gray-100 px-4 rounded-3xl h-[50px] justify-center">
               <TextInput
-                style={{
-                  flex: 1,
-                  marginLeft: 8,
-                  fontSize: 16,
-                  height: 50,
-                  paddingVertical: 0,
-                  includeFontPadding: false,
-                }}
                 placeholder={t("Farms.EnterFirstName")}
                 placeholderTextColor="#9CA3AF"
                 value={firstName}
                 onChangeText={handleFirstNameChange}
                 autoCapitalize="words"
                 editable={!isSubmitting}
+                className="text-gray-800"
+                style={{
+                  flex: 1,
+                  marginLeft: 8,
+                  fontSize: 14,
+                  height: 50,
+                  textAlignVertical: "center",
+                  paddingTop: Platform.OS === "ios" ? 12 : 0,
+                  paddingBottom: Platform.OS === "ios" ? 12 : 0,
+                  includeFontPadding: false,
+                }}
               />
             </View>
           </View>
@@ -582,20 +620,23 @@ const handleLastNameChange = (text: string) => {
             </Text>
             <View className="bg-gray-100 px-4 rounded-3xl h-[50px] justify-center">
               <TextInput
-                style={{
-                  flex: 1,
-                  marginLeft: 8,
-                  fontSize: 16,
-                  height: 50,
-                  paddingVertical: 0,
-                  includeFontPadding: false,
-                }}
                 placeholder={t("Farms.EnterLastName")}
                 placeholderTextColor="#9CA3AF"
                 value={lastName}
                 onChangeText={handleLastNameChange}
                 autoCapitalize="words"
                 editable={!isSubmitting}
+                className="text-gray-800"
+                style={{
+                  flex: 1,
+                  marginLeft: 8,
+                  fontSize: 14,
+                  height: 50,
+                  textAlignVertical: "center",
+                  paddingTop: Platform.OS === "ios" ? 12 : 0,
+                  paddingBottom: Platform.OS === "ios" ? 12 : 0,
+                  includeFontPadding: false,
+                }}
               />
             </View>
           </View>
@@ -626,12 +667,15 @@ const handleLastNameChange = (text: string) => {
                   style={{
                     flex: 1,
                     marginLeft: 8,
-                    fontSize: 16,
+                    fontSize: 14,
                     height: 50,
-                    paddingVertical: 0,
+                    textAlignVertical: "center",
+                    paddingTop: Platform.OS === "ios" ? 12 : 0,
+                    paddingBottom: Platform.OS === "ios" ? 12 : 0,
                     includeFontPadding: false,
                   }}
                   placeholder="7X XXXXXXX"
+                  placeholderTextColor="#9CA3AF"
                   value={phoneNumber}
                   onChangeText={handlePhoneChange}
                   keyboardType="phone-pad"
@@ -639,6 +683,7 @@ const handleLastNameChange = (text: string) => {
                   underlineColorAndroid="transparent"
                   cursorColor="#141415ff"
                   editable={!isSubmitting}
+                  className="text-gray-800"
                 />
               </View>
             </View>
@@ -671,7 +716,7 @@ const handleLastNameChange = (text: string) => {
               selectedItems={[countryCode]}
               onSelect={(items) => setCountryCode(items[0] ?? "+94")}
               searchPlaceholder={t("Farms.SearchCountry")}
-              searchKeys={["label"]}
+              searchKeys={["label", "countryName", "translatedCountryName"]}
               showSearch={true}
               multiSelect={false}
               noResultsText={t("SignUp.NoCountryFound")}
@@ -687,12 +732,15 @@ const handleLastNameChange = (text: string) => {
                 onChangeText={handleNicChange}
                 placeholder={t("Farms.EnterNIC")}
                 placeholderTextColor="#9CA3AF"
+                className="text-gray-800"
                 style={{
                   flex: 1,
                   marginLeft: 8,
-                  fontSize: 16,
+                  fontSize: 14,
                   height: 50,
-                  paddingVertical: 0,
+                  textAlignVertical: "center",
+                  paddingTop: Platform.OS === "ios" ? 12 : 0,
+                  paddingBottom: Platform.OS === "ios" ? 12 : 0,
                   includeFontPadding: false,
                 }}
                 editable={!isSubmitting}

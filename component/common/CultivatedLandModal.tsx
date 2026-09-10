@@ -34,17 +34,11 @@ function CameraScreen({
 }) {
   const insets = useSafeAreaInsets();
   const [facing, setFacing] = useState<CameraType>("back");
-  const [permission, requestPermission] = useCameraPermissions();
+  const [permission, requestPermission, getPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [isTakingPhoto, setIsTakingPhoto] = useState(false);
   const { t } = useTranslation();
-
-  useEffect(() => {
-    if (permission && !permission.granted && permission.canAskAgain) {
-      requestPermission();
-    }
-  }, [permission]);
 
   if (!permission) {
     return (
@@ -60,10 +54,8 @@ function CameraScreen({
   if (!permission.granted) {
     return (
       <CameraAccess
-        // Re-run the hook's own request so its `permission` state updates
-        // and this screen re-renders into the live camera view.
-        onPermissionGranted={() => {
-          requestPermission();
+        onPermissionGranted={async () => {
+          await getPermission();
         }}
         onClose={() => onClose(null)}
       />
@@ -96,6 +88,8 @@ function CameraScreen({
         style={{ flex: 1 }}
         facing={facing}
         ref={cameraRef}
+        mode="picture"
+        mute={true}
         onCameraReady={() => setIsCameraReady(true)}
       />
 
@@ -253,7 +247,7 @@ export default function CultivatedLandModal({
 
   return (
     <Modal
-      transparent={!showCamera}
+      transparent={true}
       visible={visible}
       onRequestClose={() => {
         if (showCamera) {

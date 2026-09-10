@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,8 +10,9 @@ import {
   ScrollView,
   Platform,
   StatusBar,
+  SafeAreaView,
+  LayoutChangeEvent,
 } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import { useTranslation } from "react-i18next";
@@ -46,6 +47,13 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
 }) => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
+  const [contentHeight, setContentHeight] = useState(0);
+  const [scrollViewHeight, setScrollViewHeight] = useState(0);
+
+  const isScreenTooLong =
+    scrollViewHeight > 0 &&
+    contentHeight > 0 &&
+    scrollViewHeight >= contentHeight + 20;
 
   const handleDenyOrClose = () => {
     if (onClose) {
@@ -59,24 +67,27 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
     }
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const handleHardwareBackPress = () => {
-        handleDenyOrClose();
-        return true;
-      };
-      const subscription = BackHandler.addEventListener(
-        "hardwareBackPress",
-        handleHardwareBackPress,
-      );
-      return () => subscription.remove();
-    }, [navigation, onClose, onBackPress, returnScreen]),
-  );
+  useEffect(() => {
+    const handleHardwareBackPress = () => {
+      handleDenyOrClose();
+      return true;
+    };
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      handleHardwareBackPress,
+    );
+    return () => subscription.remove();
+  }, [navigation, onClose, onBackPress, returnScreen]);
 
   const requestCameraPermission = async () => {
     setIsLoading(true);
     try {
-      const { status } = await Camera.requestCameraPermissionsAsync();
+      const current = await Camera.getCameraPermissionsAsync();
+      let status = current.status;
+      if (status !== "granted") {
+        const response = await Camera.requestCameraPermissionsAsync();
+        status = response.status;
+      }
 
       if (status === "granted") {
         if (onPermissionGranted) {
@@ -125,20 +136,39 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
   };
 
   return (
-    <View className="flex-1 bg-[#121212]">
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#121212" }}>
       <StatusBar barStyle="light-content" backgroundColor="#121212" />
-        <CustomHeader
-          title=""
-          navigation={navigation}
-          onBackPress={handleDenyOrClose}
-          transparent
-        />
+      <CustomHeader
+        title=""
+        navigation={navigation}
+        onBackPress={handleDenyOrClose}
+        transparent
+      />
       <ScrollView
         className="flex-1 px-5"
-        contentContainerStyle={{ flexGrow: 1, paddingBottom: 32 }}
+        onLayout={(e: LayoutChangeEvent) =>
+          setScrollViewHeight(e.nativeEvent.layout.height)
+        }
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: isScreenTooLong ? "center" : "flex-start",
+          paddingBottom: isScreenTooLong
+            ? 20
+            : Platform.OS === "android"
+              ? 75
+              : 55,
+          paddingTop: isScreenTooLong ? 0 : 10,
+        }}
         showsVerticalScrollIndicator={false}
+        bounces={!isScreenTooLong}
       >
-        <View className="items-center justify-center mt-2 mb-4">
+        <View
+          onLayout={(e: LayoutChangeEvent) =>
+            setContentHeight(e.nativeEvent.layout.height)
+          }
+          className="w-full"
+        >
+          <View className="items-center justify-center mt-2 mb-4">
           <Image
             source={cameraImage}
             className="w-32 h-32"
@@ -215,7 +245,11 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
         </View>
 
         {/* Action Buttons */}
-        <View className="items-center w-full mt-auto">
+        <View
+          className={`items-center w-full mt-4 ${
+            isScreenTooLong ? "mb-2" : "mb-8"
+          }`}
+        >
           <TouchableOpacity
             onPress={requestCameraPermission}
             activeOpacity={0.8}
@@ -254,15 +288,16 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
           <TouchableOpacity
             onPress={handleDenyOrClose}
             activeOpacity={0.7}
-            className="py-2.5 px-6 items-center justify-center"
+            className="py-3 px-6 items-center justify-center"
           >
             <Text className="text-gray-400 font-semibold text-sm">
               {t("CameraAccess.NotNow") || "Not Now"}
             </Text>
           </TouchableOpacity>
         </View>
+        </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

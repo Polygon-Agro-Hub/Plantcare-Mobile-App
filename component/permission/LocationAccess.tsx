@@ -11,6 +11,8 @@ import {
   ScrollView,
   Platform,
   StatusBar,
+  SafeAreaView,
+  LayoutChangeEvent,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -30,8 +32,10 @@ interface LocationAccessProps {
   navigation?: LocationAccessNavigationProp;
   onPermissionGranted?: () => void;
   onClose?: () => void;
+  onNotNow?: () => void;
   returnScreen?: keyof RootStackParamList;
   onBackPress?: () => void;
+  blockBackNavigation?: boolean;
 }
 
 const locationImage = require("../../assets/images/permission/location.webp");
@@ -40,11 +44,20 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
   navigation,
   onPermissionGranted,
   onClose,
+  onNotNow,
   returnScreen = "Main",
   onBackPress,
+  blockBackNavigation = false,
 }) => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
+  const [contentHeight, setContentHeight] = useState(0);
+  const [scrollViewHeight, setScrollViewHeight] = useState(0);
+
+  const isScreenTooLong =
+    scrollViewHeight > 0 &&
+    contentHeight > 0 &&
+    scrollViewHeight >= contentHeight + 20;
 
   const handleDenyOrClose = () => {
     if (onClose) {
@@ -58,9 +71,21 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
     }
   };
 
+  const handleNotNowPress = () => {
+    if (onNotNow) {
+      onNotNow();
+    } else {
+      handleDenyOrClose();
+    }
+  };
+
   useFocusEffect(
     React.useCallback(() => {
       const handleHardwareBackPress = () => {
+        if (blockBackNavigation) {
+          // Block phone back navigation completely
+          return true;
+        }
         handleDenyOrClose();
         return true;
       };
@@ -69,7 +94,7 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
         handleHardwareBackPress,
       );
       return () => subscription.remove();
-    }, [navigation, onClose, onBackPress, returnScreen]),
+    }, [blockBackNavigation, navigation, onClose, onBackPress, returnScreen]),
   );
 
   const requestLocationPermission = async () => {
@@ -83,17 +108,18 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
         } else if (navigation) {
           navigation.navigate(returnScreen as any);
         }
-      } else if (status === "denied") {
+      } else {
         Alert.alert(
           t("LocationAccess.PermissionDenied") || "Permission Denied",
           t(
             "LocationAccess.LocationAccessIsRequiredPleaseEnableItInSettings",
-          ) || "Location access is required for this feature. Please enable it in settings.",
+          ) ||
+            "Location access is required for this feature. Please enable it in settings.",
           [
             {
               text: t("LocationAccess.NotNow") || "Not Now",
               style: "cancel",
-              onPress: handleDenyOrClose,
+              onPress: handleNotNowPress,
             },
             {
               text: t("LocationAccess.OpenSettings") || "Open Settings",
@@ -107,8 +133,14 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
       Alert.alert(
         t("Main.Error") || "Error",
         t("LocationAccess.UnableToRequestLocationPermissionPleaseTryAgain") ||
-        "Unable to request location permission. Please try again.",
-        [{ text: t("Main.OK") }],
+          "Unable to request location permission. Please try again.",
+        [
+          {
+            text: t("LocationAccess.NotNow") || "Not Now",
+            onPress: handleNotNowPress,
+          },
+          { text: t("Main.OK") },
+        ],
       );
     } finally {
       setIsLoading(false);
@@ -116,21 +148,43 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
   };
 
   return (
-    <View className="flex-1 bg-[#121212]">
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#121212" }}>
       <StatusBar barStyle="light-content" backgroundColor="#121212" />
-      <CustomHeader
-        title=""
-        navigation={navigation}
-        onBackPress={handleDenyOrClose}
-        transparent
-      />
+      {!blockBackNavigation && (
+        <CustomHeader
+          title=""
+          navigation={navigation}
+          onBackPress={handleDenyOrClose}
+          showBackButton={true}
+          transparent
+        />
+      )}
 
       <ScrollView
         className="flex-1 px-5"
-        contentContainerStyle={{ flexGrow: 1, paddingBottom: 32 }}
+        onLayout={(e: LayoutChangeEvent) =>
+          setScrollViewHeight(e.nativeEvent.layout.height)
+        }
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: isScreenTooLong ? "center" : "flex-start",
+          paddingBottom: isScreenTooLong
+            ? 20
+            : Platform.OS === "android"
+              ? 75
+              : 55,
+          paddingTop: isScreenTooLong ? 0 : 10,
+        }}
         showsVerticalScrollIndicator={false}
+        bounces={!isScreenTooLong}
       >
-        <View className="items-center justify-center mt-2 mb-4">
+        <View
+          onLayout={(e: LayoutChangeEvent) =>
+            setContentHeight(e.nativeEvent.layout.height)
+          }
+          className="w-full"
+        >
+          <View className="items-center justify-center mt-2 mb-4">
           <Image
             source={locationImage}
             className="w-32 h-32"
@@ -200,7 +254,11 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
         </View>
 
         {/* Action Buttons */}
-        <View className="items-center w-full mt-auto">
+        <View
+          className={`items-center w-full mt-4 ${
+            isScreenTooLong ? "mb-2" : "mb-8"
+          }`}
+        >
           <TouchableOpacity
             onPress={requestLocationPermission}
             activeOpacity={0.8}
@@ -237,17 +295,18 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={handleDenyOrClose}
+            onPress={handleNotNowPress}
             activeOpacity={0.7}
-            className="py-2.5 px-6 items-center justify-center"
+            className="py-3 px-6 items-center justify-center"
           >
             <Text className="text-gray-400 font-semibold text-sm">
               {t("LocationAccess.NotNow") || "Not Now"}
             </Text>
           </TouchableOpacity>
         </View>
+        </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import {
   View,
   Text,
@@ -22,30 +22,24 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTranslation } from "react-i18next";
 import { environment } from "@/environment/environment";
 import Checkbox from "expo-checkbox";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, RouteProp } from "@react-navigation/native";
 import countryData from "@/assets/jsons/common/country-flag.json";
 import districtData from "@/assets/jsons/common/district.json";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
 
 type SignupNavigationProp = StackNavigationProp<RootStackParamList, "Signup">;
+type SignupRouteProp = RouteProp<RootStackParamList, "Signup">;
 
 interface SignupProps {
   navigation: SignupNavigationProp;
+  route: SignupRouteProp;
 }
 
 const Bottom = require("../../assets/images/auth/sign-up-bg-vector-bottom.webp");
 const Top = require("../../assets/images/auth/sign-up-bg-vector-top.webp");
 
-const countryItems = countryData.map((country) => ({
-  label: `${country.emoji}  ${country.name}  (${country.dial_code})`,
-  value: country.dial_code,
-  countryName: country.name,
-  flag: country.emoji,
-  dialCode: country.dial_code,
-}));
-
-const Signup: React.FC<SignupProps> = ({ navigation }) => {
+const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
@@ -67,6 +61,21 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
   const [districtModalVisible, setDistrictModalVisible] = useState(false);
   const nicInputRef = useRef<TextInput>(null);
   const { t, i18n } = useTranslation();
+
+  const countryItems = useMemo(() => {
+    return countryData.map((country) => {
+      const key = country.name.replace(/\s+/g, "");
+      const translatedName = t(`Country.${key}`, country.name);
+      return {
+        label: `${country.emoji}  ${translatedName}  (${country.dial_code})`,
+        value: country.dial_code,
+        countryName: country.name,
+        translatedCountryName: translatedName,
+        flag: country.emoji,
+        dialCode: country.dial_code,
+      };
+    });
+  }, [t, i18n.language]);
 
   const districtItems = districtData
     .map((d) => ({
@@ -273,6 +282,42 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
     setDistrict(name);
   };
 
+  useEffect(() => {
+    const params = route?.params;
+    if (params) {
+      if (params.firstName !== undefined) {
+        setFirstName(params.firstName);
+        validateName(params.firstName, setFirstNameError);
+      }
+      if (params.lastName !== undefined) {
+        setLastName(params.lastName);
+        validateName(params.lastName, setLastNameError);
+      }
+      if (params.nic !== undefined) {
+        setNic(params.nic);
+        validateNic(params.nic);
+      }
+      if (params.mobileNumber !== undefined) {
+        setMobileNumber(params.mobileNumber);
+        validateMobileNumber(params.mobileNumber);
+      }
+      if (params.selectedCountryCode !== undefined) {
+        const countryCode = params.selectedCountryCode;
+        setSelectedCountryCode(countryCode);
+        const country = countryItems.find((c) => c.value === countryCode);
+        if (country) {
+          setSelectedCountryFlag(country.flag);
+        }
+      }
+      if (params.selectedCountryFlag !== undefined) {
+        setSelectedCountryFlag(params.selectedCountryFlag);
+      }
+      if (params.district !== undefined) {
+        setDistrict(params.district);
+      }
+    }
+  }, [route?.params]);
+
   const handleRegister = async () => {
     if (
       !mobileNumber ||
@@ -394,6 +439,9 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
         lastName,
         nic,
         mobileNumber: fullPhoneNumber,
+        rawMobileNumber: mobileNumber,
+        selectedCountryCode,
+        selectedCountryFlag,
         district,
       });
       setIsButtonDisabled(false);
@@ -768,12 +816,15 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
         <GlobalSearchModal
           visible={countryModalVisible}
           onClose={() => setCountryModalVisible(false)}
-          title={t("Select Country Code")}
+          title={t("SignUp.SelectCountryCode", "Select Country Code")}
           data={countryItems}
           selectedItems={[selectedCountryCode]}
           onSelect={handleCountrySelect}
-          searchPlaceholder={t("Search country or dial code...")}
-          searchKeys={["label", "countryName", "dialCode"]}
+          searchPlaceholder={t(
+            "SignUp.SearchCountry",
+            "Search country or dial code...",
+          )}
+          searchKeys={["label", "countryName", "translatedCountryName", "dialCode"]}
           multiSelect={false}
           noResultsText={t("SignUp.NoCountryFound")}
         />

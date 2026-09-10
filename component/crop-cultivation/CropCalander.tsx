@@ -160,14 +160,10 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       const enableScreenCapture = async () => {
         await ScreenCapture.allowScreenCaptureAsync();
       };
-      const fetchData = async () => {
-        await fetchCropswithoutload();
-      };
       disableScreenCapture();
 
       return () => {
         enableScreenCapture();
-        fetchData();
       };
     }, []),
   );
@@ -217,13 +213,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
       return () => subscription.remove();
     }, [handleBackPress]),
-  );
-  useFocusEffect(
-    React.useCallback(() => {
-      return () => {
-        setCultivatedLandModalVisible(false);
-      };
-    }, []),
   );
 
   const loadLanguage = async () => {
@@ -565,6 +554,10 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         }
       };
 
+      if (crops.length > 0) {
+        return;
+      }
+
       setCrops([]);
       setChecked([]);
       setTimestamps([]);
@@ -574,7 +567,7 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
 
       loadLanguage();
       fetchCrops().then(() => navigateToNextIncompleteTask());
-    }, [cropId, farmId]),
+    }, [cropId, farmId, crops.length]),
   );
 
   const viewNextTasks = () => {

@@ -101,9 +101,11 @@ const FarmCertificateTask: React.FC = () => {
   const [selectedQuestion, setSelectedQuestion] =
     useState<QuestionnaireItem | null>(null);
 
-  const fetchCertificateStatus = async () => {
+  const fetchCertificateStatus = async (showLoading = false) => {
     try {
-      setLoading(true);
+      if (showLoading) {
+        setLoading(true);
+      }
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
@@ -506,15 +508,15 @@ const FarmCertificateTask: React.FC = () => {
 
   const onRefresh = () => {
     setRefreshing(true);
-    fetchCertificateStatus();
+    fetchCertificateStatus(false);
   };
 
   useFocusEffect(
     useCallback(() => {
-      fetchCertificateStatus();
+      fetchCertificateStatus(!certificateStatus);
       const currentLanguage = t("Main.LNG");
       setLanguage(currentLanguage);
-    }, [farmId, slaveQuestionnaireId]),
+    }, [farmId, slaveQuestionnaireId, certificateStatus]),
   );
 
   useFocusEffect(

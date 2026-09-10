@@ -20,6 +20,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RootStackParamList } from "../types/types";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
+import i18n from "i18next";
 import { RefreshControl } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import CustomHeader from "../common/CustomHeader";
@@ -177,10 +178,42 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
 
   const formatDate = (dateString: string) => {
     try {
+      const now = new Date();
       const date = new Date(dateString);
-      return isNaN(date.getTime()) ? "Just now" : date.toLocaleTimeString();
+      if (isNaN(date.getTime())) {
+        return t("PublicForum.JustNow") || "Just now";
+      }
+
+      const timeDifference = Math.max(0, now.getTime() - date.getTime());
+      const seconds = Math.floor(timeDifference / 1000);
+      const minutes = Math.floor(seconds / 60);
+      const hours = Math.floor(minutes / 60);
+      const days = Math.floor(hours / 24);
+
+      if (seconds < 60) {
+        return t("PublicForum.JustNow") || "Just now";
+      } else if (minutes < 60) {
+        return minutes === 1
+          ? (t("PublicForum.MinuteAgo", { count: minutes }) || "1 minute ago")
+          : (t("PublicForum.MinutesAgo", { count: minutes }) || `${minutes} minutes ago`);
+      } else if (hours < 24) {
+        return hours === 1
+          ? (t("PublicForum.HourAgo", { count: hours }) || "1 hour ago")
+          : (t("PublicForum.HoursAgo", { count: hours }) || `${hours} hours ago`);
+      } else if (days < 7) {
+        return days === 1
+          ? (t("PublicForum.DayAgo", { count: days }) || "1 day ago")
+          : (t("PublicForum.DaysAgo", { count: days }) || `${days} days ago`);
+      } else {
+        const language = i18n.language || "en";
+        return date.toLocaleDateString(language, {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        });
+      }
     } catch (error) {
-      return "Just now";
+      return t("PublicForum.JustNow") || "Just now";
     }
   };
 

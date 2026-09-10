@@ -29,7 +29,7 @@ export const AlertModal: React.FC<AlertModalProps> = ({
   onRescan,
   showOpenOngoingButton = false,
   onOpenOngoing,
-  duration = 4000,
+  duration = 3000,
   autoClose = true,
   showOkButton,
 }) => {
@@ -37,21 +37,33 @@ export const AlertModal: React.FC<AlertModalProps> = ({
   const isOkButtonVisible = showOkButton !== undefined ? showOkButton : !autoClose;
   const loadingBarWidth = useRef(new Animated.Value(1)).current; // 1 = 100%
 
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
   useEffect(() => {
     if (visible && autoClose) {
       loadingBarWidth.setValue(1);
 
-      Animated.timing(loadingBarWidth, {
+      const animation = Animated.timing(loadingBarWidth, {
         toValue: 0,
         duration: duration,
         useNativeDriver: false,
-      }).start();
+      });
+
+      animation.start();
 
       const closeTimer = setTimeout(() => {
-        onClose();
-      }, duration - 200);
+        if (onCloseRef.current) {
+          onCloseRef.current();
+        }
+      }, duration);
 
-      return () => clearTimeout(closeTimer);
+      return () => {
+        animation.stop();
+        clearTimeout(closeTimer);
+      };
     }
   }, [visible, duration, autoClose]);
 
@@ -211,17 +223,24 @@ Alert.alert = (title, message, buttons, options) => {
     originalAlert(title, message, buttons, options);
   } else {
     const titleStr = (title || "").toString().toLowerCase().trim();
+    const msgStr = (message || "").toString().toLowerCase().trim();
     const isSuccess =
       titleStr.includes("success") ||
       titleStr.includes("සාර්ථක") ||
       titleStr.includes("வெற்றி") ||
       titleStr.includes("saved") ||
       titleStr.includes("done") ||
-      titleStr.includes("completed");
+      titleStr.includes("completed") ||
+      msgStr.includes("successfully") ||
+      msgStr.includes("සාර්ථක") ||
+      msgStr.includes("வெற்றிகரமாக");
     const type = isSuccess ? "success" : "error";
 
+    let hasCallbackRun = false;
     const onCloseCallback = () => {
-      if (buttons && buttons.length === 1 && buttons[0].onPress) {
+      if (hasCallbackRun) return;
+      hasCallbackRun = true;
+      if (buttons && buttons.length >= 1 && buttons[0].onPress) {
         buttons[0].onPress();
       }
     };
