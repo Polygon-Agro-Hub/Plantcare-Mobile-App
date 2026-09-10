@@ -456,7 +456,7 @@ const AddMemberDetails: React.FC = () => {
       Alert.alert(
         t("Main.Sorry"),
         t(
-          "Farms.One or more phone numbers are already registered. Please use different phone numbers.",
+          "Farms.OneOrMorePhoneNumbersAreAlreadyRegistered",
         ),
         [{ text: t("Main.OK") }],
       );
@@ -482,7 +482,7 @@ const AddMemberDetails: React.FC = () => {
       Alert.alert(
         t("Main.Sorry"),
         t(
-          "Farms.One or more NIC numbers are already registered. Please use different NIC numbers.",
+          "Farms.OneOrMoreNICNumbersAreAlreadyRegistered",
         ),
         [{ text: t("Main.OK") }],
       );

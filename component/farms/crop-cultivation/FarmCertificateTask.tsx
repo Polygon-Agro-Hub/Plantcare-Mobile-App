@@ -273,10 +273,10 @@ const FarmCertificateTask: React.FC = () => {
             (prevItem) =>
               prevItem.id === item.id
                 ? {
-                    ...prevItem,
-                    tickResult: 1,
-                    doneDate: new Date().toISOString(),
-                  }
+                  ...prevItem,
+                  tickResult: 1,
+                  doneDate: new Date().toISOString(),
+                }
                 : prevItem,
           );
 
@@ -339,11 +339,11 @@ const FarmCertificateTask: React.FC = () => {
             (prevItem) =>
               prevItem.id === item.id
                 ? {
-                    ...prevItem,
-                    uploadImage: null,
-                    tickResult: null,
-                    doneDate: null,
-                  }
+                  ...prevItem,
+                  uploadImage: null,
+                  tickResult: null,
+                  doneDate: null,
+                }
                 : prevItem,
           );
 
@@ -602,18 +602,16 @@ const FarmCertificateTask: React.FC = () => {
                     let validityText = t("Farms.ValidFor") + " ";
 
                     if (time.months > 0) {
-                      validityText += `${time.months} ${
-                        time.months === 1 ? t("Farms.Month") : t("Farms.Months")
-                      }`;
+                      validityText += `${time.months === 1 ? t("Farms.Month") : t("Farms.Months")
+                        } ${time.months}`;
                     }
 
                     if (time.days > 0) {
                       if (time.months > 0) {
                         validityText += " ";
                       }
-                      validityText += `${time.days} ${
-                        time.days === 1 ? t("Farms.Day") : t("Farms.Days")
-                      }`;
+                      validityText += `${time.days === 1 ? t("Farms.Day") : t("Farms.Days")
+                        } ${time.days}`;
                     }
 
                     return (
@@ -624,11 +622,10 @@ const FarmCertificateTask: React.FC = () => {
                   }
                 })()}
                 <Text
-                  className={`mt-1 font-medium ${
-                    certificateStatus.isAllCompleted
+                  className={`mt-1 font-medium ${certificateStatus.isAllCompleted
                       ? "text-green-700"
                       : "text-[#FF0000]"
-                  }`}
+                    }`}
                 >
                   {certificateStatus.isAllCompleted
                     ? t("Farms.AllCompleted")
@@ -658,11 +655,10 @@ const FarmCertificateTask: React.FC = () => {
           return (
             <View
               key={item.id}
-              className={`rounded-2xl p-4 mb-3 border shadow-sm ${
-                isPhotoProof && isCompleted && item.uploadImage
+              className={`rounded-2xl p-4 mb-3 border shadow-sm ${isPhotoProof && isCompleted && item.uploadImage
                   ? "bg-[#4B5563CC] border-[#4B5563CC]"
                   : "bg-white border-[#EFEFEF]"
-              }`}
+                }`}
               style={{
                 shadowColor: "#000000",
                 shadowOffset: { width: 0, height: 4 },
@@ -673,11 +669,10 @@ const FarmCertificateTask: React.FC = () => {
               <View className="flex-row justify-between items-start mb-3">
                 <View className="flex-1 mr-3">
                   <Text
-                    className={`font-medium text-sm mb-1 ${
-                      isPhotoProof && isCompleted && item.uploadImage
+                    className={`font-medium text-sm mb-1 ${isPhotoProof && isCompleted && item.uploadImage
                         ? "text-gray-900"
                         : "text-gray-900"
-                    }`}
+                      }`}
                   >
                     {language === "si"
                       ? item.qSinhala
@@ -692,11 +687,10 @@ const FarmCertificateTask: React.FC = () => {
                   <TouchableOpacity
                     onPress={() => handleQuestionnaireCheck(item)}
                     disabled={uploadingImageForItem === item.id}
-                    className={`w-8 h-8 rounded-full items-center justify-center ${
-                      isCompleted
+                    className={`w-8 h-8 rounded-full items-center justify-center ${isCompleted
                         ? "bg-[#00A896] border-2 border-[#00A896]"
                         : "bg-white border-2 border-[#00A896]"
-                    }`}
+                      }`}
                   >
                     {uploadingImageForItem === item.id ? (
                       <ActivityIndicator
