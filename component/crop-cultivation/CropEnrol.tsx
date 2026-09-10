@@ -13,6 +13,7 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import CustomDatePicker from "../common/CustomDatePicker";
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
@@ -87,8 +88,52 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
   const [extentp, setExtentp] = useState<string>("");
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState<boolean>(false);
+
+  const formatDisplayDate = (date: Date) => {
+    if (!date) return "";
+    const rawDays = t("Calendar.Days", { returnObjects: true });
+    const rawMonths = t("Calendar.Months", { returnObjects: true });
+
+    const days = Array.isArray(rawDays)
+      ? rawDays
+      : [
+          "Sunday",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+        ];
+    const months = Array.isArray(rawMonths)
+      ? rawMonths
+      : [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ];
+
+    const dayName = days[date.getDay()] || "";
+    const monthName = months[date.getMonth()] || "";
+    const dayNum = date.getDate();
+    const year = date.getFullYear();
+
+    if (i18n.language === "en") {
+      return `${dayName ? `${dayName}, ` : ""}${dayNum} ${monthName} ${year}`;
+    }
+    return `${dayName ? `${dayName}, ` : ""}${year} ${monthName} ${dayNum}`;
+  };
   const [cropCalender, setCropCalender] = useState<CropCalender | null>(null);
   const [search, setSearch] = useState<boolean>(false);
   const [formStatus, setFormStatus] = useState<string>(status);
@@ -643,32 +688,20 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
                   onPress={() => setShowDatePicker((prev) => !prev)}
                   className="border-b border-gray-400 my-3 flex-row justify-between items-center p-3"
                 >
-                  <Text>{startDate.toDateString()}</Text>
+                  <Text>{formatDisplayDate(startDate)}</Text>
                   <Icon name="arrow-drop-down" size={24} color="gray" />
                 </TouchableOpacity>
-                {showDatePicker &&
-                  (Platform.OS === "ios" ? (
-                    <View className="justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100 rounded-lg">
-                      <DateTimePicker
-                        value={startDate}
-                        mode="date"
-                        display="inline"
-                        style={{ width: 320, height: 260 }}
-                        maximumDate={new Date()}
-                        minimumDate={minDate}
-                        onChange={onChangeDate}
-                      />
-                    </View>
-                  ) : (
-                    <DateTimePicker
-                      value={startDate}
-                      mode="date"
-                      display="default"
-                      maximumDate={new Date()}
-                      minimumDate={minDate}
-                      onChange={onChangeDate}
-                    />
-                  ))}
+                <CustomDatePicker
+                  visible={showDatePicker}
+                  onClose={() => setShowDatePicker(false)}
+                  value={startDate}
+                  onConfirm={(date) => onChangeDate(null, date)}
+                  minimumDate={minDate}
+                  maximumDate={new Date()}
+                  title={t("Cropenroll.SelectStartDate", "Select Start Date")}
+                  cancelText={t("Main.Cancel", "Cancel")}
+                  confirmText={t("Main.OK", "OK")}
+                />
 
                 <View className="justify-center items-center px-6">
                   <TouchableOpacity
@@ -737,29 +770,17 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
               </View>
             </View>
 
-            {showDatePicker &&
-              (Platform.OS === "ios" ? (
-                <View className="justify-center items-center z-50 absolute ml-2 mt-[2%] bg-gray-100 rounded-lg">
-                  <DateTimePicker
-                    value={startDate}
-                    mode="date"
-                    display="inline"
-                    style={{ width: 320, height: 260 }}
-                    maximumDate={new Date()}
-                    minimumDate={minDate}
-                    onChange={onChangeDate}
-                  />
-                </View>
-              ) : (
-                <DateTimePicker
-                  value={startDate}
-                  mode="date"
-                  display="default"
-                  maximumDate={new Date()}
-                  minimumDate={minDate}
-                  onChange={onChangeDate}
-                />
-              ))}
+            <CustomDatePicker
+              visible={showDatePicker}
+              onClose={() => setShowDatePicker(false)}
+              value={startDate}
+              onConfirm={(date) => onChangeDate(null, date)}
+              minimumDate={minDate}
+              maximumDate={new Date()}
+              title={t("Cropenroll.SelectStartDate", "Select Start Date")}
+              cancelText={t("Main.Cancel", "Cancel")}
+              confirmText={t("Main.OK", "OK")}
+            />
 
             <View className="justify-center items-center px-6">
               <TouchableOpacity

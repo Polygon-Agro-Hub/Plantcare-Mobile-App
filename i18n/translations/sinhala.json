@@ -1386,7 +1386,13 @@
     "FailedToFetchFarmCropsPleaseTryAgain": "ගොවිපල භෝග ලබා ගැනීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
     "FailedToFetchFarmsPleaseTryAgain": "ගොවිපල ලබා ගැනීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
     "FailedToFetchServicesPleaseTryAgain": "මේ මොහොතේ පරීක්ෂණ සේවා නොමැත. කරුණාකර නැවත උත්සාහ කරන්න",
-    "SearchFarm": "ගොවිපල සොයන්න"
+    "SearchFarm": "ගොවිපල සොයන්න",
+    "UnknownCrop": "නොදන්නා බෝගය",
+    "Warning": "අවවාදයයි",
+    "DiscardAndProceed": "ඉවතලා ඉදිරියට යන්න",
+    "PleaseCompleteAllRequiredFields": "කරුණාකර සියලුම අවශ්‍ය ක්ෂේත්‍ර සම්පූර්ණ කරන්න හෝ ඔබගේ වත්මන් දත්ත සුරැකීමට 'තවත් එක් කරන්න' ක්ලික් කරන්න.",
+    "NoServiceFound": "සේවාවක් හමු නොවීය",
+    "NoFarmFound": "ගොවිපලක් හමු නොවීය"
   },
   "RequestHistory": {
     "YouHaveNoRequestsAddedYet": "--ඔබ තවමත් කිසිදු ඉල්ලීමක් එකතු කර නැත--",

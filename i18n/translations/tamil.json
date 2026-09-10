@@ -19,28 +19,14 @@
     "PleaseFillAllRequiredFields": "தயவுசெய்து தேவையான அனைத்து புலங்களையும் நிரப்பவும்.",
     "SomethingWentWrongPleaseTryAgainlater": "ஏதோ தவறு நடந்துவிட்டது. தயவுசெய்து பின்னர் மீண்டும் முயற்சிக்கவும்.",
     "PleaseTurnOnMobileDataOrWiFiToContinue": "தொடர, தயவுசெய்து மொபைல் டேட்டா அல்லது வைஃபையை இயக்கவும்.",
-    "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "இந்தச் சாதனத்திலிருந்து ஏராளமான கோரிக்கைகள் உள்ளன, தயவுசெய்து 30 நிமிடங்களில் மீண்டும் முயற்சிக்கவும்.",
-    "Done": "முடிந்தது",
-    "NoSearchResultFound": "தேடல் முடிவுகள் எதுவும் கிடைக்கவில்லை"
+    "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "இந்தச் சாதனத்திலிருந்து ஏராளமான கோரிக்கைகள் உள்ளன, தயவுசெய்து 30 நிமிடங்களில் மீண்டும் முயற்சிக்கவும்."
   },
   "Inputs": {
     "FirstName": "முதற் பெயர்",
     "LastName": "குடும்பப் பெயர்",
     "NICNumber": "தேசிய அடையாள அட்டை எண்",
     "PhoneNumber": "தொலைபேசி எண்",
-    "MobileNumber": "கைப்பேசி எண்",
-    "LastNameRequired": "குடும்பப் பெயர் தேவை.",
-    "FirstNameRequired": "முதற் பெயர் தேவை.",
-    "FirstnameRequred": "முதற் பெயர் தேவை.",
-    "Lastnamerequred": "குடும்பப் பெயர் தேவை.",
-    "EnterPhoneNumber": "தொலைபேசி எண்ணை உள்ளிடவும்",
-    "EnterNICNumber": "தேசிய அடையாள அட்டை எண்ணை உள்ளிடவும்"
-  },
-  "input": {
-    "FirstNameRequired": "முதற் பெயர் தேவை.",
-    "LastNameRequired": "குடும்பப் பெயர் தேவை.",
-    "FirstnameRequred": "முதற் பெயர் தேவை.",
-    "Lastnamerequred": "குடும்பப் பெயர் தேவை."
+    "MobileNumber": "கைப்பேசி எண்"
   },
   "District": {
     "Colombo": "கொழும்பு",
@@ -111,9 +97,7 @@
     "TheNICNumberYouEnteredIsAlreadyRegisteredPleaseCheckYourDetailsOrLogIn": "நீங்கள் உள்ளிட்ட தேசிய அடையாள அட்டை எண் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளது, தயவுசெய்து உங்கள் விவரங்களைச் சரிபார்க்கவும் அல்லது உள்நுழையவும்.",
     "BothThePhoneNumberAndNICNumberEnteredAreAlreadyRegisteredPleaseLogInInstead": "நீங்கள் உள்ளிட்ட தொலைபேசி எண் மற்றும் தேசிய அடையாள அட்டை எண் இரண்டும் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளன. அதற்குப் பதிலாக தயவுசெய்து உள்நுழையவும்.",
     "ThePhoneNumberYouEnteredIsAlreadyRegisteredPleaseUseADifferentNumberOrLogIn": "நீங்கள் உள்ளிட்ட தொலைபேசி எண் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளது. தயவுசெய்து வேறு எண்ணைப் பயன்படுத்தவும் அல்லது உள்நுழையவும்",
-    "NoCountryFound":"நாடு எதுவும் காணப்படவில்லை",
-    "SelectCountryCode": "நாட்டுக் குறியீட்டைத் தேர்ந்தெடுக்கவும்",
-    "SearchCountry": "நாடு அல்லது டயல் குறியீட்டைத் தேடு..."
+    "NoCountryFound": "நாடு எதுவும் காணப்படவில்லை"
   },
   "SignIn": {
     "SignIn": "உள்நுழைக",
@@ -251,8 +235,8 @@
     "Requesting...": "கோருகிறது...",
     "LocationAccess": "இருப்பிட அணுகல்",
     "LocationPermission": "இருப்பிட அனுமதி",
-    "ProminentDisclosureTitle": "GoViCare இருப்பிடத் தரவை ஏன் பயன்படுத்துகிறது",
-    "ProminentDisclosureIntro": "பின்வரும் முக்கியமான விவசாய அம்சங்களை இயக்க GoViCare உங்கள் சாதனத்தின் இருப்பிடத் தரவைச் சேகரித்துப் பயன்படுத்துகிறது:",
+    "ProminentDisclosureTitle": "GoviCare இருப்பிடத் தரவை ஏன் பயன்படுத்துகிறது",
+    "ProminentDisclosureIntro": "பின்வரும் முக்கியமான விவசாய அம்சங்களை இயக்க GoviCare உங்கள் சாதனத்தின் இருப்பிடத் தரவைச் சேகரித்துப் பயன்படுத்துகிறது:",
     "FeatureWeatherTitle": "வானிலை மற்றும் விவசாய முன்னறிவிப்புகள்",
     "FeatureWeatherDesc": "உங்கள் பண்ணைப் பகுதிக்கான துல்லியமான நிகழ்நேர வானிலை முன்னறிவிப்புகள் மற்றும் மழை எச்சரிக்கைகளை வழங்குகிறது.",
     "FeatureCropTitle": "பண்ணை மற்றும் பயிர் நடவடிக்கைகள் பதிவு செய்தல்",
@@ -270,8 +254,8 @@
     "OpenSettings": "அமைப்புகளைத் திறக்கவும்",
     "Requesting...": "கோருகிறது...",
     "CameraAccess": "கேமரா அணுகல்",
-    "ProminentDisclosureTitle": "GoViCare கேமராவை ஏன் பயன்படுத்துகிறது",
-    "ProminentDisclosureIntro": "பின்வரும் செயல்பாட்டு அம்சங்களை இயக்க GoViCare கேமரா அணுகலைக் கோருகிறது:",
+    "ProminentDisclosureTitle": "GoviCare கேமராவை ஏன் பயன்படுத்துகிறது",
+    "ProminentDisclosureIntro": "பின்வரும் செயல்பாட்டு அம்சங்களை இயக்க GoviCare கேமரா அணுகலைக் கோருகிறது:",
     "FeatureQRTitle": "உடனடி QR குறியீடு ஸ்கேனிங்",
     "FeatureQRDesc": "விரைவான அடையாளம், பயிர் கண்காணிப்பு மற்றும் பாதுகாப்பான பரிவர்த்தனைகளுக்கு கடை மற்றும் விவசாயி QR குறியீடுகளை ஸ்கேன் செய்தல்.",
     "FeatureInspectionTitle": "பயிர் நோய் கண்டறிதல் & ஆவணப் புகைப்படங்கள்",
@@ -445,7 +429,6 @@
     "Try1FarmForFree": "1 பண்ணையை இலவசமாக முயற்சிக்கவும்",
     "OtherStaff": "மற்ற ஊழியர்கள்",
     "Members": "உறுப்பினர்கள்",
-    "Member": "உறுப்பினர்",
     "FarmAssets": "பண்ணை சொத்துக்கள்",
     "AreYouSureYouWantToDeleteThisFarm": "இந்தப் பண்ணையை நீக்க விரும்புகிறீர்களா?",
     "AreYouSureYouWantToDeleteThisMember": "இந்த உறுப்பினரை நீக்க விரும்புகிறீர்களா?",
@@ -539,7 +522,6 @@
     "StaffMemberIDIsMissing": "ஊழியர் ஐடி காணவில்லை",
     "NoAuthenticationTokenFound": "அங்கீகார டோக்கன் எதுவும் கிடைக்கவில்லை",
     "FailedToFFetchStaffMemberData": "ஊழியர் தரவைப் பெறத் தவறியது",
-    "EditMemberDetails": "உறுப்பினர் விவரங்களைத் திருத்தவும்",
     "EditSelectedRoleDetails": "{{selectedRole}} விவரங்களைத் திருத்தவும்",
     "FailedToDeleteFarm": "பண்ணையை நீக்கத் தவறியது",
     "FailedToDeleteStaffMember": "ஊழியரை நீக்கத் தவறியது",
@@ -572,21 +554,6 @@
     "DuplicateNumbersAreNotAllowed.": "நகல் எண்கள் அனுமதிக்கப்படாது.",
     "DuplicateNICNumbersAreNotAllowed": "நகல் தேசிய அடையாள அட்டை எண்கள் அனுமதிக்கப்படாது.",
     "PleaseFixPhoneNumberValidationErrorsBeforeSaving": "சேமிப்பதற்கு முன், தயவுசெய்து தொலைபேசி எண் சரிபார்ப்பு பிழைகளைச் சரிசெய்யவும்.",
-    "PleaseFixNICValidationErrorsBeforeSaving": "சேமிப்பதற்கு முன் தேசிய அடையாள அட்டை சரிபார்ப்பு பிழைகளைச் சரிசெய்யவும்.",
-    "Please fix NIC validation errors before saving.": "சேமிப்பதற்கு முன் தேசிய அடையாள அட்டை சரிபார்ப்பு பிழைகளைச் சரிசெய்யவும்.",
-    "OneOrMorePhoneNumbersAlreadyRegistered": "ஒன்று அல்லது அதற்கு மேற்பட்ட தொலைபேசி எண்கள் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளன. தயவுசெய்து வேறு தொலைபேசி எண்களைப் பயன்படுத்தவும்.",
-    "One or more phone numbers are already registered. Please use different phone numbers.": "ஒன்று அல்லது அதற்கு மேற்பட்ட தொலைபேசி எண்கள் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளன. தயவுசெய்து வேறு தொலைபேசி எண்களைப் பயன்படுத்தவும்.",
-    "OneOrMoreNICNumbersAlreadyRegistered": "ஒன்று அல்லது அதற்கு மேற்பட்ட தேசிய அடையாள அட்டை எண்கள் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளன. தயவுசெய்து வேறு தேசிய அடையாள அட்டை எண்களைப் பயன்படுத்தவும்.",
-    "One or more NIC numbers are already registered. Please use different NIC numbers.": "ஒன்று அல்லது அதற்கு மேற்பட்ட தேசிய அடையாள அட்டை எண்கள் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளன. தயவுசெய்து வேறு தேசிய அடையாள அட்டை எண்களைப் பயன்படுத்தவும்.",
-    "DuplicatePhoneNumbersFoundPleaseUseUnique": "நகல் தொலைபேசி எண்கள் கண்டறியப்பட்டன. ஒவ்வொரு ஊழியருக்கும் தனித்துவமான தொலைபேசி எண்களைப் பயன்படுத்தவும்.",
-    "Duplicate phone numbers found. Please use unique phone numbers for each staff member.": "நகல் தொலைபேசி எண்கள் கண்டறியப்பட்டன. ஒவ்வொரு ஊழியருக்கும் தனித்துவமான தொலைபேசி எண்களைப் பயன்படுத்தவும்.",
-    "DuplicateNICNumbersFoundPleaseUseUnique": "நகல் தேசிய அடையாள அட்டை எண்கள் கண்டறியப்பட்டன. ஒவ்வொரு ஊழியருக்கும் தனித்துவமான தேசிய அடையாள அட்டை எண்களைப் பயன்படுத்தவும்.",
-    "Duplicate NIC numbers found. Please use unique NIC numbers for each staff member.": "நகல் தேசிய அடையாள அட்டை எண்கள் கண்டறியப்பட்டன. ஒவ்வொரு ஊழியருக்கும் தனித்துவமான தேசிய அடையாள அட்டை எண்களைப் பயன்படுத்தவும்.",
-    "PleaseEnterAValidPhoneNumber": "தயவுசெய்து சரியான தொலைபேசி எண்ணை உள்ளிடவும்",
-    "Please enter a valid phone number": "தயவுசெய்து சரியான தொலைபேசி எண்ணை உள்ளிடவும்",
-    "ErrorCheckingPhoneNumber": "தொலைபேசி எண்ணைச் சரிபார்ப்பதில் பிழை",
-    "Error checking phone number": "தொலைபேசி எண்ணைச் சரிபார்ப்பதில் பிழை",
-    "MissingFarmDetailsPleaseGoBack": "பண்ணை விவரங்கள் விடுபட்டுள்ளன. தயவுசெய்து திரும்பிச் சென்று அனைத்து படிகளையும் முடிக்கவும்.",
     "StaffCountCannotBeLessThanAppUserCountAppUsers": "ஊழியர்களின் எண்ணிக்கை {{appUserCount}} பயன்பாட்டுப் பயனர்களை விடக் குறைவாக இருக்க முடியாது",
     "Total": "மொத்தம்",
     "YouHaveSuccessfullyAppliedForYourCertificate": "உங்கள் சான்றிதழுக்கு நீங்கள் வெற்றிகரமாக விண்ணப்பித்துள்ளீர்கள்!",
@@ -733,9 +700,7 @@
     "StreetName": "தெரு பெயர்",
     "EnterStreetName": "தெரு பெயரை உள்ளிடவும்",
     "City": "நகரம்",
-    "EnterCityName": "நகரத்தின் பெயரை உள்ளிடவும்",
-    "EnterFirstName": "முதற் பெயரை உள்ளிடவும்",
-    "EnterLastName": "குடும்பப் பெயரை உள்ளிடவும்"
+    "EnterCityName": "நகரத்தின் பெயரை உள்ளிடவும்"
   },
   "Notification": {
     "CropTaskUpdate": "பயிர் பணி புதுப்பிப்பு!",
@@ -1183,9 +1148,9 @@
     "yes": "ஆம்",
     "No": "இல்லை",
     "WarrantyExpireDateMustBeInTheFuture": "உத்தரவாத காலாவதி தேதி எதிர்கால தேதியாக இருக்க வேண்டும்.",
-    "NoAssetTypeFound":"சொத்து வகை எதுவும் காணப்படவில்லை",
-    "NoBrandFound":"எந்த பிராண்டும் காணப்படவில்லை",
-    "NoTypeFound":"வகை எதுவும் காணப்படவில்லை"
+    "NoAssetTypeFound": "சொத்து வகை எதுவும் காணப்படவில்லை",
+    "NoBrandFound": "எந்த பிராண்டும் காணப்படவில்லை",
+    "NoTypeFound": "வகை எதுவும் காணப்படவில்லை"
   },
   "ImageViewerModal": {
     "UploadedBy": "பதிவேற்றியவர் :",
@@ -1196,13 +1161,6 @@
     "Owner": "உரிமையாளர்"
   },
   "PublicForum": {
-    "JustNow": "சற்று முன்",
-    "MinuteAgo": "1 நிமிடத்திற்கு முன்",
-    "MinutesAgo": "{{count}} நிமிடங்களுக்கு முன்",
-    "HourAgo": "1 மணிநேரத்திற்கு முன்",
-    "HoursAgo": "{{count}} மணிநேரங்களுக்கு முன்",
-    "DayAgo": "1 நாளுக்கு முன்",
-    "DaysAgo": "{{count}} நாட்களுக்கு முன்",
     "StartANewDiscussion": "புதிய விவாதத்தைத் தொடங்குங்கள்",
     "LoadingComments": "கருத்துகளை ஏற்றுகிறது...",
     "Reply": "பதில்கள்",
@@ -1372,7 +1330,13 @@
     "FailedToFetchFarmCropsPleaseTryAgain": "Failed to fetch farm crops. Please try again.",
     "FailedToFetchFarmsPleaseTryAgain": "Failed to fetch farms. Please try again.",
     "FailedToFetchServicesPleaseTryAgain": "தற்சமயம் பரிசோதனை சேவைகள் எதுவும் வழங்கப்படவில்லை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.",
-    "SearchFarm": "Search Farm"
+    "SearchFarm": "Search Farm",
+    "UnknownCrop": "தெரியாத பயிர்",
+    "Warning": "எச்சரிக்கை",
+    "DiscardAndProceed": "நிராகரித்து தொடரவும்",
+    "PleaseCompleteAllRequiredFields": "தயவுசெய்து தேவையான அனைத்து புலங்களையும் பூர்த்தி செய்யவும் அல்லது உங்கள் தற்போதைய தரவைச் சேமிக்க 'மேலும் சேர்' என்பதைக் கிளிக் செய்யவும்.",
+    "NoServiceFound": "சேவை எதுவும் கிடைக்கவில்லை",
+    "NoFarmFound": "பண்ணை எதுவும் கிடைக்கவில்லை"
   },
   "RequestHistory": {
     "YouHaveNoRequestsAddedYet": "--You have no requests added yet--",
@@ -1676,13 +1640,52 @@
     "All": "அனைத்தும்",
     "No Previous Orders": "முந்தைய ஆர்டர்கள் இல்லை"
   },
-  "EditProfile": {
-    "EditProfile": "சுயவிவரத்தை திருத்தவும்",
-    "PermissionDenied": "அனுமதி மறுக்கப்பட்டது",
-    "PleaseAllowAccessToYourGalleryToProceed": "தொடர உங்கள் கேலரிக்கான அணுகலை அனுமதிக்கவும்.",
-    "ProfileImageUpdatedSuccessfully": "சுயவிவர படம் வெற்றிகரமாக புதுப்பிக்கப்பட்டது.",
-    "FirstNameAndLastNameCannotBeEmpty": "முதல் பெயர் மற்றும் கடைசி பெயர் காலியாக இருக்கக்கூடாது.",
-    "YourProfileHasBeenUpdatedSuccessfully": "உங்கள் சுயவிவரம் வெற்றிகரமாக புதுப்பிக்கப்பட்டது.",
-    "FailedToUpdateProfileTryAgainLater": "சுயவிவரத்தை புதுப்பிக்க முடியவில்லை. பின்னர் மீண்டும் முயற்சிக்கவும்."
+  "Calendar": {
+    "Months": [
+      "ஜனவரி",
+      "பிப்ரவரி",
+      "மார்ச்",
+      "ஏப்ரல்",
+      "மே",
+      "ஜூன்",
+      "ஜூலை",
+      "ஆகஸ்ட்",
+      "செப்டம்பர்",
+      "அக்டோபர்",
+      "நவம்பர்",
+      "டிசம்பர்"
+    ],
+    "MonthsShort": [
+      "ஜன",
+      "பிப்",
+      "மார்",
+      "ஏப்",
+      "மே",
+      "ஜூன்",
+      "ஜூலை",
+      "ஆக",
+      "செப்",
+      "அக்",
+      "நவ",
+      "டிச"
+    ],
+    "Days": [
+      "ஞாயிறு",
+      "திங்கள்",
+      "செவ்வாய்",
+      "புதன்",
+      "வியாழன்",
+      "வெள்ளி",
+      "சனி"
+    ],
+    "DaysShort": [
+      "ஞா",
+      "தி",
+      "செ",
+      "பு",
+      "வி",
+      "வெ",
+      "ச"
+    ]
   }
 }

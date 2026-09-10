@@ -39,9 +39,34 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
     return new Date(d.getFullYear(), d.getMonth(), d.getDate());
   }, []);
 
-  const { t, i18n } = useTranslation();
-  const monthNames = t("Calendar.Months", { returnObjects: true }) as string[];
-  const dayNames = t("Calendar.DaysShort", { returnObjects: true }) as string[];
+  const { t } = useTranslation();
+  const defaultMonths = useMemo(
+    () => [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ],
+    []
+  );
+  const defaultDays = useMemo(
+    () => ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    []
+  );
+
+  const rawMonthNames = t("Calendar.Months", { returnObjects: true });
+  const monthNames = Array.isArray(rawMonthNames) ? rawMonthNames : defaultMonths;
+
+  const rawDayNames = t("Calendar.DaysShort", { returnObjects: true });
+  const dayNames = Array.isArray(rawDayNames) ? rawDayNames : defaultDays;
 
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());

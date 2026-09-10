@@ -273,7 +273,7 @@ const RequestInspectionForm = () => {
           setFarmCrops([
             {
               id: "unknown-crop",
-              name: t("RequestInspectionForm.Unknown Crop"),
+              name: t("RequestInspectionForm.UnknownCrop", "Unknown Crop"),
               isUnknown: true,
             },
           ]);
@@ -285,7 +285,7 @@ const RequestInspectionForm = () => {
         setFarmCrops([
           {
             id: "unknown-crop",
-            name: t("RequestInspectionForm.Unknown Crop"),
+            name: t("RequestInspectionForm.UnknownCrop", "Unknown Crop"),
             isUnknown: true,
           },
         ]);
@@ -300,7 +300,7 @@ const RequestInspectionForm = () => {
       setFarmCrops([
         {
           id: "unknown-crop",
-          name: t("RequestInspectionForm.Unknown Crop"),
+          name: t("RequestInspectionForm.UnknownCrop", "Unknown Crop"),
           isUnknown: true,
         },
       ]);
@@ -325,7 +325,9 @@ const RequestInspectionForm = () => {
   );
 
   const toggleRequest = (request: string) => {
-    const isUnknownCrop = request === t("RequestInspectionForm.Unknown Crop");
+    const isUnknownCrop =
+      request === t("RequestInspectionForm.UnknownCrop", "Unknown Crop") ||
+      request === "Unknown Crop";
 
     if (request === "All in this Farm") {
       if (selectedRequests.includes("All in this Farm")) {
@@ -341,9 +343,9 @@ const RequestInspectionForm = () => {
       }
     } else if (isUnknownCrop) {
       Alert.alert(
-        t("RequestInspectionForm.Warning"),
+        t("RequestInspectionForm.Warning", "Warning"),
         t(
-          "RequestInspectionForm.This farm has no enrolled crops. Please enroll crops first or contact support.",
+          "RequestInspectionForm.ThisFarmHasNoEnrolledCropsPleaseEnrollCropsBeforeRequestingInspection",
         ),
         [{ text: t("Main.OK") }],
       );
@@ -694,7 +696,10 @@ const RequestInspectionForm = () => {
                 [
                   { text: t("Main.Cancel"), style: "cancel" },
                   {
-                    text: t("RequestInspectionForm.Discard and Proceed"),
+                    text: t(
+                      "RequestInspectionForm.DiscardAndProceed",
+                      "Discard and Proceed",
+                    ),
                     style: "destructive",
                     onPress: () => proceedToPayment(),
                   },
@@ -754,7 +759,8 @@ const RequestInspectionForm = () => {
           : t("Main.Error"),
         hasPartialData
           ? t(
-              "RequestInspectionForm.Please complete all required fields or click 'Add More' to save your current data",
+              "RequestInspectionForm.PleaseCompleteAllRequiredFields",
+              "Please complete all required fields or click 'Add More' to save your current data.",
             )
           : t("RequestInspectionForm.PleaseAddAtLeastOneInspectionRequest"),
         [{ text: t("Main.OK") }],
@@ -813,20 +819,28 @@ const RequestInspectionForm = () => {
   ) => items.find((i) => i.value === value)?.label || null;
 
   const renderCalendar = () => {
-    const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    const days = [
+      t("RequestHistory.Days.Mon", "Mon"),
+      t("RequestHistory.Days.Tue", "Tue"),
+      t("RequestHistory.Days.Wed", "Wed"),
+      t("RequestHistory.Days.Thu", "Thu"),
+      t("RequestHistory.Days.Fri", "Fri"),
+      t("RequestHistory.Days.Sat", "Sat"),
+      t("RequestHistory.Days.Sun", "Sun"),
+    ];
     const monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
+      t("Months.January", "January"),
+      t("Months.February", "February"),
+      t("Months.March", "March"),
+      t("Months.April", "April"),
+      t("Months.May", "May"),
+      t("Months.June", "June"),
+      t("Months.July", "July"),
+      t("Months.August", "August"),
+      t("Months.September", "September"),
+      t("Months.October", "October"),
+      t("Months.November", "November"),
+      t("Months.December", "December"),
     ];
     const daysInMonth = getDaysInMonth(currentMonth);
     const firstDay = getFirstDayOfMonth(currentMonth);
@@ -1240,7 +1254,10 @@ const RequestInspectionForm = () => {
         onSelect={handleServiceSelect}
         searchPlaceholder={t("RequestInspectionForm.SearchServices...")}
         searchKeys={["label"]}
-        noResultsText="No service found"
+        noResultsText={t(
+          "RequestInspectionForm.NoServiceFound",
+          "No service found",
+        )}
         multiSelect={false}
         showSearch={true}
       />
@@ -1253,7 +1270,7 @@ const RequestInspectionForm = () => {
         selectedItems={selectedFarm ? [selectedFarm] : []}
         onSelect={handleFarmSelect}
         searchPlaceholder={t("RequestInspectionForm.SearchFarm")}
-        noResultsText="No farm found"
+        noResultsText={t("RequestInspectionForm.NoFarmFound", "No farm found")}
         searchKeys={["label"]}
         multiSelect={false}
         showSearch={true}
