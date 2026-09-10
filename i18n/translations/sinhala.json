@@ -19,7 +19,9 @@
     "PleaseFillAllRequiredFields": "කරුණාකර අවශ්‍ය සියලුම ක්ෂේත්‍ර පුරවන්න.",
     "SomethingWentWrongPleaseTryAgainlater": "යම්කිසි දෝෂයක් සිදුවිය. කරුණාකර පසුව නැවත උත්සාහ කරන්න.",
     "PleaseTurnOnMobileDataOrWiFiToContinue": "කරුණාකර දිගටම කරගෙන යාමට ජංගම දත්ත හෝ Wi-Fi සක්‍රිය කරන්න.",
-    "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "මෙම උපාංගයෙන් ඉල්ලීම් රාශියක් සිදු කර ඇත, කරුණාකර විනාඩි 30 කින් නැවත උත්සාහ කරන්න."
+    "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "මෙම උපාංගයෙන් ඉල්ලීම් රාශියක් සිදු කර ඇත, කරුණාකර විනාඩි 30 කින් නැවත උත්සාහ කරන්න.",
+    "Done": "අවසන්",
+    "NoSearchResultFound": "සෙවුම් ප්‍රතිඵල කිසිවක් හමු නොවීය"
   },
   "Inputs": {
     "FirstName": "මුල් නම",
@@ -28,7 +30,17 @@
     "PhoneNumber": "දුරකථන අංකය",
     "MobileNumber": "ජංගම දුරකථන අංකය",
     "LastNameRequired": "අවසන් නම අවශ්‍ය වේ.",
-    "FirstNameRequired": "මුල් නම අවශ්‍ය වේ."
+    "FirstNameRequired": "මුල් නම අවශ්‍ය වේ.",
+    "FirstnameRequred": "මුල් නම අවශ්‍ය වේ.",
+    "Lastnamerequred": "අවසන් නම අවශ්‍ය වේ.",
+    "EnterPhoneNumber": "දුරකථන අංකය ඇතුළත් කරන්න",
+    "EnterNICNumber": "ජාතික හැඳුනුම්පත් අංකය ඇතුළත් කරන්න"
+  },
+  "input": {
+    "FirstNameRequired": "මුල් නම අවශ්‍ය වේ.",
+    "LastNameRequired": "අවසන් නම අවශ්‍ය වේ.",
+    "FirstnameRequred": "මුල් නම අවශ්‍ය වේ.",
+    "Lastnamerequred": "අවසන් නම අවශ්‍ය වේ."
   },
   "District": {
     "Colombo": "කොළඹ",
@@ -71,6 +83,14 @@
     "November": "නොවැම්බර්",
     "December": "දෙසැම්බර්"
   },
+  "Country": {
+    "SriLanka": "ශ්‍රී ලංකාව",
+    "Vietnam": "වියට්නාමය",
+    "Cambodia": "කාම්බෝජය",
+    "Bangladesh": "බංග්ලාදේශය",
+    "India": "ඉන්දියාව",
+    "Netherlands": "නෙදර්ලන්තය"
+  },
   "SignUp": {
     "SignUp": "ලියාපදිංචි වන්න",
     "District": "දිස්ත්‍රික්කය",
@@ -91,7 +111,9 @@
     "TheNICNumberYouEnteredIsAlreadyRegisteredPleaseCheckYourDetailsOrLogIn": "ඔබ ඇතුළත් කළ ජාතික හැඳුනුම්පත් අංකය දැනටමත් ලියාපදිංචි කර ඇත, කරුණාකර ඔබගේ විස්තර පරීක්ෂා කරන්න හෝ පුරන්න.",
     "BothThePhoneNumberAndNICNumberEnteredAreAlreadyRegisteredPleaseLogInInstead": "ඔබ ඇතුළත් කළ දුරකථන අංකය සහ ජාතික හැඳුනුම්පත් අංකය දෙකම දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර ඒ වෙනුවට පුරන්න.",
     "ThePhoneNumberYouEnteredIsAlreadyRegisteredPleaseUseADifferentNumberOrLogIn": "ඔබ ඇතුළත් කළ දුරකථන අංකය දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් අංකයක් භාවිතා කරන්න හෝ පුරන්න",
-    "NoCountryFound": "රටක් හමු නොවීය."
+    "NoCountryFound": "රටක් හමු නොවීය.",
+    "SelectCountryCode": "රටේ කේතය තෝරන්න",
+    "SearchCountry": "රට හෝ ඩයල් කේතය සොයන්න..."
   },
   "SignIn": {
     "SignIn": "පුරන්න",
@@ -229,8 +251,8 @@
     "Requesting...": "ඉල්ලමින්...",
     "LocationAccess": "ස්ථාන ප්‍රවේශය",
     "LocationPermission": "ස්ථාන අවසරය",
-    "ProminentDisclosureTitle": "GoviCare ස්ථාන දත්ත භාවිතා කරන්නේ ඇයි",
-    "ProminentDisclosureIntro": "පහත සඳහන් ප්‍රධාන කෘෂිකාර්මික විශේෂාංග සක්‍රීය කිරීමට GoviCare ඔබගේ උපාංගයේ ස්ථාන දත්ත රැස් කර භාවිතා කරයි:",
+    "ProminentDisclosureTitle": "GoViCare ස්ථාන දත්ත භාවිතා කරන්නේ ඇයි",
+    "ProminentDisclosureIntro": "පහත සඳහන් ප්‍රධාන කෘෂිකාර්මික විශේෂාංග සක්‍රීය කිරීමට GoViCare ඔබගේ උපාංගයේ ස්ථාන දත්ත රැස් කර භාවිතා කරයි:",
     "FeatureWeatherTitle": "කාලගුණය සහ කෘෂිකාර්මික අනාවැකි",
     "FeatureWeatherDesc": "ඔබගේ ගොවිපල ප්‍රදේශය සඳහා නිවැරදි තත්‍ය කාලීන කාලගුණ අනාවැකි සහ වර්ෂාපතන අනතුරු ඇඟවීම් ලබා දෙයි.",
     "FeatureCropTitle": "ගොවිපල සහ බෝග ක්‍රියාකාරකම් සටහන් කිරීම",
@@ -248,8 +270,8 @@
     "OpenSettings": "සැකසුම් විවෘත කරන්න",
     "Requesting...": "ඉල්ලමින්...",
     "CameraAccess": "කැමරා ප්‍රවේශය",
-    "ProminentDisclosureTitle": "GoviCare කැමරාව භාවිතා කරන්නේ ඇයි",
-    "ProminentDisclosureIntro": "පහත සඳහන් විශේෂාංග සක්‍රීය කිරීමට GoviCare කැමරා ප්‍රවේශය අවශ්‍ය වේ:",
+    "ProminentDisclosureTitle": "GoViCare කැමරාව භාවිතා කරන්නේ ඇයි",
+    "ProminentDisclosureIntro": "පහත සඳහන් විශේෂාංග සක්‍රීය කිරීමට GoViCare කැමරා ප්‍රවේශය අවශ්‍ය වේ:",
     "FeatureQRTitle": "ක්ෂණික QR කේත පරිලෝකනය",
     "FeatureQRDesc": "ක්ෂණික හඳුනාගැනීම්, බෝග ලුහුබැඳීම සහ ආරක්ෂිත ගනුදෙනු සඳහා සාප්පු සහ ගොවි QR කේත පරිලෝකනය කිරීම.",
     "FeatureInspectionTitle": "බෝග රෝග විනිශ්චය සහ ලේඛන ඡායාරූප",
@@ -425,6 +447,7 @@
     "Try1FarmForFree": "එක් ගොවිපලක් නොමිලේ උත්සාහ කරන්න",
     "OtherStaff": "වෙනත් කාර්ය මණ්ඩලය",
     "Members": "සාමාජිකයන්",
+    "Member": "සාමාජිකයා",
     "FarmAssets": "ගොවිපල වත්කම්",
     "AreYouSureYouWantToDeleteThisFarm": "ඔබට මෙම ගොවිපල ඉවත් කරන්නට අවශ්‍ය බව ඔබට විශ්වාසද?",
     "AreYouSureYouWantToDeleteThisMember": "ඔබට මෙම සාමාජිකයා ඉවත් කරන්නට අවශ්‍ය බව ඔබට විශ්වාසද?",
@@ -523,6 +546,7 @@
     "StaffMemberIDIsMissing": "කාර්ය මණ්ඩල සාමාජික හැඳුනුම්පත මග හැරී ඇත",
     "NoAuthenticationTokenFound": "සත්‍යාපන ටෝකනයක් හමු නොවීය",
     "FailedToFFetchStaffMemberData": "කාර්ය මණ්ඩල සාමාජික දත්ත ලබා ගැනීමට අසමත් විය",
+    "EditMemberDetails": "සාමාජික විස්තර සංස්කරණය",
     "EditSelectedRoleDetails": "{{selectedRole}}ගේ විස්තර සංස්කරණය",
     "FailedToDeleteFarm": "ගොවිපල මැකීමට අසමත් විය",
     "FailedToDeleteStaffMember": "කාර්ය මණ්ඩල සාමාජිකයා මැකීමට අසමත් විය",
@@ -555,6 +579,21 @@
     "DuplicateNumbersAreNotAllowed.": "අනුපිටපත් අංකවලට අවසර නැත.",
     "DuplicateNICNumbersAreNotAllowed": "අනුපිටපත් ජාතික හැඳුනුම්පත් අංකවලට අවසර නැත.",
     "PleaseFixPhoneNumberValidationErrorsBeforeSaving": "කරුණාකර සුරැකීමට පෙර දුරකථන අංක වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
+    "PleaseFixNICValidationErrorsBeforeSaving": "කරුණාකර සුරැකීමට පෙර ජාතික හැඳුනුම්පත් වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
+    "Please fix NIC validation errors before saving.": "කරුණාකර සුරැකීමට පෙර ජාතික හැඳුනුම්පත් වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
+    "OneOrMorePhoneNumbersAlreadyRegistered": "දුරකථන අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් දුරකථන අංක භාවිතා කරන්න.",
+    "One or more phone numbers are already registered. Please use different phone numbers.": "දුරකථන අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් දුරකථන අංක භාවිතා කරන්න.",
+    "OneOrMoreNICNumbersAlreadyRegistered": "ජාතික හැඳුනුම්පත් අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් ජාතික හැඳුනුම්පත් අංක භාවිතා කරන්න.",
+    "One or more NIC numbers are already registered. Please use different NIC numbers.": "ජාතික හැඳුනුම්පත් අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් ජාතික හැඳුනුම්පත් අංක භාවිතා කරන්න.",
+    "DuplicatePhoneNumbersFoundPleaseUseUnique": "අනුපිටපත් දුරකථන අංක හමු විය. කරුණාකර එක් එක් කාර්ය මණ්ඩල සාමාජිකයා සඳහා අනන්‍ය දුරකථන අංක භාවිතා කරන්න.",
+    "Duplicate phone numbers found. Please use unique phone numbers for each staff member.": "අනුපිටපත් දුරකථන අංක හමු විය. කරුණාකර එක් එක් කාර්ය මණ්ඩල සාමාජිකයා සඳහා අනන්‍ය දුරකථන අංක භාවිතා කරන්න.",
+    "DuplicateNICNumbersFoundPleaseUseUnique": "අනුපිටපත් ජාතික හැඳුනුම්පත් අංක හමු විය. කරුණාකර එක් එක් කාර්ය මණ්ඩල සාමාජිකයා සඳහා අනන්‍ය ජාතික හැඳුනුම්පත් අංක භාවිතා කරන්න.",
+    "Duplicate NIC numbers found. Please use unique NIC numbers for each staff member.": "අනුපිටපත් ජාතික හැඳුනුම්පත් අංක හමු විය. කරුණාකර එක් එක් කාර්ය මණ්ඩල සාමාජිකයා සඳහා අනන්‍ය ජාතික හැඳුනුම්පත් අංක භාවිතා කරන්න.",
+    "PleaseEnterAValidPhoneNumber": "කරුණාකර වලංගු දුරකථන අංකයක් ඇතුළත් කරන්න",
+    "Please enter a valid phone number": "කරුණාකර වලංගු දුරකථන අංකයක් ඇතුළත් කරන්න",
+    "ErrorCheckingPhoneNumber": "දුරකථන අංකය පරීක්ෂා කිරීමේදී දෝෂයක් ඇති විය",
+    "Error checking phone number": "දුරකථන අංකය පරීක්ෂා කිරීමේදී දෝෂයක් ඇති විය",
+    "MissingFarmDetailsPleaseGoBack": "ගොවිපල විස්තර අසම්පූර්ණයි. කරුණාකර ආපසු ගොස් සියලු පියවර සම්පූර්ණ කරන්න.",
     "StaffCountCannotBeLessThanAppUserCountAppUsers": "කාර්ය මණ්ඩල සංඛ්‍යාව {{appUserCount}} යෙදුම් පරිශීලකයින්ට වඩා අඩු විය නොහැක",
     "Total": "එකතුව",
     "YouHaveSuccessfullyAppliedForYourCertificate": "ඔබ ඔබගේ සහතිකය සඳහා සාර්ථකව අයදුම් කර ඇත!",
@@ -703,7 +742,9 @@
     "StreetName": "වීදි නම",
     "EnterStreetName": "වීදි නම ඇතුළත් කරන්න",
     "City": "නගරය",
-    "EnterCityName": "නගරයේ නම ඇතුළත් කරන්න"
+    "EnterCityName": "නගරයේ නම ඇතුළත් කරන්න",
+    "EnterFirstName": "මුල් නම ඇතුළත් කරන්න",
+    "EnterLastName": "අවසන් නම ඇතුළත් කරන්න"
   },
   "Notification": {
     "CropTaskUpdate": "බෝග කාර්ය යාවත්කාලීන කිරීම!",
@@ -1168,6 +1209,13 @@
   },
   "PublicForum": {
     "You": "ඔබ",
+    "JustNow": "දැන්",
+    "MinuteAgo": "විනාඩි 1 කට පෙර",
+    "MinutesAgo": "විනාඩි {{count}} කට පෙර",
+    "HourAgo": "පැය 1 කට පෙර",
+    "HoursAgo": "පැය {{count}} කට පෙර",
+    "DayAgo": "දින 1 කට පෙර",
+    "DaysAgo": "දින {{count}} කට පෙර",
     "StartANewDiscussion": "නව සාකච්ඡාවක් ආරම්භ කරන්න",
     "LoadingComments": "අදහස් පූරණය වෙමින්...",
     "Reply": "පිළිතුර",
@@ -1693,5 +1741,14 @@
       "සෙනසුරාදා"
     ],
     "DaysShort": ["ඉරි", "සඳු", "අඟ", "බදා", "බ්‍ර", "සිකු", "සෙන"]
+  },
+  "EditProfile": {
+    "EditProfile": "පැතිකඩ සංස්කරණය කරන්න",
+    "PermissionDenied": "අවසර නොමැත",
+    "PleaseAllowAccessToYourGalleryToProceed": "ඉදිරියට යාමට කරුණාකර ඔබගේ ගැලරිය වෙත ප්‍රවේශය ලබා දෙන්න.",
+    "ProfileImageUpdatedSuccessfully": "පැතිකඩ රූපය සාර්ථකව යාවත්කාලීන කරන ලදී.",
+    "FirstNameAndLastNameCannotBeEmpty": "මුල් නම සහ අවසාන නම හිස් විය නොහැක.",
+    "YourProfileHasBeenUpdatedSuccessfully": "ඔබගේ පැතිකඩ සාර්ථකව යාවත්කාලීන කරන ලදී.",
+    "FailedToUpdateProfileTryAgainLater": "පැතිකඩ යාවත්කාලීන කිරීමට අසමත් විය. කරුණාකර පසුව නැවත උත්සාහ කරන්න."
   }
 }

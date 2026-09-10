@@ -371,7 +371,12 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
 
   const requestPermission = async () => {
     if (Platform.OS === "ios") {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const current = await ImagePicker.getMediaLibraryPermissionsAsync();
+      let status = current.status;
+      if (status !== "granted") {
+        const response = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        status = response.status;
+      }
       if (status !== "granted") {
         Alert.alert(
           "Permission Denied",
@@ -397,47 +402,48 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
 
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
+        mediaTypes: ["images"],
+        allowsEditing: false,
         quality: 0.8,
       });
 
-      if (!result.canceled && result.assets[0]) {
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const imageUri = result.assets[0].uri;
         switch (imageType) {
           case "nicFront":
             setFormData((prev) => ({
               ...prev,
-              nicFrontImage: result.assets[0].uri,
+              nicFrontImage: imageUri,
             }));
             break;
           case "nicBack":
             setFormData((prev) => ({
               ...prev,
-              nicBackImage: result.assets[0].uri,
+              nicBackImage: imageUri,
             }));
             break;
           case "successorNicFront":
             setFormData((prev) => ({
               ...prev,
-              successorNicFrontImage: result.assets[0].uri,
+              successorNicFrontImage: imageUri,
             }));
             break;
           case "successorNicBack":
             setFormData((prev) => ({
               ...prev,
-              successorNicBackImage: result.assets[0].uri,
+              successorNicBackImage: imageUri,
             }));
             break;
           case "successorBirthCertFront":
             setFormData((prev) => ({
               ...prev,
-              successorBirthCertFrontImage: result.assets[0].uri,
+              successorBirthCertFrontImage: imageUri,
             }));
             break;
           case "successorBirthCertBack":
             setFormData((prev) => ({
               ...prev,
-              successorBirthCertBackImage: result.assets[0].uri,
+              successorBirthCertBackImage: imageUri,
             }));
             break;
         }
@@ -552,11 +558,15 @@ const GoviPensionForm: React.FC<GoviPensionFormProps> = ({ navigation }) => {
 
       const addImageToFormData = (uri: string | null, fieldName: string) => {
         if (uri) {
-          const uriParts = uri.split(".");
-          const fileType = uriParts[uriParts.length - 1];
+          const rawExt = uri.split(".").pop()?.toLowerCase();
+          const cleanExt = rawExt ? rawExt.split("?")[0] : "jpg";
+          const fileType =
+            cleanExt === "heic" || cleanExt === "heif"
+              ? "jpeg"
+              : cleanExt || "jpeg";
           formDataToSend.append(fieldName, {
             uri,
-            name: `${fieldName}_${Date.now()}.${fileType}`,
+            name: `${fieldName}_${Date.now()}.${fileType === "jpeg" ? "jpg" : fileType}`,
             type: `image/${fileType}`,
           } as any);
         }

@@ -110,12 +110,6 @@ import CropEarnCertificateAfterEnroll from "@/component/certificates/crop-certif
 import CropPaymentScreenAfterEnroll from "@/component/certificates/crop-certificate/CropPaymentScreenAfterEnroll";
 import FarmCertificateTask from "@/component/farms/crop-cultivation/FarmCertificateTask";
 import ManagerFarmDetails from "@/component/manager-screens/ManagerFarmDetails";
-import ManageMembersManager from "@/component/manager-screens/ManageMembersManager";
-import ManagerAddStaff from "@/component/manager-screens/ManagerAddStaff";
-import ManageMembersSupervisor from "@/component/manager-screens/ManageMembersSupervisor";
-import SupervisorAddStaff from "@/component/supervisor-screens/SupervisorAddStaff";
-import ManageEditscreen from "@/component/manager-screens/ManageEditscreen";
-import SupervisorEditScreen from "@/component/supervisor-screens/SupervisorEditScreen";
 import InvestmentAndLoan from "@/component/govi-capital/InvestmentAndLoan";
 import InvestmentRequestForm from "@/component/govi-capital/InvestmentRequestForm";
 import RequestLetter from "@/component/govi-capital/RequestLetter";
@@ -467,6 +461,18 @@ function AppContent() {
               component={FarmDetailsScreen}
             />
             <Stack.Screen
+              name="EditManagersScreen"
+              component={EditManagersScreen}
+            />
+            <Stack.Screen
+              name="AddnewStaff"
+              component={AddnewStaff as any}
+            />
+            <Stack.Screen
+              name="EditStaffMember"
+              component={EditStaffMember as any}
+            />
+            <Stack.Screen
               name="AddNewFarmUnloackPro"
               component={AddNewFarmUnloackPro}
             />
@@ -532,30 +538,6 @@ function AppContent() {
             <Stack.Screen
               name="ManagerFarmDetails"
               component={ManagerFarmDetails as any}
-            />
-            <Stack.Screen
-              name="ManagerAddStaff"
-              component={ManagerAddStaff as any}
-            />
-            <Stack.Screen
-              name="SupervisorAddStaff"
-              component={SupervisorAddStaff as any}
-            />
-            <Stack.Screen
-              name="ManageEditscreen"
-              component={ManageEditscreen as any}
-            />
-            <Stack.Screen
-              name="SupervisorEditScreen"
-              component={SupervisorEditScreen as any}
-            />
-            <Stack.Screen
-              name="ManageMembersSupervisor"
-              component={ManageMembersSupervisor as any}
-            />
-            <Stack.Screen
-              name="ManageMembersManager"
-              component={ManageMembersManager as any}
             />
             <Stack.Screen
               name="FarmCertificateTask"

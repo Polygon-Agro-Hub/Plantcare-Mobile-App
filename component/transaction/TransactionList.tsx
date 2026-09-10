@@ -6,6 +6,7 @@ import {
   FlatList,
   RefreshControl,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
@@ -153,15 +154,19 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
   }, []);
 
   const renderFooter = () => {
-    if (!loadingMore) return null;
-  };
+    if (loadingMore) {
+      return (
+        <View className="py-4 items-center">
+          <ActivityIndicator size="small" color="#2AAD7A" />
+        </View>
+      );
+    }
 
-  const renderLoadMoreButton = () => {
-    if (loadingMore || !hasMore || transactions.length === 0) return null;
+    if (!hasMore || transactions.length === 0) return null;
 
     return (
       <TouchableOpacity
-        className="items-center py-4 bg-gray-100 mx-4 rounded-lg mt-2"
+        className="items-center py-4 bg-gray-100 rounded-lg mt-2 mb-4"
         onPress={loadMore}
         disabled={loadingMore}
       >
@@ -205,7 +210,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                     justifyContent: "center",
                     alignItems: "center",
                   }
-                : { paddingVertical: 8, paddingBottom: 40 }
+                : { paddingVertical: 8, paddingBottom: 120 }
             }
             className="px-6"
             refreshControl={
@@ -309,7 +314,6 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
           />
         </View>
       )}
-      {renderLoadMoreButton()}
     </View>
   );
 };

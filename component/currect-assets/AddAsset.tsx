@@ -59,6 +59,7 @@ const INITIAL_ERRORS = {
   selectedFarm: "",
   selectedCategory: "",
   selectedAsset: "",
+  customAsset: "",
   brand: "",
   batchNum: "",
   volume: "",
@@ -388,18 +389,33 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     const assetsJson = require("@/assets/jsons/current-asset/current-asset.json");
     setAssets(assetsJson[category] || []);
     setSelectedAsset("");
+    setCustomAsset("");
     setBrand("");
     setBrands([]);
   }, []);
 
   const handleAssetChange = useCallback((asset: string) => {
     setSelectedAsset(asset);
-    const selected = assets.find((a) => a.asset === asset);
-    if (selected) {
-      setBrands(selected.brands || []);
+    clearError("selectedAsset");
+    if (asset === "Other") {
+      setBrands([]);
       setBrand("");
+      setCustomAsset("");
+      clearError("customAsset");
+      clearError("brand");
+    } else {
+      const selected = assets.find((a) => a.asset === asset);
+      if (selected) {
+        setBrands(selected.brands || []);
+        setBrand("");
+      } else {
+        setBrands([]);
+        setBrand("");
+      }
+      setCustomAsset("");
+      clearError("customAsset");
     }
-  }, [assets]);
+  }, [assets, clearError]);
 
   const checkDuplicate = useCallback((
     category: string,
@@ -499,14 +515,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       ? clampDate(parseLocalDate(purchaseDate), undefined, getPurchaseMaximumDate())
       : clampDate(new Date(), undefined, getPurchaseMaximumDate());
     setTempPurchaseDate(initial);
+    setShowPurchaseDatePicker(false);
     setShowExpireDatePicker(false);
-    if (Platform.OS === "ios") {
-      setTimeout(() => {
-        setShowPurchaseDatePicker(true);
-      }, 300);
-    } else {
+    setTimeout(() => {
       setShowPurchaseDatePicker(true);
-    }
+    }, Platform.OS === "ios" ? 300 : 150);
   }, [purchaseDate, parseLocalDate, clampDate, getPurchaseMaximumDate, clearError]);
 
   const handleOpenExpirePicker = useCallback(() => {
@@ -517,13 +530,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     const initial = clampDate(getExpirePickerValue(), minDate, maxDate);
     setTempExpireDate(initial);
     setShowPurchaseDatePicker(false);
-    if (Platform.OS === "ios") {
-      setTimeout(() => {
-        setShowExpireDatePicker(true);
-      }, 300);
-    } else {
+    setShowExpireDatePicker(false);
+    setTimeout(() => {
       setShowExpireDatePicker(true);
-    }
+    }, Platform.OS === "ios" ? 300 : 150);
   }, [getExpireMinimumDate, getMaximumDate, getExpirePickerValue, clampDate, clearError]);
 
   // ---- Android onChange (dialog closes itself after pick) ----
@@ -591,8 +601,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const handleAddAsset = useCallback(async () => {
     const isBrandRequired = selectedCategory !== "Livestock for sale";
     const assetToCheck =
-      selectedAsset === "Other" ? customAsset : selectedAsset;
-    const brandToCheck = isBrandRequired ? brand : "";
+      selectedAsset === "Other" ? customAsset.trim() : selectedAsset;
+    const brandToCheck = isBrandRequired ? brand.trim() : "";
 
     if (
       checkDuplicate(selectedCategory, assetToCheck, brandToCheck, batchNum)
@@ -657,7 +667,14 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       }
     });
 
-    if (isBrandRequired && !brand) {
+    if (selectedAsset === "Other") {
+      if (!customAsset.trim()) {
+        errors.customAsset = `${t("CurrentAssets.MentionOther")} ${t("CurrentAssets.IsRequired")}`;
+        hasError = true;
+      }
+    }
+
+    if (isBrandRequired && !brand.trim()) {
       errors.brand = `${t("CurrentAssets.Brand")} ${t("CurrentAssets.IsRequired")}`;
       hasError = true;
     }
@@ -694,7 +711,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
       const assetData: Record<string, string> = {
         category: selectedCategory,
-        asset: selectedAsset,
+        asset: selectedAsset === "Other" ? customAsset.trim() : selectedAsset,
         batchNum,
         volume,
         unit,
@@ -708,7 +725,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         farmId: farmId ? farmId.toString() : selectedFarm,
       };
 
-      if (isBrandRequired) assetData.brand = brand;
+      if (isBrandRequired) assetData.brand = brand.trim();
 
       const url = farmId
         ? `${environment.API_BASE_URL}api/farm/currentAsset/${farmId}`
@@ -997,19 +1014,24 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               {selectedAsset === "Other" && (
                 <>
                   <Text className="text-[#070707] text-sm mt-2">
-                    {t("CurrentAssets.MentionOther")}
+                    {t("CurrentAssets.MentionOther")} *
                   </Text>
                   <TextInput
                     placeholder={t("CurrentAssets.Other")}
                     placeholderTextColor="#6B7280"
                     value={customAsset}
                     onChangeText={(text) => {
-                      clearError("selectedAsset");
+                      clearError("customAsset");
                       setCustomAsset(preventLeadingSpace(text));
                     }}
                     className="bg-[#F4F4F4] px-4 text-black text-sm rounded-3xl h-[50px] mt-2 mb-2"
                     style={{ fontSize: 14, color: "#000000" }}
                   />
+                  {fieldErrors.customAsset ? (
+                    <Text className="text-red-500 text-xs mt-1 ml-2">
+                      {fieldErrors.customAsset}
+                    </Text>
+                  ) : null}
                   {shouldShowBrandField && (
                     <>
                       <Text className="text-[#070707] text-sm mt-2">
@@ -1026,6 +1048,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                         className="bg-[#F4F4F4] px-4 text-black text-sm rounded-3xl h-[50px] mt-2 mb-2"
                         style={{ fontSize: 14, color: "#000000" }}
                       />
+                      {fieldErrors.brand ? (
+                        <Text className="text-red-500 text-xs mt-1 ml-2">
+                          {fieldErrors.brand}
+                        </Text>
+                      ) : null}
                     </>
                   )}
                 </>

@@ -267,15 +267,6 @@ const FramcropCalenderwithcertificate: React.FC<
     }, [navigation]),
   );
 
-  useFocusEffect(
-    React.useCallback(() => {
-      return () => {
-        setCultivatedLandModalVisible(false);
-        setPendingImageCrop(null);
-      };
-    }, []),
-  );
-
   const loadLanguage = async () => {
     const storedLanguage = await AsyncStorage.getItem("@user_language");
     if (storedLanguage) {
@@ -1111,6 +1102,10 @@ const FramcropCalenderwithcertificate: React.FC<
         }
       };
 
+      if (crops.length > 0) {
+        return;
+      }
+
       setCrops([]);
       setChecked([]);
       setTimestamps([]);
@@ -1120,7 +1115,7 @@ const FramcropCalenderwithcertificate: React.FC<
 
       loadLanguage();
       fetchCrops().then(() => navigateToNextIncompleteTask());
-    }, [cropId, farmId]),
+    }, [cropId, farmId, crops.length]),
   );
 
   const viewNextTasks = () => {
