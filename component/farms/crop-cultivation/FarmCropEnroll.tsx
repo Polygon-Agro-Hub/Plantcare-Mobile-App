@@ -125,8 +125,52 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState<boolean>(false);
+
+  const formatDisplayDate = (date: Date) => {
+    if (!date) return "";
+    const rawDays = t("Calendar.Days", { returnObjects: true });
+    const rawMonths = t("Calendar.Months", { returnObjects: true });
+
+    const days = Array.isArray(rawDays)
+      ? rawDays
+      : [
+          "Sunday",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+        ];
+    const months = Array.isArray(rawMonths)
+      ? rawMonths
+      : [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ];
+
+    const dayName = days[date.getDay()] || "";
+    const monthName = months[date.getMonth()] || "";
+    const dayNum = date.getDate();
+    const year = date.getFullYear();
+
+    if (i18n.language === "en") {
+      return `${dayName ? `${dayName}, ` : ""}${dayNum} ${monthName} ${year}`;
+    }
+    return `${dayName ? `${dayName}, ` : ""}${year} ${monthName} ${dayNum}`;
+  };
   const [cropCalender, setCropCalender] = useState<CropCalender | null>(null);
   const [search, setSearch] = useState<boolean>(false);
   const [formStatus, setFormStatus] = useState<string>(status);
@@ -552,30 +596,17 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
 const renderDatePicker = () => {
   if (!showDatePicker) return null;
 
-  if (Platform.OS === "ios") {
-    return (
-      <CustomDatePicker
-        visible={showDatePicker}
-        onClose={() => setShowDatePicker(false)}
-        value={startDate}
-        onConfirm={(date) => onChangeDate(null, date)}
-        minimumDate={minDate}
-        maximumDate={new Date()}
-        title={t("Cropenroll.SelectStartDate")}
-        cancelText={t("Main.Cancel")}
-        confirmText={t("Main.OK")}
-      />
-    );
-  }
-
   return (
-    <DateTimePicker
+    <CustomDatePicker
+      visible={showDatePicker}
+      onClose={() => setShowDatePicker(false)}
       value={startDate}
-      mode="date"
-      display="default"
-      maximumDate={new Date()}
+      onConfirm={(date) => onChangeDate(null, date)}
       minimumDate={minDate}
-      onChange={onChangeDate}
+      maximumDate={new Date()}
+      title={t("Cropenroll.SelectStartDate")}
+      cancelText={t("Main.Cancel")}
+      confirmText={t("Main.OK")}
     />
   );
 };
@@ -652,7 +683,7 @@ const renderDatePicker = () => {
                   onPress={() => setShowDatePicker((p) => !p)}
                   className="border-b border-gray-400 my-3 flex-row justify-between items-center p-3"
                 >
-                  <Text>{startDate.toDateString()}</Text>
+                  <Text>{formatDisplayDate(startDate)}</Text>
                   <MaterialIcons
                     name="arrow-drop-down"
                     size={24}

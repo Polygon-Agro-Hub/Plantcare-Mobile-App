@@ -590,7 +590,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
     showPicker: boolean;
     setShowPicker: (v: boolean) => void;
     onConfirm: (date: Date) => void;
-    onChangeAndroid: (event: DateTimePickerEvent, selectedDate?: Date) => void;
+    onChangeAndroid?: (event: DateTimePickerEvent, selectedDate?: Date) => void;
     minimumDate?: Date;
     maximumDate?: Date;
     modalTitle: string;
@@ -608,31 +608,17 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
         <EvilIcons name="calendar" size={28} color="#5e5d5d" />
       </TouchableOpacity>
 
-      {Platform.OS === "android" ? (
-        showPicker && (
-          <DateTimePicker
-            value={value || new Date()}
-            mode="date"
-            display="default"
-            onChange={onChangeAndroid}
-            minimumDate={minimumDate}
-            maximumDate={maximumDate}
-            locale={i18n.language === "si" ? "si-LK" : i18n.language === "ta" ? "ta-LK" : "en-US"}
-          />
-        )
-      ) : (
-        <CustomDatePicker
-          visible={showPicker}
-          onClose={() => setShowPicker(false)}
-          value={value}
-          onConfirm={onConfirm}
-          minimumDate={minimumDate}
-          maximumDate={maximumDate}
-          title={modalTitle}
-          cancelText={t("Main.Cancel", "Cancel")}
-          confirmText={t("Main.OK")}
-        />
-      )}
+      <CustomDatePicker
+        visible={showPicker}
+        onClose={() => setShowPicker(false)}
+        value={value}
+        onConfirm={onConfirm}
+        minimumDate={minimumDate}
+        maximumDate={maximumDate}
+        title={modalTitle}
+        cancelText={t("Main.Cancel", "Cancel")}
+        confirmText={t("Main.OK")}
+      />
     </>
   );
 
