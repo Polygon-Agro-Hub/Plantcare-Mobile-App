@@ -1161,48 +1161,25 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             {fieldErrors[tool.id].startDate}
                           </Text>
                         ) : null}
-                        {Platform.OS === "ios" ? (
-                          <CustomDatePicker
-                            visible={showStartDatePicker}
-                            onClose={() => setShowStartDatePicker(false)}
-                            value={parseDate(
-                              updatedDetails[tool.id]?.ownershipDetails
-                                ?.startDate,
-                            )}
-                            onConfirm={(date) => {
-                              handleInputChange(
-                                tool.id,
-                                "ownershipDetails.startDate",
-                                formatDate(date),
-                              );
-                            }}
-                            maximumDate={new Date()}
-                            title={t("FixedAssets.LeaseStartDate")}
-                          />
-                        ) : (
-                          showStartDatePicker && (
-                            <DateTimePicker
-                              value={
-                                parseDate(
-                                  updatedDetails[tool.id]?.ownershipDetails
-                                    ?.startDate,
-                                ) || new Date()
-                              }
-                              mode="date"
-                              display="default"
-                              onChange={(event, selectedDate) => {
-                                setShowStartDatePicker(false);
-                                if (event.type === "set" && selectedDate)
-                                  handleInputChange(
-                                    tool.id,
-                                    "ownershipDetails.startDate",
-                                    formatDate(selectedDate),
-                                  );
-                              }}
-                              maximumDate={new Date()}
-                            />
-                          )
-                        )}
+                        <CustomDatePicker
+                          visible={showStartDatePicker}
+                          onClose={() => setShowStartDatePicker(false)}
+                          value={parseDate(
+                            updatedDetails[tool.id]?.ownershipDetails
+                              ?.startDate,
+                          )}
+                          onConfirm={(date) => {
+                            handleInputChange(
+                              tool.id,
+                              "ownershipDetails.startDate",
+                              formatDate(date),
+                            );
+                          }}
+                          maximumDate={new Date()}
+                          title={t("FixedAssets.LeaseStartDate")}
+                          cancelText={t("Main.Cancel", "Cancel")}
+                          confirmText={t("Main.OK", "OK")}
+                        />
 
                         <Text className="text-[#070707] text-sm mt-2">
                           {t("FixedAssets.Duration")} *
@@ -1365,48 +1342,25 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             {fieldErrors[tool.id].issuedDate}
                           </Text>
                         ) : null}
-                        {Platform.OS === "ios" ? (
-                          <CustomDatePicker
-                            visible={showStartDatePicker}
-                            onClose={() => setShowStartDatePicker(false)}
-                            value={parseDate(
-                              updatedDetails[tool.id]?.ownershipDetails
-                                ?.issuedDate,
-                            )}
-                            onConfirm={(date) => {
-                              handleInputChange(
-                                tool.id,
-                                "ownershipDetails.issuedDate",
-                                formatDate(date),
-                              );
-                            }}
-                            maximumDate={new Date()}
-                            title={t("FixedAssets.IssuedDate")}
-                          />
-                        ) : (
-                          showStartDatePicker && (
-                            <DateTimePicker
-                              value={
-                                parseDate(
-                                  updatedDetails[tool.id]?.ownershipDetails
-                                    ?.issuedDate,
-                                ) || new Date()
-                              }
-                              mode="date"
-                              display="default"
-                              onChange={(event, selectedDate) => {
-                                setShowStartDatePicker(false);
-                                if (event.type === "set" && selectedDate)
-                                  handleInputChange(
-                                    tool.id,
-                                    "ownershipDetails.issuedDate",
-                                    formatDate(selectedDate),
-                                  );
-                              }}
-                              maximumDate={new Date()}
-                            />
-                          )
-                        )}
+                        <CustomDatePicker
+                          visible={showStartDatePicker}
+                          onClose={() => setShowStartDatePicker(false)}
+                          value={parseDate(
+                            updatedDetails[tool.id]?.ownershipDetails
+                              ?.issuedDate,
+                          )}
+                          onConfirm={(date) => {
+                            handleInputChange(
+                              tool.id,
+                              "ownershipDetails.issuedDate",
+                              formatDate(date),
+                            );
+                          }}
+                          maximumDate={new Date()}
+                          title={t("FixedAssets.IssuedDate")}
+                          cancelText={t("Main.Cancel", "Cancel")}
+                          confirmText={t("Main.OK", "OK")}
+                        />
 
                         <Text className="text-[#070707] text-sm mt-2">
                           {t("FixedAssets.AnnualPermitFee")} *
@@ -1836,48 +1790,25 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               {fieldErrors[tool.id].startDate}
                             </Text>
                           ) : null}
-                          {Platform.OS === "ios" ? (
-                            <CustomDatePicker
-                              visible={showStartDatePicker}
-                              onClose={() => setShowStartDatePicker(false)}
-                              value={parseDate(
-                                updatedDetails[tool.id]?.ownershipDetails
-                                  ?.startDate,
-                              )}
-                              onConfirm={(date) => {
-                                handleInputChange(
-                                  tool.id,
-                                  "ownershipDetails.startDate",
-                                  formatDate(date),
-                                );
-                              }}
-                              maximumDate={new Date()}
-                              title={t("FixedAssets.LeaseStartDate")}
-                            />
-                          ) : (
-                            showStartDatePicker && (
-                              <DateTimePicker
-                                value={
-                                  parseDate(
-                                    updatedDetails[tool.id]?.ownershipDetails
-                                      ?.startDate,
-                                  ) || new Date()
-                                }
-                                mode="date"
-                                display="default"
-                                onChange={(event, selectedDate) => {
-                                  setShowStartDatePicker(false);
-                                  if (event.type === "set" && selectedDate)
-                                    handleInputChange(
-                                      tool.id,
-                                      "ownershipDetails.startDate",
-                                      formatDate(selectedDate),
-                                    );
-                                }}
-                                maximumDate={new Date()}
-                              />
-                            )
-                          )}
+                          <CustomDatePicker
+                            visible={showStartDatePicker}
+                            onClose={() => setShowStartDatePicker(false)}
+                            value={parseDate(
+                              updatedDetails[tool.id]?.ownershipDetails
+                                ?.startDate,
+                            )}
+                            onConfirm={(date) => {
+                              handleInputChange(
+                                tool.id,
+                                "ownershipDetails.startDate",
+                                formatDate(date),
+                              );
+                            }}
+                            maximumDate={new Date()}
+                            title={t("FixedAssets.LeaseStartDate")}
+                            cancelText={t("Main.Cancel", "Cancel")}
+                            confirmText={t("Main.OK", "OK")}
+                          />
 
                           <Text className="text-[#070707] text-sm mt-2">
                             {t("FixedAssets.Duration")} *
@@ -2043,48 +1974,25 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                               {fieldErrors[tool.id].issuedDate}
                             </Text>
                           ) : null}
-                          {Platform.OS === "ios" ? (
-                            <CustomDatePicker
-                              visible={showStartDatePicker}
-                              onClose={() => setShowStartDatePicker(false)}
-                              value={parseDate(
-                                updatedDetails[tool.id]?.ownershipDetails
-                                  ?.issuedDate,
-                              )}
-                              onConfirm={(date) => {
-                                handleInputChange(
-                                  tool.id,
-                                  "ownershipDetails.issuedDate",
-                                  formatDate(date),
-                                );
-                              }}
-                              maximumDate={new Date()}
-                              title={t("FixedAssets.IssuedDate")}
-                            />
-                          ) : (
-                            showStartDatePicker && (
-                              <DateTimePicker
-                                value={
-                                  parseDate(
-                                    updatedDetails[tool.id]?.ownershipDetails
-                                      ?.issuedDate,
-                                  ) || new Date()
-                                }
-                                mode="date"
-                                display="default"
-                                onChange={(event, selectedDate) => {
-                                  setShowStartDatePicker(false);
-                                  if (event.type === "set" && selectedDate)
-                                    handleInputChange(
-                                      tool.id,
-                                      "ownershipDetails.issuedDate",
-                                      formatDate(selectedDate),
-                                    );
-                                }}
-                                maximumDate={new Date()}
-                              />
-                            )
-                          )}
+                          <CustomDatePicker
+                            visible={showStartDatePicker}
+                            onClose={() => setShowStartDatePicker(false)}
+                            value={parseDate(
+                              updatedDetails[tool.id]?.ownershipDetails
+                                ?.issuedDate,
+                            )}
+                            onConfirm={(date) => {
+                              handleInputChange(
+                                tool.id,
+                                "ownershipDetails.issuedDate",
+                                formatDate(date),
+                              );
+                            }}
+                            maximumDate={new Date()}
+                            title={t("FixedAssets.IssuedDate")}
+                            cancelText={t("Main.Cancel", "Cancel")}
+                            confirmText={t("Main.OK", "OK")}
+                          />
 
                           <Text className="text-[#070707] text-sm mt-2">
                             {t("FixedAssets.PermitFeeAnnuallyLKR")} *
@@ -2575,43 +2483,21 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             {fieldErrors[tool.id].purchaseDate}
                           </Text>
                         ) : null}
-                        {Platform.OS === "ios" ? (
-                          <CustomDatePicker
-                            visible={showPurchaseDatePicker}
-                            onClose={() => setShowPurchaseDatePicker(false)}
-                            value={parseDate(
-                              updatedDetails[tool.id]?.ownershipDetails
-                                ?.purchaseDate,
-                            )}
-                            onConfirm={(date) => {
-                              handlePurchaseDateChange(tool.id, date);
-                            }}
-                            maximumDate={new Date()}
-                            title={t("FixedAssets.PurchasedDate")}
-                          />
-                        ) : (
-                          showPurchaseDatePicker && (
-                            <DateTimePicker
-                              value={
-                                parseDate(
-                                  updatedDetails[tool.id]?.ownershipDetails
-                                    ?.purchaseDate,
-                                ) || new Date()
-                              }
-                              mode="date"
-                              display="default"
-                              onChange={(event, selectedDate) => {
-                                setShowPurchaseDatePicker(false);
-                                if (event.type === "set" && selectedDate)
-                                  handlePurchaseDateChange(
-                                    tool.id,
-                                    selectedDate,
-                                  );
-                              }}
-                              maximumDate={new Date()}
-                            />
-                          )
-                        )}
+                        <CustomDatePicker
+                          visible={showPurchaseDatePicker}
+                          onClose={() => setShowPurchaseDatePicker(false)}
+                          value={parseDate(
+                            updatedDetails[tool.id]?.ownershipDetails
+                              ?.purchaseDate,
+                          )}
+                          onConfirm={(date) => {
+                            handlePurchaseDateChange(tool.id, date);
+                          }}
+                          maximumDate={new Date()}
+                          title={t("FixedAssets.PurchasedDate")}
+                          cancelText={t("Main.Cancel", "Cancel")}
+                          confirmText={t("Main.OK", "OK")}
+                        />
                         {purchaseDateError ? (
                           <Text className="text-red-500 p-2 text-center text-sm">
                             {purchaseDateError}
@@ -2650,40 +2536,21 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             {fieldErrors[tool.id].expireDate}
                           </Text>
                         ) : null}
-                        {Platform.OS === "ios" ? (
-                          <CustomDatePicker
-                            visible={showExpireDatePicker}
-                            onClose={() => setShowExpireDatePicker(false)}
-                            value={parseDate(
-                              updatedDetails[tool.id]?.ownershipDetails
-                                ?.expireDate,
-                            )}
-                            onConfirm={(date) => {
-                              handleExpireDateChange(tool.id, date);
-                            }}
-                            minimumDate={getStartOfTomorrow()}
-                            title={t("FixedAssets.WarrantyExpireDate")}
-                          />
-                        ) : (
-                          showExpireDatePicker && (
-                            <DateTimePicker
-                              value={
-                                parseDate(
-                                  updatedDetails[tool.id]?.ownershipDetails
-                                    ?.expireDate,
-                                ) || new Date()
-                              }
-                              mode="date"
-                              display="default"
-                              onChange={(event, selectedDate) => {
-                                setShowExpireDatePicker(false);
-                                if (event.type === "set" && selectedDate)
-                                  handleExpireDateChange(tool.id, selectedDate);
-                              }}
-                              minimumDate={getStartOfTomorrow()}
-                            />
-                          )
-                        )}
+                        <CustomDatePicker
+                          visible={showExpireDatePicker}
+                          onClose={() => setShowExpireDatePicker(false)}
+                          value={parseDate(
+                            updatedDetails[tool.id]?.ownershipDetails
+                              ?.expireDate,
+                          )}
+                          onConfirm={(date) => {
+                            handleExpireDateChange(tool.id, date);
+                          }}
+                          minimumDate={getStartOfTomorrow()}
+                          title={t("FixedAssets.WarrantyExpireDate")}
+                          cancelText={t("Main.Cancel", "Cancel")}
+                          confirmText={t("Main.OK", "OK")}
+                        />
                         {expireDateError ? (
                           <Text className="text-red-500 p-2 text-center text-sm">
                             {expireDateError}
@@ -3033,43 +2900,21 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             {fieldErrors[tool.id].purchaseDate}
                           </Text>
                         ) : null}
-                        {Platform.OS === "ios" ? (
-                          <CustomDatePicker
-                            visible={showPurchaseDatePicker}
-                            onClose={() => setShowPurchaseDatePicker(false)}
-                            value={parseDate(
-                              updatedDetails[tool.id]?.ownershipDetails
-                                ?.purchaseDate,
-                            )}
-                            onConfirm={(date) => {
-                              handlePurchaseDateChange(tool.id, date);
-                            }}
-                            maximumDate={new Date()}
-                            title={t("FixedAssets.PurchasedDate")}
-                          />
-                        ) : (
-                          showPurchaseDatePicker && (
-                            <DateTimePicker
-                              value={
-                                parseDate(
-                                  updatedDetails[tool.id]?.ownershipDetails
-                                    ?.purchaseDate,
-                                ) || new Date()
-                              }
-                              mode="date"
-                              display="default"
-                              onChange={(event, selectedDate) => {
-                                setShowPurchaseDatePicker(false);
-                                if (event.type === "set" && selectedDate)
-                                  handlePurchaseDateChange(
-                                    tool.id,
-                                    selectedDate,
-                                  );
-                              }}
-                              maximumDate={new Date()}
-                            />
-                          )
-                        )}
+                        <CustomDatePicker
+                          visible={showPurchaseDatePicker}
+                          onClose={() => setShowPurchaseDatePicker(false)}
+                          value={parseDate(
+                            updatedDetails[tool.id]?.ownershipDetails
+                              ?.purchaseDate,
+                          )}
+                          onConfirm={(date) => {
+                            handlePurchaseDateChange(tool.id, date);
+                          }}
+                          maximumDate={new Date()}
+                          title={t("FixedAssets.PurchasedDate")}
+                          cancelText={t("Main.Cancel", "Cancel")}
+                          confirmText={t("Main.OK", "OK")}
+                        />
                         {purchaseDateError ? (
                           <Text className="text-red-500 p-2 text-center text-sm">
                             {purchaseDateError}
@@ -3108,45 +2953,26 @@ const UpdateAsset: React.FC<Props> = ({ navigation, route }) => {
                             {fieldErrors[tool.id].expireDate}
                           </Text>
                         ) : null}
-                        {Platform.OS === "ios" ? (
-                          <CustomDatePicker
-                            visible={showExpireDatePicker}
-                            onClose={() => setShowExpireDatePicker(false)}
-                            value={
-                              updatedDetails[tool.id]?.ownershipDetails
-                                ?.expireDate
-                                ? new Date(
-                                  updatedDetails[tool.id].ownershipDetails
-                                    .expireDate,
-                                )
-                                : null
-                            }
-                            onConfirm={(date) => {
-                              handleExpireDateChange(tool.id, date);
-                            }}
-                            minimumDate={getStartOfTomorrow()}
-                            title={t("FixedAssets.WarrantyExpireDate")}
-                          />
-                        ) : (
-                          showExpireDatePicker && (
-                            <DateTimePicker
-                              value={
-                                parseDate(
-                                  updatedDetails[tool.id]?.ownershipDetails
-                                    ?.expireDate,
-                                ) || new Date()
-                              }
-                              mode="date"
-                              display="default"
-                              onChange={(event, selectedDate) => {
-                                setShowExpireDatePicker(false);
-                                if (event.type === "set" && selectedDate)
-                                  handleExpireDateChange(tool.id, selectedDate);
-                              }}
-                              minimumDate={getStartOfTomorrow()}
-                            />
-                          )
-                        )}
+                        <CustomDatePicker
+                          visible={showExpireDatePicker}
+                          onClose={() => setShowExpireDatePicker(false)}
+                          value={
+                            updatedDetails[tool.id]?.ownershipDetails
+                              ?.expireDate
+                              ? new Date(
+                                updatedDetails[tool.id].ownershipDetails
+                                  .expireDate,
+                              )
+                              : null
+                          }
+                          onConfirm={(date) => {
+                            handleExpireDateChange(tool.id, date);
+                          }}
+                          minimumDate={getStartOfTomorrow()}
+                          title={t("FixedAssets.WarrantyExpireDate")}
+                          cancelText={t("Main.Cancel", "Cancel")}
+                          confirmText={t("Main.OK", "OK")}
+                        />
                         {expireDateError ? (
                           <Text className="text-red-500 p-2 text-center text-sm">
                             {expireDateError}

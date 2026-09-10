@@ -1322,7 +1322,13 @@
     "FailedToFetchFarmCropsPleaseTryAgain": "Failed to fetch farm crops. Please try again.",
     "FailedToFetchFarmsPleaseTryAgain": "Failed to fetch farms. Please try again.",
     "FailedToFetchServicesPleaseTryAgain": "தற்சமயம் பரிசோதனை சேவைகள் எதுவும் வழங்கப்படவில்லை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.",
-    "SearchFarm": "Search Farm"
+    "SearchFarm": "Search Farm",
+    "UnknownCrop": "தெரியாத பயிர்",
+    "Warning": "எச்சரிக்கை",
+    "DiscardAndProceed": "நிராகரித்து தொடரவும்",
+    "PleaseCompleteAllRequiredFields": "தயவுசெய்து தேவையான அனைத்து புலங்களையும் பூர்த்தி செய்யவும் அல்லது உங்கள் தற்போதைய தரவைச் சேமிக்க 'மேலும் சேர்' என்பதைக் கிளிக் செய்யவும்.",
+    "NoServiceFound": "சேவை எதுவும் கிடைக்கவில்லை",
+    "NoFarmFound": "பண்ணை எதுவும் கிடைக்கவில்லை"
   },
   "RequestHistory": {
     "YouHaveNoRequestsAddedYet": "--You have no requests added yet--",
@@ -1625,5 +1631,45 @@
     "My Orders": "எனது ஆர்டர்கள்",
     "All": "அனைத்தும்",
     "No Previous Orders": "முந்தைய ஆர்டர்கள் இல்லை"
+  },
+  "Calendar": {
+    "Months": [
+      "ஜனவரி",
+      "பிப்ரவரி",
+      "மார்ச்",
+      "ஏப்ரல்",
+      "மே",
+      "ஜூன்",
+      "ஜூலை",
+      "ஆகஸ்ட்",
+      "செப்டம்பர்",
+      "அக்டோபர்",
+      "நவம்பர்",
+      "டிசம்பர்"
+    ],
+    "MonthsShort": [
+      "ஜன",
+      "பிப்",
+      "மார்",
+      "ஏப்",
+      "மே",
+      "ஜூன்",
+      "ஜூலை",
+      "ஆக",
+      "செப்",
+      "அக்",
+      "நவ",
+      "டிச"
+    ],
+    "Days": [
+      "ஞாயிறு",
+      "திங்கள்",
+      "செவ்வாய்",
+      "புதன்",
+      "வியாழன்",
+      "வெள்ளி",
+      "சனி"
+    ],
+    "DaysShort": ["ஞா", "தி", "செ", "பு", "வி", "வெ", "ச"]
   }
 }

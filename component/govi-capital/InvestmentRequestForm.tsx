@@ -547,28 +547,16 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
               />
             </TouchableOpacity>
 
-            {Platform.OS === "ios" ? (
-              <CustomDatePicker
-                visible={showDatePicker}
-                onClose={() => setShowDatePicker(false)}
-                value={startDate}
-                onConfirm={(date) => setStartDate(date)}
-                minimumDate={new Date()}
-                title={t("Govicapital.ExpectedStartDate")}
-                cancelText={t("Main.Cancel")}
-                confirmText={t("Main.Continue")}
-              />
-            ) : (
-              showDatePicker && (
-                <DateTimePicker
-                  value={startDate || new Date()}
-                  mode="date"
-                  display="default"
-                  onChange={onDateChange}
-                  minimumDate={new Date()}
-                />
-              )
-            )}
+            <CustomDatePicker
+              visible={showDatePicker}
+              onClose={() => setShowDatePicker(false)}
+              value={startDate}
+              onConfirm={(date) => setStartDate(date)}
+              minimumDate={new Date()}
+              title={t("Govicapital.ExpectedStartDate")}
+              cancelText={t("Main.Cancel")}
+              confirmText={t("Main.Continue")}
+            />
           </View>
 
           {/* NIC Front Image */}

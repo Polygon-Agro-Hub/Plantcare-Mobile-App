@@ -1338,7 +1338,13 @@
     "FailedToFetchFarmCropsPleaseTryAgain": "Failed to fetch farm crops. Please try again.",
     "FailedToFetchFarmsPleaseTryAgain": "Failed to fetch farms. Please try again.",
     "FailedToFetchServicesPleaseTryAgain": "No inspection services are available at the moment. Please try again.",
-    "SearchFarm": "Search Farm"
+    "SearchFarm": "Search Farm",
+    "UnknownCrop": "Unknown Crop",
+    "Warning": "Warning",
+    "DiscardAndProceed": "Discard and Proceed",
+    "PleaseCompleteAllRequiredFields": "Please complete all required fields or click 'Add More' to save your current data.",
+    "NoServiceFound": "No service found",
+    "NoFarmFound": "No farm found"
   },
   "RequestHistory": {
     "YouHaveNoRequestsAddedYet": "--You have no requests added yet--",

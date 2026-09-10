@@ -1289,60 +1289,30 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       </ScrollView>
 
       {/* Purchase Date Picker */}
-      {Platform.OS === "android" ? (
-        showPurchaseDatePicker && (
-          <DateTimePicker
-            value={
-              purchaseDate
-                ? clampDate(parseLocalDate(purchaseDate), undefined, getPurchaseMaximumDate())
-                : clampDate(new Date(), undefined, getPurchaseMaximumDate())
-            }
-            mode="date"
-            display="default"
-            onChange={onChangePurchaseDateAndroid}
-            maximumDate={getPurchaseMaximumDate()}
-            minimumDate={new Date(2000, 0, 1)}
-          />
-        )
-      ) : (
-        <CustomDatePicker
-          visible={showPurchaseDatePicker}
-          onClose={() => setShowPurchaseDatePicker(false)}
-          value={clampedPurchaseDate}
-          onConfirm={applyPurchaseDate}
-          minimumDate={purchaseMinimumDate}
-          maximumDate={purchaseMaximumDate}
-          title={t("CurrentAssets.PurchaseDate")}
-          cancelText={t("Main.Cancel", "Cancel")}
-          confirmText={t("Main.OK")}
-        />
-      )}
+      <CustomDatePicker
+        visible={showPurchaseDatePicker}
+        onClose={() => setShowPurchaseDatePicker(false)}
+        value={clampedPurchaseDate}
+        onConfirm={applyPurchaseDate}
+        minimumDate={purchaseMinimumDate}
+        maximumDate={purchaseMaximumDate}
+        title={t("CurrentAssets.PurchaseDate")}
+        cancelText={t("Main.Cancel", "Cancel")}
+        confirmText={t("Main.OK")}
+      />
 
       {/* Expire Date Picker */}
-      {Platform.OS === "android" ? (
-        showExpireDatePicker && (
-          <DateTimePicker
-            value={clampDate(getExpirePickerValue(), getExpireMinimumDate(), getMaximumDate())}
-            mode="date"
-            display="default"
-            onChange={onChangeExpireDateAndroid}
-            minimumDate={getExpireMinimumDate()}
-            maximumDate={getMaximumDate()}
-          />
-        )
-      ) : (
-        <CustomDatePicker
-          visible={showExpireDatePicker}
-          onClose={() => setShowExpireDatePicker(false)}
-          value={clampedExpireDate}
-          onConfirm={applyExpireDate}
-          minimumDate={expireMinimumDate}
-          maximumDate={expireMaximumDate}
-          title={t("CurrentAssets.ExpireDate")}
-          cancelText={t("Main.Cancel", "Cancel")}
-          confirmText={t("Main.OK")}
-        />
-      )}
+      <CustomDatePicker
+        visible={showExpireDatePicker}
+        onClose={() => setShowExpireDatePicker(false)}
+        value={clampedExpireDate}
+        onConfirm={applyExpireDate}
+        minimumDate={expireMinimumDate}
+        maximumDate={expireMaximumDate}
+        title={t("CurrentAssets.ExpireDate")}
+        cancelText={t("Main.Cancel", "Cancel")}
+        confirmText={t("Main.OK")}
+      />
 
       {/* GlobalSearchModals */}
       <GlobalSearchModal
