@@ -236,7 +236,13 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
       <View className="bg-white px-4 pb-4 shadow-sm">
         <View className="bg-[#F6F6F6CC] rounded-3xl h-[50px] flex-row items-center px-4">
           <TextInput
-            className="flex-1 text-lg text-gray-700"
+             style={{
+              flex: 1,
+              fontSize: 14,
+              height: 50,
+              paddingVertical: 0,
+              includeFontPadding: false,
+            }}
             placeholder={t("Main.Search...")}
             placeholderTextColor="#9CA3AF"
             value={searchQuery}
@@ -300,8 +306,9 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
                     {t("EarnCertificate.Rs")}.{formatPrice(certificate.price)}
                   </Text>
                   <Text className="text-[#6B6B6B] text-sm">
-                    {t("Farms.ValidityPeriod")} {certificate.timeLine}{" "}
-                    {getMonthLabel(certificate.timeLine)}
+                    {getMonthLabel(certificate.timeLine)}{" "}
+                    {t("Farms.ValidityPeriod")} {certificate.timeLine}
+                    
                   </Text>
                 </View>
 
@@ -313,7 +320,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
                 text={
                   searchQuery
                     ? "No certificates found matching your search"
-                    : "No certificates available"
+                    : t("EarnCertificate.NoCertificatesAvailable")
                 }
               />
           )}
@@ -390,8 +397,8 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
               style={{ marginBottom: hp(3) }}
             >
               <Text className="text-[#A07700] font-semibold">
-                {selectedCertificate?.timeLine}{" "}
-                {getMonthLabel(selectedCertificate?.timeLine || "0")}
+                {getMonthLabel(selectedCertificate?.timeLine || "0")}{" "}
+                {selectedCertificate?.timeLine}
               </Text>
               . {t("EarnCertificate.DoYouWantToApplyForIt")}
             </Text>

@@ -167,11 +167,9 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
             setPosts([]);
           }
         } catch (error) {
-          Alert.alert(
-            t("Main.Sorry"),
-            t("PublicForum.FailedToRefreshPosts"),
-            [{ text: t("Main.OK") }],
-          );
+          Alert.alert(t("Main.Sorry"), t("PublicForum.FailedToRefreshPosts"), [
+            { text: t("Main.OK") },
+          ]);
         } finally {
           setRefreshing(false);
         }
@@ -248,11 +246,9 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
         setPosts([]);
       }
     } catch (error) {
-      Alert.alert(
-        t("Main.Sorry"),
-        t("PublicForum.FailedToRefreshPosts"),
-        [{ text: t("Main.OK") }],
-      );
+      Alert.alert(t("Main.Sorry"), t("PublicForum.FailedToRefreshPosts"), [
+        { text: t("Main.OK") },
+      ]);
     } finally {
       setRefreshing(false);
     }
@@ -269,11 +265,9 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
     try {
       const replyMessage = comment[postId] || "";
       if (replyMessage.trim() === "") {
-        Alert.alert(
-          t("Main.Sorry"),
-          t("PublicForum.CommentCannotBeEmpty"),
-          [{ text: t("Main.OK") }],
-        );
+        Alert.alert(t("Main.Sorry"), t("PublicForum.CommentCannotBeEmpty"), [
+          { text: t("Main.OK") },
+        ]);
         return;
       }
       const replyId = "";
@@ -302,8 +296,13 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
             : post,
         ),
       );
-    } catch (error) {
-      Alert.alert(t("Main.Sorry"), t("PublicForum.FailedToAddComment"), [
+    } catch (error: any) {
+      const errorMsg =
+        error?.response?.data?.code === "PROFANITY_DETECTED"
+          ? t("PublicForum.ProhibitedLanguageDetected")
+          : error?.response?.data?.message ||
+            t("PublicForum.FailedToAddComment");
+      Alert.alert(t("Main.Sorry"), errorMsg, [
         { text: t("Main.OK") },
       ]);
     }
@@ -332,11 +331,15 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
     Keyboard.dismiss();
   };
 
-  const formatDate = (createdAt: Date) => {
+  const formatDate = (createdAt: Date | string) => {
     const now = new Date();
     const postDate = new Date(createdAt);
 
-    const timeDifference = now.getTime() - postDate.getTime();
+    if (isNaN(postDate.getTime())) {
+      return t("PublicForum.JustNow") || "Just now";
+    }
+
+    const timeDifference = Math.max(0, now.getTime() - postDate.getTime());
 
     const seconds = Math.floor(timeDifference / 1000);
     const minutes = Math.floor(seconds / 60);
@@ -344,13 +347,19 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
     const days = Math.floor(hours / 24);
 
     if (seconds < 60) {
-      return "දැන්";
+      return t("PublicForum.JustNow") || "Just now";
     } else if (minutes < 60) {
-      return `විනාඩි ${minutes} කට පෙර`;
+      return minutes === 1
+        ? (t("PublicForum.MinuteAgo", { count: minutes }) || "1 minute ago")
+        : (t("PublicForum.MinutesAgo", { count: minutes }) || `${minutes} minutes ago`);
     } else if (hours < 24) {
-      return `පැය ${hours} කට පෙර`;
+      return hours === 1
+        ? (t("PublicForum.HourAgo", { count: hours }) || "1 hour ago")
+        : (t("PublicForum.HoursAgo", { count: hours }) || `${hours} hours ago`);
     } else if (days < 7) {
-      return `දින ${days} කට පෙර`;
+      return days === 1
+        ? (t("PublicForum.DayAgo", { count: days }) || "1 day ago")
+        : (t("PublicForum.DaysAgo", { count: days }) || `${days} days ago`);
     } else {
       const language = i18n.language || "en";
       return postDate.toLocaleDateString(language, {
@@ -437,7 +446,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
               {item.userName}{" "}
               {((item.staffId !== null && item.staffId === userId) ||
                 (item.staffId === null && item.userId === userId)) &&
-                " (You)"}
+                t("PublicForum.You")}
             </Text>
           </View>
           <View className="flex-row items-center gap-3">
@@ -527,14 +536,14 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
               style={{ marginLeft: dynamicStyles.imageMarginLeft }}
             >
               <Text
-  className="text-[#939393] text-sm underline"
-  style={{ marginLeft: dynamicStyles.textMarginLeft }}
->
-  {item.replyCount}{" "}
-  {Number(item.replyCount) === 1
-    ? t("PublicForum.Reply")
-    : t("PublicForum.Replies")}
-</Text>
+                className="text-[#939393] text-sm underline"
+                style={{ marginLeft: dynamicStyles.textMarginLeft }}
+              >
+                {item.replyCount}{" "}
+                {Number(item.replyCount) === 1
+                  ? t("PublicForum.Reply")
+                  : t("PublicForum.Replies")}
+              </Text>
             </TouchableOpacity>
 
             <View className="flex-row items-center relative">
@@ -549,7 +558,8 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
                 onContentSizeChange={handleContentSizeChange}
                 style={{
                   flex: 1,
-                  paddingHorizontal: 12,
+                  paddingLeft: 12,
+                  paddingRight: 44, // reserve space so text never renders under the send icon
                   fontSize: 16,
                   height: 50,
                   paddingVertical: 0,
@@ -558,7 +568,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
                 }}
               />
               <TouchableOpacity
-                className="absolute right-4 justify-center items-center "
+                className="absolute right-4 justify-center items-center"
                 onPress={() => handleCommentSubmit(item.id)}
                 disabled={!comment[item.id]?.trim()}
               >
@@ -644,14 +654,14 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
         onBackPress={() => navigation.navigate("Main" as any)}
       />
 
-      <View className="p-6 bg-white">
+      <View className="px-6 py-4 bg-white">
         <View
-          className="bg-white border border-[#000000] rounded-3xl px-3 flex-row items-center"
+          className="bg-white border border-black rounded-full flex-row items-center"
           style={{ height: 50 }}
         >
           <TextInput
             ref={searchInputRef}
-            className="flex-1 text-gray-600 h-[50px]"
+            className="flex-1 text-gray-700 h-[50px] px-4"
             placeholder={t("Main.Search...")}
             defaultValue={searchText}
             onChangeText={(text) => {
@@ -663,20 +673,19 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
             }}
             placeholderTextColor="#9CA3AF"
             style={{
-              flex: 1,
-              paddingHorizontal: 12,
-              fontSize: 16,
+              fontSize: 15,
               height: 50,
               paddingVertical: 0,
               includeFontPadding: false,
-              textAlign: "center",
             }}
           />
-          <View className="h-[40px]">
-            <TouchableOpacity className="bg-black rounded-full p-3">
-              <Feather name="search" size={20} color="white" />
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            className="bg-black rounded-full w-[50px] h-[50px] items-center justify-center"
+            activeOpacity={0.7}
+            onPress={dismissKeyboard}
+          >
+            <Feather name="search" size={18} color="white" />
+          </TouchableOpacity>
         </View>
       </View>
 

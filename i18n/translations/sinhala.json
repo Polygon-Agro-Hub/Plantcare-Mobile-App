@@ -19,14 +19,28 @@
     "PleaseFillAllRequiredFields": "කරුණාකර අවශ්‍ය සියලුම ක්ෂේත්‍ර පුරවන්න.",
     "SomethingWentWrongPleaseTryAgainlater": "යම්කිසි දෝෂයක් සිදුවිය. කරුණාකර පසුව නැවත උත්සාහ කරන්න.",
     "PleaseTurnOnMobileDataOrWiFiToContinue": "කරුණාකර දිගටම කරගෙන යාමට ජංගම දත්ත හෝ Wi-Fi සක්‍රිය කරන්න.",
-    "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "මෙම උපාංගයෙන් ඉල්ලීම් රාශියක් සිදු කර ඇත, කරුණාකර විනාඩි 30 කින් නැවත උත්සාහ කරන්න."
+    "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "මෙම උපාංගයෙන් ඉල්ලීම් රාශියක් සිදු කර ඇත, කරුණාකර විනාඩි 30 කින් නැවත උත්සාහ කරන්න.",
+    "Done": "අවසන්",
+    "NoSearchResultFound": "සෙවුම් ප්‍රතිඵල කිසිවක් හමු නොවීය"
   },
   "Inputs": {
     "FirstName": "මුල් නම",
     "LastName": "අවසන් නම",
     "NICNumber": "ජාතික හැඳුනුම්පත් අංකය",
     "PhoneNumber": "දුරකථන අංකය",
-    "MobileNumber": "ජංගම දුරකථන අංකය"
+    "MobileNumber": "ජංගම දුරකථන අංකය",
+    "LastNameRequired": "අවසන් නම අවශ්‍ය වේ.",
+    "FirstNameRequired": "මුල් නම අවශ්‍ය වේ.",
+    "FirstnameRequred": "මුල් නම අවශ්‍ය වේ.",
+    "Lastnamerequred": "අවසන් නම අවශ්‍ය වේ.",
+    "EnterPhoneNumber": "දුරකථන අංකය ඇතුළත් කරන්න",
+    "EnterNICNumber": "ජාතික හැඳුනුම්පත් අංකය ඇතුළත් කරන්න"
+  },
+  "input": {
+    "FirstNameRequired": "මුල් නම අවශ්‍ය වේ.",
+    "LastNameRequired": "අවසන් නම අවශ්‍ය වේ.",
+    "FirstnameRequred": "මුල් නම අවශ්‍ය වේ.",
+    "Lastnamerequred": "අවසන් නම අවශ්‍ය වේ."
   },
   "District": {
     "Colombo": "කොළඹ",
@@ -69,6 +83,14 @@
     "November": "නොවැම්බර්",
     "December": "දෙසැම්බර්"
   },
+  "Country": {
+    "SriLanka": "ශ්‍රී ලංකාව",
+    "Vietnam": "වියට්නාමය",
+    "Cambodia": "කාම්බෝජය",
+    "Bangladesh": "බංග්ලාදේශය",
+    "India": "ඉන්දියාව",
+    "Netherlands": "නෙදර්ලන්තය"
+  },
   "SignUp": {
     "SignUp": "ලියාපදිංචි වන්න",
     "District": "දිස්ත්‍රික්කය",
@@ -88,7 +110,10 @@
     "PleaseEnterAValid9DigitMobileNumberExcludeTheLeadingZero": "කරුණාකර වලංගු ඉලක්කම් 9 ක ජංගම දුරකථන අංකයක් ඇතුළත් කරන්න (ඉදිරියෙන් ඇති ශුන්‍යය බැහැර කරන්න).",
     "TheNICNumberYouEnteredIsAlreadyRegisteredPleaseCheckYourDetailsOrLogIn": "ඔබ ඇතුළත් කළ ජාතික හැඳුනුම්පත් අංකය දැනටමත් ලියාපදිංචි කර ඇත, කරුණාකර ඔබගේ විස්තර පරීක්ෂා කරන්න හෝ පුරන්න.",
     "BothThePhoneNumberAndNICNumberEnteredAreAlreadyRegisteredPleaseLogInInstead": "ඔබ ඇතුළත් කළ දුරකථන අංකය සහ ජාතික හැඳුනුම්පත් අංකය දෙකම දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර ඒ වෙනුවට පුරන්න.",
-    "ThePhoneNumberYouEnteredIsAlreadyRegisteredPleaseUseADifferentNumberOrLogIn": "ඔබ ඇතුළත් කළ දුරකථන අංකය දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් අංකයක් භාවිතා කරන්න හෝ පුරන්න"
+    "ThePhoneNumberYouEnteredIsAlreadyRegisteredPleaseUseADifferentNumberOrLogIn": "ඔබ ඇතුළත් කළ දුරකථන අංකය දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් අංකයක් භාවිතා කරන්න හෝ පුරන්න",
+    "NoCountryFound": "රටක් හමු නොවීය.",
+    "SelectCountryCode": "රටේ කේතය තෝරන්න",
+    "SearchCountry": "රට හෝ ඩයල් කේතය සොයන්න..."
   },
   "SignIn": {
     "SignIn": "පුරන්න",
@@ -220,19 +245,38 @@
   },
   "LocationAccess": {
     "Allow": "ඉඩ දෙන්න",
+    "AgreeAndContinue": "එකඟ වී ඉදිරියට යන්න",
+    "NotNow": "දැන් නොවේ",
     "OpenSettings": "සැකසුම් විවෘත කරන්න",
     "Requesting...": "ඉල්ලමින්...",
     "LocationAccess": "ස්ථාන ප්‍රවේශය",
+    "LocationPermission": "ස්ථාන අවසරය",
+    "ProminentDisclosureTitle": "GoViCare ස්ථාන දත්ත භාවිතා කරන්නේ ඇයි",
+    "ProminentDisclosureIntro": "පහත සඳහන් ප්‍රධාන කෘෂිකාර්මික විශේෂාංග සක්‍රීය කිරීමට GoViCare ඔබගේ උපාංගයේ ස්ථාන දත්ත රැස් කර භාවිතා කරයි:",
+    "FeatureWeatherTitle": "කාලගුණය සහ කෘෂිකාර්මික අනාවැකි",
+    "FeatureWeatherDesc": "ඔබගේ ගොවිපල ප්‍රදේශය සඳහා නිවැරදි තත්‍ය කාලීන කාලගුණ අනාවැකි සහ වර්ෂාපතන අනතුරු ඇඟවීම් ලබා දෙයි.",
+    "FeatureCropTitle": "ගොවිපල සහ බෝග ක්‍රියාකාරකම් සටහන් කිරීම",
+    "FeatureCropDesc": "බෝග වගා කටයුතු සහ ගොවිපල කළමනාකරණ වාර්තා සඳහා නිශ්චිත භූගෝලීය ඛණ්ඩාංක සටහන් කර සිතියම්ගත කරයි.",
+    "DisclosureFooter": "ඔබගේ ස්ථාන දත්ත වෙත ප්‍රවේශ වන්නේ මෙම විශේෂාංග භාවිතා කරන අතරතුර පමණක් වන අතර අපගේ රහස්‍යතා ප්‍රතිපත්තියට අනුව ආරක්ෂිතව හසුරුවනු ලැබේ. අපි ඔබගේ ස්ථාන දත්ත විකුණන්නේ හෝ පසුබිම් ලුහුබැඳීම සඳහා භාවිතා කරන්නේ නැත.",
     "PermissionDenied": "අවසර ප්‍රතික්ෂේප කරන ලදී",
-    "EnableLocationAccessToAccessLocationInformation": "ස්ථාන තොරතුරු වෙත ප්‍රවේශ වීමට ස්ථාන ප්‍රවේශය සක්‍රිය කරන්න.",
+    "EnableLocationAccessToAccessLocationInformation": "දේශීය කාලගුණ අනාවැකි ලබා ගැනීමට සහ බෝග ක්‍රියාකාරකම් නිවැරදිව සටහන් කිරීමට ස්ථාන ප්‍රවේශය සක්‍රිය කරන්න.",
     "UnableToRequestLocationPermissionPleaseTryAgain": "ස්ථාන අවසරය ඉල්ලීමට නොහැක. කරුණාකර නැවත උත්සාහ කරන්න.",
-    "LocationAccessIsRequiredPleaseEnableItInSettings": "ස්ථාන ප්‍රවේශය අවශ්‍ය වේ. කරුණාකර එය සැකසුම් තුළ සක්‍රිය කරන්න."
+    "LocationAccessIsRequiredPleaseEnableItInSettings": "මෙම විශේෂාංගය සඳහා ස්ථාන ප්‍රවේශය අවශ්‍ය වේ. කරුණාකර එය සැකසුම් තුළ සක්‍රිය කරන්න."
   },
   "CameraAccess": {
     "Allow": "ඉඩ දෙන්න",
+    "AgreeAndContinue": "එකඟ වී ඉදිරියට යන්න",
+    "NotNow": "දැන් නොවේ",
     "OpenSettings": "සැකසුම් විවෘත කරන්න",
     "Requesting...": "ඉල්ලමින්...",
     "CameraAccess": "කැමරා ප්‍රවේශය",
+    "ProminentDisclosureTitle": "GoViCare කැමරාව භාවිතා කරන්නේ ඇයි",
+    "ProminentDisclosureIntro": "පහත සඳහන් විශේෂාංග සක්‍රීය කිරීමට GoViCare කැමරා ප්‍රවේශය අවශ්‍ය වේ:",
+    "FeatureQRTitle": "ක්ෂණික QR කේත පරිලෝකනය",
+    "FeatureQRDesc": "ක්ෂණික හඳුනාගැනීම්, බෝග ලුහුබැඳීම සහ ආරක්ෂිත ගනුදෙනු සඳහා සාප්පු සහ ගොවි QR කේත පරිලෝකනය කිරීම.",
+    "FeatureInspectionTitle": "බෝග රෝග විනිශ්චය සහ ලේඛන ඡායාරූප",
+    "FeatureInspectionDesc": "කෘෂිකාර්මික සහාය සඳහා ශාක රෝග, බෝග හානි සහ තහවුරු කිරීමේ ලේඛනවල තත්‍ය කාලීන ඡායාරූප ලබා ගැනීම.",
+    "DisclosureFooter": "කැමරා ප්‍රවේශය සක්‍රිය වන්නේ QR පරිලෝකනය හෝ සජීවී ඡායාරූප ගැනීමේදී පමණි. ඔබගේ අවසරයකින් තොරව කිසිදු ඡායාරූපයක් හෝ වීඩියෝවක් ගනු නොලැබේ.",
     "PermissionDenied": "අවසර ප්‍රතික්ෂේප කරන ලදී",
     "EnableCameraAccessToCapturePhotos": "ඡායාරූප ගැනීමට සහ ලේඛන පරිලෝකනය කිරීමට කැමරා ප්‍රවේශය සක්‍රිය කරන්න.",
     "UnableToRequestCameraPermissionPleaseTryAgain": "කැමරා අවසරය ඉල්ලීමට නොහැක. කරුණාකර නැවත උත්සාහ කරන්න.",
@@ -281,7 +325,7 @@
     "PleaseEnterTheOTPCodeSentTo": "කරුණාකර මෙයට එවන ලද OTP කේතය ඇතුළත් කරන්න",
     "IDidntReceiveTheCode": "මට කේතය ලැබුණේ නැත!",
     "ResendIt": "එය නැවත එවන්න",
-    "Resendagain": "නැවත එවන්න!",
+    "ResendAgain": "නැවත එවන්න!",
     "Verify": "සත්‍යාපනය කරන්න",
     "TheOTPYouEnteredIsInvalidPleaseTryAgain": "ඔබ ඇතුළත් කළ OTP වලංගු නොවේ. කරුණාකර නැවත උත්සාහ කරන්න",
     "PleaseEnterTheFullOTPCode": "කරුණාකර සම්පූර්ණ OTP කේතය ඇතුළත් කරන්න",
@@ -341,13 +385,14 @@
     "YourQRCodeHasBeenSavedToYourGallery": "ඔබගේ QR කේතය ඔබගේ ගැලරියට සුරකින ලදී.",
     "UnableTSaveQRCodePleaseTryAgain": "QR කේතය සුරැකීමට නොහැක. කරුණාකර නැවත උත්සාහ කරන්න.",
     "ThisDeviceDoesNotSupportSharingQRCodes": "මෙම උපාංගය QR කේත බෙදාගැනීමට සහාය නොදක්වයි.",
-    "UnableToShareQRCodePleaseTryAgainLater": "QR කේතය බෙදාගැනීමට නොහැක. කරුණාකර පසුව නැවත උත්සාහ කරන්න.",
     "YourFarmOwnerHasNotRegisteredForAQRCodeYet": "ඔබගේ ගොවිපල හිමිකරු තවමත් QR කේතයක් සඳහා ලියාපදිංචි වී නොමැත.",
+    "YourFarmOwnerHasNotRegisteredForAQRcodeYet": "ඔබගේ ගොවිපල හිමිකරු තවමත් QR කේතයක් සඳහා ලියාපදිංචි වී නොමැත.",
     "ToObtainAccessToYourUniqueQRCodePleaseRegisterAsAMemberByEnteringYourBankDetailsThisCodeWillEnsureSmoothTransactionsAndSecurePaymentsDirectlyToYourBankAtOurCollectionCentres": "ඔබගේ අද්විතීය QR කේතයට ප්‍රවේශය ලබා ගැනීමට, කරුණාකර ඔබගේ බැංකු විස්තර ඇතුළත් කර සාමාජිකයෙකු ලෙස ලියාපදිංචි වන්න. මෙම කේතය අපගේ එකතු කිරීමේ මධ්‍යස්ථානවලදී සුමට ගනුදෙනු සහ ඔබගේ බැංකුවට සෘජුවම ආරක්ෂිත ගෙවීම් සහතික කරනු ඇත."
   },
   "ReportComplaint": {
     "ComplaintAddedSuccessfully": "පැමිණිල්ල සාර්ථකව එක් කරන ලදී!",
     "FailedToAddAComplaintPleaseTryAgain": "පැමිණිල්ලක් එක් කිරීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
+    "ProhibitedLanguageDetected": "ඔබගේ පැමිණිල්ලේ නුසුදුසු හෝ තහනම් වචන අඩංගු වේ. කරුණාකර ඒවා ඉවත් කර නැවත උත්සාහ කරන්න.",
     "TellUsThe": "අපට කියන්න",
     "Problem": "ගැටලුව",
     "SelectComplaintCategory": "පැමිණිලි කාණ්ඩය තෝරන්න",
@@ -363,7 +408,9 @@
     "ViewResponse": "ප්‍රතිචාරය බලන්න",
     "NoResponseYetForThisComplaint": "මෙම පැමිණිල්ල සඳහා තවමත් ප්‍රතිචාරයක් නැත.",
     "RefNo": "යොමු අංකය",
-    "Sent": "එවන ලදී"
+    "Sent": "එවන ලදී",
+    "AM": "පෙ.ව.",
+    "PM": "ප.ව."
   },
   "MarketPriceSlideShow": {
     "Note": "සටහන",
@@ -400,14 +447,15 @@
     "Try1FarmForFree": "එක් ගොවිපලක් නොමිලේ උත්සාහ කරන්න",
     "OtherStaff": "වෙනත් කාර්ය මණ්ඩලය",
     "Members": "සාමාජිකයන්",
+    "Member": "සාමාජිකයා",
     "FarmAssets": "ගොවිපල වත්කම්",
-    "AreYouSureYouWantToDeleteThisFarm": "ඔබට මෙම ගොවිපල මකා දැමීමට අවශ්‍ය බව ඔබට විශ්වාසද?",
-    "AreYouSureYouWantToDeleteThisMember": "ඔබට මෙම සාමාජිකයා මකා දැමීමට අවශ්‍ය බව ඔබට විශ්වාසද?",
+    "AreYouSureYouWantToDeleteThisFarm": "ඔබට මෙම ගොවිපල ඉවත් කරන්නට අවශ්‍ය බව ඔබට විශ්වාසද?",
+    "AreYouSureYouWantToDeleteThisMember": "ඔබට මෙම සාමාජිකයා ඉවත් කරන්නට අවශ්‍ය බව ඔබට විශ්වාසද?",
     "DeletingThisFarmWillPermanentlyRemoveAllAssociatedManagersCropCalendarsAndAssets": "මෙම ගොවිපල මකා දැමීමෙන් සියලුම ආශ්‍රිත කළමනාකරුවන්, භෝග දින දර්ශන සහ වත්කම් ස්ථිරවම ඉවත් කරනු ඇත.",
     "DeletingThisMemberWillPermanentlyRemoveAllDataRelatedToThatMember": "මෙම සාමාජිකයා මකා දැමීමෙන් එම සාමාජිකයාට අදාළ සියලුම දත්ත ස්ථිරවම ඉවත් කරනු ඇත.",
     "ThisActionCannotBeUndone": "මෙම ක්‍රියාව ආපසු හැරවිය නොහැක.",
-    "DeleteMember": "සාමාජිකයා මකන්න",
-    "YesDelete": "ඔව්, මකන්න",
+    "DeleteMember": "සාමාජිකයා ඉවත් කරන්න",
+    "YesDelete": "ඔව්, ඉවත් කරන්න",
     "Edit": "සංස්කරණය කරන්න",
     "Farm": "ගොවිපල",
     "NoStaffMembersFound": "කාර්ය මණ්ඩල සාමාජිකයින් හමු නොවීය",
@@ -435,8 +483,8 @@
     "EnterNumberOfStaff": "කාර්ය මණ්ඩල සංඛ්‍යාව ඇතුළත් කරන්න",
     "Updating...": "යාවත්කාලීන කරමින්...",
     "SelectDistrict": "දිස්ත්‍රික්කය තෝරන්න",
-    "FarmDeletedSuccessfully": "ගොවිපල සාර්ථකව මකා දමන ලදී",
-    "FarmMemberDeletedSuccessfully": "ගොවිපල සාමාජිකයා සාර්ථකව මකා දමන ලදී",
+    "FarmDeletedSuccessfully": "ගොවිපල සාර්ථකව ඉවත් කරන ලදී",
+    "FarmMemberDeletedSuccessfully": "ගොවිපල සාමාජිකයා සාර්ථකව ඉවත් කරන ලදී",
     "FarmUpdatedSuccessfully": "ගොවිපල සාර්ථකව යාවත්කාලීන කරන ලදී",
     "FarmBlocked": "ගොවිපල අවහිර කර ඇත",
     "ThisFarmIsBlockedDueToExpiredProMembershipPleaseRenewToAccessFarmDetails": "කල් ඉකුත් වූ Pro සාමාජිකත්වය හේතුවෙන් මෙම ගොවිපල අවහිර කර ඇත. ගොවිපල විස්තර වෙත ප්‍රවේශ වීමට කරුණාකර අලුත් කරන්න.",
@@ -452,6 +500,7 @@
     "PleaseSelectARole": "කරුණාකර තනතුරක් තෝරන්න",
     "LoadingFarmDetails...": "ගොවිපල විස්තර පූරණය කරමින්...",
     "EnterFirstName": "මුල් නම ඇතුළත් කරන්න",
+    "EnterLastName": "අවසන් නම ඇතුළත් කරන්න",
     "NIC": "ජාතික හැඳුනුම්පත් අංකය",
     "EnterNIC": "ජාතික හැඳුනුම්පත් අංකය ඇතුළත් කරන්න",
     "Role": "තනතුර",
@@ -459,7 +508,6 @@
     "SaveFarm": "ගොවිපල සුරකින්න",
     "Saving...": "සුරකිමින්...",
     "PhoneNumber": "දුරකථන අංකය",
-    "EnterLastName": "අවසන් නම ඇතුළත් කරන්න",
     "PleaseEnterAValidSriLankanNIC": "කරුණාකර වලංගු ශ්‍රී ලාංකික ජාතික හැඳුනුම්පත් අංකයක් ඇතුළත් කරන්න",
     "FarmSavedSuccessfully": "ගොවිපල සාර්ථකව සුරකින ලදී!",
     "Manager": "කළමනාකරු",
@@ -467,7 +515,7 @@
     "Worker": "කම්කරු",
     "Owner": "හිමිකරු",
     "FarmManager": "ගොවිපල කළමනාකරු",
-    "FarmSupervisor": "ගොවිපල අධීක්ෂක",
+    "FarmSupervisor": "අධීක්ෂක",
     "FarmLaborer": "ගොවිපල කම්කරු",
     "FarmOwner": "ගොවිපල හිමිකරු",
     "CreateYourFirstFarmForFree": "ඔබගේ පළමු ගොවිපල නොමිලේ සාදන්න!",
@@ -498,7 +546,8 @@
     "StaffMemberIDIsMissing": "කාර්ය මණ්ඩල සාමාජික හැඳුනුම්පත මග හැරී ඇත",
     "NoAuthenticationTokenFound": "සත්‍යාපන ටෝකනයක් හමු නොවීය",
     "FailedToFFetchStaffMemberData": "කාර්ය මණ්ඩල සාමාජික දත්ත ලබා ගැනීමට අසමත් විය",
-    "EditSelectedRoleDetails": "{{selectedRole}} විස්තර සංස්කරණය කරන්න",
+    "EditMemberDetails": "සාමාජික විස්තර සංස්කරණය",
+    "EditSelectedRoleDetails": "{{selectedRole}}ගේ විස්තර සංස්කරණය",
     "FailedToDeleteFarm": "ගොවිපල මැකීමට අසමත් විය",
     "FailedToDeleteStaffMember": "කාර්ය මණ්ඩල සාමාජිකයා මැකීමට අසමත් විය",
     "Crops": "භෝග",
@@ -530,11 +579,26 @@
     "DuplicateNumbersAreNotAllowed.": "අනුපිටපත් අංකවලට අවසර නැත.",
     "DuplicateNICNumbersAreNotAllowed": "අනුපිටපත් ජාතික හැඳුනුම්පත් අංකවලට අවසර නැත.",
     "PleaseFixPhoneNumberValidationErrorsBeforeSaving": "කරුණාකර සුරැකීමට පෙර දුරකථන අංක වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
+    "PleaseFixNICValidationErrorsBeforeSaving": "කරුණාකර සුරැකීමට පෙර ජාතික හැඳුනුම්පත් වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
+    "Please fix NIC validation errors before saving.": "කරුණාකර සුරැකීමට පෙර ජාතික හැඳුනුම්පත් වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
+    "OneOrMorePhoneNumbersAlreadyRegistered": "දුරකථන අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් දුරකථන අංක භාවිතා කරන්න.",
+    "One or more phone numbers are already registered. Please use different phone numbers.": "දුරකථන අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් දුරකථන අංක භාවිතා කරන්න.",
+    "OneOrMoreNICNumbersAlreadyRegistered": "ජාතික හැඳුනුම්පත් අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් ජාතික හැඳුනුම්පත් අංක භාවිතා කරන්න.",
+    "One or more NIC numbers are already registered. Please use different NIC numbers.": "ජාතික හැඳුනුම්පත් අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් ජාතික හැඳුනුම්පත් අංක භාවිතා කරන්න.",
+    "DuplicatePhoneNumbersFoundPleaseUseUnique": "අනුපිටපත් දුරකථන අංක හමු විය. කරුණාකර එක් එක් කාර්ය මණ්ඩල සාමාජිකයා සඳහා අනන්‍ය දුරකථන අංක භාවිතා කරන්න.",
+    "Duplicate phone numbers found. Please use unique phone numbers for each staff member.": "අනුපිටපත් දුරකථන අංක හමු විය. කරුණාකර එක් එක් කාර්ය මණ්ඩල සාමාජිකයා සඳහා අනන්‍ය දුරකථන අංක භාවිතා කරන්න.",
+    "DuplicateNICNumbersFoundPleaseUseUnique": "අනුපිටපත් ජාතික හැඳුනුම්පත් අංක හමු විය. කරුණාකර එක් එක් කාර්ය මණ්ඩල සාමාජිකයා සඳහා අනන්‍ය ජාතික හැඳුනුම්පත් අංක භාවිතා කරන්න.",
+    "Duplicate NIC numbers found. Please use unique NIC numbers for each staff member.": "අනුපිටපත් ජාතික හැඳුනුම්පත් අංක හමු විය. කරුණාකර එක් එක් කාර්ය මණ්ඩල සාමාජිකයා සඳහා අනන්‍ය ජාතික හැඳුනුම්පත් අංක භාවිතා කරන්න.",
+    "PleaseEnterAValidPhoneNumber": "කරුණාකර වලංගු දුරකථන අංකයක් ඇතුළත් කරන්න",
+    "Please enter a valid phone number": "කරුණාකර වලංගු දුරකථන අංකයක් ඇතුළත් කරන්න",
+    "ErrorCheckingPhoneNumber": "දුරකථන අංකය පරීක්ෂා කිරීමේදී දෝෂයක් ඇති විය",
+    "Error checking phone number": "දුරකථන අංකය පරීක්ෂා කිරීමේදී දෝෂයක් ඇති විය",
+    "MissingFarmDetailsPleaseGoBack": "ගොවිපල විස්තර අසම්පූර්ණයි. කරුණාකර ආපසු ගොස් සියලු පියවර සම්පූර්ණ කරන්න.",
     "StaffCountCannotBeLessThanAppUserCountAppUsers": "කාර්ය මණ්ඩල සංඛ්‍යාව {{appUserCount}} යෙදුම් පරිශීලකයින්ට වඩා අඩු විය නොහැක",
     "Total": "එකතුව",
     "YouHaveSuccessfullyAppliedForYourCertificate": "ඔබ ඔබගේ සහතිකය සඳහා සාර්ථකව අයදුම් කර ඇත!",
     "AllCompleted": "සියල්ල සම්පූර්ණයි",
-    "Pending": "විකල්ප",
+    "Pending": "විසඳීමට ඇති",
     "LoadingCertificateTasks...": "සහතික කාර්යයන් පූරණය කරමින්...",
     "UploadedByYou": "උඩුගත කළේ : ඔබ",
     "ClickAPhoto": "ඡායාරූපයක් ගන්න",
@@ -557,7 +621,13 @@
     "PRO": "PRO",
     "ID": "හැඳුනුම්පත",
     "StaffMemberHasBeenUpdatedSuccessfully": "කාර්ය මණ්ඩල සාමාජිකයා සාර්ථකව යාවත්කාලීන කර ඇත.",
-    "CompletionRemovedSuccessfully": "සම්පූර්ණ කිරීම සාර්ථකව ඉවත් කරන ලදී"
+    "CompletionRemovedSuccessfully": "සම්පූර්ණ කිරීම සාර්ථකව ඉවත් කරන ලදී",
+    "PleaseEnterAtLeastOneExtentValue": "කරුණාකර අවම වශයෙන් එක් විශාලත්ව අගයක් ඇතුළත් කරන්න",
+    "NotAllowedToBeEmpty": "හිස්ව තැබිය නොහැක",
+    "PleaseFixNICValidationErrorsBeforeSaving": "කරුණාකර සුරැකීමට පෙර ජාතික හැඳුනුම්පත් අංක වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
+    "PleaseFixDuplicateNICValidationErrorsBeforeSaving": "කරුණාකර සුරැකීමට පෙර අනුපිටපත් ජාතික හැඳුනුම්පත් අංක වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
+    "OneOrMorePhoneNumbersAreAlreadyRegistered": "එක් හෝ ඊට වඩා වැඩි දුරකථන අංක දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් දුරකථන අංකයක් ඇතුළත් කරන්න.",
+    "OneOrMoreNICNumbersAreAlreadyRegistered": "එක් හෝ ඊට වඩා වැඩි ජාතික හැඳුනුම්පත් අංක දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් ජාතික හැඳුනුම්පත් අංකයක් ඇතුළත් කරන්න."
   },
   "SelectCrop": {
     "Description": "විස්තරය",
@@ -601,9 +671,9 @@
     "AvailableExtent": "පවතින විශාලත්වය"
   },
   "MyCrop": {
-    "YouHaveNotEnrolledAnyCropsYet": "ඔබ තවමත් කිසිදු බෝගයක් ලියාපදිංචි කර නොමැත.",
+    "YouHaveNotEnrolledAnyCropsYet": "තවම වගාවක් ආරම්භ කර නොමැත",
     "NoFarmCultivationsYet": "තවමත් ගොවිපල වගාවන් නොමැත",
-    "NoOngoingCultivationsYet": "තවමත් සිදුවෙමින් පවතින වගාවන් නොමැත"
+    "NoOngoingCultivationsYet": "තවම වගාවක් ආරම්භ කර නොමැත"
   },
   "CropCalender": {
     "ConfirmRemove": "ඉවත් කිරීම තහවුරු කරන්න",
@@ -632,13 +702,13 @@
     "ViewPrevious": "පෙර බලන්න",
     "NoImagesYet": "📸 තවමත් රූප නැත",
     "YouHaventUploadedAnyImagesForTaskYetCompleteThisTaskByTakingPhotosToTrackYourProgress": "ඔබ තවමත් Task {taskIndex} සඳහා කිසිදු රූපයක් උඩුගත කර නොමැත. ඔබගේ ප්‍රගතිය නිරීක්ෂණය කිරීමට ඡායාරූප ගනිමින් මෙම කාර්යය සම්පූර්ණ කරන්න!",
-    "BuyACertificationFor": "සඳහා සහතිකයක් මිලදී ගන්න",
+    "BuyACertificationFor": "සඳහා සහතිකයක් මිලදී ගන්නවද?",
     "Reject": "ප්‍රතික්ෂේප කරන්න",
     "BuyNow": "දැන් මිලදී ගන්න",
     "NoQuestionnaireItemsAvailableForThisCertificate": "මෙම සහතිකය සඳහා ප්‍රශ්නාවලි අයිතම නොමැත",
     "CalendarTasks": "දින දර්ශන කාර්යයන්",
     "PleaseCompleteTheCertificationTasksToUnlockTheCalendarTasks": "දින දර්ශන කාර්යයන් අගුළු ඇරීමට කරුණාකර සහතික කාර්යයන් සම්පූර්ණ කරන්න",
-    "Pending": "විකල්ප",
+    "Pending": "විසඳීමට ඇති",
     "AllCompleted": "සියල්ල සම්පූර්ණයි",
     "LoadingCertificate": "සහතිකය පූරණය කරමින්...",
     "GAPCertification": "හොඳ කෘෂිකාර්මික පිළිවෙත් සහතිකය",
@@ -651,7 +721,7 @@
   "Manager": {
     "ManageWorkers": "කම්කරුවන් කළමනාකරණය කරන්න",
     "OngoingCultivations": "--සිදුවෙමින් පවතින වගාවන්--",
-    "NoOngoingCultivationsFound": "සිදුවෙමින් පවතින වගාවන් හමු නොවීය"
+    "NoOngoingCultivationsFound": "තවම වගාවක් ආරම්භ කර නොමැත"
   },
   "Payment": {
     "EnterCardNumber": "කාඩ් අංකය ඇතුළත් කරන්න",
@@ -663,7 +733,8 @@
     "ProcessingFee": "සැකසුම් ගාස්තුව",
     "FullTotal": "සම්පූර්ණ එකතුව",
     "SecureInfo": "ඔබගේ ගෙවීම් තොරතුරු සුරක්ෂිත මෙන්ම සංකේතනය කර ඇත.",
-    "ContinueToPayment": "ගෙවීමට ඉදිරියට යන්න"
+    "ContinueToPayment": "ගෙවීමට ඉදිරියට යන්න",
+    "Rs": "රු."
   },
   "AddressDetails": {
     "BuildingHouseNo": "ගොඩනැගිල්ල / නිවස අංකය",
@@ -671,7 +742,9 @@
     "StreetName": "වීදි නම",
     "EnterStreetName": "වීදි නම ඇතුළත් කරන්න",
     "City": "නගරය",
-    "EnterCityName": "නගරයේ නම ඇතුළත් කරන්න"
+    "EnterCityName": "නගරයේ නම ඇතුළත් කරන්න",
+    "EnterFirstName": "මුල් නම ඇතුළත් කරන්න",
+    "EnterLastName": "අවසන් නම ඇතුළත් කරන්න"
   },
   "Notification": {
     "CropTaskUpdate": "බෝග කාර්ය යාවත්කාලීන කිරීම!",
@@ -751,7 +824,8 @@
     "CertificateIDIsMissing": "සහතික හැඳුනුම්පත මග හැරී ඇත",
     "PleaseFillAllPaymentDetails": "කරුණාකර සියලුම ගෙවීම් විස්තර පුරවන්න",
     "PleaseEnterAValidCardExpiryDate": "කරුණාකර වලංගු කාඩ් කල් ඉකුත්වන දිනයක් ඇතුළත් කරන්න (MM/YY)",
-    "NoCertificatesAvailableForCropsAtTheMoment": "මේ මොහොතේ භෝග සඳහා සහතික නොමැත"
+    "NoCertificatesAvailableForCropsAtTheMoment": "මේ මොහොතේ භෝග සඳහා සහතික නොමැත",
+    "NoCertificatesAvailable": "මේ මොහොතේ සහතික නොමැත"
   },
   "ProjectStatus": {
     "ReceivedTotalInvestment": "ලැබුණු මුළු ආයෝජනය",
@@ -762,7 +836,8 @@
     "TotalInvestment": "මුළු ආයෝජනය",
     "Needed": "අවශ්‍යයි",
     "PendingBalance": "විකල්ප ශේෂය",
-    "ToReceive": "ලැබීමට"
+    "ToReceive": "ලැබීමට",
+    "NoInvestmentTransactionsFound": "ගනුදෙනු කිසිවක් හමු නොවීය"
   },
   "CurrentAssets": {
     "MyAssets": "මගේ වත්කම්",
@@ -773,6 +848,7 @@
     "AssetRemovedSuccessfully": "වත්කම සාර්ථකව ඉවත් කරන ලදී!",
     "Category": "කාණ්ඩය",
     "SelectCategory": "කාණ්ඩය තෝරන්න",
+    "IsRequired": "අවශ්‍යයි",
     "SelectAsset": "වත්කම තෝරන්න",
     "EnterAsset": "වත්කම ඇතුළත් කරන්න",
     "EnterBrand": "වෙළඳ නාමය ඇතුළත් කරන්න",
@@ -1118,7 +1194,10 @@
     "SteelSeedSowing": "වානේ සහ ප්ලාස්ටික් බීජ වපුරන යන්ත්‍රය",
     "TractorMountedSpray": "ට්‍රැක්ටරයට සම්බන්ධ ඉසින යන්ත්‍රය",
     "PermitFeeAnnuallyLKR": "වාර්ෂික බලපත්‍ර ගාස්තුව (රු.)",
-    "WarrantyExpireDateMustBeInTheFuture": "වගකීම් කල් ඉකුත්වීමේ දිනය අනාගත දිනයක් විය යුතුය."
+    "WarrantyExpireDateMustBeInTheFuture": "වගකීම් කල් ඉකුත්වීමේ දිනය අනාගත දිනයක් විය යුතුය.",
+    "NoAssetTypeFound": "වත්කම් වර්ගයක් හමු නොවීය",
+    "NoBrandFound": "වෙළඳ නාමයක් හමු නොවීය",
+    "NoTypeFound": "වර්ගයක් හමු නොවීය."
   },
   "ImageViewerModal": {
     "UploadedBy": "උඩුගත කළේ :",
@@ -1129,6 +1208,14 @@
     "Owner": "හිමිකරු"
   },
   "PublicForum": {
+    "You": "ඔබ",
+    "JustNow": "දැන්",
+    "MinuteAgo": "විනාඩි 1 කට පෙර",
+    "MinutesAgo": "විනාඩි {{count}} කට පෙර",
+    "HourAgo": "පැය 1 කට පෙර",
+    "HoursAgo": "පැය {{count}} කට පෙර",
+    "DayAgo": "දින 1 කට පෙර",
+    "DaysAgo": "දින {{count}} කට පෙර",
     "StartANewDiscussion": "නව සාකච්ඡාවක් ආරම්භ කරන්න",
     "LoadingComments": "අදහස් පූරණය වෙමින්...",
     "Reply": "පිළිතුර",
@@ -1152,6 +1239,7 @@
     "ViewMore": "තවත් බලන්න",
     "CommentCannotBeEmpty": "අදහස හිස් විය නොහැක!",
     "FailedToAddComment": "අදහස එක් කිරීමට අසමත් විය",
+    "ProhibitedLanguageDetected": "ඔබගේ පණිවිඩයේ නුසුදුසු හෝ තහනම් වචන අඩංගු වේ. කරුණාකර ඒවා ඉවත් කර නැවත උත්සාහ කරන්න.",
     "FailedToRefreshPosts": "පළ කිරීම් නැවුම් කිරීමට අසමත් විය.",
     "DescriptionIsRequired": "විස්තරය අවශ්‍ය වේ",
     "NoResultsFoundForYourSearch": "ඔබගේ සෙවීම සඳහා ප්‍රතිඵල කිසිවක් හමු නොවීය",
@@ -1202,7 +1290,7 @@
     "RequestLetter": "ඉල්ලීම් ලිපිය",
     "DearSirMadam": "ප්‍රිය ස්වාමිනි/මැතිනිය,",
     "SendForApproval": "අනුමැතිය සඳහා යවන්න",
-    "IFarmersNameAFarmerFromDistrictAmWritingToFormallyRequestAnAgriculturalInvestmentForTheUpcomingCultivationSeason": "මම, [ගොවියාගේ නම], [දිස්ත්‍රික්කය] හි ගොවියෙකු, ඉදිරි වගා කන්නය සඳහා කෘෂිකාර්මික ආයෝජනයක් විධිමත් ලෙස ඉල්ලා සිටීමට ලියන්නෙමි.",
+    "IFarmersNameAFarmerFromDistrictAmWritingToFormallyRequestAnAgriculturalInvestmentForTheUpcomingCultivationSeason": "මම, [Farmer's Name], [District] හි ගොවියෙකු, ඉදිරි වගා කන්නය සඳහා කෘෂිකාර්මික ආයෝජනයක් විධිමත් ලෙස ඉල්ලා සිටීමට ලියන්නෙමි.",
     "TheProjectDetailsAreAsFollows": "ව්‍යාපෘති විස්තර පහත පරිදි වේ:",
     "ThisInvestmentIsEssentialForCoveringTheCostsOfHighQualitySeedsFertilizersPesticidesIrrigationFacilitiesAndLaborExpensesForTheProjectedYearTheExpectedHarvestIsSufficientToGenerateSufficientRevenueForTheTimelyRepaymentOfTheLoanAlongWithAccruedInterest": "මෙම ආයෝජනය උසස් තත්ත්වයේ බීජ, පොහොර, පළිබෝධනාශක, වාරි පහසුකම් සහ අපේක්ෂිත අස්වැන්න සාක්ෂාත් කර ගැනීමට අවශ්‍ය ශ්‍රම වියදම් ආවරණය කිරීම සඳහා අත්‍යවශ්‍ය වේ. අපේක්ෂිත අස්වැන්න උපචිත පොලී සමඟ ණය නියමිත වේලාවට ආපසු ගෙවීම සඳහා ප්‍රමාණවත් ආදායමක් උත්පාදනය කිරීමට අපේක්ෂා කෙරේ.",
     "IHaveAAttachedTheNecessaryDocumentsForYourPerusal": "ඔබගේ බැල්ම සඳහා අවශ්‍ය ලියකියවිලි අමුණා ඇත.",
@@ -1242,7 +1330,8 @@
     "Eg10B": "උදා: 10/B",
     "LandsPlotNumber": "ඉඩමේ භූමි අංකය",
     "LandsStreetName": "ඉඩමේ වීදි නම",
-    "LandsCity": "ඉඩමේ නගරය"
+    "LandsCity": "ඉඩමේ නගරය",
+    "Kg": "කිලෝග්‍රෑම්"
   },
   "RequestInspectionForm": {
     "RequestInspection": "පරීක්ෂාවට ඉල්ලන්න",
@@ -1297,7 +1386,13 @@
     "FailedToFetchFarmCropsPleaseTryAgain": "ගොවිපල භෝග ලබා ගැනීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
     "FailedToFetchFarmsPleaseTryAgain": "ගොවිපල ලබා ගැනීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
     "FailedToFetchServicesPleaseTryAgain": "මේ මොහොතේ පරීක්ෂණ සේවා නොමැත. කරුණාකර නැවත උත්සාහ කරන්න",
-    "SearchFarm": "ගොවිපල සොයන්න"
+    "SearchFarm": "ගොවිපල සොයන්න",
+    "UnknownCrop": "නොදන්නා බෝගය",
+    "Warning": "අවවාදයයි",
+    "DiscardAndProceed": "ඉවතලා ඉදිරියට යන්න",
+    "PleaseCompleteAllRequiredFields": "කරුණාකර සියලුම අවශ්‍ය ක්ෂේත්‍ර සම්පූර්ණ කරන්න හෝ ඔබගේ වත්මන් දත්ත සුරැකීමට 'තවත් එක් කරන්න' ක්ලික් කරන්න.",
+    "NoServiceFound": "සේවාවක් හමු නොවීය",
+    "NoFarmFound": "ගොවිපලක් හමු නොවීය"
   },
   "RequestHistory": {
     "YouHaveNoRequestsAddedYet": "--ඔබ තවමත් කිසිදු ඉල්ලීමක් එකතු කර නැත--",
@@ -1407,7 +1502,22 @@
     "LoadingStatus": "තත්වය පූරණය වෙමින්..."
   },
   "MyPensionAccount": {
-    "GoViPension": "ගොවිපෙන්ෂන්"
+    "GoViPension": "ගොවිපෙන්ෂන්",
+    "TotalPensionValue": "මුළු විශ්‍රාම වැටුප් වටිනාකම",
+    "YouWillGetYourPensionIn": "ඔබට විශ්‍රාම වැටුප ලැබෙනුයේ...",
+    "Year": "වසර",
+    "Years": "වසර",
+    "Month": "මාස",
+    "Months": "මාස",
+    "Day": "දින",
+    "Days": "දින",
+    "LoadingPensionData": "විශ්‍රාම වැටුප් දත්ත පූරණය වෙමින් පවතී...",
+    "Currency": "රු.",
+    "NotApproved": "අනුමත කර නැත",
+    "PensionRequestNotApproved": "ඔබගේ විශ්‍රාම වැටුප් ඉල්ලීම තවමත් අනුමත කර නොමැත. කරුණාකර ඔබගේ තත්වය පරීක්ෂා කරන්න.",
+    "NoPensionFound": "විශ්‍රාම වැටුපක් හමු නොවීය",
+    "NoApprovedPensionAccount": "ඔබට තවමත් අනුමත විශ්‍රාම වැටුප් ගිණුමක් නොමැත.",
+    "FailedToFetchPensionData": "විශ්‍රාම වැටුප් දත්ත ලබා ගැනීමට අපොහොසත් විය. කරුණාකර නැවත උත්සාහ කරන්න."
   },
   "Calculator": {
     "Calculator": "ගණක යන්ත්‍රය",
@@ -1600,5 +1710,60 @@
     "My Orders": "මගේ ඇණවුම්",
     "All": "සියල්ල",
     "No Previous Orders": "පෙර ඇණවුම් නැත"
+  },
+  "AddFixedAsset": {
+    "DuplicateName": "නම දැනටමත් පවතී",
+    "AssetAlreadyExists": "\"{{name}}\" නම සහිත {{assetType}} වත්කම දැනටමත් පවතී.",
+    "Land": "ඉඩම්",
+    "Building": "ගොඩනැගිලි"
+  },
+  "Calendar": {
+    "Months": [
+      "ජනවාරි",
+      "පෙබරවාරි",
+      "මාර්තු",
+      "අප්‍රේල්",
+      "මැයි",
+      "ජූනි",
+      "ජූලි",
+      "අගෝස්තු",
+      "සැප්තැම්බර්",
+      "ඔක්තෝබර්",
+      "නොවැම්බර්",
+      "දෙසැම්බර්"
+    ],
+    "MonthsShort": [
+      "ජන",
+      "පෙබ",
+      "මාර්",
+      "අප්‍රේ",
+      "මැයි",
+      "ජූනි",
+      "ජූලි",
+      "අගෝ",
+      "සැප්",
+      "ඔක්",
+      "නොවැ",
+      "දෙසැ"
+    ],
+    "Days": [
+      "ඉරිදා",
+      "සඳුදා",
+      "අඟහරුවාදා",
+      "බදාදා",
+      "බ්‍රහස්පතින්දා",
+      "සිකුරාදා",
+      "සෙනසුරාදා"
+    ],
+    "DaysShort": ["ඉරි", "සඳු", "අඟ", "බදා", "බ්‍ර", "සිකු", "සෙන"]
+  },
+  "EditProfile": {
+    "EditProfile": "පැතිකඩ සංස්කරණය කරන්න",
+    "PermissionDenied": "අවසර නොමැත",
+    "PleaseAllowAccessToYourGalleryToProceed": "ඉදිරියට යාමට කරුණාකර ඔබගේ ගැලරිය වෙත ප්‍රවේශය ලබා දෙන්න.",
+    "ProfileImageUpdatedSuccessfully": "පැතිකඩ රූපය සාර්ථකව යාවත්කාලීන කරන ලදී.",
+    "FirstNameAndLastNameCannotBeEmpty": "මුල් නම සහ අවසාන නම හිස් විය නොහැක.",
+    "YourProfileHasBeenUpdatedSuccessfully": "ඔබගේ පැතිකඩ සාර්ථකව යාවත්කාලීන කරන ලදී.",
+    "FailedToUpdateProfileTryAgainLater": "පැතිකඩ යාවත්කාලීන කිරීමට අසමත් විය. කරුණාකර පසුව නැවත උත්සාහ කරන්න."
   }
 }

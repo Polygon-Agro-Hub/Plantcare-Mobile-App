@@ -139,7 +139,7 @@ const RequestSummary: React.FC<RequestSummaryProps> = ({
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.goBack();
+        navigation.navigate("RequestHistory");
         return true;
       };
 
