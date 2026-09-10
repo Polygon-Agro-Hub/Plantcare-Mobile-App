@@ -1193,7 +1193,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
 
               <View className="px-6 pb-6 ">
                 <Text className="text-center text-base text-gray-800 mb-5">
-                  {t("CropCalender.BuyACertificationFor")} {cropName}?
+                  {cropName} {t("CropCalender.BuyACertificationFor")}
                 </Text>
 
                 <View className="flex-row justify-center gap-4">
