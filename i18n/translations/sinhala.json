@@ -803,6 +803,7 @@
     "AssetRemovedSuccessfully": "වත්කම සාර්ථකව ඉවත් කරන ලදී!",
     "Category": "කාණ්ඩය",
     "SelectCategory": "කාණ්ඩය තෝරන්න",
+    "IsRequired": "අවශ්‍යයි",
     "SelectAsset": "වත්කම තෝරන්න",
     "EnterAsset": "වත්කම ඇතුළත් කරන්න",
     "EnterBrand": "වෙළඳ නාමය ඇතුළත් කරන්න",

@@ -805,6 +805,7 @@
     "AssetRemovedSuccessfully": "Asset removed successfully!",
     "Category": "Category",
     "SelectCategory": "Select Category",
+    "IsRequired": "is required",
     "SelectAsset": "Select Asset",
     "EnterAsset": "Enter Asset",
     "EnterBrand": "Enter Brand",
