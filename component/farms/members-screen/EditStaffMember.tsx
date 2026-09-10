@@ -119,10 +119,16 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
     ];
   }, [userRole, selectedLanguage]);
 
-  const countryModalData = countryData.map((country) => ({
-    label: `${country.emoji}  ${country.name}  (${country.dial_code})`,
-    value: country.dial_code,
-  }));
+  const countryModalData = countryData.map((country) => {
+    const key = country.name.replace(/\s+/g, "");
+    const translatedName = t(`Country.${key}`, country.name);
+    return {
+      label: `${country.emoji}  ${translatedName}  (${country.dial_code})`,
+      value: country.dial_code,
+      countryName: country.name,
+      translatedCountryName: translatedName,
+    };
+  });
 
   const selectedCountry = countryData.find((c) => c.dial_code === countryCode);
 
@@ -556,8 +562,8 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
               <Text
                 className={
                   selectedRole
-                    ? "text-gray-700 text-base"
-                    : "text-gray-400 text-base"
+                    ? "text-gray-700 text-sm"
+                    : "text-gray-400 text-sm"
                 }
               >
                 {selectedRole
@@ -586,20 +592,23 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
             </Text>
             <View className="bg-gray-100 px-4 rounded-3xl h-[50px] justify-center">
               <TextInput
-                style={{
-                  flex: 1,
-                  marginLeft: 8,
-                  fontSize: 16,
-                  height: 50,
-                  paddingVertical: 0,
-                  includeFontPadding: false,
-                }}
                 placeholder={t("Farms.EnterFirstName")}
                 placeholderTextColor="#9CA3AF"
                 value={firstName}
                 onChangeText={handleFirstNameChange}
                 autoCapitalize="words"
                 editable={!isSubmitting}
+                className="text-gray-800"
+                style={{
+                  flex: 1,
+                  marginLeft: 8,
+                  fontSize: 14,
+                  height: 50,
+                  textAlignVertical: "center",
+                  paddingTop: Platform.OS === "ios" ? 12 : 0,
+                  paddingBottom: Platform.OS === "ios" ? 12 : 0,
+                  includeFontPadding: false,
+                }}
               />
             </View>
           </View>
@@ -611,20 +620,23 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
             </Text>
             <View className="bg-gray-100 px-4 rounded-3xl h-[50px] justify-center">
               <TextInput
-                style={{
-                  flex: 1,
-                  marginLeft: 8,
-                  fontSize: 16,
-                  height: 50,
-                  paddingVertical: 0,
-                  includeFontPadding: false,
-                }}
                 placeholder={t("Farms.EnterLastName")}
                 placeholderTextColor="#9CA3AF"
                 value={lastName}
                 onChangeText={handleLastNameChange}
                 autoCapitalize="words"
                 editable={!isSubmitting}
+                className="text-gray-800"
+                style={{
+                  flex: 1,
+                  marginLeft: 8,
+                  fontSize: 14,
+                  height: 50,
+                  textAlignVertical: "center",
+                  paddingTop: Platform.OS === "ios" ? 12 : 0,
+                  paddingBottom: Platform.OS === "ios" ? 12 : 0,
+                  includeFontPadding: false,
+                }}
               />
             </View>
           </View>
@@ -655,12 +667,15 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
                   style={{
                     flex: 1,
                     marginLeft: 8,
-                    fontSize: 16,
+                    fontSize: 14,
                     height: 50,
-                    paddingVertical: 0,
+                    textAlignVertical: "center",
+                    paddingTop: Platform.OS === "ios" ? 12 : 0,
+                    paddingBottom: Platform.OS === "ios" ? 12 : 0,
                     includeFontPadding: false,
                   }}
                   placeholder="7X XXXXXXX"
+                  placeholderTextColor="#9CA3AF"
                   value={phoneNumber}
                   onChangeText={handlePhoneChange}
                   keyboardType="phone-pad"
@@ -668,6 +683,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
                   underlineColorAndroid="transparent"
                   cursorColor="#141415ff"
                   editable={!isSubmitting}
+                  className="text-gray-800"
                 />
               </View>
             </View>
@@ -700,7 +716,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
               selectedItems={[countryCode]}
               onSelect={(items) => setCountryCode(items[0] ?? "+94")}
               searchPlaceholder={t("Farms.SearchCountry")}
-              searchKeys={["label"]}
+              searchKeys={["label", "countryName", "translatedCountryName"]}
               showSearch={true}
               multiSelect={false}
               noResultsText={t("SignUp.NoCountryFound")}
@@ -716,12 +732,15 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
                 onChangeText={handleNicChange}
                 placeholder={t("Farms.EnterNIC")}
                 placeholderTextColor="#9CA3AF"
+                className="text-gray-800"
                 style={{
                   flex: 1,
                   marginLeft: 8,
-                  fontSize: 16,
+                  fontSize: 14,
                   height: 50,
-                  paddingVertical: 0,
+                  textAlignVertical: "center",
+                  paddingTop: Platform.OS === "ios" ? 12 : 0,
+                  paddingBottom: Platform.OS === "ios" ? 12 : 0,
                   includeFontPadding: false,
                 }}
                 editable={!isSubmitting}

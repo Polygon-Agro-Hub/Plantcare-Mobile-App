@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import {
   View,
   Text,
@@ -39,14 +39,6 @@ interface SignupProps {
 const Bottom = require("../../assets/images/auth/sign-up-bg-vector-bottom.webp");
 const Top = require("../../assets/images/auth/sign-up-bg-vector-top.webp");
 
-const countryItems = countryData.map((country) => ({
-  label: `${country.emoji}  ${country.name}  (${country.dial_code})`,
-  value: country.dial_code,
-  countryName: country.name,
-  flag: country.emoji,
-  dialCode: country.dial_code,
-}));
-
 const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -69,6 +61,21 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
   const [districtModalVisible, setDistrictModalVisible] = useState(false);
   const nicInputRef = useRef<TextInput>(null);
   const { t, i18n } = useTranslation();
+
+  const countryItems = useMemo(() => {
+    return countryData.map((country) => {
+      const key = country.name.replace(/\s+/g, "");
+      const translatedName = t(`Country.${key}`, country.name);
+      return {
+        label: `${country.emoji}  ${translatedName}  (${country.dial_code})`,
+        value: country.dial_code,
+        countryName: country.name,
+        translatedCountryName: translatedName,
+        flag: country.emoji,
+        dialCode: country.dial_code,
+      };
+    });
+  }, [t, i18n.language]);
 
   const districtItems = districtData
     .map((d) => ({
@@ -809,12 +816,15 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
         <GlobalSearchModal
           visible={countryModalVisible}
           onClose={() => setCountryModalVisible(false)}
-          title={t("Select Country Code")}
+          title={t("SignUp.SelectCountryCode", "Select Country Code")}
           data={countryItems}
           selectedItems={[selectedCountryCode]}
           onSelect={handleCountrySelect}
-          searchPlaceholder={t("Search country or dial code...")}
-          searchKeys={["label", "countryName", "dialCode"]}
+          searchPlaceholder={t(
+            "SignUp.SearchCountry",
+            "Search country or dial code...",
+          )}
+          searchKeys={["label", "countryName", "translatedCountryName", "dialCode"]}
           multiSelect={false}
           noResultsText={t("SignUp.NoCountryFound")}
         />

@@ -83,6 +83,14 @@
     "November": "නොවැම්බර්",
     "December": "දෙසැම්බර්"
   },
+  "Country": {
+    "SriLanka": "ශ්‍රී ලංකාව",
+    "Vietnam": "වියට්නාමය",
+    "Cambodia": "කාම්බෝජය",
+    "Bangladesh": "බංග්ලාදේශය",
+    "India": "ඉන්දියාව",
+    "Netherlands": "නෙදර්ලන්තය"
+  },
   "SignUp": {
     "SignUp": "ලියාපදිංචි වන්න",
     "District": "දිස්ත්‍රික්කය",
@@ -103,7 +111,9 @@
     "TheNICNumberYouEnteredIsAlreadyRegisteredPleaseCheckYourDetailsOrLogIn": "ඔබ ඇතුළත් කළ ජාතික හැඳුනුම්පත් අංකය දැනටමත් ලියාපදිංචි කර ඇත, කරුණාකර ඔබගේ විස්තර පරීක්ෂා කරන්න හෝ පුරන්න.",
     "BothThePhoneNumberAndNICNumberEnteredAreAlreadyRegisteredPleaseLogInInstead": "ඔබ ඇතුළත් කළ දුරකථන අංකය සහ ජාතික හැඳුනුම්පත් අංකය දෙකම දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර ඒ වෙනුවට පුරන්න.",
     "ThePhoneNumberYouEnteredIsAlreadyRegisteredPleaseUseADifferentNumberOrLogIn": "ඔබ ඇතුළත් කළ දුරකථන අංකය දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් අංකයක් භාවිතා කරන්න හෝ පුරන්න",
-    "NoCountryFound": "රටක් හමු නොවීය."
+    "NoCountryFound": "රටක් හමු නොවීය.",
+    "SelectCountryCode": "රටේ කේතය තෝරන්න",
+    "SearchCountry": "රට හෝ ඩයල් කේතය සොයන්න..."
   },
   "SignIn": {
     "SignIn": "පුරන්න",

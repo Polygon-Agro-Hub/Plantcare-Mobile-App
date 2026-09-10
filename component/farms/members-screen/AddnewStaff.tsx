@@ -100,10 +100,16 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
     ];
   }, [userRole, t]);
 
-  const countryModalData = countryData.map((country) => ({
-    label: `${country.emoji}  ${country.name}  (${country.dial_code})`,
-    value: country.dial_code,
-  }));
+  const countryModalData = countryData.map((country) => {
+    const key = country.name.replace(/\s+/g, "");
+    const translatedName = t(`Country.${key}`, country.name);
+    return {
+      label: `${country.emoji}  ${translatedName}  (${country.dial_code})`,
+      value: country.dial_code,
+      countryName: country.name,
+      translatedCountryName: translatedName,
+    };
+  });
 
   const getAuthToken = async () => {
     try {
@@ -692,7 +698,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
               selectedItems={[countryCode]}
               onSelect={(items) => setCountryCode(items[0] ?? "+94")}
               searchPlaceholder={t("Farms.SearchCountry")}
-              searchKeys={["label"]}
+              searchKeys={["label", "countryName", "translatedCountryName"]}
               showSearch={true}
               multiSelect={false}
               noResultsText={t("SignUp.NoCountryFound")}

@@ -83,6 +83,14 @@
     "November": "November",
     "December": "December"
   },
+  "Country": {
+    "SriLanka": "Sri Lanka",
+    "Vietnam": "Vietnam",
+    "Cambodia": "Cambodia",
+    "Bangladesh": "Bangladesh",
+    "India": "India",
+    "Netherlands": "Netherlands"
+  },
   "SignUp": {
     "SignUp": "Sign Up",
     "District": "District",
@@ -103,7 +111,9 @@
     "TheNICNumberYouEnteredIsAlreadyRegisteredPleaseCheckYourDetailsOrLogIn": "The NIC number you entered is already registered, please check your details or log in.",
     "BothThePhoneNumberAndNICNumberEnteredAreAlreadyRegisteredPleaseLogInInstead": "Both the phone number and NIC number entered are already registered. Please log in instead.",
     "ThePhoneNumberYouEnteredIsAlreadyRegisteredPleaseUseADifferentNumberOrLogIn": "The phone number you entered is already registered. Please use a different number or log in",
-    "NoCountryFound": "No country found"
+    "NoCountryFound": "No country found",
+    "SelectCountryCode": "Select Country Code",
+    "SearchCountry": "Search country or dial code..."
   },
   "SignIn": {
     "SignIn": "Sign in",
