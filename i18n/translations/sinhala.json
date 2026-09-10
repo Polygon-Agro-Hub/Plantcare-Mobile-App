@@ -626,9 +626,9 @@
     "AvailableExtent": "පවතින විශාලත්වය"
   },
   "MyCrop": {
-    "YouHaveNotEnrolledAnyCropsYet": "ඔබ තවමත් කිසිදු බෝගයක් ලියාපදිංචි කර නොමැත.",
+    "YouHaveNotEnrolledAnyCropsYet": "තවම වගාවක් ආරම්භ කර නොමැත",
     "NoFarmCultivationsYet": "තවමත් ගොවිපල වගාවන් නොමැත",
-    "NoOngoingCultivationsYet": "තවමත් සිදුවෙමින් පවතින වගාවන් නොමැත"
+    "NoOngoingCultivationsYet": "තවම වගාවක් ආරම්භ කර නොමැත"
   },
   "CropCalender": {
     "ConfirmRemove": "ඉවත් කිරීම තහවුරු කරන්න",
@@ -676,7 +676,7 @@
   "Manager": {
     "ManageWorkers": "කම්කරුවන් කළමනාකරණය කරන්න",
     "OngoingCultivations": "--සිදුවෙමින් පවතින වගාවන්--",
-    "NoOngoingCultivationsFound": "සිදුවෙමින් පවතින වගාවන් හමු නොවීය"
+    "NoOngoingCultivationsFound": "තවම වගාවක් ආරම්භ කර නොමැත"
   },
   "Payment": {
     "EnterCardNumber": "කාඩ් අංකය ඇතුළත් කරන්න",
