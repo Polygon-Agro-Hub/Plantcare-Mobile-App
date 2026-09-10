@@ -386,7 +386,9 @@
     "ViewResponse": "View Response",
     "NoResponseYetForThisComplaint": "No response yet for this complaint.",
     "RefNo": "Ref No",
-    "Sent": "Sent"
+    "Sent": "Sent",
+    "AM": "AM",
+    "PM": "PM"
   },
   "MarketPriceSlideShow": {
     "Note": "Note",

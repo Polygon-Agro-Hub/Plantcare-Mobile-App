@@ -386,7 +386,9 @@
     "ViewResponse": "ප්‍රතිචාරය බලන්න",
     "NoResponseYetForThisComplaint": "මෙම පැමිණිල්ල සඳහා තවමත් ප්‍රතිචාරයක් නැත.",
     "RefNo": "යොමු අංකය",
-    "Sent": "එවන ලදී"
+    "Sent": "එවන ලදී",
+    "AM": "පෙ.ව.",
+    "PM": "ප.ව."
   },
   "MarketPriceSlideShow": {
     "Note": "සටහන",

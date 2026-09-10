@@ -130,13 +130,14 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
 
     const hours = date.getHours();
     const minutes = date.getMinutes();
-    const ampm = hours >= 12 ? "PM" : "AM";
+    const ampm = hours >= 12 ? t("ReportHistory.PM") : t("ReportHistory.AM");
     const hour12 = hours % 12 || 12;
     const minuteStr = minutes.toString().padStart(2, "0");
     const timeStr = `${hour12}.${minuteStr}${ampm}`;
 
     const day = date.getDate();
-    const month = date.toLocaleString("en-US", { month: "short" });
+    const monthNamesShort = t("Calendar.MonthsShort", { returnObjects: true }) as string[];
+    const month = monthNamesShort[date.getMonth()];
     const year = date.getFullYear();
 
     return `${timeStr},${day} ${month} ${year}`;
@@ -226,11 +227,10 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
                   )}
                   <View className="flex-1 items-end">
                     <Text
-                      className={`text-xs font-semibold px-4 py-2 rounded ${
-                        complain.status === "Opened"
+                      className={`text-xs font-semibold px-4 py-2 rounded ${complain.status === "Opened"
                           ? "bg-blue-100 text-[#0051FF]"
                           : "bg-green-100 text-green-800"
-                      }`}
+                        }`}
                     >
                       {complain.status === "Opened"
                         ? t("ReportHistory.Opened") || "Opened"
