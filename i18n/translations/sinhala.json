@@ -19,7 +19,9 @@
     "PleaseFillAllRequiredFields": "කරුණාකර අවශ්‍ය සියලුම ක්ෂේත්‍ර පුරවන්න.",
     "SomethingWentWrongPleaseTryAgainlater": "යම්කිසි දෝෂයක් සිදුවිය. කරුණාකර පසුව නැවත උත්සාහ කරන්න.",
     "PleaseTurnOnMobileDataOrWiFiToContinue": "කරුණාකර දිගටම කරගෙන යාමට ජංගම දත්ත හෝ Wi-Fi සක්‍රිය කරන්න.",
-    "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "මෙම උපාංගයෙන් ඉල්ලීම් රාශියක් සිදු කර ඇත, කරුණාකර විනාඩි 30 කින් නැවත උත්සාහ කරන්න."
+    "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "මෙම උපාංගයෙන් ඉල්ලීම් රාශියක් සිදු කර ඇත, කරුණාකර විනාඩි 30 කින් නැවත උත්සාහ කරන්න.",
+    "Done": "අවසන්",
+    "NoSearchResultFound": "සෙවුම් ප්‍රතිඵල කිසිවක් හමු නොවීය"
   },
   "Inputs": {
     "FirstName": "මුල් නම",
@@ -435,6 +437,7 @@
     "Try1FarmForFree": "එක් ගොවිපලක් නොමිලේ උත්සාහ කරන්න",
     "OtherStaff": "වෙනත් කාර්ය මණ්ඩලය",
     "Members": "සාමාජිකයන්",
+    "Member": "සාමාජිකයා",
     "FarmAssets": "ගොවිපල වත්කම්",
     "AreYouSureYouWantToDeleteThisFarm": "ඔබට මෙම ගොවිපල ඉවත් කරන්නට අවශ්‍ය බව ඔබට විශ්වාසද?",
     "AreYouSureYouWantToDeleteThisMember": "ඔබට මෙම සාමාජිකයා ඉවත් කරන්නට අවශ්‍ය බව ඔබට විශ්වාසද?",
@@ -533,6 +536,7 @@
     "StaffMemberIDIsMissing": "කාර්ය මණ්ඩල සාමාජික හැඳුනුම්පත මග හැරී ඇත",
     "NoAuthenticationTokenFound": "සත්‍යාපන ටෝකනයක් හමු නොවීය",
     "FailedToFFetchStaffMemberData": "කාර්ය මණ්ඩල සාමාජික දත්ත ලබා ගැනීමට අසමත් විය",
+    "EditMemberDetails": "සාමාජික විස්තර සංස්කරණය",
     "EditSelectedRoleDetails": "{{selectedRole}}ගේ විස්තර සංස්කරණය",
     "FailedToDeleteFarm": "ගොවිපල මැකීමට අසමත් විය",
     "FailedToDeleteStaffMember": "කාර්ය මණ්ඩල සාමාජිකයා මැකීමට අසමත් විය",

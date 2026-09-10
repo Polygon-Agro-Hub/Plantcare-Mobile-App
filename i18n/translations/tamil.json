@@ -19,7 +19,9 @@
     "PleaseFillAllRequiredFields": "தயவுசெய்து தேவையான அனைத்து புலங்களையும் நிரப்பவும்.",
     "SomethingWentWrongPleaseTryAgainlater": "ஏதோ தவறு நடந்துவிட்டது. தயவுசெய்து பின்னர் மீண்டும் முயற்சிக்கவும்.",
     "PleaseTurnOnMobileDataOrWiFiToContinue": "தொடர, தயவுசெய்து மொபைல் டேட்டா அல்லது வைஃபையை இயக்கவும்.",
-    "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "இந்தச் சாதனத்திலிருந்து ஏராளமான கோரிக்கைகள் உள்ளன, தயவுசெய்து 30 நிமிடங்களில் மீண்டும் முயற்சிக்கவும்."
+    "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "இந்தச் சாதனத்திலிருந்து ஏராளமான கோரிக்கைகள் உள்ளன, தயவுசெய்து 30 நிமிடங்களில் மீண்டும் முயற்சிக்கவும்.",
+    "Done": "முடிந்தது",
+    "NoSearchResultFound": "தேடல் முடிவுகள் எதுவும் கிடைக்கவில்லை"
   },
   "Inputs": {
     "FirstName": "முதற் பெயர்",
@@ -433,6 +435,7 @@
     "Try1FarmForFree": "1 பண்ணையை இலவசமாக முயற்சிக்கவும்",
     "OtherStaff": "மற்ற ஊழியர்கள்",
     "Members": "உறுப்பினர்கள்",
+    "Member": "உறுப்பினர்",
     "FarmAssets": "பண்ணை சொத்துக்கள்",
     "AreYouSureYouWantToDeleteThisFarm": "இந்தப் பண்ணையை நீக்க விரும்புகிறீர்களா?",
     "AreYouSureYouWantToDeleteThisMember": "இந்த உறுப்பினரை நீக்க விரும்புகிறீர்களா?",
@@ -526,6 +529,7 @@
     "StaffMemberIDIsMissing": "ஊழியர் ஐடி காணவில்லை",
     "NoAuthenticationTokenFound": "அங்கீகார டோக்கன் எதுவும் கிடைக்கவில்லை",
     "FailedToFFetchStaffMemberData": "ஊழியர் தரவைப் பெறத் தவறியது",
+    "EditMemberDetails": "உறுப்பினர் விவரங்களைத் திருத்தவும்",
     "EditSelectedRoleDetails": "{{selectedRole}} விவரங்களைத் திருத்தவும்",
     "FailedToDeleteFarm": "பண்ணையை நீக்கத் தவறியது",
     "FailedToDeleteStaffMember": "ஊழியரை நீக்கத் தவறியது",

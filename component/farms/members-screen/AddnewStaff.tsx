@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import {
   View,
   Text,
@@ -12,6 +12,8 @@ import {
   BackHandler,
   Keyboard,
 } from "react-native";
+import { useSelector } from "react-redux";
+import { RootState } from "@/services/reducxStore";
 import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -24,7 +26,10 @@ import GlobalSearchModal from "../../common/GlobalSearchModal";
 
 interface RouteParams {
   farmId: number;
-  regCode: string;
+  regCode?: string;
+  farmName?: string;
+  imageId?: number;
+  role?: string;
 }
 
 interface AddnewStaffProps {
@@ -56,14 +61,44 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
 
   const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const { farmId, regCode } = route.params;
+  const currentUser = useSelector((state: RootState) => state.user.userData);
+  const routeParams = (route.params || {}) as RouteParams;
+  const userRole = currentUser?.role || routeParams.role || "Owner";
+  const { farmId, regCode, farmName, imageId } = routeParams;
   const { t } = useTranslation();
 
-  const roleItems = [
-    { label: t("Farms.Manager"), value: "Manager" },
-    { label: t("Farms.Supervisor"), value: "Supervisor" },
-    { label: t("Farms.Worker"), value: "Laborer" },
-  ];
+  const roleItems = useMemo(() => {
+    if (userRole === "Supervisor") {
+      return [
+        {
+          label:
+            t("Farms.FarmLaborer") || t("Farms.Laborer") || "Farm Laborer",
+          value: "Laborer",
+        },
+      ];
+    }
+    if (userRole === "Manager") {
+      return [
+        {
+          label:
+            t("Farms.FarmSupervisor") ||
+            t("Farms.Supervisor") ||
+            "Farm Supervisor",
+          value: "Supervisor",
+        },
+        {
+          label:
+            t("Farms.FarmLaborer") || t("Farms.Laborer") || "Farm Laborer",
+          value: "Laborer",
+        },
+      ];
+    }
+    return [
+      { label: t("Farms.Manager"), value: "Manager" },
+      { label: t("Farms.Supervisor"), value: "Supervisor" },
+      { label: t("Farms.Worker"), value: "Laborer" },
+    ];
+  }, [userRole, t]);
 
   const countryModalData = countryData.map((country) => ({
     label: `${country.emoji}  ${country.name}  (${country.dial_code})`,
@@ -190,7 +225,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
     setLastName("");
     setPhoneNumber("");
     setCountryCode("+94");
-    setSelectedRole("");
+    setSelectedRole(userRole === "Supervisor" ? "Laborer" : "");
     setPhoneError(null);
     setIsSubmitting(false);
     setCheckingNumber(false);
@@ -201,7 +236,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
     setNicDuplicateErrors(null);
     setRoleModalVisible(false);
     setCountryModalVisible(false);
-  }, []);
+  }, [userRole]);
 
   useEffect(() => {
     resetFormState();
@@ -312,8 +347,13 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
         nic: nic.trim(),
       };
 
+      const endpoint =
+        userRole === "Manager" || userRole === "Supervisor"
+          ? `${environment.API_BASE_URL}api/staff/create-new-staffmember/${farmId}`
+          : `${environment.API_BASE_URL}api/farm/create-new-staffmember/${farmId}`;
+
       await axios.post(
-        `${environment.API_BASE_URL}api/farm/create-new-staffmember/${farmId}`,
+        endpoint,
         staffData,
         {
           headers: {
@@ -332,7 +372,12 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
             onPress: () => {
               navigation.navigate("Main", {
                 screen: "EditManagersScreen",
-                params: { farmId, regCode },
+                params: {
+                  farmId,
+                  regCode,
+                  farmName,
+                  imageId,
+                },
               });
             },
           },
@@ -361,7 +406,12 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
       const handleBackPress = () => {
         navigation.navigate("Main", {
           screen: "EditManagersScreen",
-          params: { farmId: farmId, regCode: regCode },
+          params: {
+            farmId: farmId,
+            regCode: regCode,
+            farmName,
+            imageId,
+          },
         });
         return true;
       };
@@ -372,7 +422,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
       );
 
       return () => backHandler.remove();
-    }, [navigation, farmId, resetFormState]),
+    }, [navigation, farmId, regCode, farmName, imageId, resetFormState]),
   );
 
   const handleNicChange = (nicValue: string) => {
@@ -468,7 +518,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
           onBackPress={() =>
             navigation.navigate("Main", {
               screen: "EditManagersScreen",
-              params: { farmId: farmId, regCode: regCode },
+              params: { farmId, regCode, farmName, imageId },
             })
           }
         />
@@ -478,9 +528,10 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.Role")}</Text>
             <TouchableOpacity
-              onPress={() => !isSubmitting && setRoleModalVisible(true)}
+              onPress={() => !isSubmitting && userRole !== "Supervisor" && setRoleModalVisible(true)}
               className="bg-gray-100 px-4 rounded-3xl flex-row items-center justify-between h-[50px]"
-              activeOpacity={0.7}
+              activeOpacity={userRole === "Supervisor" ? 1 : 0.7}
+              disabled={userRole === "Supervisor" || isSubmitting}
             >
               <Text
                 className={
@@ -522,12 +573,15 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
                 onChangeText={handleFirstNameChange}
                 autoCapitalize="words"
                 editable={!isSubmitting}
+                className="text-gray-800"
                 style={{
                   flex: 1,
                   marginLeft: 8,
-                  fontSize: 12,
+                  fontSize: 14,
                   height: 50,
-                  paddingVertical: 0,
+                  textAlignVertical: "center",
+                  paddingTop: Platform.OS === "ios" ? 12 : 0,
+                  paddingBottom: Platform.OS === "ios" ? 12 : 0,
                   includeFontPadding: false,
                 }}
               />
@@ -547,12 +601,15 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
                 onChangeText={handleLastNameChange}
                 autoCapitalize="words"
                 editable={!isSubmitting}
+                className="text-gray-800"
                 style={{
                   flex: 1,
                   marginLeft: 8,
-                  fontSize: 12,
+                  fontSize: 14,
                   height: 50,
-                  paddingVertical: 0,
+                  textAlignVertical: "center",
+                  paddingTop: Platform.OS === "ios" ? 12 : 0,
+                  paddingBottom: Platform.OS === "ios" ? 12 : 0,
                   includeFontPadding: false,
                 }}
               />
@@ -586,9 +643,11 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
                   style={{
                     flex: 1,
                     marginLeft: 8,
-                    fontSize: 12,
+                    fontSize: 14,
                     height: 50,
-                    paddingVertical: 0,
+                    textAlignVertical: "center",
+                    paddingTop: Platform.OS === "ios" ? 12 : 0,
+                    paddingBottom: Platform.OS === "ios" ? 12 : 0,
                     includeFontPadding: false,
                   }}
                   placeholder="7X XXXXXXX"
@@ -600,6 +659,7 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
                   cursorColor="#141415ff"
                   editable={!isSubmitting}
                   placeholderTextColor="#9CA3AF"
+                  className="text-gray-800"
                 />
               </View>
             </View>
@@ -648,13 +708,15 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
                 onChangeText={(text: string) => handleNicChange(text)}
                 placeholder={t("Farms.EnterNIC")}
                 placeholderTextColor="#9CA3AF"
-                className="text-gray-800 text-base w-full"
+                className="text-gray-800"
                 style={{
                   flex: 1,
                   marginLeft: 8,
-                  fontSize: 12,
+                  fontSize: 14,
                   height: 50,
-                  paddingVertical: 0,
+                  textAlignVertical: "center",
+                  paddingTop: Platform.OS === "ios" ? 12 : 0,
+                  paddingBottom: Platform.OS === "ios" ? 12 : 0,
                   includeFontPadding: false,
                 }}
                 editable={!isSubmitting}

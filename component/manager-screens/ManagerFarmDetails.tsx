@@ -207,17 +207,13 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
   };
 
   const handleManageWorkersPress = () => {
-    if (users?.role === "Manager") {
-      navigation.navigate("ManageMembersManager", {
-        farmId: farmId,
+    if (!farmId) return;
+    if (users?.role === "Manager" || users?.role === "Supervisor") {
+      navigation.navigate("EditManagersScreen", {
+        farmId: Number(farmId),
         farmName: farmName,
-        imageId: imageId,
-      });
-    } else if (users?.role === "Supervisor") {
-      navigation.navigate("ManageMembersSupervisor", {
-        farmId: farmId,
-        farmName: farmName,
-        imageId: imageId,
+        imageId: imageId ? Number(imageId) : undefined,
+        role: users?.role,
       });
     } else {
       Alert.alert(

@@ -166,40 +166,50 @@ export type RootStackParamList = {
   };
   FarmDetailsScreen: { farmId: Number; farmName: string };
   EditManagersScreen: {
-    farmId: number;
-    membership: string;
-    renew: string;
-    regCode: string;
-  };
-  ManageMembersManager: {
-    farmId?: Number;
+    farmId: number | Number;
+    membership?: string;
+    renew?: string | boolean;
+    regCode?: string;
     farmName?: string;
-    imageId?: Number;
+    imageId?: number | Number;
+    role?: string;
   };
-  ManageMembersSupervisor: {
-    farmId?: Number;
+  ManageMembersManager?: {
+    farmId?: number;
     farmName?: string;
-    imageId?: Number;
+    imageId?: number;
+  };
+  ManageMembersSupervisor?: {
+    farmId?: number;
+    farmName?: string;
+    imageId?: number;
   };
   FarmCropItem: undefined;
   FarmCropVariety: undefined;
   EditFarm: { farmId: number; from?: string };
   FromFramEditFarm: { farmId: number; from?: string };
-  AddnewStaff: { farmId: number; regCode: string };
-  ManagerAddStaff: { farmId: number };
+  AddnewStaff: {
+    farmId: number;
+    regCode?: string;
+    farmName?: string;
+    imageId?: number;
+  };
+  ManagerAddStaff?: { farmId: number };
   EditStaffMember: {
     staffMemberId: number;
     farmId: number;
-    membership: string;
-    renew: string;
-    regCode: string;
+    membership?: string;
+    renew?: string | boolean;
+    regCode?: string;
+    farmName?: string;
+    imageId?: number;
   };
-  SupervisorAddStaff: { farmId: number };
-  ManageEditscreen: { staffMemberId: number; farmId: number; farmName: string };
-  SupervisorEditScreen: {
+  SupervisorAddStaff?: { farmId: number };
+  ManageEditscreen?: { staffMemberId: number; farmId: number; farmName?: string };
+  SupervisorEditScreen?: {
     staffMemberId: number;
     farmId: number;
-    farmName: string;
+    farmName?: string;
   };
   FarmCropSelectCard: undefined;
   MyCultivation: undefined;

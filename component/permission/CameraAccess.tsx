@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,7 +13,6 @@ import {
   SafeAreaView,
   LayoutChangeEvent,
 } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import { useTranslation } from "react-i18next";
@@ -68,24 +67,27 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
     }
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const handleHardwareBackPress = () => {
-        handleDenyOrClose();
-        return true;
-      };
-      const subscription = BackHandler.addEventListener(
-        "hardwareBackPress",
-        handleHardwareBackPress,
-      );
-      return () => subscription.remove();
-    }, [navigation, onClose, onBackPress, returnScreen]),
-  );
+  useEffect(() => {
+    const handleHardwareBackPress = () => {
+      handleDenyOrClose();
+      return true;
+    };
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      handleHardwareBackPress,
+    );
+    return () => subscription.remove();
+  }, [navigation, onClose, onBackPress, returnScreen]);
 
   const requestCameraPermission = async () => {
     setIsLoading(true);
     try {
-      const { status } = await Camera.requestCameraPermissionsAsync();
+      const current = await Camera.getCameraPermissionsAsync();
+      let status = current.status;
+      if (status !== "granted") {
+        const response = await Camera.requestCameraPermissionsAsync();
+        status = response.status;
+      }
 
       if (status === "granted") {
         if (onPermissionGranted) {

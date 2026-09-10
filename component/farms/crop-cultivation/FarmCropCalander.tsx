@@ -260,7 +260,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
 
       const setupScreen = async () => {
         try {
-          if (isActive) {
+          if (isActive && crops.length === 0) {
             await fetchCrops();
           }
 
@@ -287,7 +287,7 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
         isActive = false;
         ScreenCapture.allowScreenCaptureAsync();
       };
-    }, [farmId, hasCertificate]),
+    }, [farmId, hasCertificate, crops.length]),
   );
 
   const handleReject = () => {

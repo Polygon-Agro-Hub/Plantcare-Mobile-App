@@ -234,7 +234,12 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
 
   const requestPermission = async () => {
     if (Platform.OS === "ios") {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const current = await ImagePicker.getMediaLibraryPermissionsAsync();
+      let status = current.status;
+      if (status !== "granted") {
+        const response = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        status = response.status;
+      }
       if (status !== "granted") {
         Alert.alert(
           "Permission Denied",
@@ -252,12 +257,12 @@ const InvestmentRequestForm: React.FC<InvestmentRequestFormProps> = ({
 
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
+        mediaTypes: ["images"],
+        allowsEditing: false,
         quality: 0.8,
       });
 
-      if (!result.canceled && result.assets[0]) {
+      if (!result.canceled && result.assets && result.assets.length > 0) {
         if (imageType === "front") {
           setNicFrontImage(result.assets[0].uri);
         } else {

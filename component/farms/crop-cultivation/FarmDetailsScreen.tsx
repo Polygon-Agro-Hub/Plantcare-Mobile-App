@@ -938,7 +938,10 @@ const FarmDetailsScreen = () => {
           </Text>
           <View className="flex-row items-center mt-1 gap-6">
             <Text className="text-[#6B6B6B] text-sm">
-              • {farmData?.appUserCount || 0} {t("Farms.Members")}
+              • {farmData?.appUserCount || 0}{" "}
+              {(farmData?.appUserCount ?? 0) === 1
+                ? t("Farms.Member")
+                : t("Farms.Members")}
             </Text>
             <Text className="text-[#6B6B6B] text-sm ml-2">
               • {farmData?.staffCount || 0} {t("Farms.OtherStaff")}
