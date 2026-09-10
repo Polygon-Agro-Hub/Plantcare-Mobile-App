@@ -185,25 +185,32 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       const ongoingId = onCulscropId || (route.params as any)?.ongoingCropId;
       if (ongoingId) {
         const cropCertResponse = await axios.get(
-          `${environment.API_BASE_URL}api/certificate/get-crop-certificate-status/${ongoingId}`,
+          `${environment.API_BASE_URL}api/certificate/get-crop-certificate-byId/${ongoingId}`,
           { headers: { Authorization: `Bearer ${token}` } },
         );
         if (
-          cropCertResponse.data?.questionnaireItems &&
-          Array.isArray(cropCertResponse.data.questionnaireItems) &&
-          cropCertResponse.data.questionnaireItems.length > 0
+          cropCertResponse.data &&
+          Array.isArray(cropCertResponse.data) &&
+          cropCertResponse.data.length > 0
         ) {
-          const allComplete = cropCertResponse.data.questionnaireItems.every(
-            (item: any) => {
-              if (item.type === "Tick Off") return item.tickResult === 1;
-              if (item.type === "Photo Proof")
-                return item.uploadImage !== null && item.uploadImage !== "";
-              return true;
-            },
-          );
-          if (!allComplete) {
-            setIsCertificatePending(true);
-            return;
+          const certData = cropCertResponse.data[0];
+          if (
+            certData.questionnaireItems &&
+            Array.isArray(certData.questionnaireItems) &&
+            certData.questionnaireItems.length > 0
+          ) {
+            const allComplete = certData.questionnaireItems.every(
+              (item: any) => {
+                if (item.type === "Tick Off") return item.tickResult === 1;
+                if (item.type === "Photo Proof")
+                  return item.uploadImage !== null && item.uploadImage !== "";
+                return true;
+              },
+            );
+            if (!allComplete) {
+              setIsCertificatePending(true);
+              return;
+            }
           }
         }
       }
@@ -212,6 +219,18 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       setIsCertificatePending(false);
     }
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const checkInitialCert = async () => {
+        const token = await AsyncStorage.getItem("userToken");
+        if (token) {
+          checkCertificateStatus(token);
+        }
+      };
+      checkInitialCert();
+    }, [farmId, (route.params as any)?.ongoingCropId]),
+  );
 
   useFocusEffect(
     React.useCallback(() => {
@@ -1300,8 +1319,8 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
                     className="p-2"
                     onPress={() => handleCheck(index)}
                     disabled={
-                      isCertificatePending ||
-                      (lastCompletedIndex !== null &&
+                      (!isCertificatePending &&
+                        lastCompletedIndex !== null &&
                         startIndex + index > lastCompletedIndex + 1) ||
                       crop.autoCompleted === 1
                     }

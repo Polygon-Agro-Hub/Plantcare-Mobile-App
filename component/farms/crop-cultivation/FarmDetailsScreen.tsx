@@ -489,23 +489,23 @@ const FarmDetailsScreen = () => {
     const cropCertificatePromises = cropsWithProgress.map(async (crop) => {
       try {
         const response = await axios.get(
-          `${environment.API_BASE_URL}api/certificate/get-crop-certificate-status/${crop.ongoingCropId}`,
+          `${environment.API_BASE_URL}api/certificate/get-crop-certificate-byId/${crop.ongoingCropId}`,
           { headers: { Authorization: `Bearer ${token}` } },
         );
 
         let isAllCompleted = false;
+        const certData = response.data?.[0];
         if (
-          response.data.questionnaireItems &&
-          Array.isArray(response.data.questionnaireItems)
+          certData?.questionnaireItems &&
+          Array.isArray(certData.questionnaireItems) &&
+          certData.questionnaireItems.length > 0
         ) {
-          isAllCompleted =
-            response.data.questionnaireItems.length === 0 ||
-            response.data.questionnaireItems.every((item: any) => {
-              if (item.type === "Tick Off") return item.tickResult === 1;
-              if (item.type === "Photo Proof")
-                return item.uploadImage !== null && item.uploadImage !== "";
-              return true;
-            });
+          isAllCompleted = certData.questionnaireItems.every((item: any) => {
+            if (item.type === "Tick Off") return item.tickResult === 1;
+            if (item.type === "Photo Proof")
+              return item.uploadImage !== null && item.uploadImage !== "";
+            return true;
+          });
         } else {
           isAllCompleted = true;
         }

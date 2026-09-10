@@ -88,6 +88,7 @@ export type RootStackParamList = {
     farmId: number;
     farmName?: string;
     imageId?: Number;
+    ongoingCropId?: string | number;
   };
   CropCalanderTamil: { cropId: string; cropName: string };
   CropCalanderSinhala: { cropId: string; cropName: string };
