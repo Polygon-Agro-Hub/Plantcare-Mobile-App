@@ -1228,6 +1228,42 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
             />
           }
         >
+          {/* Certificate Pending Banner */}
+          {isCertificatePending && (
+            <TouchableOpacity
+              onPress={() => setShowCertificationModal(true)}
+              activeOpacity={0.85}
+              style={{
+                marginHorizontal: 24,
+                marginTop: 16,
+                marginBottom: 8,
+                backgroundColor: "#FFF7ED",
+                borderRadius: 14,
+                borderWidth: 1,
+                borderColor: "#FED7AA",
+                paddingHorizontal: 16,
+                paddingVertical: 12,
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <Ionicons name="lock-closed" size={20} color="#9CA3AF" />
+              <Text
+                style={{
+                  marginLeft: 10,
+                  flex: 1,
+                  fontSize: 13,
+                  color: "#6B7280",
+                  lineHeight: 18,
+                }}
+              >
+                {t(
+                  "CropCalender.PleaseCompleteTheCertificationTasksToUnlockTheCalendarTasks",
+                )}
+              </Text>
+            </TouchableOpacity>
+          )}
+
           {startIndex > 0 && (
             <TouchableOpacity
               onPress={viewPreviousTasks}
@@ -1264,47 +1300,69 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
                     className="p-2"
                     onPress={() => handleCheck(index)}
                     disabled={
+                      isCertificatePending ||
                       (lastCompletedIndex !== null &&
                         startIndex + index > lastCompletedIndex + 1) ||
                       crop.autoCompleted === 1
                     }
                     style={{ zIndex: 200 }}
                   >
-                    <View
-                      style={{
-                        borderWidth:
-                          checked[startIndex + index] ||
-                          (lastCompletedIndex !== null &&
-                            startIndex + index === lastCompletedIndex + 1)
-                            ? 0
-                            : 2,
-                        borderColor: "#00A896",
-                        borderRadius: 15,
-                        width: 30,
-                        height: 30,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: checked[startIndex + index]
-                          ? "#00A896"
-                          : lastCompletedIndex !== null &&
-                              startIndex + index === lastCompletedIndex + 1
-                            ? "black"
-                            : "transparent",
-                      }}
-                    >
-                      <AntDesign
-                        name="check"
-                        size={15}
-                        color={
-                          checked[startIndex + index]
-                            ? "white"
+                    {isCertificatePending ? (
+                      <View
+                        style={{
+                          borderWidth: 2,
+                          borderColor: "#D1D5DB",
+                          borderRadius: 15,
+                          width: 30,
+                          height: 30,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          backgroundColor: "transparent",
+                        }}
+                      >
+                        <Ionicons
+                          name="lock-closed"
+                          size={14}
+                          color="#9CA3AF"
+                        />
+                      </View>
+                    ) : (
+                      <View
+                        style={{
+                          borderWidth:
+                            checked[startIndex + index] ||
+                            (lastCompletedIndex !== null &&
+                              startIndex + index === lastCompletedIndex + 1)
+                              ? 0
+                              : 2,
+                          borderColor: "#00A896",
+                          borderRadius: 15,
+                          width: 30,
+                          height: 30,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          backgroundColor: checked[startIndex + index]
+                            ? "#00A896"
                             : lastCompletedIndex !== null &&
                                 startIndex + index === lastCompletedIndex + 1
+                              ? "black"
+                              : "transparent",
+                        }}
+                      >
+                        <AntDesign
+                          name="check"
+                          size={15}
+                          color={
+                            checked[startIndex + index]
                               ? "white"
-                              : "black"
-                        }
-                      />
-                    </View>
+                              : lastCompletedIndex !== null &&
+                                  startIndex + index === lastCompletedIndex + 1
+                                ? "white"
+                                : "black"
+                          }
+                        />
+                      </View>
+                    )}
                   </TouchableOpacity>
                 </View>
               </View>
