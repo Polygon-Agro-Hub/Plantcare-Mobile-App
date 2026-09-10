@@ -64,6 +64,7 @@
         },
         "NSCameraUsageDescription": "Camera access is required to scan QR codes and capture crop photos.",
         "NSPhotoLibraryUsageDescription": "Photo library access is required to upload related images.",
+        "NSPhotoLibraryAddUsageDescription": "Photo library access is required to save and upload related images.",
         "NSLocationWhenInUseUsageDescription": "Location access is required to receive local weather forecasts and log crop activities accurately.",
         "NSUserTrackingUsageDescription": "Tracking is used to improve app experience."
       }

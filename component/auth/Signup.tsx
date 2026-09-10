@@ -22,16 +22,18 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTranslation } from "react-i18next";
 import { environment } from "@/environment/environment";
 import Checkbox from "expo-checkbox";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, RouteProp } from "@react-navigation/native";
 import countryData from "@/assets/jsons/common/country-flag.json";
 import districtData from "@/assets/jsons/common/district.json";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
 
 type SignupNavigationProp = StackNavigationProp<RootStackParamList, "Signup">;
+type SignupRouteProp = RouteProp<RootStackParamList, "Signup">;
 
 interface SignupProps {
   navigation: SignupNavigationProp;
+  route: SignupRouteProp;
 }
 
 const Bottom = require("../../assets/images/auth/sign-up-bg-vector-bottom.webp");
@@ -45,7 +47,7 @@ const countryItems = countryData.map((country) => ({
   dialCode: country.dial_code,
 }));
 
-const Signup: React.FC<SignupProps> = ({ navigation }) => {
+const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
@@ -273,6 +275,42 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
     setDistrict(name);
   };
 
+  useEffect(() => {
+    const params = route?.params;
+    if (params) {
+      if (params.firstName !== undefined) {
+        setFirstName(params.firstName);
+        validateName(params.firstName, setFirstNameError);
+      }
+      if (params.lastName !== undefined) {
+        setLastName(params.lastName);
+        validateName(params.lastName, setLastNameError);
+      }
+      if (params.nic !== undefined) {
+        setNic(params.nic);
+        validateNic(params.nic);
+      }
+      if (params.mobileNumber !== undefined) {
+        setMobileNumber(params.mobileNumber);
+        validateMobileNumber(params.mobileNumber);
+      }
+      if (params.selectedCountryCode !== undefined) {
+        const countryCode = params.selectedCountryCode;
+        setSelectedCountryCode(countryCode);
+        const country = countryItems.find((c) => c.value === countryCode);
+        if (country) {
+          setSelectedCountryFlag(country.flag);
+        }
+      }
+      if (params.selectedCountryFlag !== undefined) {
+        setSelectedCountryFlag(params.selectedCountryFlag);
+      }
+      if (params.district !== undefined) {
+        setDistrict(params.district);
+      }
+    }
+  }, [route?.params]);
+
   const handleRegister = async () => {
     if (
       !mobileNumber ||
@@ -394,6 +432,9 @@ const Signup: React.FC<SignupProps> = ({ navigation }) => {
         lastName,
         nic,
         mobileNumber: fullPhoneNumber,
+        rawMobileNumber: mobileNumber,
+        selectedCountryCode,
+        selectedCountryFlag,
         district,
       });
       setIsButtonDisabled(false);

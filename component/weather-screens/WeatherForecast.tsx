@@ -15,6 +15,7 @@ import {
   Dimensions,
   StyleSheet,
   Modal,
+  Platform,
 } from "react-native";
 import * as Location from "expo-location";
 import { Ionicons, Entypo, AntDesign, FontAwesome6 } from "@expo/vector-icons";
@@ -60,25 +61,75 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
 
   const apiKey = "8561cb293616fe29259448fd098f654b";
 
-  useEffect(() => {
-    checkLocationPermission();
-  }, []);
-
-  const checkLocationPermission = async () => {
+  const getDeviceLocation = async (): Promise<Location.LocationObject | null> => {
     try {
-      const { status } = await Location.getForegroundPermissionsAsync();
-      if (status === "granted") {
-        setHasLocationPermission(true);
-        setShowLocationAccess(false);
-        await loadCurrentLocationWeather();
-      } else {
-        setHasLocationPermission(false);
-        setShowLocationAccess(true);
+      // 1. Check if device location services (GPS) are enabled
+      const servicesEnabled = await Location.hasServicesEnabledAsync();
+      if (!servicesEnabled && Platform.OS === "android") {
+        try {
+          await Location.enableNetworkProviderAsync();
+        } catch (e) {
+          console.log("User declined network provider enable", e);
+        }
       }
-    } catch (error) {
-      console.error("Error checking location permission:", error);
-      setHasLocationPermission(false);
-      setShowLocationAccess(true);
+
+      // 2. Try last known position first (fastest on Android & iOS, cached by Google Play Services)
+      try {
+        const lastKnown = await Location.getLastKnownPositionAsync({
+          maxAge: 60000,
+        });
+        if (lastKnown?.coords) {
+          return lastKnown;
+        }
+      } catch (e) {
+        console.log("getLastKnownPositionAsync error:", e);
+      }
+
+      // 3. Request current position with Balanced accuracy (Wi-Fi + Cellular, fast & reliable indoors)
+      try {
+        const current = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Balanced,
+        });
+        if (current?.coords) {
+          return current;
+        }
+      } catch (e) {
+        console.log("getCurrentPositionAsync Balanced error:", e);
+      }
+
+      // 4. Fallback with Lowest accuracy
+      try {
+        const lowest = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Lowest,
+        });
+        if (lowest?.coords) {
+          return lowest;
+        }
+      } catch (e) {
+        console.log("getCurrentPositionAsync Lowest error:", e);
+      }
+
+      // 5. Final fallback: any cached last known position
+      return await Location.getLastKnownPositionAsync({});
+    } catch (err) {
+      console.error("Error in getDeviceLocation:", err);
+      return null;
+    }
+  };
+
+  const fetchWeatherByName = async (cityName: string) => {
+    try {
+      const geoRes = await fetch(
+        `https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${apiKey}`,
+      );
+      const geoData = await geoRes.json();
+      if (geoData && geoData.length > 0) {
+        await fetchWeather(geoData[0].lat, geoData[0].lon, true);
+      } else {
+        await fetchWeather(6.9271, 79.8612, true);
+      }
+    } catch {
+      await fetchWeather(6.9271, 79.8612, true);
     }
   };
 
@@ -86,8 +137,18 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
     setLoading(true);
     try {
       const { status } = await Location.getForegroundPermissionsAsync();
-      if (status === "granted") {
-        const location = await Location.getCurrentPositionAsync({});
+      if (status !== "granted") {
+        setHasLocationPermission(false);
+        setShowLocationAccess(true);
+        setLoading(false);
+        return;
+      }
+
+      setHasLocationPermission(true);
+      setShowLocationAccess(false);
+
+      const location = await getDeviceLocation();
+      if (location?.coords) {
         await fetchWeather(
           location.coords.latitude,
           location.coords.longitude,
@@ -106,13 +167,16 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
           }
         }
       } else {
-        setLoading(false);
-        setShowLocationAccess(true);
+        // Fallback to last searched city or Colombo
+        const lastCity = await AsyncStorage.getItem("lastSearchedCity");
+        if (lastCity) {
+          await fetchWeatherByName(lastCity);
+        } else {
+          await fetchWeather(6.9271, 79.8612, true);
+        }
       }
     } catch (error) {
-      console.error("Error fetching current location:", error);
-      setLoading(false);
-      setShowLocationAccess(true);
+      console.error("Error loading current location weather:", error);
     } finally {
       setLoading(false);
     }
@@ -124,69 +188,53 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
     loadCurrentLocationWeather();
   };
 
+  // Every time Weather screen comes into focus:
+  // Until "Agree & Continue" is selected and granted, Location Access UI continues to be displayed.
   useFocusEffect(
     useCallback(() => {
-      if (hasLocationPermission) {
-        const resetAndLoadCurrentLocation = async () => {
-          setSearchQuery("");
-          setSuggestions([]);
-          setWeatherData(null);
-          setForecastData([]);
-          setLoading(true);
+      let isMounted = true;
 
-          try {
-            const { status } = await Location.getForegroundPermissionsAsync();
-            if (status === "granted") {
-              const location = await Location.getCurrentPositionAsync({});
-              await fetchWeather(
-                location.coords.latitude,
-                location.coords.longitude,
-                true,
-              );
-
-              const cityName = await getCityNameFromCoords(
-                location.coords.latitude,
-                location.coords.longitude,
-              );
-              if (cityName) {
-                try {
-                  await AsyncStorage.setItem("lastSearchedCity", cityName);
-                } catch (error) {
-                  console.error(
-                    "Error storing city name in local storage:",
-                    error,
-                  );
-                }
-              }
-            } else {
-              setLoading(false);
-              setShowLocationAccess(true);
+      const checkPermissionAndLoad = async () => {
+        try {
+          const { status } = await Location.getForegroundPermissionsAsync();
+          if (status === "granted") {
+            setHasLocationPermission(true);
+            setShowLocationAccess(false);
+            if (isMounted) {
+              await loadCurrentLocationWeather();
             }
-          } catch (error) {
-            console.error("Error fetching current location:", error);
-            setLoading(false);
+          } else {
+            setHasLocationPermission(false);
             setShowLocationAccess(true);
           }
-        };
+        } catch (error) {
+          console.error("Error checking location permission on focus:", error);
+          setHasLocationPermission(false);
+          setShowLocationAccess(true);
+        }
+      };
 
-        resetAndLoadCurrentLocation();
-      }
-    }, [hasLocationPermission]),
-  );
+      checkPermissionAndLoad();
 
-  useFocusEffect(
-    useCallback(() => {
-      const handleBackPress = () => {
+      const handleHardwareBackPress = () => {
+        // When Location Access UI is displayed, phone back navigation is blocked
+        if (showLocationAccess) {
+          return true;
+        }
         navigation.navigate("Dashboard");
         return true;
       };
 
       const subscription = BackHandler.addEventListener(
         "hardwareBackPress",
-        handleBackPress,
+        handleHardwareBackPress,
       );
-      return () => subscription.remove();
-    }, [navigation]),
+
+      return () => {
+        isMounted = false;
+        subscription.remove();
+      };
+    }, [showLocationAccess, navigation]),
   );
 
   const fetchWeather = async (
@@ -317,15 +365,24 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
   const handleLocationIconPress = async () => {
     try {
       const { status } = await Location.getForegroundPermissionsAsync();
-      if (status === "granted") {
-        setHasLocationPermission(true);
-        setShowLocationAccess(false);
-        setSearchQuery("");
-        setSuggestions([]);
+      if (status !== "granted") {
+        setShowLocationAccess(true);
+        return;
+      }
 
-        const location = await Location.getCurrentPositionAsync({});
+      setHasLocationPermission(true);
+      setShowLocationAccess(false);
+      setSearchQuery("");
+      setSuggestions([]);
+      setLoading(true);
 
-        fetchWeather(location.coords.latitude, location.coords.longitude, true);
+      const location = await getDeviceLocation();
+      if (location?.coords) {
+        await fetchWeather(
+          location.coords.latitude,
+          location.coords.longitude,
+          true,
+        );
 
         const cityName = await getCityNameFromCoords(
           location.coords.latitude,
@@ -338,12 +395,11 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
             console.error("Error storing city name in local storage:", error);
           }
         }
-      } else {
-        setShowLocationAccess(true);
       }
     } catch (error) {
       console.error("Error getting current location:", error);
-      setShowLocationAccess(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -472,8 +528,14 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
 
     try {
       const { status } = await Location.getForegroundPermissionsAsync();
-      if (status === "granted") {
-        const location = await Location.getCurrentPositionAsync({});
+      if (status !== "granted") {
+        setShowLocationAccess(true);
+        setRefreshing(false);
+        return;
+      }
+
+      const location = await getDeviceLocation();
+      if (location?.coords) {
         await fetchWeather(
           location.coords.latitude,
           location.coords.longitude,
@@ -487,8 +549,6 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
         if (cityName) {
           await AsyncStorage.setItem("lastSearchedCity", cityName);
         }
-      } else {
-        setShowLocationAccess(true);
       }
     } catch (error) {
       console.error("Error refreshing with current location:", error);
@@ -589,9 +649,9 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
           </View>
         </View>
 
-        {loading ? (
+        {loading || !weatherData ? (
           <View className="flex-1 justify-center items-center">
-            <LoadingPage fullScreen />
+            <LoadingPage fullScreen backgroundColor="#FFFFFF" />
           </View>
         ) : (
           <ScrollView
@@ -605,7 +665,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
             }
           >
             <View className="p-1 pt-0 mt-0 pb-4">
-              {weatherData ? (
+              {weatherData && (
                 <View className="items-center">
                   <Image
                     source={getWeatherImage(
@@ -803,10 +863,6 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
                     )}
                   </ScrollView>
                 </View>
-              ) : (
-                <View className="flex-1 justify-center items-center">
-                  <ActivityIndicator size="large" color="#26D041" />
-                </View>
               )}
             </View>
           </ScrollView>
@@ -819,19 +875,26 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
         animationType="slide"
         statusBarTranslucent
         onRequestClose={() => {
-          setShowLocationAccess(false);
+          // Block phone back navigation on the Location Access UI
         }}
       >
         <LocationAccess
           navigation={navigation as any}
+          blockBackNavigation={true}
           onPermissionGranted={() => {
             setShowLocationAccess(false);
-            handlePermissionGranted();
+            setHasLocationPermission(true);
+            loadCurrentLocationWeather();
+          }}
+          onNotNow={() => {
+            setShowLocationAccess(false);
+            navigation.navigate("Dashboard");
           }}
           onClose={() => {
             setShowLocationAccess(false);
+            navigation.navigate("Dashboard");
           }}
-          returnScreen="WeatherForecast"
+          returnScreen="Dashboard"
         />
       </Modal>
     </View>

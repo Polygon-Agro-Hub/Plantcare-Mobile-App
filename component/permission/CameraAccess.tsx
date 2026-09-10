@@ -10,6 +10,7 @@ import {
   ScrollView,
   Platform,
   StatusBar,
+  SafeAreaView,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -125,17 +126,20 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
   };
 
   return (
-    <View className="flex-1 bg-[#121212]">
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#121212" }}>
       <StatusBar barStyle="light-content" backgroundColor="#121212" />
-        <CustomHeader
-          title=""
-          navigation={navigation}
-          onBackPress={handleDenyOrClose}
-          transparent
-        />
+      <CustomHeader
+        title=""
+        navigation={navigation}
+        onBackPress={handleDenyOrClose}
+        transparent
+      />
       <ScrollView
         className="flex-1 px-5"
-        contentContainerStyle={{ flexGrow: 1, paddingBottom: 32 }}
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingBottom: Platform.OS === "android" ? 75 : 55,
+        }}
         showsVerticalScrollIndicator={false}
       >
         <View className="items-center justify-center mt-2 mb-4">
@@ -215,7 +219,7 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
         </View>
 
         {/* Action Buttons */}
-        <View className="items-center w-full mt-auto">
+        <View className="items-center w-full mt-4 mb-8">
           <TouchableOpacity
             onPress={requestCameraPermission}
             activeOpacity={0.8}
@@ -254,7 +258,7 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
           <TouchableOpacity
             onPress={handleDenyOrClose}
             activeOpacity={0.7}
-            className="py-2.5 px-6 items-center justify-center"
+            className="py-3 px-6 items-center justify-center"
           >
             <Text className="text-gray-400 font-semibold text-sm">
               {t("CameraAccess.NotNow") || "Not Now"}
@@ -262,7 +266,7 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

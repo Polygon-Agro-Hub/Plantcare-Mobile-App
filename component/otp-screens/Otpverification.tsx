@@ -38,7 +38,16 @@ interface userItem {
 }
 
 const Otpverification: React.FC = ({ navigation, route }: any) => {
-  const { mobileNumber, firstName, lastName, nic, district } = route.params;
+  const {
+    mobileNumber,
+    firstName,
+    lastName,
+    nic,
+    district,
+    rawMobileNumber,
+    selectedCountryCode,
+    selectedCountryFlag,
+  } = route?.params || {};
   const isSignup = firstName !== undefined;
   const [otpCode, setOtpCode] = useState<string>("");
   const [maskedCode, setMaskedCode] = useState<string>("XXXXX");
@@ -71,10 +80,41 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
     fetchReferenceId();
   }, []);
 
+  const handleBackPress = React.useCallback(() => {
+    if (isSignup) {
+      navigation.navigate("Signup", {
+        firstName,
+        lastName,
+        nic,
+        mobileNumber:
+          rawMobileNumber ??
+          (mobileNumber?.startsWith(selectedCountryCode || "+94")
+            ? mobileNumber.slice((selectedCountryCode || "+94").length)
+            : mobileNumber),
+        selectedCountryCode: selectedCountryCode || "+94",
+        selectedCountryFlag: selectedCountryFlag || "🇱🇰",
+        district,
+      });
+    } else {
+      navigation.navigate("Signin");
+    }
+  }, [
+    navigation,
+    isSignup,
+    firstName,
+    lastName,
+    nic,
+    district,
+    rawMobileNumber,
+    selectedCountryCode,
+    selectedCountryFlag,
+    mobileNumber,
+  ]);
+
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.navigate(isSignup ? "Signup" : "Signin");
+        handleBackPress();
         return true;
       };
 
@@ -84,7 +124,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       );
 
       return () => subscription.remove();
-    }, [navigation, isSignup]),
+    }, [handleBackPress]),
   );
 
   useFocusEffect(
@@ -376,7 +416,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       <CustomHeader
         title=""
         navigation={navigation}
-        onBackPress={() => navigation.goBack()}
+        onBackPress={handleBackPress}
       />
 
       <ScrollView

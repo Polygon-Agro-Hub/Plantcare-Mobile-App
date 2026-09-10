@@ -15,6 +15,7 @@ import {
 import axios from "axios";
 import { RootStackParamList } from "../types/types";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../../component/common/CustomHeader";
 import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -71,18 +72,32 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
     setLanguage(selectedLanguage);
   }, [t]);
 
-  useEffect(() => {
-    const backAction = () => {
+  const handleBackPress = React.useCallback(() => {
+    if (navigation.canGoBack()) {
       navigation.goBack();
-      return true;
-    };
+    } else {
+      if (isSignUp) {
+        navigation.navigate("MembershipScreenSignUp" as any);
+      } else {
+        navigation.navigate("MembershipScreen" as any);
+      }
+    }
+  }, [navigation, isSignUp]);
 
-    const subscription = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction,
-    );
-    return () => subscription.remove();
-  }, [navigation]);
+  useFocusEffect(
+    React.useCallback(() => {
+      const backAction = () => {
+        handleBackPress();
+        return true;
+      };
+
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction,
+      );
+      return () => subscription.remove();
+    }, [handleBackPress]),
+  );
 
   useEffect(() => {
     if (bankName) {
@@ -229,7 +244,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
           if (isSignUp) {
             navigation.navigate("Main", { screen: "Dashboard" });
           } else {
-            navigation.navigate("EngProfile");
+            navigation.navigate("Main", { screen: "QRcode" });
           }
         } else {
           Alert.alert(
@@ -369,7 +384,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
       <CustomHeader
         title=""
         navigation={navigation}
-        onBackPress={() => navigation.goBack()}
+        onBackPress={handleBackPress}
       />
 
       <ScrollView

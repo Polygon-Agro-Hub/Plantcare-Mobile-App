@@ -1,7 +1,17 @@
 export type RootStackParamList = {
   Lanuage: undefined;
   Signin: undefined;
-  Signup: undefined;
+  Signup:
+    | {
+        firstName?: string;
+        lastName?: string;
+        nic?: string;
+        mobileNumber?: string;
+        selectedCountryCode?: string;
+        selectedCountryFlag?: string;
+        district?: string;
+      }
+    | undefined;
   Selectedcrop: undefined;
   SignumpFS: undefined;
   SignupFT: undefined;
@@ -20,6 +30,9 @@ export type RootStackParamList = {
     lastName: string;
     nic: string;
     district: string;
+    rawMobileNumber?: string;
+    selectedCountryCode?: string;
+    selectedCountryFlag?: string;
   };
   OTPEOLDUSER: {
     mobileNumber: string;
@@ -86,15 +99,19 @@ export type RootStackParamList = {
   CropEnrol: { cropId: string; status: string; onCulscropID: number; farmId?: number };
 
   MembershipScreen: undefined;
+  MembershipScreenSignUp: undefined;
   ComplainForm: undefined;
   ComplainHistory: undefined;
-  BankDetailsScreen: {
-    firstName: string;
-    lastName: string;
-    nic: string;
-    mobileNumber: string;
-    selectedDistrict: string;
-  };
+  BankDetailsScreen:
+    | {
+        firstName?: string;
+        lastName?: string;
+        nic?: string;
+        mobileNumber?: string;
+        selectedDistrict?: string;
+      }
+    | undefined;
+  BankDetailsSignUp: undefined;
   PrivacyPolicy: undefined;
   TermsConditions: undefined;
   LocationDetailsScreen: undefined;
