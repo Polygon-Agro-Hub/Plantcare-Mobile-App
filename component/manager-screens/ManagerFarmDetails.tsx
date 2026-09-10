@@ -8,6 +8,7 @@ import {
   ScrollView,
   RefreshControl,
   BackHandler,
+  Modal,
 } from "react-native";
 import {
   widthPercentageToDP as wp,
@@ -18,6 +19,7 @@ import { StatusBar } from "expo-status-bar";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Entypo from "@expo/vector-icons/Entypo";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { RootStackParamList } from "../types/types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -38,6 +40,28 @@ type ManagerFarmDetailsNavigationProp = StackNavigationProp<
   "ManagerFarmDetails"
 >;
 
+interface QuestionnaireItem {
+  id: number;
+  slaveId: number;
+  type: string;
+  qNo: number;
+  qEnglish: string;
+  qSinhala: string;
+  qTamil: string;
+  tickResult: number;
+  officerTickResult: string | null;
+  uploadImage: string | null;
+  officerUploadImage: string | null;
+  doneDate: string | null;
+}
+
+interface CropCertificateStatus {
+  cropId: number;
+  ongoingCropId: number;
+  certificateStatus: "pending" | "completed";
+  isAllTasksCompleted: boolean;
+}
+
 interface CropItem {
   id: number;
   image: { type: string; data: number[] };
@@ -50,6 +74,7 @@ interface CropItem {
   progress: number;
   farmId: number;
   isBlock: number;
+  ongoingCropId?: number;
 }
 
 interface ManagerFarmDetailsProps {
@@ -67,6 +92,10 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [crops, setCrops] = useState<CropItem[]>([]);
+  const [cropCertificates, setCropCertificates] = useState<
+    CropCertificateStatus[]
+  >([]);
+  const [showCertificationModal, setShowCertificationModal] = useState(false);
   const { t } = useTranslation();
   const users = useSelector((state: RootState) => state.user.userData);
 
@@ -189,21 +218,123 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
         }),
       );
 
-      setTimeout(() => {
-        setLoading(false);
-        setRefreshing(false);
-      }, 300);
-
       setCrops(cropsWithProgress);
+
+      if (cropsWithProgress.length > 0) {
+        const cropCerts = await _fetchCropCertificates(
+          token,
+          cropsWithProgress,
+        );
+        setCropCertificates(cropCerts);
+      } else {
+        setCropCertificates([]);
+      }
     } catch (error) {
       console.error("Error fetching cultivations or progress:", error);
       setCrops([]);
+      setCropCertificates([]);
     } finally {
       setTimeout(() => {
         setLoading(false);
         setRefreshing(false);
       }, 300);
     }
+  };
+
+  const _fetchCropCertificates = async (
+    token: string,
+    cropsWithProgress: CropItem[],
+  ): Promise<CropCertificateStatus[]> => {
+    let allFarmCertificatesComplete = true;
+    let farmHasCertificates = false;
+
+    try {
+      const farmCertResponse = await axios.get(
+        `${environment.API_BASE_URL}api/certificate/get-farmcertificatetask/${farmId}`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+
+      if (farmCertResponse.data && farmCertResponse.data.length > 0) {
+        farmHasCertificates = true;
+        allFarmCertificatesComplete = farmCertResponse.data.every(
+          (certificate: any) =>
+            certificate.questionnaireItems?.every((item: QuestionnaireItem) => {
+              if (item.type === "Tick Off") return item.tickResult === 1;
+              if (item.type === "Photo Proof")
+                return item.uploadImage !== null && item.uploadImage !== "";
+              return true;
+            }) || false,
+        );
+      }
+    } catch (error: any) {
+      farmHasCertificates = false;
+    }
+
+    if (farmHasCertificates && !allFarmCertificatesComplete) {
+      return cropsWithProgress.map((crop) => ({
+        cropId: crop.id,
+        ongoingCropId: crop.ongoingCropId || crop.id,
+        certificateStatus: "pending" as const,
+        isAllTasksCompleted: false,
+      }));
+    }
+
+    const cropCertificatePromises = cropsWithProgress.map(async (crop) => {
+      const cropOngoingId = crop.ongoingCropId || crop.id;
+      try {
+        const response = await axios.get(
+          `${environment.API_BASE_URL}api/certificate/get-crop-certificate-status/${cropOngoingId}`,
+          { headers: { Authorization: `Bearer ${token}` } },
+        );
+
+        let isAllCompleted = false;
+        if (
+          response.data.questionnaireItems &&
+          Array.isArray(response.data.questionnaireItems)
+        ) {
+          isAllCompleted =
+            response.data.questionnaireItems.length === 0 ||
+            response.data.questionnaireItems.every((item: any) => {
+              if (item.type === "Tick Off") return item.tickResult === 1;
+              if (item.type === "Photo Proof")
+                return item.uploadImage !== null && item.uploadImage !== "";
+              return true;
+            });
+        } else {
+          isAllCompleted = true;
+        }
+
+        return {
+          cropId: crop.id,
+          ongoingCropId: cropOngoingId,
+          certificateStatus: (isAllCompleted ? "completed" : "pending") as
+            | "pending"
+            | "completed",
+          isAllTasksCompleted: isAllCompleted,
+        };
+      } catch (error: any) {
+        const isNotFound =
+          error.response?.status === 404 ||
+          error.response?.data?.message?.includes("not found");
+        return {
+          cropId: crop.id,
+          ongoingCropId: cropOngoingId,
+          certificateStatus: (isNotFound ? "completed" : "pending") as
+            | "pending"
+            | "completed",
+          isAllTasksCompleted: isNotFound,
+        };
+      }
+    });
+
+    return Promise.all(cropCertificatePromises);
+  };
+
+  const getCropCertificateStatus = (
+    cropId: number,
+  ): "pending" | "completed" => {
+    const certificate = cropCertificates.find((cert) => cert.cropId === cropId);
+    return certificate?.certificateStatus || "completed";
   };
 
   const handleManageWorkersPress = () => {
@@ -251,6 +382,12 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
 
   const handleCropPress = (crop: CropItem) => {
     if (crop.isBlock === 1) {
+      return;
+    }
+
+    const cropCertificateStatus = getCropCertificateStatus(crop.id);
+    if (cropCertificateStatus === "pending") {
+      setShowCertificationModal(true);
       return;
     }
 
@@ -322,19 +459,19 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
             />
           </TouchableOpacity>
 
-          <View className="items-center mb-4">
-            <View className="rounded-full w-24 h-24 shadow-lg mb-3 overflow-hidden border-4 border-white">
+          <View className="items-center mb-3">
+            <View className="rounded-full w-20 h-20 shadow-md mb-2 overflow-hidden border-2 border-white">
               <Image
                 source={getImageSource(imageId ? Number(imageId) : undefined)}
                 className="w-full h-full"
                 resizeMode="cover"
               />
             </View>
-            <Text className="text-2xl font-bold text-gray-800">{farmName}</Text>
+            <Text className="text-lg font-bold text-gray-800">{farmName}</Text>
           </View>
 
           <TouchableOpacity
-            className="bg-white border border-gray-200 rounded-2xl px-5 py-4 flex-row items-center justify-between shadow-sm"
+            className="bg-white border border-gray-200 rounded-2xl px-4 py-3 flex-row items-center justify-between shadow-sm"
             onPress={handleManageWorkersPress}
             style={{
               shadowColor: "#000",
@@ -348,26 +485,27 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
             }}
           >
             <View className="flex-row items-center">
-              <View className="rounded-full w-12 h-12 items-center justify-center mr-3">
+              <View className="rounded-full w-10 h-10 items-center justify-center mr-3">
                 <Image
-                  className="w-[50px] h-[50px]"
+                  className="w-10 h-10"
                   source={require("../../assets/images/farms/managers-image.webp")}
+                  resizeMode="contain"
                 />
               </View>
-              <Text className="text-base font-semibold text-gray-800">
+              <Text className="text-sm font-semibold text-gray-800">
                 {t("Manager.ManageWorkers")}
               </Text>
             </View>
             <MaterialCommunityIcons
               name="chevron-right"
-              size={24}
+              size={22}
               color="#9CA3AF"
             />
           </TouchableOpacity>
         </View>
 
-        <View className="px-5 mt-6">
-          <Text className="text-center text-sm text-gray-500 font-medium mb-4">
+        <View className="px-5 mt-4">
+          <Text className="text-center text-sm text-gray-500 font-medium mb-3">
             {t("Manager.OngoingCultivations")}
           </Text>
 
@@ -382,15 +520,17 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
             />
           ) : (
             crops.map((crop) => {
-              const isBlocked = crop.isBlock === 1;
+              const cropCertificateStatus = getCropCertificateStatus(crop.id);
+              const isBlocked =
+                crop.isBlock === 1 || cropCertificateStatus === "pending";
               return (
                 <TouchableOpacity
                   key={crop.id}
-                  onPress={isBlocked ? undefined : () => handleCropPress(crop)}
+                  onPress={() => handleCropPress(crop)}
                   activeOpacity={0.7}
                   style={{
                     width: "100%",
-                    marginVertical: 8,
+                    marginVertical: 6,
                     borderRadius: 9,
                     shadowColor: "#000",
                     shadowOffset: { width: 0, height: 2 },
@@ -402,8 +542,8 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
                   <View
                     style={{
                       backgroundColor: "#FFFFFF",
-                      padding: 16,
-                      borderWidth: 2,
+                      padding: 12,
+                      borderWidth: 1.5,
                       borderColor: "#EFEFEF",
                       borderRadius: 9,
                       overflow: "hidden",
@@ -415,7 +555,7 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
                   >
                     {isBlocked && (
                       <View className="absolute top-1 left-1 z-10 rounded-full w-6 h-6 items-center justify-center">
-                        <Entypo name="lock" size={20} color="black" />
+                        <Entypo name="lock" size={18} color="black" />
                       </View>
                     )}
 
@@ -427,11 +567,11 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
                             : formatImage(crop.image),
                       }}
                       style={{
-                        width: 70,
-                        height: 70,
+                        width: 54,
+                        height: 54,
                         borderRadius: 8,
                         opacity: isBlocked ? 0.5 : 1,
-                        marginStart: 10,
+                        marginStart: 6,
                       }}
                       resizeMode="contain"
                     />
@@ -457,28 +597,29 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
                       style={{
                         alignItems: "center",
                         justifyContent: "center",
-                        marginTop: 5,
+                        marginTop: 2,
                       }}
                     >
                       <Progress.Circle
-                        size={60}
+                        size={50}
                         progress={crop.progress}
-                        thickness={4}
+                        thickness={3}
                         color={isBlocked ? "#ccc" : "#4caf50"}
                         unfilledColor="#ddd"
                         showsText={true}
                         formatText={() => {
                           const percentage = crop.progress * 100;
+                          const formatted = percentage.toFixed(2);
                           if (percentage >= 100 || crop.progress >= 1) {
                             return "100%";
                           }
-                          if (percentage > 0 && percentage < 0.01) {
-                            return "0.01%";
+                          if (percentage <= 0 || formatted === "0.00") {
+                            return "0%";
                           }
-                          return `${percentage.toFixed(2)}%`;
+                          return `${formatted}%`;
                         }}
                         textStyle={{
-                          fontSize: 10,
+                          fontSize: 9,
                           color: isBlocked ? "#999" : "#4caf50",
                           fontWeight: "bold",
                         }}
@@ -493,6 +634,36 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
 
         <View className="h-6" />
       </ScrollView>
+
+      <Modal
+        visible={showCertificationModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowCertificationModal(false)}
+      >
+        <View className="flex-1 justify-center items-center bg-black/50">
+          <View className="bg-white rounded-2xl mx-4 p-6 w-11/12 max-w-sm">
+            <View className="items-center mb-4">
+              <View className="bg-[#F6F7F9] rounded-lg p-3">
+                <Ionicons name="warning" size={32} color="#757472ff" />
+              </View>
+            </View>
+            <Text className="text-gray-600 text-center text-sm leading-5 mb-6">
+              {t(
+                "CropCalender.PleaseCompleteTheCertificationTasksToUnlockTheCalendarTasks",
+              )}
+            </Text>
+            <TouchableOpacity
+              onPress={() => setShowCertificationModal(false)}
+              className="bg-gray-900 rounded-xl py-3"
+            >
+              <Text className="text-white text-center font-medium text-base">
+                {t("Main.OK")}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };

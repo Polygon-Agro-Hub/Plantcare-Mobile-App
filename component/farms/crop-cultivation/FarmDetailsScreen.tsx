@@ -95,8 +95,8 @@ const CropCard: React.FC<CropCardProps> = ({
       <View
         style={{
           backgroundColor: "#FFFFFF",
-          padding: 16,
-          borderWidth: 2,
+          padding: 12,
+          borderWidth: 1.5,
           borderColor: "#EFEFEF",
           borderRadius: 9,
           overflow: "hidden",
@@ -108,7 +108,7 @@ const CropCard: React.FC<CropCardProps> = ({
       >
         {isBlocked && (
           <View className="absolute top-1 left-1 z-10 rounded-full w-6 h-6 items-center justify-center ">
-            <Entypo name="lock" size={20} color="black" />
+            <Entypo name="lock" size={18} color="black" />
           </View>
         )}
 
@@ -119,11 +119,11 @@ const CropCard: React.FC<CropCardProps> = ({
               : { uri: formatImage(image) }
           }
           style={{
-            width: 70,
-            height: 70,
+            width: 54,
+            height: 54,
             borderRadius: 8,
             opacity: isBlocked ? 0.5 : 1,
-            marginStart: 10,
+            marginStart: 6,
           }}
           resizeMode="contain"
         />
@@ -145,31 +145,29 @@ const CropCard: React.FC<CropCardProps> = ({
           style={{
             alignItems: "center",
             justifyContent: "center",
-            marginTop: 5,
+            marginTop: 2,
           }}
         >
           <Progress.Circle
-            size={60}
+            size={50}
             progress={progress}
-            thickness={4}
+            thickness={3}
             color={isBlocked ? "#ccc" : "#4caf50"}
             unfilledColor="#ddd"
             showsText={true}
             formatText={() => {
               const percentage = progress * 100;
+              const formatted = percentage.toFixed(2);
               if (percentage >= 100 || progress >= 1) {
                 return "100%";
               }
-              if (percentage === 0) {
+              if (percentage <= 0 || formatted === "0.00") {
                 return "0%";
               }
-              if (percentage > 0 && percentage < 0.01) {
-                return "0.01%";
-              }
-              return `${percentage.toFixed(2)}%`;
+              return `${formatted}%`;
             }}
             textStyle={{
-              fontSize: 10,
+              fontSize: 9,
               color: isBlocked ? "#999" : "#4caf50",
               fontWeight: "bold",
             }}
@@ -890,10 +888,10 @@ const FarmDetailsScreen = () => {
         }
         rightComponent={rightComponent}
       />
-      <View className="items-center bg-white pb-3">
+      <View className="items-center bg-white pb-2">
         <Image
           source={getImageSource(farmData?.imageId)}
-          className="w-28 h-28 rounded-full border-2 border-gray-200"
+          className="w-20 h-20 rounded-full border-2 border-gray-200"
           resizeMode="cover"
           accessible
           accessibilityLabel={farmData?.farmName || farmBasicDetails?.farmName}
@@ -908,16 +906,16 @@ const FarmDetailsScreen = () => {
         }
         showsVerticalScrollIndicator={true}
       >
-        <View className="items-center py-4 w-full">
+        <View className="items-center py-3 w-full">
           <View className="flex-row items-center">
-            <Text className="font-bold text-xl text-gray-900 mr-3">
+            <Text className="font-bold text-lg text-gray-900 mr-2">
               {farmData?.farmName || farmBasicDetails?.farmName}
             </Text>
             {(() => {
               const membershipDisplay = getMembershipDisplay();
               return (
                 <View
-                  className={`${membershipDisplay.bgColor} px-3 py-1 rounded-lg`}
+                  className={`${membershipDisplay.bgColor} px-2.5 py-0.5 rounded-lg`}
                 >
                   <Text
                     className={`${membershipDisplay.textColor} text-xs font-medium uppercase`}
@@ -928,30 +926,30 @@ const FarmDetailsScreen = () => {
               );
             })()}
           </View>
-          <View className="border border-[#434343] px-3 py-1 rounded-lg mt-2">
-            <Text className="text-gray-700 text-xl font-medium">
+          <View className="border border-[#434343] px-2.5 py-0.5 rounded-lg mt-1.5">
+            <Text className="text-gray-700 text-sm font-medium">
               ID : {farmData?.regCode}
             </Text>
           </View>
-          <Text className="text-[#6B6B6B] font-medium text-[15px] mt-1">
+          <Text className="text-[#6B6B6B] font-medium text-xs mt-0.5">
             {t("District." + (farmData?.district ?? ""))}
           </Text>
-          <View className="flex-row items-center mt-1 gap-6">
-            <Text className="text-[#6B6B6B] text-sm">
+          <View className="flex-row items-center mt-1 gap-4">
+            <Text className="text-[#6B6B6B] text-xs">
               • {farmData?.appUserCount || 0}{" "}
               {(farmData?.appUserCount ?? 0) === 1
                 ? t("Farms.Member")
                 : t("Farms.Members")}
             </Text>
-            <Text className="text-[#6B6B6B] text-sm ml-2">
+            <Text className="text-[#6B6B6B] text-xs ml-1">
               • {farmData?.staffCount || 0} {t("Farms.OtherStaff")}
             </Text>
           </View>
         </View>
 
-        <View className="flex-row justify-between mt-5 w-full">
+        <View className="flex-row justify-between mt-4 w-full">
           <TouchableOpacity
-            className="bg-white p-4 rounded-xl justify-center items-center border border-[#445F4A33]"
+            className="bg-white p-3 rounded-xl justify-center items-center border border-[#445F4A33]"
             style={{
               shadowColor: "#000",
               shadowOffset: { width: 0, height: 2 },
@@ -976,7 +974,7 @@ const FarmDetailsScreen = () => {
               }
             }}
           >
-            <View className="w-24 h-24 rounded-lg justify-center items-center mb-3 overflow-hidden">
+            <View className="w-16 h-16 rounded-lg justify-center items-center mb-2 overflow-hidden">
               <Image
                 source={require("../../../assets/images/farms/managers-image.webp")}
                 style={{ width: "100%", height: "100%" }}
@@ -989,7 +987,7 @@ const FarmDetailsScreen = () => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="bg-white p-4 rounded-xl justify-center items-center border border-[#445F4A33]"
+            className="bg-white p-3 rounded-xl justify-center items-center border border-[#445F4A33]"
             style={{
               shadowColor: "#000",
               shadowOffset: { width: 0, height: 2 },
@@ -1007,7 +1005,7 @@ const FarmDetailsScreen = () => {
               })
             }
           >
-            <View className="w-24 h-24 rounded-lg justify-center items-center mb-3 overflow-hidden">
+            <View className="w-16 h-16 rounded-lg justify-center items-center mb-2 overflow-hidden">
               <Image
                 source={require("../../../assets/images/farms/farm-assets.webp")}
                 style={{ width: "100%", height: "100%" }}
@@ -1021,7 +1019,7 @@ const FarmDetailsScreen = () => {
         </View>
 
         {certificateStatuses.length > 0 && (
-          <View className="mt-6 w-full px-0">
+          <View className="mt-4 w-full px-0">
             {certificateStatuses.map((certificate, index) => {
               const getCertificateName = () => {
                 if (language === "si" && certificate.srtNameSinhala)
@@ -1035,7 +1033,7 @@ const FarmDetailsScreen = () => {
                 <TouchableOpacity
                   key={`cert-${certificate.certificateId}-${certificate.slaveQuestionnaireId}`}
                   onPress={() => handleViewCertificateTasks(certificate)}
-                  className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-3"
+                  className="bg-white rounded-2xl shadow-sm border border-gray-200 p-3 mb-3"
                   style={{
                     shadowColor: "#000000",
                     shadowOffset: { width: 0, height: 4 },
@@ -1048,7 +1046,7 @@ const FarmDetailsScreen = () => {
                     <View className="flex-row items-center flex-1">
                       <Image
                         source={require("../../../assets/images/farms/star-certificate.webp")}
-                        className="w-24 h-24"
+                        className="w-16 h-16"
                         resizeMode="contain"
                       />
                       <View className="ml-3 flex-1">
