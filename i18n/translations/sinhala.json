@@ -91,7 +91,7 @@
     "TheNICNumberYouEnteredIsAlreadyRegisteredPleaseCheckYourDetailsOrLogIn": "ඔබ ඇතුළත් කළ ජාතික හැඳුනුම්පත් අංකය දැනටමත් ලියාපදිංචි කර ඇත, කරුණාකර ඔබගේ විස්තර පරීක්ෂා කරන්න හෝ පුරන්න.",
     "BothThePhoneNumberAndNICNumberEnteredAreAlreadyRegisteredPleaseLogInInstead": "ඔබ ඇතුළත් කළ දුරකථන අංකය සහ ජාතික හැඳුනුම්පත් අංකය දෙකම දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර ඒ වෙනුවට පුරන්න.",
     "ThePhoneNumberYouEnteredIsAlreadyRegisteredPleaseUseADifferentNumberOrLogIn": "ඔබ ඇතුළත් කළ දුරකථන අංකය දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් අංකයක් භාවිතා කරන්න හෝ පුරන්න",
-    "NoCountryFound":"රටක් හමු නොවීය."
+    "NoCountryFound": "රටක් හමු නොවීය."
   },
   "SignIn": {
     "SignIn": "පුරන්න",
@@ -548,7 +548,7 @@
     "Total": "එකතුව",
     "YouHaveSuccessfullyAppliedForYourCertificate": "ඔබ ඔබගේ සහතිකය සඳහා සාර්ථකව අයදුම් කර ඇත!",
     "AllCompleted": "සියල්ල සම්පූර්ණයි",
-    "Pending": "විකල්ප",
+    "Pending": "විසඳීමට ඇති",
     "LoadingCertificateTasks...": "සහතික කාර්යයන් පූරණය කරමින්...",
     "UploadedByYou": "උඩුගත කළේ : ඔබ",
     "ClickAPhoto": "ඡායාරූපයක් ගන්න",
@@ -782,7 +782,6 @@
     "PendingBalance": "විකල්ප ශේෂය",
     "ToReceive": "ලැබීමට",
     "NoInvestmentTransactionsFound": "ගනුදෙනු කිසිවක් හමු නොවීය"
-
   },
   "CurrentAssets": {
     "MyAssets": "මගේ වත්කම්",
@@ -1139,9 +1138,9 @@
     "TractorMountedSpray": "ට්‍රැක්ටරයට සම්බන්ධ ඉසින යන්ත්‍රය",
     "PermitFeeAnnuallyLKR": "වාර්ෂික බලපත්‍ර ගාස්තුව (රු.)",
     "WarrantyExpireDateMustBeInTheFuture": "වගකීම් කල් ඉකුත්වීමේ දිනය අනාගත දිනයක් විය යුතුය.",
-    "NoAssetTypeFound":"වත්කම් වර්ගයක් හමු නොවීය",
-    "NoBrandFound":"වෙළඳ නාමයක් හමු නොවීය",
-    "NoTypeFound":"වර්ගයක් හමු නොවීය."
+    "NoAssetTypeFound": "වත්කම් වර්ගයක් හමු නොවීය",
+    "NoBrandFound": "වෙළඳ නාමයක් හමු නොවීය",
+    "NoTypeFound": "වර්ගයක් හමු නොවීය."
   },
   "ImageViewerModal": {
     "UploadedBy": "උඩුගත කළේ :",
@@ -1627,8 +1626,50 @@
     "All": "සියල්ල",
     "No Previous Orders": "පෙර ඇණවුම් නැත"
   },
-  "AddFixedAsset":{
+  "AddFixedAsset": {
     "DuplicateName": "නම දැනටමත් පවතී",
-    "BuildingAssetAlreadyExists": "\"{{name}}\" නම සහිත ගොඩනැගිලි වත්කම දැනටමත් පවතී."
+    "AssetAlreadyExists": "\"{{name}}\" නම සහිත {{assetType}} වත්කම දැනටමත් පවතී.",
+    "Land": "ඉඩම්",
+    "Building": "ගොඩනැගිලි"
+  },
+  "Calendar": {
+    "Months": [
+      "ජනවාරි",
+      "පෙබරවාරි",
+      "මාර්තු",
+      "අප්‍රේල්",
+      "මැයි",
+      "ජූනි",
+      "ජූලි",
+      "අගෝස්තු",
+      "සැප්තැම්බර්",
+      "ඔක්තෝබර්",
+      "නොවැම්බර්",
+      "දෙසැම්බර්"
+    ],
+    "MonthsShort": [
+      "ජන",
+      "පෙබ",
+      "මාර්",
+      "අප්‍රේ",
+      "මැයි",
+      "ජූනි",
+      "ජූලි",
+      "අගෝ",
+      "සැප්",
+      "ඔක්",
+      "නොවැ",
+      "දෙසැ"
+    ],
+    "Days": [
+      "ඉරිදා",
+      "සඳුදා",
+      "අඟහරුවාදා",
+      "බදාදා",
+      "බ්‍රහස්පතින්දා",
+      "සිකුරාදා",
+      "සෙනසුරාදා"
+    ],
+    "DaysShort": ["ඉරි", "සඳු", "අඟ", "බදා", "බ්‍ර", "සිකු", "සෙන"]
   }
 }

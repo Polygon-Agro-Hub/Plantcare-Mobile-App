@@ -91,7 +91,7 @@
     "TheNICNumberYouEnteredIsAlreadyRegisteredPleaseCheckYourDetailsOrLogIn": "The NIC number you entered is already registered, please check your details or log in.",
     "BothThePhoneNumberAndNICNumberEnteredAreAlreadyRegisteredPleaseLogInInstead": "Both the phone number and NIC number entered are already registered. Please log in instead.",
     "ThePhoneNumberYouEnteredIsAlreadyRegisteredPleaseUseADifferentNumberOrLogIn": "The phone number you entered is already registered. Please use a different number or log in",
-    "NoCountryFound":"No country found"
+    "NoCountryFound": "No country found"
   },
   "SignIn": {
     "SignIn": "Sign in",
@@ -1140,9 +1140,9 @@
     "TractorMountedSpray": "Tractor Mounted Sprayer",
     "PermitFeeAnnuallyLKR": "Permit Fee Annually (LKR)",
     "WarrantyExpireDateMustBeInTheFuture": "Warranty expire date must be in the future.",
-    "NoAssetTypeFound":"No asset type found",
-    "NoBrandFound":"No brand found",
-    "NoTypeFound":"No type found"
+    "NoAssetTypeFound": "No asset type found",
+    "NoBrandFound": "No brand found",
+    "NoTypeFound": "No type found"
   },
   "ImageViewerModal": {
     "UploadedBy": "Uploaded By :",
@@ -1628,9 +1628,50 @@
     "All": "All",
     "No Previous Orders": "No Previous Orders"
   },
-  "AddFixedAsset":{
+  "AddFixedAsset": {
     "DuplicateName": "Duplicate Name",
-    "BuildingAssetAlreadyExists": "A building asset with the name \"{{name}}\" already exists."
+    "AssetAlreadyExists": "A {{assetType}} asset with the name \"{{name}}\" already exists.",
+    "Land": "Land",
+    "Building": "Building"
+  },
+  "Calendar": {
+    "Months": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ],
+    "MonthsShort": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ],
+    "Days": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "DaysShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
   }
-
 }
