@@ -18,6 +18,7 @@ import { RootStackParamList } from "../types/types";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import type { NativeEventSubscription } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../common/CustomHeader";
 import LoadingPage from "../common/LoadingPage";
 
@@ -112,40 +113,75 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
     fetchRegistrationDetails();
   }, []);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchRegistrationDetails();
+    }, []),
+  );
+
+  const ensureLocalQRFile = async (): Promise<string | null> => {
+    if (!QR) return null;
+    const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
+    if (QR.startsWith("data:image/") || QR.includes(";base64,")) {
+      const base64Data = QR.replace(/^data:image\/\w+;base64,/, "");
+      await FileSystem.writeAsStringAsync(fileUri, base64Data, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      return fileUri;
+    } else if (QR.startsWith("http://") || QR.startsWith("https://")) {
+      const downloadResult = await FileSystem.downloadAsync(QR, fileUri);
+      if (downloadResult.status === 200) {
+        return downloadResult.uri;
+      }
+      throw new Error("Download failed with status: " + downloadResult.status);
+    } else {
+      if (QR.startsWith("file://")) {
+        return QR;
+      }
+      await FileSystem.writeAsStringAsync(fileUri, QR, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      return fileUri;
+    }
+  };
+
   const downloadQRCode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.Error"), t("QRcode.noQRCodeAvailable"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error") || "Error",
+          t("QRcode.noQRCodeAvailable") || "No QR code available",
+          [{ text: t("Main.OK") || "OK" }],
+        );
         return;
       }
 
-      const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
-      const downloadResult = await FileSystem.downloadAsync(QR, fileUri);
-
-      if (downloadResult.status !== 200) {
-        throw new Error("Download failed");
+      const localUri = await ensureLocalQRFile();
+      if (!localUri) {
+        throw new Error("Unable to create local QR file");
       }
 
       if (await Sharing.isAvailableAsync()) {
-        await Sharing.shareAsync(downloadResult.uri, {
+        await Sharing.shareAsync(localUri, {
+          UTI: "public.png",
           mimeType: "image/png",
-          dialogTitle: t("QRcode.ShareQRCode"),
+          dialogTitle: t("QRcode.ShareQRCode") || "Save / Share QR Code",
         });
       } else {
         Alert.alert(
-          t("Main.Success"),
-          t("QRcode.YourQRCodeHasBeenSavedToYourGallery"),
-          [{ text: t("Main.OK") }]
+          t("Main.Error") || "Error",
+          t("QRcode.UnableToSaveQRCodePleaseTryAgain") ||
+            "Unable to save QR code. Please try again.",
+          [{ text: t("Main.OK") || "OK" }],
         );
       }
     } catch (error) {
       console.error("Download error:", error);
       Alert.alert(
-        t("Main.Error"),
-        t("QRcode.UnableToSaveQRCodePleaseTryAgain"),
-        [{ text: t("Main.OK") }]
+        t("Main.Error") || "Error",
+        t("QRcode.UnableToSaveQRCodePleaseTryAgain") ||
+          "Unable to save QR code. Please try again.",
+        [{ text: t("Main.OK") || "OK" }],
       );
     }
   };
@@ -153,33 +189,40 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
   const shareQRCode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.Error"), t("QRcode.noQRCodeAvailable"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error") || "Error",
+          t("QRcode.noQRCodeAvailable") || "No QR code available",
+          [{ text: t("Main.OK") || "OK" }],
+        );
         return;
       }
 
-      const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
-      const downloadResult = await FileSystem.downloadAsync(QR, fileUri);
+      const localUri = await ensureLocalQRFile();
+      if (!localUri) {
+        throw new Error("Unable to create local QR file");
+      }
 
       if (await Sharing.isAvailableAsync()) {
-        await Sharing.shareAsync(downloadResult.uri, {
+        await Sharing.shareAsync(localUri, {
+          UTI: "public.png",
           mimeType: "image/png",
-          dialogTitle: t("QRcode.ShareQRCode"),
+          dialogTitle: t("QRcode.ShareQRCode") || "Share QR Code",
         });
       } else {
         Alert.alert(
-          t("QRcode.SharingFeatureUnavailable"),
-          t("QRcode.ThisDeviceDoesNotSupportSharingQRCodes"),
-          [{ text: t("Main.OK") }],
+          t("QRcode.SharingFeatureUnavailable") || "Sharing Unavailable",
+          t("QRcode.ThisDeviceDoesNotSupportSharingQRCodes") ||
+            "This device does not support sharing QR codes.",
+          [{ text: t("Main.OK") || "OK" }],
         );
       }
     } catch (error) {
       console.error("Share error:", error);
       Alert.alert(
-        t("Main.Error"), 
-        t("QRcode.UnableToShareQRCodePleaseTryAgainLater"), 
-        [{ text: t("Main.OK") }]
+        t("Main.Error") || "Error",
+        t("QRcode.UnableToShareQRCodePleaseTryAgainLater") ||
+          "Unable to share QR code. Please try again later.",
+        [{ text: t("Main.OK") || "OK" }],
       );
     }
   };

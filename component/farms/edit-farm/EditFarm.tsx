@@ -10,6 +10,7 @@ import {
   Alert,
   BackHandler,
   Platform,
+  KeyboardAvoidingView,
 } from "react-native";
 import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import ImageData from "@/assets/jsons/farm/farm-image.json";
@@ -539,9 +540,13 @@ const EditFarm: React.FC<EditFarmProps> = ({
   }
 
   return (
-    <View className="flex-1 bg-white">
+    <KeyboardAvoidingView
+      className="flex-1 bg-white"
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+    >
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
         nestedScrollEnabled={true}
         keyboardShouldPersistTaps="handled"
@@ -890,7 +895,7 @@ const EditFarm: React.FC<EditFarmProps> = ({
           </View>
         </View>
       </Modal>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

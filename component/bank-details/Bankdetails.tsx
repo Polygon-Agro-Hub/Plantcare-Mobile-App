@@ -213,12 +213,17 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
           t("BankDetails.BankDetailsRegisteredSuccessfully"),
           [
             {
-              text: t("Main.OK"),
               onPress: () => {
                 if (isSignUp) {
-                  navigation.navigate("Main", { screen: "Dashboard" });
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: "Main", params: { screen: "Dashboard" } }],
+                  });
                 } else {
-                  navigation.navigate("Main", { screen: "QRcode" });
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: "Main", params: { screen: "QRcode" } }],
+                  });
                 }
               },
             },
@@ -239,13 +244,25 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
           Alert.alert(
             t("BankDetails.Failed"),
             t("BankDetails.ExistingBankDetails"),
-            [{ text: t("Main.OK") }],
+            [
+              {
+                text: t("Main.OK"),
+                onPress: () => {
+                  if (isSignUp) {
+                    navigation.reset({
+                      index: 0,
+                      routes: [{ name: "Main", params: { screen: "Dashboard" } }],
+                    });
+                  } else {
+                    navigation.reset({
+                      index: 0,
+                      routes: [{ name: "Main", params: { screen: "QRcode" } }],
+                    });
+                  }
+                },
+              },
+            ],
           );
-          if (isSignUp) {
-            navigation.navigate("Main", { screen: "Dashboard" });
-          } else {
-            navigation.navigate("Main", { screen: "QRcode" });
-          }
         } else {
           Alert.alert(
             t("Main.Error"),

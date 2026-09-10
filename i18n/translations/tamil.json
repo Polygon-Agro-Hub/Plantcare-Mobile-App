@@ -26,7 +26,19 @@
     "LastName": "குடும்பப் பெயர்",
     "NICNumber": "தேசிய அடையாள அட்டை எண்",
     "PhoneNumber": "தொலைபேசி எண்",
-    "MobileNumber": "கைப்பேசி எண்"
+    "MobileNumber": "கைப்பேசி எண்",
+    "LastNameRequired": "குடும்பப் பெயர் தேவை.",
+    "FirstNameRequired": "முதற் பெயர் தேவை.",
+    "FirstnameRequred": "முதற் பெயர் தேவை.",
+    "Lastnamerequred": "குடும்பப் பெயர் தேவை.",
+    "EnterPhoneNumber": "தொலைபேசி எண்ணை உள்ளிடவும்",
+    "EnterNICNumber": "தேசிய அடையாள அட்டை எண்ணை உள்ளிடவும்"
+  },
+  "input": {
+    "FirstNameRequired": "முதற் பெயர் தேவை.",
+    "LastNameRequired": "குடும்பப் பெயர் தேவை.",
+    "FirstnameRequred": "முதற் பெயர் தேவை.",
+    "Lastnamerequred": "குடும்பப் பெயர் தேவை."
   },
   "District": {
     "Colombo": "கொழும்பு",
@@ -546,6 +558,21 @@
     "DuplicateNumbersAreNotAllowed.": "நகல் எண்கள் அனுமதிக்கப்படாது.",
     "DuplicateNICNumbersAreNotAllowed": "நகல் தேசிய அடையாள அட்டை எண்கள் அனுமதிக்கப்படாது.",
     "PleaseFixPhoneNumberValidationErrorsBeforeSaving": "சேமிப்பதற்கு முன், தயவுசெய்து தொலைபேசி எண் சரிபார்ப்பு பிழைகளைச் சரிசெய்யவும்.",
+    "PleaseFixNICValidationErrorsBeforeSaving": "சேமிப்பதற்கு முன் தேசிய அடையாள அட்டை சரிபார்ப்பு பிழைகளைச் சரிசெய்யவும்.",
+    "Please fix NIC validation errors before saving.": "சேமிப்பதற்கு முன் தேசிய அடையாள அட்டை சரிபார்ப்பு பிழைகளைச் சரிசெய்யவும்.",
+    "OneOrMorePhoneNumbersAlreadyRegistered": "ஒன்று அல்லது அதற்கு மேற்பட்ட தொலைபேசி எண்கள் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளன. தயவுசெய்து வேறு தொலைபேசி எண்களைப் பயன்படுத்தவும்.",
+    "One or more phone numbers are already registered. Please use different phone numbers.": "ஒன்று அல்லது அதற்கு மேற்பட்ட தொலைபேசி எண்கள் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளன. தயவுசெய்து வேறு தொலைபேசி எண்களைப் பயன்படுத்தவும்.",
+    "OneOrMoreNICNumbersAlreadyRegistered": "ஒன்று அல்லது அதற்கு மேற்பட்ட தேசிய அடையாள அட்டை எண்கள் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளன. தயவுசெய்து வேறு தேசிய அடையாள அட்டை எண்களைப் பயன்படுத்தவும்.",
+    "One or more NIC numbers are already registered. Please use different NIC numbers.": "ஒன்று அல்லது அதற்கு மேற்பட்ட தேசிய அடையாள அட்டை எண்கள் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளன. தயவுசெய்து வேறு தேசிய அடையாள அட்டை எண்களைப் பயன்படுத்தவும்.",
+    "DuplicatePhoneNumbersFoundPleaseUseUnique": "நகல் தொலைபேசி எண்கள் கண்டறியப்பட்டன. ஒவ்வொரு ஊழியருக்கும் தனித்துவமான தொலைபேசி எண்களைப் பயன்படுத்தவும்.",
+    "Duplicate phone numbers found. Please use unique phone numbers for each staff member.": "நகல் தொலைபேசி எண்கள் கண்டறியப்பட்டன. ஒவ்வொரு ஊழியருக்கும் தனித்துவமான தொலைபேசி எண்களைப் பயன்படுத்தவும்.",
+    "DuplicateNICNumbersFoundPleaseUseUnique": "நகல் தேசிய அடையாள அட்டை எண்கள் கண்டறியப்பட்டன. ஒவ்வொரு ஊழியருக்கும் தனித்துவமான தேசிய அடையாள அட்டை எண்களைப் பயன்படுத்தவும்.",
+    "Duplicate NIC numbers found. Please use unique NIC numbers for each staff member.": "நகல் தேசிய அடையாள அட்டை எண்கள் கண்டறியப்பட்டன. ஒவ்வொரு ஊழியருக்கும் தனித்துவமான தேசிய அடையாள அட்டை எண்களைப் பயன்படுத்தவும்.",
+    "PleaseEnterAValidPhoneNumber": "தயவுசெய்து சரியான தொலைபேசி எண்ணை உள்ளிடவும்",
+    "Please enter a valid phone number": "தயவுசெய்து சரியான தொலைபேசி எண்ணை உள்ளிடவும்",
+    "ErrorCheckingPhoneNumber": "தொலைபேசி எண்ணைச் சரிபார்ப்பதில் பிழை",
+    "Error checking phone number": "தொலைபேசி எண்ணைச் சரிபார்ப்பதில் பிழை",
+    "MissingFarmDetailsPleaseGoBack": "பண்ணை விவரங்கள் விடுபட்டுள்ளன. தயவுசெய்து திரும்பிச் சென்று அனைத்து படிகளையும் முடிக்கவும்.",
     "StaffCountCannotBeLessThanAppUserCountAppUsers": "ஊழியர்களின் எண்ணிக்கை {{appUserCount}} பயன்பாட்டுப் பயனர்களை விடக் குறைவாக இருக்க முடியாது",
     "Total": "மொத்தம்",
     "YouHaveSuccessfullyAppliedForYourCertificate": "உங்கள் சான்றிதழுக்கு நீங்கள் வெற்றிகரமாக விண்ணப்பித்துள்ளீர்கள்!",
@@ -692,7 +719,9 @@
     "StreetName": "தெரு பெயர்",
     "EnterStreetName": "தெரு பெயரை உள்ளிடவும்",
     "City": "நகரம்",
-    "EnterCityName": "நகரத்தின் பெயரை உள்ளிடவும்"
+    "EnterCityName": "நகரத்தின் பெயரை உள்ளிடவும்",
+    "EnterFirstName": "முதற் பெயரை உள்ளிடவும்",
+    "EnterLastName": "குடும்பப் பெயரை உள்ளிடவும்"
   },
   "Notification": {
     "CropTaskUpdate": "பயிர் பணி புதுப்பிப்பு!",
@@ -1632,5 +1661,14 @@
     "My Orders": "எனது ஆர்டர்கள்",
     "All": "அனைத்தும்",
     "No Previous Orders": "முந்தைய ஆர்டர்கள் இல்லை"
+  },
+  "EditProfile": {
+    "EditProfile": "சுயவிவரத்தை திருத்தவும்",
+    "PermissionDenied": "அனுமதி மறுக்கப்பட்டது",
+    "PleaseAllowAccessToYourGalleryToProceed": "தொடர உங்கள் கேலரிக்கான அணுகலை அனுமதிக்கவும்.",
+    "ProfileImageUpdatedSuccessfully": "சுயவிவர படம் வெற்றிகரமாக புதுப்பிக்கப்பட்டது.",
+    "FirstNameAndLastNameCannotBeEmpty": "முதல் பெயர் மற்றும் கடைசி பெயர் காலியாக இருக்கக்கூடாது.",
+    "YourProfileHasBeenUpdatedSuccessfully": "உங்கள் சுயவிவரம் வெற்றிகரமாக புதுப்பிக்கப்பட்டது.",
+    "FailedToUpdateProfileTryAgainLater": "சுயவிவரத்தை புதுப்பிக்க முடியவில்லை. பின்னர் மீண்டும் முயற்சிக்கவும்."
   }
 }

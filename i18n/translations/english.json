@@ -28,7 +28,17 @@
     "PhoneNumber": "Phone Number",
     "MobileNumber": "Mobile Number",
     "LastNameRequired": "Last Name is required.",
-    "FirstNameRequired": "First Name is required."
+    "FirstNameRequired": "First Name is required.",
+    "FirstnameRequred": "First Name is required.",
+    "Lastnamerequred": "Last Name is required.",
+    "EnterPhoneNumber": "Enter Phone Number",
+    "EnterNICNumber": "Enter NIC Number"
+  },
+  "input": {
+    "FirstNameRequired": "First Name is required.",
+    "LastNameRequired": "Last Name is required.",
+    "FirstnameRequred": "First Name is required.",
+    "Lastnamerequred": "Last Name is required."
   },
   "District": {
     "Colombo": "Colombo",
@@ -553,6 +563,21 @@
     "DuplicateNumbersAreNotAllowed.": "Duplicate numbers are not allowed.",
     "DuplicateNICNumbersAreNotAllowed": "Duplicate NIC numbers are not allowed.",
     "PleaseFixPhoneNumberValidationErrorsBeforeSaving": "Please fix phone number validation errors before saving.",
+    "PleaseFixNICValidationErrorsBeforeSaving": "Please fix NIC validation errors before saving.",
+    "Please fix NIC validation errors before saving.": "Please fix NIC validation errors before saving.",
+    "OneOrMorePhoneNumbersAlreadyRegistered": "One or more phone numbers are already registered. Please use different phone numbers.",
+    "One or more phone numbers are already registered. Please use different phone numbers.": "One or more phone numbers are already registered. Please use different phone numbers.",
+    "OneOrMoreNICNumbersAlreadyRegistered": "One or more NIC numbers are already registered. Please use different NIC numbers.",
+    "One or more NIC numbers are already registered. Please use different NIC numbers.": "One or more NIC numbers are already registered. Please use different NIC numbers.",
+    "DuplicatePhoneNumbersFoundPleaseUseUnique": "Duplicate phone numbers found. Please use unique phone numbers for each staff member.",
+    "Duplicate phone numbers found. Please use unique phone numbers for each staff member.": "Duplicate phone numbers found. Please use unique phone numbers for each staff member.",
+    "DuplicateNICNumbersFoundPleaseUseUnique": "Duplicate NIC numbers found. Please use unique NIC numbers for each staff member.",
+    "Duplicate NIC numbers found. Please use unique NIC numbers for each staff member.": "Duplicate NIC numbers found. Please use unique NIC numbers for each staff member.",
+    "PleaseEnterAValidPhoneNumber": "Please enter a valid phone number",
+    "Please enter a valid phone number": "Please enter a valid phone number",
+    "ErrorCheckingPhoneNumber": "Error checking phone number",
+    "Error checking phone number": "Error checking phone number",
+    "MissingFarmDetailsPleaseGoBack": "Missing farm details. Please go back and complete all steps.",
     "StaffCountCannotBeLessThanAppUserCountAppUsers": "Staff count cannot be less than {{appUserCount}} app users",
     "Total": "Total",
     "YouHaveSuccessfullyAppliedForYourCertificate": "You have successfully applied for\nyour certificate!",
@@ -1689,5 +1714,14 @@
       "Saturday"
     ],
     "DaysShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+  },
+  "EditProfile": {
+    "EditProfile": "Edit Profile",
+    "PermissionDenied": "Permission Denied",
+    "PleaseAllowAccessToYourGalleryToProceed": "Please allow access to your gallery to proceed.",
+    "ProfileImageUpdatedSuccessfully": "Profile image updated successfully.",
+    "FirstNameAndLastNameCannotBeEmpty": "First name and last name cannot be empty.",
+    "YourProfileHasBeenUpdatedSuccessfully": "Your profile has been updated successfully.",
+    "FailedToUpdateProfileTryAgainLater": "Failed to update profile. Please try again later."
   }
 }

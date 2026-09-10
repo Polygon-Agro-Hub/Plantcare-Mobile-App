@@ -28,7 +28,17 @@
     "PhoneNumber": "දුරකථන අංකය",
     "MobileNumber": "ජංගම දුරකථන අංකය",
     "LastNameRequired": "අවසන් නම අවශ්‍ය වේ.",
-    "FirstNameRequired": "මුල් නම අවශ්‍ය වේ."
+    "FirstNameRequired": "මුල් නම අවශ්‍ය වේ.",
+    "FirstnameRequred": "මුල් නම අවශ්‍ය වේ.",
+    "Lastnamerequred": "අවසන් නම අවශ්‍ය වේ.",
+    "EnterPhoneNumber": "දුරකථන අංකය ඇතුළත් කරන්න",
+    "EnterNICNumber": "ජාතික හැඳුනුම්පත් අංකය ඇතුළත් කරන්න"
+  },
+  "input": {
+    "FirstNameRequired": "මුල් නම අවශ්‍ය වේ.",
+    "LastNameRequired": "අවසන් නම අවශ්‍ය වේ.",
+    "FirstnameRequred": "මුල් නම අවශ්‍ය වේ.",
+    "Lastnamerequred": "අවසන් නම අවශ්‍ය වේ."
   },
   "District": {
     "Colombo": "කොළඹ",
@@ -553,6 +563,21 @@
     "DuplicateNumbersAreNotAllowed.": "අනුපිටපත් අංකවලට අවසර නැත.",
     "DuplicateNICNumbersAreNotAllowed": "අනුපිටපත් ජාතික හැඳුනුම්පත් අංකවලට අවසර නැත.",
     "PleaseFixPhoneNumberValidationErrorsBeforeSaving": "කරුණාකර සුරැකීමට පෙර දුරකථන අංක වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
+    "PleaseFixNICValidationErrorsBeforeSaving": "කරුණාකර සුරැකීමට පෙර ජාතික හැඳුනුම්පත් වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
+    "Please fix NIC validation errors before saving.": "කරුණාකර සුරැකීමට පෙර ජාතික හැඳුනුම්පත් වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
+    "OneOrMorePhoneNumbersAlreadyRegistered": "දුරකථන අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් දුරකථන අංක භාවිතා කරන්න.",
+    "One or more phone numbers are already registered. Please use different phone numbers.": "දුරකථන අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් දුරකථන අංක භාවිතා කරන්න.",
+    "OneOrMoreNICNumbersAlreadyRegistered": "ජාතික හැඳුනුම්පත් අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් ජාතික හැඳුනුම්පත් අංක භාවිතා කරන්න.",
+    "One or more NIC numbers are already registered. Please use different NIC numbers.": "ජාතික හැඳුනුම්පත් අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් ජාතික හැඳුනුම්පත් අංක භාවිතා කරන්න.",
+    "DuplicatePhoneNumbersFoundPleaseUseUnique": "අනුපිටපත් දුරකථන අංක හමු විය. කරුණාකර එක් එක් කාර්ය මණ්ඩල සාමාජිකයා සඳහා අනන්‍ය දුරකථන අංක භාවිතා කරන්න.",
+    "Duplicate phone numbers found. Please use unique phone numbers for each staff member.": "අනුපිටපත් දුරකථන අංක හමු විය. කරුණාකර එක් එක් කාර්ය මණ්ඩල සාමාජිකයා සඳහා අනන්‍ය දුරකථන අංක භාවිතා කරන්න.",
+    "DuplicateNICNumbersFoundPleaseUseUnique": "අනුපිටපත් ජාතික හැඳුනුම්පත් අංක හමු විය. කරුණාකර එක් එක් කාර්ය මණ්ඩල සාමාජිකයා සඳහා අනන්‍ය ජාතික හැඳුනුම්පත් අංක භාවිතා කරන්න.",
+    "Duplicate NIC numbers found. Please use unique NIC numbers for each staff member.": "අනුපිටපත් ජාතික හැඳුනුම්පත් අංක හමු විය. කරුණාකර එක් එක් කාර්ය මණ්ඩල සාමාජිකයා සඳහා අනන්‍ය ජාතික හැඳුනුම්පත් අංක භාවිතා කරන්න.",
+    "PleaseEnterAValidPhoneNumber": "කරුණාකර වලංගු දුරකථන අංකයක් ඇතුළත් කරන්න",
+    "Please enter a valid phone number": "කරුණාකර වලංගු දුරකථන අංකයක් ඇතුළත් කරන්න",
+    "ErrorCheckingPhoneNumber": "දුරකථන අංකය පරීක්ෂා කිරීමේදී දෝෂයක් ඇති විය",
+    "Error checking phone number": "දුරකථන අංකය පරීක්ෂා කිරීමේදී දෝෂයක් ඇති විය",
+    "MissingFarmDetailsPleaseGoBack": "ගොවිපල විස්තර අසම්පූර්ණයි. කරුණාකර ආපසු ගොස් සියලු පියවර සම්පූර්ණ කරන්න.",
     "StaffCountCannotBeLessThanAppUserCountAppUsers": "කාර්ය මණ්ඩල සංඛ්‍යාව {{appUserCount}} යෙදුම් පරිශීලකයින්ට වඩා අඩු විය නොහැක",
     "Total": "එකතුව",
     "YouHaveSuccessfullyAppliedForYourCertificate": "ඔබ ඔබගේ සහතිකය සඳහා සාර්ථකව අයදුම් කර ඇත!",
@@ -697,7 +722,9 @@
     "StreetName": "වීදි නම",
     "EnterStreetName": "වීදි නම ඇතුළත් කරන්න",
     "City": "නගරය",
-    "EnterCityName": "නගරයේ නම ඇතුළත් කරන්න"
+    "EnterCityName": "නගරයේ නම ඇතුළත් කරන්න",
+    "EnterFirstName": "මුල් නම ඇතුළත් කරන්න",
+    "EnterLastName": "අවසන් නම ඇතුළත් කරන්න"
   },
   "Notification": {
     "CropTaskUpdate": "බෝග කාර්ය යාවත්කාලීන කිරීම!",
@@ -1687,5 +1714,14 @@
       "සෙනසුරාදා"
     ],
     "DaysShort": ["ඉරි", "සඳු", "අඟ", "බදා", "බ්‍ර", "සිකු", "සෙන"]
+  },
+  "EditProfile": {
+    "EditProfile": "පැතිකඩ සංස්කරණය කරන්න",
+    "PermissionDenied": "අවසර නොමැත",
+    "PleaseAllowAccessToYourGalleryToProceed": "ඉදිරියට යාමට කරුණාකර ඔබගේ ගැලරිය වෙත ප්‍රවේශය ලබා දෙන්න.",
+    "ProfileImageUpdatedSuccessfully": "පැතිකඩ රූපය සාර්ථකව යාවත්කාලීන කරන ලදී.",
+    "FirstNameAndLastNameCannotBeEmpty": "මුල් නම සහ අවසාන නම හිස් විය නොහැක.",
+    "YourProfileHasBeenUpdatedSuccessfully": "ඔබගේ පැතිකඩ සාර්ථකව යාවත්කාලීන කරන ලදී.",
+    "FailedToUpdateProfileTryAgainLater": "පැතිකඩ යාවත්කාලීන කිරීමට අසමත් විය. කරුණාකර පසුව නැවත උත්සාහ කරන්න."
   }
 }

@@ -117,7 +117,10 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
       if (error?.response?.status === 409) {
         setPhoneError(t("Farms.ThisPhoneNumberIsAlreadyRegistered"));
       } else if (error?.response) {
-        setPhoneError(t("Farms.Error checking phone number"));
+        setPhoneError(
+          t("Farms.ErrorCheckingPhoneNumber") ||
+            t("Farms.Error checking phone number"),
+        );
       } else {
         setPhoneError(null);
       }
@@ -154,7 +157,10 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
       } else if (formattedText.length < 9) {
         setValidationError(t("Farms.PhoneNumberMustBeExactly9Digits"));
       } else if (!validateSriLankanPhoneNumber(formattedText)) {
-        setValidationError(t("Farms.Please enter a valid phone number"));
+        setValidationError(
+          t("Farms.PleaseEnterAValidPhoneNumber") ||
+            t("Farms.Please enter a valid phone number"),
+        );
       } else {
         setValidationError(null);
       }
@@ -247,7 +253,8 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
       } else {
         Alert.alert(
           t("Main.Sorry"),
-          t("Farms.Please enter a valid phone number"),
+          t("Farms.PleaseEnterAValidPhoneNumber") ||
+            t("Farms.Please enter a valid phone number"),
           [{ text: t("Main.OK") }],
         );
       }
@@ -435,11 +442,13 @@ const AddnewStaff: React.FC<AddnewStaffProps> = ({ navigation, route }) => {
   };
 
   const handleFirstNameChange = (text: string) => {
-    setFirstName(stripLeadingSpaces(text));
+    const filtered = text.replace(/[^a-zA-Z\u0D80-\u0DFF\u0B80-\u0BFF ]/g, "");
+    setFirstName(stripLeadingSpaces(filtered));
   };
 
   const handleLastNameChange = (text: string) => {
-    setLastName(stripLeadingSpaces(text));
+    const filtered = text.replace(/[^a-zA-Z\u0D80-\u0DFF\u0B80-\u0BFF ]/g, "");
+    setLastName(stripLeadingSpaces(filtered));
   };
 
   return (
