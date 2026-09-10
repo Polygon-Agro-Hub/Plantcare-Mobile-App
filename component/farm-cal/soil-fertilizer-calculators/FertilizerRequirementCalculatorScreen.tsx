@@ -110,16 +110,31 @@ const FertilizerRequirementCalculatorScreen: React.FC<
           `${environment.API_BASE_URL}api/crop/get-all-cropgroups`,
         );
 
+        // if (response.data.status === "success") {
+        //   const mapped: CropItem[] = response.data.data
+        //     .filter(
+        //       (item: CropGroup) =>
+        //         item.cropNameEnglish &&
+        //         (item.nitrogen > 0 ||
+        //           item.phosphorus > 0 ||
+        //           item.potassium > 0),
+        //     )
+        //     .map((item: CropGroup) => ({
+        //       label: item.cropNameEnglish,
+        //       value: item.cropNameEnglish,
+        //       nameEnglish: item.cropNameEnglish,
+        //       nameSinhala: item.cropNameSinhala || item.cropNameEnglish,
+        //       nameTamil: item.cropNameTamil || item.cropNameEnglish,
+        //       nitrogen: Number(item.nitrogen),
+        //       phosphorus: Number(item.phosphorus),
+        //       potassium: Number(item.potassium),
+        //       icon: item.image ?? null,
+        //     }));
+        //   setRawCrops(mapped);
+        // }
         if (response.data.status === "success") {
-          const mapped: CropItem[] = response.data.data
-            .filter(
-              (item: CropGroup) =>
-                item.cropNameEnglish &&
-                (item.nitrogen > 0 ||
-                  item.phosphorus > 0 ||
-                  item.potassium > 0),
-            )
-            .map((item: CropGroup) => ({
+          const mapped: CropItem[] = response.data.data.map(
+            (item: CropGroup) => ({
               label: item.cropNameEnglish,
               value: item.cropNameEnglish,
               nameEnglish: item.cropNameEnglish,
@@ -129,7 +144,8 @@ const FertilizerRequirementCalculatorScreen: React.FC<
               phosphorus: Number(item.phosphorus),
               potassium: Number(item.potassium),
               icon: item.image ?? null,
-            }));
+            }),
+          );
           setRawCrops(mapped);
         }
       } catch (error) {
@@ -210,7 +226,7 @@ const FertilizerRequirementCalculatorScreen: React.FC<
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
-        title={`${t("SoilFertilizerCalculators.Fertilizer")} ${t("Calculator.calculator")}`}
+        title={`${t("SoilFertilizerCalculators.FertilizerRequirement")} ${t("Calculator.Calculator")}`}
         icon={require("@/assets/images/farm-cal/soil-fertilizer-calculators/fertilizer-icon.webp")}
         onBack={() => navigation.goBack()}
       />
@@ -285,7 +301,10 @@ const FertilizerRequirementCalculatorScreen: React.FC<
         <Text className="text-sm font-semibold text-gray-900 mb-2 mt-6">
           {t("SoilFertilizerCalculators.RecommendedNPKRatio")}
         </Text>
-        <View className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] justify-center">
+        <View
+          className="bg-[#F4F4F4] rounded-3xl px-4 justify-center"
+          style={{ minHeight: 50, paddingVertical: selectedCrop ? 12 : 0 }}
+        >
           {selectedCrop ? (
             <View>
               <Text
@@ -375,23 +394,33 @@ const FertilizerRequirementCalculatorScreen: React.FC<
         >
           <View
             className="bg-white w-3/4 shadow-lg overflow-hidden"
-            style={{ borderRadius: 16 }}
+            style={{ borderRadius: 16, position: "relative" }}
           >
             {/* Yellow top bar */}
             <View
               style={{ height: 10, backgroundColor: "#F5C518", width: "100%" }}
             />
 
+            {/* Close button — now a sibling of the yellow bar & content, anchored to the card itself */}
+            <TouchableOpacity
+              onPress={() => setResultModalVisible(false)}
+              style={{
+                position: "absolute",
+                top: 16,
+                right: 12,
+                width: 28,
+                height: 28,
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 10,
+              }}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Ionicons name="close-circle" size={26} color="#C7C9CB" />
+            </TouchableOpacity>
+
             {/* Content */}
             <View className="py-7 px-9 items-center">
-              {/* Close button */}
-              <TouchableOpacity
-                onPress={() => setResultModalVisible(false)}
-                className="absolute top-3 right-3 w-7 h-7 rounded-full items-center justify-center"
-              >
-                <Ionicons name="close-circle" size={30} color="#C7C9CB" />
-              </TouchableOpacity>
-
               {/* Crop Image */}
               {selectedCrop?.icon && (
                 <Image
@@ -408,7 +437,6 @@ const FertilizerRequirementCalculatorScreen: React.FC<
 
               {/* NPK Values */}
               <View className="w-full mt-4">
-                {/* N Row */}
                 <View className="flex-row items-baseline justify-center mb-2">
                   <Text className="text-3xl font-extrabold text-gray-900">
                     {t("SoilFertilizerCalculators.N")} : {npkResult.N}
@@ -418,7 +446,6 @@ const FertilizerRequirementCalculatorScreen: React.FC<
                   </Text>
                 </View>
 
-                {/* P Row */}
                 <View className="flex-row items-baseline justify-center mb-2">
                   <Text className="text-3xl font-extrabold text-gray-900">
                     {t("SoilFertilizerCalculators.P")} : {npkResult.P}
@@ -428,7 +455,6 @@ const FertilizerRequirementCalculatorScreen: React.FC<
                   </Text>
                 </View>
 
-                {/* K Row */}
                 <View className="flex-row items-baseline justify-center">
                   <Text className="text-3xl font-extrabold text-gray-900">
                     {t("SoilFertilizerCalculators.K")} : {npkResult.K}

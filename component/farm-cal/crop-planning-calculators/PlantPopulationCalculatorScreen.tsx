@@ -193,7 +193,7 @@ const PlantPopulationCalculatorScreen: React.FC<PlantPopulationProps> = ({
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
-        title={`${t("CropPlanningCalculators.PlantPopulation")} ${t("Calculator.calculator")}`}
+        title={`${t("CropPlanningCalculators.PlantPopulation")} ${t("Calculator.Calculator")}`}
         icon={require("@/assets/images/farm-cal/crop-planning-calculators/plant-population-icon.webp")}
         onBack={() => navigation.goBack()}
       />

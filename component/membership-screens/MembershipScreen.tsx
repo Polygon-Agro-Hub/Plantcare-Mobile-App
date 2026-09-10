@@ -10,6 +10,7 @@ import {
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import { useTranslation } from "react-i18next";
+import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../common/CustomHeader";
 
 type MembershipScreenNavigationProp = StackNavigationProp<
@@ -36,10 +37,20 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({
   useEffect(() => {
     const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
+  }, [t]);
 
-    if (!isSignUp) {
+  const handleBackPress = React.useCallback(() => {
+    if (isSignUp) {
+      navigation.navigate("Verify");
+    } else {
+      navigation.navigate("Main", { screen: "QRcode" } as any);
+    }
+  }, [navigation, isSignUp]);
+
+  useFocusEffect(
+    React.useCallback(() => {
       const backAction = () => {
-        navigation.navigate("Main", { screen: "QRcode" });
+        handleBackPress();
         return true;
       };
 
@@ -51,8 +62,8 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({
       return () => {
         backHandler.remove();
       };
-    }
-  }, [t, navigation, isSignUp]);
+    }, [handleBackPress]),
+  );
 
   return (
     <View className="flex-1 bg-white">
@@ -65,13 +76,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({
           title={""}
           navigation={navigation}
           showBackButton={true}
-          onBackPress={() => {
-            if (isSignUp) {
-              navigation.goBack();
-            } else {
-              navigation.navigate("Main", { screen: "QRcode" });
-            }
-          }}
+          onBackPress={handleBackPress}
         />
 
         <View className="items-center mb-6 px-4">
@@ -193,7 +198,7 @@ const MembershipScreen: React.FC<MembershipScreenProps> = ({
                   className="font-bold text-gray-900 text-center mb-2"
                   style={{ fontSize: adjustFontSize(14) }}
                 >
-                  {t("Membership.QrCodeAcess")}
+                  {t("Membership.QrCodeAccess")}
                 </Text>
                 <Text
                   className="text-gray-600 text-center"

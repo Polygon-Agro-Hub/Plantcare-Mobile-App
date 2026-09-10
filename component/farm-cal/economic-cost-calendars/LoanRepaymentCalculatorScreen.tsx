@@ -75,11 +75,6 @@ const LoanRepaymentCalculatorScreen: React.FC<LoanRepaymentProps> = ({
     setShowValidation(true);
 
     if (!loanAmount || !interestRate || !loanYears) {
-      Alert.alert(
-        t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("Main.PleaseFillAllRequiredFields") ||
-        "Please fill all required fields.",
-      );
       return;
     }
 
@@ -139,7 +134,7 @@ const LoanRepaymentCalculatorScreen: React.FC<LoanRepaymentProps> = ({
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
-        title={t("EconomicCostCalendars.LoanRepayment")}
+        title={`${t("EconomicCostCalendars.LoanRepayment")} ${t("Calculator.Calculator")}`}
         icon={require("@/assets/images/farm-cal/economic-cost-calculators/loan-repayment-icon.webp")}
         onBack={() => navigation.goBack()}
       />

@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StatusBar,
   Image,
   ScrollView,
   Alert,
@@ -357,11 +356,11 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
         contentContainerStyle={{ paddingBottom: 20 }}
       >
         <View className="bg-white rounded-2xl  mb-5">
-          <Text className="text-[#070707]  mb-3 text-sm">
+          <Text className="text-[#070707]  mb-3 ">
             {t("Govicapital.DearSirMadam")}
           </Text>
 
-          <Text className="text-[#070707] leading-5 mb-3">
+          <Text className="text-[#070707] leading-6 mb-3">
             {t(
               "Govicapital.IFarmersNameAFarmerFromDistrictAmWritingToFormallyRequestAnAgriculturalInvestmentForTheUpcomingCultivationSeason",
             )
@@ -369,7 +368,7 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
               .replace("[District]", district)}
           </Text>
 
-          <Text className="text-[#070707] leading-5 mb-3 ">
+          <Text className="text-[#070707] leading-6 mb-3 ">
             {t("Govicapital.TheProjectDetailsAreAsFollows")}
           </Text>
 
@@ -418,7 +417,7 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
                     {t("Govicapital.ExpectedYield")}:
                   </Text>
                   <Text className="text-[#070707] mt-1 font-semibold">
-                    {expectedYield || 0} kg
+                    {expectedYield || 0} {t("Govicapital.Kg")}
                   </Text>
                 </View>
               </View>
@@ -438,13 +437,13 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
             </View>
           </View>
 
-          <Text className="text-[#070707] leading-5 mb-3">
+          <Text className="text-[#070707] leading-6 mb-3">
             {t(
               "Govicapital.ThisInvestmentIsEssentialForCoveringTheCostsOfHighQualitySeedsFertilizersPesticidesIrrigationFacilitiesAndLaborExpensesForTheProjectedYearTheExpectedHarvestIsSufficientToGenerateSufficientRevenueForTheTimelyRepaymentOfTheLoanAlongWithAccruedInterest",
             )}
           </Text>
 
-          <Text className="text-[#070707] leading-5 mb-3">
+          <Text className="text-[#070707] leading-6 mb-3">
             {t(
               "Govicapital.IHaveAAttachedTheNecessaryDocumentsForYourPerusal",
             )}
@@ -471,18 +470,18 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
             )}
           </View>
 
-          <Text className="text-gray-700 leading-5 mb-3">
+          <Text className="text-[#070707] leading-6 mb-3">
             {t(
               "Govicapital.IAmConfidentInTheSuccessOfThisVentureAndRequestYouToKindlyApproveMyLoanApplicationILookForwardToYourFavorableTimeAndConsideration",
             )}
           </Text>
 
           <View className="mt-3">
-            <Text className="text-gray-700 font-semibold mb-1">
+            <Text className="text-[#070707] leading-6">
               {t("Govicapital.Sincerely")}
             </Text>
-            <Text className="text-gray-700">{farmerName}</Text>
-            <Text className="text-gray-700">{contactNumber}</Text>
+            <Text className="text-[#070707] leading-6">{farmerName}</Text>
+            <Text className="text-[#070707] leading-6">{contactNumber}</Text>
           </View>
         </View>
 
@@ -499,7 +498,7 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
               elevation: 4,
             }}
           >
-            <Text className="text-gray-700 text-center font-medium text-lg">
+            <Text className="text-[#070707] text-center font-medium text-lg">
               {t("Main.GoBack")}
             </Text>
           </TouchableOpacity>

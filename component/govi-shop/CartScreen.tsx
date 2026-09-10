@@ -6,13 +6,14 @@ import {
   Image,
   FlatList,
   Alert,
-  ActivityIndicator,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons,MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import CustomHeader from "../common/CustomHeader";
+import ShopLoading from "./ShopLoading";
+import { useTranslation } from "react-i18next";
 import { RootStackParamList } from "../types/types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/core";
@@ -136,7 +137,7 @@ const CartCard: React.FC<CartCardProps> = ({
 
   return (
     <View
-      className={`bg-white mb-2 mx-4 rounded-2xl overflow-hidden ${
+      className={`bg-white mb-2 mx-6 rounded-2xl overflow-hidden ${
         item.isOutOfStock ? "border-2 border-red-500" : "border border-gray-100"
       }`}
       style={{
@@ -219,9 +220,9 @@ const CartCard: React.FC<CartCardProps> = ({
           <TouchableOpacity
             onPress={() => onRemove(item.id)}
             activeOpacity={0.7}
-            className="w-7 h-7 rounded-full bg-red-50 items-center justify-center"
+            className="w-7 h-7 rounded-full items-center justify-center"
           >
-            <Ionicons name="trash-outline" size={13} color="#EF4444" />
+            <MaterialIcons name="delete" size={20} color="#EF4444" />
           </TouchableOpacity>
 
           {/* Qty Stepper */}
@@ -272,11 +273,11 @@ const SummaryRow: React.FC<{
   highlight?: boolean;
 }> = ({ label, value, highlight }) => (
   <View className="flex-row justify-between items-center mb-2">
-    <Text className="text-sm text-[#415479] font-bold">{label}</Text>
+    <Text className=" text-[#415479] font-medium">{label}</Text>
     <Text
-      className={`text-sm ${
+      className={`${
         highlight
-          ? "text-[#FF8000] font-bold text-base"
+          ? "text-[#FF8000] font-medium text-base"
           : "text-[#2E2E2E] font-bold"
       }`}
     >
@@ -286,6 +287,7 @@ const SummaryRow: React.FC<{
 );
 
 const CartScreen: React.FC<CartScreenProps> = ({ route, navigation }) => {
+  const { t } = useTranslation();
   const shopname = route?.params?.shopname ?? "Cart";
   const branchId = route?.params?.branchId;
 
@@ -489,10 +491,7 @@ const CartScreen: React.FC<CartScreenProps> = ({ route, navigation }) => {
           navigation={navigation}
           transparent={false}
         />
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#FF8000" />
-          <Text className="text-gray-400 mt-3 text-sm">Loading cart…</Text>
-        </View>
+        <ShopLoading text={t("GoviShop.LoadingCart") || "Loading cart..."} />
       </View>
     );
   }
@@ -549,7 +548,7 @@ const CartScreen: React.FC<CartScreenProps> = ({ route, navigation }) => {
       />
 
       {/* Count header */}
-      <View className="px-4 pt-3 pb-2">
+      <View className="px-6 pt-3 pb-2">
         <Text className="text-[#000000] font-semibold text-sm">
           All ({cart.length})
         </Text>
@@ -571,8 +570,8 @@ const CartScreen: React.FC<CartScreenProps> = ({ route, navigation }) => {
         showsVerticalScrollIndicator={false}
         ItemSeparatorComponent={() => <View className="h-1" />}
         ListFooterComponent={
-          <View className="mx-4 mt-5">
-            <View className="bg-white rounded-2xl p-4">
+          <View className="mt-5">
+            <View className="bg-white rounded-2xl px-6">
               <View className="h-px bg-gray-200 mb-3" />
               <SummaryRow
                 label="Subtotal"
@@ -594,7 +593,7 @@ const CartScreen: React.FC<CartScreenProps> = ({ route, navigation }) => {
       />
 
       {/* Checkout bar */}
-      <View className="px-4 pt-3 pb-7">
+      <View className="px-6 pt-4 pb-6">
         <TouchableOpacity
           onPress={handleCheckout}
           activeOpacity={0.88}

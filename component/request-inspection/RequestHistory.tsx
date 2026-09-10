@@ -27,6 +27,7 @@ import LottieView from "lottie-react-native";
 import { useSelector } from "react-redux";
 import { selectUserFarmCount } from "../../store/userSlice";
 import CustomHeader from "../common/CustomHeader";
+import NoData from "../common/NoData";
 import LoadingPage from "../common/LoadingPage";
 
 type RequestHistoryNavigationProp = StackNavigationProp<
@@ -232,7 +233,9 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
     if (farmCount === 0) {
       Alert.alert(
         t("RequestHistory.NoFarmAvailable") || "No Farm Available",
-        t("RequestHistory.YouMustCreateAFarmAndEnrollInAtLeastOneCropVarietyBeforeYouCanContinue") ||
+        t(
+          "RequestHistory.YouMustCreateAFarmAndEnrollInAtLeastOneCropVarietyBeforeYouCanContinue",
+        ) ||
           "You must create a farm and enroll in at least one crop variety before you can continue.",
         [{ text: t("OK") || "OK" }],
       );
@@ -242,28 +245,34 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
   };
 
   const EmptyState = () => (
-    <View className="flex-1 items-center justify-center -mt-[70%]">
-      <LottieView
-        source={require("@/assets/jsons/common/no-data.json")}
-        style={{ width: wp(50), height: hp(50) }}
-        autoPlay
-        loop
-      />
-      <Text className="text-center text-gray-600 px-8 -mt-[30%]">
-        {farmCount === 0
-          ? t("RequestHistory.YouMustCreateAFarmAndEnrollInAtLeastOneCropVarietyBeforeYouCanContinue") ||
+    <NoData
+      text={
+        farmCount === 0
+          ? t(
+              "RequestHistory.YouMustCreateAFarmAndEnrollInAtLeastOneCropVarietyBeforeYouCanContinue",
+            ) ||
             "You must create a farm and enroll in at least one crop variety before you can continue."
-          : t("RequestHistory.YouHaveNoRequestsAddedYet") || "You have no requests added yet"}
-      </Text>
-    </View>
+          : t("RequestHistory.YouHaveNoRequestsAddedYet") ||
+            "You have no requests added yet"
+      }
+    />
   );
 
   const RequestCard = ({ request }: { request: ServiceRequest }) => (
     <TouchableOpacity
       onPress={() => handleRequestPress(request)}
       activeOpacity={0.7}
+      className="rounded-xl border border-gray-200 p-4 mb-3 mx-6"
+      style={{
+        backgroundColor: "#ffffff", // explicit + opaque, required for Android elevation
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.12,
+        shadowRadius: 4,
+        elevation: 4,
+      }}
     >
-      <View className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-3 mx-6">
+      <View>
         <View className="flex-row justify-between items-start mb-3">
           <Text className="font-semibold text-gray-800 flex-1 mr-2">
             {request.serviceName}
@@ -290,9 +299,7 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
   );
 
   if (loading) {
-    return (
-     <LoadingPage fullScreen />
-    );
+    return <LoadingPage fullScreen />;
   }
 
   return (
@@ -313,7 +320,20 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
         />
 
         {requests.length === 0 ? (
-          <EmptyState />
+          <ScrollView
+            className="flex-1 mb-24"
+            contentContainerStyle={{
+              flexGrow: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: 25,
+            }}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+          >
+            <EmptyState />
+          </ScrollView>
         ) : (
           <ScrollView
             refreshControl={
@@ -332,7 +352,7 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ navigation }) => {
       </View>
 
       <View className="">
-        <TouchableOpacity    
+        <TouchableOpacity
           className={`absolute bottom-20 right-6 w-16 h-16 rounded-full items-center justify-center shadow-lg ${
             farmCount === 0 ? "bg-gray-400" : "bg-gray-800"
           }`}

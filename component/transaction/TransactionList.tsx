@@ -5,6 +5,8 @@ import {
   TouchableOpacity,
   FlatList,
   RefreshControl,
+  ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
@@ -15,12 +17,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
-import LottieView from "lottie-react-native";
 import CustomHeader from "../common/CustomHeader";
+import NoData from "../common/NoData";
 import LoadingPage from "../common/LoadingPage";
 
 type TransactionHistoryNavigationProp = StackNavigationProp<
@@ -156,15 +154,19 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
   }, []);
 
   const renderFooter = () => {
-    if (!loadingMore) return null;
-  };
+    if (loadingMore) {
+      return (
+        <View className="py-4 items-center">
+          <ActivityIndicator size="small" color="#2AAD7A" />
+        </View>
+      );
+    }
 
-  const renderLoadMoreButton = () => {
-    if (loadingMore || !hasMore || transactions.length === 0) return null;
+    if (!hasMore || transactions.length === 0) return null;
 
     return (
       <TouchableOpacity
-        className="items-center py-4 bg-gray-100 mx-4 rounded-lg mt-2"
+        className="items-center py-4 bg-gray-100 rounded-lg mt-2 mb-4"
         onPress={loadMore}
         disabled={loadingMore}
       >
@@ -189,14 +191,28 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
           <LoadingPage fullScreen />
         </View>
       ) : (
-        <View className="flex-1 px-6">
-          <Text className="font-medium text-base text-gray-600 mb-2">
-            {t("TransactionList.All")} ({transactions.length})
-          </Text>
+        <View className="flex-1">
+          {transactions.length > 0 && (
+            <View className="px-6">
+              <Text className="font-medium text-base text-gray-600 mb-2">
+                {t("TransactionList.All")} (
+                {String(transactions.length).padStart(2, "0")})
+              </Text>
+            </View>
+          )}
           <FlatList
             data={transactions}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={{ paddingVertical: 8, paddingBottom: 40 }}
+            contentContainerStyle={
+              transactions.length === 0
+                ? {
+                    flexGrow: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }
+                : { paddingVertical: 8, paddingBottom: 120 }
+            }
+            className="px-6"
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
@@ -210,7 +226,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
             ListFooterComponent={renderFooter}
             renderItem={({ item }) => (
               <TouchableOpacity
-                className="flex-row justify-between items-center p-4 bg-white border border-gray-200 mt-2"
+                className="flex-row justify-between  items-center p-5 bg-white border border-gray-200 mt-2"
                 style={{
                   shadowColor: "#000",
                   shadowOffset: { width: 0, height: 2 },
@@ -251,7 +267,9 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                     <Text className="text-gray-800 ">
                       # {t("TransactionList.of Items")}
                     </Text>
-                    <Text className="text-gray-800 ml-2">: {item.itemCount}</Text>
+                    <Text className="text-gray-800 ml-2">
+                      : {item.itemCount}
+                    </Text>
                   </View>
                   <View className="flex-row">
                     <Text className="text-gray-800 ">
@@ -270,22 +288,32 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
               </TouchableOpacity>
             )}
             ListEmptyComponent={
-              <View className="flex-1 items-center justify-center">
-                <LottieView
-                  source={require("@/assets/jsons/common/no-data.json")}
-                  style={{ width: wp(50), height: hp(50) }}
-                  autoPlay
-                  loop
+              <ScrollView
+                className="flex-1 mb-24"
+                contentContainerStyle={{
+                  flexGrow: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginBottom: 25,
+                }}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+              >
+                <NoData
+                  text={
+                    t("TransactionList.NoTransactionsFound") ||
+                    "No transactions found"
+                  }
                 />
-                <Text className="text-center text-gray-600 mt-[-30%]">
-                  --{t("TransactionList.NoTransactionsFound")}--
-                </Text>
-              </View>
+              </ScrollView>
             }
           />
         </View>
       )}
-      {renderLoadMoreButton()}
     </View>
   );
 };

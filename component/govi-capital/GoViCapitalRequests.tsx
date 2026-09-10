@@ -3,22 +3,20 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StatusBar,
   ScrollView,
   Alert,
-  ActivityIndicator,
   RefreshControl,
 } from "react-native";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import axios from "axios";
 import { environment } from "@/environment/environment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import LottieView from "lottie-react-native";
 import { useTranslation } from "react-i18next";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../types/types";
 import CustomHeader from "../common/CustomHeader";
+import NoData from "../common/NoData";
 import LoadingPage from "../common/LoadingPage";
 
 type GoViCapitalRequestsNavigationProp = StackNavigationProp<
@@ -232,7 +230,7 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
 
   const formatAmount = (amount: string | number) => {
     const numAmount = typeof amount === "string" ? parseFloat(amount) : amount;
-    return `Rs. ${numAmount.toLocaleString("en-LK", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    return `${t("Govicapital.Rs")} ${numAmount.toLocaleString("en-LK", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
   return (
@@ -244,13 +242,19 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
       />
       {/* Loading State */}
       {loading ? (
-        <View className="flex-1 justify-center items-center bg-white">
+        <View className="flex-1 mb-20 justify-center items-center bg-white">
           <LoadingPage fullScreen />
         </View>
       ) : investmentRequests.length === 0 ? (
         /* Empty State */
         <ScrollView
-          contentContainerStyle={{ flex: 1 }}
+          className="flex-1 mb-24"
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            marginBottom:25
+          }}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -260,17 +264,7 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
             />
           }
         >
-          <View className="flex-1 items-center justify-center mt-[-40%]">
-            <LottieView
-              source={require("@/assets/jsons/common/no-data.json")}
-              style={{ width: 200, height: 200 }}
-              autoPlay
-              loop
-            />
-            <Text className=" text-[#393939]">
-              --{t("Govicapital.NoRequestsYet")}--
-            </Text>
-          </View>
+          <NoData text={t("Govicapital.NoRequestsYet") || "No requests yet"} />
         </ScrollView>
       ) : (
         <ScrollView

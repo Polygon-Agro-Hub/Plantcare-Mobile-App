@@ -40,11 +40,23 @@ const ShelfLifeCalculatorScreen: React.FC<ShelfLifeProps> = ({
     text: string,
     setter: (value: string) => void,
     decimals: number = 1,
+    allowNegative: boolean = false,
   ) => {
-    const cleaned = text.replace(/[^0-9.]/g, "");
+    // Strip disallowed characters (digits, '.', and optionally '-')
+    const pattern = allowNegative ? /[^0-9.\-]/g : /[^0-9.]/g;
+    let cleaned = text.replace(pattern, "");
+
+    if (allowNegative) {
+      // Allow at most one '-' and only at the very start of the string
+      const isNegative = cleaned.startsWith("-");
+      cleaned = cleaned.replace(/-/g, "");
+      if (isNegative) cleaned = "-" + cleaned;
+    }
+
     const parts = cleaned.split(".");
     if (parts.length > 2) return;
     if (parts[1] && parts[1].length > decimals) return;
+
     setter(cleaned);
   };
 
@@ -52,10 +64,6 @@ const ShelfLifeCalculatorScreen: React.FC<ShelfLifeProps> = ({
     setShowValidation(true);
 
     if (!idealStorageLife || !temperature || !humidity) {
-      Alert.alert(
-        t("PostHarvestStorageCalculators.InvalidInput"),
-        t("Main.PleaseFillAllRequiredFields"),
-      );
       return;
     }
 
@@ -66,7 +74,9 @@ const ShelfLifeCalculatorScreen: React.FC<ShelfLifeProps> = ({
     if (isNaN(idealNum) || idealNum <= 0) {
       Alert.alert(
         t("PostHarvestStorageCalculators.InvalidInput"),
-        t("PostHarvestStorageCalculators.IdealStorageLifeDaysMustBeGreaterThan0"),
+        t(
+          "PostHarvestStorageCalculators.IdealStorageLifeDaysMustBeGreaterThan0",
+        ),
       );
       return;
     }
@@ -90,7 +100,9 @@ const ShelfLifeCalculatorScreen: React.FC<ShelfLifeProps> = ({
     if (averageFactor === 0) {
       Alert.alert(
         t("PostHarvestStorageCalculators.InvalidInput"),
-        t("PostHarvestStorageCalculators.TemperatureAndHumidityCannotBothBeZero"),
+        t(
+          "PostHarvestStorageCalculators.TemperatureAndHumidityCannotBothBeZero",
+        ),
       );
       return;
     }
@@ -115,7 +127,7 @@ const ShelfLifeCalculatorScreen: React.FC<ShelfLifeProps> = ({
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
-        title={t("PostHarvestStorageCalculators.ShelfLife")}
+        title={`${t("PostHarvestStorageCalculators.ShelfLife")} ${t("Calculator.Calculator")}`}
         icon={require("@/assets/images/farm-cal/post-harvest-storage-calculators/shelf-life-icon.webp")}
         onBack={() => navigation.goBack()}
       />
@@ -149,16 +161,18 @@ const ShelfLifeCalculatorScreen: React.FC<ShelfLifeProps> = ({
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"
         />
 
-        {/* Temperature Input */}
+        {/* Temperature Input (negative values allowed) */}
         <Text className="text-sm font-semibold text-gray-900 mb-2">
           {t("PostHarvestStorageCalculators.TemperatureC")} *
         </Text>
         <TextInput
           value={temperature}
-          onChangeText={(text) => handleNumberInput(text, setTemperature, 1)}
+          onChangeText={(text) =>
+            handleNumberInput(text, setTemperature, 1, true)
+          }
           placeholder={t("Main.TypeHere")}
           placeholderTextColor="#9CA3AF"
-          keyboardType="decimal-pad"
+          keyboardType="numbers-and-punctuation"
           className="bg-[#F4F4F4] rounded-3xl px-4 h-[50px] text-sm text-gray-900 mb-6"
         />
 

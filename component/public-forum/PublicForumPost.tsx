@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   TextInput,
@@ -12,8 +12,11 @@ import {
   Modal,
   ActivityIndicator,
   BackHandler,
+  Keyboard,
+  Linking,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from "expo-image-manipulator";
 import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
@@ -39,6 +42,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
   const [authToken, setAuthToken] = useState<string | null>(null);
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
+  const isSubmittingRef = useRef(false);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -57,24 +61,53 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
   );
 
   const handleImagePick = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
+    try {
+      if (Platform.OS === "ios") {
+        const { status } =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+          Alert.alert(
+            t("EditProfile.PermissionDenied") || t("Main.Sorry"),
+            t("EditProfile.PleaseAllowAccessToYourGalleryToProceed") ||
+              "Please allow access to your photo library to proceed!",
+            [
+              { text: t("Main.Cancel") || "Cancel", style: "cancel" },
+              {
+                text: t("Main.Settings") || "Settings",
+                onPress: () => Linking.openSettings(),
+              },
+            ],
+          );
+          return;
+        }
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        allowsEditing: false,
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const originalUri = result.assets[0].uri;
+        const manipulatedImage = await ImageManipulator.manipulateAsync(
+          originalUri,
+          [{ resize: { width: 1200 } }],
+          {
+            compress: 0.7,
+            format: ImageManipulator.SaveFormat.JPEG,
+          },
+        );
+        setPostImageUri(manipulatedImage.uri);
+      }
+    } catch (error) {
+      console.error("Error picking image:", error);
       Alert.alert(
-        t("Main.Sorry"),
-        t("PublicForum.WeNeedAccessToYourCameraToContinuePleaseEnablePermissions"),
+        t("Main.Sorry") || "Error",
+        t("EditProfile.PleaseAllowAccessToYourGalleryToProceed") ||
+          "Failed to select image. Please try again.",
         [{ text: t("Main.OK") }],
       );
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setPostImageUri(result.assets[0].uri);
     }
   };
 
@@ -111,6 +144,12 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
   }, []);
 
   const handleSubmit = async () => {
+    if (isSubmittingRef.current || loading) {
+      return;
+    }
+
+    Keyboard.dismiss();
+
     const trimmedHeading = heading.trim();
     const trimmedMessage = message.trim();
 
@@ -132,15 +171,6 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       return;
     }
 
-    if (!trimmedHeading || !trimmedMessage) {
-      Alert.alert(
-        t("Main.Sorry"),
-        t("PublicForum.fillAllRequiredFields") ||
-        "Please fill in both Title and Description fields",
-        [{ text: t("Main.OK") }],
-      );
-      return;
-    }
     if (trimmedHeading.length > 250) {
       Alert.alert(
         t("Main.Sorry"),
@@ -150,14 +180,25 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       return;
     }
 
+    isSubmittingRef.current = true;
     setLoading(true);
+
+    const token = authToken || (await AsyncStorage.getItem("userToken"));
+    if (!token) {
+      setLoading(false);
+      isSubmittingRef.current = false;
+      Alert.alert(t("Main.Sorry"), "Please log in to publish a post.", [
+        { text: t("Main.OK") },
+      ]);
+      return;
+    }
 
     const formData = new FormData();
     formData.append("heading", trimmedHeading);
     formData.append("message", trimmedMessage);
 
     if (postImageUri) {
-      const fileName = postImageUri.split("/").pop();
+      const fileName = postImageUri.split("/").pop() || "photo.jpg";
       const fileType = fileName?.split(".").pop()
         ? `image/${fileName.split(".").pop()}`
         : "image/jpeg";
@@ -176,49 +217,51 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authToken}`,
+            Authorization: `Bearer ${token}`,
           },
         },
       );
 
-      Alert.alert(t("Main.Success"), t("PublicForum.YourPostAddedSuccessfully"), [
-        {
-          text: t("Main.OK"),
-          onPress: () => {
-            setHeading("");
-            setMessage("");
-            setPostImageUri(null);
-            setLoading(false);
-            navigation.navigate("PublicForum" as any);
-          },
-        },
-      ]);
+      setLoading(false);
+      isSubmittingRef.current = false;
       setHeading("");
       setMessage("");
       setPostImageUri(null);
-      setLoading(false);
-      navigation.navigate("PublicForum" as any);
-    } catch (error) {
+
+      setTimeout(() => {
+        Alert.alert(
+          t("Main.Success"),
+          t("PublicForum.YourPostAddedSuccessfully"),
+          [
+            {
+              text: t("Main.OK"),
+              onPress: () => {
+                navigation.navigate("PublicForum" as any);
+              },
+            },
+          ],
+        );
+      }, 100);
+    } catch (error: any) {
       console.error("Error creating post:", error);
       setLoading(false);
-      Alert.alert(t("Main.Sorry"), t("PublicForum.FailedToCreateThePostPleaseTryAgain"), [
-        { text: t("Main.OK") },
-      ]);
+      isSubmittingRef.current = false;
+      const errorMsg =
+        error?.response?.data?.code === "PROFANITY_DETECTED"
+          ? t("PublicForum.ProhibitedLanguageDetected")
+          : error?.response?.data?.message ||
+            t("PublicForum.FailedToCreateThePostPleaseTryAgain");
+
+      setTimeout(() => {
+        Alert.alert(t("Main.Sorry"), errorMsg, [
+          { text: t("Main.OK") },
+        ]);
+      }, 100);
     } finally {
       setLoading(false);
+      isSubmittingRef.current = false;
     }
   };
-
-  if (loading) {
-    return (
-      <Modal transparent={true} visible={loading} animationType="fade">
-        <View className="flex-1 justify-center items-center bg-black/50">
-          <ActivityIndicator size="large" color="#ffffff" />
-          <Text className="text-white mt-4">{t("Main.Loading...")}</Text>
-        </View>
-      </Modal>
-    );
-  }
 
   return (
     <KeyboardAvoidingView
@@ -311,18 +354,68 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
         {/* Publish button matching UserFeedback design */}
         <View className="absolute bottom-0 left-0 right-0 bg-white px-10 py-4">
           <TouchableOpacity
-            disabled={heading.trim() === "" || message.trim() === ""}
+            disabled={heading.trim() === "" || message.trim() === "" || loading}
             onPress={handleSubmit}
             activeOpacity={0.8}
             className={`w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 ${
-              (heading.trim() === "" || message.trim() === "") ? "bg-[#9CA3AF]" : "bg-[#353535]"
+              heading.trim() === "" || message.trim() === "" || loading
+                ? "bg-[#9CA3AF]"
+                : "bg-[#353535]"
             }`}
           >
-            <Text className="text-white font-semibold text-center text-lg">
-              {t("PublicForum.Publish")}
-            </Text>
+            {loading ? (
+              <ActivityIndicator color="white" size="small" />
+            ) : (
+              <Text className="text-white font-semibold text-center text-lg">
+                {t("PublicForum.Publish")}
+              </Text>
+            )}
           </TouchableOpacity>
         </View>
+
+        {/* Loading Overlay */}
+        {loading && (
+          <View
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(0, 0, 0, 0.4)",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 9999,
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: "#1F2937",
+                paddingHorizontal: 28,
+                paddingVertical: 20,
+                borderRadius: 16,
+                alignItems: "center",
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+                elevation: 5,
+              }}
+            >
+              <ActivityIndicator size="large" color="#19D7B7" />
+              <Text
+                style={{
+                  color: "white",
+                  marginTop: 12,
+                  fontWeight: "600",
+                  fontSize: 14,
+                }}
+              >
+                {t("Main.Loading...")}
+              </Text>
+            </View>
+          </View>
+        )}
       </View>
     </KeyboardAvoidingView>
   );

@@ -24,6 +24,7 @@ import store, { RootState } from "@/services/reducxStore";
 import NetInfo from "@react-native-community/netinfo";
 import { useTranslation } from "react-i18next";
 import * as SplashScreen from "expo-splash-screen";
+import { requestTrackingIfNeeded } from "@/utils/ios/trackingPermissions";
 import Splash from "../component/auth/Splash";
 import Lanuage from "../component/common/Lanuage";
 import Signin from "@/component/auth/Signin";
@@ -88,7 +89,8 @@ import PublicForumPostEdit from "@/component/public-forum/PublicForumPostEdit";
 import MyCultivation from "@/component/farms/crop-cultivation/MyCultivation";
 import LabororDashbord from "@/component/laboror-screens/LabororDashbord";
 import OwnerQRcode from "@/component/laboror-screens/OwnerQRcode";
-
+import ManagerProfileView from "@/component/manager-screens/ManagerProfileView";
+import SupervisorProfileView from "@/component/supervisor-screens/SupervisorProfileView";
 import FarmCurrectAssetRemove from "@/component/farms/current-asset/FarmCurrectAssetRemove";
 import FarmCropCalander from "@/component/farms/crop-cultivation/FarmCropCalander";
 import ManagerDashbord from "@/component/manager-screens/ManagerDashbord";
@@ -108,12 +110,6 @@ import CropEarnCertificateAfterEnroll from "@/component/certificates/crop-certif
 import CropPaymentScreenAfterEnroll from "@/component/certificates/crop-certificate/CropPaymentScreenAfterEnroll";
 import FarmCertificateTask from "@/component/farms/crop-cultivation/FarmCertificateTask";
 import ManagerFarmDetails from "@/component/manager-screens/ManagerFarmDetails";
-import ManageMembersManager from "@/component/manager-screens/ManageMembersManager";
-import ManagerAddStaff from "@/component/manager-screens/ManagerAddStaff";
-import ManageMembersSupervisor from "@/component/manager-screens/ManageMembersSupervisor";
-import SupervisorAddStaff from "@/component/supervisor-screens/SupervisorAddStaff";
-import ManageEditscreen from "@/component/manager-screens/ManageEditscreen";
-import SupervisorEditScreen from "@/component/supervisor-screens/SupervisorEditScreen";
 import InvestmentAndLoan from "@/component/govi-capital/InvestmentAndLoan";
 import InvestmentRequestForm from "@/component/govi-capital/InvestmentRequestForm";
 import RequestLetter from "@/component/govi-capital/RequestLetter";
@@ -151,13 +147,15 @@ import FarmBudgetProfitCalculatorScreen from "@/component/farm-cal/economic-cost
 import DripIrrigationCalculatorScreen from "@/component/farm-cal/irrigation-water-calculators/DripIrrigationCalculatorScreen";
 import GoviShopLoadingScreen from "@/component/govi-shop/GoviShopLoading";
 import ExploreShopsScreen from "@/component/govi-shop/ExploreShops";
-import GoviShopCartScreen from "@/component/govi-shop/GoviShopCartScreen";
 import GoviShopProfileScreen from "@/component/govi-shop/GoviShopProfileScreen";
 import LocationAccess from "@/component/permission/LocationAccess";
+import CameraAccess from "@/component/permission/CameraAccess";
 import ViewProduct from "@/component/govi-shop/ViewProduct";
 import SoilGridsScreen from "@/component/soil-grids/SoilGridsScreen";
 import CartScreen from "@/component/govi-shop/CartScreen";
 import CheckoutScreen from "@/component/govi-shop/CheckoutScreen";
+import InvoiceScreen from "@/component/govi-shop/Invoicescreen";
+import OrderHistory from "@/component/govi-shop/OrderHistory";
 
 LogBox.ignoreAllLogs(true);
 
@@ -169,6 +167,13 @@ LogBox.ignoreAllLogs(true);
 (TextInput as any).defaultProps = {
   ...(TextInput as any).defaultProps,
   allowFontScaling: false,
+  style: [
+    {
+      paddingVertical: Platform.OS === "ios" ? 0 : undefined,
+      includeFontPadding: false,
+    },
+    (TextInput as any).defaultProps?.style,
+  ],
 };
 
 const Stack = createStackNavigator();
@@ -207,7 +212,6 @@ function MainTabNavigator() {
       <Tab.Screen name="LabororDashbord" component={LabororDashbord} />
       <Tab.Screen name="ManagerDashbord" component={ManagerDashbord} />
       <Tab.Screen name="SupervisorDashbord" component={SupervisorDashboard} />
-
       <Tab.Screen name="AddFixedAsset" component={AddFixedAsset} />
       <Tab.Screen name="ComplainHistory" component={ComplainHistory} />
       <Tab.Screen name="CropCalander" component={CropCalander as any} />
@@ -223,7 +227,6 @@ function MainTabNavigator() {
         name="TransactionHistory"
         component={TransactionHistory as any}
       />
-
       <Tab.Screen name="AddNewFarmFirst" component={AddNewFarmFirst} />
       <Tab.Screen
         name="PaymentGatewayView"
@@ -255,7 +258,6 @@ function MainTabNavigator() {
       <Tab.Screen name="FromFramEditFarm" component={EditFarm as any} />
       <Tab.Screen name="AddNewCrop" component={AddNewCrop} />
       <Tab.Screen name="AssertsFixedView" component={AssertsFixedView as any} />
-
       <Tab.Screen
         name="GoViCapitalRequests"
         component={GoViCapitalRequests as any}
@@ -315,6 +317,9 @@ function AppContent() {
     SplashScreen.hideAsync().catch((err) => {
       console.warn("Failed to hide splash screen:", err);
     });
+
+    // Request iOS AppTrackingTransparency permission if needed (iOS only)
+    requestTrackingIfNeeded();
   }, []);
 
   useEffect(() => {
@@ -389,7 +394,7 @@ function AppContent() {
         edges={["top", "right", "left"]}
       >
         <NavigationContainer ref={navigationRef}>
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Navigator screenOptions={{ headerShown: false, gestureEnabled: false  }}>
             <Stack.Screen name="Splash" component={Splash} />
             <Stack.Screen name="Lanuage" component={Lanuage} />
             <Stack.Screen name="Signin" component={Signin} />
@@ -441,7 +446,7 @@ function AppContent() {
             <Stack.Screen
               name="Main"
               component={MainTabNavigator}
-              options={{ headerShown: false }}
+              options={{ headerShown: false, gestureEnabled: false }}
             />
 
             <Stack.Screen name="FirstLoginProView" component={FirstLoginView} />
@@ -454,6 +459,18 @@ function AppContent() {
             <Stack.Screen
               name="FarmDetailsScreen"
               component={FarmDetailsScreen}
+            />
+            <Stack.Screen
+              name="EditManagersScreen"
+              component={EditManagersScreen}
+            />
+            <Stack.Screen
+              name="AddnewStaff"
+              component={AddnewStaff as any}
+            />
+            <Stack.Screen
+              name="EditStaffMember"
+              component={EditStaffMember as any}
             />
             <Stack.Screen
               name="AddNewFarmUnloackPro"
@@ -521,30 +538,6 @@ function AppContent() {
             <Stack.Screen
               name="ManagerFarmDetails"
               component={ManagerFarmDetails as any}
-            />
-            <Stack.Screen
-              name="ManagerAddStaff"
-              component={ManagerAddStaff as any}
-            />
-            <Stack.Screen
-              name="SupervisorAddStaff"
-              component={SupervisorAddStaff as any}
-            />
-            <Stack.Screen
-              name="ManageEditscreen"
-              component={ManageEditscreen as any}
-            />
-            <Stack.Screen
-              name="SupervisorEditScreen"
-              component={SupervisorEditScreen as any}
-            />
-            <Stack.Screen
-              name="ManageMembersSupervisor"
-              component={ManageMembersSupervisor as any}
-            />
-            <Stack.Screen
-              name="ManageMembersManager"
-              component={ManageMembersManager as any}
             />
             <Stack.Screen
               name="FarmCertificateTask"
@@ -697,10 +690,6 @@ function AppContent() {
               name="ExploreShopsScreen"
               component={ExploreShopsScreen}
             />
-            <Stack.Screen
-              name="GoviShopCartScreen"
-              component={GoviShopCartScreen as any}
-            />
             <Stack.Screen name="CartScreen" component={CartScreen as any} />
             <Stack.Screen
               name="GoviShopProfileScreen"
@@ -711,9 +700,24 @@ function AppContent() {
               name="LocationAccess"
               component={LocationAccess as any}
             />
+            <Stack.Screen
+              name="CameraAccess"
+              component={CameraAccess as any}
+            />
             <Stack.Screen name="CheckoutScreen" component={CheckoutScreen as any} />
             <Stack.Screen name="ViewProduct" component={ViewProduct as any} />
+            <Stack.Screen name="InvoiceScreen" component={InvoiceScreen as any} />
             <Stack.Screen name="SoilGridsScreen" component={SoilGridsScreen} />
+            <Stack.Screen name="OrderHistory" component={OrderHistory} />
+            <Stack.Screen
+              name="SupervisorProfileView"
+              component={SupervisorProfileView as any}
+            />
+            <Stack.Screen
+              name="ManagerProfileView"
+              component={ManagerProfileView as any}
+            />
+          
           </Stack.Navigator>
         </NavigationContainer>
         <AlertModal

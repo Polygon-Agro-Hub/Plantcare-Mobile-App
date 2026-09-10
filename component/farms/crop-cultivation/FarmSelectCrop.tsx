@@ -1,4 +1,4 @@
-import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, Image, ScrollView, TouchableOpacity, BackHandler } from "react-native";
 import React, { useEffect, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../types/types";
@@ -7,6 +7,7 @@ import { RouteProp } from "@react-navigation/native";
 import i18n from "@/i18n/i18n";
 import CustomHeader from "@/component/common/CustomHeader";
 import LoadingPage from "@/component/common/LoadingPage";
+import { useFocusEffect } from "@react-navigation/native";
 
 type FarmSelectCropRouteProp = RouteProp<RootStackParamList, "FarmSelectCrop">;
 type FarmSelectCropNavigationCrop = StackNavigationProp<
@@ -50,6 +51,20 @@ const FarmSelectCrop: React.FC<FarmSelectCropProps> = ({
       setLoading(true);
     }
   }, [selectedVariety]);
+
+   useFocusEffect(
+        React.useCallback(() => {
+          const onBackPress = () => {
+            navigation.goBack()
+            return true;
+          };
+          const subscription = BackHandler.addEventListener(
+            "hardwareBackPress",
+            onBackPress,
+          );
+          return () => subscription.remove();
+        }, [navigation]),
+      );
 
   const getCropName = () => {
     switch (language) {

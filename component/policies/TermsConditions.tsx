@@ -84,7 +84,7 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
           {t("Terms&Condisions.ProhibitedUses")}
         </Text>
         <Text className="text-sm text-gray-700 mt-1">
-          {t("Terms&Condisions.ProhibitedUsesText")}
+          {t("Terms&Condisions.ProhibitedUsesTxt")}
         </Text>
         <View>
           <Text className="text-sm text-gray-700 mt-4">
@@ -108,10 +108,10 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
           className="text-lg font-bold mt-6"
           style={{ fontSize: adjustFontSize(16) }}
         >
-          2. {t("Terms&Condisions.UserRegistrationandAccountSecurity")}
+          2. {t("Terms&Condisions.UserRegistrationAndAccountSecurity")}
         </Text>
         <Text className="text-sm text-gray-700 mt-4">
-          {t("Terms&Condisions.UserRegistrationandAccountSecurityText")}
+          {t("Terms&Condisions.UserRegistrationAndAccountSecurityText")}
         </Text>
         <View>
           <Text className="text-sm text-gray-700 mt-4">

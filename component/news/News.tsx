@@ -5,6 +5,7 @@ import {
   Dimensions,
   ActivityIndicator,
   TouchableOpacity,
+  BackHandler,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -21,6 +22,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Entypo } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 
 interface NewsItem {
   id: number;
@@ -52,6 +54,20 @@ const formatDate = (dateString: string) => {
   return `${year}-${month}-${day}`;
 };
 
+const titleBaseStyle = {
+  fontWeight: "bold" as const,
+  fontSize: 18,
+  color: "#000",
+  textAlign: "center" as const,
+};
+
+const titleTagsStyles = {
+  p: { textAlign: "center" as const },
+  div: { textAlign: "center" as const },
+  span: { textAlign: "center" as const },
+  body: { textAlign: "center" as const },
+};
+
 const News: React.FC<NewsProps> = ({ navigation, route }) => {
   const { newsId } = route.params;
   const [news, setNews] = useState<NewsItem | null>(null);
@@ -60,6 +76,20 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const screenWidth = Dimensions.get("window").width;
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.goBack();
+        return true;
+      };
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
+      );
+      return () => subscription.remove();
+    }, [navigation]),
+  );
 
   useEffect(() => {
     const selectedLanguage = t("Main.LNG");
@@ -96,12 +126,14 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
     <View className="flex-1 bg-white">
       <View className="absolute top-0 left-0 right-0 z-10  ">
         <View className="flex-row ml-5 mt-5 items-center">
-          <TouchableOpacity className="p-2 bg-transparent">
+          <TouchableOpacity
+            className="p-2 bg-transparent"
+            onPress={() => navigation.goBack()}
+          >
             <Entypo
               name="chevron-left"
               size={24}
               color="#000502"
-              onPress={() => navigation.goBack()}
               style={{
                 backgroundColor: "#F6F6F6CC",
                 borderRadius: 50,
@@ -132,33 +164,24 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
                     <RenderHtml
                       contentWidth={screenWidth}
                       source={{ html: news.titleEnglish }}
-                      baseStyle={{
-                        fontWeight: "bold",
-                        fontSize: 18,
-                        color: "#000",
-                      }}
+                      baseStyle={titleBaseStyle}
+                      tagsStyles={titleTagsStyles}
                     />
                   )}
                   {language === "si" && news?.titleSinhala && (
                     <RenderHtml
                       contentWidth={screenWidth}
                       source={{ html: news.titleSinhala }}
-                      baseStyle={{
-                        fontWeight: "bold",
-                        fontSize: 18,
-                        color: "#000",
-                      }}
+                      baseStyle={titleBaseStyle}
+                      tagsStyles={titleTagsStyles}
                     />
                   )}
                   {language === "ta" && news?.titleTamil && (
                     <RenderHtml
                       contentWidth={screenWidth}
                       source={{ html: news.titleTamil }}
-                      baseStyle={{
-                        fontWeight: "bold",
-                        fontSize: 18,
-                        color: "#000",
-                      }}
+                      baseStyle={titleBaseStyle}
+                      tagsStyles={titleTagsStyles}
                     />
                   )}
                 </View>

@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as FileSystem from "expo-file-system/legacy";
-import * as MediaLibrary from "expo-media-library";
 import * as Sharing from "expo-sharing";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -20,6 +19,7 @@ import { useTranslation } from "react-i18next";
 import type { NativeEventSubscription } from "react-native";
 import CustomHeader from "../common/CustomHeader";
 import LoadingPage from "../common/LoadingPage";
+import NoData from "../common/NoData";
 
 type QRcodeNavigationPrps = StackNavigationProp<
   RootStackParamList,
@@ -37,7 +37,11 @@ const OwnerQRcode: React.FC<QRcodeProps> = ({ navigation }) => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const handleBackButton = () => {
-    navigation.navigate("LabororEngProfile" as any);
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.navigate("LabororEngProfile" as any);
+    }
     return true;
   };
 
@@ -97,52 +101,48 @@ const OwnerQRcode: React.FC<QRcodeProps> = ({ navigation }) => {
     fetchRegistrationDetails();
   }, []);
 
-  const downloadQRCode = async () => {
+  const downloadQRcode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.Error"), t("QRCode.noQRCodeAvailable"), [
+        Alert.alert(t("Main.Error"), t("QRcode.noQRcodeAvailable"), [
           { text: t("Main.OK") },
         ]);
         return;
       }
 
-      const { status } = await MediaLibrary.requestPermissionsAsync(true);
-      if (status !== "granted") {
-        Alert.alert(
-          t("QRCode.AccessRequired"),
-          t("QRCode.PleaseEnablePermissionToSaveTheQRToYourGallery"),
-          [{ text: t("Main.OK") }],
-        );
-        return;
-      }
-
-      const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
+      const fileUri = `${FileSystem.documentDirectory}QRcode_${Date.now()}.png`;
       const response = await FileSystem.downloadAsync(QR, fileUri);
 
-      const asset = await MediaLibrary.createAssetAsync(response.uri);
-      await MediaLibrary.createAlbumAsync("Download", asset, false);
-
-      Alert.alert(t("Main.Success"), t("QRCode.YourQRCodeHasBeenSavedToYourGallery"), [
-        { text: t("Main.OK") },
-      ]);
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(response.uri, {
+          mimeType: "image/png",
+          dialogTitle: "Save or Share QR Code",
+        });
+      } else {
+        Alert.alert(
+          t("Main.Success"),
+          t("QRcode.YourQRCodeHasBeenSavedToYourGallery"),
+          [{ text: t("Main.OK") }]
+        );
+      }
     } catch (error) {
       console.error("Download error:", error);
-      Alert.alert(t("Main.Error"), t("QRCode.UnableTSaveQRCodePleaseTryAgain"), [
+      Alert.alert(t("Main.Error"), t("QRcode.UnableTSaveQRcodePleaseTryAgain"), [
         { text: t("Main.OK") },
       ]);
     }
   };
 
-  const shareQRCode = async () => {
+  const shareQRcode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.Error"), t("QRCode.noQRCodeAvailable"), [
+        Alert.alert(t("Main.Error"), t("QRcode.noQRcodeAvailable"), [
           { text: t("Main.OK") },
         ]);
         return;
       }
 
-      const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
+      const fileUri = `${FileSystem.documentDirectory}QRcode_${Date.now()}.png`;
       const response = await FileSystem.downloadAsync(QR, fileUri);
 
       if (await Sharing.isAvailableAsync()) {
@@ -152,14 +152,14 @@ const OwnerQRcode: React.FC<QRcodeProps> = ({ navigation }) => {
         });
       } else {
         Alert.alert(
-          t("QRCode.SharingFeatureUnavailable"),
-          t("QRCode.ThisDeviceDoesNotSupportSharingQRCodes"),
+          t("QRcode.SharingFeatureUnavailable"),
+          t("QRcode.ThisDeviceDoesNotSupportSharingQRcodes"),
           [{ text: t("Main.OK") }],
         );
       }
     } catch (error) {
       console.error("Share error:", error);
-      Alert.alert(t("Main.Error"), t("QRCode.UnableToShareQRCodePleaseTryAgainLater"), [
+      Alert.alert(t("Main.Error"), t("QRcode.UnableToShareQRcodePleaseTryAgainLater"), [
         { text: t("Main.OK") },
       ]);
     }
@@ -175,60 +175,58 @@ const OwnerQRcode: React.FC<QRcodeProps> = ({ navigation }) => {
   }
 
   return (
-    <ScrollView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       <CustomHeader
-        title={t("QRCode.QRCode")}
+        title={t("QRcode.QRCode")}
         showBackButton={true}
         navigation={navigation}
-        onBackPress={() => navigation.navigate("LabororEngProfile" as any)}
+        onBackPress={handleBackButton}
       />
 
-      <View className="items-center mb-4 mt-20">
-        {QR ? (
-          <View className="bg-white p-6 rounded-xl border-2 border-black">
-            <Image
-              source={{ uri: `${QR}` }}
-              style={{
-                width: dynamicStyles.qrSize,
-                height: dynamicStyles.qrSize,
-                resizeMode: "contain",
-              }}
-            />
+      {QR ? (
+        <ScrollView className="flex-1" contentContainerStyle={{ flexGrow: 1 }}>
+          <View className="items-center mb-4 mt-20">
+            <View className="bg-white p-6 rounded-xl border-2 border-black">
+              <Image
+                source={{ uri: `${QR}` }}
+                style={{
+                  width: dynamicStyles.qrSize,
+                  height: dynamicStyles.qrSize,
+                  resizeMode: "contain",
+                }}
+              />
+            </View>
           </View>
-        ) : (
-          <View className="items-center justify-center">
-            <Text className=" text-center mt-4 p-2 gap-y-4 max-w-[80%] leading-7 text-gray-500 ">
-              {t("QRCode.YourFarmOwnerHasNotRegisteredForAQRCodeYet")}
-            </Text>
-          </View>
-        )}
-      </View>
 
-      <View className="flex-row justify-center gap-6 mb-20 mt-2">
-        {QR && (
-          <>
+          <View className="flex-row justify-center gap-6 mb-20 mt-2">
             <TouchableOpacity
-              className="bg-[#1E1E1E] w-24 h-20 rounded-lg items-center justify-center flex-col mt-5 ml-6 "
-              onPress={downloadQRCode}
+              className="bg-[#1E1E1E] w-24 h-20 rounded-lg items-center justify-center flex-col mt-5 ml-6"
+              onPress={downloadQRcode}
             >
               <MaterialIcons name="download" size={24} color="white" />
               <Text className="text-white text-xs mt-1">
-                {t("QRCode.Download")}
+                {t("QRcode.Download")}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              className="bg-[#1E1E1E] w-24 h-20 rounded-lg items-center justify-center flex-col  mt-5 ml-5"
-              onPress={shareQRCode}
+              className="bg-[#1E1E1E] w-24 h-20 rounded-lg items-center justify-center flex-col mt-5 ml-5"
+              onPress={shareQRcode}
             >
               <MaterialIcons name="share" size={24} color="white" />
               <Text className="text-white text-xs mt-1">
-                {t("QRCode.Share")}
+                {t("QRcode.Share")}
               </Text>
             </TouchableOpacity>
-          </>
-        )}
-      </View>
-    </ScrollView>
+          </View>
+        </ScrollView>
+      ) : (
+        <View className="flex-1 justify-center items-center px-4">
+          <NoData
+            text={t("QRcode.YourFarmOwnerHasNotRegisteredForAQRCodeYet")}
+          />
+        </View>
+      )}
+    </View>
   );
 };
 

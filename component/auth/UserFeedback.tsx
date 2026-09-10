@@ -89,9 +89,15 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
         }
 
         const data = await response.json();
+        const rawOptions = (data.feedbackOptions || []).slice();
+        if (rawOptions.some((item: any) => typeof item.orderNumber === "number")) {
+          rawOptions.sort(
+            (a: any, b: any) => (a.orderNumber ?? 0) - (b.orderNumber ?? 0),
+          );
+        }
 
         setFeedbackOptions(
-          data.feedbackOptions.map((item: any) => ({
+          rawOptions.map((item: any) => ({
             id: item.id,
             feedbackEnglish: item.feedbackEnglish,
             feedbackSinahala: item.feedbackSinahala,
@@ -202,7 +208,6 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ navigation }) => {
         title={t("Feedback.Feedback")}
         navigation={navigation}
         onBackPress={handleGoBack}
-        showBackButton={false}
       />
       {isLoading ? (
         <View className="flex-1 justify-center items-center">

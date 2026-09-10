@@ -24,8 +24,8 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import axios from "axios";
-import LottieView from "lottie-react-native";
 import CustomHeader from "@/component/common/CustomHeader";
+import NoData from "@/component/common/NoData";
 
 type CropEarnCertificateAfterEnrollNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -75,7 +75,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
   const getMonthLabel = (timeline: string) => {
     const months = parseInt(timeline);
     return months === 1
-      ? t("EarnCertificate.month")
+      ? t("EarnCertificate.Month")
       : t("EarnCertificate.Months");
   };
 
@@ -236,7 +236,13 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
       <View className="bg-white px-4 pb-4 shadow-sm">
         <View className="bg-[#F6F6F6CC] rounded-3xl h-[50px] flex-row items-center px-4">
           <TextInput
-            className="flex-1 text-lg text-gray-700"
+             style={{
+              flex: 1,
+              fontSize: 14,
+              height: 50,
+              paddingVertical: 0,
+              includeFontPadding: false,
+            }}
             placeholder={t("Main.Search...")}
             placeholderTextColor="#9CA3AF"
             value={searchQuery}
@@ -257,6 +263,7 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
       ) : (
         <ScrollView
           className="flex-1 px-4"
+          contentContainerStyle={{ flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
         >
           {filteredCertificates.length > 0 && (
@@ -299,8 +306,9 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
                     {t("EarnCertificate.Rs")}.{formatPrice(certificate.price)}
                   </Text>
                   <Text className="text-[#6B6B6B] text-sm">
-                    {t("Farms.ValidityPeriod")} {certificate.timeLine}{" "}
-                    {getMonthLabel(certificate.timeLine)}
+                    {getMonthLabel(certificate.timeLine)}{" "}
+                    {t("Farms.ValidityPeriod")} {certificate.timeLine}
+                    
                   </Text>
                 </View>
 
@@ -308,36 +316,16 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
               </TouchableOpacity>
             ))
           ) : (
-            <View
-              className="justify-center items-center py-2"
-              style={{ height: hp(50) }}
-            >
-              <View
-                style={{
-                  height: hp(30),
-                  width: wp(50),
-                  marginBottom: hp(-6),
-                }}
-              >
-                <LottieView
-                  source={require("@/assets/jsons/common/no-data.json")}
-                  style={{ width: "100%", height: "100%" }}
-                  autoPlay
-                  loop
-                />
-              </View>
-              <Text
-                className="text-gray-500 text-center mt-2"
-                style={{ fontSize: wp(4) }}
-              >
-                {searchQuery
-                  ? "No certificates found matching your search"
-                  : "No certificates available"}
-              </Text>
-            </View>
+              <NoData
+                text={
+                  searchQuery
+                    ? "No certificates found matching your search"
+                    : t("EarnCertificate.NoCertificatesAvailable")
+                }
+              />
           )}
 
-          {filteredCertificates.length > 0 && (
+          {!searchQuery && (
             <TouchableOpacity
               onPress={handleProceedWithout}
               className="bg-[#F3F3F5] rounded-3xl h-[50px] justify-center px-6 mt-6 mb-8 shadow-sm"
@@ -402,15 +390,15 @@ const CropEarnCertificateAfterEnroll: React.FC = () => {
                 {t("EarnCertificate.Rs")}.
                 {formatPrice(selectedCertificate?.price || "0")}
               </Text>{" "}
-              {t("EarnCertificate.and is valid for")}
+              {t("EarnCertificate.AndIsValidFor")}
             </Text>
             <Text
               className="text-center text-gray-800"
               style={{ marginBottom: hp(3) }}
             >
               <Text className="text-[#A07700] font-semibold">
-                {selectedCertificate?.timeLine}{" "}
-                {getMonthLabel(selectedCertificate?.timeLine || "0")}
+                {getMonthLabel(selectedCertificate?.timeLine || "0")}{" "}
+                {selectedCertificate?.timeLine}
               </Text>
               . {t("EarnCertificate.DoYouWantToApplyForIt")}
             </Text>

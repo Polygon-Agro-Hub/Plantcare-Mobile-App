@@ -393,7 +393,7 @@ const CropPaymentScreen: React.FC<CropPaymentScreenProps> = ({
           </View>
 
           <TextInput
-            className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-3xl h-[50px] p-3 mb-8 text-base"
+            className="border border-gray-300 bg-[#F6F6F6] rounded-3xl h-[50px] p-3 mb-8 text-base"
             placeholder={t("Payment.EnterCardNumber") ?? "Enter Card Number"}
             style={{ color: '#000000' }} 
             placeholderTextColor="#000000"
@@ -404,7 +404,7 @@ const CropPaymentScreen: React.FC<CropPaymentScreenProps> = ({
           />
 
           <TextInput
-            className="h-12 border border-gray-300 bg-[#F6F6F6] rounded-3xl h-[50px] p-3 mb-8 text-base"
+            className="border border-gray-300 bg-[#F6F6F6] rounded-3xl h-[50px] p-3 mb-8 text-base"
             placeholder={t("Payment.EnterNameOnCard")}
             style={{ color: '#000000' }} 
             placeholderTextColor="#000000"
@@ -412,7 +412,7 @@ const CropPaymentScreen: React.FC<CropPaymentScreenProps> = ({
             onChangeText={handleCardHolderNameChange}
           />
 
-          <View className="flex-row items-center rounded-3xl h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-full px-3 mb-8">
+          <View className="flex-row items-center h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-full px-3 mb-8">
             <TextInput
               className="flex-1 h-full text-base"
               placeholder={t("Payment.EnterExpirationDate")}
@@ -427,7 +427,7 @@ const CropPaymentScreen: React.FC<CropPaymentScreenProps> = ({
           </View>
 
           <TextInput
-            className="rounded-3xl h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-5 text-base"
+            className="h-[50px] border border-gray-300 bg-[#F6F6F6] rounded-full p-3 mb-5 text-base"
             placeholder={t("Payment.EnterCVV")}
             style={{ color: '#000000' }} 
             placeholderTextColor="#000000"

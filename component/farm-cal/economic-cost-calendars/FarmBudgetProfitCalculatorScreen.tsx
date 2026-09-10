@@ -62,11 +62,6 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
     setShowValidation(true);
 
     if (!totalExpenses || !expectedRevenue) {
-      Alert.alert(
-        t("EconomicCostCalendars.InvalidInput") || "Invalid Input",
-        t("Main.PleaseFillAllRequiredFields") ||
-        "Please fill all required fields.",
-      );
       return;
     }
 
@@ -106,7 +101,7 @@ const FarmBudgetProfitCalculatorScreen: React.FC<FarmBudgetProfitProps> = ({
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
-        title={t("EconomicCostCalendars.FarmBudget&Profit")}
+        title={`${t("EconomicCostCalendars.FarmBudget&Profit")} ${t("Calculator.Calculator")}`} 
         icon={require("@/assets/images/farm-cal/economic-cost-calculators/farm-budget-profit-icon.webp")}
         onBack={() => navigation.goBack()}
       />

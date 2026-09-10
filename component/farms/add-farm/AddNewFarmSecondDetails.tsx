@@ -162,15 +162,17 @@ const AddNewFarmSecondDetails = () => {
   );
 
   React.useEffect(() => {
-    if (submitSuccess) {
+    if (submitSuccess && lastCreatedFarmId) {
       Alert.alert(t("Main.Success"), t("Farms.FarmSavedSuccessfully"), [
         {
           text: t("Main.OK"),
           onPress: () => {
+            const targetFarmId = lastCreatedFarmId;
+            const targetRegCode = registrationCode;
             dispatch(clearSubmitState());
             navigation.navigate("EarnCertificate", {
-              farmId: lastCreatedFarmId,
-              registrationCode: registrationCode || undefined,
+              farmId: targetFarmId,
+              registrationCode: targetRegCode || undefined,
             });
           },
         },
@@ -178,14 +180,22 @@ const AddNewFarmSecondDetails = () => {
     }
 
     if (submitError) {
-      Alert.alert("Error", submitError, [
+      Alert.alert(t("Main.Error") || "Error", submitError, [
         {
           text: t("Main.OK"),
           onPress: () => dispatch(clearSubmitState()),
         },
       ]);
     }
-  }, [submitSuccess, submitError, dispatch, navigation]);
+  }, [
+    submitSuccess,
+    submitError,
+    lastCreatedFarmId,
+    registrationCode,
+    dispatch,
+    navigation,
+    t,
+  ]);
 
   const saveFarmDirectly = async () => {
     dispatch(clearSubmitState());
@@ -217,7 +227,7 @@ const AddNewFarmSecondDetails = () => {
     if (!numberOfStaff) {
       Alert.alert(
         t("Main.Sorry"),
-        t("Farms.PleaseEnterTheNNumberOfStaff"),
+        t("Farms.PleaseEnterTheNumberOfStaff"),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -497,9 +507,12 @@ const AddNewFarmSecondDetails = () => {
               >
                 <Text
                   className="text-[#84868B] text-center font-semibold text-lg"
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.7}
                   style={[
                     i18n.language === "si"
-                      ? { fontSize: 16 }
+                      ? { fontSize: 15 }
                       : i18n.language === "ta"
                         ? { fontSize: 13 }
                         : { fontSize: 16 },

@@ -25,13 +25,17 @@ import countryData from "@/assets/jsons/common/country-flag.json";
 import CustomHeader from "../../common/CustomHeader";
 import GlobalSearchModal from "../../common/GlobalSearchModal";
 import LoadingPage from "@/component/common/LoadingPage";
+import { useSelector } from "react-redux";
+import { RootState } from "@/services/reducxStore";
 
 type RouteParams = {
   farmId: number;
   staffMemberId?: number;
-  membership: string;
-  renew: string;
-  regCode: string;
+  membership?: string;
+  renew?: string;
+  regCode?: string;
+  farmName?: string;
+  imageId?: string;
 };
 
 interface EditStaffMemberProps {
@@ -57,7 +61,8 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
   navigation,
   route,
 }) => {
-  const { farmId, staffMemberId, membership, renew, regCode } = route.params;
+  const { farmId, staffMemberId, membership = "", renew = "", regCode = "", farmName = "", imageId = "" } = route.params;
+  const userRole = useSelector((state: RootState) => state.user.userData?.role);
   const { t } = useTranslation();
   const selectedLanguage = i18n.language;
 
@@ -87,38 +92,43 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
   const getRoleText = (role: string) => {
     switch (role) {
       case "Manager":
-        return selectedLanguage === "si"
-          ? "කළමනාකරු"
-          : selectedLanguage === "ta"
-            ? "மேலாளர்"
-            : t("Farms.Manager");
+        return t("Farms.FarmManager") || t("Farms.Manager") || "Farm Manager";
       case "Supervisor":
-        return selectedLanguage === "si"
-          ? "අධීක්ෂක"
-          : selectedLanguage === "ta"
-            ? "மேற்பார்வையாளர்"
-            : t("Farms.Supervisor");
+        return t("Farms.FarmSupervisor") || t("Farms.Supervisor") || "Farm Supervisor";
       case "Laborer":
-        return selectedLanguage === "si"
-          ? "කම්කරුවා"
-          : selectedLanguage === "ta"
-            ? "தொழிலாளி"
-            : t("Farms.Worker");
+        return t("Farms.FarmLaborer") || t("Farms.Laborer") || "Farm Laborer";
       default:
         return role;
     }
   };
 
-  const roleItems = [
-    { label: getRoleText("Manager"), value: "Manager" },
-    { label: getRoleText("Supervisor"), value: "Supervisor" },
-    { label: getRoleText("Laborer"), value: "Laborer" },
-  ];
+  const roleItems = React.useMemo(() => {
+    if (userRole === "Supervisor") {
+      return [{ label: getRoleText("Laborer"), value: "Laborer" }];
+    }
+    if (userRole === "Manager") {
+      return [
+        { label: getRoleText("Supervisor"), value: "Supervisor" },
+        { label: getRoleText("Laborer"), value: "Laborer" },
+      ];
+    }
+    return [
+      { label: getRoleText("Manager"), value: "Manager" },
+      { label: getRoleText("Supervisor"), value: "Supervisor" },
+      { label: getRoleText("Laborer"), value: "Laborer" },
+    ];
+  }, [userRole, selectedLanguage]);
 
-  const countryModalData = countryData.map((country) => ({
-    label: `${country.emoji}  ${country.name}  (${country.dial_code})`,
-    value: country.dial_code,
-  }));
+  const countryModalData = countryData.map((country) => {
+    const key = country.name.replace(/\s+/g, "");
+    const translatedName = t(`Country.${key}`, country.name);
+    return {
+      label: `${country.emoji}  ${translatedName}  (${country.dial_code})`,
+      value: country.dial_code,
+      countryName: country.name,
+      translatedCountryName: translatedName,
+    };
+  });
 
   const selectedCountry = countryData.find((c) => c.dial_code === countryCode);
 
@@ -138,6 +148,20 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
 
   const formatPhoneInput = (text: string): string =>
     text.replace(/\D/g, "").slice(0, 9);
+
+  const stripLeadingSpaces = (text: string): string => {
+    return text.replace(/^\s+/, "").replace(/\s{2,}/g, " ");
+  };
+
+  const handleFirstNameChange = (text: string) => {
+    const filtered = text.replace(/[^a-zA-Z\u0D80-\u0DFF\u0B80-\u0BFF ]/g, "");
+    setFirstName(stripLeadingSpaces(filtered));
+  };
+
+  const handleLastNameChange = (text: string) => {
+    const filtered = text.replace(/[^a-zA-Z\u0D80-\u0DFF\u0B80-\u0BFF ]/g, "");
+    setLastName(stripLeadingSpaces(filtered));
+  };
 
   const checkPhoneNumber = async (fullNumber: string) => {
     if (!fullNumber || fullNumber.length < 10) {
@@ -301,15 +325,11 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
       return false;
     }
     if (phoneError) {
-      Alert.alert(t("Main.Sorry"), phoneError, [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(t("Main.Sorry"), phoneError, [{ text: t("Main.OK") }]);
       return false;
     }
     if (validationError) {
-      Alert.alert(t("Main.Sorry"), validationError, [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(t("Main.Sorry"), validationError, [{ text: t("Main.OK") }]);
       return false;
     }
     if (nicDuplicateErrors) {
@@ -340,11 +360,9 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
 
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(
-          t("Main.Sorry"),
-          t("Farms.NoAuthenticationTokenFound"),
-          [{ text: t("Main.OK") }],
-        );
+        Alert.alert(t("Main.Sorry"), t("Farms.NoAuthenticationTokenFound"), [
+          { text: t("Main.OK") },
+        ]);
         return;
       }
 
@@ -361,11 +379,9 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
       setSelectedRole(res.data.role || "");
       setNic(res.data.nic || "");
     } catch {
-      Alert.alert(
-        t("Main.Sorry"),
-        t("Farms.FailedToFFetchStaffMemberData"),
-        [{ text: t("Main.OK") }],
-      );
+      Alert.alert(t("Main.Sorry"), t("Farms.FailedToFFetchStaffMemberData"), [
+        { text: t("Main.OK") },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -391,6 +407,8 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
           membership,
           renew,
           regCode,
+          farmName,
+          imageId,
         });
         return true;
       };
@@ -399,7 +417,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
         handleBackPress,
       );
       return () => subscription.remove();
-    }, [navigation]),
+    }, [navigation, staffMemberId, farmId, membership, renew, regCode, farmName, imageId]),
   );
 
   const handleSave = async () => {
@@ -428,7 +446,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
       );
       Alert.alert(
         t("Main.Success"),
-        t("Farms.Staff member has been updated successfully"),
+        t("Farms.StaffMemberHasBeenUpdatedSuccessfully"),
         [
           {
             text: t("Main.OK"),
@@ -439,6 +457,8 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
                 membership,
                 renew,
                 regCode,
+                farmName,
+                imageId,
               }),
           },
         ],
@@ -452,9 +472,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
       } else if (error.request) {
         errorMessage = t("Farms.NetworkErrorPleaseCheckYourConnection");
       }
-      Alert.alert(t("Main.Sorry"), errorMessage, [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(t("Main.Sorry"), errorMessage, [{ text: t("Main.OK") }]);
     } finally {
       setIsSubmitting(false);
     }
@@ -466,34 +484,30 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(
-          t("Main.Error"),
-          t("Farms.NoAuthenticationTokenFound"),
-          [{ text: t("Main.OK") }],
-        );
+        Alert.alert(t("Main.Error"), t("Farms.NoAuthenticationTokenFound"), [
+          { text: t("Main.OK") },
+        ]);
         return;
       }
       await axios.delete(
         `${environment.API_BASE_URL}api/farm/delete-staffmember/${staffMemberId}/${farmId}`,
         { headers: { Authorization: `Bearer ${token}` } },
       );
-      Alert.alert(
-        t("Main.Success"),
-        t("Farms.FarmMemberDeletedSuccessfully"),
-        [
-          {
-            text: t("Main.OK"),
-            onPress: () =>
-              navigation.navigate("EditManagersScreen", {
-                staffMemberId,
-                farmId,
-                membership,
-                renew,
-                regCode,
-              }),
-          },
-        ],
-      );
+      Alert.alert(t("Main.Success"), t("Farms.FarmMemberDeletedSuccessfully"), [
+        {
+          text: t("Main.OK"),
+          onPress: () =>
+            navigation.navigate("EditManagersScreen", {
+              staffMemberId,
+              farmId,
+              membership,
+              renew,
+              regCode,
+              farmName,
+              imageId,
+            }),
+        },
+      ]);
     } catch {
       Alert.alert(t("Main.Sorry"), t("Farms.FailedToDeleteStaffMember"), [
         { text: t("Main.OK") },
@@ -502,6 +516,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
       setLoading(false);
     }
   };
+  
 
   if (loading) {
     return <LoadingPage fullScreen />;
@@ -519,9 +534,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
         keyboardShouldPersistTaps="handled"
       >
         <CustomHeader
-          title={t("Farms.EditSelectedRoleDetails", {
-            selectedRole: getRoleText(selectedRole),
-          })}
+          title={t("Farms.EditMemberDetails") || "Edit Member Details"}
           navigation={navigation}
           onBackPress={() =>
             navigation.navigate("EditManagersScreen", {
@@ -530,6 +543,8 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
               membership,
               renew,
               regCode,
+              farmName,
+              imageId,
             })
           }
         />
@@ -539,15 +554,16 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.Role")}</Text>
             <TouchableOpacity
-              onPress={() => !isSubmitting && setRoleModalVisible(true)}
+              onPress={() => !isSubmitting && userRole !== "Supervisor" && setRoleModalVisible(true)}
               className="bg-gray-100 px-4 rounded-3xl flex-row items-center justify-between h-[50px]"
-              activeOpacity={0.7}
+              activeOpacity={userRole === "Supervisor" ? 1 : 0.7}
+              disabled={userRole === "Supervisor" || isSubmitting}
             >
               <Text
                 className={
                   selectedRole
-                    ? "text-gray-700 text-base"
-                    : "text-gray-400 text-base"
+                    ? "text-gray-700 text-sm"
+                    : "text-gray-400 text-sm"
                 }
               >
                 {selectedRole
@@ -574,15 +590,27 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
             <Text className="text-gray-900 text-base">
               {t("Inputs.FirstName")}
             </Text>
-            <TextInput
-              className="bg-gray-100 px-4 h-[50px] rounded-3xl text-base text-gray-700"
-              placeholder={t("Farms.EnterFirstName")}
-              placeholderTextColor="#9CA3AF"
-              value={firstName}
-              onChangeText={setFirstName}
-              autoCapitalize="words"
-              editable={!isSubmitting}
-            />
+            <View className="bg-gray-100 px-4 rounded-3xl h-[50px] justify-center">
+              <TextInput
+                placeholder={t("Farms.EnterFirstName")}
+                placeholderTextColor="#9CA3AF"
+                value={firstName}
+                onChangeText={handleFirstNameChange}
+                autoCapitalize="words"
+                editable={!isSubmitting}
+                className="text-gray-800"
+                style={{
+                  flex: 1,
+                  marginLeft: 8,
+                  fontSize: 14,
+                  height: 50,
+                  textAlignVertical: "center",
+                  paddingTop: Platform.OS === "ios" ? 12 : 0,
+                  paddingBottom: Platform.OS === "ios" ? 12 : 0,
+                  includeFontPadding: false,
+                }}
+              />
+            </View>
           </View>
 
           {/* Last Name */}
@@ -590,15 +618,27 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
             <Text className="text-gray-900 text-base">
               {t("Inputs.LastName")}
             </Text>
-            <TextInput
-              className="bg-gray-100 px-4 rounded-3xl h-[50px] text-base text-gray-700"
-              placeholder={t("Farms.EnterLastName")}
-              placeholderTextColor="#9CA3AF"
-              value={lastName}
-              onChangeText={setLastName}
-              autoCapitalize="words"
-              editable={!isSubmitting}
-            />
+            <View className="bg-gray-100 px-4 rounded-3xl h-[50px] justify-center">
+              <TextInput
+                placeholder={t("Farms.EnterLastName")}
+                placeholderTextColor="#9CA3AF"
+                value={lastName}
+                onChangeText={handleLastNameChange}
+                autoCapitalize="words"
+                editable={!isSubmitting}
+                className="text-gray-800"
+                style={{
+                  flex: 1,
+                  marginLeft: 8,
+                  fontSize: 14,
+                  height: 50,
+                  textAlignVertical: "center",
+                  paddingTop: Platform.OS === "ios" ? 12 : 0,
+                  paddingBottom: Platform.OS === "ios" ? 12 : 0,
+                  includeFontPadding: false,
+                }}
+              />
+            </View>
           </View>
 
           {/* Phone Number */}
@@ -618,13 +658,24 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
                 <Text className="text-[#333] text-center text-[13px] ml-1">
                   {countryCode}
                 </Text>
+                <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
               </TouchableOpacity>
 
               {/* Phone Input */}
-              <View style={{ flex: 1 }}>
+              <View className="flex-1 bg-[#F4F4F4] rounded-3xl h-[50px] px-4 justify-center">
                 <TextInput
-                  className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4 text-base text-gray-700"
+                  style={{
+                    flex: 1,
+                    marginLeft: 8,
+                    fontSize: 14,
+                    height: 50,
+                    textAlignVertical: "center",
+                    paddingTop: Platform.OS === "ios" ? 12 : 0,
+                    paddingBottom: Platform.OS === "ios" ? 12 : 0,
+                    includeFontPadding: false,
+                  }}
                   placeholder="7X XXXXXXX"
+                  placeholderTextColor="#9CA3AF"
                   value={phoneNumber}
                   onChangeText={handlePhoneChange}
                   keyboardType="phone-pad"
@@ -632,6 +683,7 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
                   underlineColorAndroid="transparent"
                   cursorColor="#141415ff"
                   editable={!isSubmitting}
+                  className="text-gray-800"
                 />
               </View>
             </View>
@@ -663,26 +715,39 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
               data={countryModalData}
               selectedItems={[countryCode]}
               onSelect={(items) => setCountryCode(items[0] ?? "+94")}
-              searchPlaceholder={t("Farms.Search country...")}
-              searchKeys={["label"]}
+              searchPlaceholder={t("Farms.SearchCountry")}
+              searchKeys={["label", "countryName", "translatedCountryName"]}
               showSearch={true}
               multiSelect={false}
+              noResultsText={t("SignUp.NoCountryFound")}
             />
           </View>
 
           {/* NIC */}
           <View className="gap-2">
             <Text className="text-gray-900 text-base">{t("Farms.NIC")}</Text>
-            <TextInput
-              value={nic}
-              onChangeText={handleNicChange}
-              placeholder={t("Farms.EnterNIC")}
-              placeholderTextColor="#9CA3AF"
-              className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] text-gray-800 text-base"
-              editable={!isSubmitting}
-              autoCapitalize="characters"
-              maxLength={12}
-            />
+            <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center">
+              <TextInput
+                value={nic}
+                onChangeText={handleNicChange}
+                placeholder={t("Farms.EnterNIC")}
+                placeholderTextColor="#9CA3AF"
+                className="text-gray-800"
+                style={{
+                  flex: 1,
+                  marginLeft: 8,
+                  fontSize: 14,
+                  height: 50,
+                  textAlignVertical: "center",
+                  paddingTop: Platform.OS === "ios" ? 12 : 0,
+                  paddingBottom: Platform.OS === "ios" ? 12 : 0,
+                  includeFontPadding: false,
+                }}
+                editable={!isSubmitting}
+                autoCapitalize="characters"
+                maxLength={12}
+              />
+            </View>
             {checkingNIC && (
               <View className="flex-row items-center mt-1 ml-3">
                 <ActivityIndicator size="small" color="#2563EB" />
@@ -772,7 +837,9 @@ const EditStaffMember: React.FC<EditStaffMemberProps> = ({
                   className="px-6 h-[50px] justify-center bg-black rounded-3xl"
                 >
                   <View className="justify-center items-center">
-                    <Text className="text-white text-lg">{t("Farms.YesDelete")}</Text>
+                    <Text className="text-white text-lg">
+                      {t("Farms.YesDelete")}
+                    </Text>
                   </View>
                 </TouchableOpacity>
               </View>

@@ -48,10 +48,6 @@ const ColdStorageCalculatorScreen: React.FC<ColdStorageProps> = ({
     setShowValidation(true);
 
     if (!storageVolume || !coolingPowerPerUnit) {
-      Alert.alert(
-        t("PostHarvestStorageCalculators.InvalidInput"),
-        t("Main.PleaseFillAllRequiredFields"),
-      );
       return;
     }
 
@@ -103,7 +99,7 @@ const ColdStorageCalculatorScreen: React.FC<ColdStorageProps> = ({
   return (
     <View className="flex-1 bg-white">
       <CalculatorHeader
-        title={t("PostHarvestStorageCalculators.ColdStorage")}
+        title={`${t("PostHarvestStorageCalculators.ColdStorage")} ${t("Calculator.Calculator")}`}
         icon={require("@/assets/images/farm-cal/post-harvest-storage-calculators/cold-storage-icon.webp")}
         onBack={() => navigation.goBack()}
       />

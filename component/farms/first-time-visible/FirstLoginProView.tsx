@@ -63,7 +63,7 @@ const FirstLoginView: React.FC = () => {
                 </Text>
                 <Text className="text-base text-black mt-1 ml-3">
                   {t(
-                    "Farms.PlanTrackAndOptimizeAllYourCropCCyclesWithoutBoundaries",
+                    "Farms.PlanTrackAndOptimizeAllYourCropCyclesWithoutBoundaries",
                   )}
                 </Text>
               </View>

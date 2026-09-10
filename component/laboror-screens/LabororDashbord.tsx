@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { useFocusEffect } from "@react-navigation/native";
-import { StatusBar } from "expo-status-bar";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import NewsSlideShow from "@/Items/NewsSlideShow";
 import MarketPriceSlideShow from "@/Items/MarketPriceSlideShow";
@@ -21,7 +20,6 @@ import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import NetInfo from "@react-native-community/netinfo";
 import { BackHandler } from "react-native";
-import DashboardSkeleton from "@/skeletons/DashboardSkeleton";
 import { useDispatch } from "react-redux";
 import { setUserData, setUserPersonalData } from "../../store/userSlice";
 import { useSelector } from "react-redux";
@@ -52,7 +50,7 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
   const [isConnected, setIsConnected] = useState(true);
-  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
 
   const scrollViewRef = useRef<ScrollView>(null);
@@ -130,7 +128,7 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
     }, [userPersonalData]),
   );
 
-  const fetchProfileData = async () => {
+  const fetchProfileData = async (isManualRefresh = false) => {
     const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
     try {
@@ -147,9 +145,11 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
       const data = await response.json();
 
       if (!data.user || !data.user.firstName) {
-        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error"),
+          t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
         navigation.navigate("Signin");
         return;
       }
@@ -157,19 +157,21 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
       setUser(data.user);
       dispatch(setUserData(data.usermembership));
       dispatch(setUserPersonalData(data.user));
-      setTimeout(() => setLoading(false), 300);
     } catch (error) {
-      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(
+        t("Main.Error"),
+        t("Main.SomethingWentWrongPleaseTryAgainlater"),
+        [{ text: t("Main.OK") }],
+      );
       navigation.navigate("Signin");
+    } finally {
+      if (isManualRefresh) setRefreshing(false);
     }
   };
 
   const handleRefresh = async () => {
-    setLoading(true);
-    await fetchProfileData();
-    setLoading(false);
+    setRefreshing(true);
+    await fetchProfileData(true);
   };
 
   useFocusEffect(
@@ -207,12 +209,8 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
 
   const actionRows = chunkArray(actionItems, 2);
 
-  if (loading) return <DashboardSkeleton />;
-
   return (
     <View className="flex-1 bg-white">
-      
-
       <View style={{ flexDirection: "row" }} className="mb-2">
         <TouchableOpacity
           onPress={() => navigation.navigate("LabororEngProfile")}
@@ -276,7 +274,7 @@ const LabororDashbord: React.FC<LabororDashbordProps> = ({ navigation }) => {
       <ScrollView
         ref={scrollViewRef}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={handleRefresh} />
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
         showsVerticalScrollIndicator={false}
       >

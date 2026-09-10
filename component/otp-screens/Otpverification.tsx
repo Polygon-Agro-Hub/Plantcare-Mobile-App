@@ -38,7 +38,16 @@ interface userItem {
 }
 
 const Otpverification: React.FC = ({ navigation, route }: any) => {
-  const { mobileNumber, firstName, lastName, nic, district } = route.params;
+  const {
+    mobileNumber,
+    firstName,
+    lastName,
+    nic,
+    district,
+    rawMobileNumber,
+    selectedCountryCode,
+    selectedCountryFlag,
+  } = route?.params || {};
   const isSignup = firstName !== undefined;
   const [otpCode, setOtpCode] = useState<string>("");
   const [maskedCode, setMaskedCode] = useState<string>("XXXXX");
@@ -71,10 +80,41 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
     fetchReferenceId();
   }, []);
 
+  const handleBackPress = React.useCallback(() => {
+    if (isSignup) {
+      navigation.navigate("Signup", {
+        firstName,
+        lastName,
+        nic,
+        mobileNumber:
+          rawMobileNumber ??
+          (mobileNumber?.startsWith(selectedCountryCode || "+94")
+            ? mobileNumber.slice((selectedCountryCode || "+94").length)
+            : mobileNumber),
+        selectedCountryCode: selectedCountryCode || "+94",
+        selectedCountryFlag: selectedCountryFlag || "🇱🇰",
+        district,
+      });
+    } else {
+      navigation.navigate("Signin");
+    }
+  }, [
+    navigation,
+    isSignup,
+    firstName,
+    lastName,
+    nic,
+    district,
+    rawMobileNumber,
+    selectedCountryCode,
+    selectedCountryFlag,
+    mobileNumber,
+  ]);
+
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.navigate(isSignup ? "Signup" : "Signin");
+        handleBackPress();
         return true;
       };
 
@@ -84,7 +124,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       );
 
       return () => subscription.remove();
-    }, [navigation, isSignup]),
+    }, [handleBackPress]),
   );
 
   useFocusEffect(
@@ -127,9 +167,11 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
     const code = otpCode;
 
     if (code.length !== 5) {
-      Alert.alert(t("Main.Error"), t("OtpVerification.PleaseEnterTheFullOTPCode"), [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(
+        t("Main.Error"),
+        t("OtpVerification.PleaseEnterTheFullOTPCode"),
+        [{ text: t("Main.OK") }],
+      );
       setDisabledVerify(false);
       setIsLoading(false);
       return;
@@ -139,7 +181,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       Alert.alert(
         t("Main.Error"),
         t("OtpVerification.OTPHasExpiredPleaseResendANewOTP") ||
-        "OTP has expired. Please resend a new OTP.",
+          "OTP has expired. Please resend a new OTP.",
         [{ text: t("Main.OK") }],
       );
       setDisabledVerify(false);
@@ -180,16 +222,22 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         if (statusCode === "1000") {
           isSuccess = true;
         } else if (statusCode === "1001") {
-          Alert.alert(t("Main.Error"), t("OtpVerification.OTPVerificationFailedPleaseCheckTheCodeAndTryAgain"), [
-            { text: t("Main.OK") },
-          ]);
+          Alert.alert(
+            t("Main.Error"),
+            t(
+              "OtpVerification.OTPVerificationFailedPleaseCheckTheCodeAndTryAgain",
+            ),
+            [{ text: t("Main.OK") }],
+          );
           setDisabledVerify(false);
           setIsLoading(false);
           return;
         } else {
-          Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-            { text: t("Main.OK") },
-          ]);
+          Alert.alert(
+            t("Main.Error"),
+            t("Main.SomethingWentWrongPleaseTryAgainlater"),
+            [{ text: t("Main.OK") }],
+          );
           setDisabledVerify(false);
           setIsLoading(false);
           return;
@@ -257,26 +305,35 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
               setDisabledVerify(false);
               setIsLoading(false);
             } else {
-              Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-                { text: t("Main.OK") },
-              ]);
+              Alert.alert(
+                t("Main.Error"),
+                t("Main.SomethingWentWrongPleaseTryAgainlater"),
+                [{ text: t("Main.OK") }],
+              );
               setDisabledVerify(false);
               setIsLoading(false);
             }
           } else {
-            Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-              { text: t("Main.OK") },
-            ]);
+            Alert.alert(
+              t("Main.Error"),
+              t("Main.SomethingWentWrongPleaseTryAgainlater"),
+              [{ text: t("Main.OK") }],
+            );
             setDisabledVerify(false);
             setIsLoading(false);
           }
         }
       }
     } catch (error) {
-      console.error("Error during OTP verification or registration/login:", error);
-      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        { text: t("Main.OK") },
-      ]);
+      console.error(
+        "Error during OTP verification or registration/login:",
+        error,
+      );
+      Alert.alert(
+        t("Main.Error"),
+        t("Main.SomethingWentWrongPleaseTryAgainlater"),
+        [{ text: t("Main.OK") }],
+      );
       setDisabledVerify(false);
       setIsLoading(false);
     }
@@ -322,14 +379,18 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         setTimer(240);
         setDisabledResend(true);
       } else {
-        Alert.alert(t("Main.Error"), t("OtpVerification.FailedToResendOTPPleaseTryAgain"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error"),
+          t("OtpVerification.FailedToResendOTPPleaseTryAgain"),
+          [{ text: t("Main.OK") }],
+        );
       }
     } catch (error) {
-      Alert.alert(t("Main.Error"), t("OtpVerification.FailedToResendOTPPleaseTryAgain"), [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(
+        t("Main.Error"),
+        t("OtpVerification.FailedToResendOTPPleaseTryAgain"),
+        [{ text: t("Main.OK") }],
+      );
     }
   };
 
@@ -344,8 +405,10 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   };
 
   return (
+     <View style={{ flex: 1, backgroundColor: "white" }}>
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 30}
       style={{ flex: 1, backgroundColor: "white" }}
       enabled
     >
@@ -353,7 +416,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       <CustomHeader
         title=""
         navigation={navigation}
-        onBackPress={() => navigation.goBack()}
+        onBackPress={handleBackPress}
       />
 
       <ScrollView
@@ -438,7 +501,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
                   className="mt-2 text-lg text-center underline"
                   style={{
                     color: disabledResend ? "#9CA3AF" : "#0085FF",
-                    fontSize: 16,
+                    fontSize: 14,
                   }}
                 >
                   {timer > 0
@@ -455,7 +518,9 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
                 disabled={!isOtpValid || disabledVerify}
                 activeOpacity={0.8}
                 className={`w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 ${
-                  (!isOtpValid || disabledVerify) ? "bg-[#9CA3AF]" : "bg-[#353535]"
+                  !isOtpValid || disabledVerify
+                    ? "bg-[#9CA3AF]"
+                    : "bg-[#353535]"
                 }`}
               >
                 {isLoading ? (
@@ -471,6 +536,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
+    </View>
   );
 };
 

@@ -12,6 +12,8 @@ import {
 import Swiper from "react-native-swiper";
 import { Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../services/reducxStore";
 import CustomHeader from "./CustomHeader";
 
 interface ImageData {
@@ -43,6 +45,11 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
   const swiperRef = useRef<any>(null);
   const { t } = useTranslation();
 
+  const userPersonalData = useSelector(
+    (state: RootState) => state.user.userPersonalData,
+  );
+  const userData = useSelector((state: RootState) => state.user.userData);
+
   React.useEffect(() => {
     setCurrentIndex(initialIndex);
   }, [initialIndex]);
@@ -56,6 +63,58 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
     if (swiperRef.current) {
       swiperRef.current.scrollBy(index - currentIndex);
     }
+  };
+
+  const getFormattedUploadedBy = (uploadedByValue?: string): string => {
+    if (!uploadedByValue) return "";
+
+    const trimmed = uploadedByValue.trim();
+    const lower = trimmed.toLowerCase();
+
+    const firstName = userPersonalData?.firstName?.trim() || "";
+    const lastName = userPersonalData?.lastName?.trim() || "";
+    const fullName = `${firstName} ${lastName}`.trim();
+    const userName = (userData?.name as string | undefined)?.trim() || "";
+    const userId = userPersonalData?.id || userData?.id;
+    const userRole = (userData?.role || "").toLowerCase();
+    const isStaff =
+      userRole === "manager" ||
+      userRole === "supervisor" ||
+      userRole === "laborer" ||
+      userRole === "laboror";
+
+    // 1. Check if the uploadedBy matches the currently logged-in user's name or ID
+    const matchesLoggedInUser =
+      (fullName !== "" && lower === fullName.toLowerCase()) ||
+      (firstName !== "" && lower === firstName.toLowerCase()) ||
+      (userName !== "" && lower === userName.toLowerCase()) ||
+      (userId !== undefined && String(trimmed) === String(userId));
+
+    if (matchesLoggedInUser) {
+      return t("ImageViewerModal.You");
+    }
+
+    // 2. If it is explicitly "You" or localized "You"
+    if (
+      lower === "you" ||
+      lower === t("ImageViewerModal.You").toLowerCase()
+    ) {
+      if (isStaff) {
+        return t("ImageViewerModal.Owner") || "Owner";
+      }
+      return t("ImageViewerModal.You");
+    }
+
+    // 3. If it is marked as "owner" or "farm owner"
+    if (lower === "owner" || lower === "farm owner") {
+      if (!isStaff) {
+        return t("ImageViewerModal.You");
+      }
+      return t("ImageViewerModal.Owner") || "Owner";
+    }
+
+    // 4. Otherwise, display the actual relevant name (e.g. staff member name or owner name)
+    return trimmed;
   };
 
   if (!visible || !images || images.length === 0) {
@@ -100,9 +159,7 @@ const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
           <View style={styles.uploadedByContainer}>
             <Text style={styles.uploadedBy}>
               {t("ImageViewerModal.UploadedBy")}{" "}
-              {images[currentIndex].uploadedBy === "You"
-                ? t("ImageViewerModal.You")
-                : images[currentIndex].uploadedBy}
+              {getFormattedUploadedBy(images[currentIndex].uploadedBy)}
             </Text>
           </View>
         )}

@@ -30,6 +30,7 @@ import ContentLoader, { Rect } from "react-content-loader/native";
 import { StatusBar } from "expo-status-bar";
 import LottieView from "lottie-react-native";
 import CustomHeader from "../common/CustomHeader";
+import NoData from "../common/NoData";
 
 interface CropCardProps {
   id: number;
@@ -132,14 +133,26 @@ const CropCard: React.FC<CropCardProps> = ({
 
         <View style={{ alignItems: "center", justifyContent: "center" }}>
           <Progress.Circle
-            size={50}
+            size={60}
             progress={progress}
             thickness={4}
             color="#4caf50"
             unfilledColor="#ddd"
             showsText={true}
-            formatText={() => `${Math.round(progress * 100)}%`}
-            textStyle={{ fontSize: 12 }}
+            formatText={() => {
+              const percentage = progress * 100;
+              if (percentage >= 100 || progress >= 1) {
+                return "100%";
+              }
+              if (percentage === 0) {
+                return "0%";
+              }
+              if (percentage > 0 && percentage < 0.01) {
+                return "0.01%";
+              }
+              return `${percentage.toFixed(2)}%`;
+            }}
+            textStyle={{ fontSize: 10, color: "#4caf50", fontWeight: "bold" }}
           />
         </View>
       </TouchableOpacity>
@@ -269,10 +282,15 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
       "hardwareBackPress",
       () => {
         const userRole = user?.role;
-        let screenName = "LabororDashbord";
+        let screenName = "Dashboard";
 
-        if (userRole === "Manager") screenName = "ManagerDashbord";
-        else if (userRole === "Supervisor") screenName = "SupervisorDashbord";
+        if (userRole === "Laborer" || userRole === "Laboror") {
+          screenName = "LabororDashbord";
+        } else if (userRole === "Manager") {
+          screenName = "ManagerDashbord";
+        } else if (userRole === "Supervisor") {
+          screenName = "SupervisorDashbord";
+        }
 
         (navigation as any).navigate("Main", {
           screen: screenName,
@@ -318,44 +336,36 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      
-
       <CustomHeader
         title={t("Farms.Cultivation")}
         navigation={navigation}
         onBackPress={() => {
           const userRole = user?.role;
-          let screenName = "LabororDashbord";
+          let screenName = "Dashboard";
 
-          if (userRole === "Manager") screenName = "ManagerDashbord";
-          else if (userRole === "Supervisor") screenName = "SupervisorDashbord";
+          if (userRole === "Laborer" || userRole === "Laboror") {
+            screenName = "LabororDashbord";
+          } else if (userRole === "Manager") {
+            screenName = "ManagerDashbord";
+          } else if (userRole === "Supervisor") {
+            screenName = "SupervisorDashbord";
+          }
 
           (navigation as any).navigate("Main", {
             screen: screenName,
           });
         }}
       />
-      <View className="border border-[0.5px] border-gray-200" />
+      <View className=" border-[0.5px] border-gray-200" />
       {loading ? (
         <SkeletonLoader />
       ) : crops.length === 0 ? (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <LottieView
-            source={require("@/assets/jsons/common/no-data.json")}
-            style={{ width: wp(50), height: hp(25) }}
-            autoPlay
-            loop
-          />
-          <Text className="text-center text-gray-600 ">
-            --{t("MyCrop.YouHaveNotEnrolledAnyCropsYet")}--
-          </Text>
-        </View>
+        <NoData
+          text={
+            t("MyCrop.YouHaveNotEnrolledAnyCropsYet") ||
+            "You have not enrolled any crops yet"
+          }
+        />
       ) : (
         <ScrollView
           contentContainerStyle={{ padding: 16 }}
@@ -390,6 +400,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
                         : language === "ta"
                           ? crop.varietyNameTamil
                           : crop.varietyNameEnglish,
+                    fromScreen: "MyCrop",
                   },
                 })
               }

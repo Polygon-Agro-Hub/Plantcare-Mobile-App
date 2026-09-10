@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   View,
   Text,
@@ -9,14 +9,17 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   BackHandler,
-  StatusBar,
   Platform,
   Keyboard,
+  Modal,
+  TouchableWithoutFeedback,
 } from "react-native";
 import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
@@ -25,6 +28,7 @@ import type { RootState } from "@/services/reducxStore";
 import { RootStackParamList } from "../types/types";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
+import CustomDatePicker from "../common/CustomDatePicker";
 import { MaterialIcons } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
 
@@ -51,16 +55,11 @@ interface ModalState {
   unit: boolean;
 }
 
-const UNIT_OPTIONS = [
-  { label: "ml", value: "ml" },
-  { label: "kg", value: "kg" },
-  { label: "l", value: "l" },
-];
-
 const INITIAL_ERRORS = {
   selectedFarm: "",
   selectedCategory: "",
   selectedAsset: "",
+  customAsset: "",
   brand: "",
   batchNum: "",
   volume: "",
@@ -74,24 +73,35 @@ const INITIAL_ERRORS = {
 
 const preventLeadingSpace = (text: string): string => text.replace(/^\s+/, "");
 
+const formatLocalDate = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 interface UserData {
   role: string;
 }
 
 const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const route = useRoute();
-  const { farmId, farmName } = (route.params || {}) as { farmId?: number; farmName?: string };
+  const { farmId, farmName } = (route.params || {}) as {
+    farmId?: number;
+    farmName?: string;
+  };
   const user = useSelector(
     (state: RootState) => state.user.userData,
   ) as UserData | null;
 
   const scrollViewRef = useRef<ScrollView>(null);
   const { t, i18n } = useTranslation();
-  const unitOptions = [
+
+  const unitOptions = useMemo(() => [
     { label: t("CurrentAssets.ml"), value: "ml" },
     { label: t("CurrentAssets.kg"), value: "kg" },
     { label: t("CurrentAssets.l"), value: "l" },
-  ];
+  ], [t]);
 
   const [assets, setAssets] = useState<any[]>([]);
   const [brands, setBrands] = useState<string[]>([]);
@@ -120,18 +130,116 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     brand: false,
     unit: false,
   });
+
+  // Date picker modal visibility (Android shows the native dialog directly,
+  // iOS shows it inside a Modal with an inline calendar + Cancel/OK)
   const [showPurchaseDatePicker, setShowPurchaseDatePicker] = useState(false);
   const [showExpireDatePicker, setShowExpireDatePicker] = useState(false);
 
+  // Temp values held while the iOS inline picker is open, committed on OK
+  const [tempPurchaseDate, setTempPurchaseDate] = useState<Date>(new Date());
+  const [tempExpireDate, setTempExpireDate] = useState<Date>(new Date());
+
   const [fieldErrors, setFieldErrors] = useState(INITIAL_ERRORS);
 
-  const openModal = (key: keyof ModalState) =>
-    setModals((m) => ({ ...m, [key]: true }));
-  const closeModal = (key: keyof ModalState) =>
-    setModals((m) => ({ ...m, [key]: false }));
+  // Date helper functions - defined first
+  const getDateOnly = useCallback((date: Date): Date => {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  }, []);
 
-  const clearError = (key: keyof typeof INITIAL_ERRORS) =>
-    setFieldErrors((prev) => ({ ...prev, [key]: "" }));
+  const parseLocalDate = useCallback((dateStr: string): Date => {
+    if (!dateStr) return new Date();
+    const parts = dateStr.split("-").map(Number);
+    if (parts.length === 3 && !parts.some(isNaN)) {
+      return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
+    return new Date();
+  }, []);
+
+  const addDays = useCallback((date: Date, days: number): Date => {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
+  }, []);
+
+  const getMaximumDate = useCallback(() => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() + 100);
+    return d;
+  }, []);
+
+  const getPurchaseMaximumDate = useCallback((): Date => {
+    const d = new Date();
+    d.setHours(23, 59, 59, 999);
+    return d;
+  }, []);
+
+  const getExpireMinimumDate = useCallback((): Date => {
+    return purchaseDate ? addDays(parseLocalDate(purchaseDate), 1) : new Date();
+  }, [purchaseDate, addDays, parseLocalDate]);
+
+  const clampDate = useCallback((date: Date, min?: Date, max?: Date): Date => {
+    let result = getDateOnly(date);
+
+    if (min) {
+      const minDate = getDateOnly(min);
+      if (result.getTime() < minDate.getTime()) {
+        result = new Date(minDate);
+      }
+    }
+
+    if (max) {
+      const maxDate = getDateOnly(max);
+      if (result.getTime() > maxDate.getTime()) {
+        result = new Date(maxDate);
+      }
+    }
+
+    return result;
+  }, [getDateOnly]);
+
+  const getExpirePickerValue = useCallback((): Date => {
+    const minDate = getExpireMinimumDate();
+
+    if (expireDate) {
+      const parsedExpire = parseLocalDate(expireDate);
+      return parsedExpire < minDate ? minDate : parsedExpire;
+    }
+
+    return minDate;
+  }, [expireDate, getExpireMinimumDate, parseLocalDate]);
+
+  // Memoized date parameters for iOS DateTimePickers to prevent reference changes on every render
+  const purchaseMinimumDate = useMemo(() => new Date(2000, 0, 1), []);
+  const purchaseMaximumDate = useMemo(() => {
+    const max = getPurchaseMaximumDate();
+    return new Date(max.getFullYear(), max.getMonth(), max.getDate(), 23, 59, 59, 999);
+  }, [getPurchaseMaximumDate]);
+
+  const clampedPurchaseDate = useMemo(() => {
+    return clampDate(tempPurchaseDate, purchaseMinimumDate, purchaseMaximumDate);
+  }, [tempPurchaseDate, purchaseMinimumDate, purchaseMaximumDate, clampDate]);
+
+  const expireMinimumDate = useMemo(() => {
+    const min = getExpireMinimumDate();
+    return new Date(min.getFullYear(), min.getMonth(), min.getDate());
+  }, [purchaseDate, getExpireMinimumDate]);
+
+  const expireMaximumDate = useMemo(() => {
+    const max = getMaximumDate();
+    return new Date(max.getFullYear(), max.getMonth(), max.getDate());
+  }, [getMaximumDate]);
+
+  const clampedExpireDate = useMemo(() => {
+    return clampDate(tempExpireDate, expireMinimumDate, expireMaximumDate);
+  }, [tempExpireDate, expireMinimumDate, expireMaximumDate, clampDate]);
+
+  const openModal = useCallback((key: keyof ModalState) =>
+    setModals((m) => ({ ...m, [key]: true })), []);
+
+  const closeModal = useCallback((key: keyof ModalState) =>
+    setModals((m) => ({ ...m, [key]: false })), []);
+
+  const clearError = useCallback((key: keyof typeof INITIAL_ERRORS) =>
+    setFieldErrors((prev) => ({ ...prev, [key]: "" })), []);
 
   const statusMapping: Record<string, string> = {
     [t("CurrentAssets.Expired")]: "Expired",
@@ -141,7 +249,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const cleanNumber = (value: string) =>
     value ? parseFloat(value.replace(/,/g, "")) : 0;
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setSelectedFarm("");
     setSelectedCategory("");
     setSelectedAsset("");
@@ -167,7 +275,9 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       brand: false,
       unit: false,
     });
-  };
+    setShowPurchaseDatePicker(false);
+    setShowExpireDatePicker(false);
+  }, []);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -191,13 +301,10 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     const unsubscribe = navigation.addListener("focus", () => {
       resetForm();
       setExistingAssets([]);
-
       scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: false });
     });
     return unsubscribe;
-  }, [navigation]);
-
-
+  }, [navigation, resetForm]);
 
   useEffect(() => {
     if (numberOfUnits && unitPrice) {
@@ -206,37 +313,28 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     }
   }, [numberOfUnits, unitPrice]);
 
+  // Keep expire date valid whenever purchase date changes
   useEffect(() => {
-    if (selectedCategory && selectedAsset && batchNum && volume && unit) {
-      const assetToCheck =
-        selectedAsset === "Other" && customAsset ? customAsset : selectedAsset;
-      const brandToCheck =
-        selectedCategory === "Livestock for sale" ? "" : brand;
+    if (purchaseDate) {
+      const minExpireDate = addDays(parseLocalDate(purchaseDate), 1);
 
-      if (
-        assetToCheck &&
-        (selectedCategory === "Livestock for sale" || brandToCheck)
-      ) {
-        checkDuplicate(selectedCategory, assetToCheck, brandToCheck, batchNum);
+      if (expireDate && parseLocalDate(expireDate) < minExpireDate) {
+        const newExpireDate = formatLocalDate(minExpireDate);
+        setExpireDate(newExpireDate);
+        calculateWarranty(purchaseDate, newExpireDate);
+        setStatus(
+          parseLocalDate(newExpireDate) < new Date()
+            ? t("CurrentAssets.Expired")
+            : t("CurrentAssets.Valid"),
+        );
       }
-    } else {
-      console.error("Add Asset Error");
     }
-  }, [
-    selectedCategory,
-    selectedAsset,
-    customAsset,
-    brand,
-    batchNum,
-    volume,
-    unit,
-    existingAssets,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [purchaseDate]);
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       fetchExistingAssets();
-
       scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: false });
     }, [farmId]),
   );
@@ -247,7 +345,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     }
   }, [farmId]);
 
-  const fetchExistingAssets = async () => {
+  const fetchExistingAssets = useCallback(async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) return;
@@ -263,9 +361,9 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     } catch (error) {
       console.error("Error fetching existing assets:", error);
     }
-  };
+  }, [farmId]);
 
-  const fetchFarmData = async () => {
+  const fetchFarmData = useCallback(async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) return;
@@ -284,27 +382,42 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     } catch (error) {
       console.error("Error fetching farms:", error);
     }
-  };
+  }, []);
 
-  const handleCategoryChange = (category: string) => {
+  const handleCategoryChange = useCallback((category: string) => {
     setSelectedCategory(category);
     const assetsJson = require("@/assets/jsons/current-asset/current-asset.json");
     setAssets(assetsJson[category] || []);
     setSelectedAsset("");
+    setCustomAsset("");
     setBrand("");
     setBrands([]);
-  };
+  }, []);
 
-  const handleAssetChange = (asset: string) => {
+  const handleAssetChange = useCallback((asset: string) => {
     setSelectedAsset(asset);
-    const selected = assets.find((a) => a.asset === asset);
-    if (selected) {
-      setBrands(selected.brands || []);
+    clearError("selectedAsset");
+    if (asset === "Other") {
+      setBrands([]);
       setBrand("");
+      setCustomAsset("");
+      clearError("customAsset");
+      clearError("brand");
+    } else {
+      const selected = assets.find((a) => a.asset === asset);
+      if (selected) {
+        setBrands(selected.brands || []);
+        setBrand("");
+      } else {
+        setBrands([]);
+        setBrand("");
+      }
+      setCustomAsset("");
+      clearError("customAsset");
     }
-  };
+  }, [assets, clearError]);
 
-  const checkDuplicate = (
+  const checkDuplicate = useCallback((
     category: string,
     asset: string,
     brand: string,
@@ -318,120 +431,184 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         item.batchNum.toString() === batchNum.toString(),
     );
     return !!duplicate;
-  };
+  }, [existingAssets]);
 
-  const handleDateChange = (
-    event: any,
-    selectedDate: any,
-    type: "purchase" | "expire",
-  ) => {
-    const currentDate = selectedDate || new Date();
-    const dateString = currentDate.toISOString().slice(0, 10);
+  const calculateWarranty = useCallback((purchase: string, expire: string) => {
+    const diffTime = parseLocalDate(expire).getTime() - parseLocalDate(purchase).getTime();
+    const diffMonths = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 30));
+    setWarranty(diffMonths > 0 ? diffMonths.toString() : "0");
+  }, [parseLocalDate]);
 
-    if (type === "purchase") {
-      if (new Date(dateString) > new Date()) {
+  // ---- Purchase date: apply a chosen date (from Android dialog or iOS OK) ----
+  const applyPurchaseDate = useCallback((rawDate: Date) => {
+    const currentDate = getDateOnly(rawDate);
+    const todayOnly = getDateOnly(new Date());
+
+    if (currentDate > todayOnly) {
+      Alert.alert(
+        t("Main.Sorry"),
+        t("CurrentAssets.PurchaseDateMustNotBeInTheFuture"),
+        [{ text: t("Main.OK") }],
+      );
+      return;
+    }
+
+    const dateString = formatLocalDate(currentDate);
+    setPurchaseDate(dateString);
+    clearError("purchaseDate");
+
+    if (expireDate) {
+      const expireDateObj = parseLocalDate(expireDate);
+      if (expireDateObj <= currentDate) {
         Alert.alert(
-          t("CurrentAssets.sorry"),
-          t("CurrentAssets.PurchaseDateMustNotBeInTheFuture"),
-          [{ text: t("Main.OK") }],
-        );
-        return;
-      }
-      setPurchaseDate(dateString);
-      setShowPurchaseDatePicker(false);
-
-      if (expireDate && new Date(dateString) > new Date(expireDate)) {
-        Alert.alert(
-          t("CurrentAssets.sorry"),
+          t("Main.Sorry"),
           t("CurrentAssets.ExpirationDateMustBeAfterPurchaseDate"),
           [{ text: t("Main.OK") }],
         );
         setExpireDate("");
         setWarranty("");
         setStatus("");
-      } else if (expireDate) {
+      } else {
         calculateWarranty(dateString, expireDate);
         setStatus(
-          new Date(expireDate) < new Date()
+          expireDateObj < new Date()
             ? t("CurrentAssets.Expired")
             : t("CurrentAssets.Valid"),
         );
-      }
-    } else {
-      if (new Date(dateString) < new Date(purchaseDate)) {
-        Alert.alert(
-          t("CurrentAssets.sorry"),
-          t("CurrentAssets.ExpirationDateMustBeAfterPurchaseDate"),
-          [{ text: t("Main.OK") }],
-        );
-        return;
-      }
-      setExpireDate(dateString);
-      setShowExpireDatePicker(false);
-      if (purchaseDate) {
-        setStatus(
-          new Date(dateString) < new Date()
-            ? t("CurrentAssets.Expired")
-            : t("CurrentAssets.Valid"),
-        );
-        calculateWarranty(purchaseDate, dateString);
       }
     }
-  };
+  }, [expireDate, getDateOnly, parseLocalDate, calculateWarranty, clearError, t]);
 
-  const calculateWarranty = (purchase: string, expire: string) => {
-    const diffTime = new Date(expire).getTime() - new Date(purchase).getTime();
-    const diffMonths = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 30));
-    setWarranty(diffMonths > 0 ? diffMonths.toString() : "0");
-  };
+  // ---- Expire date: apply a chosen date (from Android dialog or iOS OK) ----
+  const applyExpireDate = useCallback((rawDate: Date) => {
+    const currentDate = getDateOnly(rawDate);
+    const purchaseDateObj = purchaseDate ? parseLocalDate(purchaseDate) : null;
 
-  const handleBatchNumChange = (text: string) => {
+    if (purchaseDateObj && currentDate <= purchaseDateObj) {
+      Alert.alert(
+        t("Main.Sorry"),
+        t("CurrentAssets.ExpirationDateMustBeAfterPurchaseDate"),
+        [{ text: t("Main.OK") }],
+      );
+      return;
+    }
+
+    const dateString = formatLocalDate(currentDate);
+    setExpireDate(dateString);
+    clearError("expireDate");
+
+    if (purchaseDate) {
+      setStatus(
+        currentDate < new Date()
+          ? t("CurrentAssets.Expired")
+          : t("CurrentAssets.Valid"),
+      );
+      calculateWarranty(purchaseDate, dateString);
+    }
+  }, [purchaseDate, getDateOnly, parseLocalDate, calculateWarranty, clearError, t]);
+
+  // ---- Open handlers ----
+  const handleOpenPurchasePicker = useCallback(() => {
+    Keyboard.dismiss();
+    clearError("purchaseDate");
+    const initial = purchaseDate
+      ? clampDate(parseLocalDate(purchaseDate), undefined, getPurchaseMaximumDate())
+      : clampDate(new Date(), undefined, getPurchaseMaximumDate());
+    setTempPurchaseDate(initial);
+    setShowPurchaseDatePicker(false);
+    setShowExpireDatePicker(false);
+    setTimeout(() => {
+      setShowPurchaseDatePicker(true);
+    }, Platform.OS === "ios" ? 300 : 150);
+  }, [purchaseDate, parseLocalDate, clampDate, getPurchaseMaximumDate, clearError]);
+
+  const handleOpenExpirePicker = useCallback(() => {
+    Keyboard.dismiss();
+    clearError("expireDate");
+    const minDate = getExpireMinimumDate();
+    const maxDate = getMaximumDate();
+    const initial = clampDate(getExpirePickerValue(), minDate, maxDate);
+    setTempExpireDate(initial);
+    setShowPurchaseDatePicker(false);
+    setShowExpireDatePicker(false);
+    setTimeout(() => {
+      setShowExpireDatePicker(true);
+    }, Platform.OS === "ios" ? 300 : 150);
+  }, [getExpireMinimumDate, getMaximumDate, getExpirePickerValue, clampDate, clearError]);
+
+  // ---- Android onChange (dialog closes itself after pick) ----
+  const onChangePurchaseDateAndroid = useCallback((
+    event: DateTimePickerEvent,
+    selectedDate?: Date,
+  ) => {
+    setShowPurchaseDatePicker(false);
+    if (event.type === "set" && selectedDate) {
+      applyPurchaseDate(selectedDate);
+    }
+  }, [applyPurchaseDate]);
+
+  const onChangeExpireDateAndroid = useCallback((
+    event: DateTimePickerEvent,
+    selectedDate?: Date,
+  ) => {
+    setShowExpireDatePicker(false);
+    if (event.type === "set" && selectedDate) {
+      applyExpireDate(selectedDate);
+    }
+  }, [applyExpireDate]);
+
+  // ---- iOS confirm (Modal OK button) ----
+  const onConfirmPurchaseDateIOS = useCallback(() => {
+    applyPurchaseDate(tempPurchaseDate);
+    setShowPurchaseDatePicker(false);
+  }, [applyPurchaseDate, tempPurchaseDate]);
+
+  const onConfirmExpireDateIOS = useCallback(() => {
+    applyExpireDate(tempExpireDate);
+    setShowExpireDatePicker(false);
+  }, [applyExpireDate, tempExpireDate]);
+
+  const handleBatchNumChange = useCallback((text: string) => {
     clearError("batchNum");
     setBatchNum(preventLeadingSpace(text.replace(/[-.*#]/g, "")));
-  };
-  const handleVolumeChange = (text: string) => {
+  }, [clearError]);
+
+  const handleVolumeChange = useCallback((text: string) => {
     clearError("volume");
-
     const sanitized = text.replace(/[^0-9.]/g, "");
-
     const parts = sanitized.split(".");
     if (parts.length > 2) return;
-
     if (parts[1] !== undefined && parts[1].length > 2) return;
-
     setVolume(sanitized);
-  };
-  const handleNumOfUnitsChange = (text: string) => {
+  }, [clearError]);
+
+  const handleNumOfUnitsChange = useCallback((text: string) => {
     clearError("numberOfUnits");
     setNumberOfUnits(text.replace(/[^0-9.]/g, ""));
-  };
-  const handleUnitPriceChange = (text: string) => {
+  }, [clearError]);
+
+  const handleUnitPriceChange = useCallback((text: string) => {
     clearError("unitPrice");
-
     const sanitized = text.replace(/[^0-9.]/g, "");
-
     const parts = sanitized.split(".");
     if (parts.length > 2) return;
-
     if (parts[1] !== undefined && parts[1].length > 2) return;
-
     const intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     const formatted = parts.length === 2 ? `${intPart}.${parts[1]}` : intPart;
-
     setUnitPrice(formatted);
-  };
+  }, [clearError]);
 
-  const handleAddAsset = async () => {
+  const handleAddAsset = useCallback(async () => {
     const isBrandRequired = selectedCategory !== "Livestock for sale";
     const assetToCheck =
-      selectedAsset === "Other" ? customAsset : selectedAsset;
-    const brandToCheck = isBrandRequired ? brand : "";
+      selectedAsset === "Other" ? customAsset.trim() : selectedAsset;
+    const brandToCheck = isBrandRequired ? brand.trim() : "";
 
     if (
       checkDuplicate(selectedCategory, assetToCheck, brandToCheck, batchNum)
     ) {
       Alert.alert(
-        t("CurrentAssets.sorry"),
+        t("Main.Sorry"),
         t("CurrentAssets.ThisExactAssetAlreadyExists"),
         [{ text: t("Main.OK") }],
       );
@@ -441,52 +618,47 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     const errors = { ...INITIAL_ERRORS };
     let hasError = false;
 
-    const requiredFields: Array<[any, keyof typeof INITIAL_ERRORS, string]> =
+    const requiredFields: Array<[any, keyof typeof INITIAL_ERRORS, string]> = [
       [
-        [
-          farmId || selectedFarm,
-          "selectedFarm",
-          `${t("CurrentAssets.SelectFarm")} is required`,
-        ],
-        [
-          selectedCategory,
-          "selectedCategory",
-          `${t("CurrentAssets.Selectcategory")} is required`,
-        ],
-        [
-          selectedAsset,
-          "selectedAsset",
-          `${t("CurrentAssets.Asset")} is required`,
-        ],
-        [batchNum, "batchNum", `${t("CurrentAssets.BatchNumber")} is required`],
-        [
-          volume,
-          "volume",
-          `${t("CurrentAssets.UnitVolumeWeight")} is required`,
-        ],
-        [
-          numberOfUnits,
-          "numberOfUnits",
-          `${t("CurrentAssets.NumberOfUnits")} is required`,
-        ],
-        [unitPrice, "unitPrice", `${t("CurrentAssets.UnitPrice")} is required`],
-        [
-          purchaseDate,
-          "purchaseDate",
-          `${t("CurrentAssets.PurchaseDate")} is required`,
-        ],
-        [
-          expireDate,
-          "expireDate",
-          `${t("CurrentAssets.ExpireDate")} is required`,
-        ],
-        [
-          warranty,
-          "warranty",
-          `${t("CurrentAssets.WarrentyInMonths")} is required`,
-        ],
-        [status, "status", `${t("CurrentAssets.Status")} is required`],
-      ];
+        farmId || selectedFarm,
+        "selectedFarm",
+        `${t("CurrentAssets.SelectFarm")} ${t("CurrentAssets.IsRequired")}`,
+      ],
+      [
+        selectedCategory,
+        "selectedCategory",
+        `${t("CurrentAssets.SelectCategory")} ${t("CurrentAssets.IsRequired")}`,
+      ],
+      [
+        selectedAsset,
+        "selectedAsset",
+        `${t("CurrentAssets.Asset")} ${t("CurrentAssets.IsRequired")}`,
+      ],
+      [batchNum, "batchNum", `${t("CurrentAssets.BatchNumber")} ${t("CurrentAssets.IsRequired")}`],
+      [volume, "volume", `${t("CurrentAssets.UnitVolumeWeight")} ${t("CurrentAssets.IsRequired")}`],
+      [
+        numberOfUnits,
+        "numberOfUnits",
+        `${t("CurrentAssets.NumberOfUnits")} ${t("CurrentAssets.IsRequired")}`,
+      ],
+      [unitPrice, "unitPrice", `${t("CurrentAssets.UnitPrice")} ${t("CurrentAssets.IsRequired")}`],
+      [
+        purchaseDate,
+        "purchaseDate",
+        `${t("CurrentAssets.PurchaseDate")} ${t("CurrentAssets.IsRequired")}`,
+      ],
+      [
+        expireDate,
+        "expireDate",
+        `${t("CurrentAssets.ExpireDate")} ${t("CurrentAssets.IsRequired")}`,
+      ],
+      [
+        warranty,
+        "warranty",
+        `${t("CurrentAssets.WarrentyInMonths")} ${t("CurrentAssets.IsRequired")}`,
+      ],
+      [status, "status", `${t("CurrentAssets.Status")} ${t("CurrentAssets.IsRequired")}`],
+    ];
 
     requiredFields.forEach(([val, key, message]) => {
       if (!val) {
@@ -495,14 +667,21 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       }
     });
 
-    if (isBrandRequired && !brand) {
-      errors.brand = `${t("CurrentAssets.Brand")} is required`;
+    if (selectedAsset === "Other") {
+      if (!customAsset.trim()) {
+        errors.customAsset = `${t("CurrentAssets.MentionOther")} ${t("CurrentAssets.IsRequired")}`;
+        hasError = true;
+      }
+    }
+
+    if (isBrandRequired && !brand.trim()) {
+      errors.brand = `${t("CurrentAssets.Brand")} ${t("CurrentAssets.IsRequired")}`;
       hasError = true;
     }
 
     if (status === t("CurrentAssets.Expired")) {
       Alert.alert(
-        t("CurrentAssets.sorry"),
+        t("Main.Sorry"),
         t("CurrentAssets.CannotAddAnAssetThatHasAlreadyExpired"),
         [{ text: t("Main.OK") }],
       );
@@ -519,9 +698,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error"),
+          t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
         return;
       }
 
@@ -530,7 +711,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
       const assetData: Record<string, string> = {
         category: selectedCategory,
-        asset: selectedAsset,
+        asset: selectedAsset === "Other" ? customAsset.trim() : selectedAsset,
         batchNum,
         volume,
         unit,
@@ -544,22 +725,18 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         farmId: farmId ? farmId.toString() : selectedFarm,
       };
 
-      if (isBrandRequired) assetData.brand = brand;
+      if (isBrandRequired) assetData.brand = brand.trim();
 
       const url = farmId
         ? `${environment.API_BASE_URL}api/farm/currentAsset/${farmId}`
         : `${environment.API_BASE_URL}api/auth/currentAsset`;
 
-      await axios.post(
-        url,
-        assetData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+      await axios.post(url, assetData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
       Alert.alert(
         t("Main.Success"),
@@ -578,7 +755,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     } catch (error: any) {
       if (error?.response?.status === 409) {
         Alert.alert(
-          t("CurrentAssets.sorry"),
+          t("Main.Sorry"),
           t(
             "CurrentAssets.ThisExactAssetAlreadyExists You cannot add the same asset with the same brand, batch number, volume, and unit.",
           ),
@@ -589,19 +766,21 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       }
 
       console.error("Error adding asset:", error);
-      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(
+        t("Main.Error"),
+        t("Main.SomethingWentWrongPleaseTryAgainlater"),
+        [{ text: t("Main.OK") }],
+      );
       scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
     }
-  };
+  }, [
+    selectedCategory, selectedAsset, customAsset, brand, batchNum,
+    volume, unit, numberOfUnits, unitPrice, purchaseDate, expireDate,
+    warranty, status, selectedFarm, farmId, farmName, checkDuplicate,
+    cleanNumber, statusMapping, t, navigation
+  ]);
 
   const shouldShowBrandField = selectedCategory !== "Livestock for sale";
-  const getMaximumDate = () => {
-    const d = new Date();
-    d.setFullYear(d.getFullYear() + 100);
-    return d;
-  };
 
   if (loading) {
     return (
@@ -619,18 +798,30 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
   const categoryData = require("@/assets/jsons/current-asset/categories.json");
   const assetTranslationData = require("@/assets/jsons/current-asset/assets-translations.json");
 
-  const getCategoryLabel = (val: string) => {
+  const getCategoryLabel = useCallback((val: string) => {
     const item = categoryData.find((c: any) => c.value === val);
-    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
-    return item ? (item.translations[lang] || item.translations["en"]) : val;
-  };
+    const lang = i18n.language
+      ? i18n.language.startsWith("si")
+        ? "si"
+        : i18n.language.startsWith("ta")
+          ? "ta"
+          : "en"
+      : "en";
+    return item ? item.translations[lang] || item.translations["en"] : val;
+  }, [i18n.language]);
 
-  const getAssetLabel = (val: string) => {
+  const getAssetLabel = useCallback((val: string) => {
     if (val === "Other") return t("CurrentAssets.Other");
     const item = assetTranslationData.find((a: any) => a.value === val);
-    const lang = i18n.language ? (i18n.language.startsWith("si") ? "si" : i18n.language.startsWith("ta") ? "ta" : "en") : "en";
-    return item ? (item.translations[lang] || item.translations["en"]) : val;
-  };
+    const lang = i18n.language
+      ? i18n.language.startsWith("si")
+        ? "si"
+        : i18n.language.startsWith("ta")
+          ? "ta"
+          : "en"
+      : "en";
+    return item ? item.translations[lang] || item.translations["en"] : val;
+  }, [i18n.language, t]);
 
   const categoryItems = categoryData.map((item: any) => ({
     label: getCategoryLabel(item.value),
@@ -644,7 +835,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
   const brandItems = brands.map((b) => ({ label: b, value: b }));
 
-  const PickerTrigger = ({
+  const PickerTrigger = useCallback(({
     label,
     placeholder,
     onPress,
@@ -661,24 +852,23 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           Keyboard.dismiss();
           onPress();
         }}
-        className="bg-[#F4F4F4] rounded-3xl h-[50px] flex-row items-center px-4 justify-between"
+        className="bg-[#F4F4F4] rounded-3xl min-h-[50px] flex-row items-center px-4 justify-between py-2"
       >
         <Text
-          className={label ? "text-black text-sm" : "text-[#6B7280] text-sm"}
+          className={`flex-1 text-sm mr-2 ${
+            label ? "text-black" : "text-[#6B7280]"
+          }`}
+          style={{ fontSize: 14, color: label ? "#000000" : "#6B7280" }}
         >
           {label || placeholder}
         </Text>
-        <MaterialIcons
-          name="arrow-drop-down"
-          size={24}
-          color="#666"
-        />
+        <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
       </TouchableOpacity>
       {error ? (
         <Text className="text-red-500 text-xs mt-1 ml-2">{error}</Text>
       ) : null}
     </View>
-  );
+  ), []);
 
   return (
     <KeyboardAvoidingView
@@ -690,8 +880,6 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         className="flex-1 bg-white"
         keyboardShouldPersistTaps="handled"
       >
-        
-
         <CustomHeader
           title={farmId && farmName ? farmName : t("FixedAssets.MyAssets")}
           navigation={navigation}
@@ -745,8 +933,8 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               </Text>
               <PickerTrigger
                 label={
-                  farms.find((f) => f.id.toString() === selectedFarm)?.farmName ??
-                  ""
+                  farms.find((f) => f.id.toString() === selectedFarm)
+                    ?.farmName ?? ""
                 }
                 placeholder={t("FixedAssets.SelectAFarm")}
                 onPress={() => openModal("farm")}
@@ -757,13 +945,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
           {/* Category */}
           <Text className="text-[#070707] text-sm mt-2">
-            {t("CurrentAssets.Selectcategory")} *
+            {t("CurrentAssets.SelectCategory")} *
           </Text>
           <PickerTrigger
-            label={
-              selectedCategory ? getCategoryLabel(selectedCategory) : ""
-            }
-            placeholder={t("CurrentAssets.Selectcategory")}
+            label={selectedCategory ? getCategoryLabel(selectedCategory) : ""}
+            placeholder={t("CurrentAssets.SelectCategory")}
             onPress={() => openModal("category")}
             error={fieldErrors.selectedCategory}
           />
@@ -771,33 +957,45 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           {selectedCategory === "Other consumables" ? (
             <>
               <Text className="text-[#070707] text-sm mt-2">
-                {t("CurrentAssets.Asset")}
+                {t("CurrentAssets.Asset")} *
               </Text>
               <TextInput
                 placeholder={t("CurrentAssets.EnterAsset")}
-                placeholderTextColor="#585858"
+                placeholderTextColor="#6B7280"
                 value={selectedAsset}
                 onChangeText={(text) => {
                   clearError("selectedAsset");
                   setSelectedAsset(preventLeadingSpace(text));
                 }}
-                className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2"
+                className="bg-[#F4F4F4] px-4 text-black text-sm rounded-3xl h-[50px] mt-2 mb-2"
+                style={{ fontSize: 14, color: "#000000" }}
               />
+              {fieldErrors.selectedAsset ? (
+                <Text className="text-red-500 text-xs mt-1 ml-2">
+                  {fieldErrors.selectedAsset}
+                </Text>
+              ) : null}
               {shouldShowBrandField && (
                 <>
                   <Text className="text-[#070707] text-sm mt-2">
-                    {t("CurrentAssets.Brand")}
+                    {t("CurrentAssets.Brand")} *
                   </Text>
                   <TextInput
                     placeholder={t("CurrentAssets.EnterBrand")}
-                    placeholderTextColor="#585858"
+                    placeholderTextColor="#6B7280"
                     value={brand}
                     onChangeText={(text) => {
                       clearError("brand");
                       setBrand(preventLeadingSpace(text));
                     }}
-                    className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2"
+                    className="bg-[#F4F4F4] px-4 text-black text-sm rounded-3xl h-[50px] mt-2 mb-2"
+                    style={{ fontSize: 14, color: "#000000" }}
                   />
+                  {fieldErrors.brand ? (
+                    <Text className="text-red-500 text-xs mt-1 ml-2">
+                      {fieldErrors.brand}
+                    </Text>
+                  ) : null}
                 </>
               )}
             </>
@@ -816,33 +1014,45 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               {selectedAsset === "Other" && (
                 <>
                   <Text className="text-[#070707] text-sm mt-2">
-                    {t("CurrentAssets.MentionOther")}
+                    {t("CurrentAssets.MentionOther")} *
                   </Text>
                   <TextInput
                     placeholder={t("CurrentAssets.Other")}
-                    placeholderTextColor="#585858"
+                    placeholderTextColor="#6B7280"
                     value={customAsset}
                     onChangeText={(text) => {
-                      clearError("selectedAsset");
+                      clearError("customAsset");
                       setCustomAsset(preventLeadingSpace(text));
                     }}
-                    className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2"
+                    className="bg-[#F4F4F4] px-4 text-black text-sm rounded-3xl h-[50px] mt-2 mb-2"
+                    style={{ fontSize: 14, color: "#000000" }}
                   />
+                  {fieldErrors.customAsset ? (
+                    <Text className="text-red-500 text-xs mt-1 ml-2">
+                      {fieldErrors.customAsset}
+                    </Text>
+                  ) : null}
                   {shouldShowBrandField && (
                     <>
                       <Text className="text-[#070707] text-sm mt-2">
-                        {t("CurrentAssets.Brand")}
+                        {t("CurrentAssets.Brand")} *
                       </Text>
                       <TextInput
-                        placeholder={t("CurrentAssets.SelectBrand")}
-                        placeholderTextColor="#585858"
+                        placeholder={t("CurrentAssets.Brand")}
+                        placeholderTextColor="#6B7280"
                         value={brand}
                         onChangeText={(text) => {
                           clearError("brand");
                           setBrand(preventLeadingSpace(text));
                         }}
-                        className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2"
+                        className="bg-[#F4F4F4] px-4 text-black text-sm rounded-3xl h-[50px] mt-2 mb-2"
+                        style={{ fontSize: 14, color: "#000000" }}
                       />
+                      {fieldErrors.brand ? (
+                        <Text className="text-red-500 text-xs mt-1 ml-2">
+                          {fieldErrors.brand}
+                        </Text>
+                      ) : null}
                     </>
                   )}
                 </>
@@ -871,10 +1081,11 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             </Text>
             <TextInput
               placeholder={t("CurrentAssets.BatchNumber")}
-              placeholderTextColor="#585858"
+              placeholderTextColor="#6B7280"
               value={batchNum}
               onChangeText={handleBatchNumChange}
-              className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2"
+              className="bg-[#F4F4F4] text-black text-sm px-4 rounded-3xl h-[50px] mt-2"
+              style={{ fontSize: 14, color: "#000000" }}
               keyboardType="numeric"
             />
             {fieldErrors.batchNum ? (
@@ -891,11 +1102,12 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             <View className="flex-row items-center justify-between mt-2">
               <TextInput
                 placeholder={t("CurrentAssets.UnitVolumeWeight")}
-                placeholderTextColor="#585858"
+                placeholderTextColor="#6B7280"
                 value={volume}
                 onChangeText={handleVolumeChange}
                 keyboardType="decimal-pad"
-                className="flex-1 mr-2 px-4 bg-[#F4F4F4] h-[50px] rounded-3xl"
+                className="flex-1 mr-2 px-4 text-black text-sm bg-[#F4F4F4] h-[50px] rounded-3xl"
+                style={{ fontSize: 14, color: "#000000" }}
               />
               <TouchableOpacity
                 onPress={() => {
@@ -904,12 +1116,13 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 }}
                 className="bg-[#F4F4F4] rounded-3xl h-[50px] w-28 flex-row items-center justify-between px-3"
               >
-                <Text className="text-sm text-black">{t(`CurrentAssets.${unit}`, unit)}</Text>
-                <MaterialIcons
-                  name="arrow-drop-down"
-                  size={24}
-                  color="#666"
-                />
+                <Text
+                  className="text-sm text-black"
+                  style={{ fontSize: 14, color: "#000000" }}
+                >
+                  {t(`CurrentAssets.${unit}`, unit)}
+                </Text>
+                <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
               </TouchableOpacity>
             </View>
             {fieldErrors.volume ? (
@@ -918,6 +1131,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               </Text>
             ) : null}
           </View>
+
           {/* Number of Units */}
           <View className="mt-2 mb-2">
             <Text className="text-[#070707] text-sm">
@@ -925,13 +1139,14 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             </Text>
             <TextInput
               placeholder={t("CurrentAssets.NumberOfUnits")}
-              placeholderTextColor="#585858"
+              placeholderTextColor="#6B7280"
               keyboardType="numeric"
               value={numberOfUnits}
               onChangeText={(text) =>
                 handleNumOfUnitsChange(text.replace(/[^0-9]/g, ""))
               }
-              className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2"
+              className="bg-[#F4F4F4] px-4 text-black text-sm rounded-3xl h-[50px] mt-2"
+              style={{ fontSize: 14, color: "#000000" }}
             />
             {fieldErrors.numberOfUnits ? (
               <Text className="text-red-500 text-xs mt-1 ml-2">
@@ -946,11 +1161,12 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             </Text>
             <TextInput
               placeholder={t("CurrentAssets.UnitPrice")}
-              placeholderTextColor="#585858"
+              placeholderTextColor="#6B7280"
               keyboardType="decimal-pad"
               value={unitPrice}
               onChangeText={handleUnitPriceChange}
-              className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2"
+              className="bg-[#F4F4F4] px-4 text-black text-sm rounded-3xl h-[50px] mt-2"
+              style={{ fontSize: 14, color: "#000000" }}
             />
             {fieldErrors.unitPrice ? (
               <Text className="text-red-500 text-xs mt-1 ml-2">
@@ -961,20 +1177,23 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
 
           {/* Total Price  */}
           <View className="mt-2 mb-2">
-            <Text className="text-[#070707] text-sm">{t("CurrentAssets.TotalPrice")}</Text>
+            <Text className="text-[#070707] text-sm">
+              {t("CurrentAssets.TotalPrice")}
+            </Text>
             <TextInput
               placeholder={t("CurrentAssets.TotalPrice")}
-              placeholderTextColor="#585858"
+              placeholderTextColor="#6B7280"
               value={
                 totalPrice
                   ? parseFloat(totalPrice).toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })
                   : ""
               }
               editable={false}
-              className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 text-gray-500"
+              className="bg-[#F4F4F4] px-4 rounded-3xl text-sm h-[50px] mt-2 text-balck"
+              style={{ fontSize: 14 }}
             />
           </View>
 
@@ -984,14 +1203,15 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               {t("CurrentAssets.PurchaseDate")} *
             </Text>
             <TouchableOpacity
-              onPress={() => {
-                clearError("purchaseDate");
-                setShowPurchaseDatePicker((p) => !p);
-              }}
+              onPress={handleOpenPurchasePicker}
               className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2"
             >
               <Text
-                className={`flex-1 ${!purchaseDate ? "text-[#6B7280]" : "text-black"}`}
+                className={`flex-1 text-sm ${!purchaseDate ? "text-[#6B7280]" : "text-black"}`}
+                style={{
+                  fontSize: 14,
+                  color: !purchaseDate ? "#6B7280" : "#000000",
+                }}
               >
                 {purchaseDate || t("CurrentAssets.PurchaseDate")}
               </Text>
@@ -1002,28 +1222,6 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 {fieldErrors.purchaseDate}
               </Text>
             ) : null}
-
-            {showPurchaseDatePicker &&
-              (Platform.OS === "ios" ? (
-                <View className="justify-center items-center z-50 bg-[#F4F4F4] rounded-lg">
-                  <DateTimePicker
-                    value={purchaseDate ? new Date(purchaseDate) : new Date()}
-                    mode="date"
-                    display="inline"
-                    style={{ width: 320, height: 260, padding: 4 }}
-                    maximumDate={new Date()}
-                    onChange={(e, d) => handleDateChange(e, d, "purchase")}
-                  />
-                </View>
-              ) : (
-                <DateTimePicker
-                  value={purchaseDate ? new Date(purchaseDate) : new Date()}
-                  mode="date"
-                  display="default"
-                  maximumDate={new Date()}
-                  onChange={(e, d) => handleDateChange(e, d, "purchase")}
-                />
-              ))}
           </View>
 
           {/* Expire Date */}
@@ -1032,14 +1230,15 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
               {t("CurrentAssets.ExpireDate")} *
             </Text>
             <TouchableOpacity
-              onPress={() => {
-                clearError("expireDate");
-                setShowExpireDatePicker((p) => !p);
-              }}
+              onPress={handleOpenExpirePicker}
               className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] justify-center flex-row items-center mt-2"
             >
               <Text
-                className={`flex-1 ${!expireDate ? "text-[#6B7280]" : "text-black"}`}
+                className={`flex-1 text-sm ${!expireDate ? "text-[#6B7280]" : "text-black"}`}
+                style={{
+                  fontSize: 14,
+                  color: !expireDate ? "#6B7280" : "#000000",
+                }}
               >
                 {expireDate || t("CurrentAssets.ExpireDate")}
               </Text>
@@ -1050,38 +1249,6 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
                 {fieldErrors.expireDate}
               </Text>
             ) : null}
-
-            {showExpireDatePicker &&
-              (Platform.OS === "ios" ? (
-                <View className="justify-center items-center z-50 bg-gray-100 rounded-lg">
-                  <DateTimePicker
-                    value={expireDate ? new Date(expireDate) : new Date()}
-                    mode="date"
-                    display="inline"
-                    style={{ width: 320, height: 260, padding: 4 }}
-                    minimumDate={
-                      purchaseDate
-                        ? new Date(new Date(purchaseDate).getTime() + 86400000)
-                        : new Date()
-                    }
-                    maximumDate={getMaximumDate()}
-                    onChange={(e, d) => handleDateChange(e, d, "expire")}
-                  />
-                </View>
-              ) : (
-                <DateTimePicker
-                  value={expireDate ? new Date(expireDate) : new Date()}
-                  mode="date"
-                  minimumDate={
-                    purchaseDate
-                      ? new Date(new Date(purchaseDate).getTime() + 86400000)
-                      : new Date()
-                  }
-                  maximumDate={getMaximumDate()}
-                  display="default"
-                  onChange={(e, d) => handleDateChange(e, d, "expire")}
-                />
-              ))}
           </View>
 
           {/* Warranty  */}
@@ -1091,31 +1258,40 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
             </Text>
             <TextInput
               placeholder={t("CurrentAssets.WarrentyInMonths")}
-              placeholderTextColor="#585858"
+              placeholderTextColor="#6B7280"
               value={warranty}
               keyboardType="numeric"
-              className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 text-gray-500"
+              className="bg-[#F4F4F4] px-4 rounded-3xl text-sm h-[50px] mt-2 text-black"
+              style={{ fontSize: 14 }}
               editable={false}
             />
           </View>
 
           {/* Status  */}
           <View className="mt-2 mb-2">
-            <Text className="text-[#070707] text-sm">{t("CurrentAssets.Status")}</Text>
+            <Text className="text-[#070707] text-sm">
+              {t("CurrentAssets.Status")}
+            </Text>
             <View className="bg-[#F4F4F4] rounded-3xl h-[50px] justify-center items-center mt-2">
               {status ? (
                 <Text
-                  className={`font-bold ${status === t("CurrentAssets.Expired")
-                    ? "text-red-500"
-                    : "text-green-500"
-                    }`}
+                  className={`font-bold ${
+                    status === t("CurrentAssets.Expired")
+                      ? "text-red-500"
+                      : "text-green-500"
+                  }`}
                 >
                   {status === t("CurrentAssets.Expired")
                     ? t("CurrentAssets.Expired")
                     : t("CurrentAssets.Valid")}
                 </Text>
               ) : (
-                <Text className="text-gray-400 text-lg">{t("CurrentAssets.Status")}</Text>
+                <Text
+                  className="text-[#6B7280] text-sm"
+                  style={{ fontSize: 14, color: "#6B7280" }}
+                >
+                  {t("CurrentAssets.Status")}
+                </Text>
               )}
             </View>
           </View>
@@ -1139,6 +1315,62 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
         </View>
       </ScrollView>
 
+      {/* Purchase Date Picker */}
+      {Platform.OS === "android" ? (
+        showPurchaseDatePicker && (
+          <DateTimePicker
+            value={
+              purchaseDate
+                ? clampDate(parseLocalDate(purchaseDate), undefined, getPurchaseMaximumDate())
+                : clampDate(new Date(), undefined, getPurchaseMaximumDate())
+            }
+            mode="date"
+            display="default"
+            onChange={onChangePurchaseDateAndroid}
+            maximumDate={getPurchaseMaximumDate()}
+            minimumDate={new Date(2000, 0, 1)}
+          />
+        )
+      ) : (
+        <CustomDatePicker
+          visible={showPurchaseDatePicker}
+          onClose={() => setShowPurchaseDatePicker(false)}
+          value={clampedPurchaseDate}
+          onConfirm={applyPurchaseDate}
+          minimumDate={purchaseMinimumDate}
+          maximumDate={purchaseMaximumDate}
+          title={t("CurrentAssets.PurchaseDate")}
+          cancelText={t("Main.Cancel", "Cancel")}
+          confirmText={t("Main.OK")}
+        />
+      )}
+
+      {/* Expire Date Picker */}
+      {Platform.OS === "android" ? (
+        showExpireDatePicker && (
+          <DateTimePicker
+            value={clampDate(getExpirePickerValue(), getExpireMinimumDate(), getMaximumDate())}
+            mode="date"
+            display="default"
+            onChange={onChangeExpireDateAndroid}
+            minimumDate={getExpireMinimumDate()}
+            maximumDate={getMaximumDate()}
+          />
+        )
+      ) : (
+        <CustomDatePicker
+          visible={showExpireDatePicker}
+          onClose={() => setShowExpireDatePicker(false)}
+          value={clampedExpireDate}
+          onConfirm={applyExpireDate}
+          minimumDate={expireMinimumDate}
+          maximumDate={expireMaximumDate}
+          title={t("CurrentAssets.ExpireDate")}
+          cancelText={t("Main.Cancel", "Cancel")}
+          confirmText={t("Main.OK")}
+        />
+      )}
+
       {/* GlobalSearchModals */}
       <GlobalSearchModal
         visible={modals.farm}
@@ -1156,7 +1388,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       <GlobalSearchModal
         visible={modals.category}
         onClose={() => closeModal("category")}
-        title={t("CurrentAssets.Selectcategory")}
+        title={t("CurrentAssets.SelectCategory")}
         data={categoryItems}
         selectedItems={selectedCategory ? [selectedCategory] : []}
         onSelect={(items) => {
@@ -1165,6 +1397,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           clearError("selectedCategory");
         }}
         searchPlaceholder={t("Main.Search...")}
+        noResultsText="No category found"
       />
 
       <GlobalSearchModal
@@ -1179,6 +1412,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           clearError("selectedAsset");
         }}
         searchPlaceholder={t("Main.Search...")}
+        noResultsText="No asset found"
       />
 
       <GlobalSearchModal
@@ -1192,6 +1426,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
           clearError("brand");
         }}
         searchPlaceholder={t("Main.Search...")}
+        noResultsText="No brand found"
       />
 
       <GlobalSearchModal

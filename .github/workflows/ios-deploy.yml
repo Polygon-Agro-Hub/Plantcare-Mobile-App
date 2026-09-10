@@ -4,12 +4,16 @@
 #
 # TRIGGERS:
 #   Push to dev-main → Upload to TestFlight (QA testing)
+#   Push to UAT      → Upload to TestFlight (UAT testing)
 #   Push to main     → Upload to App Store Connect (production)
 #
 # PREREQUISITES (all must be set up — see SETUP_GUIDE.md):
 #   GitHub Secrets: ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_CONTENT,
 #                   MATCH_GIT_URL, MATCH_GIT_BASIC_AUTHORIZATION,
-#                   MATCH_PASSWORD, DEV_API_URL, PROD_API_URL
+#                   MATCH_PASSWORD, DEV_API_URL, DEV_SHOUTOUT_API_KEY,
+#                   UAT_API_URL, UAT_SHOUTOUT_API_KEY,
+#                   PROD_API_URL, PROD_SHOUTOUT_API_KEY,
+#                   APPLE_TEAM_ID
 
 name: iOS Deploy
 
@@ -17,6 +21,7 @@ on:
   push:
     branches:
       - dev-main   # → TestFlight build for QA team
+      - UAT        # → TestFlight build for UAT testers
       - main       # → App Store submission
 
 # Prevent multiple builds running simultaneously for the same branch.
@@ -60,7 +65,7 @@ jobs:
       - name: "⬢ Set up Node.js"
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
           cache: "npm"   # Caches node_modules between runs — saves 1-2 min
 
       # ─────────────────────────────────────────────────────────────────
@@ -71,6 +76,23 @@ jobs:
       # ─────────────────────────────────────────────────────────────────
       - name: "📦 Install Node.js dependencies"
         run: npm ci
+
+      # ─────────────────────────────────────────────────────────────────
+      # STEP 4b: Apply patches (expo-modules-jsi RuntimeScheduler fix)
+      # patch-package should already run via postinstall, but we run it
+      # explicitly here as a safety net to ensure the Swift 6 Clang fix
+      # is applied before expo prebuild and pod install.
+      # ─────────────────────────────────────────────────────────────────
+      - name: "🩹 Apply node_modules patches"
+        run: |
+          npx patch-package
+          # Verify the fix is in place — fail fast if not
+          if grep -q "SWIFT_RETURNS_RETAINED" node_modules/expo-modules-jsi/apple/Sources/ExpoModulesJSI-Cxx/include/RuntimeScheduler.h; then
+            echo "❌ Patch NOT applied — SWIFT_RETURNS_RETAINED still present!"
+            exit 1
+          else
+            echo "✅ Patch applied — SWIFT_RETURNS_RETAINED removed from RuntimeScheduler.h"
+          fi
 
       # ─────────────────────────────────────────────────────────────────
       # STEP 5a: Write DEV environment (dev-main branch only)
@@ -84,7 +106,8 @@ jobs:
           SHOUTOUT_API_KEY: ${{ secrets.DEV_SHOUTOUT_API_KEY }}
         run: |
           cat > environment/environment.ts << ENVEOF
-          const environment = {
+          export const environment = {
+            isDevelopment: false,
             production: false,
             API_BASE_URL: "${DEV_API_URL}",
             SHOUTOUT_API_KEY: "${SHOUTOUT_API_KEY}"
@@ -94,7 +117,29 @@ jobs:
           echo "✅ DEV environment.ts written with API: ${DEV_API_URL}"
 
       # ─────────────────────────────────────────────────────────────────
-      # STEP 5b: Write PROD environment (main branch only)
+      # STEP 5b: Write UAT environment (UAT branch only)
+      # Overwrites environment/environment.ts with UAT API URL before building.
+      # This does NOT change the committed file — only the build-time file.
+      # ─────────────────────────────────────────────────────────────────
+      - name: "🔧 Write UAT environment (UAT → TestFlight)"
+        if: github.ref == 'refs/heads/UAT'
+        env:
+          UAT_API_URL: ${{ secrets.UAT_API_URL }}
+          SHOUTOUT_API_KEY: ${{ secrets.UAT_SHOUTOUT_API_KEY }}
+        run: |
+          cat > environment/environment.ts << ENVEOF
+          export const environment = {
+            isDevelopment: false,
+            production: false,
+            API_BASE_URL: "${UAT_API_URL}",
+            SHOUTOUT_API_KEY: "${SHOUTOUT_API_KEY}"
+          };
+          export default environment;
+          ENVEOF
+          echo "✅ UAT environment.ts written with API: ${UAT_API_URL}"
+
+      # ─────────────────────────────────────────────────────────────────
+      # STEP 5c: Write PROD environment (main branch only)
       # ─────────────────────────────────────────────────────────────────
       - name: "🔧 Write PROD environment (main → App Store)"
         if: github.ref == 'refs/heads/main'
@@ -103,7 +148,8 @@ jobs:
           SHOUTOUT_API_KEY: ${{ secrets.PROD_SHOUTOUT_API_KEY }}
         run: |
           cat > environment/environment.ts << ENVEOF
-          const environment = {
+          export const environment = {
+            isDevelopment: false,
             production: true,
             API_BASE_URL: "${PROD_API_URL}",
             SHOUTOUT_API_KEY: "${SHOUTOUT_API_KEY}"
@@ -120,51 +166,45 @@ jobs:
       # --platform ios: only generate iOS (skip Android)
       # ─────────────────────────────────────────────────────────────────
       - name: "⚙️ Generate native iOS project (expo prebuild)"
-        run: npx expo prebuild --platform ios --non-interactive --clean
+        run: |
+          npx expo prebuild --platform ios --non-interactive --clean
+          echo "export NODE_BINARY=\$(which node)" > ios/.xcode.env.local
+          echo "✅ Created ios/.xcode.env.local with NODE_BINARY=\$(which node)"
 
       # ─────────────────────────────────────────────────────────────────
       # STEP 7: Cache CocoaPods
-      # Caches the downloaded iOS native packages to speed up future builds.
-      # The cache is invalidated when Podfile.lock changes.
+      # Key uses package-lock.json (since ios/Podfile.lock doesn't exist before pod install)
+      # and is bumped to v57 to invalidate stale Expo 54 caches.
       # ─────────────────────────────────────────────────────────────────
       - name: "💾 Cache CocoaPods"
         uses: actions/cache@v4
         id: pods-cache
         with:
-          # path: |
-          #   ios/Pods
-          #   ~/.cocoapods
-          # key: pods-${{ hashFiles('ios/Podfile.lock') }}
-          # restore-keys: |
-          #   pods-
           path: |
               ~/Library/Caches/CocoaPods
               ~/.cocoapods
-          key: pods-v2-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}
+          key: pods-v57-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
           restore-keys: |
-            pods-v2-${{ runner.os }}-
-#
+            pods-v57-${{ runner.os }}-
+
       # ─────────────────────────────────────────────────────────────────
       # STEP 8: Install CocoaPods dependencies
-      # Installs native iOS packages defined in the Podfile
-      # (generated by expo prebuild)
       # ─────────────────────────────────────────────────────────────────
       - name: "🍫 Install CocoaPods dependencies"
         run: |
           cd ios
-          # Clear the stale React-Core-prebuilt podspec that causes version conflicts
-          # after React Native upgrades (Expo 54→55 / RN 0.77→0.83)
-          pod cache clean "React-Core-prebuilt" 2>/dev/null || true
-          pod install
+          # Clean any stale cached pods from previous SDKs
+          pod cache clean --all 2>/dev/null || true
+          pod install --repo-update
           cd ..
 
       # ─────────────────────────────────────────────────────────────────
-      # STEP 9a: Deploy to TestFlight (dev-main branch)
+      # STEP 9a: Deploy to TestFlight (dev-main + UAT branches)
       # Runs: fastlane beta
       # Which: syncs certs, sets build number, builds .ipa, uploads
       # ─────────────────────────────────────────────────────────────────
-      - name: "🚀 Deploy to TestFlight [dev-main]"
-        if: github.ref == 'refs/heads/dev-main'
+      - name: "🚀 Deploy to TestFlight [dev-main & UAT]"
+        if: github.ref == 'refs/heads/dev-main' || github.ref == 'refs/heads/UAT'
         run: bundle exec fastlane beta
         env:
           # App Store Connect API Key — authenticates with Apple servers
@@ -201,16 +241,43 @@ jobs:
           GITHUB_RUN_NUMBER: ${{ github.run_number }}
           #Apple Team ID
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+
       # ─────────────────────────────────────────────────────────────────
-      # STEP 10: Upload build artifacts (for debugging if build fails)
-      # Saves the .ipa file as a GitHub Actions artifact for 7 days.
-      # You can download it from the GitHub Actions run page.
+      # STEP 10: Print & Upload Xcode/Gym build logs on failure
       # ─────────────────────────────────────────────────────────────────
-      - name: "📤 Upload .ipa artifact (for debugging)"
+      - name: "📋 Print Xcode build errors on failure"
+        if: failure()
+        run: |
+          echo "==================== SEARCHING FOR XCODE COMPILER/LINKER ERRORS ===================="
+          for logfile in /Users/runner/Library/Logs/gym/*.log; do
+            if [ -f "$logfile" ]; then
+              echo ">>> Errors from: $logfile <<<"
+              grep -C 3 -i -E "(error:|fatal error:|clang: error|ld: error|\*\* ARCHIVE FAILED \*\*)" "$logfile" | head -n 120 || true
+            fi
+          done
+          echo "==================== TAIL OF GYM LOG ===================="
+          for logfile in /Users/runner/Library/Logs/gym/*.log; do
+            if [ -f "$logfile" ]; then
+              tail -n 60 "$logfile" || true
+            fi
+          done
+
+      - name: "📤 Upload Xcode/Gym build log on failure"
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "xcode-build-logs-${{ github.ref_name }}-${{ github.run_number }}"
+          path: /Users/runner/Library/Logs/gym/*.log
+          retention-days: 7
+
+      # ─────────────────────────────────────────────────────────────────
+      # STEP 11: Upload build artifacts
+      # ─────────────────────────────────────────────────────────────────
+      - name: "📤 Upload .ipa artifact"
         if: always()   # Run even if previous steps fail
         uses: actions/upload-artifact@v4
         with:
           name: "GoVi-Transport-${{ github.ref_name }}-${{ github.run_number }}.ipa"
           path: build/GoVi-Transport.ipa
           retention-days: 7
-          if-no-files-found: warn   # Don't fail if build never produced an .ipa
+          if-no-files-found: warn
