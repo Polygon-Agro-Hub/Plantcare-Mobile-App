@@ -284,25 +284,40 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
 
     try {
       const date = new Date(dateString);
-
       if (isNaN(date.getTime())) {
         return dateString;
       }
 
-      const options: Intl.DateTimeFormatOptions = {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      };
+      const year = date.getFullYear();
+      const monthIndex = date.getMonth();
+      const day = date.getDate();
 
-      let locale = "en-US";
-      if (i18n.language === "si") {
-        locale = "si-LK";
-      } else if (i18n.language === "ta") {
-        locale = "ta-LK";
+      const monthNames = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+      const monthName = t(`Months.${monthNames[monthIndex]}`, {
+        defaultValue: monthNames[monthIndex],
+      });
+
+      const currentLang = i18n.language || "en";
+      if (currentLang.startsWith("si")) {
+        return `${year} ${monthName} ${day}`;
+      } else if (currentLang.startsWith("ta")) {
+        return `${day} ${monthName} ${year}`;
       }
 
-      return date.toLocaleDateString(locale, options);
+      return `${monthName} ${day}, ${year}`;
     } catch (error) {
       console.error("Error formatting date:", error);
       return dateString;
@@ -329,7 +344,12 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
     ? `${farmerDetails.firstName} ${farmerDetails.lastName}`
     : "[Farmer's Name]";
 
-  const district = farmerDetails?.district || "[District]";
+  const rawDistrict = farmerDetails?.district || "";
+  const district = rawDistrict
+    ? t(`District.${rawDistrict.replace(/\s+/g, "")}`, {
+        defaultValue: rawDistrict,
+      })
+    : "[District]";
   const contactNumber = farmerDetails?.phoneNumber || "[Contact Number]";
 
   if (loading) {
@@ -364,8 +384,8 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
             {t(
               "Govicapital.IFarmersNameAFarmerFromDistrictAmWritingToFormallyRequestAnAgriculturalInvestmentForTheUpcomingCultivationSeason",
             )
-              .replace("[Farmer's Name]", farmerName)
-              .replace("[District]", district)}
+              .replace(/\[Farmer's Name\]|\[ගොවියාගේ නම\]/g, farmerName)
+              .replace(/\[District\]|\[දිස්ත්‍රික්කය\]/g, district)}
           </Text>
 
           <Text className="text-[#070707] leading-6 mb-3 ">
@@ -417,7 +437,7 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
                     {t("Govicapital.ExpectedYield")}:
                   </Text>
                   <Text className="text-[#070707] mt-1 font-semibold">
-                    {expectedYield || 0} kg
+                    {expectedYield || 0} {t("Govicapital.Kg")}
                   </Text>
                 </View>
               </View>

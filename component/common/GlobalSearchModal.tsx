@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 interface GlobalSearchModalProps {
   visible: boolean;
@@ -35,9 +36,9 @@ const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
   data,
   selectedItems = [],
   onSelect,
-  searchPlaceholder = "Search...",
-  doneButtonText = "Done",
-  noResultsText = "No items found",
+  searchPlaceholder,
+  doneButtonText,
+  noResultsText,
   multiSelect = false,
   renderItem,
   searchKeys = ["label"],
@@ -45,6 +46,7 @@ const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
   isLoading = false,
   placeholderTextColor = "#7F7F7F",
 }) => {
+  const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState("");
   const [filteredData, setFilteredData] = useState(data);
   const [selectedValues, setSelectedValues] = useState<string[]>(selectedItems);
@@ -125,6 +127,12 @@ const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
     </TouchableOpacity>
   );
 
+  const resolvedSearchPlaceholder =
+    searchPlaceholder || t("Main.Search...", "Search...");
+  const resolvedDoneButtonText = doneButtonText || t("Main.Done", "Done");
+  const defaultNoResultText =
+    t("Main.NoSearchResultFound") || "No Search Result Found";
+
   const renderSearchInput = () => (
     <View className="px-4 py-2 border-b border-gray-200">
       <View
@@ -133,7 +141,7 @@ const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
       >
         <MaterialIcons name="search" size={20} color="#666" />
         <TextInput
-          placeholder={searchPlaceholder}
+          placeholder={resolvedSearchPlaceholder}
           value={searchValue}
           onChangeText={setSearchValue}
           placeholderTextColor={placeholderTextColor}
@@ -162,15 +170,24 @@ const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
       return (
         <View className="px-4 py-12 items-center justify-center">
           <ActivityIndicator size="large" color="#6839CF" />
-          <Text className="text-sm mt-3 text-[#6839CF]">Loading...</Text>
+          <Text className="text-sm mt-3 text-[#6839CF]">
+            {t("Main.Loading...", "Loading...")}
+          </Text>
         </View>
       );
     }
 
     if (filteredData.length === 0) {
+      const displayText =
+        searchValue.trim().length > 0
+          ? defaultNoResultText
+          : noResultsText || defaultNoResultText;
+
       return (
         <View className="px-4 py-8 items-center">
-          <Text className="text-gray-500 text-base">{noResultsText}</Text>
+          <Text className="text-gray-500 text-base text-center">
+            {displayText}
+          </Text>
         </View>
       );
     }
@@ -233,7 +250,7 @@ const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
                 onPress={handleDone}
               >
                 <Text className="text-white font-semibold text-base">
-                  {doneButtonText}
+                  {resolvedDoneButtonText}
                 </Text>
               </TouchableOpacity>
             </View>

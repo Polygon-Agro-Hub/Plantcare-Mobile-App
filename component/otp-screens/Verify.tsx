@@ -1,22 +1,25 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { View, Text, TouchableOpacity, BackHandler, Image } from "react-native";
 import { useTranslation } from "react-i18next";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Verify: React.FC = ({ navigation }: any) => {
   const { t } = useTranslation();
 
-  useEffect(() => {
-    const handleBackPress = () => {
-      return true;
-    };
+  useFocusEffect(
+    React.useCallback(() => {
+      const handleBackPress = () => {
+        return true;
+      };
 
-    const subscription = BackHandler.addEventListener(
-      "hardwareBackPress",
-      handleBackPress,
-    );
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        handleBackPress,
+      );
 
-    return () => subscription.remove();
-  }, []);
+      return () => subscription.remove();
+    }, []),
+  );
 
   return (
     <View className="flex-1 bg-white">

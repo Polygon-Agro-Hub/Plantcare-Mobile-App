@@ -69,6 +69,14 @@
     "November": "நவம்பர்",
     "December": "டிசம்பர்"
   },
+  "Country": {
+    "SriLanka": "இலங்கை",
+    "Vietnam": "வியட்நாம்",
+    "Cambodia": "கம்போடியா",
+    "Bangladesh": "வங்கதேசம்",
+    "India": "இந்தியா",
+    "Netherlands": "நெதர்லாந்து"
+  },
   "SignUp": {
     "SignUp": "பதிவு செய்யுங்கள்",
     "District": "மாவட்டம்",
@@ -89,7 +97,7 @@
     "TheNICNumberYouEnteredIsAlreadyRegisteredPleaseCheckYourDetailsOrLogIn": "நீங்கள் உள்ளிட்ட தேசிய அடையாள அட்டை எண் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளது, தயவுசெய்து உங்கள் விவரங்களைச் சரிபார்க்கவும் அல்லது உள்நுழையவும்.",
     "BothThePhoneNumberAndNICNumberEnteredAreAlreadyRegisteredPleaseLogInInstead": "நீங்கள் உள்ளிட்ட தொலைபேசி எண் மற்றும் தேசிய அடையாள அட்டை எண் இரண்டும் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளன. அதற்குப் பதிலாக தயவுசெய்து உள்நுழையவும்.",
     "ThePhoneNumberYouEnteredIsAlreadyRegisteredPleaseUseADifferentNumberOrLogIn": "நீங்கள் உள்ளிட்ட தொலைபேசி எண் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளது. தயவுசெய்து வேறு எண்ணைப் பயன்படுத்தவும் அல்லது உள்நுழையவும்",
-    "NoCountryFound":"நாடு எதுவும் காணப்படவில்லை"
+    "NoCountryFound": "நாடு எதுவும் காணப்படவில்லை"
   },
   "SignIn": {
     "SignIn": "உள்நுழைக",
@@ -241,9 +249,18 @@
   },
   "CameraAccess": {
     "Allow": "அனுமதி",
+    "AgreeAndContinue": "ஒப்புக்கொண்டு தொடரவும்",
+    "NotNow": "இப்போது இல்லை",
     "OpenSettings": "அமைப்புகளைத் திறக்கவும்",
     "Requesting...": "கோருகிறது...",
     "CameraAccess": "கேமரா அணுகல்",
+    "ProminentDisclosureTitle": "GoviCare கேமராவை ஏன் பயன்படுத்துகிறது",
+    "ProminentDisclosureIntro": "பின்வரும் செயல்பாட்டு அம்சங்களை இயக்க GoviCare கேமரா அணுகலைக் கோருகிறது:",
+    "FeatureQRTitle": "உடனடி QR குறியீடு ஸ்கேனிங்",
+    "FeatureQRDesc": "விரைவான அடையாளம், பயிர் கண்காணிப்பு மற்றும் பாதுகாப்பான பரிவர்த்தனைகளுக்கு கடை மற்றும் விவசாயி QR குறியீடுகளை ஸ்கேன் செய்தல்.",
+    "FeatureInspectionTitle": "பயிர் நோய் கண்டறிதல் & ஆவணப் புகைப்படங்கள்",
+    "FeatureInspectionDesc": "விவசாய உதவிக்காக தாவர நோய்கள், பயிர் சேதங்கள் மற்றும் சரிபார்ப்பு ஆவணங்களின் நேரடி புகைப்படங்களை எடுத்தல்.",
+    "DisclosureFooter": "QR ஸ்கேனிங் அல்லது நேரடி புகைப்படங்களை எடுக்கும்போது மட்டுமே கேமரா அணுகல் செயலில் இருக்கும். உங்கள் தட்டல் இல்லாமல் எந்த புகைப்படங்களும் எடுக்கப்படாது.",
     "PermissionDenied": "அனுமதி மறுக்கப்பட்டது",
     "EnableCameraAccessToCapturePhotos": "புகைப்படங்களை எடுக்க கேமரா அணுகலை இயக்கவும்.",
     "UnableToRequestCameraPermissionPleaseTryAgain": "கேமரா அனுமதியைக் கோர முடியவில்லை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.",
@@ -1131,9 +1148,9 @@
     "yes": "ஆம்",
     "No": "இல்லை",
     "WarrantyExpireDateMustBeInTheFuture": "உத்தரவாத காலாவதி தேதி எதிர்கால தேதியாக இருக்க வேண்டும்.",
-    "NoAssetTypeFound":"சொத்து வகை எதுவும் காணப்படவில்லை",
-    "NoBrandFound":"எந்த பிராண்டும் காணப்படவில்லை",
-    "NoTypeFound":"வகை எதுவும் காணப்படவில்லை"
+    "NoAssetTypeFound": "சொத்து வகை எதுவும் காணப்படவில்லை",
+    "NoBrandFound": "எந்த பிராண்டும் காணப்படவில்லை",
+    "NoTypeFound": "வகை எதுவும் காணப்படவில்லை"
   },
   "ImageViewerModal": {
     "UploadedBy": "பதிவேற்றியவர் :",
@@ -1258,7 +1275,8 @@
     "Eg10B": "E.g: 10/B",
     "LandsPlotNumber": "Land's Plot Number",
     "LandsStreetName": "Land's Street Name",
-    "LandsCity": "Land's City"
+    "LandsCity": "Land's City",
+    "Kg": "கிலோ"
   },
   "RequestInspectionForm": {
     "RequestInspection": "Request Inspection",
@@ -1313,7 +1331,13 @@
     "FailedToFetchFarmCropsPleaseTryAgain": "Failed to fetch farm crops. Please try again.",
     "FailedToFetchFarmsPleaseTryAgain": "Failed to fetch farms. Please try again.",
     "FailedToFetchServicesPleaseTryAgain": "தற்சமயம் பரிசோதனை சேவைகள் எதுவும் வழங்கப்படவில்லை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.",
-    "SearchFarm": "Search Farm"
+    "SearchFarm": "Search Farm",
+    "UnknownCrop": "தெரியாத பயிர்",
+    "Warning": "எச்சரிக்கை",
+    "DiscardAndProceed": "நிராகரித்து தொடரவும்",
+    "PleaseCompleteAllRequiredFields": "தயவுசெய்து தேவையான அனைத்து புலங்களையும் பூர்த்தி செய்யவும் அல்லது உங்கள் தற்போதைய தரவைச் சேமிக்க 'மேலும் சேர்' என்பதைக் கிளிக் செய்யவும்.",
+    "NoServiceFound": "சேவை எதுவும் கிடைக்கவில்லை",
+    "NoFarmFound": "பண்ணை எதுவும் கிடைக்கவில்லை"
   },
   "RequestHistory": {
     "YouHaveNoRequestsAddedYet": "--You have no requests added yet--",
@@ -1423,7 +1447,22 @@
     "LoadingStatus": "Loading status..."
   },
   "MyPensionAccount": {
-    "GoViPension": "GoViPension"
+    "GoViPension": "GoViPension",
+    "TotalPensionValue": "மொத்த ஓய்வூதிய மதிப்பு",
+    "YouWillGetYourPensionIn": "உங்கள் ஓய்வூதியம் கிடைக்க இன்னும்...",
+    "Year": "வருடம்",
+    "Years": "வருடங்கள்",
+    "Month": "மாதம்",
+    "Months": "மாதங்கள்",
+    "Day": "நாள்",
+    "Days": "நாட்கள்",
+    "LoadingPensionData": "ஓய்வூதியத் தரவு ஏற்றப்படுகிறது...",
+    "Currency": "ரூ.",
+    "NotApproved": "அங்கீகரிக்கப்படவில்லை",
+    "PensionRequestNotApproved": "உங்கள் ஓய்வூதியக் கோரிக்கை இன்னும் அங்கீகரிக்கப்படவில்லை. உங்கள் நிலையைச் சரிபார்க்கவும்.",
+    "NoPensionFound": "ஓய்வூதியம் எதுவும் கிடைக்கவில்லை",
+    "NoApprovedPensionAccount": "உங்களிடம் இன்னும் அங்கீகரிக்கப்பட்ட ஓய்வூதியக் கணக்கு இல்லை.",
+    "FailedToFetchPensionData": "ஓய்வூதியத் தரவைப் பெறுவதில் தோல்வி. மீண்டும் முயற்சிக்கவும்."
   },
   "Calculator": {
     "Calculator": "Calculator",
@@ -1616,5 +1655,53 @@
     "My Orders": "எனது ஆர்டர்கள்",
     "All": "அனைத்தும்",
     "No Previous Orders": "முந்தைய ஆர்டர்கள் இல்லை"
+  },
+  "Calendar": {
+    "Months": [
+      "ஜனவரி",
+      "பிப்ரவரி",
+      "மார்ச்",
+      "ஏப்ரல்",
+      "மே",
+      "ஜூன்",
+      "ஜூலை",
+      "ஆகஸ்ட்",
+      "செப்டம்பர்",
+      "அக்டோபர்",
+      "நவம்பர்",
+      "டிசம்பர்"
+    ],
+    "MonthsShort": [
+      "ஜன",
+      "பிப்",
+      "மார்",
+      "ஏப்",
+      "மே",
+      "ஜூன்",
+      "ஜூலை",
+      "ஆக",
+      "செப்",
+      "அக்",
+      "நவ",
+      "டிச"
+    ],
+    "Days": [
+      "ஞாயிறு",
+      "திங்கள்",
+      "செவ்வாய்",
+      "புதன்",
+      "வியாழன்",
+      "வெள்ளி",
+      "சனி"
+    ],
+    "DaysShort": [
+      "ஞா",
+      "தி",
+      "செ",
+      "பு",
+      "வி",
+      "வெ",
+      "ச"
+    ]
   }
 }

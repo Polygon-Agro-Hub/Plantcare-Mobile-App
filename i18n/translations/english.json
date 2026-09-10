@@ -19,14 +19,28 @@
     "PleaseFillAllRequiredFields": "Please Fill All Required Fields.",
     "SomethingWentWrongPleaseTryAgainlater": "Something Went Wrong. Please Try Again Later.",
     "PleaseTurnOnMobileDataOrWiFiToContinue": "Please Turn On Mobile Data or Wi-Fi to Continue.",
-    "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "Too many requests from this device, please try again in 30 minutes."
+    "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "Too many requests from this device, please try again in 30 minutes.",
+    "Done": "Done",
+    "NoSearchResultFound": "No Search Result Found"
   },
   "Inputs": {
     "FirstName": "First Name",
     "LastName": "Last Name",
     "NICNumber": "NIC Number",
     "PhoneNumber": "Phone Number",
-    "MobileNumber": "Mobile Number"
+    "MobileNumber": "Mobile Number",
+    "LastNameRequired": "Last Name is required.",
+    "FirstNameRequired": "First Name is required.",
+    "FirstnameRequred": "First Name is required.",
+    "Lastnamerequred": "Last Name is required.",
+    "EnterPhoneNumber": "Enter Phone Number",
+    "EnterNICNumber": "Enter NIC Number"
+  },
+  "input": {
+    "FirstNameRequired": "First Name is required.",
+    "LastNameRequired": "Last Name is required.",
+    "FirstnameRequred": "First Name is required.",
+    "Lastnamerequred": "Last Name is required."
   },
   "District": {
     "Colombo": "Colombo",
@@ -69,6 +83,14 @@
     "November": "November",
     "December": "December"
   },
+  "Country": {
+    "SriLanka": "Sri Lanka",
+    "Vietnam": "Vietnam",
+    "Cambodia": "Cambodia",
+    "Bangladesh": "Bangladesh",
+    "India": "India",
+    "Netherlands": "Netherlands"
+  },
   "SignUp": {
     "SignUp": "Sign Up",
     "District": "District",
@@ -89,7 +111,9 @@
     "TheNICNumberYouEnteredIsAlreadyRegisteredPleaseCheckYourDetailsOrLogIn": "The NIC number you entered is already registered, please check your details or log in.",
     "BothThePhoneNumberAndNICNumberEnteredAreAlreadyRegisteredPleaseLogInInstead": "Both the phone number and NIC number entered are already registered. Please log in instead.",
     "ThePhoneNumberYouEnteredIsAlreadyRegisteredPleaseUseADifferentNumberOrLogIn": "The phone number you entered is already registered. Please use a different number or log in",
-    "NoCountryFound":"No country found"
+    "NoCountryFound": "No country found",
+    "SelectCountryCode": "Select Country Code",
+    "SearchCountry": "Search country or dial code..."
   },
   "SignIn": {
     "SignIn": "Sign in",
@@ -227,8 +251,8 @@
     "Requesting...": "Requesting...",
     "LocationAccess": "Location Access",
     "LocationPermission": "Location Permission",
-    "ProminentDisclosureTitle": "Why GoviCare Uses Location Data",
-    "ProminentDisclosureIntro": "GoviCare collects and uses your device's location data to enable the following core agricultural features:",
+    "ProminentDisclosureTitle": "Why GoViCare Uses Location Data",
+    "ProminentDisclosureIntro": "GoViCare collects and uses your device's location data to enable the following core agricultural features:",
     "FeatureWeatherTitle": "Hyperlocal Weather & Agricultural Forecasts",
     "FeatureWeatherDesc": "Deliver precise real-time weather forecasts, rain predictions, and temperature warnings for your specific farm area.",
     "FeatureCropTitle": "Farm & Crop Activity Logging",
@@ -241,11 +265,20 @@
   },
   "CameraAccess": {
     "Allow": "Allow",
+    "AgreeAndContinue": "Agree & Continue",
+    "NotNow": "Not Now",
     "OpenSettings": "Open Settings",
     "Requesting...": "Requesting...",
     "CameraAccess": "Camera Access",
+    "ProminentDisclosureTitle": "Why GoViCare Uses Camera",
+    "ProminentDisclosureIntro": "GoViCare requires camera access to enable the following operational features:",
+    "FeatureQRTitle": "Instant QR Code Scanning",
+    "FeatureQRDesc": "Scan shop and farmer QR codes for quick identification, crop tracking, and secure transactions.",
+    "FeatureInspectionTitle": "Crop Diagnosis & Document Photos",
+    "FeatureInspectionDesc": "Capture real-time photos of plant diseases, crop damages, and verification documents for agricultural assistance.",
+    "DisclosureFooter": "Camera access is only active while using QR scanning or live photo capture. No photos or videos are captured without your explicit tap.",
     "PermissionDenied": "Permission Denied",
-    "EnableCameraAccessToCapturePhotos": "Enable access to the camera to take photos.",
+    "EnableCameraAccessToCapturePhotos": "Enable access to the camera to scan QR codes and capture crop diagnosis photos.",
     "UnableToRequestCameraPermissionPleaseTryAgain": "Unable to request camera permission. Please try again.",
     "CameraAccessIsRequiredPleaseEnableItInSettings": "Camera access is required. Please enable it in settings."
   },
@@ -375,7 +408,9 @@
     "ViewResponse": "View Response",
     "NoResponseYetForThisComplaint": "No response yet for this complaint.",
     "RefNo": "Ref No",
-    "Sent": "Sent"
+    "Sent": "Sent",
+    "AM": "AM",
+    "PM": "PM"
   },
   "MarketPriceSlideShow": {
     "Note": "Note",
@@ -412,6 +447,7 @@
     "Try1FarmForFree": "Try 1 Farm for Free",
     "OtherStaff": "Other Staff",
     "Members": "Members",
+    "Member": "Member",
     "FarmAssets": "Farm Assets",
     "AreYouSureYouWantToDeleteThisFarm": "Are you sure you want to delete this farm?",
     "AreYouSureYouWantToDeleteThisMember": "Are you sure you want to delete this member?",
@@ -510,6 +546,7 @@
     "StaffMemberIDIsMissing": "Staff member ID is missing",
     "NoAuthenticationTokenFound": "No authentication token found",
     "FailedToFFetchStaffMemberData": "Failed to fetch staff member data",
+    "EditMemberDetails": "Edit Member Details",
     "EditSelectedRoleDetails": "Edit {{selectedRole}} Details",
     "FailedToDeleteFarm": "Failed to delete farm",
     "FailedToDeleteStaffMember": "Failed to delete staff member",
@@ -542,6 +579,21 @@
     "DuplicateNumbersAreNotAllowed.": "Duplicate numbers are not allowed.",
     "DuplicateNICNumbersAreNotAllowed": "Duplicate NIC numbers are not allowed.",
     "PleaseFixPhoneNumberValidationErrorsBeforeSaving": "Please fix phone number validation errors before saving.",
+    "PleaseFixNICValidationErrorsBeforeSaving": "Please fix NIC validation errors before saving.",
+    "Please fix NIC validation errors before saving.": "Please fix NIC validation errors before saving.",
+    "OneOrMorePhoneNumbersAlreadyRegistered": "One or more phone numbers are already registered. Please use different phone numbers.",
+    "One or more phone numbers are already registered. Please use different phone numbers.": "One or more phone numbers are already registered. Please use different phone numbers.",
+    "OneOrMoreNICNumbersAlreadyRegistered": "One or more NIC numbers are already registered. Please use different NIC numbers.",
+    "One or more NIC numbers are already registered. Please use different NIC numbers.": "One or more NIC numbers are already registered. Please use different NIC numbers.",
+    "DuplicatePhoneNumbersFoundPleaseUseUnique": "Duplicate phone numbers found. Please use unique phone numbers for each staff member.",
+    "Duplicate phone numbers found. Please use unique phone numbers for each staff member.": "Duplicate phone numbers found. Please use unique phone numbers for each staff member.",
+    "DuplicateNICNumbersFoundPleaseUseUnique": "Duplicate NIC numbers found. Please use unique NIC numbers for each staff member.",
+    "Duplicate NIC numbers found. Please use unique NIC numbers for each staff member.": "Duplicate NIC numbers found. Please use unique NIC numbers for each staff member.",
+    "PleaseEnterAValidPhoneNumber": "Please enter a valid phone number",
+    "Please enter a valid phone number": "Please enter a valid phone number",
+    "ErrorCheckingPhoneNumber": "Error checking phone number",
+    "Error checking phone number": "Error checking phone number",
+    "MissingFarmDetailsPleaseGoBack": "Missing farm details. Please go back and complete all steps.",
     "StaffCountCannotBeLessThanAppUserCountAppUsers": "Staff count cannot be less than {{appUserCount}} app users",
     "Total": "Total",
     "YouHaveSuccessfullyAppliedForYourCertificate": "You have successfully applied for\nyour certificate!",
@@ -569,7 +621,11 @@
     "PRO": "PRO",
     "ID": "ID",
     "StaffMemberHasBeenUpdatedSuccessfully": "Staff member has been updated successfully",
-    "CompletionRemovedSuccessfully": "Completion removed successfully"
+    "CompletionRemovedSuccessfully": "Completion removed successfully",
+    "PleaseEnterAtLeastOneExtentValue": "Please enter at least one extent value",
+    "NotAllowedToBeEmpty": "is not allowed to be empty",
+    "OneOrMorePhoneNumbersAreAlreadyRegistered": "One or more phone numbers are already registered. Please use different phone numbers.",
+    "OneOrMoreNICNumbersAreAlreadyRegistered": "One or more NIC numbers are already registered. Please use different NIC numbers."
   },
   "SelectCrop": {
     "Description": "Description",
@@ -675,7 +731,8 @@
     "ProcessingFee": "Processing Fee",
     "FullTotal": "Full Total",
     "SecureInfo": "Your payment information is secure and encrypted.",
-    "ContinueToPayment": "Continue to Payment"
+    "ContinueToPayment": "Continue to Payment",
+    "Rs": "Rs."
   },
   "AddressDetails": {
     "BuildingHouseNo": "Building / House No.",
@@ -683,7 +740,9 @@
     "StreetName": "Street Name",
     "EnterStreetName": "Enter Street Name",
     "City": "City",
-    "EnterCityName": "Enter City Name"
+    "EnterCityName": "Enter City Name",
+    "EnterFirstName": "Enter First Name",
+    "EnterLastName": "Enter Last Name"
   },
   "Notification": {
     "CropTaskUpdate": "Crop Task Update!",
@@ -763,7 +822,8 @@
     "CertificateIDIsMissing": "Certificate ID is missing",
     "PleaseFillAllPaymentDetails": "Please fill all payment details",
     "PleaseEnterAValidCardExpiryDate": "Please enter a valid card expiry date (MM/YY)",
-    "NoCertificatesAvailableForCropsAtTheMoment": "No certificates available for crops at the moment"
+    "NoCertificatesAvailableForCropsAtTheMoment": "No certificates available for crops at the moment",
+    "NoCertificatesAvailable": "No certificates available"
   },
   "ProjectStatus": {
     "ReceivedTotalInvestment": "Received Total Investment",
@@ -774,7 +834,8 @@
     "TotalInvestment": "Total Investment",
     "Needed": "Needed",
     "PendingBalance": "Pending Balance",
-    "ToReceive": "to Receive"
+    "ToReceive": "to Receive",
+    "NoInvestmentTransactionsFound": "No investment transactions found"
   },
   "CurrentAssets": {
     "MyAssets": "My Assets",
@@ -785,6 +846,7 @@
     "AssetRemovedSuccessfully": "Asset removed successfully!",
     "Category": "Category",
     "SelectCategory": "Select Category",
+    "IsRequired": "is required",
     "SelectAsset": "Select Asset",
     "EnterAsset": "Enter Asset",
     "EnterBrand": "Enter Brand",
@@ -1131,9 +1193,9 @@
     "TractorMountedSpray": "Tractor Mounted Sprayer",
     "PermitFeeAnnuallyLKR": "Permit Fee Annually (LKR)",
     "WarrantyExpireDateMustBeInTheFuture": "Warranty expire date must be in the future.",
-    "NoAssetTypeFound":"No asset type found",
-    "NoBrandFound":"No brand found",
-    "NoTypeFound":"No type found"
+    "NoAssetTypeFound": "No asset type found",
+    "NoBrandFound": "No brand found",
+    "NoTypeFound": "No type found"
   },
   "ImageViewerModal": {
     "UploadedBy": "Uploaded By :",
@@ -1144,6 +1206,14 @@
     "Owner": "Owner"
   },
   "PublicForum": {
+    "You": "You",
+    "JustNow": "Just now",
+    "MinuteAgo": "1 minute ago",
+    "MinutesAgo": "{{count}} minutes ago",
+    "HourAgo": "1 hour ago",
+    "HoursAgo": "{{count}} hours ago",
+    "DayAgo": "1 day ago",
+    "DaysAgo": "{{count}} days ago",
     "StartANewDiscussion": "Start a new discussion",
     "LoadingComments": "Loading comments...",
     "Replies": "replies",
@@ -1258,7 +1328,8 @@
     "Eg10B": "E.g: 10/B",
     "LandsPlotNumber": "Land's Plot Number",
     "LandsStreetName": "Land's Street Name",
-    "LandsCity": "Land's City"
+    "LandsCity": "Land's City",
+    "Kg": "kg"
   },
   "RequestInspectionForm": {
     "RequestInspection": "Request Inspection",
@@ -1313,7 +1384,13 @@
     "FailedToFetchFarmCropsPleaseTryAgain": "Failed to fetch farm crops. Please try again.",
     "FailedToFetchFarmsPleaseTryAgain": "Failed to fetch farms. Please try again.",
     "FailedToFetchServicesPleaseTryAgain": "No inspection services are available at the moment. Please try again.",
-    "SearchFarm": "Search Farm"
+    "SearchFarm": "Search Farm",
+    "UnknownCrop": "Unknown Crop",
+    "Warning": "Warning",
+    "DiscardAndProceed": "Discard and Proceed",
+    "PleaseCompleteAllRequiredFields": "Please complete all required fields or click 'Add More' to save your current data.",
+    "NoServiceFound": "No service found",
+    "NoFarmFound": "No farm found"
   },
   "RequestHistory": {
     "YouHaveNoRequestsAddedYet": "--You have no requests added yet--",
@@ -1423,7 +1500,22 @@
     "LoadingStatus": "Loading status..."
   },
   "MyPensionAccount": {
-    "GoViPension": "GoViPension"
+    "GoViPension": "GoViPension",
+    "TotalPensionValue": "Total Pension Value",
+    "YouWillGetYourPensionIn": "You will get your pension in...",
+    "Year": "Year",
+    "Years": "Years",
+    "Month": "Month",
+    "Months": "Months",
+    "Day": "Day",
+    "Days": "Days",
+    "LoadingPensionData": "Loading pension data...",
+    "Currency": "Rs.",
+    "NotApproved": "Not Approved",
+    "PensionRequestNotApproved": "Your pension request has not been approved yet. Please check your status.",
+    "NoPensionFound": "No Pension Found",
+    "NoApprovedPensionAccount": "You don't have an approved pension account yet.",
+    "FailedToFetchPensionData": "Failed to fetch pension data. Please try again."
   },
   "Calculator": {
     "Calculator": "Calculator",
@@ -1616,5 +1708,60 @@
     "My Orders": "My Orders",
     "All": "All",
     "No Previous Orders": "No Previous Orders"
+  },
+  "AddFixedAsset": {
+    "DuplicateName": "Duplicate Name",
+    "AssetAlreadyExists": "A {{assetType}} asset with the name \"{{name}}\" already exists.",
+    "Land": "Land",
+    "Building": "Building"
+  },
+  "Calendar": {
+    "Months": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ],
+    "MonthsShort": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ],
+    "Days": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "DaysShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+  },
+  "EditProfile": {
+    "EditProfile": "Edit Profile",
+    "PermissionDenied": "Permission Denied",
+    "PleaseAllowAccessToYourGalleryToProceed": "Please allow access to your gallery to proceed.",
+    "ProfileImageUpdatedSuccessfully": "Profile image updated successfully.",
+    "FirstNameAndLastNameCannotBeEmpty": "First name and last name cannot be empty.",
+    "YourProfileHasBeenUpdatedSuccessfully": "Your profile has been updated successfully.",
+    "FailedToUpdateProfileTryAgainLater": "Failed to update profile. Please try again later."
   }
 }

@@ -130,7 +130,7 @@ const EarnCertificate: React.FC = () => {
       if (err.response?.status === 404) {
         Alert.alert(
           t("Main.Error"),
-          "No certificates available for farms at the moment",
+          t("EarnCertificate.NoCertificatesAvailableForCropsAtTheMoment"),
           [{ text: t("Main.OK") }],
         );
       } else {
@@ -296,8 +296,8 @@ const EarnCertificate: React.FC = () => {
                     {t("EarnCertificate.Rs")}.{formatPrice(certificate.price)}
                   </Text>
                   <Text className="text-[#6B6B6B] text-sm">
-                    {t("Farms.ValidityPeriod")} {certificate.timeLine}{" "}
-                    {getMonthLabel(certificate.timeLine)}
+                    {getMonthLabel(certificate.timeLine)}{" "}
+                    {t("Farms.ValidityPeriod")} {certificate.timeLine}
                   </Text>
                 </View>
 
@@ -309,7 +309,7 @@ const EarnCertificate: React.FC = () => {
               text={
                 searchQuery
                   ? "No certificates found matching your search"
-                  : "No certificates available"
+                  : t("EarnCertificate.NoCertificatesAvailable")
               }
             />
           )}
@@ -386,8 +386,8 @@ const EarnCertificate: React.FC = () => {
               style={{ marginBottom: hp(3) }}
             >
               <Text className="text-[#A07700] font-semibold">
-                {selectedCertificate?.timeLine}{" "}
-                {getMonthLabel(selectedCertificate?.timeLine || "0")}
+                {getMonthLabel(selectedCertificate?.timeLine || "0")}{" "}
+                {selectedCertificate?.timeLine}
               </Text>
               . {t("EarnCertificate.DoYouWantToApplyForIt")}
             </Text>

@@ -342,8 +342,8 @@ const CropEarnCertificate: React.FC = () => {
                     {t("EarnCertificate.Rs")}.{formatPrice(certificate.price)}
                   </Text>
                   <Text className="text-[#6B6B6B] text-sm">
-                    {t("Farms.ValidityPeriod")} : {certificate.timeLine}{" "}
-                    {getMonthLabel(certificate.timeLine)}
+                    {getMonthLabel(certificate.timeLine)}{" "}
+                    {t("Farms.ValidityPeriod")} : {certificate.timeLine}
                   </Text>
                 </View>
 
@@ -355,7 +355,7 @@ const CropEarnCertificate: React.FC = () => {
               text={
                 searchQuery
                   ? "No certificates found matching your search"
-                  : "No certificates available"
+                  : t("EarnCertificate.NoCertificatesAvailable")
               }
             />
           )}
@@ -432,8 +432,8 @@ const CropEarnCertificate: React.FC = () => {
               style={{ marginBottom: hp(3) }}
             >
               <Text className="text-[#A07700] font-semibold">
-                {selectedCertificate?.timeLine}{" "}
-                {getMonthLabel(selectedCertificate?.timeLine || "0")}
+                {getMonthLabel(selectedCertificate?.timeLine || "0")}{" "}
+                {selectedCertificate?.timeLine}
               </Text>
               . {t("EarnCertificate.DoYouWantToApplyForIt")}
             </Text>

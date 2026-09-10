@@ -267,15 +267,6 @@ const FramcropCalenderwithcertificate: React.FC<
     }, [navigation]),
   );
 
-  useFocusEffect(
-    React.useCallback(() => {
-      return () => {
-        setCultivatedLandModalVisible(false);
-        setPendingImageCrop(null);
-      };
-    }, []),
-  );
-
   const loadLanguage = async () => {
     const storedLanguage = await AsyncStorage.getItem("@user_language");
     if (storedLanguage) {
@@ -1111,6 +1102,10 @@ const FramcropCalenderwithcertificate: React.FC<
         }
       };
 
+      if (crops.length > 0) {
+        return;
+      }
+
       setCrops([]);
       setChecked([]);
       setTimestamps([]);
@@ -1120,7 +1115,7 @@ const FramcropCalenderwithcertificate: React.FC<
 
       loadLanguage();
       fetchCrops().then(() => navigateToNextIncompleteTask());
-    }, [cropId, farmId]),
+    }, [cropId, farmId, crops.length]),
   );
 
   const viewNextTasks = () => {
@@ -1319,7 +1314,9 @@ const FramcropCalenderwithcertificate: React.FC<
       }
 
       const newLastCompletedIndex = updatedChecked.lastIndexOf(true);
-      setLastCompletedIndex(newLastCompletedIndex === -1 ? null : newLastCompletedIndex);
+      setLastCompletedIndex(
+        newLastCompletedIndex === -1 ? null : newLastCompletedIndex,
+      );
 
       if (globalIndex < crops.length - 1) {
         if (newStatus === "completed") {
@@ -1747,11 +1744,7 @@ const FramcropCalenderwithcertificate: React.FC<
               setCultivatedLandModalVisible(false);
               setPendingImageCrop(null);
             }
-            await handleUploadCalendarTaskImage(
-              imageUri,
-              crop,
-              isLastImage,
-            );
+            await handleUploadCalendarTaskImage(imageUri, crop, isLastImage);
           }}
           requiredImages={pendingImageCrop.crop.reqImages || 1}
         />
@@ -1784,7 +1777,7 @@ const FramcropCalenderwithcertificate: React.FC<
                 status: "edit",
                 onCulscropID: crops[0]?.onCulscropID,
                 cropId,
-              farmId: Number(farmId),
+                farmId: Number(farmId),
               })
             }
           >
@@ -1860,18 +1853,33 @@ const FramcropCalenderwithcertificate: React.FC<
                         certificateData.expireDate,
                       );
 
+                      const isSinhala =
+                        language === "si" ||
+                        i18n.language === "si" ||
+                        t("Main.LNG") === "si";
+
                       if (
                         remainingTime.months === 0 &&
                         remainingTime.days === 0
                       ) {
                         return t("CropCalender.CertificateExpired");
                       } else if (remainingTime.months === 0) {
-                        return `${t("Farms.ValidityPeriod")} : ${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.Day") : t("Farms.Days")}`;
+                        const dayText = isSinhala
+                          ? `${remainingTime.days === 1 ? t("Farms.Day") : t("Farms.Days")} ${remainingTime.days}`
+                          : `${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.Day") : t("Farms.Days")}`;
+                        return `${t("Farms.ValidityPeriod")} : ${dayText}`;
                       } else if (remainingTime.days === 0) {
-                        return `${t("Farms.ValidityPeriod")} : ${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.Month") : t("Farms.Months")}`;
+                        const monthText = isSinhala
+                          ? `${remainingTime.months === 1 ? t("Farms.Month") : t("Farms.Months")} ${remainingTime.months}`
+                          : `${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.Month") : t("Farms.Months")}`;
+                        return `${t("Farms.ValidityPeriod")} : ${monthText}`;
                       } else {
-                        const monthText = `${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.Month") : t("Farms.Months")}`;
-                        const dayText = `${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.Day") : t("Farms.Days")}`;
+                        const monthText = isSinhala
+                          ? `${remainingTime.months === 1 ? t("Farms.Month") : t("Farms.Months")} ${remainingTime.months}`
+                          : `${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.Month") : t("Farms.Months")}`;
+                        const dayText = isSinhala
+                          ? `${remainingTime.days === 1 ? t("Farms.Day") : t("Farms.Days")} ${remainingTime.days}`
+                          : `${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.Day") : t("Farms.Days")}`;
                         return `${t("Farms.ValidityPeriod")} : ${monthText} ${dayText}`;
                       }
                     })()
@@ -2128,13 +2136,18 @@ const FramcropCalenderwithcertificate: React.FC<
               <View className="mt-2">
                 {startIndex > 0 && (
                   <TouchableOpacity
-                    className="py-3 px-4 flex-row items-center justify-center bg-white rounded-xl mb-2"
                     onPress={viewPreviousTasks}
+                    activeOpacity={0.7}
+                    className="mx-6 mt-2 mb-1 py-3 rounded-xl bg-gray-50 border border-gray-200 flex-row items-center justify-center"
                   >
-                    <Ionicons name="chevron-up" size={16} color="#6B7280" />
-                    <Text className="text-gray-600 font-medium ml-2">
+                    <Text className="text-black font-bold mr-2">
                       {t("CropCalender.ViewPrevious")}
                     </Text>
+                    <Ionicons
+                      name="chevron-up-outline"
+                      size={18}
+                      color="black"
+                    />
                   </TouchableOpacity>
                 )}
 
@@ -2350,13 +2363,18 @@ const FramcropCalenderwithcertificate: React.FC<
 
                 {startIndex + tasksPerPage < crops.length && (
                   <TouchableOpacity
-                    className="py-3 px-4 flex-row items-center justify-center bg-white rounded-xl mt-2"
                     onPress={viewNextTasks}
+                    activeOpacity={0.7}
+                    className="mx-6 mt-7 mb-8 py-3 rounded-xl bg-gray-50 border border-gray-200 flex-row items-center justify-center"
                   >
-                    <Text className="text-gray-600 font-medium mr-2">
+                    <Text className="text-black font-bold mr-2">
                       {t("CropCalender.ViewMore")}
                     </Text>
-                    <Ionicons name="chevron-down" size={16} color="#6B7280" />
+                    <Ionicons
+                      name="chevron-down-outline"
+                      size={18}
+                      color="black"
+                    />
                   </TouchableOpacity>
                 )}
               </View>

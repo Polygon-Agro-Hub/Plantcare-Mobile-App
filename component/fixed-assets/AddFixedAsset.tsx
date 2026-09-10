@@ -385,7 +385,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
       Alert.alert(
         t("FixedAssets.sorry"),
         t("FixedAssets.WarrantyExpireDateMustBeInTheFuture") ||
-          "Warranty expire date must be in the future.",
+        "Warranty expire date must be in the future.",
         [{ text: t("Main.OK") }],
       );
       return;
@@ -590,7 +590,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
     showPicker: boolean;
     setShowPicker: (v: boolean) => void;
     onConfirm: (date: Date) => void;
-    onChangeAndroid: (event: DateTimePickerEvent, selectedDate?: Date) => void;
+    onChangeAndroid?: (event: DateTimePickerEvent, selectedDate?: Date) => void;
     minimumDate?: Date;
     maximumDate?: Date;
     modalTitle: string;
@@ -608,30 +608,17 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
         <EvilIcons name="calendar" size={28} color="#5e5d5d" />
       </TouchableOpacity>
 
-      {Platform.OS === "android" ? (
-        showPicker && (
-          <DateTimePicker
-            value={value || new Date()}
-            mode="date"
-            display="default"
-            onChange={onChangeAndroid}
-            minimumDate={minimumDate}
-            maximumDate={maximumDate}
-          />
-        )
-      ) : (
-        <CustomDatePicker
-          visible={showPicker}
-          onClose={() => setShowPicker(false)}
-          value={value}
-          onConfirm={onConfirm}
-          minimumDate={minimumDate}
-          maximumDate={maximumDate}
-          title={modalTitle}
-          cancelText={t("Main.Cancel", "Cancel")}
-          confirmText={t("Main.OK")}
-        />
-      )}
+      <CustomDatePicker
+        visible={showPicker}
+        onClose={() => setShowPicker(false)}
+        value={value}
+        onConfirm={onConfirm}
+        minimumDate={minimumDate}
+        maximumDate={maximumDate}
+        title={modalTitle}
+        cancelText={t("Main.Cancel", "Cancel")}
+        confirmText={t("Main.OK")}
+      />
     </>
   );
 
@@ -885,7 +872,25 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
     } catch (error: any) {
       console.error("Error submitting data:", error);
       setLoading(false);
-      Alert.alert("Duplicate Name", error.response.data.message, [
+      const message = error.response.data.message;
+
+      const assetTypeMap: Record<string, string> = {
+        land: "AddFixedAsset.Land",
+        building: "AddFixedAsset.Building",
+        vehicle: "AddFixedAsset.Vehicle",
+        equipment: "AddFixedAsset.Equipment",
+        // add any other asset types your app has
+      };
+
+      const translatedMessage = message.replace(
+        /^A (\w+) asset with the name "(.*?)" already exists\.?$/,
+        (_: any, assetType: string, name: string) => {
+          const key = assetTypeMap[assetType.toLowerCase()];
+          const translatedType = key ? t(key) : assetType;
+          return t("AddFixedAsset.AssetAlreadyExists", { assetType: translatedType, name });
+        }
+      );
+      Alert.alert(t("AddFixedAsset.DuplicateName"), translatedMessage, [
         { text: t("Main.OK") },
       ]);
     }
@@ -1386,13 +1391,13 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   <Text className="text-sm">
                     {totalPrice
                       ? (() => {
-                          const parts = totalPrice.toFixed(2).split(".");
-                          return (
-                            parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-                            "." +
-                            parts[1]
-                          );
-                        })()
+                        const parts = totalPrice.toFixed(2).split(".");
+                        return (
+                          parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+                          "." +
+                          parts[1]
+                        );
+                      })()
                       : "0.00"}
                   </Text>
                 </View>
@@ -1815,9 +1820,8 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         className="flex-row items-center"
                       >
                         <View
-                          className={`w-5 h-5 rounded-full ${
-                            landFenced === v ? "bg-green-500" : "bg-gray-400"
-                          }`}
+                          className={`w-5 h-5 rounded-full ${landFenced === v ? "bg-green-500" : "bg-gray-400"
+                            }`}
                         />
                         <Text className="ml-2 text-sm">
                           {v === "yes"
@@ -1841,9 +1845,8 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         className="flex-row items-center"
                       >
                         <View
-                          className={`w-5 h-5 rounded-full ${
-                            perennialCrop === v ? "bg-green-500" : "bg-gray-400"
-                          }`}
+                          className={`w-5 h-5 rounded-full ${perennialCrop === v ? "bg-green-500" : "bg-gray-400"
+                            }`}
                         />
                         <Text className="ml-2 text-sm">
                           {v === "yes"
@@ -2008,13 +2011,13 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   <Text className="text-black text-sm">
                     {totalPrice
                       ? (() => {
-                          const parts = totalPrice.toFixed(2).split(".");
-                          return (
-                            parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-                            "." +
-                            parts[1]
-                          );
-                        })()
+                        const parts = totalPrice.toFixed(2).split(".");
+                        return (
+                          parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+                          "." +
+                          parts[1]
+                        );
+                      })()
                       : "0.00"}
                   </Text>
                 </View>
