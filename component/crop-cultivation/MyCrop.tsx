@@ -275,23 +275,23 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
 
       try {
         const response = await axios.get(
-          `${environment.API_BASE_URL}api/certificate/get-crop-certificate-status/${cropOngoingId}`,
+          `${environment.API_BASE_URL}api/certificate/get-crop-certificate-byId/${cropOngoingId}`,
           { headers: { Authorization: `Bearer ${token}` } },
         );
 
         let isAllCompleted = false;
+        const certData = response.data?.[0];
         if (
-          response.data.questionnaireItems &&
-          Array.isArray(response.data.questionnaireItems)
+          certData?.questionnaireItems &&
+          Array.isArray(certData.questionnaireItems) &&
+          certData.questionnaireItems.length > 0
         ) {
-          isAllCompleted =
-            response.data.questionnaireItems.length === 0 ||
-            response.data.questionnaireItems.every((item: any) => {
-              if (item.type === "Tick Off") return item.tickResult === 1;
-              if (item.type === "Photo Proof")
-                return item.uploadImage !== null && item.uploadImage !== "";
-              return true;
-            });
+          isAllCompleted = certData.questionnaireItems.every((item: any) => {
+            if (item.type === "Tick Off") return item.tickResult === 1;
+            if (item.type === "Photo Proof")
+              return item.uploadImage !== null && item.uploadImage !== "";
+            return true;
+          });
         } else {
           isAllCompleted = true;
         }
@@ -326,7 +326,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
     cropId: number,
   ): "pending" | "completed" => {
     const certificate = cropCertificates.find((cert) => cert.cropId === cropId);
-    return certificate?.certificateStatus || "completed";
+    return certificate?.certificateStatus || "pending";
   };
 
   const fetchCultivationsAndProgress = async () => {
@@ -422,10 +422,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      if (crops.length === 0) {
-        setLoading(true);
-        fetchCultivationsAndProgress();
-      }
+      fetchCultivationsAndProgress();
     }, []),
   );
 
@@ -482,6 +479,7 @@ const MyCrop: React.FC<MyCropProps> = ({ navigation }) => {
             : language === "ta"
               ? crop.varietyNameTamil
               : crop.varietyNameEnglish,
+        ongoingCropId: crop.ongoingCropId || crop.id,
         fromScreen: "MyCrop",
       },
     });

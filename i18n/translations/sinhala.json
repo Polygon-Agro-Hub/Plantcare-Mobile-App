@@ -1290,7 +1290,7 @@
     "RequestLetter": "ඉල්ලීම් ලිපිය",
     "DearSirMadam": "ප්‍රිය ස්වාමිනි/මැතිනිය,",
     "SendForApproval": "අනුමැතිය සඳහා යවන්න",
-    "IFarmersNameAFarmerFromDistrictAmWritingToFormallyRequestAnAgriculturalInvestmentForTheUpcomingCultivationSeason": "මම, [ගොවියාගේ නම], [දිස්ත්‍රික්කය] හි ගොවියෙකු, ඉදිරි වගා කන්නය සඳහා කෘෂිකාර්මික ආයෝජනයක් විධිමත් ලෙස ඉල්ලා සිටීමට ලියන්නෙමි.",
+    "IFarmersNameAFarmerFromDistrictAmWritingToFormallyRequestAnAgriculturalInvestmentForTheUpcomingCultivationSeason": "මම, [Farmer's Name], [District] හි ගොවියෙකු, ඉදිරි වගා කන්නය සඳහා කෘෂිකාර්මික ආයෝජනයක් විධිමත් ලෙස ඉල්ලා සිටීමට ලියන්නෙමි.",
     "TheProjectDetailsAreAsFollows": "ව්‍යාපෘති විස්තර පහත පරිදි වේ:",
     "ThisInvestmentIsEssentialForCoveringTheCostsOfHighQualitySeedsFertilizersPesticidesIrrigationFacilitiesAndLaborExpensesForTheProjectedYearTheExpectedHarvestIsSufficientToGenerateSufficientRevenueForTheTimelyRepaymentOfTheLoanAlongWithAccruedInterest": "මෙම ආයෝජනය උසස් තත්ත්වයේ බීජ, පොහොර, පළිබෝධනාශක, වාරි පහසුකම් සහ අපේක්ෂිත අස්වැන්න සාක්ෂාත් කර ගැනීමට අවශ්‍ය ශ්‍රම වියදම් ආවරණය කිරීම සඳහා අත්‍යවශ්‍ය වේ. අපේක්ෂිත අස්වැන්න උපචිත පොලී සමඟ ණය නියමිත වේලාවට ආපසු ගෙවීම සඳහා ප්‍රමාණවත් ආදායමක් උත්පාදනය කිරීමට අපේක්ෂා කෙරේ.",
     "IHaveAAttachedTheNecessaryDocumentsForYourPerusal": "ඔබගේ බැල්ම සඳහා අවශ්‍ය ලියකියවිලි අමුණා ඇත.",
@@ -1502,7 +1502,22 @@
     "LoadingStatus": "තත්වය පූරණය වෙමින්..."
   },
   "MyPensionAccount": {
-    "GoViPension": "ගොවිපෙන්ෂන්"
+    "GoViPension": "ගොවිපෙන්ෂන්",
+    "TotalPensionValue": "මුළු විශ්‍රාම වැටුප් වටිනාකම",
+    "YouWillGetYourPensionIn": "ඔබට විශ්‍රාම වැටුප ලැබෙනුයේ...",
+    "Year": "වසර",
+    "Years": "වසර",
+    "Month": "මාස",
+    "Months": "මාස",
+    "Day": "දින",
+    "Days": "දින",
+    "LoadingPensionData": "විශ්‍රාම වැටුප් දත්ත පූරණය වෙමින් පවතී...",
+    "Currency": "රු.",
+    "NotApproved": "අනුමත කර නැත",
+    "PensionRequestNotApproved": "ඔබගේ විශ්‍රාම වැටුප් ඉල්ලීම තවමත් අනුමත කර නොමැත. කරුණාකර ඔබගේ තත්වය පරීක්ෂා කරන්න.",
+    "NoPensionFound": "විශ්‍රාම වැටුපක් හමු නොවීය",
+    "NoApprovedPensionAccount": "ඔබට තවමත් අනුමත විශ්‍රාම වැටුප් ගිණුමක් නොමැත.",
+    "FailedToFetchPensionData": "විශ්‍රාම වැටුප් දත්ත ලබා ගැනීමට අපොහොසත් විය. කරුණාකර නැවත උත්සාහ කරන්න."
   },
   "Calculator": {
     "Calculator": "ගණක යන්ත්‍රය",

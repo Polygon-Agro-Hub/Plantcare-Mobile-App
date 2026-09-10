@@ -185,25 +185,32 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       const ongoingId = onCulscropId || (route.params as any)?.ongoingCropId;
       if (ongoingId) {
         const cropCertResponse = await axios.get(
-          `${environment.API_BASE_URL}api/certificate/get-crop-certificate-status/${ongoingId}`,
+          `${environment.API_BASE_URL}api/certificate/get-crop-certificate-byId/${ongoingId}`,
           { headers: { Authorization: `Bearer ${token}` } },
         );
         if (
-          cropCertResponse.data?.questionnaireItems &&
-          Array.isArray(cropCertResponse.data.questionnaireItems) &&
-          cropCertResponse.data.questionnaireItems.length > 0
+          cropCertResponse.data &&
+          Array.isArray(cropCertResponse.data) &&
+          cropCertResponse.data.length > 0
         ) {
-          const allComplete = cropCertResponse.data.questionnaireItems.every(
-            (item: any) => {
-              if (item.type === "Tick Off") return item.tickResult === 1;
-              if (item.type === "Photo Proof")
-                return item.uploadImage !== null && item.uploadImage !== "";
-              return true;
-            },
-          );
-          if (!allComplete) {
-            setIsCertificatePending(true);
-            return;
+          const certData = cropCertResponse.data[0];
+          if (
+            certData.questionnaireItems &&
+            Array.isArray(certData.questionnaireItems) &&
+            certData.questionnaireItems.length > 0
+          ) {
+            const allComplete = certData.questionnaireItems.every(
+              (item: any) => {
+                if (item.type === "Tick Off") return item.tickResult === 1;
+                if (item.type === "Photo Proof")
+                  return item.uploadImage !== null && item.uploadImage !== "";
+                return true;
+              },
+            );
+            if (!allComplete) {
+              setIsCertificatePending(true);
+              return;
+            }
           }
         }
       }
@@ -212,6 +219,18 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       setIsCertificatePending(false);
     }
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const checkInitialCert = async () => {
+        const token = await AsyncStorage.getItem("userToken");
+        if (token) {
+          checkCertificateStatus(token);
+        }
+      };
+      checkInitialCert();
+    }, [farmId, (route.params as any)?.ongoingCropId]),
+  );
 
   useFocusEffect(
     React.useCallback(() => {
@@ -1228,6 +1247,42 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
             />
           }
         >
+          {/* Certificate Pending Banner */}
+          {isCertificatePending && (
+            <TouchableOpacity
+              onPress={() => setShowCertificationModal(true)}
+              activeOpacity={0.85}
+              style={{
+                marginHorizontal: 24,
+                marginTop: 16,
+                marginBottom: 8,
+                backgroundColor: "#FFF7ED",
+                borderRadius: 14,
+                borderWidth: 1,
+                borderColor: "#FED7AA",
+                paddingHorizontal: 16,
+                paddingVertical: 12,
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <Ionicons name="lock-closed" size={20} color="#9CA3AF" />
+              <Text
+                style={{
+                  marginLeft: 10,
+                  flex: 1,
+                  fontSize: 13,
+                  color: "#6B7280",
+                  lineHeight: 18,
+                }}
+              >
+                {t(
+                  "CropCalender.PleaseCompleteTheCertificationTasksToUnlockTheCalendarTasks",
+                )}
+              </Text>
+            </TouchableOpacity>
+          )}
+
           {startIndex > 0 && (
             <TouchableOpacity
               onPress={viewPreviousTasks}
@@ -1264,47 +1319,69 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
                     className="p-2"
                     onPress={() => handleCheck(index)}
                     disabled={
-                      (lastCompletedIndex !== null &&
+                      (!isCertificatePending &&
+                        lastCompletedIndex !== null &&
                         startIndex + index > lastCompletedIndex + 1) ||
                       crop.autoCompleted === 1
                     }
                     style={{ zIndex: 200 }}
                   >
-                    <View
-                      style={{
-                        borderWidth:
-                          checked[startIndex + index] ||
-                          (lastCompletedIndex !== null &&
-                            startIndex + index === lastCompletedIndex + 1)
-                            ? 0
-                            : 2,
-                        borderColor: "#00A896",
-                        borderRadius: 15,
-                        width: 30,
-                        height: 30,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: checked[startIndex + index]
-                          ? "#00A896"
-                          : lastCompletedIndex !== null &&
-                              startIndex + index === lastCompletedIndex + 1
-                            ? "black"
-                            : "transparent",
-                      }}
-                    >
-                      <AntDesign
-                        name="check"
-                        size={15}
-                        color={
-                          checked[startIndex + index]
-                            ? "white"
+                    {isCertificatePending ? (
+                      <View
+                        style={{
+                          borderWidth: 2,
+                          borderColor: "#D1D5DB",
+                          borderRadius: 15,
+                          width: 30,
+                          height: 30,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          backgroundColor: "transparent",
+                        }}
+                      >
+                        <Ionicons
+                          name="lock-closed"
+                          size={14}
+                          color="#9CA3AF"
+                        />
+                      </View>
+                    ) : (
+                      <View
+                        style={{
+                          borderWidth:
+                            checked[startIndex + index] ||
+                            (lastCompletedIndex !== null &&
+                              startIndex + index === lastCompletedIndex + 1)
+                              ? 0
+                              : 2,
+                          borderColor: "#00A896",
+                          borderRadius: 15,
+                          width: 30,
+                          height: 30,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          backgroundColor: checked[startIndex + index]
+                            ? "#00A896"
                             : lastCompletedIndex !== null &&
                                 startIndex + index === lastCompletedIndex + 1
+                              ? "black"
+                              : "transparent",
+                        }}
+                      >
+                        <AntDesign
+                          name="check"
+                          size={15}
+                          color={
+                            checked[startIndex + index]
                               ? "white"
-                              : "black"
-                        }
-                      />
-                    </View>
+                              : lastCompletedIndex !== null &&
+                                  startIndex + index === lastCompletedIndex + 1
+                                ? "white"
+                                : "black"
+                          }
+                        />
+                      </View>
+                    )}
                   </TouchableOpacity>
                 </View>
               </View>
