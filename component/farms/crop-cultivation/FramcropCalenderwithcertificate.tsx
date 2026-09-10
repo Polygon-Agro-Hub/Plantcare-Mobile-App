@@ -1855,18 +1855,33 @@ const FramcropCalenderwithcertificate: React.FC<
                         certificateData.expireDate,
                       );
 
+                      const isSinhala =
+                        language === "si" ||
+                        i18n.language === "si" ||
+                        t("Main.LNG") === "si";
+
                       if (
                         remainingTime.months === 0 &&
                         remainingTime.days === 0
                       ) {
                         return t("CropCalender.CertificateExpired");
                       } else if (remainingTime.months === 0) {
-                        return `${t("Farms.ValidityPeriod")} : ${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.Day") : t("Farms.Days")}`;
+                        const dayText = isSinhala
+                          ? `${remainingTime.days === 1 ? t("Farms.Day") : t("Farms.Days")} ${remainingTime.days}`
+                          : `${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.Day") : t("Farms.Days")}`;
+                        return `${t("Farms.ValidityPeriod")} : ${dayText}`;
                       } else if (remainingTime.days === 0) {
-                        return `${t("Farms.ValidityPeriod")} : ${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.Month") : t("Farms.Months")}`;
+                        const monthText = isSinhala
+                          ? `${remainingTime.months === 1 ? t("Farms.Month") : t("Farms.Months")} ${remainingTime.months}`
+                          : `${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.Month") : t("Farms.Months")}`;
+                        return `${t("Farms.ValidityPeriod")} : ${monthText}`;
                       } else {
-                        const monthText = `${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.Month") : t("Farms.Months")}`;
-                        const dayText = `${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.Day") : t("Farms.Days")}`;
+                        const monthText = isSinhala
+                          ? `${remainingTime.months === 1 ? t("Farms.Month") : t("Farms.Months")} ${remainingTime.months}`
+                          : `${remainingTime.months} ${remainingTime.months === 1 ? t("Farms.Month") : t("Farms.Months")}`;
+                        const dayText = isSinhala
+                          ? `${remainingTime.days === 1 ? t("Farms.Day") : t("Farms.Days")} ${remainingTime.days}`
+                          : `${remainingTime.days} ${remainingTime.days === 1 ? t("Farms.Day") : t("Farms.Days")}`;
                         return `${t("Farms.ValidityPeriod")} : ${monthText} ${dayText}`;
                       }
                     })()
