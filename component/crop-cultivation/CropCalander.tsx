@@ -150,6 +150,68 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     globalIndex: number;
     crop: CropItem;
   } | null>(null);
+  const [showCertificationModal, setShowCertificationModal] =
+    useState<boolean>(false);
+  const [isCertificatePending, setIsCertificatePending] =
+    useState<boolean>(false);
+
+  const checkCertificateStatus = async (
+    token: string,
+    onCulscropId?: number,
+  ) => {
+    try {
+      if (farmId) {
+        const farmCertResponse = await axios.get(
+          `${environment.API_BASE_URL}api/certificate/get-farmcertificatetask/${farmId}`,
+          { headers: { Authorization: `Bearer ${token}` } },
+        );
+        if (farmCertResponse.data && farmCertResponse.data.length > 0) {
+          const allComplete = farmCertResponse.data.every(
+            (cert: any) =>
+              cert.questionnaireItems?.every((item: any) => {
+                if (item.type === "Tick Off") return item.tickResult === 1;
+                if (item.type === "Photo Proof")
+                  return item.uploadImage !== null && item.uploadImage !== "";
+                return true;
+              }) || false,
+          );
+          if (!allComplete) {
+            setIsCertificatePending(true);
+            return;
+          }
+        }
+      }
+
+      const ongoingId = onCulscropId || (route.params as any)?.ongoingCropId;
+      if (ongoingId) {
+        const cropCertResponse = await axios.get(
+          `${environment.API_BASE_URL}api/certificate/get-crop-certificate-status/${ongoingId}`,
+          { headers: { Authorization: `Bearer ${token}` } },
+        );
+        if (
+          cropCertResponse.data?.questionnaireItems &&
+          Array.isArray(cropCertResponse.data.questionnaireItems) &&
+          cropCertResponse.data.questionnaireItems.length > 0
+        ) {
+          const allComplete = cropCertResponse.data.questionnaireItems.every(
+            (item: any) => {
+              if (item.type === "Tick Off") return item.tickResult === 1;
+              if (item.type === "Photo Proof")
+                return item.uploadImage !== null && item.uploadImage !== "";
+              return true;
+            },
+          );
+          if (!allComplete) {
+            setIsCertificatePending(true);
+            return;
+          }
+        }
+      }
+      setIsCertificatePending(false);
+    } catch {
+      setIsCertificatePending(false);
+    }
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -256,6 +318,9 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       }
 
       setCrops(formattedCrops);
+      if (token && formattedCrops.length > 0) {
+        checkCertificateStatus(token, formattedCrops[0]?.onCulscropID);
+      }
       const newCheckedStates = formattedCrops.map(
         (crop: CropItem) => crop.status === "completed",
       );
@@ -473,11 +538,9 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       }
     } catch (error: any) {
       console.error("Error uploading calendar task image:", error);
-      Alert.alert(
-        t("Main.Error"),
-        t("CropCalender.UploadRetryFailed"),
-        [{ text: t("Main.OK") }],
-      );
+      Alert.alert(t("Main.Error"), t("CropCalender.UploadRetryFailed"), [
+        { text: t("Main.OK") },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -511,6 +574,9 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       }
 
       setCrops(formattedCrops);
+      if (token && formattedCrops.length > 0) {
+        checkCertificateStatus(token, formattedCrops[0]?.onCulscropID);
+      }
       const newCheckedStates = formattedCrops.map(
         (crop: CropItem) => crop.status === "completed",
       );
@@ -585,6 +651,10 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
   const currentTasks = crops.slice(startIndex, startIndex + tasksPerPage);
 
   const handleCheck = async (i: number) => {
+    if (isCertificatePending) {
+      setShowCertificationModal(true);
+      return;
+    }
     const globalIndex = startIndex + i;
     const currentCrop = crops[globalIndex];
     const PreviousCrop = crops[globalIndex - 1];
@@ -950,8 +1020,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     }
   }, [crops]);
 
-
-
   const SkeletonLoader = () => {
     const rectHeight = hp("30%");
     const gap = hp("4%");
@@ -1162,12 +1230,14 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         >
           {startIndex > 0 && (
             <TouchableOpacity
-              className="py-2 px-4 flex-row items-center justify-center"
               onPress={viewPreviousTasks}
+              activeOpacity={0.7}
+              className="mx-6 mt-2 mb-1 py-3 rounded-xl bg-gray-50 border border-gray-200 flex-row items-center justify-center"
             >
-              <Text className="text-black font-bold">
+              <Text className="text-black font-bold mr-2">
                 {t("CropCalender.ViewPrevious")}
               </Text>
+              <Ionicons name="chevron-up-outline" size={18} color="black" />
             </TouchableOpacity>
           )}
 
@@ -1356,16 +1426,48 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           </Modal>
           {startIndex + tasksPerPage < crops.length && (
             <TouchableOpacity
-              className="py-2 pb-8 px-4 flex-row items-center justify-center"
               onPress={viewNextTasks}
+              activeOpacity={0.7}
+              className="mx-6 mt-7 mb-8 py-3  rounded-xl bg-gray-50 border border-gray-200 flex-row items-center justify-center"
             >
-              <Text className="text-black font-bold">
+              <Text className="text-black font-bold mr-2">
                 {t("CropCalender.ViewMore")}
               </Text>
+              <Ionicons name="chevron-down-outline" size={18} color="black" />
             </TouchableOpacity>
           )}
         </ScrollView>
       )}
+
+      <Modal
+        visible={showCertificationModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowCertificationModal(false)}
+      >
+        <View className="flex-1 justify-center items-center bg-black/50">
+          <View className="bg-white rounded-2xl mx-4 p-6 w-11/12 max-w-sm">
+            <View className="items-center mb-4">
+              <View className="bg-[#F6F7F9] rounded-lg p-3">
+                <Ionicons name="warning" size={32} color="#757472ff" />
+              </View>
+            </View>
+            <Text className="text-gray-600 text-center text-sm leading-5 mb-6">
+              {t(
+                "CropCalender.PleaseCompleteTheCertificationTasksToUnlockTheCalendarTasks",
+              )}
+            </Text>
+            <TouchableOpacity
+              onPress={() => setShowCertificationModal(false)}
+              className="bg-gray-900 rounded-xl py-3"
+            >
+              <Text className="text-white text-center font-medium text-base">
+                {t("Main.OK")}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };

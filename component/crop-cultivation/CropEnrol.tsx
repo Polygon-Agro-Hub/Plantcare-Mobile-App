@@ -80,7 +80,6 @@ interface FarmExtent {
 const farmer = require("../../assets/images/crop-cultivation/farmer.webp");
 
 const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
-  // NEW: farmId pulled from route params (must be added to RootStackParamList)
   const { cropId, status, onCulscropID, farmId } = route.params;
   const [natureOfCultivation, setNatureOfCultivation] = useState<string>("");
   const [cultivationMethod, setCultivationMethod] = useState<string>("");
@@ -142,11 +141,7 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
   const [showNatureModal, setShowNatureModal] = useState<boolean>(false);
   const [showMethodModal, setShowMethodModal] = useState<boolean>(false);
 
-  // NEW: farm extent state
   const [farmExtent, setFarmExtent] = useState<FarmExtent | null>(null);
-  // NEW: the extent this record already occupies on the farm, as loaded in edit mode.
-  // Needed so validateExtent() can add it back to "available" — otherwise editing
-  // an existing cultivation always looks like it exceeds the farm's free extent.
   const [originalExtent, setOriginalExtent] = useState<{
     ha: string;
     ac: string;
@@ -197,38 +192,34 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
     }, []),
   );
 
-  // NEW: convert ha/ac/p to perches so extents can be compared on one scale
+  // Correct unit conversion (1 acre = 160 perches, 1 hectare ≈ 395.36875 perches)
   const convertToPerches = (ha: string, ac: string, p: string): number =>
-    parseFloat(ha || "0") * 160 +
-    parseFloat(ac || "0") * 4 +
+    parseFloat(ha || "0") * 395.36875 +
+    parseFloat(ac || "0") * 160 +
     parseFloat(p || "0");
 
-  // NEW: fetch the farm's extent so we know how much is available to allocate
-  useEffect(() => {
-    const fetchFarmExtent = async () => {
-      try {
-        const token = await AsyncStorage.getItem("userToken");
-        if (!token) return;
-        const response = await axios.get(
-          `${environment.API_BASE_URL}api/farm/get-farm-extend/${farmId}`,
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
-        if (response.data?.status === "success") {
-          setFarmExtent(response.data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching farm extent:", error);
-      }
-    };
-    if (farmId) fetchFarmExtent();
-  }, [farmId]);
+  // Re-fetch farm extent fresh right before validating, instead of trusting
+  // a value grabbed once at mount — this avoids the stale/not-yet-updated
+  // availableExtent problem on a just-created record.
+  const validateExtent = async (): Promise<boolean> => {
+    const token = await AsyncStorage.getItem("userToken");
+    if (!token) return false;
 
-  // NEW: validates the entered extent against the farm's *actually* available
-  // extent. In edit mode, this record's original extent is added back to
-  // availableExtent first, since that extent is already booked under
-  // "cultivated" and shouldn't be double-counted against the user's own edit.
-  const validateExtent = (): boolean => {
-    if (!farmExtent) {
+    let currentFarmExtent: FarmExtent | null = null;
+    try {
+      const response = await axios.get(
+        `${environment.API_BASE_URL}api/farm/get-farm-extend/${farmId}`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      if (response.data?.status === "success") {
+        currentFarmExtent = response.data.data;
+        setFarmExtent(currentFarmExtent);
+      }
+    } catch (error) {
+      console.error("Error re-fetching farm extent:", error);
+    }
+
+    if (!currentFarmExtent) {
       Alert.alert(
         t("Main.Error"),
         "Unable to verify farm extent. Please try again.",
@@ -245,19 +236,11 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
         : 0;
 
     const effectiveAvailablePerches =
-      farmExtent.availableExtent.totalPerches + originalExtentPerches;
+      currentFarmExtent.availableExtent.totalPerches + originalExtentPerches;
 
     if (newExtentPerches > effectiveAvailablePerches) {
-      const {
-        hectares: aHa,
-        acres: aAc,
-        perches: aP,
-      } = farmExtent.availableExtent;
-      const {
-        hectares: cHa,
-        acres: cAc,
-        perches: cP,
-      } = farmExtent.cultivatedExtent;
+      const { hectares: aHa, acres: aAc, perches: aP } = currentFarmExtent.availableExtent;
+      const { hectares: cHa, acres: cAc, perches: cP } = currentFarmExtent.cultivatedExtent;
 
       Alert.alert(
         t("Main.Sorry"),
@@ -324,8 +307,10 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
       return;
     }
 
-    // NEW: block enrollment if it would exceed the farm's available extent
-    if (!validateExtent()) return;
+    // FIX: validateExtent is async — must be awaited, otherwise the Promise
+    // object is always truthy and this check never blocks.
+    const isValid = await validateExtent();
+    if (!isValid) return;
 
     const extenthaValue = extentha || "0";
     const extentacValue = extentac || "0";
@@ -484,8 +469,6 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
           setExtentha(ongoingCultivation.extentha.toString());
           setExtentac(ongoingCultivation.extentac.toString());
           setExtentp(ongoingCultivation.extentp.toString());
-          // NEW: remember the original extent so validateExtent() can
-          // add it back to available extent during edit
           setOriginalExtent({
             ha: ongoingCultivation.extentha.toString(),
             ac: ongoingCultivation.extentac.toString(),
@@ -499,8 +482,9 @@ const CropEnrol: React.FC<CropEnrolProps> = ({ route, navigation }) => {
   }, [formStatus, onCulscropID]);
 
   const updateOngoingCultivation = async () => {
-    // NEW: block update if it would exceed the farm's available extent
-    if (!validateExtent()) return;
+    // FIX: same as above — await the async validation before proceeding.
+    const isValid = await validateExtent();
+    if (!isValid) return;
 
     try {
       const token = await AsyncStorage.getItem("userToken");
