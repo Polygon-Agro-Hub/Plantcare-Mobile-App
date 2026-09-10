@@ -612,42 +612,42 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
       [
         farmId || selectedFarm,
         "selectedFarm",
-        `${t("CurrentAssets.SelectFarm")} is required`,
+        `${t("CurrentAssets.SelectFarm")} ${t("CurrentAssets.IsRequired")}`,
       ],
       [
         selectedCategory,
         "selectedCategory",
-        `${t("CurrentAssets.SelectCategory")} is required`,
+        `${t("CurrentAssets.SelectCategory")} ${t("CurrentAssets.IsRequired")}`,
       ],
       [
         selectedAsset,
         "selectedAsset",
-        `${t("CurrentAssets.Asset")} is required`,
+        `${t("CurrentAssets.Asset")} ${t("CurrentAssets.IsRequired")}`,
       ],
-      [batchNum, "batchNum", `${t("CurrentAssets.BatchNumber")} is required`],
-      [volume, "volume", `${t("CurrentAssets.UnitVolumeWeight")} is required`],
+      [batchNum, "batchNum", `${t("CurrentAssets.BatchNumber")} ${t("CurrentAssets.IsRequired")}`],
+      [volume, "volume", `${t("CurrentAssets.UnitVolumeWeight")} ${t("CurrentAssets.IsRequired")}`],
       [
         numberOfUnits,
         "numberOfUnits",
-        `${t("CurrentAssets.NumberOfUnits")} is required`,
+        `${t("CurrentAssets.NumberOfUnits")} ${t("CurrentAssets.IsRequired")}`,
       ],
-      [unitPrice, "unitPrice", `${t("CurrentAssets.UnitPrice")} is required`],
+      [unitPrice, "unitPrice", `${t("CurrentAssets.UnitPrice")} ${t("CurrentAssets.IsRequired")}`],
       [
         purchaseDate,
         "purchaseDate",
-        `${t("CurrentAssets.PurchaseDate")} is required`,
+        `${t("CurrentAssets.PurchaseDate")} ${t("CurrentAssets.IsRequired")}`,
       ],
       [
         expireDate,
         "expireDate",
-        `${t("CurrentAssets.ExpireDate")} is required`,
+        `${t("CurrentAssets.ExpireDate")} ${t("CurrentAssets.IsRequired")}`,
       ],
       [
         warranty,
         "warranty",
-        `${t("CurrentAssets.WarrentyInMonths")} is required`,
+        `${t("CurrentAssets.WarrentyInMonths")} ${t("CurrentAssets.IsRequired")}`,
       ],
-      [status, "status", `${t("CurrentAssets.Status")} is required`],
+      [status, "status", `${t("CurrentAssets.Status")} ${t("CurrentAssets.IsRequired")}`],
     ];
 
     requiredFields.forEach(([val, key, message]) => {
@@ -658,7 +658,7 @@ const AddAssetScreen: React.FC<AddAssetProps> = ({ navigation }) => {
     });
 
     if (isBrandRequired && !brand) {
-      errors.brand = `${t("CurrentAssets.Brand")} is required`;
+      errors.brand = `${t("CurrentAssets.Brand")} ${t("CurrentAssets.IsRequired")}`;
       hasError = true;
     }
 
