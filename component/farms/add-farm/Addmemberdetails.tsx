@@ -473,7 +473,7 @@ const AddMemberDetails: React.FC = () => {
     if (Object.values(nicErrors).some(Boolean)) {
       Alert.alert(
         t("Main.Sorry"),
-        t("Farms.Please fix NIC validation errors before saving."),
+        t("Farms.PleaseFixNICValidationErrorsBeforeSaving"),
         [{ text: t("Main.OK") }],
       );
       return;

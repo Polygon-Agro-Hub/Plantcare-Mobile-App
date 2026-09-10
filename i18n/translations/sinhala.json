@@ -584,7 +584,9 @@
     "StaffMemberHasBeenUpdatedSuccessfully": "කාර්ය මණ්ඩල සාමාජිකයා සාර්ථකව යාවත්කාලීන කර ඇත.",
     "CompletionRemovedSuccessfully": "සම්පූර්ණ කිරීම සාර්ථකව ඉවත් කරන ලදී",
     "PleaseEnterAtLeastOneExtentValue": "කරුණාකර අවම වශයෙන් එක් විශාලත්ව අගයක් ඇතුළත් කරන්න",
-    "NotAllowedToBeEmpty": "හිස්ව තැබිය නොහැක"
+    "NotAllowedToBeEmpty": "හිස්ව තැබිය නොහැක",
+    "PleaseFixNICValidationErrorsBeforeSaving": "කරුණාකර සුරැකීමට පෙර ජාතික හැඳුනුම්පත් අංක වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
+    "PleaseFixDuplicateNICValidationErrorsBeforeSaving": "කරුණාකර සුරැකීමට පෙර අනුපිටපත් ජාතික හැඳුනුම්පත් අංක වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න."
   },
   "SelectCrop": {
     "Description": "විස්තරය",
