@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as FileSystem from "expo-file-system/legacy";
-import * as MediaLibrary from "expo-media-library/legacy";
 import * as Sharing from "expo-sharing";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -111,25 +110,21 @@ const OwnerQRcode: React.FC<QRcodeProps> = ({ navigation }) => {
         return;
       }
 
-      const { status } = await MediaLibrary.requestPermissionsAsync(true);
-      if (status !== "granted") {
-        Alert.alert(
-          t("QRcode.AccessRequired"),
-          t("QRcode.PleaseEnablePermissionToSaveTheQRToYourGallery"),
-          [{ text: t("Main.OK") }],
-        );
-        return;
-      }
-
       const fileUri = `${FileSystem.documentDirectory}QRcode_${Date.now()}.png`;
       const response = await FileSystem.downloadAsync(QR, fileUri);
 
-      // Save directly to media library
-      await MediaLibrary.createAssetAsync(response.uri);
-
-      Alert.alert(t("Main.Success"), t("QRcode.YourQRCodeHasBeenSavedToYourGallery"), [
-        { text: t("Main.OK") },
-      ]);
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(response.uri, {
+          mimeType: "image/png",
+          dialogTitle: "Save or Share QR Code",
+        });
+      } else {
+        Alert.alert(
+          t("Main.Success"),
+          t("QRcode.YourQRCodeHasBeenSavedToYourGallery"),
+          [{ text: t("Main.OK") }]
+        );
+      }
     } catch (error) {
       console.error("Download error:", error);
       Alert.alert(t("Main.Error"), t("QRcode.UnableTSaveQRcodePleaseTryAgain"), [

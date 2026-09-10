@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as FileSystem from "expo-file-system/legacy";
-import * as MediaLibrary from "expo-media-library/legacy";
 import * as Sharing from "expo-sharing";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -113,26 +112,6 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
     fetchRegistrationDetails();
   }, []);
 
-  const requestMediaLibraryPermissions = async () => {
-    try {
-      if (Platform.OS === 'ios') {
-        const { status } = await MediaLibrary.requestPermissionsAsync();
-        return status === 'granted';
-      } else {
-        // For Android, check and request permissions with writeOnly=true to avoid audio permission request
-        const permission = await MediaLibrary.getPermissionsAsync(true);
-        if (permission.status !== 'granted') {
-          const { status } = await MediaLibrary.requestPermissionsAsync(true);
-          return status === 'granted';
-        }
-        return permission.status === 'granted';
-      }
-    } catch (error) {
-      console.error("Permission error:", error);
-      return false;
-    }
-  };
-
   const downloadQRCode = async () => {
     try {
       if (!QR) {
@@ -142,39 +121,30 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
         return;
       }
 
-      // Request permissions
-      const hasPermission = await requestMediaLibraryPermissions();
-      if (!hasPermission) {
-        Alert.alert(
-          t("QRcode.AccessRequired"),
-          t("QRcode.PleaseEnablePermissionToSaveTheQRToYourGallery"),
-          [{ text: t("Main.OK") }],
-        );
-        return;
-      }
-
       const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
-      
-      // Download the file
       const downloadResult = await FileSystem.downloadAsync(QR, fileUri);
-      
+
       if (downloadResult.status !== 200) {
-        throw new Error('Download failed');
+        throw new Error("Download failed");
       }
 
-      // Save to media library (directly saves to device gallery without triggering Android scoped storage modify prompt)
-      await MediaLibrary.createAssetAsync(downloadResult.uri);
-
-      Alert.alert(
-        t("Main.Success"), 
-        t("QRcode.YourQRCodeHasBeenSavedToYourGallery"), 
-        [{ text: t("Main.OK") }]
-      );
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(downloadResult.uri, {
+          mimeType: "image/png",
+          dialogTitle: t("QRcode.ShareQRCode"),
+        });
+      } else {
+        Alert.alert(
+          t("Main.Success"),
+          t("QRcode.YourQRCodeHasBeenSavedToYourGallery"),
+          [{ text: t("Main.OK") }]
+        );
+      }
     } catch (error) {
       console.error("Download error:", error);
       Alert.alert(
-        t("Main.Error"), 
-        t("QRcode.UnableToSaveQRCodePleaseTryAgain"), 
+        t("Main.Error"),
+        t("QRcode.UnableToSaveQRCodePleaseTryAgain"),
         [{ text: t("Main.OK") }]
       );
     }

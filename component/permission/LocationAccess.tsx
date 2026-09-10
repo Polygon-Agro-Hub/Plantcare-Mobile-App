@@ -27,20 +27,21 @@ type LocationAccessNavigationProp = StackNavigationProp<
 >;
 
 interface LocationAccessProps {
-  navigation: LocationAccessNavigationProp;
+  navigation?: LocationAccessNavigationProp;
   onPermissionGranted?: () => void;
   onClose?: () => void;
   returnScreen?: keyof RootStackParamList;
+  onBackPress?: () => void;
 }
 
 const locationImage = require("../../assets/images/permission/location.webp");
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const LocationAccess: React.FC<LocationAccessProps> = ({
   navigation,
   onPermissionGranted,
   onClose,
   returnScreen = "Main",
+  onBackPress,
 }) => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
@@ -48,25 +49,27 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
   const handleDenyOrClose = () => {
     if (onClose) {
       onClose();
-    } else if (navigation.canGoBack()) {
+    } else if (onBackPress) {
+      onBackPress();
+    } else if (navigation?.canGoBack && navigation.canGoBack()) {
       navigation.goBack();
-    } else {
+    } else if (navigation) {
       navigation.navigate(returnScreen as any);
     }
   };
 
   useFocusEffect(
     React.useCallback(() => {
-      const onBackPress = () => {
+      const handleHardwareBackPress = () => {
         handleDenyOrClose();
         return true;
       };
       const subscription = BackHandler.addEventListener(
         "hardwareBackPress",
-        onBackPress,
+        handleHardwareBackPress,
       );
       return () => subscription.remove();
-    }, [navigation, onClose, returnScreen]),
+    }, [navigation, onClose, onBackPress, returnScreen]),
   );
 
   const requestLocationPermission = async () => {
@@ -77,7 +80,7 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
       if (status === "granted") {
         if (onPermissionGranted) {
           onPermissionGranted();
-        } else {
+        } else if (navigation) {
           navigation.navigate(returnScreen as any);
         }
       } else if (status === "denied") {
@@ -104,7 +107,7 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
       Alert.alert(
         t("Main.Error") || "Error",
         t("LocationAccess.UnableToRequestLocationPermissionPleaseTryAgain") ||
-          "Unable to request location permission. Please try again.",
+        "Unable to request location permission. Please try again.",
         [{ text: t("Main.OK") }],
       );
     } finally {
@@ -114,21 +117,13 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
 
   return (
     <View className="flex-1 bg-[#121212]">
-      <View
-        style={{
-          paddingTop:
-            Platform.OS === "android"
-              ? (StatusBar.currentHeight ? StatusBar.currentHeight + 10 : 36)
-              : 48,
-        }}
-      >
-        <CustomHeader
-          title=""
-          navigation={navigation}
-          onBackPress={handleDenyOrClose}
-          transparent
-        />
-      </View>
+      <StatusBar barStyle="light-content" backgroundColor="#121212" />
+      <CustomHeader
+        title=""
+        navigation={navigation}
+        onBackPress={handleDenyOrClose}
+        transparent
+      />
 
       <ScrollView
         className="flex-1 px-5"
@@ -138,7 +133,7 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
         <View className="items-center justify-center mt-2 mb-4">
           <Image
             source={locationImage}
-            className="w-28 h-28"
+            className="w-32 h-32"
             resizeMode="contain"
           />
         </View>
@@ -225,11 +220,19 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
                 width: "100%",
               }}
             >
-              <Text className="text-black font-extrabold text-base tracking-wide">
-                {isLoading
-                  ? t("LocationAccess.Requesting...") || "Requesting..."
-                  : t("LocationAccess.AgreeAndContinue")}
-              </Text>
+              <View className="flex-row items-center justify-center">
+                <Ionicons
+                  name="location-outline"
+                  size={20}
+                  color="#000000"
+                  style={{ marginRight: 8 }}
+                />
+                <Text className="text-black font-extrabold text-base tracking-wide">
+                  {isLoading
+                    ? t("LocationAccess.Requesting...") || "Requesting..."
+                    : t("LocationAccess.AgreeAndContinue") || "Agree & Continue"}
+                </Text>
+              </View>
             </LinearGradient>
           </TouchableOpacity>
 
@@ -239,7 +242,7 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
             className="py-2.5 px-6 items-center justify-center"
           >
             <Text className="text-gray-400 font-semibold text-sm">
-              {t("LocationAccess.NotNow")}
+              {t("LocationAccess.NotNow") || "Not Now"}
             </Text>
           </TouchableOpacity>
         </View>
