@@ -11,6 +11,7 @@ import {
   Platform,
   StatusBar,
   SafeAreaView,
+  LayoutChangeEvent,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -47,6 +48,13 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
 }) => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
+  const [contentHeight, setContentHeight] = useState(0);
+  const [scrollViewHeight, setScrollViewHeight] = useState(0);
+
+  const isScreenTooLong =
+    scrollViewHeight > 0 &&
+    contentHeight > 0 &&
+    scrollViewHeight >= contentHeight + 20;
 
   const handleDenyOrClose = () => {
     if (onClose) {
@@ -136,13 +144,29 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
       />
       <ScrollView
         className="flex-1 px-5"
+        onLayout={(e: LayoutChangeEvent) =>
+          setScrollViewHeight(e.nativeEvent.layout.height)
+        }
         contentContainerStyle={{
           flexGrow: 1,
-          paddingBottom: Platform.OS === "android" ? 75 : 55,
+          justifyContent: isScreenTooLong ? "center" : "flex-start",
+          paddingBottom: isScreenTooLong
+            ? 20
+            : Platform.OS === "android"
+              ? 75
+              : 55,
+          paddingTop: isScreenTooLong ? 0 : 10,
         }}
         showsVerticalScrollIndicator={false}
+        bounces={!isScreenTooLong}
       >
-        <View className="items-center justify-center mt-2 mb-4">
+        <View
+          onLayout={(e: LayoutChangeEvent) =>
+            setContentHeight(e.nativeEvent.layout.height)
+          }
+          className="w-full"
+        >
+          <View className="items-center justify-center mt-2 mb-4">
           <Image
             source={cameraImage}
             className="w-32 h-32"
@@ -219,7 +243,11 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
         </View>
 
         {/* Action Buttons */}
-        <View className="items-center w-full mt-4 mb-8">
+        <View
+          className={`items-center w-full mt-4 ${
+            isScreenTooLong ? "mb-2" : "mb-8"
+          }`}
+        >
           <TouchableOpacity
             onPress={requestCameraPermission}
             activeOpacity={0.8}
@@ -264,6 +292,7 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
               {t("CameraAccess.NotNow") || "Not Now"}
             </Text>
           </TouchableOpacity>
+        </View>
         </View>
       </ScrollView>
     </SafeAreaView>
