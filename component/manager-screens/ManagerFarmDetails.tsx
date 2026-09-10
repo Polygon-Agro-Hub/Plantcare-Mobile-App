@@ -470,38 +470,46 @@ const ManagerFarmDetails: React.FC<ManagerFarmDetailsProps> = ({
             <Text className="text-lg font-bold text-gray-800">{farmName}</Text>
           </View>
 
-          <TouchableOpacity
-            className="bg-white border border-gray-200 rounded-2xl px-4 py-3 flex-row items-center justify-between shadow-sm"
-            onPress={handleManageWorkersPress}
-            style={{
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.12,
-              shadowRadius: 4,
-              elevation: 4,
-              backgroundColor: "#fff",
-              borderRadius: 8,
-              marginBottom: 8,
-            }}
-          >
-            <View className="flex-row items-center">
-              <View className="rounded-full w-10 h-10 items-center justify-center mr-3">
-                <Image
-                  className="w-10 h-10"
-                  source={require("../../assets/images/farms/managers-image.webp")}
-                  resizeMode="contain"
-                />
-              </View>
-              <Text className="text-sm font-semibold text-gray-800">
-                {t("Manager.ManageWorkers")}
-              </Text>
-            </View>
-            <MaterialCommunityIcons
-              name="chevron-right"
-              size={22}
-              color="#9CA3AF"
-            />
-          </TouchableOpacity>
+         <TouchableOpacity
+  className="bg-white border border-gray-200 rounded-2xl px-4 py-3 flex-row items-center justify-between shadow-sm"
+  onPress={handleManageWorkersPress}
+  style={{
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 4,
+    elevation: 4,
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    marginBottom: 8,
+  }}
+>
+  <View
+    className="flex-row items-center"
+    style={{ flex: 1, marginRight: 8 }}
+  >
+    <View className="rounded-full w-10 h-10 items-center justify-center mr-3">
+      <Image
+        className="w-10 h-10"
+        source={require("../../assets/images/farms/managers-image.webp")}
+        resizeMode="contain"
+      />
+    </View>
+    <Text
+      className="text-sm font-semibold text-gray-800"
+      style={{ flex: 1, flexShrink: 1 }}
+      numberOfLines={2}
+    >
+      {t("Manager.ManageWorkers")}
+    </Text>
+  </View>
+  <MaterialCommunityIcons
+    name="chevron-right"
+    size={22}
+    color="#9CA3AF"
+    style={{ flexShrink: 0 }}
+  />
+</TouchableOpacity>
         </View>
 
         <View className="px-5 mt-4">

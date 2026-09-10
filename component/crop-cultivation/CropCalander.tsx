@@ -193,13 +193,14 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           Array.isArray(cropCertResponse.data.questionnaireItems) &&
           cropCertResponse.data.questionnaireItems.length > 0
         ) {
-          const allComplete =
-            cropCertResponse.data.questionnaireItems.every((item: any) => {
+          const allComplete = cropCertResponse.data.questionnaireItems.every(
+            (item: any) => {
               if (item.type === "Tick Off") return item.tickResult === 1;
               if (item.type === "Photo Proof")
                 return item.uploadImage !== null && item.uploadImage !== "";
               return true;
-            });
+            },
+          );
           if (!allComplete) {
             setIsCertificatePending(true);
             return;
@@ -537,11 +538,9 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
       }
     } catch (error: any) {
       console.error("Error uploading calendar task image:", error);
-      Alert.alert(
-        t("Main.Error"),
-        t("CropCalender.UploadRetryFailed"),
-        [{ text: t("Main.OK") }],
-      );
+      Alert.alert(t("Main.Error"), t("CropCalender.UploadRetryFailed"), [
+        { text: t("Main.OK") },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -1021,8 +1020,6 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
     }
   }, [crops]);
 
-
-
   const SkeletonLoader = () => {
     const rectHeight = hp("30%");
     const gap = hp("4%");
@@ -1233,12 +1230,14 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
         >
           {startIndex > 0 && (
             <TouchableOpacity
-              className="py-2 px-4 flex-row items-center justify-center"
               onPress={viewPreviousTasks}
+              activeOpacity={0.7}
+              className="mx-6 mt-2 mb-1 py-3 rounded-xl bg-gray-50 border border-gray-200 flex-row items-center justify-center"
             >
-              <Text className="text-black font-bold">
+              <Text className="text-black font-bold mr-2">
                 {t("CropCalender.ViewPrevious")}
               </Text>
+              <Ionicons name="chevron-up-outline" size={18} color="black" />
             </TouchableOpacity>
           )}
 
@@ -1427,12 +1426,14 @@ const CropCalander: React.FC<CropCalendarProps> = ({ navigation, route }) => {
           </Modal>
           {startIndex + tasksPerPage < crops.length && (
             <TouchableOpacity
-              className="py-2 pb-8 px-4 flex-row items-center justify-center"
               onPress={viewNextTasks}
+              activeOpacity={0.7}
+              className="mx-6 mt-7 mb-8 py-3  rounded-xl bg-gray-50 border border-gray-200 flex-row items-center justify-center"
             >
-              <Text className="text-black font-bold">
+              <Text className="text-black font-bold mr-2">
                 {t("CropCalender.ViewMore")}
               </Text>
+              <Ionicons name="chevron-down-outline" size={18} color="black" />
             </TouchableOpacity>
           )}
         </ScrollView>

@@ -1314,7 +1314,9 @@ const FramcropCalenderwithcertificate: React.FC<
       }
 
       const newLastCompletedIndex = updatedChecked.lastIndexOf(true);
-      setLastCompletedIndex(newLastCompletedIndex === -1 ? null : newLastCompletedIndex);
+      setLastCompletedIndex(
+        newLastCompletedIndex === -1 ? null : newLastCompletedIndex,
+      );
 
       if (globalIndex < crops.length - 1) {
         if (newStatus === "completed") {
@@ -1742,11 +1744,7 @@ const FramcropCalenderwithcertificate: React.FC<
               setCultivatedLandModalVisible(false);
               setPendingImageCrop(null);
             }
-            await handleUploadCalendarTaskImage(
-              imageUri,
-              crop,
-              isLastImage,
-            );
+            await handleUploadCalendarTaskImage(imageUri, crop, isLastImage);
           }}
           requiredImages={pendingImageCrop.crop.reqImages || 1}
         />
@@ -1779,7 +1777,7 @@ const FramcropCalenderwithcertificate: React.FC<
                 status: "edit",
                 onCulscropID: crops[0]?.onCulscropID,
                 cropId,
-              farmId: Number(farmId),
+                farmId: Number(farmId),
               })
             }
           >
@@ -2123,13 +2121,18 @@ const FramcropCalenderwithcertificate: React.FC<
               <View className="mt-2">
                 {startIndex > 0 && (
                   <TouchableOpacity
-                    className="py-3 px-4 flex-row items-center justify-center bg-white rounded-xl mb-2"
                     onPress={viewPreviousTasks}
+                    activeOpacity={0.7}
+                    className="mx-6 mt-2 mb-1 py-3 rounded-xl bg-gray-50 border border-gray-200 flex-row items-center justify-center"
                   >
-                    <Ionicons name="chevron-up" size={16} color="#6B7280" />
-                    <Text className="text-gray-600 font-medium ml-2">
+                    <Text className="text-black font-bold mr-2">
                       {t("CropCalender.ViewPrevious")}
                     </Text>
+                    <Ionicons
+                      name="chevron-up-outline"
+                      size={18}
+                      color="black"
+                    />
                   </TouchableOpacity>
                 )}
 
@@ -2345,13 +2348,18 @@ const FramcropCalenderwithcertificate: React.FC<
 
                 {startIndex + tasksPerPage < crops.length && (
                   <TouchableOpacity
-                    className="py-3 px-4 flex-row items-center justify-center bg-white rounded-xl mt-2"
                     onPress={viewNextTasks}
+                    activeOpacity={0.7}
+                    className="mx-6 mt-7 mb-8 py-3 rounded-xl bg-gray-50 border border-gray-200 flex-row items-center justify-center"
                   >
-                    <Text className="text-gray-600 font-medium mr-2">
+                    <Text className="text-black font-bold mr-2">
                       {t("CropCalender.ViewMore")}
                     </Text>
-                    <Ionicons name="chevron-down" size={16} color="#6B7280" />
+                    <Ionicons
+                      name="chevron-down-outline"
+                      size={18}
+                      color="black"
+                    />
                   </TouchableOpacity>
                 )}
               </View>
