@@ -625,7 +625,9 @@
     "PleaseEnterAtLeastOneExtentValue": "කරුණාකර අවම වශයෙන් එක් විශාලත්ව අගයක් ඇතුළත් කරන්න",
     "NotAllowedToBeEmpty": "හිස්ව තැබිය නොහැක",
     "PleaseFixNICValidationErrorsBeforeSaving": "කරුණාකර සුරැකීමට පෙර ජාතික හැඳුනුම්පත් අංක වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
-    "PleaseFixDuplicateNICValidationErrorsBeforeSaving": "කරුණාකර සුරැකීමට පෙර අනුපිටපත් ජාතික හැඳුනුම්පත් අංක වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න."
+    "PleaseFixDuplicateNICValidationErrorsBeforeSaving": "කරුණාකර සුරැකීමට පෙර අනුපිටපත් ජාතික හැඳුනුම්පත් අංක වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
+    "OneOrMorePhoneNumbersAreAlreadyRegistered": "එක් හෝ ඊට වඩා වැඩි දුරකථන අංක දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් දුරකථන අංකයක් ඇතුළත් කරන්න.",
+    "OneOrMoreNICNumbersAreAlreadyRegistered": "එක් හෝ ඊට වඩා වැඩි ජාතික හැඳුනුම්පත් අංක දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් ජාතික හැඳුනුම්පත් අංකයක් ඇතුළත් කරන්න."
   },
   "SelectCrop": {
     "Description": "විස්තරය",

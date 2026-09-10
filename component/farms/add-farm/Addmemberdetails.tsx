@@ -457,7 +457,9 @@ const AddMemberDetails: React.FC = () => {
     if (Object.values(phoneErrors).some(Boolean)) {
       Alert.alert(
         t("Main.Sorry"),
-        t("Farms.OneOrMorePhoneNumbersAlreadyRegistered"),
+        t(
+          "Farms.OneOrMorePhoneNumbersAreAlreadyRegistered",
+        ),
         [{ text: t("Main.OK") }],
       );
       return;
@@ -481,7 +483,9 @@ const AddMemberDetails: React.FC = () => {
     if (Object.values(nicduplicateErrors).some(Boolean)) {
       Alert.alert(
         t("Main.Sorry"),
-        t("Farms.OneOrMoreNICNumbersAlreadyRegistered"),
+        t(
+          "Farms.OneOrMoreNICNumbersAreAlreadyRegistered",
+        ),
         [{ text: t("Main.OK") }],
       );
       return;

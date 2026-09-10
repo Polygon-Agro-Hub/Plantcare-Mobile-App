@@ -1071,18 +1071,16 @@ const FarmDetailsScreen = () => {
                           }
                           let validityText = t("Farms.ValidFor") + " ";
                           if (remainingTime.months > 0)
-                            validityText += `${remainingTime.months} ${
-                              remainingTime.months === 1
+                            validityText += `${remainingTime.months === 1
                                 ? t("Farms.Month")
                                 : t("Farms.Months")
-                            }`;
+                              } ${remainingTime.months}`;
                           if (remainingTime.days > 0) {
                             if (remainingTime.months > 0) validityText += " ";
-                            validityText += `${remainingTime.days} ${
-                              remainingTime.days === 1
+                            validityText += `${remainingTime.days === 1
                                 ? t("Farms.Day")
                                 : t("Farms.Days")
-                            }`;
+                              } ${remainingTime.days}`;
                           }
                           return (
                             <Text className="text-gray-600 text-sm mt-1">
@@ -1091,11 +1089,10 @@ const FarmDetailsScreen = () => {
                           );
                         })()}
                         <Text
-                          className={`text-sm font-medium mt-1 ${
-                            certificate.isAllCompleted
+                          className={`text-sm font-medium mt-1 ${certificate.isAllCompleted
                               ? "text-[#00A896]"
                               : "text-red-500"
-                          }`}
+                            }`}
                         >
                           {certificate.isAllCompleted
                             ? t("Farms.AllCompleted")
@@ -1172,45 +1169,45 @@ const FarmDetailsScreen = () => {
             renewalData?.needsRenewal === true)) &&
         (cropCount >= 3 || crops.length >= 3)
       ) && (
-        <View>
-          <TouchableOpacity
-            className="absolute bottom-20 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
-            onPress={() => {
-              const currentCropCount = Math.max(cropCount, crops.length);
-              const isBasic =
-                !membership ||
-                membership.toLowerCase() === "basic" ||
-                (membership.toLowerCase() === "pro" &&
-                  renewalData?.needsRenewal === true);
+          <View>
+            <TouchableOpacity
+              className="absolute bottom-20 right-6 bg-gray-800 w-16 h-16 rounded-full items-center justify-center shadow-lg"
+              onPress={() => {
+                const currentCropCount = Math.max(cropCount, crops.length);
+                const isBasic =
+                  !membership ||
+                  membership.toLowerCase() === "basic" ||
+                  (membership.toLowerCase() === "pro" &&
+                    renewalData?.needsRenewal === true);
 
-              if (isBasic && currentCropCount >= 3) {
-                Alert.alert(
-                  t("Main.Sorry"),
-                  t("Farms.You only have 3 free crop enrollments for now"),
-                  [{ text: t("Main.OK") }],
-                );
-                return;
-              }
-              if (
-                membership.toLowerCase() === "pro" &&
-                renewalData?.needsRenewal === true &&
-                (farmData?.farmIndex ?? 0) > 1
-              ) {
-                navigation.navigate("AddNewFarmUnloackPro" as any);
-              } else {
-                navigation.navigate("AddNewCrop", { farmId });
-              }
-            }}
-            accessibilityLabel="Add new asset"
-            accessibilityRole="button"
-          >
-            <Image
-              className="w-[20px] h-[20px]"
-              source={require("../../../assets/images/farms/plus-white.webp")}
-            />
-          </TouchableOpacity>
-        </View>
-      )}
+                if (isBasic && currentCropCount >= 3) {
+                  Alert.alert(
+                    t("Main.Sorry"),
+                    t("Farms.You only have 3 free crop enrollments for now"),
+                    [{ text: t("Main.OK") }],
+                  );
+                  return;
+                }
+                if (
+                  membership.toLowerCase() === "pro" &&
+                  renewalData?.needsRenewal === true &&
+                  (farmData?.farmIndex ?? 0) > 1
+                ) {
+                  navigation.navigate("AddNewFarmUnloackPro" as any);
+                } else {
+                  navigation.navigate("AddNewCrop", { farmId });
+                }
+              }}
+              accessibilityLabel="Add new asset"
+              accessibilityRole="button"
+            >
+              <Image
+                className="w-[20px] h-[20px]"
+                source={require("../../../assets/images/farms/plus-white.webp")}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
 
       <Modal
         visible={showCertificationModal}

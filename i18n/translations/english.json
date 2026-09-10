@@ -623,7 +623,9 @@
     "StaffMemberHasBeenUpdatedSuccessfully": "Staff member has been updated successfully",
     "CompletionRemovedSuccessfully": "Completion removed successfully",
     "PleaseEnterAtLeastOneExtentValue": "Please enter at least one extent value",
-    "NotAllowedToBeEmpty": "is not allowed to be empty"
+    "NotAllowedToBeEmpty": "is not allowed to be empty",
+    "OneOrMorePhoneNumbersAreAlreadyRegistered": "One or more phone numbers are already registered. Please use different phone numbers.",
+    "OneOrMoreNICNumbersAreAlreadyRegistered": "One or more NIC numbers are already registered. Please use different NIC numbers."
   },
   "SelectCrop": {
     "Description": "Description",
