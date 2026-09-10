@@ -1500,7 +1500,22 @@
     "LoadingStatus": "Loading status..."
   },
   "MyPensionAccount": {
-    "GoViPension": "GoViPension"
+    "GoViPension": "GoViPension",
+    "TotalPensionValue": "Total Pension Value",
+    "YouWillGetYourPensionIn": "You will get your pension in...",
+    "Year": "Year",
+    "Years": "Years",
+    "Month": "Month",
+    "Months": "Months",
+    "Day": "Day",
+    "Days": "Days",
+    "LoadingPensionData": "Loading pension data...",
+    "Currency": "Rs.",
+    "NotApproved": "Not Approved",
+    "PensionRequestNotApproved": "Your pension request has not been approved yet. Please check your status.",
+    "NoPensionFound": "No Pension Found",
+    "NoApprovedPensionAccount": "You don't have an approved pension account yet.",
+    "FailedToFetchPensionData": "Failed to fetch pension data. Please try again."
   },
   "Calculator": {
     "Calculator": "Calculator",

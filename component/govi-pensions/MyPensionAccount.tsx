@@ -84,7 +84,8 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
   useEffect(() => {
     if (!pensionData) return;
 
-    const pensionText = `Rs. ${calculatePensionValue().toLocaleString("en-US", {
+    const currency = t("MyPensionAccount.Currency", { defaultValue: "Rs." });
+    const pensionText = `${currency} ${calculatePensionValue().toLocaleString("en-US", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     })}`;
@@ -135,11 +136,11 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
       if (response.data.status && response.data.reqStatus) {
         if (response.data.reqStatus !== "Approved") {
           Alert.alert(
-            "Not Approved",
-            "Your pension request has not been approved yet. Please check your status.",
+            t("MyPensionAccount.NotApproved"),
+            t("MyPensionAccount.PensionRequestNotApproved"),
             [
               {
-                text: "OK",
+                text: t("Main.OK"),
                 onPress: () => navigation.navigate("GoviPensionStatus"),
               },
             ],
@@ -154,18 +155,18 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
         });
       } else {
         Alert.alert(
-          "No Pension Found",
-          "You don't have an approved pension account yet.",
-          [{ text: "OK", onPress: () => navigation.goBack() }],
+          t("MyPensionAccount.NoPensionFound"),
+          t("MyPensionAccount.NoApprovedPensionAccount"),
+          [{ text: t("Main.OK"), onPress: () => navigation.goBack() }],
         );
       }
     } catch (error: any) {
       console.error("Error fetching pension data:", error);
       const errorMessage =
         error.response?.data?.message ||
-        "Failed to fetch pension data. Please try again.";
-      Alert.alert("Error", errorMessage, [
-        { text: "OK", onPress: () => navigation.goBack() },
+        t("MyPensionAccount.FailedToFetchPensionData");
+      Alert.alert(t("Main.Error"), errorMessage, [
+        { text: t("Main.OK"), onPress: () => navigation.goBack() },
       ]);
     } finally {
       setIsLoading(false);
@@ -310,7 +311,9 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
         />
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="#00A896" />
-          <Text className="mt-4 text-white">Loading pension data...</Text>
+          <Text className="mt-4 text-white">
+            {t("MyPensionAccount.LoadingPensionData")}
+          </Text>
         </View>
       </View>
     );
@@ -322,7 +325,8 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
   const eligible = isEligible();
   const remaining = calculateRemainingTime();
 
-  const pensionText = `Rs. ${pensionValue.toLocaleString("en-US", {
+  const currency = t("MyPensionAccount.Currency", { defaultValue: "Rs." });
+  const pensionText = `${currency} ${pensionValue.toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;
@@ -407,14 +411,16 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
         {eligible ? (
           <View className="flex-1 items-center justify-center px-6 mt-[-15%] min-h-screen">
             <PensionAmount />
-            <Text className="text-black text-lg my-6">Total Pension Value</Text>
+            <Text className="text-black text-lg my-6">
+              {t("MyPensionAccount.TotalPensionValue")}
+            </Text>
           </View>
         ) : (
           <View className="flex-1 justify-end min-h-screen mt-[-10%]">
             <View className="flex-1 items-center justify-center px-6">
               <PensionAmount />
               <Text className="text-black text-lg my-6">
-                Total Pension Value
+                {t("MyPensionAccount.TotalPensionValue")}
               </Text>
             </View>
 
@@ -423,7 +429,7 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
               className="bg-white rounded-t-3xl px-6 mt-[-5%] items-center justify-center"
             >
               <Text className="text-gray-800 text-xl font-semibold mt-[-35%] text-center">
-                You will get your pension in...
+                {t("MyPensionAccount.YouWillGetYourPensionIn")}
               </Text>
 
               <View className="w-48 h-48 mb-6 items-center justify-center">
@@ -450,7 +456,9 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
                     <View className="items-center">
                       <Text className="text-xl font-bold text-black">
                         {remaining.years}{" "}
-                        {remaining.years === 1 ? "Year" : "Years"}
+                        {remaining.years === 1
+                          ? t("MyPensionAccount.Year")
+                          : t("MyPensionAccount.Years")}
                       </Text>
                     </View>
                   )}
@@ -458,13 +466,18 @@ const MyPensionAccount: React.FC<MyPensionAccountProps> = ({ navigation }) => {
                     <View className="items-center">
                       <Text className="text-xl font-bold text-black">
                         {remaining.months}{" "}
-                        {remaining.months === 1 ? "Month" : "Months"}
+                        {remaining.months === 1
+                          ? t("MyPensionAccount.Month")
+                          : t("MyPensionAccount.Months")}
                       </Text>
                     </View>
                   )}
                   <View className="items-center">
                     <Text className="text-xl font-bold text-black">
-                      {remaining.days} {remaining.days === 1 ? "Day" : "Days"}
+                      {remaining.days}{" "}
+                      {remaining.days === 1
+                        ? t("MyPensionAccount.Day")
+                        : t("MyPensionAccount.Days")}
                     </Text>
                   </View>
                 </View>

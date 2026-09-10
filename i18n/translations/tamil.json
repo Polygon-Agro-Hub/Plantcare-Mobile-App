@@ -1275,7 +1275,8 @@
     "Eg10B": "E.g: 10/B",
     "LandsPlotNumber": "Land's Plot Number",
     "LandsStreetName": "Land's Street Name",
-    "LandsCity": "Land's City"
+    "LandsCity": "Land's City",
+    "Kg": "கிலோ"
   },
   "RequestInspectionForm": {
     "RequestInspection": "Request Inspection",
@@ -1446,7 +1447,22 @@
     "LoadingStatus": "Loading status..."
   },
   "MyPensionAccount": {
-    "GoViPension": "GoViPension"
+    "GoViPension": "GoViPension",
+    "TotalPensionValue": "மொத்த ஓய்வூதிய மதிப்பு",
+    "YouWillGetYourPensionIn": "உங்கள் ஓய்வூதியம் கிடைக்க இன்னும்...",
+    "Year": "வருடம்",
+    "Years": "வருடங்கள்",
+    "Month": "மாதம்",
+    "Months": "மாதங்கள்",
+    "Day": "நாள்",
+    "Days": "நாட்கள்",
+    "LoadingPensionData": "ஓய்வூதியத் தரவு ஏற்றப்படுகிறது...",
+    "Currency": "ரூ.",
+    "NotApproved": "அங்கீகரிக்கப்படவில்லை",
+    "PensionRequestNotApproved": "உங்கள் ஓய்வூதியக் கோரிக்கை இன்னும் அங்கீகரிக்கப்படவில்லை. உங்கள் நிலையைச் சரிபார்க்கவும்.",
+    "NoPensionFound": "ஓய்வூதியம் எதுவும் கிடைக்கவில்லை",
+    "NoApprovedPensionAccount": "உங்களிடம் இன்னும் அங்கீகரிக்கப்பட்ட ஓய்வூதியக் கணக்கு இல்லை.",
+    "FailedToFetchPensionData": "ஓய்வூதியத் தரவைப் பெறுவதில் தோல்வி. மீண்டும் முயற்சிக்கவும்."
   },
   "Calculator": {
     "Calculator": "Calculator",
