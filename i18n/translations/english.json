@@ -26,7 +26,9 @@
     "LastName": "Last Name",
     "NICNumber": "NIC Number",
     "PhoneNumber": "Phone Number",
-    "MobileNumber": "Mobile Number"
+    "MobileNumber": "Mobile Number",
+    "LastNameRequired": "Last Name is required.",
+    "FirstNameRequired": "First Name is required."
   },
   "District": {
     "Colombo": "Colombo",
@@ -89,7 +91,7 @@
     "TheNICNumberYouEnteredIsAlreadyRegisteredPleaseCheckYourDetailsOrLogIn": "The NIC number you entered is already registered, please check your details or log in.",
     "BothThePhoneNumberAndNICNumberEnteredAreAlreadyRegisteredPleaseLogInInstead": "Both the phone number and NIC number entered are already registered. Please log in instead.",
     "ThePhoneNumberYouEnteredIsAlreadyRegisteredPleaseUseADifferentNumberOrLogIn": "The phone number you entered is already registered. Please use a different number or log in",
-    "NoCountryFound":"No country found"
+    "NoCountryFound": "No country found"
   },
   "SignIn": {
     "SignIn": "Sign in",
@@ -569,7 +571,9 @@
     "PRO": "PRO",
     "ID": "ID",
     "StaffMemberHasBeenUpdatedSuccessfully": "Staff member has been updated successfully",
-    "CompletionRemovedSuccessfully": "Completion removed successfully"
+    "CompletionRemovedSuccessfully": "Completion removed successfully",
+    "PleaseEnterAtLeastOneExtentValue": "Please enter at least one extent value",
+    "NotAllowedToBeEmpty": "is not allowed to be empty"
   },
   "SelectCrop": {
     "Description": "Description",
@@ -675,7 +679,8 @@
     "ProcessingFee": "Processing Fee",
     "FullTotal": "Full Total",
     "SecureInfo": "Your payment information is secure and encrypted.",
-    "ContinueToPayment": "Continue to Payment"
+    "ContinueToPayment": "Continue to Payment",
+    "Rs": "Rs."
   },
   "AddressDetails": {
     "BuildingHouseNo": "Building / House No.",
@@ -683,7 +688,9 @@
     "StreetName": "Street Name",
     "EnterStreetName": "Enter Street Name",
     "City": "City",
-    "EnterCityName": "Enter City Name"
+    "EnterCityName": "Enter City Name",
+    "EnterFirstName": "Enter First Name",
+    "EnterLastName": "Enter Last Name"
   },
   "Notification": {
     "CropTaskUpdate": "Crop Task Update!",
@@ -763,7 +770,8 @@
     "CertificateIDIsMissing": "Certificate ID is missing",
     "PleaseFillAllPaymentDetails": "Please fill all payment details",
     "PleaseEnterAValidCardExpiryDate": "Please enter a valid card expiry date (MM/YY)",
-    "NoCertificatesAvailableForCropsAtTheMoment": "No certificates available for crops at the moment"
+    "NoCertificatesAvailableForCropsAtTheMoment": "No certificates available for crops at the moment",
+    "NoCertificatesAvailable": "No certificates available"
   },
   "ProjectStatus": {
     "ReceivedTotalInvestment": "Received Total Investment",
@@ -774,7 +782,8 @@
     "TotalInvestment": "Total Investment",
     "Needed": "Needed",
     "PendingBalance": "Pending Balance",
-    "ToReceive": "to Receive"
+    "ToReceive": "to Receive",
+    "NoInvestmentTransactionsFound": "No investment transactions found"
   },
   "CurrentAssets": {
     "MyAssets": "My Assets",
@@ -1131,9 +1140,9 @@
     "TractorMountedSpray": "Tractor Mounted Sprayer",
     "PermitFeeAnnuallyLKR": "Permit Fee Annually (LKR)",
     "WarrantyExpireDateMustBeInTheFuture": "Warranty expire date must be in the future.",
-    "NoAssetTypeFound":"No asset type found",
-    "NoBrandFound":"No brand found",
-    "NoTypeFound":"No type found"
+    "NoAssetTypeFound": "No asset type found",
+    "NoBrandFound": "No brand found",
+    "NoTypeFound": "No type found"
   },
   "ImageViewerModal": {
     "UploadedBy": "Uploaded By :",
@@ -1144,6 +1153,7 @@
     "Owner": "Owner"
   },
   "PublicForum": {
+    "You": "You",
     "StartANewDiscussion": "Start a new discussion",
     "LoadingComments": "Loading comments...",
     "Replies": "replies",
@@ -1258,7 +1268,8 @@
     "Eg10B": "E.g: 10/B",
     "LandsPlotNumber": "Land's Plot Number",
     "LandsStreetName": "Land's Street Name",
-    "LandsCity": "Land's City"
+    "LandsCity": "Land's City",
+    "Kg": "kg"
   },
   "RequestInspectionForm": {
     "RequestInspection": "Request Inspection",
@@ -1616,5 +1627,51 @@
     "My Orders": "My Orders",
     "All": "All",
     "No Previous Orders": "No Previous Orders"
+  },
+  "AddFixedAsset": {
+    "DuplicateName": "Duplicate Name",
+    "AssetAlreadyExists": "A {{assetType}} asset with the name \"{{name}}\" already exists.",
+    "Land": "Land",
+    "Building": "Building"
+  },
+  "Calendar": {
+    "Months": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ],
+    "MonthsShort": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ],
+    "Days": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "DaysShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
   }
 }

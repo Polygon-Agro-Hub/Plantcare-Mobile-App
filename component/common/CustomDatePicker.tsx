@@ -9,6 +9,7 @@ import {
   Platform,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 interface CustomDatePickerProps {
   visible: boolean;
@@ -37,6 +38,10 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
     const d = new Date();
     return new Date(d.getFullYear(), d.getMonth(), d.getDate());
   }, []);
+
+  const { t, i18n } = useTranslation();
+  const monthNames = t("Calendar.Months", { returnObjects: true }) as string[];
+  const dayNames = t("Calendar.DaysShort", { returnObjects: true }) as string[];
 
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
@@ -82,12 +87,9 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
     }
   }, [visible, value, today, minimumDate, maximumDate]);
 
-  const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-  ];
 
-  const daysOfWeek = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+
+
 
   const daysGrid = useMemo(() => {
     const startOfMonth = new Date(currentYear, currentMonth, 1);
@@ -134,7 +136,7 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
 
   const isDayDisabled = (date: Date | null): boolean => {
     if (!date) return true;
-    
+
     // Normalize compared date to midnight local time
     const compareTime = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
 
@@ -188,7 +190,7 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
 
             {/* Weekdays Row */}
             <View style={styles.weekdaysRow}>
-              {daysOfWeek.map((day, idx) => (
+              {dayNames.map((day, idx) => (
                 <Text key={idx} style={styles.weekdayText}>
                   {day}
                 </Text>

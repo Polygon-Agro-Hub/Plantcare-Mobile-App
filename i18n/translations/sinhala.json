@@ -26,7 +26,9 @@
     "LastName": "අවසන් නම",
     "NICNumber": "ජාතික හැඳුනුම්පත් අංකය",
     "PhoneNumber": "දුරකථන අංකය",
-    "MobileNumber": "ජංගම දුරකථන අංකය"
+    "MobileNumber": "ජංගම දුරකථන අංකය",
+    "LastNameRequired": "අවසන් නම අවශ්‍ය වේ.",
+    "FirstNameRequired": "මුල් නම අවශ්‍ය වේ."
   },
   "District": {
     "Colombo": "කොළඹ",
@@ -89,7 +91,7 @@
     "TheNICNumberYouEnteredIsAlreadyRegisteredPleaseCheckYourDetailsOrLogIn": "ඔබ ඇතුළත් කළ ජාතික හැඳුනුම්පත් අංකය දැනටමත් ලියාපදිංචි කර ඇත, කරුණාකර ඔබගේ විස්තර පරීක්ෂා කරන්න හෝ පුරන්න.",
     "BothThePhoneNumberAndNICNumberEnteredAreAlreadyRegisteredPleaseLogInInstead": "ඔබ ඇතුළත් කළ දුරකථන අංකය සහ ජාතික හැඳුනුම්පත් අංකය දෙකම දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර ඒ වෙනුවට පුරන්න.",
     "ThePhoneNumberYouEnteredIsAlreadyRegisteredPleaseUseADifferentNumberOrLogIn": "ඔබ ඇතුළත් කළ දුරකථන අංකය දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් අංකයක් භාවිතා කරන්න හෝ පුරන්න",
-    "NoCountryFound":"රටක් හමු නොවීය."
+    "NoCountryFound": "රටක් හමු නොවීය."
   },
   "SignIn": {
     "SignIn": "පුරන්න",
@@ -292,7 +294,7 @@
     "PleaseEnterTheOTPCodeSentTo": "කරුණාකර මෙයට එවන ලද OTP කේතය ඇතුළත් කරන්න",
     "IDidntReceiveTheCode": "මට කේතය ලැබුණේ නැත!",
     "ResendIt": "එය නැවත එවන්න",
-    "Resendagain": "නැවත එවන්න!",
+    "ResendAgain": "නැවත එවන්න!",
     "Verify": "සත්‍යාපනය කරන්න",
     "TheOTPYouEnteredIsInvalidPleaseTryAgain": "ඔබ ඇතුළත් කළ OTP වලංගු නොවේ. කරුණාකර නැවත උත්සාහ කරන්න",
     "PleaseEnterTheFullOTPCode": "කරුණාකර සම්පූර්ණ OTP කේතය ඇතුළත් කරන්න",
@@ -413,13 +415,13 @@
     "OtherStaff": "වෙනත් කාර්ය මණ්ඩලය",
     "Members": "සාමාජිකයන්",
     "FarmAssets": "ගොවිපල වත්කම්",
-    "AreYouSureYouWantToDeleteThisFarm": "ඔබට මෙම ගොවිපල මකා දැමීමට අවශ්‍ය බව ඔබට විශ්වාසද?",
-    "AreYouSureYouWantToDeleteThisMember": "ඔබට මෙම සාමාජිකයා මකා දැමීමට අවශ්‍ය බව ඔබට විශ්වාසද?",
+    "AreYouSureYouWantToDeleteThisFarm": "ඔබට මෙම ගොවිපල ඉවත් කරන්නට අවශ්‍ය බව ඔබට විශ්වාසද?",
+    "AreYouSureYouWantToDeleteThisMember": "ඔබට මෙම සාමාජිකයා ඉවත් කරන්නට අවශ්‍ය බව ඔබට විශ්වාසද?",
     "DeletingThisFarmWillPermanentlyRemoveAllAssociatedManagersCropCalendarsAndAssets": "මෙම ගොවිපල මකා දැමීමෙන් සියලුම ආශ්‍රිත කළමනාකරුවන්, භෝග දින දර්ශන සහ වත්කම් ස්ථිරවම ඉවත් කරනු ඇත.",
     "DeletingThisMemberWillPermanentlyRemoveAllDataRelatedToThatMember": "මෙම සාමාජිකයා මකා දැමීමෙන් එම සාමාජිකයාට අදාළ සියලුම දත්ත ස්ථිරවම ඉවත් කරනු ඇත.",
     "ThisActionCannotBeUndone": "මෙම ක්‍රියාව ආපසු හැරවිය නොහැක.",
-    "DeleteMember": "සාමාජිකයා මකන්න",
-    "YesDelete": "ඔව්, මකන්න",
+    "DeleteMember": "සාමාජිකයා ඉවත් කරන්න",
+    "YesDelete": "ඔව්, ඉවත් කරන්න",
     "Edit": "සංස්කරණය කරන්න",
     "Farm": "ගොවිපල",
     "NoStaffMembersFound": "කාර්ය මණ්ඩල සාමාජිකයින් හමු නොවීය",
@@ -447,8 +449,8 @@
     "EnterNumberOfStaff": "කාර්ය මණ්ඩල සංඛ්‍යාව ඇතුළත් කරන්න",
     "Updating...": "යාවත්කාලීන කරමින්...",
     "SelectDistrict": "දිස්ත්‍රික්කය තෝරන්න",
-    "FarmDeletedSuccessfully": "ගොවිපල සාර්ථකව මකා දමන ලදී",
-    "FarmMemberDeletedSuccessfully": "ගොවිපල සාමාජිකයා සාර්ථකව මකා දමන ලදී",
+    "FarmDeletedSuccessfully": "ගොවිපල සාර්ථකව ඉවත් කරන ලදී",
+    "FarmMemberDeletedSuccessfully": "ගොවිපල සාමාජිකයා සාර්ථකව ඉවත් කරන ලදී",
     "FarmUpdatedSuccessfully": "ගොවිපල සාර්ථකව යාවත්කාලීන කරන ලදී",
     "FarmBlocked": "ගොවිපල අවහිර කර ඇත",
     "ThisFarmIsBlockedDueToExpiredProMembershipPleaseRenewToAccessFarmDetails": "කල් ඉකුත් වූ Pro සාමාජිකත්වය හේතුවෙන් මෙම ගොවිපල අවහිර කර ඇත. ගොවිපල විස්තර වෙත ප්‍රවේශ වීමට කරුණාකර අලුත් කරන්න.",
@@ -464,6 +466,7 @@
     "PleaseSelectARole": "කරුණාකර තනතුරක් තෝරන්න",
     "LoadingFarmDetails...": "ගොවිපල විස්තර පූරණය කරමින්...",
     "EnterFirstName": "මුල් නම ඇතුළත් කරන්න",
+    "EnterLastName": "අවසන් නම ඇතුළත් කරන්න",
     "NIC": "ජාතික හැඳුනුම්පත් අංකය",
     "EnterNIC": "ජාතික හැඳුනුම්පත් අංකය ඇතුළත් කරන්න",
     "Role": "තනතුර",
@@ -471,7 +474,6 @@
     "SaveFarm": "ගොවිපල සුරකින්න",
     "Saving...": "සුරකිමින්...",
     "PhoneNumber": "දුරකථන අංකය",
-    "EnterLastName": "අවසන් නම ඇතුළත් කරන්න",
     "PleaseEnterAValidSriLankanNIC": "කරුණාකර වලංගු ශ්‍රී ලාංකික ජාතික හැඳුනුම්පත් අංකයක් ඇතුළත් කරන්න",
     "FarmSavedSuccessfully": "ගොවිපල සාර්ථකව සුරකින ලදී!",
     "Manager": "කළමනාකරු",
@@ -479,7 +481,7 @@
     "Worker": "කම්කරු",
     "Owner": "හිමිකරු",
     "FarmManager": "ගොවිපල කළමනාකරු",
-    "FarmSupervisor": "ගොවිපල අධීක්ෂක",
+    "FarmSupervisor": "අධීක්ෂක",
     "FarmLaborer": "ගොවිපල කම්කරු",
     "FarmOwner": "ගොවිපල හිමිකරු",
     "CreateYourFirstFarmForFree": "ඔබගේ පළමු ගොවිපල නොමිලේ සාදන්න!",
@@ -510,7 +512,7 @@
     "StaffMemberIDIsMissing": "කාර්ය මණ්ඩල සාමාජික හැඳුනුම්පත මග හැරී ඇත",
     "NoAuthenticationTokenFound": "සත්‍යාපන ටෝකනයක් හමු නොවීය",
     "FailedToFFetchStaffMemberData": "කාර්ය මණ්ඩල සාමාජික දත්ත ලබා ගැනීමට අසමත් විය",
-    "EditSelectedRoleDetails": "{{selectedRole}} විස්තර සංස්කරණය කරන්න",
+    "EditSelectedRoleDetails": "{{selectedRole}}ගේ විස්තර සංස්කරණය",
     "FailedToDeleteFarm": "ගොවිපල මැකීමට අසමත් විය",
     "FailedToDeleteStaffMember": "කාර්ය මණ්ඩල සාමාජිකයා මැකීමට අසමත් විය",
     "Crops": "භෝග",
@@ -546,7 +548,7 @@
     "Total": "එකතුව",
     "YouHaveSuccessfullyAppliedForYourCertificate": "ඔබ ඔබගේ සහතිකය සඳහා සාර්ථකව අයදුම් කර ඇත!",
     "AllCompleted": "සියල්ල සම්පූර්ණයි",
-    "Pending": "විකල්ප",
+    "Pending": "විසඳීමට ඇති",
     "LoadingCertificateTasks...": "සහතික කාර්යයන් පූරණය කරමින්...",
     "UploadedByYou": "උඩුගත කළේ : ඔබ",
     "ClickAPhoto": "ඡායාරූපයක් ගන්න",
@@ -569,7 +571,9 @@
     "PRO": "PRO",
     "ID": "හැඳුනුම්පත",
     "StaffMemberHasBeenUpdatedSuccessfully": "කාර්ය මණ්ඩල සාමාජිකයා සාර්ථකව යාවත්කාලීන කර ඇත.",
-    "CompletionRemovedSuccessfully": "සම්පූර්ණ කිරීම සාර්ථකව ඉවත් කරන ලදී"
+    "CompletionRemovedSuccessfully": "සම්පූර්ණ කිරීම සාර්ථකව ඉවත් කරන ලදී",
+    "PleaseEnterAtLeastOneExtentValue": "කරුණාකර අවම වශයෙන් එක් විශාලත්ව අගයක් ඇතුළත් කරන්න",
+    "NotAllowedToBeEmpty": "හිස්ව තැබිය නොහැක"
   },
   "SelectCrop": {
     "Description": "විස්තරය",
@@ -650,7 +654,7 @@
     "NoQuestionnaireItemsAvailableForThisCertificate": "මෙම සහතිකය සඳහා ප්‍රශ්නාවලි අයිතම නොමැත",
     "CalendarTasks": "දින දර්ශන කාර්යයන්",
     "PleaseCompleteTheCertificationTasksToUnlockTheCalendarTasks": "දින දර්ශන කාර්යයන් අගුළු ඇරීමට කරුණාකර සහතික කාර්යයන් සම්පූර්ණ කරන්න",
-    "Pending": "විකල්ප",
+    "Pending": "විසඳීමට ඇති",
     "AllCompleted": "සියල්ල සම්පූර්ණයි",
     "LoadingCertificate": "සහතිකය පූරණය කරමින්...",
     "GAPCertification": "හොඳ කෘෂිකාර්මික පිළිවෙත් සහතිකය",
@@ -675,7 +679,8 @@
     "ProcessingFee": "සැකසුම් ගාස්තුව",
     "FullTotal": "සම්පූර්ණ එකතුව",
     "SecureInfo": "ඔබගේ ගෙවීම් තොරතුරු සුරක්ෂිත මෙන්ම සංකේතනය කර ඇත.",
-    "ContinueToPayment": "ගෙවීමට ඉදිරියට යන්න"
+    "ContinueToPayment": "ගෙවීමට ඉදිරියට යන්න",
+    "Rs": "රු."
   },
   "AddressDetails": {
     "BuildingHouseNo": "ගොඩනැගිල්ල / නිවස අංකය",
@@ -763,7 +768,8 @@
     "CertificateIDIsMissing": "සහතික හැඳුනුම්පත මග හැරී ඇත",
     "PleaseFillAllPaymentDetails": "කරුණාකර සියලුම ගෙවීම් විස්තර පුරවන්න",
     "PleaseEnterAValidCardExpiryDate": "කරුණාකර වලංගු කාඩ් කල් ඉකුත්වන දිනයක් ඇතුළත් කරන්න (MM/YY)",
-    "NoCertificatesAvailableForCropsAtTheMoment": "මේ මොහොතේ භෝග සඳහා සහතික නොමැත"
+    "NoCertificatesAvailableForCropsAtTheMoment": "මේ මොහොතේ භෝග සඳහා සහතික නොමැත",
+    "NoCertificatesAvailable": "මේ මොහොතේ සහතික නොමැත"
   },
   "ProjectStatus": {
     "ReceivedTotalInvestment": "ලැබුණු මුළු ආයෝජනය",
@@ -774,7 +780,8 @@
     "TotalInvestment": "මුළු ආයෝජනය",
     "Needed": "අවශ්‍යයි",
     "PendingBalance": "විකල්ප ශේෂය",
-    "ToReceive": "ලැබීමට"
+    "ToReceive": "ලැබීමට",
+    "NoInvestmentTransactionsFound": "ගනුදෙනු කිසිවක් හමු නොවීය"
   },
   "CurrentAssets": {
     "MyAssets": "මගේ වත්කම්",
@@ -1131,9 +1138,9 @@
     "TractorMountedSpray": "ට්‍රැක්ටරයට සම්බන්ධ ඉසින යන්ත්‍රය",
     "PermitFeeAnnuallyLKR": "වාර්ෂික බලපත්‍ර ගාස්තුව (රු.)",
     "WarrantyExpireDateMustBeInTheFuture": "වගකීම් කල් ඉකුත්වීමේ දිනය අනාගත දිනයක් විය යුතුය.",
-    "NoAssetTypeFound":"වත්කම් වර්ගයක් හමු නොවීය",
-    "NoBrandFound":"වෙළඳ නාමයක් හමු නොවීය",
-    "NoTypeFound":"වර්ගයක් හමු නොවීය."
+    "NoAssetTypeFound": "වත්කම් වර්ගයක් හමු නොවීය",
+    "NoBrandFound": "වෙළඳ නාමයක් හමු නොවීය",
+    "NoTypeFound": "වර්ගයක් හමු නොවීය."
   },
   "ImageViewerModal": {
     "UploadedBy": "උඩුගත කළේ :",
@@ -1144,6 +1151,7 @@
     "Owner": "හිමිකරු"
   },
   "PublicForum": {
+    "You": "ඔබ",
     "StartANewDiscussion": "නව සාකච්ඡාවක් ආරම්භ කරන්න",
     "LoadingComments": "අදහස් පූරණය වෙමින්...",
     "Reply": "පිළිතුර",
@@ -1258,7 +1266,8 @@
     "Eg10B": "උදා: 10/B",
     "LandsPlotNumber": "ඉඩමේ භූමි අංකය",
     "LandsStreetName": "ඉඩමේ වීදි නම",
-    "LandsCity": "ඉඩමේ නගරය"
+    "LandsCity": "ඉඩමේ නගරය",
+    "Kg": "කිලෝග්‍රෑම්"
   },
   "RequestInspectionForm": {
     "RequestInspection": "පරීක්ෂාවට ඉල්ලන්න",
@@ -1616,5 +1625,51 @@
     "My Orders": "මගේ ඇණවුම්",
     "All": "සියල්ල",
     "No Previous Orders": "පෙර ඇණවුම් නැත"
+  },
+  "AddFixedAsset": {
+    "DuplicateName": "නම දැනටමත් පවතී",
+    "AssetAlreadyExists": "\"{{name}}\" නම සහිත {{assetType}} වත්කම දැනටමත් පවතී.",
+    "Land": "ඉඩම්",
+    "Building": "ගොඩනැගිලි"
+  },
+  "Calendar": {
+    "Months": [
+      "ජනවාරි",
+      "පෙබරවාරි",
+      "මාර්තු",
+      "අප්‍රේල්",
+      "මැයි",
+      "ජූනි",
+      "ජූලි",
+      "අගෝස්තු",
+      "සැප්තැම්බර්",
+      "ඔක්තෝබර්",
+      "නොවැම්බර්",
+      "දෙසැම්බර්"
+    ],
+    "MonthsShort": [
+      "ජන",
+      "පෙබ",
+      "මාර්",
+      "අප්‍රේ",
+      "මැයි",
+      "ජූනි",
+      "ජූලි",
+      "අගෝ",
+      "සැප්",
+      "ඔක්",
+      "නොවැ",
+      "දෙසැ"
+    ],
+    "Days": [
+      "ඉරිදා",
+      "සඳුදා",
+      "අඟහරුවාදා",
+      "බදාදා",
+      "බ්‍රහස්පතින්දා",
+      "සිකුරාදා",
+      "සෙනසුරාදා"
+    ],
+    "DaysShort": ["ඉරි", "සඳු", "අඟ", "බදා", "බ්‍ර", "සිකු", "සෙන"]
   }
 }

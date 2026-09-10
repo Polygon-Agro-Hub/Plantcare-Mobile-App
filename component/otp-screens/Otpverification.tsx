@@ -461,7 +461,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
                   className="mt-2 text-lg text-center underline"
                   style={{
                     color: disabledResend ? "#9CA3AF" : "#0085FF",
-                    fontSize: 16,
+                    fontSize: 14,
                   }}
                 >
                   {timer > 0

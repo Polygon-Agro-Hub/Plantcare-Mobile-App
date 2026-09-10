@@ -417,7 +417,7 @@ const RequestLetter: React.FC<RequestLetterProps> = ({ navigation, route }) => {
                     {t("Govicapital.ExpectedYield")}:
                   </Text>
                   <Text className="text-[#070707] mt-1 font-semibold">
-                    {expectedYield || 0} kg
+                    {expectedYield || 0} {t("Govicapital.Kg")}
                   </Text>
                 </View>
               </View>
