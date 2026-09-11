@@ -8,7 +8,7 @@
     "userInterfaceStyle": "automatic",
     "android": {
       "package": "com.polygonagro.GoviCare",
-      "versionCode": 20,
+      "versionCode": 21,
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "resize",
@@ -122,7 +122,7 @@
     ],
     "extra": {
       "eas": {
-        "projectId": ""
+        "projectId": "4c217452-9ea5-4b96-96db-65e7c802790d"
       }
     }
   }
