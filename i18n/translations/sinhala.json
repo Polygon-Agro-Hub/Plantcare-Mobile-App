@@ -21,7 +21,8 @@
     "PleaseTurnOnMobileDataOrWiFiToContinue": "කරුණාකර දිගටම කරගෙන යාමට ජංගම දත්ත හෝ Wi-Fi සක්‍රිය කරන්න.",
     "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "මෙම උපාංගයෙන් ඉල්ලීම් රාශියක් සිදු කර ඇත, කරුණාකර විනාඩි 30 කින් නැවත උත්සාහ කරන්න.",
     "Done": "අවසන්",
-    "NoSearchResultFound": "සෙවුම් ප්‍රතිඵල කිසිවක් හමු නොවීය"
+    "NoSearchResultFound": "සෙවුම් ප්‍රතිඵල කිසිවක් හමු නොවීය",
+    "NoResultsFoundForYourSearch": "ඔබගේ සෙවුමට ගැලපෙන ප්‍රතිඵල කිසිවක් හමු නොවීය"
   },
   "Inputs": {
     "FirstName": "මුල් නම",
@@ -102,10 +103,10 @@
     "CreateAccount": "ගිණුමක් සාදන්න",
     "NoSpacesAllowed": "අවකාශයන්ට අවසර නැත",
     "OnlyLettersAllowed": "අකුරු පමණක් අවසර දෙනු ලැබේ",
-    "CanNotStartWithSpace": "අවකාශයකින් ආරම්භ කළ නොහැක",
+    "CanNotStartWithSpace": "හිස්තැනකින් ආරම්භ කළ නොහැක",
     "AlreadyHaveAnAccount": "දැනටමත් ගිණුමක් තිබේද?",
     "PleaseEnterAValidNICNumber": "කරුණාකර වලංගු ජාතික හැඳුනුම්පත් අංකයක් ඇතුළත් කරන්න",
-    "UserNameMustStartWithALetterAndContainNoSpaces": "පරිශීලක නාමය අකුරකින් ආරම්භ විය යුතු අතර අවකාශයන් අඩංගු නොවිය යුතුය",
+    "UserNameMustStartWithALetterAndContainNoSpaces": "පරිශීලක නාමය අකුරකින් ආරම්භ විය යුතු අතර ආරම්භයේ හිස්තැන් අඩංගු නොවිය යුතුය",
     "FailedToSendOTPPleaseCheckYourNumberAndTryAgain": "OTP එවීමට අසමත් විය. කරුණාකර ඔබගේ අංකය පරීක්ෂා කර නැවත උත්සාහ කරන්න.",
     "PleaseEnterAValid9DigitMobileNumberExcludeTheLeadingZero": "කරුණාකර වලංගු ඉලක්කම් 9 ක ජංගම දුරකථන අංකයක් ඇතුළත් කරන්න (ඉදිරියෙන් ඇති ශුන්‍යය බැහැර කරන්න).",
     "TheNICNumberYouEnteredIsAlreadyRegisteredPleaseCheckYourDetailsOrLogIn": "ඔබ ඇතුළත් කළ ජාතික හැඳුනුම්පත් අංකය දැනටමත් ලියාපදිංචි කර ඇත, කරුණාකර ඔබගේ විස්තර පරීක්ෂා කරන්න හෝ පුරන්න.",

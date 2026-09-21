@@ -299,12 +299,21 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
   };
 
   const handleFirstNameChange = (text: string) => {
+    if (text.startsWith(" ")) {
+      setAccountHolderName(text);
+      setHoldernameNameError(
+        t("SignUp.UserNameMustStartWithALetterAndContainNoSpaces"),
+      );
+      return;
+    }
+
     const trimmedText = text.replace(/^\s+/, "");
 
     if (validateName(trimmedText) || trimmedText === "") {
       setAccountHolderName(trimmedText);
       setHoldernameNameError("");
     } else {
+      setAccountHolderName(text);
       setHoldernameNameError(
         t("SignUp.UserNameMustStartWithALetterAndContainNoSpaces"),
       );

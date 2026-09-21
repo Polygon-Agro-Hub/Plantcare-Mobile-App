@@ -21,7 +21,8 @@
     "PleaseTurnOnMobileDataOrWiFiToContinue": "Please Turn On Mobile Data or Wi-Fi to Continue.",
     "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "Too many requests from this device, please try again in 30 minutes.",
     "Done": "Done",
-    "NoSearchResultFound": "No Search Result Found"
+    "NoSearchResultFound": "No Search Result Found",
+    "NoResultsFoundForYourSearch": "No results found for your search"
   },
   "Inputs": {
     "FirstName": "First Name",
