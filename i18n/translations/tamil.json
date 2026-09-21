@@ -280,7 +280,8 @@
     "PleaseCheckYourInternetConnectionAndTryAgain": "தயவுசெய்து உங்கள் இணைய இணைப்பைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.",
     "LocationNotFound": "இருப்பிடம் கிடைக்கவில்லை.",
     "AnErrorOccurredWhileFetchingWeatherData": "வானிலைத் தரவைப் பெறும்போது பிழை ஏற்பட்டது.",
-    "UnableToFetchCurrentLocation": "தற்போதைய இருப்பிடத்தைப் பெற முடியவில்லை."
+    "UnableToFetchCurrentLocation": "தற்போதைய இருப்பிடத்தைப் பெற முடியவில்லை.",
+    "NoResultsFound":"உங்கள் தேடலுக்கு எந்த முடிவுகளும் கிடைக்கவில்லை."
   },
   "FiveDayForcast": {
     "5DaysForecast": "5 நாள் முன்னறிவிப்பு",

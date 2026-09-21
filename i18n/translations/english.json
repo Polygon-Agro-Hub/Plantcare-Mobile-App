@@ -154,15 +154,6 @@
     "UnableToOpenTheDialerPleaseTryAgain": "Unable to open the dialer. Please try again.",
     "NeedGoViCareHelpTapTheCallButtonForInstantSupport": "Need GoViCare help? Tap the call button for instant support."
   },
-  "EditProfile": {
-    "EditProfile": "Edit Profile",
-    "ViewProfile": "View Profile",
-    "FirstNameAndLastNameCannotBeEmpty": "First name and last name cannot be empty.",
-    "YourProfileHasBeenUpdatedSuccessfully": "Your profile has been updated successfully!",
-    "FailedToUpdateProfileTryAgainLater": "Failed to update profile. Try again later.",
-    "PermissionDenied": "Permission Denied",
-    "PleaseAllowAccessToYourGalleryToProceed": "Please allow access to your gallery to proceed!"
-  },
   "PrivacyPolicy": {
     "PrivacyPolicy": "Privacy Policy",
     "By": "By",
@@ -295,7 +286,8 @@
     "PleaseCheckYourInternetConnectionAndTryAgain": "Please check your internet connection and try again.",
     "LocationNotFound": "Location not found.",
     "AnErrorOccurredWhileFetchingWeatherData": "An error occurred while fetching weather data.",
-    "UnableToFetchCurrentLocation": "Unable to fetch current location."
+    "UnableToFetchCurrentLocation": "Unable to fetch current location.",
+    "NoResultsFound":"No results found for your search"
   },
   "FiveDayForcast": {
     "5DaysForecast": "5 Days Forecast",
