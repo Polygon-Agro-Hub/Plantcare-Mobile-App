@@ -27,6 +27,7 @@ import { setUserData, setUserPersonalData } from "../../store/userSlice";
 import { useSelector } from "react-redux";
 import { selectUserPersonal } from "@/store/userSlice";
 import axios from "axios";
+import LoadingPage from "../common/LoadingPage";
 
 type DashboardNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -229,15 +230,15 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   };
 
   const actionItems = [
-    {
-      image: require("../../assets/images/dashboard/assets.webp"),
-      label: t("Dashboard.MyAssets"),
-      action: () => {
-        navigation.navigate("CurrentAssert");
-        dispatch(setAssetData({ farmName: "My Assets", farmId: null }));
-      },
-      bgColor: "#FFFFFF",
-    },
+    // {
+    //   image: require("../../assets/images/dashboard/assets.webp"),
+    //   label: t("Dashboard.MyAssets"),
+    //   action: () => {
+    //     navigation.navigate("CurrentAssert");
+    //     dispatch(setAssetData({ farmName: "My Assets", farmId: null }));
+    //   },
+    //   bgColor: "#FFFFFF",
+    // },
     {
       image: require("../../assets/images/dashboard/weather.webp"),
       label: t("Dashboard.Weather"),
@@ -250,42 +251,42 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
       action: () => navigation.navigate("TransactionHistory" as any),
       bgColor: "#FFFFFF",
     },
-    {
-      image: require("../../assets/images/dashboard/govi-shop.webp"),
-      label: t("Dashboard.GoviShop"),
-      action: () => navigation.navigate("GoviShopLoadingScreen" as any),
-      bgColor: "#FFFFFF",
-    },
-    {
-      image: require("../../assets/images/farm-cal/menu/farmcal.webp"),
-      label: t("TransactionList.FarmCal"),
-      action: () => navigation.navigate("FarmCalMenu" as any),
-      bgColor: "#FFFFFF",
-    },
-    {
-      image: require("../../assets/images/dashboard/surveybadge.webp"),
-      label: t("Dashboard.Survey"),
-      action: () => navigation.navigate("RequestHistory"),
-      bgColor: "#FFFFFF",
-    },
-    {
-      image: require("../../assets/images/dashboard/govi-capital.webp"),
-      label: t("TransactionList.GoViCapital"),
-      action: () => navigation.navigate("GoViCapitalRequests" as any),
-      bgColor: "#FFFFFF",
-    },
-    {
-      image: require("../../assets/images/govi-pension/govi-pension.webp"),
-      label: t("TransactionList.GoViPension"),
-      action: handlePensionNavigation,
-      bgColor: "#FFFFFF",
-    },
-    {
-      image: require("../../assets/images/dashboard/soil-data.webp"),
-      label: t("Dashboard.SoilData"),
-      action: () => navigation.navigate("SoilGridsScreen" as any),
-      bgColor: "#FFFFFF",
-    },
+    // {
+    //   image: require("../../assets/images/dashboard/govi-shop.webp"),
+    //   label: t("Dashboard.GoviShop"),
+    //   action: () => navigation.navigate("GoviShopLoadingScreen" as any),
+    //   bgColor: "#FFFFFF",
+    // },
+    // {
+    //   image: require("../../assets/images/farm-cal/menu/farmcal.webp"),
+    //   label: t("TransactionList.FarmCal"),
+    //   action: () => navigation.navigate("FarmCalMenu" as any),
+    //   bgColor: "#FFFFFF",
+    // },
+    // {
+    //   image: require("../../assets/images/dashboard/surveybadge.webp"),
+    //   label: t("Dashboard.Survey"),
+    //   action: () => navigation.navigate("RequestHistory"),
+    //   bgColor: "#FFFFFF",
+    // },
+    // {
+    //   image: require("../../assets/images/dashboard/govi-capital.webp"),
+    //   label: t("TransactionList.GoViCapital"),
+    //   action: () => navigation.navigate("GoViCapitalRequests" as any),
+    //   bgColor: "#FFFFFF",
+    // },
+    // {
+    //   image: require("../../assets/images/govi-pension/govi-pension.webp"),
+    //   label: t("TransactionList.GoViPension"),
+    //   action: handlePensionNavigation,
+    //   bgColor: "#FFFFFF",
+    // },
+    // {
+    //   image: require("../../assets/images/dashboard/soil-data.webp"),
+    //   label: t("Dashboard.SoilData"),
+    //   action: () => navigation.navigate("SoilGridsScreen" as any),
+    //   bgColor: "#FFFFFF",
+    // },
   ];
 
   const chunkArray = (arr: any[], size: number) => {
@@ -299,7 +300,11 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   const actionRows = chunkArray(actionItems, 2);
 
   if (loading) {
-    return <DashboardSkeleton />;
+    return (
+      <View className="flex-1 bg-white justify-center">
+        <LoadingPage />
+      </View>
+    );
   }
 
   return (
@@ -376,7 +381,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         }
         showsVerticalScrollIndicator={false}
       >
-        <View style={{ marginLeft: 20, marginTop: 20 }}>
+        {/* <View style={{ marginLeft: 20, marginTop: 20 }}>
           <Text
             style={{
               fontSize: 15,
@@ -405,9 +410,9 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
           }}
         >
           <MarketPriceSlideShow language={language} />
-        </View>
+        </View> */}
 
-        <View style={{ marginLeft: 20 }}>
+        <View style={{ marginLeft: 20, marginTop: 20 }}>
           <Text
             style={{
               fontSize: 15,

@@ -59,6 +59,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
     require("../../assets/images/auth/profile.webp"),
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [phoneNumberError, setPhoneNumberError] = useState("");
   const [isMenuVisible, setMenuVisible] = useState(false);
@@ -161,6 +162,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
 
 
   const uploadImage = async (imageUri: string) => {
+    setIsUploadingPhoto(true);
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
@@ -245,6 +247,8 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
         t("Main.SomethingWentWrongPleaseTryAgainlater"),
         [{ text: t("Main.OK") }],
       );
+    } finally {
+      setIsUploadingPhoto(false);
     }
   };
 
@@ -462,11 +466,29 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                 <View style={{ width: 100, height: 100, position: "relative" }}>
                   <Image
                     source={profileImage}
-                    style={{ width: 100, height: 100, borderRadius: 50 }}
+                    style={{ width: 100, height: 100, borderRadius: 50, opacity: isUploadingPhoto ? 0.5 : 1 }}
                   />
+                  {isUploadingPhoto && (
+                    <View
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "rgba(0,0,0,0.35)",
+                        borderRadius: 50,
+                      }}
+                    >
+                      <ActivityIndicator size="small" color="#ffffff" />
+                    </View>
+                  )}
                   <TouchableOpacity
                     className="absolute bottom-0 right-0 p-2 bg-black rounded-full"
                     onPress={pickImage}
+                    disabled={isUploadingPhoto}
                     style={{
                       shadowColor: "#000",
                       shadowOffset: { width: 0, height: 2 },
@@ -495,7 +517,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       }
                       placeholderTextColor="#9CA3AF"
                       value={firstName}
-                      onChangeText={setFirstName}
+                      onChangeText={(text) => setFirstName(text.replace(/^\s+/, ""))}
                       maxLength={20}
                     />
                   </View>
@@ -512,7 +534,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       }
                       placeholderTextColor="#9CA3AF"
                       value={lastName}
-                      onChangeText={setLastName}
+                      onChangeText={(text) => setLastName(text.replace(/^\s+/, ""))}
                       maxLength={20}
                     />
                   </View>
@@ -572,7 +594,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       }
                       placeholderTextColor="#9CA3AF"
                       value={buidingname}
-                      onChangeText={setBuildingName}
+                      onChangeText={(text) => setBuildingName(text.replace(/^\s+/, ""))}
                     />
                   </View>
                 </View>
@@ -589,7 +611,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       }
                       placeholderTextColor="#9CA3AF"
                       value={streetname}
-                      onChangeText={setStreetName}
+                      onChangeText={(text) => setStreetName(text.replace(/^\s+/, ""))}
                     />
                   </View>
                 </View>
@@ -605,7 +627,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       }
                       placeholderTextColor="#9CA3AF"
                       value={city}
-                      onChangeText={setCity}
+                      onChangeText={(text) => setCity(text.replace(/^\s+/, ""))}
                     />
                   </View>
                 </View>

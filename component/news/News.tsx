@@ -66,6 +66,28 @@ const titleTagsStyles = {
   div: { textAlign: "center" as const },
   span: { textAlign: "center" as const },
   body: { textAlign: "center" as const },
+  u: { textDecorationLine: "underline" as const, textAlign: "center" as const },
+  ins: { textDecorationLine: "underline" as const, textAlign: "center" as const },
+  i: { fontStyle: "italic" as const, textAlign: "center" as const },
+  em: { fontStyle: "italic" as const, textAlign: "center" as const },
+  b: { fontWeight: "bold" as const, textAlign: "center" as const },
+  strong: { fontWeight: "bold" as const, textAlign: "center" as const },
+  s: { textDecorationLine: "line-through" as const, textAlign: "center" as const },
+  strike: { textDecorationLine: "line-through" as const, textAlign: "center" as const },
+  del: { textDecorationLine: "line-through" as const, textAlign: "center" as const },
+};
+
+const contentTagsStyles = {
+  u: { textDecorationLine: "underline" as const },
+  ins: { textDecorationLine: "underline" as const },
+  i: { fontStyle: "italic" as const },
+  em: { fontStyle: "italic" as const },
+  b: { fontWeight: "bold" as const },
+  strong: { fontWeight: "bold" as const },
+  s: { textDecorationLine: "line-through" as const },
+  strike: { textDecorationLine: "line-through" as const },
+  del: { textDecorationLine: "line-through" as const },
+  p: { marginVertical: 4 },
 };
 
 const News: React.FC<NewsProps> = ({ navigation, route }) => {
@@ -209,6 +231,7 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
               contentWidth={screenWidth}
               source={{ html: news.descriptionEnglish }}
               baseStyle={{ fontSize: 16, color: "#333", marginTop: 8 }}
+              tagsStyles={contentTagsStyles}
             />
           )}
           {language === "si" && news?.descriptionSinhala && (
@@ -216,6 +239,7 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
               contentWidth={screenWidth}
               source={{ html: news.descriptionSinhala }}
               baseStyle={{ fontSize: 16, color: "#333", marginTop: 8 }}
+              tagsStyles={contentTagsStyles}
             />
           )}
           {language === "ta" && news?.descriptionTamil && (
@@ -223,6 +247,7 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
               contentWidth={screenWidth}
               source={{ html: news.descriptionTamil }}
               baseStyle={{ fontSize: 16, color: "#333", marginTop: 8 }}
+              tagsStyles={contentTagsStyles}
             />
           )}
         </View>

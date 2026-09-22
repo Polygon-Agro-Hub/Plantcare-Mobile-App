@@ -714,15 +714,17 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
             .toLowerCase()
             .includes(searchText.trim().toLowerCase()),
       ).length === 0 && !loading ? (
-        <NoData
-          text={
-            searchText.trim() !== ""
-              ? t("PublicForum.NoResultsFoundForYourSearch") ||
-                "No results found for your search"
-              : t("PublicForum.NoDiscussionsAvailable") ||
-                "No discussions available"
-          }
-        />
+        <View className="flex-1 justify-center items-center">
+          <NoData
+            text={
+              searchText.trim() !== ""
+                ? t("PublicForum.NoResultsFoundForYourSearch") ||
+                  "No results found for your search"
+                : t("PublicForum.NoDiscussionsAvailable") ||
+                  "No discussions available"
+            }
+          />
+        </View>
       ) : (
         <FlatList
           showsVerticalScrollIndicator={false}

@@ -265,7 +265,7 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
       enabled
       style={{ flex: 1 }}
     >
@@ -277,7 +277,12 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
           onBackPress={() => navigation.navigate("PublicForum" as any)}
         />
 
-        <ScrollView contentContainerClassName="pb-24" className="px-6 py-4">
+        <ScrollView
+          contentContainerStyle={{ paddingBottom: 40 }}
+          className="px-6 py-4"
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
           <View className="mb-4">
             <Text className="text-base font-semibold">
               {t("PublicForum.Title")}
@@ -349,29 +354,28 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
             )}
           </View>
 
+          {/* Publish button */}
+          <View className="mt-8 mb-4">
+            <TouchableOpacity
+              disabled={heading.trim() === "" || message.trim() === "" || loading}
+              onPress={handleSubmit}
+              activeOpacity={0.8}
+              className={`w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 ${
+                heading.trim() === "" || message.trim() === "" || loading
+                  ? "bg-[#9CA3AF]"
+                  : "bg-[#353535]"
+              }`}
+            >
+              {loading ? (
+                <ActivityIndicator color="white" size="small" />
+              ) : (
+                <Text className="text-white font-semibold text-center text-lg">
+                  {t("PublicForum.Publish")}
+                </Text>
+              )}
+            </TouchableOpacity>
+          </View>
         </ScrollView>
-
-        {/* Publish button matching UserFeedback design */}
-        <View className="absolute bottom-0 left-0 right-0 bg-white px-10 py-4">
-          <TouchableOpacity
-            disabled={heading.trim() === "" || message.trim() === "" || loading}
-            onPress={handleSubmit}
-            activeOpacity={0.8}
-            className={`w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 ${
-              heading.trim() === "" || message.trim() === "" || loading
-                ? "bg-[#9CA3AF]"
-                : "bg-[#353535]"
-            }`}
-          >
-            {loading ? (
-              <ActivityIndicator color="white" size="small" />
-            ) : (
-              <Text className="text-white font-semibold text-center text-lg">
-                {t("PublicForum.Publish")}
-              </Text>
-            )}
-          </TouchableOpacity>
-        </View>
 
         {/* Loading Overlay */}
         {loading && (
