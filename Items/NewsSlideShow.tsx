@@ -35,6 +35,18 @@ interface NavigationbarProps {
   refreshTrigger?: number;
 }
 
+const slideTagsStyles = {
+  u: { textDecorationLine: "underline" as const },
+  ins: { textDecorationLine: "underline" as const },
+  i: { fontStyle: "italic" as const },
+  em: { fontStyle: "italic" as const },
+  b: { fontWeight: "bold" as const },
+  strong: { fontWeight: "bold" as const },
+  s: { textDecorationLine: "line-through" as const },
+  strike: { textDecorationLine: "line-through" as const },
+  del: { textDecorationLine: "line-through" as const },
+};
+
 const NewsSlideShow: React.FC<NavigationbarProps> = ({
   navigation,
   language,
@@ -201,6 +213,7 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({
                       fontWeight: "bold",
                       fontSize: 16,
                     }}
+                    tagsStyles={slideTagsStyles}
                   />
                 </View>
               </View>

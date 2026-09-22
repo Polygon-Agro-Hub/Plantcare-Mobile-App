@@ -346,7 +346,7 @@ const PublicForumReplies: React.FC<PublicForumRepliesProps> = ({
                           }`}
                         numberOfLines={1}
                       >
-                        {item.userName || "GoviCare"}{" "}
+                        {item.userName || "GoviCare Admin"}{" "}
                         {isOwnComment && t("PublicForum.(You)")}
                       </Text>
                     </View>

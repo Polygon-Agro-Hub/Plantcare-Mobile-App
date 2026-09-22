@@ -19,7 +19,9 @@
     "PleaseFillAllRequiredFields": "தயவுசெய்து தேவையான அனைத்து புலங்களையும் நிரப்பவும்.",
     "SomethingWentWrongPleaseTryAgainlater": "ஏதோ தவறு நடந்துவிட்டது. தயவுசெய்து பின்னர் மீண்டும் முயற்சிக்கவும்.",
     "PleaseTurnOnMobileDataOrWiFiToContinue": "தொடர, தயவுசெய்து மொபைல் டேட்டா அல்லது வைஃபையை இயக்கவும்.",
-    "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "இந்தச் சாதனத்திலிருந்து ஏராளமான கோரிக்கைகள் உள்ளன, தயவுசெய்து 30 நிமிடங்களில் மீண்டும் முயற்சிக்கவும்."
+    "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "இந்தச் சாதனத்திலிருந்து ஏராளமான கோரிக்கைகள் உள்ளன, தயவுசெய்து 30 நிமிடங்களில் மீண்டும் முயற்சிக்கவும்.",
+    "NoSearchResultFound": "தேடல் முடிவுகள் எதுவும் கிடைக்கவில்லை",
+    "NoResultsFoundForYourSearch": "உங்கள் தேடலுக்கு முடிவுகள் எதுவும் கிடைக்கவில்லை"
   },
   "Inputs": {
     "FirstName": "முதற் பெயர்",
@@ -278,7 +280,8 @@
     "PleaseCheckYourInternetConnectionAndTryAgain": "தயவுசெய்து உங்கள் இணைய இணைப்பைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.",
     "LocationNotFound": "இருப்பிடம் கிடைக்கவில்லை.",
     "AnErrorOccurredWhileFetchingWeatherData": "வானிலைத் தரவைப் பெறும்போது பிழை ஏற்பட்டது.",
-    "UnableToFetchCurrentLocation": "தற்போதைய இருப்பிடத்தைப் பெற முடியவில்லை."
+    "UnableToFetchCurrentLocation": "தற்போதைய இருப்பிடத்தைப் பெற முடியவில்லை.",
+    "NoResultsFound":"உங்கள் தேடலுக்கு எந்த முடிவுகளும் கிடைக்கவில்லை."
   },
   "FiveDayForcast": {
     "5DaysForecast": "5 நாள் முன்னறிவிப்பு",

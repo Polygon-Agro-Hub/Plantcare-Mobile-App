@@ -58,6 +58,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
     boolean | null
   >(null);
   const [showLocationAccess, setShowLocationAccess] = useState(false);
+  const [noResultsFound, setNoResultsFound] = useState(false);
 
   const apiKey = "8561cb293616fe29259448fd098f654b";
 
@@ -266,6 +267,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
         setWeatherData(weatherData);
 
         setSuggestions([]);
+        setNoResultsFound(false);
         if (clearSearch) {
           setSearchQuery("");
         }
@@ -309,6 +311,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
   const fetchSuggestions = async (query: string) => {
     if (query.length < 3) {
       setSuggestions([]);
+      setNoResultsFound(false);
       return;
     }
 
@@ -320,12 +323,15 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
 
       if (data.length > 0) {
         setSuggestions(data);
+        setNoResultsFound(false);
       } else {
         setSuggestions([]);
+        setNoResultsFound(true);
       }
     } catch (error) {
       console.error("Error fetching suggestions:", error);
       setSuggestions([]);
+      setNoResultsFound(false);
     }
   };
 
@@ -340,6 +346,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
     name: string,
   ) => {
     setSuggestions([]);
+    setNoResultsFound(false);
     setSearchQuery("");
 
     fetchWeather(lat, lon, true);
@@ -356,6 +363,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
 
     if (text.length < 3) {
       setSuggestions([]);
+      setNoResultsFound(false);
       return;
     }
 
@@ -374,6 +382,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
       setShowLocationAccess(false);
       setSearchQuery("");
       setSuggestions([]);
+      setNoResultsFound(false);
       setLoading(true);
 
       const location = await getDeviceLocation();
@@ -525,6 +534,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
     setRefreshing(true);
     setSearchQuery("");
     setSuggestions([]);
+    setNoResultsFound(false);
 
     try {
       const { status } = await Location.getForegroundPermissionsAsync();
@@ -610,30 +620,44 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
                 </View>
               </View>
 
-              {suggestions.length > 0 && (
+              {(suggestions.length > 0 ||
+                (noResultsFound && searchQuery.length >= 3)) && (
                 <View
                   style={[styles.suggestionsContainer]}
                   className="absolute top-12 left-0 right-0 bg-white shadow-lg rounded-lg"
                 >
-                  <FlatList
-                    data={suggestions}
-                    keyExtractor={(item) =>
-                      `${item.lat}-${item.lon}-${item.name}`
-                    }
-                    renderItem={({ item }) => (
-                      <TouchableWithoutFeedback
-                        onPress={() =>
-                          handleSuggestionPress(item.lat, item.lon, item.name)
-                        }
-                      >
-                        <View className="px-4 py-2 border-b border-gray-200">
-                          <Text className="text-lg text-black">
-                            {item.name}, {item.state}, {item.country}
-                          </Text>
-                        </View>
-                      </TouchableWithoutFeedback>
-                    )}
-                  />
+                  {suggestions.length > 0 ? (
+                    <FlatList
+                      data={suggestions}
+                      keyExtractor={(item) =>
+                        `${item.lat}-${item.lon}-${item.name}`
+                      }
+                      renderItem={({ item }) => (
+                        <TouchableWithoutFeedback
+                          onPress={() =>
+                            handleSuggestionPress(
+                              item.lat,
+                              item.lon,
+                              item.name,
+                            )
+                          }
+                        >
+                          <View className="px-4 py-2 border-b border-gray-200">
+                            <Text className="text-lg text-black">
+                              {item.name}, {item.state}, {item.country}
+                            </Text>
+                          </View>
+                        </TouchableWithoutFeedback>
+                      )}
+                    />
+                  ) : (
+                    <View className="px-4 py-3">
+                      <Text className="text-base text-gray-500">
+                        {t("WeatherForecast.NoResultsFound") ||
+                          "No results found for your search"}
+                      </Text>
+                    </View>
+                  )}
                 </View>
               )}
             </View>

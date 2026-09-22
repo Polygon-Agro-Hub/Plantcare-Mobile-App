@@ -98,11 +98,11 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
       } else if (status === "denied") {
         Alert.alert(
           t("CameraAccess.PermissionDenied") ||
-            t("Permission.PermissionDenied") ||
-            "Permission Denied",
+          t("Permission.PermissionDenied") ||
+          "Permission Denied",
           t("CameraAccess.CameraAccessIsRequiredPleaseEnableItInSettings") ||
-            t("Permission.CameraAccessIsRequiredPleaseEnableItInSettings") ||
-            "Camera access is required. Please enable it in settings.",
+          t("Permission.CameraAccessIsRequiredPleaseEnableItInSettings") ||
+          "Camera access is required. Please enable it in settings.",
           [
             {
               text:
@@ -127,7 +127,7 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
       Alert.alert(
         t("Main.Error") || "Error",
         t("CameraAccess.UnableToRequestCameraPermissionPleaseTryAgain") ||
-          "Unable to request camera permission. Please try again.",
+        "Unable to request camera permission. Please try again.",
         [{ text: t("Main.OK") || "OK" }],
       );
     } finally {
@@ -142,6 +142,7 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
         title=""
         navigation={navigation}
         onBackPress={handleDenyOrClose}
+        showBackButton={false}
         transparent
       />
       <ScrollView
@@ -169,132 +170,131 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
           className="w-full"
         >
           <View className="items-center justify-center mt-2 mb-4">
-          <Image
-            source={cameraImage}
-            className="w-32 h-32"
-            resizeMode="contain"
-          />
-        </View>
-
-        {/* Title */}
-        <Text className="text-white text-2xl font-bold text-center mb-2">
-          {t("CameraAccess.ProminentDisclosureTitle") ||
-            "Why GoviCare Uses Camera"}
-        </Text>
-
-        {/* Intro */}
-        <Text className="text-gray-300 text-sm text-center mb-5 leading-5">
-          {t("CameraAccess.ProminentDisclosureIntro") ||
-            "GoviCare requires camera access to enable the following operational features:"}
-        </Text>
-
-        {/* Feature 1: QR Scanning */}
-        <View className="bg-[#1E1E1E] p-4 rounded-xl mb-3 border border-gray-800 flex-row items-start">
-          <View className="bg-[#009570]/20 p-2.5 rounded-lg mr-3 mt-0.5 border border-[#009570]/30">
-            <MaterialCommunityIcons
-              name="qrcode-scan"
-              size={24}
-              color="#19D7B7"
+            <Image
+              source={cameraImage}
+              className="w-32 h-32"
+              resizeMode="contain"
             />
           </View>
-          <View className="flex-1">
-            <Text className="text-white font-semibold text-base mb-1">
-              {t("CameraAccess.FeatureQRTitle") ||
-                "Instant QR Code Scanning"}
-            </Text>
-            <Text className="text-gray-400 text-xs leading-4">
-              {t("CameraAccess.FeatureQRDesc") ||
-                "Scan shop and farmer QR codes for quick identification, crop tracking, and secure transactions."}
-            </Text>
-          </View>
-        </View>
 
-        {/* Feature 2: Inspection / Crop Diagnosis */}
-        <View className="bg-[#1E1E1E] p-4 rounded-xl mb-4 border border-gray-800 flex-row items-start">
-          <View className="bg-[#009570]/20 p-2.5 rounded-lg mr-3 mt-0.5 border border-[#009570]/30">
-            <MaterialCommunityIcons
-              name="camera-outline"
-              size={24}
-              color="#19D7B7"
-            />
-          </View>
-          <View className="flex-1">
-            <Text className="text-white font-semibold text-base mb-1">
-              {t("CameraAccess.FeatureInspectionTitle") ||
-                "Crop Diagnosis & Document Photos"}
-            </Text>
-            <Text className="text-gray-400 text-xs leading-4">
-              {t("CameraAccess.FeatureInspectionDesc") ||
-                "Capture real-time photos of plant diseases, crop damages, and verification documents for agricultural assistance."}
-            </Text>
-          </View>
-        </View>
-
-        {/* Privacy Note */}
-        <View className="bg-[#1A2621] p-3 rounded-lg mb-6 border border-[#009570]/30 flex-row items-start">
-          <Ionicons
-            name="shield-checkmark-outline"
-            size={18}
-            color="#19D7B7"
-            style={{ marginTop: 2, marginRight: 8 }}
-          />
-          <Text className="text-gray-300 text-xs flex-1 leading-4">
-            {t("CameraAccess.DisclosureFooter") ||
-              "Camera access is only active while using QR scanning or live photo capture. No photos or videos are captured without your explicit tap."}
+          {/* Title */}
+          <Text className="text-white text-2xl font-bold text-center mb-2">
+            {t("CameraAccess.ProminentDisclosureTitle") ||
+              "Why GoviCare Uses Camera"}
           </Text>
-        </View>
 
-        {/* Action Buttons */}
-        <View
-          className={`items-center w-full mt-4 ${
-            isScreenTooLong ? "mb-2" : "mb-8"
-          }`}
-        >
-          <TouchableOpacity
-            onPress={requestCameraPermission}
-            activeOpacity={0.8}
-            disabled={isLoading}
-            className="w-full mb-3"
-            style={{ borderRadius: 999, overflow: "hidden" }}
-          >
-            <LinearGradient
-              colors={["#009570", "#19D7B7"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={{
-                height: 52,
-                borderRadius: 999,
-                alignItems: "center",
-                justifyContent: "center",
-                width: "100%",
-              }}
-            >
-              <View className="flex-row items-center justify-center">
-                <Ionicons
-                  name="camera-outline"
-                  size={20}
-                  color="#000000"
-                  style={{ marginRight: 8 }}
-                />
-                <Text className="text-black font-extrabold text-base tracking-wide">
-                  {isLoading
-                    ? t("CameraAccess.Requesting...") || "Requesting..."
-                    : t("CameraAccess.AgreeAndContinue") || "Agree & Continue"}
-                </Text>
-              </View>
-            </LinearGradient>
-          </TouchableOpacity>
+          {/* Intro */}
+          <Text className="text-gray-300 text-sm text-center mb-5 leading-5">
+            {t("CameraAccess.ProminentDisclosureIntro") ||
+              "GoviCare requires camera access to enable the following operational features:"}
+          </Text>
 
-          <TouchableOpacity
-            onPress={handleDenyOrClose}
-            activeOpacity={0.7}
-            className="py-3 px-6 items-center justify-center"
-          >
-            <Text className="text-gray-400 font-semibold text-sm">
-              {t("CameraAccess.NotNow") || "Not Now"}
+          {/* Feature 1: QR Scanning */}
+          <View className="bg-[#1E1E1E] p-4 rounded-xl mb-3 border border-gray-800 flex-row items-start">
+            <View className="bg-[#009570]/20 p-2.5 rounded-lg mr-3 mt-0.5 border border-[#009570]/30">
+              <MaterialCommunityIcons
+                name="qrcode-scan"
+                size={24}
+                color="#19D7B7"
+              />
+            </View>
+            <View className="flex-1">
+              <Text className="text-white font-semibold text-base mb-1">
+                {t("CameraAccess.FeatureQRTitle") ||
+                  "Instant QR Code Scanning"}
+              </Text>
+              <Text className="text-gray-400 text-xs leading-4">
+                {t("CameraAccess.FeatureQRDesc") ||
+                  "Scan shop and farmer QR codes for quick identification, crop tracking, and secure transactions."}
+              </Text>
+            </View>
+          </View>
+
+          {/* Feature 2: Inspection / Crop Diagnosis */}
+          <View className="bg-[#1E1E1E] p-4 rounded-xl mb-4 border border-gray-800 flex-row items-start">
+            <View className="bg-[#009570]/20 p-2.5 rounded-lg mr-3 mt-0.5 border border-[#009570]/30">
+              <MaterialCommunityIcons
+                name="camera-outline"
+                size={24}
+                color="#19D7B7"
+              />
+            </View>
+            <View className="flex-1">
+              <Text className="text-white font-semibold text-base mb-1">
+                {t("CameraAccess.FeatureInspectionTitle") ||
+                  "Crop Diagnosis & Document Photos"}
+              </Text>
+              <Text className="text-gray-400 text-xs leading-4">
+                {t("CameraAccess.FeatureInspectionDesc") ||
+                  "Capture real-time photos of plant diseases, crop damages, and verification documents for agricultural assistance."}
+              </Text>
+            </View>
+          </View>
+
+          {/* Privacy Note */}
+          <View className="bg-[#1A2621] p-3 rounded-lg mb-6 border border-[#009570]/30 flex-row items-start">
+            <Ionicons
+              name="shield-checkmark-outline"
+              size={18}
+              color="#19D7B7"
+              style={{ marginTop: 2, marginRight: 8 }}
+            />
+            <Text className="text-gray-300 text-xs flex-1 leading-4">
+              {t("CameraAccess.DisclosureFooter") ||
+                "Camera access is only active while using QR scanning or live photo capture. No photos or videos are captured without your explicit tap."}
             </Text>
-          </TouchableOpacity>
-        </View>
+          </View>
+
+          {/* Action Buttons */}
+          <View
+            className={`items-center w-full mt-4 ${isScreenTooLong ? "mb-2" : "mb-8"
+              }`}
+          >
+            <TouchableOpacity
+              onPress={requestCameraPermission}
+              activeOpacity={0.8}
+              disabled={isLoading}
+              className="w-full mb-3"
+              style={{ borderRadius: 999, overflow: "hidden" }}
+            >
+              <LinearGradient
+                colors={["#009570", "#19D7B7"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={{
+                  height: 52,
+                  borderRadius: 999,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                }}
+              >
+                <View className="flex-row items-center justify-center">
+                  <Ionicons
+                    name="camera-outline"
+                    size={20}
+                    color="#000000"
+                    style={{ marginRight: 8 }}
+                  />
+                  <Text className="text-black font-extrabold text-base tracking-wide">
+                    {isLoading
+                      ? t("CameraAccess.Requesting...") || "Requesting..."
+                      : t("CameraAccess.AgreeAndContinue") || "Agree & Continue"}
+                  </Text>
+                </View>
+              </LinearGradient>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={handleDenyOrClose}
+              activeOpacity={0.7}
+              className="py-3 px-6 items-center justify-center"
+            >
+              <Text className="text-gray-400 font-semibold text-sm">
+                {t("CameraAccess.NotNow") || "Not Now"}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>

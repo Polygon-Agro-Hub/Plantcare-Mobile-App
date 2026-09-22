@@ -21,7 +21,8 @@
     "PleaseTurnOnMobileDataOrWiFiToContinue": "කරුණාකර දිගටම කරගෙන යාමට ජංගම දත්ත හෝ Wi-Fi සක්‍රිය කරන්න.",
     "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "මෙම උපාංගයෙන් ඉල්ලීම් රාශියක් සිදු කර ඇත, කරුණාකර විනාඩි 30 කින් නැවත උත්සාහ කරන්න.",
     "Done": "අවසන්",
-    "NoSearchResultFound": "සෙවුම් ප්‍රතිඵල කිසිවක් හමු නොවීය"
+    "NoSearchResultFound": "සෙවුම් ප්‍රතිඵල කිසිවක් හමු නොවීය",
+    "NoResultsFoundForYourSearch": "ඔබගේ සෙවුමට ගැලපෙන ප්‍රතිඵල කිසිවක් හමු නොවීය"
   },
   "Inputs": {
     "FirstName": "මුල් නම",
@@ -102,10 +103,10 @@
     "CreateAccount": "ගිණුමක් සාදන්න",
     "NoSpacesAllowed": "අවකාශයන්ට අවසර නැත",
     "OnlyLettersAllowed": "අකුරු පමණක් අවසර දෙනු ලැබේ",
-    "CanNotStartWithSpace": "අවකාශයකින් ආරම්භ කළ නොහැක",
+    "CanNotStartWithSpace": "හිස්තැනකින් ආරම්භ කළ නොහැක",
     "AlreadyHaveAnAccount": "දැනටමත් ගිණුමක් තිබේද?",
     "PleaseEnterAValidNICNumber": "කරුණාකර වලංගු ජාතික හැඳුනුම්පත් අංකයක් ඇතුළත් කරන්න",
-    "UserNameMustStartWithALetterAndContainNoSpaces": "පරිශීලක නාමය අකුරකින් ආරම්භ විය යුතු අතර අවකාශයන් අඩංගු නොවිය යුතුය",
+    "UserNameMustStartWithALetterAndContainNoSpaces": "පරිශීලක නාමය අකුරකින් ආරම්භ විය යුතු අතර ආරම්භයේ හිස්තැන් අඩංගු නොවිය යුතුය",
     "FailedToSendOTPPleaseCheckYourNumberAndTryAgain": "OTP එවීමට අසමත් විය. කරුණාකර ඔබගේ අංකය පරීක්ෂා කර නැවත උත්සාහ කරන්න.",
     "PleaseEnterAValid9DigitMobileNumberExcludeTheLeadingZero": "කරුණාකර වලංගු ඉලක්කම් 9 ක ජංගම දුරකථන අංකයක් ඇතුළත් කරන්න (ඉදිරියෙන් ඇති ශුන්‍යය බැහැර කරන්න).",
     "TheNICNumberYouEnteredIsAlreadyRegisteredPleaseCheckYourDetailsOrLogIn": "ඔබ ඇතුළත් කළ ජාතික හැඳුනුම්පත් අංකය දැනටමත් ලියාපදිංචි කර ඇත, කරුණාකර ඔබගේ විස්තර පරීක්ෂා කරන්න හෝ පුරන්න.",
@@ -152,15 +153,6 @@
     "NeedHelp": "උදව් අවශ්‍යයි",
     "UnableToOpenTheDialerPleaseTryAgain": "අමතන්න විවෘත කළ නොහැක. කරුණාකර නැවත උත්සාහ කරන්න.",
     "NeedGoViCareHelpTapTheCallButtonForInstantSupport": "GoViCare උදව් අවශ්‍යද? ක්ෂණික සහාය සඳහා ඇමතුම් බොත්තම ඔබන්න."
-  },
-  "EditProfile": {
-    "EditProfile": "පැතිකඩ සංස්කරණය කරන්න",
-    "ViewProfile": "පැතිකඩ බලන්න",
-    "FirstNameAndLastNameCannotBeEmpty": "මුල් නම සහ අවසන් නම හිස් විය නොහැක.",
-    "YourProfileHasBeenUpdatedSuccessfully": "ඔබගේ පැතිකඩ සාර්ථකව යාවත්කාලීන කර ඇත!",
-    "FailedToUpdateProfileTryAgainLater": "පැතිකඩ යාවත්කාලීන කිරීමට අසමත් විය. පසුව නැවත උත්සාහ කරන්න.",
-    "PermissionDenied": "අවසර ප්‍රතික්ෂේප කරන ලදී",
-    "PleaseAllowAccessToYourGalleryToProceed": "කරුණාකර ඉදිරියට යාමට ඔබගේ ගැලරියට ප්‍රවේශය ලබා දෙන්න!"
   },
   "PrivacyPolicy": {
     "PrivacyPolicy": "රහස්‍යතා ප්‍රතිපත්තිය",
@@ -294,7 +286,8 @@
     "PleaseCheckYourInternetConnectionAndTryAgain": "කරුණාකර ඔබගේ අන්තර්ජාල සම්බන්ධතාවය පරීක්ෂා කර නැවත උත්සාහ කරන්න.",
     "LocationNotFound": "ස්ථානය හමු නොවීය.",
     "AnErrorOccurredWhileFetchingWeatherData": "කාලගුණ දත්ත ලබා ගැනීමේදී දෝෂයක් ඇති විය.",
-    "UnableToFetchCurrentLocation": "වත්මන් ස්ථානය ලබා ගැනීමට නොහැක."
+    "UnableToFetchCurrentLocation": "වත්මන් ස්ථානය ලබා ගැනීමට නොහැක.",
+    "NoResultsFound":"ඔබේ සෙවුම සඳහා ප්‍රතිඵල කිසිවක් හමු නොවීය."
   },
   "FiveDayForcast": {
     "5DaysForecast": "දින 5 ක අනාවැකිය",
@@ -579,7 +572,6 @@
     "DuplicateNumbersAreNotAllowed.": "අනුපිටපත් අංකවලට අවසර නැත.",
     "DuplicateNICNumbersAreNotAllowed": "අනුපිටපත් ජාතික හැඳුනුම්පත් අංකවලට අවසර නැත.",
     "PleaseFixPhoneNumberValidationErrorsBeforeSaving": "කරුණාකර සුරැකීමට පෙර දුරකථන අංක වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
-    "PleaseFixNICValidationErrorsBeforeSaving": "කරුණාකර සුරැකීමට පෙර ජාතික හැඳුනුම්පත් වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
     "Please fix NIC validation errors before saving.": "කරුණාකර සුරැකීමට පෙර ජාතික හැඳුනුම්පත් වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
     "OneOrMorePhoneNumbersAlreadyRegistered": "දුරකථන අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් දුරකථන අංක භාවිතා කරන්න.",
     "One or more phone numbers are already registered. Please use different phone numbers.": "දුරකථන අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් දුරකථන අංක භාවිතා කරන්න.",

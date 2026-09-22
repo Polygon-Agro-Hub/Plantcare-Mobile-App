@@ -143,6 +143,11 @@ const NavigationBar = ({
 
   if (isKeyboardVisible || !tabs.length || (user && user.role === "Laborer"))
     return null;
+
+  // Temporarily commented out bottom navigation bar from all screens
+  return null;
+
+  /*
   return (
     <View className="absolute bottom-0 flex-row justify-between items-center bg-[#21202B] py-2 px-6 rounded-t-3xl w-full">
       {tabs.map((tab, index) => {
@@ -187,6 +192,7 @@ const NavigationBar = ({
       })}
     </View>
   );
+  */
 };
 
 export default NavigationBar;

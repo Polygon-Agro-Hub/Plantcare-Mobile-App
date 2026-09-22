@@ -131,7 +131,9 @@ const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
     searchPlaceholder || t("Main.Search...", "Search...");
   const resolvedDoneButtonText = doneButtonText || t("Main.Done", "Done");
   const defaultNoResultText =
-    t("Main.NoSearchResultFound") || "No Search Result Found";
+    t("Main.NoResultsFoundForYourSearch") ||
+    t("Main.NoSearchResultFound") ||
+    "No results found for your search";
 
   const renderSearchInput = () => (
     <View className="px-4 py-2 border-b border-gray-200">
