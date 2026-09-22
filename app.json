@@ -107,7 +107,8 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Photo library access is required to upload related images."
+          "photosPermission": "Photo library access is required to upload related images.",
+          "microphonePermission": false
         }
       ],
       "expo-location",
@@ -122,7 +123,7 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "4c217452-9ea5-4b96-96db-65e7c802790d"
+        "projectId": ""
       }
     }
   }
