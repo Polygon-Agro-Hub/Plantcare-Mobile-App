@@ -35,16 +35,40 @@ interface NavigationbarProps {
   refreshTrigger?: number;
 }
 
+const prepareHtml = (htmlContent?: string) => {
+  if (!htmlContent) return "";
+  let content = htmlContent;
+  if (content.includes("&lt;") && content.includes("&gt;")) {
+    content = content
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&amp;/g, "&")
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'");
+  }
+  return content;
+};
+
 const slideTagsStyles = {
-  u: { textDecorationLine: "underline" as const },
-  ins: { textDecorationLine: "underline" as const },
-  i: { fontStyle: "italic" as const },
-  em: { fontStyle: "italic" as const },
-  b: { fontWeight: "bold" as const },
-  strong: { fontWeight: "bold" as const },
-  s: { textDecorationLine: "line-through" as const },
-  strike: { textDecorationLine: "line-through" as const },
-  del: { textDecorationLine: "line-through" as const },
+  h1: { fontSize: 16, fontWeight: "bold" as const, color: "#ffffff", marginVertical: 2 },
+  h2: { fontSize: 15, fontWeight: "bold" as const, color: "#ffffff", marginVertical: 2 },
+  h3: { fontSize: 14, fontWeight: "bold" as const, color: "#ffffff", marginVertical: 2 },
+  h4: { fontSize: 14, fontWeight: "bold" as const, color: "#ffffff", marginVertical: 1 },
+  h5: { fontSize: 13, fontWeight: "bold" as const, color: "#ffffff", marginVertical: 1 },
+  h6: { fontSize: 12, fontWeight: "bold" as const, color: "#ffffff", marginVertical: 1 },
+  p: { color: "#ffffff", marginVertical: 0 },
+  div: { color: "#ffffff" },
+  span: { color: "#ffffff" },
+  body: { color: "#ffffff" },
+  u: { textDecorationLine: "underline" as const, color: "#ffffff" },
+  ins: { textDecorationLine: "underline" as const, color: "#ffffff" },
+  i: { fontStyle: "italic" as const, color: "#ffffff" },
+  em: { fontStyle: "italic" as const, color: "#ffffff" },
+  b: { fontWeight: "bold" as const, color: "#ffffff" },
+  strong: { fontWeight: "bold" as const, color: "#ffffff" },
+  s: { textDecorationLine: "line-through" as const, color: "#ffffff" },
+  strike: { textDecorationLine: "line-through" as const, color: "#ffffff" },
+  del: { textDecorationLine: "line-through" as const, color: "#ffffff" },
 };
 
 const NewsSlideShow: React.FC<NavigationbarProps> = ({
@@ -201,12 +225,13 @@ const NewsSlideShow: React.FC<NavigationbarProps> = ({
                   <RenderHtml
                     contentWidth={screenWidth}
                     source={{
-                      html:
+                      html: prepareHtml(
                         language === "si"
                           ? item.titleSinhala
                           : language === "ta"
                             ? item.titleTamil
                             : item.titleEnglish,
+                      ),
                     }}
                     baseStyle={{
                       color: "white",
