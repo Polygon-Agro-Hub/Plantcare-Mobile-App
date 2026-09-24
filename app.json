@@ -111,11 +111,12 @@
           "resizeMode": "contain",
           "backgroundColor": "#26D041"
         }
-      ]
+      ],
+      "./plugins/withCustomAndroidPermissions"
     ],
     "extra": {
       "eas": {
-        "projectId": "2baca125-2d08-4fbc-84b4-84f23c45108c"
+        "projectId": "ef05f895-39ea-4c9b-811c-3a474f0144ab"
       }
     }
   }
