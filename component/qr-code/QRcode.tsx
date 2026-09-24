@@ -11,21 +11,19 @@ import {
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as FileSystem from "expo-file-system/legacy";
-import * as MediaLibrary from "expo-media-library";
 import * as Sharing from "expo-sharing";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { saveImageToGallery } from "@/utils/mediaSave";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import type { NativeEventSubscription } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../common/CustomHeader";
 import LoadingPage from "../common/LoadingPage";
 
-type QRcodeNavigationPrps = StackNavigationProp<
-  RootStackParamList,
-  "QRcode"
->;
+type QRcodeNavigationPrps = StackNavigationProp<RootStackParamList, "QRcode">;
 
 interface QRcodeProps {
   navigation: QRcodeNavigationPrps;
@@ -69,9 +67,11 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error"),
+          t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
         return;
       }
 
@@ -95,15 +95,19 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
         setQR(registrationDetails.farmerQr || "");
         await AsyncStorage.setItem("district", registrationDetails.district);
       } else {
-        Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error"),
+          t("Main.SomethingWentWrongPleaseTryAgainlater"),
+          [{ text: t("Main.OK") }],
+        );
       }
     } catch (error) {
       console.error("Fetch error:", error);
-      Alert.alert(t("Main.Error"), t("Main.SomethingWentWrongPleaseTryAgainlater"), [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(
+        t("Main.Error"),
+        t("Main.SomethingWentWrongPleaseTryAgainlater"),
+        [{ text: t("Main.OK") }],
+      );
     } finally {
       setLoading(false);
     }
@@ -113,69 +117,102 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
     fetchRegistrationDetails();
   }, []);
 
-  const requestMediaLibraryPermissions = async () => {
-    try {
-      if (Platform.OS === 'ios') {
-        const { status } = await MediaLibrary.requestPermissionsAsync();
-        return status === 'granted';
-      } else {
-        // For Android, check and request permissions with writeOnly=true to avoid audio permission request
-        const permission = await MediaLibrary.getPermissionsAsync(true);
-        if (permission.status !== 'granted') {
-          const { status } = await MediaLibrary.requestPermissionsAsync(true);
-          return status === 'granted';
-        }
-        return permission.status === 'granted';
-      }
-    } catch (error) {
-      console.error("Permission error:", error);
-      return false;
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchRegistrationDetails();
+    }, []),
+  );
+
+  const ensureLocalQRFile = async (): Promise<string> => {
+    if (!QR) {
+      throw new Error("No QR code data available.");
     }
+
+    const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
+
+    if (QR.startsWith("data:image/") || QR.includes(";base64,")) {
+      const base64Data = QR.includes(";base64,") ? QR.split(";base64,")[1] : QR;
+
+      if (!base64Data) {
+        throw new Error("QR data URI did not contain any base64 payload.");
+      }
+
+      await FileSystem.writeAsStringAsync(fileUri, base64Data, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      return fileUri;
+    }
+
+    if (QR.startsWith("http://") || QR.startsWith("https://")) {
+      const token = await AsyncStorage.getItem("userToken");
+
+      const downloadResult = await FileSystem.downloadAsync(QR, fileUri, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
+
+      if (downloadResult.status !== 200) {
+        throw new Error(
+          `QR download failed with HTTP status ${downloadResult.status}`,
+        );
+      }
+      return downloadResult.uri;
+    }
+
+    if (QR.startsWith("file://")) {
+      return QR;
+    }
+
+    await FileSystem.writeAsStringAsync(fileUri, QR, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+    return fileUri;
+  };
+
+  const getErrorMessage = (error: unknown, fallback: string): string => {
+    if (error instanceof Error && error.message) {
+      return error.message;
+    }
+    if (typeof error === "string" && error) {
+      return error;
+    }
+    return fallback;
   };
 
   const downloadQRCode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.Error"), t("QRcode.noQRCodeAvailable"), [
-          { text: t("Main.OK") },
-        ]);
-        return;
-      }
-
-      // Request permissions
-      const hasPermission = await requestMediaLibraryPermissions();
-      if (!hasPermission) {
         Alert.alert(
-          t("QRcode.AccessRequired"),
-          t("QRcode.PleaseEnablePermissionToSaveTheQRToYourGallery"),
-          [{ text: t("Main.OK") }],
+          t("Main.Error") || "Error",
+          t("QRcode.noQRCodeAvailable") || "No QR code available",
+          [{ text: t("Main.OK") || "OK" }],
         );
         return;
       }
 
-      const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
-      
-      // Download the file
-      const downloadResult = await FileSystem.downloadAsync(QR, fileUri);
-      
-      if (downloadResult.status !== 200) {
-        throw new Error('Download failed');
+      const localUri = await ensureLocalQRFile();
+
+      const saved = await saveImageToGallery(localUri, "QRCode");
+
+      if (!saved) {
+        return;
       }
 
-      // Save to media library (directly saves to device gallery without triggering Android scoped storage modify prompt)
-      await MediaLibrary.createAssetAsync(downloadResult.uri);
-
       Alert.alert(
-        t("Main.Success"), 
-        t("QRcode.YourQRCodeHasBeenSavedToYourGallery"), 
-        [{ text: t("Main.OK") }]
+        t("Main.Success") || "Success",
+        t("QRcode.YourQRCodeHasBeenSavedToYourGallery") ||
+          "Your QR Code has been saved to your gallery.",
+        [{ text: t("Main.OK") || "OK" }],
       );
     } catch (error) {
       console.error("Download error:", error);
       Alert.alert(
-        t("Main.Error"), 
-        t("QRcode.UnableToSaveQRCodePleaseTryAgain"), 
-        [{ text: t("Main.OK") }]
+        t("Main.Error") || "Error",
+        getErrorMessage(
+          error,
+          t("QRcode.UnableToSaveQRCodePleaseTryAgain") ||
+            "Unable to save QR code. Please try again.",
+        ),
+        [{ text: t("Main.OK") || "OK" }],
       );
     }
   };
@@ -183,33 +220,40 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
   const shareQRCode = async () => {
     try {
       if (!QR) {
-        Alert.alert(t("Main.Error"), t("QRcode.noQRCodeAvailable"), [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(
+          t("Main.Error") || "Error",
+          t("QRcode.noQRCodeAvailable") || "No QR code available",
+          [{ text: t("Main.OK") || "OK" }],
+        );
         return;
       }
 
-      const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
-      const downloadResult = await FileSystem.downloadAsync(QR, fileUri);
+      const localUri = await ensureLocalQRFile();
 
       if (await Sharing.isAvailableAsync()) {
-        await Sharing.shareAsync(downloadResult.uri, {
+        await Sharing.shareAsync(localUri, {
+          UTI: "public.png",
           mimeType: "image/png",
-          dialogTitle: t("QRcode.ShareQRCode"),
+          dialogTitle: t("QRcode.ShareQRCode") || "Share QR Code",
         });
       } else {
         Alert.alert(
-          t("QRcode.SharingFeatureUnavailable"),
-          t("QRcode.ThisDeviceDoesNotSupportSharingQRCodes"),
-          [{ text: t("Main.OK") }],
+          t("QRcode.SharingFeatureUnavailable") || "Sharing Unavailable",
+          t("QRcode.ThisDeviceDoesNotSupportSharingQRCodes") ||
+            "This device does not support sharing QR codes.",
+          [{ text: t("Main.OK") || "OK" }],
         );
       }
     } catch (error) {
       console.error("Share error:", error);
       Alert.alert(
-        t("Main.Error"), 
-        t("QRcode.UnableToShareQRCodePleaseTryAgainLater"), 
-        [{ text: t("Main.OK") }]
+        t("Main.Error") || "Error",
+        getErrorMessage(
+          error,
+          t("QRcode.UnableToShareQRCodePleaseTryAgainLater") ||
+            "Unable to share QR code. Please try again later.",
+        ),
+        [{ text: t("Main.OK") || "OK" }],
       );
     }
   };
@@ -224,7 +268,10 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
   }
 
   return (
-    <ScrollView className="flex-1 bg-white" showsVerticalScrollIndicator={false}>
+    <ScrollView
+      className="flex-1 bg-white"
+      showsVerticalScrollIndicator={false}
+    >
       <CustomHeader
         title={t("QRcode.MyQRCode")}
         showBackButton={true}
@@ -259,9 +306,11 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
         ) : (
           <View className="items-center justify-center w-full">
             <Text className="text-center mt-4 p-4 leading-7 text-gray-500 text-base">
-              {t("Membership.ToObtainAccessToYourUniqueQRCodePleaseRegisterAsAMemberByEnteringYourBankDetailsThisCodeWillEnsureSmoothTransactionsAndSecurePaymentsDirectlyToYourBankAtOurCollectionCentres")}
+              {t(
+                "Membership.ToObtainAccessToYourUniqueQRCodePleaseRegisterAsAMemberByEnteringYourBankDetailsThisCodeWillEnsureSmoothTransactionsAndSecurePaymentsDirectlyToYourBankAtOurCollectionCentres",
+              )}
             </Text>
-            
+
             <View className="items-center justify-center mt-4 w-full">
               {language === "en" ? (
                 <View className="flex-row justify-center flex-wrap">
@@ -380,7 +429,7 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
               {t("QRcode.Download")}
             </Text>
           </TouchableOpacity>
-          
+
           <TouchableOpacity
             className="bg-[#1E1E1E] w-1/3 h-24 rounded-xl items-center justify-center"
             onPress={shareQRCode}

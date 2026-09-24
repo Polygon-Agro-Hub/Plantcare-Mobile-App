@@ -39,9 +39,9 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
     >
       {/* LEFT - BACK BUTTON */}
       <View style={{ width: 50 }}>
-        {showBackButton && navigation && (
+        {showBackButton && (navigation || onBackPress) && (
           <TouchableOpacity
-            onPress={onBackPress ?? (() => navigation.goBack())}
+            onPress={onBackPress ?? (() => navigation?.goBack())}
             className="items-start"
           >
             <Entypo

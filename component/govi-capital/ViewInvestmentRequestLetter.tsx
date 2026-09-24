@@ -147,14 +147,49 @@ const ViewInvestmentRequestLetter: React.FC<
     });
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string): string => {
     if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return dateString;
+      }
+
+      const year = date.getFullYear();
+      const monthIndex = date.getMonth();
+      const day = date.getDate();
+
+      const monthNames = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+      const monthName = t(`Months.${monthNames[monthIndex]}`, {
+        defaultValue: monthNames[monthIndex],
+      });
+
+      const currentLang = i18n.language || "en";
+      if (currentLang.startsWith("si")) {
+        return `${year} ${monthName} ${day}`;
+      } else if (currentLang.startsWith("ta")) {
+        return `${day} ${monthName} ${year}`;
+      }
+
+      return `${monthName} ${day}, ${year}`;
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return dateString;
+    }
   };
 
   useEffect(() => {
@@ -228,7 +263,12 @@ const ViewInvestmentRequestLetter: React.FC<
     ? `${farmerDetails.firstName} ${farmerDetails.lastName}`
     : "[Farmer's Name]";
 
-  const district = farmerDetails?.district || "[District]";
+  const rawDistrict = farmerDetails?.district || "";
+  const district = rawDistrict
+    ? t(`District.${rawDistrict.replace(/\s+/g, "")}`, {
+        defaultValue: rawDistrict,
+      })
+    : "[District]";
   const contactNumber = farmerDetails?.phoneNumber || "[Contact Number]";
 
   if (loading) {
@@ -263,8 +303,8 @@ const ViewInvestmentRequestLetter: React.FC<
             {t(
               "Govicapital.IFarmersNameAFarmerFromDistrictAmWritingToFormallyRequestAnAgriculturalInvestmentForTheUpcomingCultivationSeason",
             )
-              .replace("[Farmer's Name]", farmerName)
-              .replace("[District]", district)}
+              .replace(/\[Farmer's Name\]|\[ගොවියාගේ නම\]/g, farmerName)
+              .replace(/\[District\]|\[දිස්ත්‍රික්කය\]/g, district)}
           </Text>
 
           <Text className="text-[#070707] leading-6 mb-3">
@@ -317,7 +357,7 @@ const ViewInvestmentRequestLetter: React.FC<
                   {t("Govicapital.ExpectedYield")}:
                 </Text>
                 <Text className="text-[#070707] mt-1 font-semibold">
-                  {expectedYield || 0} kg
+                  {expectedYield || 0} {t("Govicapital.Kg")}
                 </Text>
               </View>
             </View>

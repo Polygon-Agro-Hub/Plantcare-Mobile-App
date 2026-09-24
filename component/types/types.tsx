@@ -1,7 +1,17 @@
 export type RootStackParamList = {
   Lanuage: undefined;
   Signin: undefined;
-  Signup: undefined;
+  Signup:
+    | {
+        firstName?: string;
+        lastName?: string;
+        nic?: string;
+        mobileNumber?: string;
+        selectedCountryCode?: string;
+        selectedCountryFlag?: string;
+        district?: string;
+      }
+    | undefined;
   Selectedcrop: undefined;
   SignumpFS: undefined;
   SignupFT: undefined;
@@ -20,6 +30,9 @@ export type RootStackParamList = {
     lastName: string;
     nic: string;
     district: string;
+    rawMobileNumber?: string;
+    selectedCountryCode?: string;
+    selectedCountryFlag?: string;
   };
   OTPEOLDUSER: {
     mobileNumber: string;
@@ -75,6 +88,7 @@ export type RootStackParamList = {
     farmId: number;
     farmName?: string;
     imageId?: Number;
+    ongoingCropId?: string | number;
   };
   CropCalanderTamil: { cropId: string; cropName: string };
   CropCalanderSinhala: { cropId: string; cropName: string };
@@ -86,15 +100,19 @@ export type RootStackParamList = {
   CropEnrol: { cropId: string; status: string; onCulscropID: number; farmId?: number };
 
   MembershipScreen: undefined;
+  MembershipScreenSignUp: undefined;
   ComplainForm: undefined;
   ComplainHistory: undefined;
-  BankDetailsScreen: {
-    firstName: string;
-    lastName: string;
-    nic: string;
-    mobileNumber: string;
-    selectedDistrict: string;
-  };
+  BankDetailsScreen:
+    | {
+        firstName?: string;
+        lastName?: string;
+        nic?: string;
+        mobileNumber?: string;
+        selectedDistrict?: string;
+      }
+    | undefined;
+  BankDetailsSignUp: undefined;
   PrivacyPolicy: undefined;
   TermsConditions: undefined;
   LocationDetailsScreen: undefined;
@@ -149,40 +167,50 @@ export type RootStackParamList = {
   };
   FarmDetailsScreen: { farmId: Number; farmName: string };
   EditManagersScreen: {
-    farmId: number;
-    membership: string;
-    renew: string;
-    regCode: string;
-  };
-  ManageMembersManager: {
-    farmId?: Number;
+    farmId: number | Number;
+    membership?: string;
+    renew?: string | boolean;
+    regCode?: string;
     farmName?: string;
-    imageId?: Number;
+    imageId?: number | Number;
+    role?: string;
   };
-  ManageMembersSupervisor: {
-    farmId?: Number;
+  ManageMembersManager?: {
+    farmId?: number;
     farmName?: string;
-    imageId?: Number;
+    imageId?: number;
+  };
+  ManageMembersSupervisor?: {
+    farmId?: number;
+    farmName?: string;
+    imageId?: number;
   };
   FarmCropItem: undefined;
   FarmCropVariety: undefined;
   EditFarm: { farmId: number; from?: string };
   FromFramEditFarm: { farmId: number; from?: string };
-  AddnewStaff: { farmId: number; regCode: string };
-  ManagerAddStaff: { farmId: number };
+  AddnewStaff: {
+    farmId: number;
+    regCode?: string;
+    farmName?: string;
+    imageId?: number;
+  };
+  ManagerAddStaff?: { farmId: number };
   EditStaffMember: {
     staffMemberId: number;
     farmId: number;
-    membership: string;
-    renew: string;
-    regCode: string;
+    membership?: string;
+    renew?: string | boolean;
+    regCode?: string;
+    farmName?: string;
+    imageId?: number;
   };
-  SupervisorAddStaff: { farmId: number };
-  ManageEditscreen: { staffMemberId: number; farmId: number; farmName: string };
-  SupervisorEditScreen: {
+  SupervisorAddStaff?: { farmId: number };
+  ManageEditscreen?: { staffMemberId: number; farmId: number; farmName?: string };
+  SupervisorEditScreen?: {
     staffMemberId: number;
     farmId: number;
-    farmName: string;
+    farmName?: string;
   };
   FarmCropSelectCard: undefined;
   MyCultivation: undefined;

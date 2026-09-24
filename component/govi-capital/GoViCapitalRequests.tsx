@@ -230,7 +230,7 @@ const GoViCapitalRequests: React.FC<GoViCapitalRequestsProps> = ({
 
   const formatAmount = (amount: string | number) => {
     const numAmount = typeof amount === "string" ? parseFloat(amount) : amount;
-    return `Rs. ${numAmount.toLocaleString("en-LK", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    return `${t("Govicapital.Rs")} ${numAmount.toLocaleString("en-LK", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
   return (

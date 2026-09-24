@@ -394,7 +394,7 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({ navigation, route }) => {
         ) : (
           <View className="bg-[#FBFAED] border border-[#FFCD01] rounded-xl p-4 mb-3">
             <Text className="text-center text-[#5A7386]">
-              No investment transactions found
+              {t("ProjectStatus.NoInvestmentTransactionsFound")}
             </Text>
           </View>
         )}

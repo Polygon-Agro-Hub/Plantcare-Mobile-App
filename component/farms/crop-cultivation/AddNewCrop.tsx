@@ -88,6 +88,19 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
   const route = useRoute();
   const { farmId, farmName } = route.params as RouteParams;
 
+  const goToFarmDetails = () => {
+    // reset variety/crop selection state so a later visit to this
+    // screen starts back on the crop list, not the varieties view
+    setSelectedCrop(false);
+    setSelectedVariety([]);
+    setSelectedCropId(null);
+
+    navigation.navigate("Main", {
+      screen: "FarmDetailsScreen",
+      params: { farmId: farmId, farmName: farmName },
+    });
+  };
+
   useEffect(() => {
     const fetchFarmCertificateCrops = async () => {
       if (!farmId) {
@@ -521,12 +534,7 @@ const AddNewCrop: React.FC<AddNewCropProps> = ({ navigation }) => {
       <CustomHeader
         title={t("NewCrop.SelectANewCrop")}
         navigation={navigation}
-        onBackPress={() =>
-          navigation.navigate("Main", {
-            screen: "FarmDetailsScreen",
-            params: { farmId: farmId, farmName: farmName },
-          })
-        }
+        onBackPress={goToFarmDetails}
       />
 
       <View className="px-6 mt-6 w-full">

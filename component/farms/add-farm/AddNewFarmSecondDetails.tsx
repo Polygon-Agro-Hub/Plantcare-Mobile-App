@@ -507,9 +507,12 @@ const AddNewFarmSecondDetails = () => {
               >
                 <Text
                   className="text-[#84868B] text-center font-semibold text-lg"
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.7}
                   style={[
                     i18n.language === "si"
-                      ? { fontSize: 16 }
+                      ? { fontSize: 15 }
                       : i18n.language === "ta"
                         ? { fontSize: 13 }
                         : { fontSize: 16 },

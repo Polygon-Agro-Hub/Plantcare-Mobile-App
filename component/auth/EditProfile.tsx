@@ -16,7 +16,7 @@ import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
-import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import {  MaterialIcons } from "@expo/vector-icons";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import * as ImagePicker from "expo-image-picker";
@@ -24,12 +24,18 @@ import { ScrollView } from "react-native-gesture-handler";
 import Entypo from "@expo/vector-icons/Entypo";
 import { useFocusEffect } from "@react-navigation/native";
 import * as ImageManipulator from "expo-image-manipulator";
+import axios from "axios";
 import districtData from "@/assets/jsons/common/district.json";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../../component/common/CustomHeader";
 import LoadingPage from "../common/LoadingPage";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUserPersonal, setUserPersonalData } from "@/store/userSlice";
+import {
+  selectUserPersonal,
+  setUserPersonalData,
+  selectUserData,
+  setUserData,
+} from "@/store/userSlice";
 
 type EditProfileNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -53,6 +59,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
     require("../../assets/images/auth/profile.webp"),
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [phoneNumberError, setPhoneNumberError] = useState("");
   const [isMenuVisible, setMenuVisible] = useState(false);
@@ -62,6 +69,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const userPersonalData = useSelector(selectUserPersonal);
+  const userData = useSelector(selectUserData);
 
   const districtItems = districtData
     .map((d) => ({
@@ -153,6 +161,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
   }, []);
 
   const uploadImage = async (imageUri: string) => {
+    setIsUploadingPhoto(true);
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
@@ -163,46 +172,62 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
         );
         return;
       }
+
       const formData = new FormData();
-      const fileName = imageUri.split("/").pop();
-      const fileType = fileName?.split(".").pop()
-        ? `image/${fileName.split(".").pop()}`
-        : "image/jpeg";
+      // Derive filename — keep extension, fall back to .jpg
+      const rawName = imageUri.split("/").pop() || "profile.jpg";
+      // Always use a .jpg extension so multer's extname check passes
+      const fileName = rawName.includes(".")
+        ? rawName.replace(/\.[^.]+$/, ".jpg")
+        : "profile.jpg";
+
       formData.append("profileImage", {
         uri: imageUri,
         name: fileName,
-        type: fileType,
+        type: "image/jpeg",
       } as any);
 
-      const response = await fetch(
+      const response = await axios.post(
         `${environment.API_BASE_URL}api/auth/upload-profile-image`,
+        formData,
         {
-          method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
           },
-          body: formData,
+          timeout: 30000,
         },
       );
-      const data = await response.json();
-      if (data.status === "success") {
-        // The server is the source of truth for the hosted image URL.
-        // Fall back to the local uri only if the server doesn't echo one back.
-        const newImageUrl: string =
-          data.user?.profileImage || data.profileImage || imageUri;
 
-        // Keep the local preview in sync with what will be persisted.
+      const data = response.data;
+      if (data.status === "success") {
+        const newImageUrl: string =
+          data.profileImageUrl ||
+          data.user?.profileImage ||
+          data.profileImage ||
+          imageUri;
+
         setProfileImage({ uri: newImageUrl });
 
-        // This is the critical fix: push the new image URL into Redux so
-        // that any screen reading selectUserPersonal (e.g. UserProfile)
-        // sees the update immediately, without needing an app reload.
         dispatch(
           setUserPersonalData({
             ...userPersonalData,
             profileImage: newImageUrl,
           }),
+        );
+        if (userData) {
+          dispatch(
+            setUserData({
+              ...userData,
+              profileImage: newImageUrl,
+            }),
+          );
+        }
+        Alert.alert(
+          t("Main.Success") || "Success",
+          t("EditProfile.ProfileImageUpdatedSuccessfully") ||
+            "Profile image updated successfully.",
+          [{ text: t("Main.OK") }],
         );
       } else {
         Alert.alert(
@@ -211,43 +236,81 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
           [{ text: t("Main.OK") }],
         );
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error(
+        "Error uploading profile image:",
+        error?.response?.data || error?.message || error,
+      );
       Alert.alert(
         t("Main.Error"),
         t("Main.SomethingWentWrongPleaseTryAgainlater"),
         [{ text: t("Main.OK") }],
       );
+    } finally {
+      setIsUploadingPhoto(false);
     }
   };
 
   const pickImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
+    try {
+      if (Platform.OS === "ios") {
+        const { status } =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+          Alert.alert(
+            t("EditProfile.PermissionDenied"),
+            t("EditProfile.PleaseAllowAccessToYourGalleryToProceed"),
+            [{ text: t("Main.OK") }],
+          );
+          return;
+        }
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        allowsEditing: false,
+        quality: 0.7,
+      });
+
+      if (!result.canceled && result.assets?.length > 0) {
+        const asset = result.assets[0];
+        let imageUri = asset.uri;
+
+        const isHeic =
+          /\.(heic|heif)$/i.test(imageUri) ||
+          /image\/hei[cf]/i.test(asset.mimeType || "");
+
+        if (isHeic) {
+          try {
+            const manipulated = await ImageManipulator.manipulateAsync(
+              imageUri,
+              [],
+              { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG },
+            );
+            imageUri = manipulated.uri;
+          } catch (conversionError) {
+            console.error("HEIC conversion failed:", conversionError);
+            Alert.alert(
+              t("Main.Error") || "Error",
+              t("EditProfile.UnsupportedImageFormat") ||
+                "Couldn't process this photo format. Please try a different photo.",
+              [{ text: t("Main.OK") }],
+            );
+            return;
+          }
+        }
+
+        setProfileImage({ uri: imageUri });
+        await uploadImage(imageUri);
+      }
+    } catch (error: any) {
+      console.error("Error picking profile image:", error?.message || error);
       Alert.alert(
-        t("EditProfile.PermissionDenied"),
-        t("EditProfile.PleaseAllowAccessToYourGalleryToProceed"),
+        t("Main.Error") || "Error",
+        t("Main.SomethingWentWrongPleaseTryAgainlater") ||
+          "Failed to select image. Please try again.",
         [{ text: t("Main.OK") }],
       );
-      return;
-    }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-    if (!result.canceled && result.assets?.length > 0) {
-      const imageUri = result.assets[0].uri;
-      const resizedImage = await ImageManipulator.manipulateAsync(
-        imageUri,
-        [{ resize: { width: 500 } }],
-        { compress: 0.6, format: ImageManipulator.SaveFormat.JPEG },
-      );
-      // Show the local file immediately for a responsive UI...
-      setProfileImage({ uri: resizedImage.uri });
-      // ...then uploadImage() will replace it (and Redux) with the
-      // server-hosted URL once the upload succeeds.
-      await uploadImage(resizedImage.uri);
     }
   };
 
@@ -262,20 +325,29 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
 
     if (!trimmedFirstName && !trimmedLastName) {
       Alert.alert(
-       t("Main.Sorry"),
-        t("EditProfile.FirstNameAndLastNameCannotBeEmpty"),
-        [{ text: t("Main.OK") }],
+        t("Main.Sorry") || "Sorry",
+        t("EditProfile.FirstNameAndLastNameCannotBeEmpty") ||
+          "First name and last name cannot be empty",
+        [{ text: t("Main.OK") || "OK" }],
       );
       return;
     } else if (!trimmedFirstName) {
-      Alert.alert(t("Main.Sorry"), t("Inputs.FirstNameRequired"), [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(
+        t("Main.Sorry") || "Sorry",
+        t("Inputs.FirstNameRequired") ||
+          t("input.FirstnameRequred") ||
+          "First Name is required.",
+        [{ text: t("Main.OK") || "OK" }],
+      );
       return;
     } else if (!trimmedLastName) {
-      Alert.alert(t("Main.Sorry"), t("Inputs.LastNameRequired"), [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(
+        t("Main.Sorry") || "Sorry",
+        t("Inputs.LastNameRequired") ||
+          t("input.Lastnamerequred") ||
+          "Last Name is required.",
+        [{ text: t("Main.OK") || "OK" }],
+      );
       return;
     }
 
@@ -416,11 +488,34 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                 <View style={{ width: 100, height: 100, position: "relative" }}>
                   <Image
                     source={profileImage}
-                    style={{ width: 100, height: 100, borderRadius: 50 }}
+                    style={{
+                      width: 100,
+                      height: 100,
+                      borderRadius: 50,
+                      opacity: isUploadingPhoto ? 0.5 : 1,
+                    }}
                   />
+                  {isUploadingPhoto && (
+                    <View
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "rgba(0,0,0,0.35)",
+                        borderRadius: 50,
+                      }}
+                    >
+                      <ActivityIndicator size="small" color="#ffffff" />
+                    </View>
+                  )}
                   <TouchableOpacity
                     className="absolute bottom-0 right-0 p-2 bg-black rounded-full"
                     onPress={pickImage}
+                    disabled={isUploadingPhoto}
                     style={{
                       shadowColor: "#000",
                       shadowOffset: { width: 0, height: 2 },
@@ -444,8 +539,14 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                   </Text>
                   <View className={inputStyle}>
                     <TextInput
+                      placeholder={
+                        t("AddressDetails.EnterFirstName") || "Enter First Name"
+                      }
+                      placeholderTextColor="#9CA3AF"
                       value={firstName}
-                      onChangeText={setFirstName}
+                      onChangeText={(text) =>
+                        setFirstName(text.replace(/^\s+/, ""))
+                      }
                       maxLength={20}
                     />
                   </View>
@@ -457,8 +558,14 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                   </Text>
                   <View className={inputStyle}>
                     <TextInput
+                      placeholder={
+                        t("AddressDetails.EnterLastName") || "Enter Last Name"
+                      }
+                      placeholderTextColor="#9CA3AF"
                       value={lastName}
-                      onChangeText={setLastName}
+                      onChangeText={(text) =>
+                        setLastName(text.replace(/^\s+/, ""))
+                      }
                       maxLength={20}
                     />
                   </View>
@@ -470,6 +577,12 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                   </Text>
                   <View className={`${inputStyle} text-[#8492A3]`}>
                     <TextInput
+                      placeholder={
+                        t("Inputs.EnterPhoneNumber") ||
+                        t("Inputs.PhoneNumber") ||
+                        "Enter Phone Number"
+                      }
+                      placeholderTextColor="#9CA3AF"
                       value={phoneNumber}
                       keyboardType="phone-pad"
                       editable={false}
@@ -487,7 +600,16 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                     {t("Inputs.NICNumber")}
                   </Text>
                   <View className={`${inputStyle} text-[#8492A3]`}>
-                    <TextInput value={NICnumber} editable={false} />
+                    <TextInput
+                      placeholder={
+                        t("Inputs.EnterNICNumber") ||
+                        t("Inputs.NICNumber") ||
+                        "Enter NIC Number"
+                      }
+                      placeholderTextColor="#9CA3AF"
+                      value={NICnumber}
+                      editable={false}
+                    />
                   </View>
                 </View>
 
@@ -501,8 +623,11 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                         t("AddressDetails.EnterHouseBuildingNo") ||
                         "Enter House / Building No"
                       }
+                      placeholderTextColor="#9CA3AF"
                       value={buidingname}
-                      onChangeText={setBuildingName}
+                      onChangeText={(text) =>
+                        setBuildingName(text.replace(/^\s+/, ""))
+                      }
                     />
                   </View>
                 </View>
@@ -517,8 +642,11 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                         t("AddressDetails.EnterStreetName") ||
                         "Enter Street Name"
                       }
+                      placeholderTextColor="#9CA3AF"
                       value={streetname}
-                      onChangeText={setStreetName}
+                      onChangeText={(text) =>
+                        setStreetName(text.replace(/^\s+/, ""))
+                      }
                     />
                   </View>
                 </View>
@@ -532,8 +660,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       placeholder={
                         t("AddressDetails.EnterCityName") || "Enter City Name"
                       }
+                      placeholderTextColor="#9CA3AF"
                       value={city}
-                      onChangeText={setCity}
+                      onChangeText={(text) => setCity(text.replace(/^\s+/, ""))}
                     />
                   </View>
                 </View>
@@ -559,14 +688,14 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                     <Text
                       style={{
                         fontSize: 14,
-                        color: district ? "#111" : "#ccc",
+                        color: district ? "#111" : "#9CA3AF",
                         flex: 1,
                       }}
                     >
                       {district
                         ? (districtItems.find((d) => d.value === district)
                             ?.label ?? district)
-                        : t("FixedAssets.SelectDistrict")}
+                        : t("FixedAssets.SelectDistrict") || "Select District"}
                     </Text>
                     <MaterialIcons
                       name="arrow-drop-down"

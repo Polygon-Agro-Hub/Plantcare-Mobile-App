@@ -130,13 +130,14 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
 
     const hours = date.getHours();
     const minutes = date.getMinutes();
-    const ampm = hours >= 12 ? "PM" : "AM";
+    const ampm = hours >= 12 ? t("ReportHistory.PM") : t("ReportHistory.AM");
     const hour12 = hours % 12 || 12;
     const minuteStr = minutes.toString().padStart(2, "0");
     const timeStr = `${hour12}.${minuteStr}${ampm}`;
 
     const day = date.getDate();
-    const month = date.toLocaleString("en-US", { month: "short" });
+    const monthNamesShort = t("Calendar.MonthsShort", { returnObjects: true }) as string[];
+    const month = monthNamesShort[date.getMonth()];
     const year = date.getFullYear();
 
     return `${timeStr},${day} ${month} ${year}`;
@@ -226,11 +227,10 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
                   )}
                   <View className="flex-1 items-end">
                     <Text
-                      className={`text-xs font-semibold px-4 py-2 rounded ${
-                        complain.status === "Opened"
+                      className={`text-xs font-semibold px-4 py-2 rounded ${complain.status === "Opened"
                           ? "bg-blue-100 text-[#0051FF]"
                           : "bg-green-100 text-green-800"
-                      }`}
+                        }`}
                     >
                       {complain.status === "Opened"
                         ? t("ReportHistory.Opened") || "Opened"
@@ -280,7 +280,7 @@ const ComplainHistory: React.FC<ComplainHistoryProps> = ({ navigation }) => {
               <View>
                 <Text className="text-[#2D2D2D] text-base leading-relaxed text-left">
                   {language === "si"
-                    ? `හිතවත් ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nඅපි ඔබට කාරුණිකව දැනුම් දෙන්න කැමතියි ඔබගේ පැමිණිල්ල විසඳා ගෙන ඇත.\n\n${complainReply || "Loading..."}\n\nඔබට තවත් ගැටළු හෝ ප්‍රශ්න තිබේ නම්, කරුණාකර අප හා සම්බන්ධ වන්න. ඔබේ ඉවසීම සහ අවබෝධය වෙනුවෙන් ස්තූතියි.\n\nමෙයට,\nPolygon Customer Support Team`
+                    ? `හිතවත් ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nඅපි ඔබට කාරුණිකව දැනුම් දෙන්න කැමතියි ඔබගේ පැමිණිල්ල විසඳා ගෙන ඇත.\n\n${complainReply || "Loading..."}\n\nඔබට තවත් ගැටළු හෝ ප්‍රශ්න තිබේ නම්, කරුණාකර අප හා සම්බන්ධ වන්න. ඔබේ ඉවසීම සහ අවබෝධය වෙනුවෙන් ස්තූතියි.\n\nමෙයට,\nපොලිගන් පාරිභෝගික සහාය කණ්ඩායම`
                     : language === "ta"
                       ? `அன்புள்ள ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nநாங்கள் உங்கள் புகாரை தீர்க்கப்பட்டதாக தெரிவித்ததில் மகிழ்ச்சி அடைகிறோம்\n\n${complainReply || "Loading..."}\n\nஉங்களுக்கு மேலும் ஏதேனும் சிக்கல்கள் அல்லது கேள்விகள் இருந்தால், தயவுசெய்து எங்களைத் தொடர்பு கொள்ளவும். உங்கள் பொறுமைக்கும் புரிதலுக்கும் நன்றி.\n\nஇதற்கு,\nPolygon Customer Support Team`
                       : `Dear ${profile?.firstName || ""} ${profile?.lastName || ""},\n\nWe are pleased to inform you that your complaint has been resolved\n\n${complainReply || "Loading..."}\n\nIf you have any further concerns or questions, feel free to reach out.\nThank you for your patience and understanding.\n\nSincerely,\nPolygon Customer Support Team`}

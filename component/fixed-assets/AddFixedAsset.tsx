@@ -385,7 +385,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
       Alert.alert(
         t("FixedAssets.sorry"),
         t("FixedAssets.WarrantyExpireDateMustBeInTheFuture") ||
-          "Warranty expire date must be in the future.",
+        "Warranty expire date must be in the future.",
         [{ text: t("Main.OK") }],
       );
       return;
@@ -402,6 +402,46 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
     setErrorMessage("");
     clearError("expireDate");
   };
+
+  const RadioOption = ({
+    label,
+    selected,
+    onPress,
+  }: {
+    label: string;
+    selected: boolean;
+    onPress: () => void;
+  }) => (
+    <TouchableOpacity
+      onPress={onPress}
+      style={{ flexDirection: "row", alignItems: "center", marginLeft: 24 }}
+      activeOpacity={0.7}
+    >
+      <View
+        style={{
+          width: 20,
+          height: 20,
+          borderRadius: 10,
+          borderWidth: 2,
+          borderColor: selected ? "#0021F5" : "#9CA3AF",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {selected && (
+          <View
+            style={{
+              width: 10,
+              height: 10,
+              borderRadius: 5,
+              backgroundColor: "#0021F5",
+            }}
+          />
+        )}
+      </View>
+      <Text className="ml-2 text-sm text-black">{label}</Text>
+    </TouchableOpacity>
+  );
 
   const applyStartDate = (date: Date) => {
     if (date > getEndOfToday()) {
@@ -550,7 +590,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
     showPicker: boolean;
     setShowPicker: (v: boolean) => void;
     onConfirm: (date: Date) => void;
-    onChangeAndroid: (event: DateTimePickerEvent, selectedDate?: Date) => void;
+    onChangeAndroid?: (event: DateTimePickerEvent, selectedDate?: Date) => void;
     minimumDate?: Date;
     maximumDate?: Date;
     modalTitle: string;
@@ -568,30 +608,17 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
         <EvilIcons name="calendar" size={28} color="#5e5d5d" />
       </TouchableOpacity>
 
-      {Platform.OS === "android" ? (
-        showPicker && (
-          <DateTimePicker
-            value={value || new Date()}
-            mode="date"
-            display="default"
-            onChange={onChangeAndroid}
-            minimumDate={minimumDate}
-            maximumDate={maximumDate}
-          />
-        )
-      ) : (
-        <CustomDatePicker
-          visible={showPicker}
-          onClose={() => setShowPicker(false)}
-          value={value}
-          onConfirm={onConfirm}
-          minimumDate={minimumDate}
-          maximumDate={maximumDate}
-          title={modalTitle}
-          cancelText={t("Main.Cancel", "Cancel")}
-          confirmText={t("Main.OK")}
-        />
-      )}
+      <CustomDatePicker
+        visible={showPicker}
+        onClose={() => setShowPicker(false)}
+        value={value}
+        onConfirm={onConfirm}
+        minimumDate={minimumDate}
+        maximumDate={maximumDate}
+        title={modalTitle}
+        cancelText={t("Main.Cancel", "Cancel")}
+        confirmText={t("Main.OK")}
+      />
     </>
   );
 
@@ -845,7 +872,25 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
     } catch (error: any) {
       console.error("Error submitting data:", error);
       setLoading(false);
-      Alert.alert("Duplicate Name", error.response.data.message, [
+      const message = error.response.data.message;
+
+      const assetTypeMap: Record<string, string> = {
+        land: "AddFixedAsset.Land",
+        building: "AddFixedAsset.Building",
+        vehicle: "AddFixedAsset.Vehicle",
+        equipment: "AddFixedAsset.Equipment",
+        // add any other asset types your app has
+      };
+
+      const translatedMessage = message.replace(
+        /^A (\w+) asset with the name "(.*?)" already exists\.?$/,
+        (_: any, assetType: string, name: string) => {
+          const key = assetTypeMap[assetType.toLowerCase()];
+          const translatedType = key ? t(key) : assetType;
+          return t("AddFixedAsset.AssetAlreadyExists", { assetType: translatedType, name });
+        }
+      );
+      Alert.alert(t("AddFixedAsset.DuplicateName"), translatedMessage, [
         { text: t("Main.OK") },
       ]);
     }
@@ -945,6 +990,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 clearError("assetType");
               }}
               searchPlaceholder={t("Main.Search...")}
+              noResultsText={t("FixedAssets.NoAssetTypeFound")}
             />
           )}
 
@@ -963,6 +1009,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 clearError("brand");
               }}
               searchPlaceholder={t("Main.Search...")}
+              noResultsText={t("FixedAssets.NoBrandFound")}
             />
           )}
 
@@ -1031,6 +1078,7 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
               clearError("type");
             }}
             searchPlaceholder={t("Main.Search...")}
+            noResultsText={t("FixedAssets.NoTypeFound")}
           />
         )}
 
@@ -1195,17 +1243,14 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     </Text>
                     <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
                       <TextInput
-                        className="text-black w-full text-sm"
                         placeholderTextColor="#6B7280"
                         style={{
+                          flex: 1,
+
                           fontSize: 12,
+                          height: 50,
                           paddingVertical: 0,
-                          paddingTop: 0,
-                          paddingBottom: 0,
-                          textAlign: "left",
-                          ...(Platform.OS === "android"
-                            ? { textAlignVertical: "center" }
-                            : {}),
+                          includeFontPadding: false,
                         }}
                         placeholder={t("FixedAssets.MentionOther")}
                         value={mentionOther}
@@ -1346,40 +1391,34 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   <Text className="text-sm">
                     {totalPrice
                       ? (() => {
-                          const parts = totalPrice.toFixed(2).split(".");
-                          return (
-                            parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-                            "." +
-                            parts[1]
-                          );
-                        })()
+                        const parts = totalPrice.toFixed(2).split(".");
+                        return (
+                          parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+                          "." +
+                          parts[1]
+                        );
+                      })()
                       : "0.00"}
                   </Text>
                 </View>
 
                 {/* Warranty */}
-                <Text className="text-[#070707] text-sm mt-2">
-                  {t("FixedAssets.Warranty")}
-                </Text>
-                <View className="flex-row mt-2 mb-4 justify-around">
-                  {["yes", "no"].map((w) => (
-                    <TouchableOpacity
-                      key={w}
-                      onPress={() => setWarranty(w)}
-                      className="flex-row items-center"
-                    >
-                      <View
-                        className={`w-5 h-5 rounded-full ${
-                          warranty === w ? "bg-green-500" : "bg-gray-400"
-                        }`}
-                      />
-                      <Text className="ml-2 text-sm">
-                        {w === "yes"
-                          ? t("FixedAssets.yes")
-                          : t("FixedAssets.no")}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
+                <View className="flex-row items-center justify-between px-4 mt-4 mb-4">
+                  <Text className="text-[#070707] text-sm">
+                    {t("FixedAssets.Warranty")}
+                  </Text>
+                  <View className="flex-row items-center">
+                    <RadioOption
+                      label={t("FixedAssets.yes")}
+                      selected={warranty === "yes"}
+                      onPress={() => setWarranty("yes")}
+                    />
+                    <RadioOption
+                      label={t("FixedAssets.no")}
+                      selected={warranty === "no"}
+                      onPress={() => setWarranty("no")}
+                    />
+                  </View>
                 </View>
                 <ErrorText field="warranty" />
 
@@ -1448,17 +1487,13 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 </Text>
                 <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
                   <TextInput
-                    className="text-black w-full text-sm"
                     placeholderTextColor="#6B7280"
                     style={{
+                      flex: 1,
                       fontSize: 12,
+                      height: 50,
                       paddingVertical: 0,
-                      paddingTop: 0,
-                      paddingBottom: 0,
-                      textAlign: "left",
-                      ...(Platform.OS === "android"
-                        ? { textAlignVertical: "center" }
-                        : {}),
+                      includeFontPadding: false,
                     }}
                     placeholder={t("FixedAssets.EnterLandName")}
                     value={landName}
@@ -1785,9 +1820,8 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         className="flex-row items-center"
                       >
                         <View
-                          className={`w-5 h-5 rounded-full ${
-                            landFenced === v ? "bg-green-500" : "bg-gray-400"
-                          }`}
+                          className={`w-5 h-5 rounded-full ${landFenced === v ? "bg-green-500" : "bg-gray-400"
+                            }`}
                         />
                         <Text className="ml-2 text-sm">
                           {v === "yes"
@@ -1811,9 +1845,8 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                         className="flex-row items-center"
                       >
                         <View
-                          className={`w-5 h-5 rounded-full ${
-                            perennialCrop === v ? "bg-green-500" : "bg-gray-400"
-                          }`}
+                          className={`w-5 h-5 rounded-full ${perennialCrop === v ? "bg-green-500" : "bg-gray-400"
+                            }`}
                         />
                         <Text className="ml-2 text-sm">
                           {v === "yes"
@@ -1852,17 +1885,13 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     </Text>
                     <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
                       <TextInput
-                        className="text-black w-full text-sm"
                         placeholderTextColor="#6B7280"
                         style={{
+                          flex: 1,
                           fontSize: 12,
+                          height: 50,
                           paddingVertical: 0,
-                          paddingTop: 0,
-                          paddingBottom: 0,
-                          textAlign: "left",
-                          ...(Platform.OS === "android"
-                            ? { textAlignVertical: "center" }
-                            : {}),
+                          includeFontPadding: false,
                         }}
                         value={othertool}
                         onChangeText={(text) => {
@@ -1897,17 +1926,13 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                     </Text>
                     <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
                       <TextInput
-                        className="text-black w-full text-sm"
                         placeholderTextColor="#6B7280"
                         style={{
+                          flex: 1,
                           fontSize: 12,
+                          height: 50,
                           paddingVertical: 0,
-                          paddingTop: 0,
-                          paddingBottom: 0,
-                          textAlign: "left",
-                          ...(Platform.OS === "android"
-                            ? { textAlignVertical: "center" }
-                            : {}),
+                          includeFontPadding: false,
                         }}
                         placeholder={t("FixedAssets.EnterBrandName")}
                         value={customBrand}
@@ -1986,40 +2011,34 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                   <Text className="text-black text-sm">
                     {totalPrice
                       ? (() => {
-                          const parts = totalPrice.toFixed(2).split(".");
-                          return (
-                            parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-                            "." +
-                            parts[1]
-                          );
-                        })()
+                        const parts = totalPrice.toFixed(2).split(".");
+                        return (
+                          parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+                          "." +
+                          parts[1]
+                        );
+                      })()
                       : "0.00"}
                   </Text>
                 </View>
 
                 {/* Warranty */}
-                <Text className="text-[#070707] text-sm mt-2">
-                  {t("FixedAssets.Warranty")}
-                </Text>
-                <View className="flex-row justify-around mt-2 mb-5">
-                  {["yes", "no"].map((w) => (
-                    <TouchableOpacity
-                      key={w}
-                      onPress={() => setWarranty(w)}
-                      className="flex-row items-center"
-                    >
-                      <View
-                        className={`w-5 h-5 rounded-full ${
-                          warranty === w ? "bg-green-500" : "bg-gray-400"
-                        }`}
-                      />
-                      <Text className="ml-2 text-sm">
-                        {w === "yes"
-                          ? t("FixedAssets.yes")
-                          : t("FixedAssets.no")}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
+                <View className="flex-row items-center justify-between px-4 mt-4 mb-4">
+                  <Text className="text-[#070707] text-sm">
+                    {t("FixedAssets.Warranty")}
+                  </Text>
+                  <View className="flex-row items-center">
+                    <RadioOption
+                      label={t("FixedAssets.yes")}
+                      selected={warranty === "yes"}
+                      onPress={() => setWarranty("yes")}
+                    />
+                    <RadioOption
+                      label={t("FixedAssets.no")}
+                      selected={warranty === "no"}
+                      onPress={() => setWarranty("no")}
+                    />
+                  </View>
                 </View>
                 <ErrorText field="warranty" />
 
@@ -2105,17 +2124,13 @@ const AddFixedAsset: React.FC<AddFixedAssetProps> = ({ navigation }) => {
                 </Text>
                 <View className="bg-[#F4F4F4] px-4 rounded-3xl h-[50px] mt-2 mb-2 justify-center">
                   <TextInput
-                    className="text-black w-full text-sm"
                     placeholderTextColor="#6B7280"
                     style={{
+                      flex: 1,
                       fontSize: 12,
+                      height: 50,
                       paddingVertical: 0,
-                      paddingTop: 0,
-                      paddingBottom: 0,
-                      textAlign: "left",
-                      ...(Platform.OS === "android"
-                        ? { textAlignVertical: "center" }
-                        : {}),
+                      includeFontPadding: false,
                     }}
                     placeholder={t("FixedAssets.EnterBuildingName")}
                     value={buildingName}

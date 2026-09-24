@@ -23,6 +23,7 @@ import {
 } from "react-native-responsive-screen";
 import { Entypo } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
+import LoadingPage from "../common/LoadingPage";
 
 interface NewsItem {
   id: number;
@@ -54,6 +55,20 @@ const formatDate = (dateString: string) => {
   return `${year}-${month}-${day}`;
 };
 
+const prepareHtml = (htmlContent?: string) => {
+  if (!htmlContent) return "";
+  let content = htmlContent;
+  if (content.includes("&lt;") && content.includes("&gt;")) {
+    content = content
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&amp;/g, "&")
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'");
+  }
+  return content;
+};
+
 const titleBaseStyle = {
   fontWeight: "bold" as const,
   fontSize: 18,
@@ -62,10 +77,122 @@ const titleBaseStyle = {
 };
 
 const titleTagsStyles = {
-  p: { textAlign: "center" as const },
-  div: { textAlign: "center" as const },
-  span: { textAlign: "center" as const },
-  body: { textAlign: "center" as const },
+  h1: {
+    fontSize: 20,
+    fontWeight: "bold" as const,
+    color: "#000000",
+    textAlign: "center" as const,
+    marginVertical: 4,
+  },
+  h2: {
+    fontSize: 18,
+    fontWeight: "bold" as const,
+    color: "#000000",
+    textAlign: "center" as const,
+    marginVertical: 4,
+  },
+  h3: {
+    fontSize: 17,
+    fontWeight: "bold" as const,
+    color: "#000000",
+    textAlign: "center" as const,
+    marginVertical: 3,
+  },
+  h4: {
+    fontSize: 16,
+    fontWeight: "bold" as const,
+    color: "#000000",
+    textAlign: "center" as const,
+    marginVertical: 2,
+  },
+  h5: {
+    fontSize: 15,
+    fontWeight: "bold" as const,
+    color: "#000000",
+    textAlign: "center" as const,
+    marginVertical: 2,
+  },
+  h6: {
+    fontSize: 14,
+    fontWeight: "bold" as const,
+    color: "#000000",
+    textAlign: "center" as const,
+    marginVertical: 2,
+  },
+  p: { textAlign: "center" as const, color: "#000000" },
+  div: { textAlign: "center" as const, color: "#000000" },
+  span: { textAlign: "center" as const, color: "#000000" },
+  body: { textAlign: "center" as const, color: "#000000" },
+  u: { textDecorationLine: "underline" as const, textAlign: "center" as const },
+  ins: { textDecorationLine: "underline" as const, textAlign: "center" as const },
+  i: { fontStyle: "italic" as const, textAlign: "center" as const },
+  em: { fontStyle: "italic" as const, textAlign: "center" as const },
+  b: { fontWeight: "bold" as const, textAlign: "center" as const },
+  strong: { fontWeight: "bold" as const, textAlign: "center" as const },
+  s: { textDecorationLine: "line-through" as const, textAlign: "center" as const },
+  strike: { textDecorationLine: "line-through" as const, textAlign: "center" as const },
+  del: { textDecorationLine: "line-through" as const, textAlign: "center" as const },
+};
+
+const contentTagsStyles = {
+  h1: {
+    fontSize: 22,
+    fontWeight: "bold" as const,
+    color: "#111827",
+    marginVertical: 8,
+    lineHeight: 28,
+  },
+  h2: {
+    fontSize: 20,
+    fontWeight: "bold" as const,
+    color: "#1f2937",
+    marginVertical: 6,
+    lineHeight: 26,
+  },
+  h3: {
+    fontSize: 18,
+    fontWeight: "bold" as const,
+    color: "#1f2937",
+    marginVertical: 6,
+    lineHeight: 24,
+  },
+  h4: {
+    fontSize: 16,
+    fontWeight: "bold" as const,
+    color: "#374151",
+    marginVertical: 4,
+    lineHeight: 22,
+  },
+  h5: {
+    fontSize: 15,
+    fontWeight: "bold" as const,
+    color: "#374151",
+    marginVertical: 4,
+    lineHeight: 20,
+  },
+  h6: {
+    fontSize: 14,
+    fontWeight: "bold" as const,
+    color: "#4b5563",
+    marginVertical: 2,
+    lineHeight: 18,
+  },
+  u: { textDecorationLine: "underline" as const },
+  ins: { textDecorationLine: "underline" as const },
+  i: { fontStyle: "italic" as const },
+  em: { fontStyle: "italic" as const },
+  b: { fontWeight: "bold" as const },
+  strong: { fontWeight: "bold" as const },
+  s: { textDecorationLine: "line-through" as const },
+  strike: { textDecorationLine: "line-through" as const },
+  del: { textDecorationLine: "line-through" as const },
+  p: { marginVertical: 4, color: "#374151", fontSize: 16, lineHeight: 22 },
+  span: { color: "#374151" },
+  div: { color: "#374151" },
+  body: { color: "#374151" },
+  ul: { marginVertical: 4 },
+  ol: { marginVertical: 4 },
+  li: { marginVertical: 2, color: "#374151" },
 };
 
 const News: React.FC<NewsProps> = ({ navigation, route }) => {
@@ -94,30 +221,73 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
   useEffect(() => {
     const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
+
+    if (!newsId) return;
+
+    setNews(null);
+    setLoading(true);
+
+    let isMounted = true;
+
     const fetchNews = async () => {
       try {
         const res = await axios.get<NewsItem[]>(
           `${environment.API_BASE_URL}api/news/get-news/${newsId}`,
         );
-        if (res.data.length > 0) {
-          setNews(res.data[0]);
-        } else {
+        if (isMounted) {
+          if (res.data && res.data.length > 0) {
+            setNews(res.data[0]);
+          } else {
+            setNews(null);
+          }
         }
       } catch (err) {
+        if (isMounted) {
+          setNews(null);
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
-    if (newsId) {
-      fetchNews();
-    }
-  }, [newsId]);
+    fetchNews();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [newsId, t]);
 
   if (loading) {
+    return <LoadingPage fullScreen />;
+  }
+
+  if (!news) {
     return (
-      <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#00ff00" />
+      <View className="flex-1 bg-white">
+        <View className="flex-row ml-5 mt-5 items-center">
+          <TouchableOpacity
+            className="p-2 bg-transparent"
+            onPress={() => navigation.goBack()}
+          >
+            <Entypo
+              name="chevron-left"
+              size={24}
+              color="#000502"
+              style={{
+                backgroundColor: "#F6F6F6CC",
+                borderRadius: 50,
+                padding: wp(2.5),
+              }}
+            />
+          </TouchableOpacity>
+        </View>
+        <View className="flex-1 justify-center items-center p-6">
+          <Text className="text-gray-500 text-base text-center">
+            {t("Main.NoDataFound") || "News not found"}
+          </Text>
+        </View>
       </View>
     );
   }
@@ -162,24 +332,24 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
                 <View className="bg-[#FFFFFF] border-[#f8f8f8] border rounded-3xl shadow-md p-4 w-[90%]">
                   {language === "en" && news?.titleEnglish && (
                     <RenderHtml
-                      contentWidth={screenWidth}
-                      source={{ html: news.titleEnglish }}
+                      contentWidth={screenWidth * 0.9 - 32}
+                      source={{ html: prepareHtml(news.titleEnglish) }}
                       baseStyle={titleBaseStyle}
                       tagsStyles={titleTagsStyles}
                     />
                   )}
                   {language === "si" && news?.titleSinhala && (
                     <RenderHtml
-                      contentWidth={screenWidth}
-                      source={{ html: news.titleSinhala }}
+                      contentWidth={screenWidth * 0.9 - 32}
+                      source={{ html: prepareHtml(news.titleSinhala) }}
                       baseStyle={titleBaseStyle}
                       tagsStyles={titleTagsStyles}
                     />
                   )}
                   {language === "ta" && news?.titleTamil && (
                     <RenderHtml
-                      contentWidth={screenWidth}
-                      source={{ html: news.titleTamil }}
+                      contentWidth={screenWidth * 0.9 - 32}
+                      source={{ html: prepareHtml(news.titleTamil) }}
                       baseStyle={titleBaseStyle}
                       tagsStyles={titleTagsStyles}
                     />
@@ -206,23 +376,26 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
         <View className="px-6 pb-2">
           {language === "en" && news?.descriptionEnglish && (
             <RenderHtml
-              contentWidth={screenWidth}
-              source={{ html: news.descriptionEnglish }}
+              contentWidth={screenWidth - 48}
+              source={{ html: prepareHtml(news.descriptionEnglish) }}
               baseStyle={{ fontSize: 16, color: "#333", marginTop: 8 }}
+              tagsStyles={contentTagsStyles}
             />
           )}
           {language === "si" && news?.descriptionSinhala && (
             <RenderHtml
-              contentWidth={screenWidth}
-              source={{ html: news.descriptionSinhala }}
+              contentWidth={screenWidth - 48}
+              source={{ html: prepareHtml(news.descriptionSinhala) }}
               baseStyle={{ fontSize: 16, color: "#333", marginTop: 8 }}
+              tagsStyles={contentTagsStyles}
             />
           )}
           {language === "ta" && news?.descriptionTamil && (
             <RenderHtml
-              contentWidth={screenWidth}
-              source={{ html: news.descriptionTamil }}
+              contentWidth={screenWidth - 48}
+              source={{ html: prepareHtml(news.descriptionTamil) }}
               baseStyle={{ fontSize: 16, color: "#333", marginTop: 8 }}
+              tagsStyles={contentTagsStyles}
             />
           )}
         </View>

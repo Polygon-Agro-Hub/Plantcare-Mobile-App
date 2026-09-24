@@ -67,7 +67,7 @@ const PaymentSummary: React.FC<PaymentSummaryProps> = ({
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     });
-    return `${prefix}Rs.${formatted}`;
+    return `${prefix}${t("Payment.Rs")}${formatted}`;
   };
 
   const handleContinue = async () => {
