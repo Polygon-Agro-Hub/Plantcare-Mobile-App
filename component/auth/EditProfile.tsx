@@ -16,7 +16,7 @@ import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
-import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import {  MaterialIcons } from "@expo/vector-icons";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import * as ImagePicker from "expo-image-picker";
@@ -160,7 +160,6 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
     fetchProfileData();
   }, []);
 
-
   const uploadImage = async (imageUri: string) => {
     setIsUploadingPhoto(true);
     try {
@@ -274,10 +273,34 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
       });
 
       if (!result.canceled && result.assets?.length > 0) {
-        const imageUri = result.assets[0].uri;
-        // Show the picked image immediately in UI
+        const asset = result.assets[0];
+        let imageUri = asset.uri;
+
+        const isHeic =
+          /\.(heic|heif)$/i.test(imageUri) ||
+          /image\/hei[cf]/i.test(asset.mimeType || "");
+
+        if (isHeic) {
+          try {
+            const manipulated = await ImageManipulator.manipulateAsync(
+              imageUri,
+              [],
+              { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG },
+            );
+            imageUri = manipulated.uri;
+          } catch (conversionError) {
+            console.error("HEIC conversion failed:", conversionError);
+            Alert.alert(
+              t("Main.Error") || "Error",
+              t("EditProfile.UnsupportedImageFormat") ||
+                "Couldn't process this photo format. Please try a different photo.",
+              [{ text: t("Main.OK") }],
+            );
+            return;
+          }
+        }
+
         setProfileImage({ uri: imageUri });
-        // Upload directly — no ImageManipulator to avoid iOS crashes
         await uploadImage(imageUri);
       }
     } catch (error: any) {
@@ -290,7 +313,6 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
       );
     }
   };
-
 
   const handleDistrictSelect = (items: string[]) => {
     if (!items.length) return;
@@ -466,7 +488,12 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                 <View style={{ width: 100, height: 100, position: "relative" }}>
                   <Image
                     source={profileImage}
-                    style={{ width: 100, height: 100, borderRadius: 50, opacity: isUploadingPhoto ? 0.5 : 1 }}
+                    style={{
+                      width: 100,
+                      height: 100,
+                      borderRadius: 50,
+                      opacity: isUploadingPhoto ? 0.5 : 1,
+                    }}
                   />
                   {isUploadingPhoto && (
                     <View
@@ -517,7 +544,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       }
                       placeholderTextColor="#9CA3AF"
                       value={firstName}
-                      onChangeText={(text) => setFirstName(text.replace(/^\s+/, ""))}
+                      onChangeText={(text) =>
+                        setFirstName(text.replace(/^\s+/, ""))
+                      }
                       maxLength={20}
                     />
                   </View>
@@ -534,7 +563,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       }
                       placeholderTextColor="#9CA3AF"
                       value={lastName}
-                      onChangeText={(text) => setLastName(text.replace(/^\s+/, ""))}
+                      onChangeText={(text) =>
+                        setLastName(text.replace(/^\s+/, ""))
+                      }
                       maxLength={20}
                     />
                   </View>
@@ -594,7 +625,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       }
                       placeholderTextColor="#9CA3AF"
                       value={buidingname}
-                      onChangeText={(text) => setBuildingName(text.replace(/^\s+/, ""))}
+                      onChangeText={(text) =>
+                        setBuildingName(text.replace(/^\s+/, ""))
+                      }
                     />
                   </View>
                 </View>
@@ -611,7 +644,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       }
                       placeholderTextColor="#9CA3AF"
                       value={streetname}
-                      onChangeText={(text) => setStreetName(text.replace(/^\s+/, ""))}
+                      onChangeText={(text) =>
+                        setStreetName(text.replace(/^\s+/, ""))
+                      }
                     />
                   </View>
                 </View>
@@ -675,8 +710,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                     onPress={handleSave}
                     disabled={isLoading}
                     activeOpacity={0.8}
-                    className={`w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 ${isLoading ? "bg-[#9CA3AF]" : "bg-[#353535]"
-                      }`}
+                    className={`w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 ${
+                      isLoading ? "bg-[#9CA3AF]" : "bg-[#353535]"
+                    }`}
                   >
                     {isLoading ? (
                       <ActivityIndicator size="small" color="#fff" />
