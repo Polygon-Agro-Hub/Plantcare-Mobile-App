@@ -136,7 +136,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ navigation }) => {
   }, [isLaborer]);
 
   const handleCall = () => {
-    const phoneNumber = "+94770111999";
+    const phoneNumber = "+94114313433";
     const url = `tel:${phoneNumber}`;
     Linking.openURL(url).catch((err) =>
       Alert.alert(

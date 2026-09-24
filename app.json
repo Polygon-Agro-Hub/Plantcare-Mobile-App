@@ -18,13 +18,13 @@
       },
       "permissions": [
         "android.permission.INTERNET",
-        "android.permission.CAMERA",
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.ACCESS_WIFI_STATE",
         "android.permission.ACCESS_NETWORK_STATE"
       ],
       "blockedPermissions": [
+        "android.permission.CAMERA",
         "com.google.android.gms.permission.AD_ID",
         "android.permission.ACCESS_BACKGROUND_LOCATION",
         "android.permission.READ_MEDIA_AUDIO",
@@ -97,13 +97,6 @@
       "expo-web-browser",
       "@react-native-community/datetimepicker",
       "expo-asset",
-      [
-        "expo-camera",
-        {
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
-          "recordAudioAndroid": false
-        }
-      ],
       [
         "expo-image-picker",
         {
