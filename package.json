@@ -46,7 +46,6 @@
     "expo-splash-screen": "~57.0.8",
     "expo-status-bar": "~57.0.1",
     "expo-system-ui": "~57.0.3",
-    "expo-tracking-transparency": "~57.0.1",
     "expo-video": "~57.0.3",
     "expo-web-browser": "~57.0.2",
     "i18next": "^25.5.2",

@@ -55,6 +55,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
   const { t, i18n } = useTranslation();
   const screenWidth = Dimensions.get("window").width;
   const [isValid, setIsValid] = useState(false);
+  const [headerHeight, setHeaderHeight] = useState(0);
 
   const countryItems = useMemo(() => {
     return countryData.map((country) => {
@@ -107,7 +108,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
 
   const handlePhoneNumberChange = (text: string) => {
     const cleaned = text.replace(/[^0-9]/g, "");
-    if (cleaned.length <= 10) {
+    if (cleaned.length <= 9) {
       setPhonenumber(cleaned);
       validateMobileNumber(cleaned);
     }
@@ -167,11 +168,11 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
 
             let otpMessage = "";
             if (i18n.language === "en") {
-              otpMessage = `Your GoviCare OTP is {{code}}`;
+              otpMessage = `Your GoViCare OTP is {{code}}`;
             } else if (i18n.language === "si") {
-              otpMessage = `ඔබේ GoviCare OTP මුරපදය {{code}} වේ.`;
+              otpMessage = `ඔබේ GoViCare OTP මුරපදය {{code}} වේ.`;
             } else if (i18n.language === "ta") {
-              otpMessage = `உங்கள் GoviCare OTP {{code}} ஆகும்.`;
+              otpMessage = `உங்கள் GoViCare OTP {{code}} ஆகும்.`;
             }
 
             const body = {
@@ -269,18 +270,20 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-        style={{ flex: 1, backgroundColor: "white" }}
-        enabled
-      >
+      <View onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}>
         <CustomHeader
           title=""
           navigation={navigation}
           onBackPress={() => navigation.navigate("Lanuage")}
         />
+      </View>
 
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 20 : 20}
+        style={{ flex: 1, backgroundColor: "white" }}
+        enabled
+      >
         <ScrollView
           contentContainerStyle={{
             flexGrow: 1,
@@ -358,7 +361,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                         value={phonenumber}
                         onChangeText={handlePhoneNumberChange}
                         keyboardType="phone-pad"
-                        maxLength={10}
+                        maxLength={9}
                         autoFocus
                         underlineColorAndroid="transparent"
                         cursorColor="#141415ff"
@@ -485,7 +488,12 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
           "SignUp.SearchCountry",
           "Search country or dial code...",
         )}
-        searchKeys={["label", "countryName", "translatedCountryName", "dialCode"]}
+        searchKeys={[
+          "label",
+          "countryName",
+          "translatedCountryName",
+          "dialCode",
+        ]}
         multiSelect={false}
         noResultsText={t("SignUp.NoCountryFound")}
       />

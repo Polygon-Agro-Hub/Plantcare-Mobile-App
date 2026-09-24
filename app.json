@@ -18,13 +18,13 @@
       },
       "permissions": [
         "android.permission.INTERNET",
-        "android.permission.CAMERA",
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.ACCESS_WIFI_STATE",
         "android.permission.ACCESS_NETWORK_STATE"
       ],
       "blockedPermissions": [
+        "android.permission.CAMERA",
         "com.google.android.gms.permission.AD_ID",
         "android.permission.ACCESS_BACKGROUND_LOCATION",
         "android.permission.READ_MEDIA_AUDIO",
@@ -62,11 +62,9 @@
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true
         },
-        "NSCameraUsageDescription": "Camera access is required to scan QR codes and capture crop photos.",
         "NSPhotoLibraryUsageDescription": "Photo library access is required to upload related images.",
         "NSPhotoLibraryAddUsageDescription": "Photo library access is required to save and upload related images.",
-        "NSLocationWhenInUseUsageDescription": "Location access is required to receive local weather forecasts and log crop activities accurately.",
-        "NSUserTrackingUsageDescription": "Tracking is used to improve app experience."
+        "NSLocationWhenInUseUsageDescription": "Location access is required to receive local weather forecasts and log crop activities accurately."
       }
     },
     "web": {
@@ -93,21 +91,15 @@
         }
       ],
       "expo-font",
-      "expo-tracking-transparency",
       "expo-web-browser",
       "@react-native-community/datetimepicker",
       "expo-asset",
       [
-        "expo-camera",
-        {
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
-          "recordAudioAndroid": false
-        }
-      ],
-      [
         "expo-image-picker",
         {
-          "photosPermission": "Photo library access is required to upload related images."
+          "photosPermission": "Photo library access is required to upload related images.",
+          "cameraPermission": false,
+          "microphonePermission": false
         }
       ],
       "expo-location",
@@ -122,7 +114,7 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "4c217452-9ea5-4b96-96db-65e7c802790d"
+        "projectId": ""
       }
     }
   }
