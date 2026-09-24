@@ -11,6 +11,9 @@ import {
   RefreshControl,
   Keyboard,
   BackHandler,
+  KeyboardAvoidingView,
+  KeyboardEvent,
+  Platform,
 } from "react-native";
 import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -26,7 +29,6 @@ import {
 } from "react-native-responsive-screen";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import ContentLoader, { Rect } from "react-content-loader/native";
-import LottieView from "lottie-react-native";
 import NoData from "../common/NoData";
 import { useFocusEffect } from "@react-navigation/native";
 import Entypo from "@expo/vector-icons/Entypo";
@@ -78,6 +80,12 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
   const { t } = useTranslation();
   const screenWidth = wp(100);
   const [inputHeight, setInputHeight] = useState(50);
+
+  // Keyboard state: track visibility AND actual height (iOS/Android report
+  // different keyboard heights depending on device, locale, and whether a
+  // suggestion bar is shown, so a hardcoded % offset is unreliable).
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [expandedPosts, setExpandedPosts] = useState<{
@@ -302,9 +310,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
           ? t("PublicForum.ProhibitedLanguageDetected")
           : error?.response?.data?.message ||
             t("PublicForum.FailedToAddComment");
-      Alert.alert(t("Main.Sorry"), errorMsg, [
-        { text: t("Main.OK") },
-      ]);
+      Alert.alert(t("Main.Sorry"), errorMsg, [{ text: t("Main.OK") }]);
     }
   };
 
@@ -350,16 +356,17 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
       return t("PublicForum.JustNow") || "Just now";
     } else if (minutes < 60) {
       return minutes === 1
-        ? (t("PublicForum.MinuteAgo", { count: minutes }) || "1 minute ago")
-        : (t("PublicForum.MinutesAgo", { count: minutes }) || `${minutes} minutes ago`);
+        ? t("PublicForum.MinuteAgo", { count: minutes }) || "1 minute ago"
+        : t("PublicForum.MinutesAgo", { count: minutes }) ||
+            `${minutes} minutes ago`;
     } else if (hours < 24) {
       return hours === 1
-        ? (t("PublicForum.HourAgo", { count: hours }) || "1 hour ago")
-        : (t("PublicForum.HoursAgo", { count: hours }) || `${hours} hours ago`);
+        ? t("PublicForum.HourAgo", { count: hours }) || "1 hour ago"
+        : t("PublicForum.HoursAgo", { count: hours }) || `${hours} hours ago`;
     } else if (days < 7) {
       return days === 1
-        ? (t("PublicForum.DayAgo", { count: days }) || "1 day ago")
-        : (t("PublicForum.DaysAgo", { count: days }) || `${days} days ago`);
+        ? t("PublicForum.DayAgo", { count: days }) || "1 day ago"
+        : t("PublicForum.DaysAgo", { count: days }) || `${days} days ago`;
     } else {
       const language = i18n.language || "en";
       return postDate.toLocaleDateString(language, {
@@ -380,6 +387,39 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
       [id]: !prev[id],
     }));
   };
+
+  // Keyboard visibility + height tracking.
+  // - iOS never resizes the root view when the keyboard shows, so a
+  //   flex-1 + justifyContent:"center" wrapper stays anchored at the
+  //   screen's vertical center, which the keyboard then visually covers
+  //   (or pushes your content oddly if you fake an offset).
+  // - Android's default `adjustResize` already shrinks the view for you,
+  //   which is why "it just works" there with no extra code.
+  // Reading the real keyboard height from the event (instead of guessing
+  // a fixed % like hp("8%")) lets us reserve exactly the right amount of
+  // space on iOS regardless of device size, locale, or whether a
+  // suggestions/predictive-text bar adds extra height (as in the Sinhala
+  // keyboard screenshot, which is taller than a plain English keyboard).
+  useEffect(() => {
+    const showEvent =
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+    const hideEvent =
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+
+    const showSub = Keyboard.addListener(showEvent, (e: KeyboardEvent) => {
+      setKeyboardVisible(true);
+      setKeyboardHeight(e?.endCoordinates?.height ?? 0);
+    });
+    const hideSub = Keyboard.addListener(hideEvent, () => {
+      setKeyboardVisible(false);
+      setKeyboardHeight(0);
+    });
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   const renderPostItem = ({ item }: { item: Post }) => {
     const postImageSource = item.postimage
@@ -443,10 +483,13 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
               className="font-bold text-base overflow-hidden"
               numberOfLines={1}
             >
-              {item.userName}{" "}
+              {item.userName}
               {((item.staffId !== null && item.staffId === userId) ||
                 (item.staffId === null && item.userId === userId)) &&
-                t("PublicForum.You")}
+                t("PublicForum.You") &&
+                t("PublicForum.You") !== "()" && (
+                  <Text> [ {t("PublicForum.You")} ]</Text>
+                )}
             </Text>
           </View>
           <View className="flex-row items-center gap-3">
@@ -548,7 +591,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
 
             <View className="flex-row items-center relative">
               <TextInput
-                className="flex-1 text-gray-500 bg-[#F2F2F2] text-sm rounded-3xl"
+                className="flex-1 text-[#000000] bg-[#F2F2F2] text-sm rounded-3xl"
                 placeholder={t("PublicForum.WriteAComment")}
                 placeholderTextColor="#000000"
                 value={comment[item.id] || ""}
@@ -573,7 +616,11 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
                 disabled={!comment[item.id]?.trim()}
               >
                 <Image
-                  source={require("../../assets/images/public-forum/sent-image.webp")}
+                  source={
+                    comment[item.id]?.trim()
+                      ? require("../../assets/images/public-forum/sended-image.webp") // filled/blue icon while there is text to send
+                      : require("../../assets/images/public-forum/sent-image.webp") // outline/grey icon while the field is empty
+                  }
                   className="w-6 h-6"
                 />
               </TouchableOpacity>
@@ -714,7 +761,18 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
             .toLowerCase()
             .includes(searchText.trim().toLowerCase()),
       ).length === 0 && !loading ? (
-        <View className="flex-1 justify-center items-center">
+        <View
+          className="flex-1 items-center justify-center"
+          style={{
+            // Reserve exactly the real keyboard height (only relevant on
+            // iOS, since Android already resizes the root view for us via
+            // adjustResize). This keeps the Lottie/NoData content centered
+            // within the space actually visible above the keyboard instead
+            // of drifting under it or off-screen.
+            paddingBottom:
+              Platform.OS === "ios" && keyboardVisible ? keyboardHeight : 0,
+          }}
+        >
           <NoData
             text={
               searchText.trim() !== ""
@@ -739,6 +797,7 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
           )}
           keyExtractor={(item, index) => `${item.id}-${index}`}
           renderItem={renderPostItem}
+          extraData={{ comment, activeMenuId, expandedPosts }}
           refreshing={refreshing}
           onRefresh={onRefresh}
           ListFooterComponent={renderFooter}
