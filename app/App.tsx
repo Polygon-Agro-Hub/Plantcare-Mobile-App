@@ -54,6 +54,7 @@ import UpdateAsset from "@/component/fixed-assets/UpdateAsset";
 import CropEnrol from "@/component/crop-cultivation/CropEnrol";
 import { LogBox } from "react-native";
 import { AlertModal, setGlobalAlertListener } from "@/component/common/AlertModal";
+import { AppUpdateProvider } from "@/app-update";
 import MembershipScreen from "@/component/membership-screens/MembershipScreen";
 import BankDetailsScreen from "@/component/bank-details/Bankdetails";
 import PrivacyPolicy from "@/component/policies/PrivacyPolicy";
@@ -734,7 +735,9 @@ export default function App() {
     <SafeAreaProvider>
       <Provider store={store}>
         <LanguageProvider>
-          <AppContent />
+          <AppUpdateProvider>
+            <AppContent />
+          </AppUpdateProvider>
         </LanguageProvider>
       </Provider>
     </SafeAreaProvider>
