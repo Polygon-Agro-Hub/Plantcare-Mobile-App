@@ -25,6 +25,7 @@
     "base64-arraybuffer": "^1.0.2",
     "date-fns": "^4.1.0",
     "expo": "~57.0.19",
+    "expo-application": "~57.0.2",
     "expo-asset": "~57.0.16",
     "expo-build-properties": "~57.0.16",
     "expo-camera": "~57.0.4",
