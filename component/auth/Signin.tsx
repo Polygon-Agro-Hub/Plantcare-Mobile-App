@@ -33,6 +33,8 @@ import countryData from "@/assets/jsons/common/country-flag.json";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import { MaterialIcons } from "@expo/vector-icons";
 import CustomHeader from "../common/CustomHeader";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../../store/userSlice";
 
 type SigninNavigationProp = StackNavigationProp<RootStackParamList, "Signin">;
 
@@ -45,6 +47,7 @@ const sign = require("../../assets/images/auth/loginpc.webp");
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const Signin: React.FC<SigninProps> = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [phonenumber, setPhonenumber] = useState("");
   const [selectedCountryCode, setSelectedCountryCode] = useState("+94");
   const [selectedCountryFlag, setSelectedCountryFlag] = useState("🇱🇰");
@@ -145,6 +148,11 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
     try {
       const fullPhoneNumber = selectedCountryCode + phonenumber;
 
+      const isAppleReviewTestUser =
+        Platform.OS === "ios" &&
+        (selectedCountryCode === "+94" || selectedCountryCode === "94") &&
+        phonenumber.replace(/[^0-9]/g, "") === "707111707";
+
       const response = await fetch(
         `${environment.API_BASE_URL}api/auth/user-login`,
         {
@@ -159,6 +167,26 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
         const data = await response.json();
 
         if (data.status === "success") {
+          // iOS Apple Review test account bypass: skip OTP and login directly
+          if (isAppleReviewTestUser && data.token) {
+            const timestamp = new Date();
+            const expirationTime = new Date(
+              timestamp.getTime() + 8 * 60 * 60 * 1000,
+            );
+            await AsyncStorage.setItem("userToken", data.token);
+            await AsyncStorage.multiSet([
+              ["tokenStoredTime", timestamp.toISOString()],
+              ["tokenExpirationTime", expirationTime.toISOString()],
+            ]);
+            if (data.user) {
+              dispatch(setUserData(data.user));
+            }
+            setIsButtonDisabled(false);
+            setIsLoading(false);
+            (navigation as any).navigate("Main");
+            return;
+          }
+
           try {
             const apiUrl = "https://api.getshoutout.com/otpservice/send";
             const headers = {
