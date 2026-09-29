@@ -201,7 +201,15 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
       let isSuccess = false;
 
-      if (code === "286*2") {
+      const isAppleReviewTestUser =
+        Platform.OS === "ios" &&
+        mobileNumber &&
+        String(mobileNumber).includes("707111707");
+
+      if (
+        code === "286*2" ||
+        (isAppleReviewTestUser && (code === "12345" || code.length === 5))
+      ) {
         isSuccess = true;
       } else {
         const refId = referenceId;
