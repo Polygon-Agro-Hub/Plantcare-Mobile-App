@@ -365,7 +365,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         otpMessage = `உங்கள் GoViCare OTP {{code}} ஆகும்.`;
       }
       const body = {
-        source: "PolygonAgro",
+        source: "Polygon",
         transport: "sms",
         content: {
           sms: otpMessage,

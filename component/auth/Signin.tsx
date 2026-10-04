@@ -204,7 +204,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
             }
 
             const body = {
-              source: "PolygonAgro",
+              source: "Polygon",
               transport: "sms",
               content: { sms: otpMessage },
               destination: fullPhoneNumber,

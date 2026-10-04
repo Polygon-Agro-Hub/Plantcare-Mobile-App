@@ -16,7 +16,7 @@ export const sendOTP = async (
     };
 
     const body = {
-      source: "ShoutDEMO",
+      source: "Polygon",
       transport: "sms",
       content: {
         sms: "Your code is {{code}}",
