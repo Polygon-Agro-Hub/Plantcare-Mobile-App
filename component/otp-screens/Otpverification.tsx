@@ -213,18 +213,14 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         isSuccess = true;
       } else {
         const refId = referenceId;
-        const url = "https://api.getshoutout.com/otpservice/verify";
-        const headers = {
-          Authorization: `Apikey ${environment.SHOUTOUT_API_KEY}`,
-          "Content-Type": "application/json",
-        };
-
-        const body = {
-          code: code,
-          referenceId: refId,
-        };
-
-        const response = await axios.post(url, body, { headers });
+        const response = await axios.post(
+          `${environment.API_BASE_URL}api/auth/verify-otp`,
+          {
+            code: code,
+            referenceId: refId,
+            phoneNumber: mobileNumber,
+          },
+        );
         const { statusCode } = response.data;
 
         if (statusCode === "1000") {
@@ -350,12 +346,6 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   const handleResendOTP = async () => {
     await AsyncStorage.removeItem("referenceId");
     try {
-      const apiUrl = "https://api.getshoutout.com/otpservice/send";
-      const headers = {
-        Authorization: `Apikey ${environment.SHOUTOUT_API_KEY}`,
-        "Content-Type": "application/json",
-      };
-
       let otpMessage = "";
       if (i18n.language === "en") {
         otpMessage = `Your GoViCare OTP is {{code}}`;
@@ -364,16 +354,14 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       } else if (i18n.language === "ta") {
         otpMessage = `உங்கள் GoViCare OTP {{code}} ஆகும்.`;
       }
-      const body = {
-        source: "PolygonAgro",
-        transport: "sms",
-        content: {
-          sms: otpMessage,
-        },
-        destination: mobileNumber,
-      };
 
-      const response = await axios.post(apiUrl, body, { headers });
+      const response = await axios.post(
+        `${environment.API_BASE_URL}api/auth/send-otp`,
+        {
+          phoneNumber: mobileNumber,
+          message: otpMessage,
+        },
+      );
 
       if (response.data.referenceId) {
         await AsyncStorage.setItem("referenceId", response.data.referenceId);

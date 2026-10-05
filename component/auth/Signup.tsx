@@ -412,18 +412,10 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
       }
 
       const otpResponse = await axios.post(
-        "https://api.getshoutout.com/otpservice/send",
+        `${environment.API_BASE_URL}api/auth/send-otp`,
         {
-          source: "PolygonAgro",
-          transport: "sms",
-          content: { sms: otpMessage },
-          destination: fullPhoneNumber,
-        },
-        {
-          headers: {
-            Authorization: `Apikey ${environment.SHOUTOUT_API_KEY}`,
-            "Content-Type": "application/json",
-          },
+          phoneNumber: fullPhoneNumber,
+          message: otpMessage,
         },
       );
 
