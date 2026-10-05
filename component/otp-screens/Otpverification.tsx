@@ -212,40 +212,58 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       ) {
         isSuccess = true;
       } else {
-        const refId = referenceId;
-        const response = await axios.post(
-          `${environment.API_BASE_URL}api/auth/verify-otp`,
-          {
-            code: code,
-            referenceId: refId,
-            phoneNumber: mobileNumber,
-          },
-        );
-        const { statusCode } = response.data;
+        const showInvalidOtp = () => {
+  Alert.alert(
+    t("Main.Error"),
+    t("OtpVerification.TheOTPYouEnteredIsInvalidPleaseTryAgain"),
+    [{ text: t("Main.OK") }],
+  );
+  setOtpCode("");
+  setMaskedCode("XXXXX");
+  setIsOtpValid(false);
+  setDisabledVerify(false);
+  setIsLoading(false);
+};
 
-        if (statusCode === "1000") {
-          isSuccess = true;
-        } else if (statusCode === "1001") {
-          Alert.alert(
-            t("Main.Error"),
-            t(
-              "OtpVerification.OTPVerificationFailedPleaseCheckTheCodeAndTryAgain",
-            ),
-            [{ text: t("Main.OK") }],
-          );
-          setDisabledVerify(false);
-          setIsLoading(false);
-          return;
-        } else {
-          Alert.alert(
-            t("Main.Error"),
-            t("Main.SomethingWentWrongPleaseTryAgainlater"),
-            [{ text: t("Main.OK") }],
-          );
-          setDisabledVerify(false);
-          setIsLoading(false);
-          return;
-        }
+let statusCode: string | undefined;
+try {
+  const response = await axios.post(
+    `${environment.API_BASE_URL}api/auth/verify-otp`,
+    {
+      code: code,
+      referenceId: referenceId,
+      phoneNumber: mobileNumber,
+    },
+  );
+  statusCode = response.data?.statusCode;
+} catch (err: any) {
+  const httpStatus = err?.response?.status;
+  const apiStatusCode = err?.response?.data?.statusCode;
+
+  // Wrong/invalid OTP: the server answered with a 4xx or a 1001 code
+  if (apiStatusCode === "1001" || (httpStatus && httpStatus >= 400 && httpStatus < 500)) {
+    showInvalidOtp();
+    return;
+  }
+  throw err; // network error / 5xx -> falls to generic "something went wrong"
+}
+      
+
+      if (statusCode === "1000") {
+  isSuccess = true;
+} else if (statusCode === "1001") {
+  showInvalidOtp();
+  return;
+} else {
+  Alert.alert(
+    t("Main.Error"),
+    t("Main.SomethingWentWrongPleaseTryAgainlater"),
+    [{ text: t("Main.OK") }],
+  );
+  setDisabledVerify(false);
+  setIsLoading(false);
+  return;
+}
       }
 
       if (isSuccess) {
