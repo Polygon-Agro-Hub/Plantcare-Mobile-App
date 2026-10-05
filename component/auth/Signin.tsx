@@ -188,12 +188,6 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
           }
 
           try {
-            const apiUrl = "https://api.getshoutout.com/otpservice/send";
-            const headers = {
-              Authorization: `Apikey ${environment.SHOUTOUT_API_KEY}`,
-              "Content-Type": "application/json",
-            };
-
             let otpMessage = "";
             if (i18n.language === "en") {
               otpMessage = `Your GoViCare OTP is {{code}}`;
@@ -203,14 +197,14 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
               otpMessage = `உங்கள் GoViCare OTP {{code}} ஆகும்.`;
             }
 
-            const body = {
-              source: "Polygon",
-              transport: "sms",
-              content: { sms: otpMessage },
-              destination: fullPhoneNumber,
-            };
+            const otpResponse = await axios.post(
+              `${environment.API_BASE_URL}api/auth/send-otp`,
+              {
+                phoneNumber: fullPhoneNumber,
+                message: otpMessage,
+              },
+            );
 
-            const otpResponse = await axios.post(apiUrl, body, { headers });
             await AsyncStorage.setItem(
               "referenceId",
               otpResponse.data.referenceId,
