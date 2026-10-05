@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   View,
   TextInput,
@@ -7,9 +7,7 @@ import {
   Image,
   Alert,
   ScrollView,
-  KeyboardAvoidingView,
   Platform,
-  Modal,
   ActivityIndicator,
   BackHandler,
   Keyboard,
@@ -23,7 +21,6 @@ import { RootStackParamList } from "../types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../common/CustomHeader";
 
@@ -41,6 +38,14 @@ interface PublicForumPostEditProps {
   };
 }
 
+type FieldName = "title" | "message";
+
+// Space (px) kept between the focused field and the keyboard.
+const EXTRA_SPACE: Record<FieldName, number> = {
+  title: 30,
+  message: 40,
+};
+
 const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
   navigation,
   route,
@@ -50,6 +55,7 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
   const [heading, setHeading] = useState("");
   const [message, setMessage] = useState("");
   const [postImageUri, setPostImageUri] = useState<string | null>(null);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   const { t } = useTranslation();
 
@@ -57,6 +63,61 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
   const isSubmittingRef = useRef(false);
 
   const [previousImageUri, setPreviousImageUri] = useState<string | null>(null);
+
+  // Keyboard / scroll refs
+  const scrollRef = useRef<ScrollView>(null);
+  const scrollYRef = useRef(0);
+  const keyboardTopRef = useRef(0);
+  const keyboardOpenRef = useRef(false);
+  const focusedFieldRef = useRef<FieldName>("title");
+  const titleWrapRef = useRef<View>(null);
+  const messageWrapRef = useRef<View>(null);
+
+  // Scroll only as much as needed so the focused field sits just above
+  // the keyboard (not at the top of the screen).
+  const ensureVisible = useCallback(() => {
+    const field = focusedFieldRef.current;
+    const target = field === "title" ? titleWrapRef : messageWrapRef;
+
+    target.current?.measureInWindow((_x, y, _w, h) => {
+      const limit = keyboardTopRef.current - EXTRA_SPACE[field];
+      const overflow = y + h - limit;
+      if (overflow > 0) {
+        scrollRef.current?.scrollTo({
+          y: scrollYRef.current + overflow,
+          animated: true,
+        });
+      }
+    });
+  }, []);
+
+  const handleFocus = (field: FieldName) => {
+    focusedFieldRef.current = field;
+    // if keyboard is already open (switching fields), adjust now
+    if (keyboardOpenRef.current) {
+      setTimeout(ensureVisible, 150);
+    }
+  };
+
+  // Track keyboard height
+  useEffect(() => {
+    const showListener = Keyboard.addListener("keyboardDidShow", (e) => {
+      keyboardOpenRef.current = true;
+      keyboardTopRef.current = e.endCoordinates.screenY;
+      setKeyboardHeight(e.endCoordinates.height);
+      // wait for bottom padding to render, then scroll
+      setTimeout(ensureVisible, 150);
+    });
+    const hideListener = Keyboard.addListener("keyboardDidHide", () => {
+      keyboardOpenRef.current = false;
+      setKeyboardHeight(0);
+    });
+
+    return () => {
+      showListener.remove();
+      hideListener.remove();
+    };
+  }, [ensureVisible]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -81,7 +142,9 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
           await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== "granted") {
           Alert.alert(
-            t("EditProfile.PermissionDenied") || t("PublicForum.sorry") || "Sorry",
+            t("EditProfile.PermissionDenied") ||
+              t("PublicForum.sorry") ||
+              "Sorry",
             t("EditProfile.PleaseAllowAccessToYourGalleryToProceed") ||
               "Please allow access to your photo library to proceed!",
             [
@@ -219,12 +282,16 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
         }, 100);
       } else {
         setTimeout(() => {
-          Alert.alert(t("PublicForum.error"), t("PublicForum.FailedToUpdatePost"), [
-            {
-              text: t("Main.OK"),
-              style: "default",
-            },
-          ]);
+          Alert.alert(
+            t("PublicForum.error"),
+            t("PublicForum.FailedToUpdatePost"),
+            [
+              {
+                text: t("Main.OK"),
+                style: "default",
+              },
+            ],
+          );
         }, 100);
       }
     } catch (error: any) {
@@ -238,9 +305,7 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
             t("Main.SomethingWentWrongPleaseTryAgainlater");
 
       setTimeout(() => {
-        Alert.alert(t("Main.Error"), errorMsg, [
-          { text: t("Main.OK") },
-        ]);
+        Alert.alert(t("Main.Error"), errorMsg, [{ text: t("Main.OK") }]);
       }, 100);
     } finally {
       setLoading(false);
@@ -268,158 +333,166 @@ const PublicForumPostEdit: React.FC<PublicForumPostEditProps> = ({
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      enabled
-      style={{ flex: 1 }}
-    >
-      <View className="flex-1 bg-white ">
-        <CustomHeader
-          title={t("Edit Post")}
-          showBackButton={true}
-          navigation={navigation}
-          onBackPress={() => navigation.goBack()}
-        />
+    <View className="flex-1 bg-white ">
+      <CustomHeader
+        title={t("Edit Post")}
+        showBackButton={true}
+        navigation={navigation}
+        onBackPress={() => navigation.goBack()}
+      />
 
-        <ScrollView className="px-4 py-6 p-7 ">
-          <View className="mb-4">
-            <Text className="text-base font-semibold">
-              {t("PublicForum.Title")}
+      <ScrollView
+        ref={scrollRef}
+        className="px-4 py-6 p-7 "
+        // Manually lift content above the keyboard (works in production
+        // builds even with edge-to-edge enabled).
+        contentContainerStyle={{ paddingBottom: keyboardHeight }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        onScroll={(e) => {
+          scrollYRef.current = e.nativeEvent.contentOffset.y;
+        }}
+        scrollEventThrottle={16}
+      >
+        {/* Title */}
+        <View className="mb-4" ref={titleWrapRef} collapsable={false}>
+          <Text className="text-base font-semibold">
+            {t("PublicForum.Title")}
+          </Text>
+          <TextInput
+            className=" border-gray-300  bg-[#F4F7FF] rounded-3xl px-4 h-[50px] mt-2"
+            placeholder={t("PublicForum.AddYourTitleHere")}
+            value={heading}
+            onChangeText={setHeading}
+            maxLength={250}
+            placeholderTextColor="#000000"
+            onFocus={() => handleFocus("title")}
+          />
+          {heading.length >= 250 && (
+            <Text className="text-red-500 mt-1 text-sm">
+              {t("PublicForum.Maximum250charactersAllowed")}
             </Text>
-            <TextInput
-              className=" border-gray-300  bg-[#F4F7FF] rounded-3xl px-4 h-[50px] mt-2"
-              placeholder={t("PublicForum.AddYourTitleHere")}
-              value={heading}
-              onChangeText={setHeading}
-              maxLength={250}
-              placeholderTextColor="#000000"
-            />
-            {heading.length >= 250 && (
-              <Text className="text-red-500 mt-1 text-sm">
-                {t("PublicForum.Maximum250charactersAllowed")}
-              </Text>
-            )}
-          </View>
+          )}
+        </View>
 
-          <View className="mb-4 mt-6">
-            <Text className="text-base font-semibold ml-4">
-              {t("PublicForum.Discussion")}
-            </Text>
-            <TextInput
-              className=" bg-[#F4F7FF] border-gray-300 rounded-3xl px-4 py-2 mt-2 h-44  p-4 "
-              placeholder={t("PublicForum.AddYourDiscussionHere")}
-              value={message}
-              onChangeText={setMessage}
-              multiline
-              textAlignVertical="top"
-              placeholderTextColor="#000000"
-            />
-          </View>
+        {/* Discussion */}
+        <View className="mb-4 mt-6" ref={messageWrapRef} collapsable={false}>
+          <Text className="text-base font-semibold ml-4">
+            {t("PublicForum.Discussion")}
+          </Text>
+          <TextInput
+            className=" bg-[#F4F7FF] border-gray-300 rounded-3xl px-4 py-2 mt-2 h-44  p-4 "
+            placeholder={t("PublicForum.AddYourDiscussionHere")}
+            value={message}
+            onChangeText={setMessage}
+            multiline
+            textAlignVertical="top"
+            placeholderTextColor="#000000"
+            onFocus={() => handleFocus("message")}
+          />
+        </View>
 
-          <View className="mb-4 items-center mt-[3%]">
-            <TouchableOpacity
-              className="border bg-[#F4F7FF] border-[#525252] py-3 px-6 rounded-lg"
-              onPress={handleImagePick}
-            >
-              <Text className="text-[#667BA5]">
-                {t("PublicForum.UploadImage")}
-              </Text>
-            </TouchableOpacity>
-            {postImageUri && (
-              <View className="relative mt-[5%] w-full">
-                <Image
-                  source={{ uri: postImageUri }}
-                  className="w-full min-h-60 rounded-lg"
-                  resizeMode="cover"
-                />
-                <TouchableOpacity
-                  onPress={deleteImage}
-                  className="absolute -top-3 -right-2 rounded-full p-1"
-                  style={{
-                    width: 24,
-                    height: 24,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Image
-                    source={require("../../assets/images/public-forum/remove-image.webp")}
-                    style={{ width: 18, height: 18 }}
-                    resizeMode="contain"
-                  />
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
-          <View className=" items-center">
-            <TouchableOpacity
-              className="bg-[#353535] rounded-full py-3 w-[75%] items-center mt-[6%] mb-10"
-              disabled={loading}
-              onPress={handleUpdatePost}
-              style={{
-                shadowColor: "#000000",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.25,
-                shadowRadius: 4,
-                elevation: 4,
-              }}
-            >
-              {loading ? (
-                <ActivityIndicator color="white" size="small" />
-              ) : (
-                <Text className="text-white text-lg">
-                  {t("Main.Update")}
-                </Text>
-              )}
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-
-        {/* Loading Overlay */}
-        {loading && (
-          <View
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: "rgba(0, 0, 0, 0.4)",
-              justifyContent: "center",
-              alignItems: "center",
-              zIndex: 9999,
-            }}
+        <View className="mb-4 items-center mt-[3%]">
+          <TouchableOpacity
+            className="border bg-[#F4F7FF] border-[#525252] py-3 px-6 rounded-lg"
+            onPress={handleImagePick}
           >
-            <View
-              style={{
-                backgroundColor: "#1F2937",
-                paddingHorizontal: 28,
-                paddingVertical: 20,
-                borderRadius: 16,
-                alignItems: "center",
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.25,
-                shadowRadius: 4,
-                elevation: 5,
-              }}
-            >
-              <ActivityIndicator size="large" color="#19D7B7" />
-              <Text
+            <Text className="text-[#667BA5]">
+              {t("PublicForum.UploadImage")}
+            </Text>
+          </TouchableOpacity>
+          {postImageUri && (
+            <View className="relative mt-[5%] w-full">
+              <Image
+                source={{ uri: postImageUri }}
+                className="w-full min-h-60 rounded-lg"
+                resizeMode="cover"
+              />
+              <TouchableOpacity
+                onPress={deleteImage}
+                className="absolute -top-3 -right-2 rounded-full p-1"
                 style={{
-                  color: "white",
-                  marginTop: 12,
-                  fontWeight: "600",
-                  fontSize: 14,
+                  width: 24,
+                  height: 24,
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
-                {t("Main.Loading...")}
-              </Text>
+                <Image
+                  source={require("../../assets/images/public-forum/remove-image.webp")}
+                  style={{ width: 18, height: 18 }}
+                  resizeMode="contain"
+                />
+              </TouchableOpacity>
             </View>
+          )}
+        </View>
+        <View className=" items-center">
+          <TouchableOpacity
+            className="bg-[#353535] rounded-full py-3 w-[75%] items-center mt-[6%] mb-10"
+            disabled={loading}
+            onPress={handleUpdatePost}
+            style={{
+              shadowColor: "#000000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.25,
+              shadowRadius: 4,
+              elevation: 4,
+            }}
+          >
+            {loading ? (
+              <ActivityIndicator color="white" size="small" />
+            ) : (
+              <Text className="text-white text-lg">{t("Main.Update")}</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+
+      {/* Loading Overlay */}
+      {loading && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.4)",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "#1F2937",
+              paddingHorizontal: 28,
+              paddingVertical: 20,
+              borderRadius: 16,
+              alignItems: "center",
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.25,
+              shadowRadius: 4,
+              elevation: 5,
+            }}
+          >
+            <ActivityIndicator size="large" color="#19D7B7" />
+            <Text
+              style={{
+                color: "white",
+                marginTop: 12,
+                fontWeight: "600",
+                fontSize: 14,
+              }}
+            >
+              {t("Main.Loading...")}
+            </Text>
           </View>
-        )}
-      </View>
-    </KeyboardAvoidingView>
+        </View>
+      )}
+    </View>
   );
 };
 

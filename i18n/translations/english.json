@@ -320,7 +320,7 @@
     "ResendIt": "Resend it",
     "ResendAgain": "Resend again!",
     "Verify": "Verify",
-    "TheOTPYouEnteredIsInvalidPleaseTryAgain": "The OTP you entered is invalid. Please try again",
+    "TheOTPYouEnteredIsInvalidPleaseTryAgain": "The OTP you entered is incorrect. Please try again",
     "PleaseEnterTheFullOTPCode": "Please enter the full OTP code",
     "OTPVerificationFailedPleaseCheckTheCodeAndTryAgain": "OTP verification failed. Please check the code and try again.",
     "OTPHasBeenResentSuccessfully": "OTP has been resent successfully!",
