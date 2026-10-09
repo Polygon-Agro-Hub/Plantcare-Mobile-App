@@ -118,8 +118,8 @@
     "MyAssets": "எனது சொத்துக்கள்",
     "Weather": "வானிலை",
     "Survey": "கணக்கெடுப்பு",
-    "GoviShop": "கோவி கடை",
-    "SoilData": "மண் தரவு"
+    "GoviShop": "கொவி கடை",
+    "SoilData": "மண் தகவல்"
   },
   "Profile": {
     "Call": "அழைக்கவும்",
@@ -130,12 +130,12 @@
     "Complaints": "புகார்கள்",
     "PrivacyPolicy": "தனியுரிமைக் கொள்கை",
     "Terms&Conditions": "விதிமுறைகள் மற்றும் நிபந்தனைகள்",
-    "GoViCareHelp": "கோவிகேர் உதவி",
+    "GoViCareHelp": "GoViCare உதவி",
     "ReportComplaint": "ஒரு புகாரைப் பதிவு செய்யுங்கள்",
     "ViewComplaintHistory": "புகார் வரலாற்றைக் காண்க",
     "NeedHelp": "உதவி தேவை",
     "UnableToOpenTheDialerPleaseTryAgain": "டயலரைத் திறக்க முடியவில்லை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.",
-    "NeedGoViCareHelpTapTheCallButtonForInstantSupport": "கோவிகேர் உதவி தேவையா? உடனடி ஆதரவுக்கு அழைப்பு பொத்தானைத் தட்டவும்.",
+    "NeedGoViCareHelpTapTheCallButtonForInstantSupport": "GoViCare உதவி தேவையா? உடனடி ஆதரவுக்கு அழைப்பு பொத்தானைத் தட்டவும்.",
     "Profile": "சுயவிவரம்",
     "ViewProfile": "சுயவிவரத்தைப் பார்க்கவும்"
   },
@@ -281,7 +281,7 @@
     "LocationNotFound": "இருப்பிடம் கிடைக்கவில்லை.",
     "AnErrorOccurredWhileFetchingWeatherData": "வானிலைத் தரவைப் பெறும்போது பிழை ஏற்பட்டது.",
     "UnableToFetchCurrentLocation": "தற்போதைய இருப்பிடத்தைப் பெற முடியவில்லை.",
-    "NoResultsFound":"உங்கள் தேடலுக்கு எந்த முடிவுகளும் கிடைக்கவில்லை."
+    "NoResultsFound": "உங்கள் தேடலுக்கு எந்த முடிவுகளும் கிடைக்கவில்லை."
   },
   "FiveDayForcast": {
     "5DaysForecast": "5 நாள் முன்னறிவிப்பு",
@@ -412,7 +412,7 @@
     "NoSupervisorsOrLaborersFoundForThisFarm": "இந்தப் பண்ணைக்கு மேற்பார்வையாளர்கள் அல்லது தொழிலாளர்கள் எவரும் கிடைக்கவில்லை",
     "Laborer": "பண்ணை தொழிலாளி",
     "NoLaborersFoundForThisFarm": "இந்தப் பண்ணைக்கு தொழிலாளர்கள் எவரும் கிடைக்கவில்லை",
-    "ClickOnAFarmToEditFarmDetails": "பண்ணை விவரங்களைத் திருத்த பண்ணையில் கிளிக் செய்யவும்",
+    "ClickOnAFarmToEditFarmDetails": "பண்ணையைத் தேர்ந்தெடுத்து பண்ணை விவரங்களைத் திருத்தவும்",
     "AddNewFarm": "புதிய பண்ணையைச் சேர்க்கவும்",
     "YourProMembershipExpiresInDate": "உங்கள் Pro உறுப்பினர் {{date}} அன்று காலாவதியாகும்",
     "Pro": "PRO",
@@ -529,11 +529,11 @@
     "FailedToDeleteFarm": "பண்ணையை நீக்கத் தவறியது",
     "FailedToDeleteStaffMember": "ஊழியரை நீக்கத் தவறியது",
     "Crops": "பயிர்கள்",
-    "MyCultivation": "எனது சாகுபடி",
+    "MyCultivation": "எனது பயிர்ச்செய்கை",
     "SelectAFarmToManageYourCultivationAndAssets": "உங்கள் சாகுபடி மற்றும் சொத்துக்களை நிர்வகிக்க ஒரு பண்ணையைத் தேர்ந்தெடுக்கவும்",
     "StaffMemberUpdated": "பணியாளர் வெற்றிகரமாகப் புதுப்பிக்கப்பட்டார்.",
     "Assets": "சொத்துக்கள்",
-    "Cultivation": "சாகுபடி",
+    "Cultivation": "பயிர்ச்செய்கை",
     "StaffMember": "ஊழியர் -",
     "Rs": "ரூ.",
     "CreditDebitCard": "கிரெடிட் / டெபிட் கார்டு",
@@ -635,7 +635,7 @@
   "MyCrop": {
     "YouHaveNotEnrolledAnyCropsYet": "நீங்கள் இதுவரை எந்தப் பயிர்களையும் பதிவு செய்யவில்லை.",
     "NoFarmCultivationsYet": "இதுவரை பண்ணை சாகுபடிகள் இல்லை",
-    "NoOngoingCultivationsYet": "இதுவரை நடைபெற்று வரும் சாகுபடிகள் இல்லை"
+    "NoOngoingCultivationsYet": "இதுவரை பயிர்ச்செய்கைகள் எதுவும் இடம் பெறவில்லை"
   },
   "CropCalender": {
     "ConfirmRemove": "அகற்றுவதை உறுதிப்படுத்தவும்",
@@ -727,9 +727,9 @@
     "Transactions": "பரிவர்த்தனைகள்",
     "All": "அனைத்தும்",
     "TransactionHistory": "பரிவர்த்தனை வரலாறு",
-    "GoViCapital": "கோவிகேப்பிடல்",
-    "GoViPension": "கோவிபென்ஷன்",
-    "FarmCal": "பண்ணை கால்",
+    "GoViCapital": "கொவி மூலதனம்",
+    "GoViPension": "கொவி ஓய்வூதியம்",
+    "FarmCal": "பண்ணை கணிப்பான்",
     "GRNNo": "GRN எண்",
     "Amount": "தொகை",
     "OfItems": "பொருட்கள்",
@@ -1164,7 +1164,7 @@
     "Owner": "உரிமையாளர்"
   },
   "PublicForum": {
-    "StartANewDiscussion": "புதிய விவாதத்தைத் தொடங்குங்கள்",
+    "StartANewDiscussion": "புதிய கலந்துரையாடலை தொடங்குங்கள்",
     "LoadingComments": "கருத்துகளை ஏற்றுகிறது...",
     "Reply": "பதில்கள்",
     "Replies": "பதில்கள்",
@@ -1191,7 +1191,7 @@
     "FailedToRefreshPosts": "பதிவுகளைப் புதுப்பிக்கத் தவறியது.",
     "DescriptionIsRequired": "விளக்கம் தேவை",
     "NoResultsFoundForYourSearch": "உங்கள் தேடலுக்கு முடிவுகள் எதுவும் கிடைக்கவில்லை",
-    "NoDiscussionsAvailable": "விவாதங்கள் எதுவும் இல்லை",
+    "NoDiscussionsAvailable": "இதுவரை கலந்துரையாடல்கள் எதுவும் இடம்பெறவில்லை",
     "DeletePost": "பதிவை நீக்கவும்",
     "AreYouSureYouWantToDeleteThisPost": "இந்தப் பதிவை நீக்க விரும்புகிறீர்களா?",
     "PostDeleteSuccessful": "பதிவு நீக்கம் வெற்றிகரமானது!",
@@ -1244,7 +1244,7 @@
     "IHaveAAttachedTheNecessaryDocumentsForYourPerusal": "I have attached the necessary documents for your perusal.",
     "IAmConfidentInTheSuccessOfThisVentureAndRequestYouToKindlyApproveMyLoanApplicationILookForwardToYourFavorableTimeAndConsideration": "I am confident in the success of this venture and request you to kindly approve my investment application at the earliest. Thank you for your time and consideration.",
     "Sincerely": "Sincerely,",
-    "Extent": "Extent",
+    "Extent": "பரப்பளவு",
     "ExpectedInvestment": "Expected Investment",
     "ExpectedYield": "Expected Yield",
     "CultivationStartDate": "Cultivation Start Date",
@@ -1254,7 +1254,7 @@
     "Rs": "Rs.",
     "Hectare": "hectare",
     "Acres": "acres",
-    "Perches": "perches",
+    "Perches": "பேர்ச்",
     "And": "and",
     "YourInvestmentRequestHasBeenSentForApproval": "Your investment request has been sent for approval!",
     "NoRequestsYet": "No Requests Yet",
@@ -1450,7 +1450,7 @@
     "LoadingStatus": "Loading status..."
   },
   "MyPensionAccount": {
-    "GoViPension": "GoViPension",
+    "GoViPension": "கொவி ஓய்வூதியம்",
     "TotalPensionValue": "மொத்த ஓய்வூதிய மதிப்பு",
     "YouWillGetYourPensionIn": "உங்கள் ஓய்வூதியம் கிடைக்க இன்னும்...",
     "Year": "வருடம்",
