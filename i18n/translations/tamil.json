@@ -400,7 +400,7 @@
   "MarketPriceSlideShow": {
     "Note": "குறிப்பு",
     "ActualMarketPricesMayDifferFromTheDisplayedPrice": "உண்மையான சந்தை விலைகள் காட்டப்படும் விலையிலிருந்து வேறுபடலாம்.",
-    "PleaseEnrollToCropsToSeeHowTheMarketPricesAre": "சந்தை விலைகள் எப்படி இருக்கும் என்பதைப் பார்க்க, தயவுசெய்து பயிர்களுக்குப் பதிவு செய்யவும்."
+    "PleaseEnrollToCropsToSeeHowTheMarketPricesAre": "சந்தை விலைகளைப் பார்க்க, தயவுசெய்து பயிர்களைப் பதிவு செய்யவும்."
   },
   "Farms": {
     "MyFarms": "எனது பண்ணைகள்",
@@ -446,7 +446,7 @@
     "Retry": "மீண்டும் முயற்சிக்கவும்",
     "EditFarm": "பண்ணையைத் திருத்தவும்",
     "FarmName": "பண்ணை பெயர்",
-    "Extent": "விரிவு",
+    "Extent": "பரப்பளவு",
     "ha": "ஹெக்டேர்",
     "ac": "ஏக்கர்",
     "p": "பெர்ச்",
@@ -530,7 +530,7 @@
     "FailedToDeleteStaffMember": "ஊழியரை நீக்கத் தவறியது",
     "Crops": "பயிர்கள்",
     "MyCultivation": "எனது பயிர்ச்செய்கை",
-    "SelectAFarmToManageYourCultivationAndAssets": "உங்கள் சாகுபடி மற்றும் சொத்துக்களை நிர்வகிக்க ஒரு பண்ணையைத் தேர்ந்தெடுக்கவும்",
+    "SelectAFarmToManageYourCultivationAndAssets": "உங்கள் பயிர்ச்செய்கை மற்றும் சொத்துக்களை நிர்வகிக்க ஒரு பண்ணையைத் தேர்ந்தெடுக்கவும்",
     "StaffMemberUpdated": "பணியாளர் வெற்றிகரமாகப் புதுப்பிக்கப்பட்டார்.",
     "Assets": "சொத்துக்கள்",
     "Cultivation": "பயிர்ச்செய்கை",
@@ -540,8 +540,8 @@
     "Processing...": "செயலாக்குகிறது...",
     "PayNow": "இப்போது செலுத்துங்கள்",
     "FarmIDOrFarmNameIsMissingOrInvalid": "பண்ணை ஐடி அல்லது பண்ணை பெயர் காணவில்லை அல்லது தவறானது.",
-    "NatureOfCultivation": "சாகுபடியின் தன்மை",
-    "CultivationMethod": "சாகுபடி முறை",
+    "NatureOfCultivation": "பயிர்ச்செய்கை தன்மை",
+    "CultivationMethod": "பயிர்ச்செய்கை முறை",
     "PleaseEnterFarmExtentAtLeastOneFieldHaAcOrP": "தயவுசெய்து பண்ணை விரிவை உள்ளிடவும் (குறைந்தது ஒரு புலம்: ஹெக்டேர், ஏக்கர், அல்லது பெர்ச்)",
     "PleaseEnterPlotNumber": "தயவுசெய்து மனை எண்ணை உள்ளிடவும்",
     "PleaseEnterStreetName": "தயவுசெய்து தெரு பெயரை உள்ளிடவும்",
@@ -614,7 +614,7 @@
     "ConventionalFarming": "வழக்கமான விவசாயம்",
     "GAPFarming": "GAP விவசாயம்",
     "OrganicFarming": "கரிம விவசாயம்",
-    "Extent": "விரிவு",
+    "Extent": "பரப்பளவு",
     "SelectStartDate": "தொடக்க தேதியைத் தேர்ந்தெடுக்கவும்",
     "Enroll": "பதிவு செய்யுங்கள்",
     "PleaseSelectNatureOfCultivation": "தயவுசெய்து சாகுபடியின் தன்மையைத் தேர்ந்தெடுக்கவும்.",
@@ -724,7 +724,7 @@
     "DeleteSuccessThankYou": "நீக்கம் வெற்றி, நன்றி!"
   },
   "TransactionList": {
-    "Transactions": "பரிவர்த்தனைகள்",
+    "Transactions": "கொடுக்கல் வாங்கல்",
     "All": "அனைத்தும்",
     "TransactionHistory": "பரிவர்த்தனை வரலாறு",
     "GoViCapital": "கொவி மூலதனம்",
@@ -892,7 +892,7 @@
     "District": "மாவட்டம்",
     "SelectDistrict": "மாவட்டத்தைத் தேர்ந்தெடுக்கவும்",
     "AddAsset": "சொத்தைச் சேர்க்கவும்",
-    "Extent": "விரிவு",
+    "Extent": "பரப்பளவு",
     "Years": "ஆண்டுகள்",
     "Months": "மாதங்கள்",
     "AnnualLeaseAmount": "வருடாந்திர குத்தகைத் தொகை (ரூ.)",
@@ -1217,12 +1217,12 @@
   },
   "Govicapital": {
     "HowCanWeHelpYou": "How can we help you?",
-    "GoviCapitalProvidesYouWithCultivationInvestmentsAndLoans": "GoviCapital provides you with\ncultivation investments and loans.",
+    "GoviCapitalProvidesYouWithCultivationInvestmentsAndLoans": "கொவி மூலதனம் provides you with\ncultivation investments and loans.",
     "INeedAAnInvestment": "I need an\ninvestment",
     "INeedALoan": "I need a\nloan",
     "InvestmentRequest": "Investment Request",
     "Crop": "Crop",
-    "CultivationExtent": "Cultivation Extent",
+    "CultivationExtent": "Cultivation பரப்பளவு",
     "ha": "ha",
     "ac": "ac",
     "p": "p",
@@ -1276,7 +1276,7 @@
     "ViewProjectStatus": "View Project Status",
     "Investment": "Investment",
     "Eg10B": "E.g: 10/B",
-    "LandsPlotNumber": "Land's Plot Number",
+    "LandsPlotNumber": "Land's காணி இலக்கம்",
     "LandsStreetName": "Land's Street Name",
     "LandsCity": "Land's City",
     "Kg": "கிலோ"
@@ -1287,7 +1287,7 @@
     "IncompleteData": "Incomplete Data",
     "PleaseFillAllPaymentDetails": "Please fill all payment details",
     "PleaseEnterAValidCardExpiryDateMMYY": "Please enter a valid card expiry date (MM/YY)",
-    "PleaseEnterPlotNumber": "Please enter Plot Number",
+    "PleaseEnterPlotNumber": "Please enter காணி இலக்கம்",
     "PleaseEnterStreetName": "Please enter Street Name",
     "PleaseEnterCity": "Please enter City",
     "PleaseSelectAScheduleDate": "Please select a schedule date",
@@ -1390,7 +1390,7 @@
     "YourScheduledFieldInspectionWasCompletedByTimeOnDate": "Your scheduled field inspection was completed by {{time}} on {{date}}."
   },
   "GoviPensionForm": {
-    "GoViPension": "GoViPension",
+    "GoViPension": "கொவி ஓய்வூதியம்",
     "YourFullName": "Your Full Name",
     "YourDateOfBirth": "Your Date of Birth",
     "SelectDate": "--Select Date--",
