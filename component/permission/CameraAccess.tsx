@@ -95,7 +95,7 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
         } else if (navigation) {
           navigation.navigate(returnScreen as any);
         }
-      } else if (status === "denied") {
+      } else {
         Alert.alert(
           t("CameraAccess.PermissionDenied") ||
           t("Permission.PermissionDenied") ||
@@ -106,9 +106,8 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
           [
             {
               text:
-                t("CameraAccess.NotNow") ||
                 t("Main.Cancel") ||
-                "Not Now",
+                "Cancel",
               style: "cancel",
               onPress: handleDenyOrClose,
             },
@@ -117,7 +116,10 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
                 t("CameraAccess.OpenSettings") ||
                 t("Permission.OpenSettings") ||
                 "Open Settings",
-              onPress: () => Linking.openSettings(),
+              onPress: () => {
+                Linking.openSettings();
+                handleDenyOrClose();
+              },
             },
           ],
         );
@@ -128,7 +130,13 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
         t("Main.Error") || "Error",
         t("CameraAccess.UnableToRequestCameraPermissionPleaseTryAgain") ||
         "Unable to request camera permission. Please try again.",
-        [{ text: t("Main.OK") || "OK" }],
+        [
+          {
+            text: t("Main.Cancel") || "Cancel",
+            onPress: handleDenyOrClose,
+          },
+          { text: t("Main.OK") || "OK", onPress: handleDenyOrClose },
+        ],
       );
     } finally {
       setIsLoading(false);
@@ -247,14 +255,14 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
 
           {/* Action Buttons */}
           <View
-            className={`items-center w-full mt-4 ${isScreenTooLong ? "mb-2" : "mb-8"
+            className={`items-center w-full mt-4 ${isScreenTooLong ? "mb-2" : "mb-6"
               }`}
           >
             <TouchableOpacity
               onPress={requestCameraPermission}
               activeOpacity={0.8}
               disabled={isLoading}
-              className="w-full mb-3"
+              className="w-full"
               style={{ borderRadius: 999, overflow: "hidden" }}
             >
               <LinearGradient
@@ -279,20 +287,10 @@ const CameraAccess: React.FC<CameraAccessProps> = ({
                   <Text className="text-black font-extrabold text-base tracking-wide">
                     {isLoading
                       ? t("CameraAccess.Requesting...") || "Requesting..."
-                      : t("CameraAccess.AgreeAndContinue") || "Agree & Continue"}
+                      : t("CameraAccess.Continue") || t("Main.Continue") || "Continue"}
                   </Text>
                 </View>
               </LinearGradient>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={handleDenyOrClose}
-              activeOpacity={0.7}
-              className="py-3 px-6 items-center justify-center"
-            >
-              <Text className="text-gray-400 font-semibold text-sm">
-                {t("CameraAccess.NotNow") || "Not Now"}
-              </Text>
             </TouchableOpacity>
           </View>
         </View>

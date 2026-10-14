@@ -231,7 +231,8 @@
   },
   "LocationAccess": {
     "Allow": "அனுமதி",
-    "AgreeAndContinue": "ஒப்புக்கொண்டு தொடரவும்",
+    "Continue": "தொடரவும்",
+    "AgreeAndContinue": "தொடரவும்",
     "NotNow": "இப்போது இல்லை",
     "OpenSettings": "அமைப்புகளைத் திறக்கவும்",
     "Requesting...": "கோருகிறது...",
@@ -251,7 +252,8 @@
   },
   "CameraAccess": {
     "Allow": "அனுமதி",
-    "AgreeAndContinue": "ஒப்புக்கொண்டு தொடரவும்",
+    "Continue": "தொடரவும்",
+    "AgreeAndContinue": "தொடரவும்",
     "NotNow": "இப்போது இல்லை",
     "OpenSettings": "அமைப்புகளைத் திறக்கவும்",
     "Requesting...": "கோருகிறது...",

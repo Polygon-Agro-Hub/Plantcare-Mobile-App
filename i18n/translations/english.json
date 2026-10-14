@@ -237,7 +237,8 @@
   },
   "LocationAccess": {
     "Allow": "Allow",
-    "AgreeAndContinue": "Agree & Continue",
+    "Continue": "Continue",
+    "AgreeAndContinue": "Continue",
     "NotNow": "Not Now",
     "OpenSettings": "Open Settings",
     "Requesting...": "Requesting...",
@@ -257,7 +258,8 @@
   },
   "CameraAccess": {
     "Allow": "Allow",
-    "AgreeAndContinue": "Agree & Continue",
+    "Continue": "Continue",
+    "AgreeAndContinue": "Continue",
     "NotNow": "Not Now",
     "OpenSettings": "Open Settings",
     "Requesting...": "Requesting...",
