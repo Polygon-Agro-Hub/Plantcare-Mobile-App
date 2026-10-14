@@ -117,13 +117,16 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
           "Location access is required for this feature. Please enable it in settings.",
           [
             {
-              text: t("LocationAccess.NotNow") || "Not Now",
+              text: t("Main.Cancel") || "Cancel",
               style: "cancel",
-              onPress: handleNotNowPress,
+              onPress: handleDenyOrClose,
             },
             {
               text: t("LocationAccess.OpenSettings") || "Open Settings",
-              onPress: () => Linking.openSettings(),
+              onPress: () => {
+                Linking.openSettings();
+                handleDenyOrClose();
+              },
             },
           ],
         );
@@ -136,10 +139,10 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
         "Unable to request location permission. Please try again.",
         [
           {
-            text: t("LocationAccess.NotNow") || "Not Now",
-            onPress: handleNotNowPress,
+            text: t("Main.Cancel") || "Cancel",
+            onPress: handleDenyOrClose,
           },
-          { text: t("Main.OK") },
+          { text: t("Main.OK") || "OK", onPress: handleDenyOrClose },
         ],
       );
     } finally {
@@ -255,14 +258,14 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
 
           {/* Action Buttons */}
           <View
-            className={`items-center w-full mt-4 ${isScreenTooLong ? "mb-2" : "mb-8"
+            className={`items-center w-full mt-4 ${isScreenTooLong ? "mb-2" : "mb-6"
               }`}
           >
             <TouchableOpacity
               onPress={requestLocationPermission}
               activeOpacity={0.8}
               disabled={isLoading}
-              className="w-full mb-3"
+              className="w-full"
               style={{ borderRadius: 999, overflow: "hidden" }}
             >
               <LinearGradient
@@ -287,20 +290,10 @@ const LocationAccess: React.FC<LocationAccessProps> = ({
                   <Text className="text-black font-extrabold text-base tracking-wide">
                     {isLoading
                       ? t("LocationAccess.Requesting...") || "Requesting..."
-                      : t("LocationAccess.AgreeAndContinue") || "Agree & Continue"}
+                      : t("LocationAccess.Continue") || t("Main.Continue") || "Continue"}
                   </Text>
                 </View>
               </LinearGradient>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={handleNotNowPress}
-              activeOpacity={0.7}
-              className="py-3 px-6 items-center justify-center"
-            >
-              <Text className="text-gray-400 font-semibold text-sm">
-                {t("LocationAccess.NotNow") || "Not Now"}
-              </Text>
             </TouchableOpacity>
           </View>
         </View>

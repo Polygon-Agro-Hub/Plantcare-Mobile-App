@@ -237,7 +237,8 @@
   },
   "LocationAccess": {
     "Allow": "ඉඩ දෙන්න",
-    "AgreeAndContinue": "එකඟ වී ඉදිරියට යන්න",
+    "Continue": "ඉදිරියට යන්න",
+    "AgreeAndContinue": "ඉදිරියට යන්න",
     "NotNow": "දැන් නොවේ",
     "OpenSettings": "සැකසුම් විවෘත කරන්න",
     "Requesting...": "ඉල්ලමින්...",
@@ -257,7 +258,8 @@
   },
   "CameraAccess": {
     "Allow": "ඉඩ දෙන්න",
-    "AgreeAndContinue": "එකඟ වී ඉදිරියට යන්න",
+    "Continue": "ඉදිරියට යන්න",
+    "AgreeAndContinue": "ඉදිරියට යන්න",
     "NotNow": "දැන් නොවේ",
     "OpenSettings": "සැකසුම් විවෘත කරන්න",
     "Requesting...": "ඉල්ලමින්...",
