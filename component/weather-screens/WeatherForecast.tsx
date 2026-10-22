@@ -190,7 +190,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
   };
 
   // Every time Weather screen comes into focus:
-  // Until "Agree & Continue" is selected and granted, Location Access UI continues to be displayed.
+  // If location permission has not been granted, Location Access UI is displayed.
   useFocusEffect(
     useCallback(() => {
       let isMounted = true;
