@@ -541,7 +541,7 @@
     "StaffMemberIDIsMissing": "ஊழியர் ஐடி காணவில்லை",
     "NoAuthenticationTokenFound": "அங்கீகார டோக்கன் எதுவும் கிடைக்கவில்லை",
     "FailedToFFetchStaffMemberData": "ஊழியர் தரவைப் பெறத் தவறியது",
-    "EditMemberDetails": "Edit Member Details",
+    "EditMemberDetails": "உறுப்பினர் விவரங்களைத் திருத்தவும்",
     "EditSelectedRoleDetails": "{{selectedRole}} விவரங்களைத் திருத்தவும்",
     "FailedToDeleteFarm": "பண்ணையை நீக்கத் தவறியது",
     "FailedToDeleteStaffMember": "ஊழியரை நீக்கத் தவறியது",
@@ -574,16 +574,16 @@
     "DuplicateNumbersAreNotAllowed.": "நகல் எண்கள் அனுமதிக்கப்படாது.",
     "DuplicateNICNumbersAreNotAllowed": "நகல் NIC அனுமதிக்கப்படாது.",
     "PleaseFixPhoneNumberValidationErrorsBeforeSaving": "சேமிப்பதற்கு முன், தயவுசெய்து தொலைபேசி எண் சரிபார்ப்பு தவறுகளைச் சரிசெய்யவும்.",
-    "PleaseFixNICValidationErrorsBeforeSaving": "Please fix NIC validation errors before saving.",
-    "DuplicatePhoneNumbersFoundPleaseUseUnique": "Duplicate phone numbers found. Please use unique phone numbers for each staff member.",
-    "Duplicate phone numbers found. Please use unique phone numbers for each staff member.": "Duplicate phone numbers found. Please use unique phone numbers for each staff member.",
-    "DuplicateNICNumbersFoundPleaseUseUnique": "Duplicate NIC numbers found. Please use unique NIC numbers for each staff member.",
-    "Duplicate NIC numbers found. Please use unique NIC numbers for each staff member.": "Duplicate NIC numbers found. Please use unique NIC numbers for each staff member.",
-    "PleaseEnterAValidPhoneNumber": "Please enter a valid phone number",
-    "Please enter a valid phone number": "Please enter a valid phone number",
-    "ErrorCheckingPhoneNumber": "Error checking phone number",
-    "Error checking phone number": "Error checking phone number",
-    "MissingFarmDetailsPleaseGoBack": "Missing farm details. Please go back and complete all steps.",
+    "PleaseFixNICValidationErrorsBeforeSaving": " சேமிப்பதற்கு முன் தேசிய அடையாள அட்டை இலக்கத்தைச் சரிபார்த்து, பிழைகளைத் திருத்தவும்.",
+    "DuplicatePhoneNumbersFoundPleaseUseUnique": " ஒரே தொலைபேசி இலக்கம் ஒன்றுக்கு மேற்பட்ட முறை பயன்படுத்தப்பட்டுள்ளது. ஒவ்வொரு பணியாளருக்கும் தனித்தனி தொலைபேசி இலக்கத்தைப் பயன்படுத்தவும்.",
+    "Duplicate phone numbers found. Please use unique phone numbers for each staff member.": " ஒரே தொலைபேசி இலக்கம் ஒன்றுக்கு மேற்பட்ட முறை பயன்படுத்தப்பட்டுள்ளது. ஒவ்வொரு பணியாளருக்கும் வெவ்வேறு தொலைபேசி இலக்கத்தைப் பயன்படுத்தவும்..",
+    "DuplicateNICNumbersFoundPleaseUseUnique": "ஒரே தேசிய அடையாள அட்டை (NIC) இலக்கம் ஒன்றுக்கு மேற்பட்ட முறை உள்ளது. ஒவ்வொரு பணியாளருக்கும் தனித்தனி NIC இலக்கங்களைப் பயன்படுத்தவும்.",
+    "Duplicate NIC numbers found. Please use unique NIC numbers for each staff member.": " ஒரே NIC இலக்கம் பல பணியாளர்களுக்குப் பயன்படுத்தப்பட்டுள்ளது. ஒவ்வொரு பணியாளருக்கும் வெவ்வேறு NIC இலக்கங்களைப் பயன்படுத்தவும்.",
+    "PleaseEnterAValidPhoneNumber": "சரியான தொலைபேசி இலக்கத்தை உள்ளிடவும்.",
+    "Please enter a valid phone number": "சரியான தொலைபேசி இலக்கத்தை உள்ளிடவும்.",
+    "ErrorCheckingPhoneNumber": "தொலைபேசி இலக்கத்தைச் சரிபார்க்கும்போது தவறு  ஏற்பட்டது.",
+    "Error checking phone number": "தொலைபேசி இலக்கத்தைச் சரிபார்க்கும்போது தவறு  ஏற்பட்டது.",
+    "MissingFarmDetailsPleaseGoBack": " பண்ணை விவரங்கள் விடுபட்டுள்ளன. முந்தைய பக்கத்திற்குச் சென்று தேவையான அனைத்து விவரங்களையும் நிரப்பவும்.",
     "StaffCountCannotBeLessThanAppUserCountAppUsers": "ஊழியர்களின் எண்ணிக்கை {{appUserCount}} பயன்பாட்டுப் பயனர்களை விடக் குறைவாக இருக்க முடியாது",
     "Total": "மொத்தம்",
     "YouHaveSuccessfullyAppliedForYourCertificate": "உங்கள் சான்றிதழுக்கு நீங்கள் வெற்றிகரமாக விண்ணப்பித்துள்ளீர்கள்!",
@@ -612,10 +612,10 @@
     "ID": "ID",
     "StaffMemberHasBeenUpdatedSuccessfully": "பணியாளர் வெற்றிகரமாகப் புதுப்பிக்கப்பட்டார்.",
     "CompletionRemovedSuccessfully": "நிறைவு வெற்றிகரமாக நீக்கப்பட்டது",
-    "PleaseEnterAtLeastOneExtentValue": "Please enter at least one extent value",
-    "NotAllowedToBeEmpty": "is not allowed to be empty",
-    "OneOrMorePhoneNumbersAreAlreadyRegistered": "One or more phone numbers are already registered. Please use different phone numbers.",
-    "OneOrMoreNICNumbersAreAlreadyRegistered": "One or more NIC numbers are already registered. Please use different NIC numbers."
+    "PleaseEnterAtLeastOneExtentValue": " குறைந்தது ஒரு நிலப்பரப்பு அளவையாவது உள்ளிடவும்.",
+    "NotAllowedToBeEmpty": "இந்த இடத்தை வெற்றிடமாக விடக்கூடாது.",
+    "OneOrMorePhoneNumbersAreAlreadyRegistered": " நீங்கள் உள்ளிட்ட ஒன்று அல்லது அதற்கு மேற்பட்ட தொலைபேசி இலக்கங்கள் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளன. வேறு தொலைபேசி இலக்கங்களைப் பயன்படுத்தவும்.",
+    "OneOrMoreNICNumbersAreAlreadyRegistered": " நீங்கள் உள்ளிட்ட ஒன்று அல்லது அதற்கு மேற்பட்ட NIC இலக்கங்கள் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளன. வேறு NIC இலக்கங்களைப் பயன்படுத்தவும்."
   },
   "SelectCrop": {
     "Description": "விளக்கம்",
@@ -813,7 +813,7 @@
     "PleaseFillAllPaymentDetails": "தயவுசெய்து அனைத்து கட்டண விவரங்களையும் நிரப்பவும்",
     "PleaseEnterAValidCardExpiryDate": "தயவுசெய்து சரியான அட்டை காலாவதி திகதியை உள்ளிடவும் (MM/YY)",
     "NoCertificatesAvailableForCropsAtTheMoment": "தற்போது பயிர்களுக்கு கிடைக்கக்கூடிய சான்றிதழ்கள் எதுவும் இல்லை",
-    "NoCertificatesAvailable": "No certificates available"
+    "NoCertificatesAvailable": "சான்றிதழ்கள் எதுவும் கிடைக்கவில்லை"
   },
   "ProjectStatus": {
     "ReceivedTotalInvestment": "பெறப்பட்ட மொத்த முதலீடு",
@@ -825,7 +825,7 @@
     "Needed": "தேவை",
     "PendingBalance": "நிலுவை இருப்பு",
     "ToReceive": "பெற",
-    "NoInvestmentTransactionsFound": "No investment transactions found"
+    "NoInvestmentTransactionsFound": "முதலீட்டுப் பரிவர்த்தனைகள் எதுவும் கண்டறியப்படவில்லை"
   },
   "CurrentAssets": {
     "MyAssets": "எனது சொத்துக்கள்",
@@ -836,7 +836,7 @@
     "AssetRemovedSuccessfully": "சொத்து வெற்றிகரமாக அகற்றப்பட்டது!",
     "Category": "வகை",
     "SelectCategory": "வகையைத் தேர்ந்தெடுக்கவும்",
-    "IsRequired": "is required",
+    "IsRequired": "கட்டாயமாகத் தேவை",
     "SelectAsset": "சொத்தைத் தேர்ந்தெடுக்கவும்",
     "EnterAsset": "சொத்தை உள்ளிடவும்",
     "EnterBrand": "பிராண்டை உள்ளிடவும்",
@@ -1196,14 +1196,14 @@
     "Owner": "உரிமையாளர்"
   },
   "PublicForum": {
-    "You": "You",
-    "JustNow": "Just now",
-    "MinuteAgo": "1 minute ago",
-    "MinutesAgo": "{{count}} minutes ago",
-    "HourAgo": "1 hour ago",
-    "HoursAgo": "{{count}} hours ago",
-    "DayAgo": "1 day ago",
-    "DaysAgo": "{{count}} days ago",
+    "You": "நீங்கள்",
+    "JustNow": "சற்று முன்பு",
+    "MinuteAgo": "1 நிமிடத்திற்கு முன்பு",
+    "MinutesAgo": "{{count}} நிமிடங்களுக்கு முன்பு",
+    "HourAgo": "1 மணி நேரத்திற்கு முன்பு",
+    "HoursAgo": "{{count}} மணி நேரங்களுக்கு முன்பு",
+    "DayAgo": "1 நாளுக்கு முன்பு",
+    "DaysAgo": "{{count}} நாட்களுக்கு முன்பு",
     "StartANewDiscussion": "புதிய கலந்துரையாடலை தொடங்குங்கள்",
     "LoadingComments": "கருத்துகளை ஏற்றுகிறது...",
     "Reply": "பதில்",
@@ -1700,10 +1700,10 @@
     "No Previous Orders": "முந்தைய ஆர்டர்கள் இல்லை"
   },
   "AddFixedAsset": {
-    "DuplicateName": "Duplicate Name",
-    "AssetAlreadyExists": "A {{assetType}} asset with the name \"{{name}}\" already exists.",
-    "Land": "Land",
-    "Building": "Building"
+    "DuplicateName": "இந்தப் பெயர் ஏற்கனவே உள்ளது",
+    "AssetAlreadyExists": "\"{{name}}\" என்ற பெயரில் {{assetType}} சொத்து ஏற்கனவே உள்ளது.",
+    "Land": "நிலம்",
+    "Building": "கட்டிடம்"
   },
   "Calendar": {
     "Months": [
