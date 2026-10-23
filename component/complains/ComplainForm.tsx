@@ -115,7 +115,12 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
                 label: categoryValue,
               };
             })
-            .filter((item: { value: any }) => item.value);
+            .filter((item: { value: any; label?: string }) => item.value && item.label)
+            .sort((a: { label: string }, b: { label: string }) =>
+              (a.label || '').localeCompare(b.label || '', undefined, {
+                sensitivity: 'base',
+              }),
+            );
 
           setCategory(mappedCategories);
         }

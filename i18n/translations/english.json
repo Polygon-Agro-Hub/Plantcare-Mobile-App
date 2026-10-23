@@ -289,7 +289,7 @@
     "LocationNotFound": "Location not found.",
     "AnErrorOccurredWhileFetchingWeatherData": "An error occurred while fetching weather data.",
     "UnableToFetchCurrentLocation": "Unable to fetch current location.",
-    "NoResultsFound":"No results found for your search"
+    "NoResultsFound": "No results found for your search"
   },
   "FiveDayForcast": {
     "5DaysForecast": "5 Days Forecast",
@@ -575,11 +575,6 @@
     "DuplicateNICNumbersAreNotAllowed": "Duplicate NIC numbers are not allowed.",
     "PleaseFixPhoneNumberValidationErrorsBeforeSaving": "Please fix phone number validation errors before saving.",
     "PleaseFixNICValidationErrorsBeforeSaving": "Please fix NIC validation errors before saving.",
-    "Please fix NIC validation errors before saving.": "Please fix NIC validation errors before saving.",
-    "OneOrMorePhoneNumbersAlreadyRegistered": "One or more phone numbers are already registered. Please use different phone numbers.",
-    "One or more phone numbers are already registered. Please use different phone numbers.": "One or more phone numbers are already registered. Please use different phone numbers.",
-    "OneOrMoreNICNumbersAlreadyRegistered": "One or more NIC numbers are already registered. Please use different NIC numbers.",
-    "One or more NIC numbers are already registered. Please use different NIC numbers.": "One or more NIC numbers are already registered. Please use different NIC numbers.",
     "DuplicatePhoneNumbersFoundPleaseUseUnique": "Duplicate phone numbers found. Please use unique phone numbers for each staff member.",
     "Duplicate phone numbers found. Please use unique phone numbers for each staff member.": "Duplicate phone numbers found. Please use unique phone numbers for each staff member.",
     "DuplicateNICNumbersFoundPleaseUseUnique": "Duplicate NIC numbers found. Please use unique NIC numbers for each staff member.",

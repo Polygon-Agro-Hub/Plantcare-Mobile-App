@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -63,6 +63,25 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
   const [accountNumberError, setAccountNumberError] = useState("");
 
   const isSignUp = route.name === "BankDetailsSignUp";
+
+  const isRegisteredSuccessRef = useRef(false);
+  const hasNavigatedRef = useRef(false);
+
+  const navigateToNextScreen = React.useCallback(() => {
+    if (hasNavigatedRef.current) return;
+    hasNavigatedRef.current = true;
+    if (isSignUp) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Main", params: { screen: "Dashboard" } }],
+      });
+    } else {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Main", params: { screen: "QRcode" } }],
+      });
+    }
+  }, [isSignUp, navigation]);
 
   const adjustFontSize = (size: number) =>
     language !== "en" ? size * 0.9 : size;
@@ -208,29 +227,25 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
       );
 
       if (response.status === 200) {
+        isRegisteredSuccessRef.current = true;
+        setDisableSubmit(true);
+        setIsLoading(false);
+
         Alert.alert(
           t("Main.Success"),
           t("BankDetails.BankDetailsRegisteredSuccessfully"),
           [
             {
-              onPress: () => {
-                if (isSignUp) {
-                  navigation.reset({
-                    index: 0,
-                    routes: [{ name: "Main", params: { screen: "Dashboard" } }],
-                  });
-                } else {
-                  navigation.reset({
-                    index: 0,
-                    routes: [{ name: "Main", params: { screen: "QRcode" } }],
-                  });
-                }
-              },
+              text: t("Main.OK") || "OK",
+              onPress: navigateToNextScreen,
             },
           ],
         );
-        setDisableSubmit(false);
-        setIsLoading(false);
+
+        setTimeout(() => {
+          navigateToNextScreen();
+        }, 3200);
+        return;
       } else {
         Alert.alert(
           t("BankDetails.Failed"),
@@ -241,28 +256,25 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 400) {
+          isRegisteredSuccessRef.current = true;
+          setDisableSubmit(true);
+          setIsLoading(false);
+
           Alert.alert(
             t("BankDetails.Failed"),
             t("BankDetails.ExistingBankDetails"),
             [
               {
-                text: t("Main.OK"),
-                onPress: () => {
-                  if (isSignUp) {
-                    navigation.reset({
-                      index: 0,
-                      routes: [{ name: "Main", params: { screen: "Dashboard" } }],
-                    });
-                  } else {
-                    navigation.reset({
-                      index: 0,
-                      routes: [{ name: "Main", params: { screen: "QRcode" } }],
-                    });
-                  }
-                },
+                text: t("Main.OK") || "OK",
+                onPress: navigateToNextScreen,
               },
             ],
           );
+
+          setTimeout(() => {
+            navigateToNextScreen();
+          }, 3200);
+          return;
         } else {
           Alert.alert(
             t("Main.Error"),
@@ -278,8 +290,10 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
         );
       }
     } finally {
-      setDisableSubmit(false);
-      setIsLoading(false);
+      if (!isRegisteredSuccessRef.current) {
+        setDisableSubmit(false);
+        setIsLoading(false);
+      }
     }
   };
 
