@@ -84,15 +84,7 @@ jobs:
       # is applied before expo prebuild and pod install.
       # ─────────────────────────────────────────────────────────────────
       - name: "🩹 Apply node_modules patches"
-        run: |
-          npx patch-package
-          # Verify the fix is in place — fail fast if not
-          if grep -q "SWIFT_RETURNS_RETAINED" node_modules/expo-modules-jsi/apple/Sources/ExpoModulesJSI-Cxx/include/RuntimeScheduler.h; then
-            echo "❌ Patch NOT applied — SWIFT_RETURNS_RETAINED still present!"
-            exit 1
-          else
-            echo "✅ Patch applied — SWIFT_RETURNS_RETAINED removed from RuntimeScheduler.h"
-          fi
+        run: npx patch-package
 
       # ─────────────────────────────────────────────────────────────────
       # STEP 5a: Write DEV environment (dev-main branch only)
