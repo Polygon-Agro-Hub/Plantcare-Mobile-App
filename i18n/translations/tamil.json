@@ -22,7 +22,8 @@
     "Done": "முடிந்தது",
     "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "இந்தச் சாதனத்தில் ஏராளமான கோரிக்கைகள் உள்ளன, தயவுசெய்து 30 நிமிடங்களில் மீண்டும் முயற்சிக்கவும்.",
     "NoSearchResultFound": "தேடல் முடிவுகள் எதுவும் கிடைக்கவில்லை",
-    "NoResultsFoundForYourSearch": "உங்கள் தேடலுக்கு முடிவுகள் எதுவும் கிடைக்கவில்லை"
+    "NoResultsFoundForYourSearch": "உங்கள் தேடலுக்கு முடிவுகள் எதுவும் கிடைக்கவில்லை",
+    "OnlyHeicJpgPngAllowed": "HEIC, JPG மற்றும் PNG கோப்புகள் மட்டுமே அனுமதிக்கப்படும்."
   },
   "Inputs": {
     "FirstName": "முதற் பெயர்",
@@ -1253,7 +1254,8 @@
     "SeeMore": "மேலும் காண்க",
     "SeeLess": "குறைவாகக் காண்க",
     "Maximum250charactersAllowed": "அதிகபட்சம் 250 எழுத்துகள் அனுமதிக்கப்படும்.",
-    "Change": "மாற்றவும்"
+    "Change": "மாற்றவும்",
+    "OnlyHeicJpgPngAllowed": "HEIC, JPG மற்றும் PNG கோப்புகள் மட்டுமே அனுமதிக்கப்படும்."
   },
   "Govicapital": {
     "HowCanWeHelpYou": "நாங்கள் உங்களுக்கு எவ்வாறு உதவலாம்?",
@@ -1743,7 +1745,15 @@
       "வெள்ளி",
       "சனி"
     ],
-    "DaysShort": ["ஞா", "தி", "செ", "பு", "வி", "வெ", "ச"]
+    "DaysShort": [
+      "ஞா",
+      "தி",
+      "செ",
+      "பு",
+      "வி",
+      "வெ",
+      "ச"
+    ]
   },
   "EditProfile": {
     "EditProfile": "சுயவிவரத்தைத் திருத்தவும்",
@@ -1752,6 +1762,7 @@
     "FailedToUpdateProfileTryAgainLater": "சுயவிவரத்தைப் புதுப்பிக்க முடியவில்லை. சிறிது நேரம் கழித்து மீண்டும் முயற்சிக்கவும்.",
     "PermissionDenied": "அனுமதி மறுக்கப்பட்டது",
     "PleaseAllowAccessToYourGalleryToProceed": "தொடர, தயவுசெய்து உங்கள் படத்தொகுப்புக்கான அணுகலை அனுமதிக்கவும்!",
-    "ViewProfile": "சுயவிவரத்தைப் பார்க்கவும்"
+    "ViewProfile": "சுயவிவரத்தைப் பார்க்கவும்",
+    "OnlyHeicJpgPngAllowed": "HEIC, JPG மற்றும் PNG கோப்புகள் மட்டுமே அனுமதிக்கப்படும்."
   }
 }

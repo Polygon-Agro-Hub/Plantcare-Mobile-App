@@ -22,7 +22,8 @@
     "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "Too many requests from this device, please try again in 30 minutes.",
     "Done": "Done",
     "NoSearchResultFound": "No Search Result Found",
-    "NoResultsFoundForYourSearch": "No results found for your search"
+    "NoResultsFoundForYourSearch": "No results found for your search",
+    "OnlyHeicJpgPngAllowed": "Only HEIC, JPG, and PNG files are allowed."
   },
   "Inputs": {
     "FirstName": "First Name",
@@ -1253,7 +1254,8 @@
     "SeeMore": "See More",
     "SeeLess": "See Less",
     "Maximum250charactersAllowed": "Maximum 250 characters allowed.",
-    "Change": "Change"
+    "Change": "Change",
+    "OnlyHeicJpgPngAllowed": "Only HEIC, JPG, and PNG files are allowed."
   },
   "Govicapital": {
     "HowCanWeHelpYou": "How can we help you?",
@@ -1743,7 +1745,15 @@
       "Friday",
       "Saturday"
     ],
-    "DaysShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    "DaysShort": [
+      "Sun",
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat"
+    ]
   },
   "EditProfile": {
     "EditProfile": "Edit Profile",
@@ -1752,6 +1762,7 @@
     "ProfileImageUpdatedSuccessfully": "Profile image updated successfully.",
     "FirstNameAndLastNameCannotBeEmpty": "First name and last name cannot be empty.",
     "YourProfileHasBeenUpdatedSuccessfully": "Your profile has been updated successfully.",
-    "FailedToUpdateProfileTryAgainLater": "Failed to update profile. Please try again later."
+    "FailedToUpdateProfileTryAgainLater": "Failed to update profile. Please try again later.",
+    "OnlyHeicJpgPngAllowed": "Only HEIC, JPG, and PNG files are allowed."
   }
 }
