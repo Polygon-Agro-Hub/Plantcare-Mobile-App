@@ -22,7 +22,8 @@
     "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "මෙම උපාංගයෙන් ඉල්ලීම් රාශියක් සිදු කර ඇත, කරුණාකර විනාඩි 30 කින් නැවත උත්සාහ කරන්න.",
     "Done": "අවසන්",
     "NoSearchResultFound": "සෙවුම් ප්‍රතිඵල කිසිවක් හමු නොවීය",
-    "NoResultsFoundForYourSearch": "ඔබගේ සෙවුමට ගැලපෙන ප්‍රතිඵල කිසිවක් හමු නොවීය"
+    "NoResultsFoundForYourSearch": "ඔබගේ සෙවුමට ගැලපෙන ප්‍රතිඵල කිසිවක් හමු නොවීය",
+    "OnlyHeicJpgPngAllowed": "HEIC, JPG සහ PNG වර්ගයේ ගොනු පමණක් වලංගු වේ."
   },
   "Inputs": {
     "FirstName": "මුල් නම",
@@ -1253,7 +1254,8 @@
     "SeeMore": "තවත් බලන්න",
     "SeeLess": "අඩුවෙන් බලන්න",
     "Maximum250charactersAllowed": "උපරිම අක්ෂර 250 කට අවසර ඇත.",
-    "Change": "වෙනස් කරන්න"
+    "Change": "වෙනස් කරන්න",
+    "OnlyHeicJpgPngAllowed": "HEIC, JPG සහ PNG වර්ගයේ ගොනු පමණක් වලංගු වේ."
   },
   "Govicapital": {
     "HowCanWeHelpYou": "අපට ඔබට උදව් කළ හැක්කේ කෙසේද?",
@@ -1743,7 +1745,15 @@
       "සිකුරාදා",
       "සෙනසුරාදා"
     ],
-    "DaysShort": ["ඉරි", "සඳු", "අඟ", "බදා", "බ්‍ර", "සිකු", "සෙන"]
+    "DaysShort": [
+      "ඉරි",
+      "සඳු",
+      "අඟ",
+      "බදා",
+      "බ්‍ර",
+      "සිකු",
+      "සෙන"
+    ]
   },
   "EditProfile": {
     "EditProfile": "පැතිකඩ සංස්කරණය කරන්න",
@@ -1752,6 +1762,7 @@
     "ProfileImageUpdatedSuccessfully": "පැතිකඩ රූපය සාර්ථකව යාවත්කාලීන කරන ලදී.",
     "FirstNameAndLastNameCannotBeEmpty": "මුල් නම සහ අවසාන නම හිස් විය නොහැක.",
     "YourProfileHasBeenUpdatedSuccessfully": "ඔබගේ පැතිකඩ සාර්ථකව යාවත්කාලීන කරන ලදී.",
-    "FailedToUpdateProfileTryAgainLater": "පැතිකඩ යාවත්කාලීන කිරීමට අසමත් විය. කරුණාකර පසුව නැවත උත්සාහ කරන්න."
+    "FailedToUpdateProfileTryAgainLater": "පැතිකඩ යාවත්කාලීන කිරීමට අසමත් විය. කරුණාකර පසුව නැවත උත්සාහ කරන්න.",
+    "OnlyHeicJpgPngAllowed": "HEIC, JPG සහ PNG වර්ගයේ ගොනු පමණක් වලංගු වේ."
   }
 }

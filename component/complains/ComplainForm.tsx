@@ -39,7 +39,8 @@ interface ComplainFormProps {
 const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
   const [complain, setComplain] = useState<string>("");
   const [authToken, setAuthToken] = useState<string | null>(null);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isTamil = i18n.language === "ta" || i18n.language?.startsWith("ta");
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [Category, setCategory] = useState<{ value: string; label: string }[]>(
     [],
@@ -276,12 +277,13 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
                 elevation: 4,
               }}
             >
-              <View className="flex-row">
-                <Text className="text-2xl font-semibold text-center mb-4 color-[#424242]">
+              <View className="w-full items-center justify-center mb-4 px-2">
+                <Text className="text-2xl font-semibold text-center text-[#424242]">
                   {t("ReportComplaint.TellUsThe")}
-                </Text>
-                <Text className="text-2xl font-semibold text-center mb-4 pl-2 color-[#D72C62]">
-                  {t("ReportComplaint.Problem")}
+                  {isTamil ? "\n" : " "}
+                  <Text className="text-[#D72C62]">
+                    {t("ReportComplaint.Problem")}
+                  </Text>
                 </Text>
               </View>
 
@@ -307,7 +309,10 @@ const ComplainForm: React.FC<ComplainFormProps> = ({ navigation }) => {
                       fontSize: 12,
                       color: selectedCategoryLabel ? "#434343" : "#434343",
                       flex: 1,
+                      marginRight: 8,
                     }}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
                   >
                     {selectedCategoryLabel
                       ? t(selectedCategoryLabel)
