@@ -23,6 +23,7 @@ import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../common/CustomHeader";
+import { isAllowedImageFormat, isFormatOrImagePickerError } from "@/utils/imageValidation";
 
 type PublicForumPostNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -151,7 +152,20 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
-        const originalUri = result.assets[0].uri;
+        const asset = result.assets[0];
+
+        if (!isAllowedImageFormat(asset)) {
+          Alert.alert(
+            t("Main.Sorry") || "Error",
+            t("PublicForum.OnlyHeicJpgPngAllowed") ||
+              t("Main.OnlyHeicJpgPngAllowed") ||
+              "Only HEIC, JPG, and PNG files are allowed.",
+            [{ text: t("Main.OK") || "OK" }],
+          );
+          return;
+        }
+
+        const originalUri = asset.uri;
         const manipulatedImage = await ImageManipulator.manipulateAsync(
           originalUri,
           [{ resize: { width: 1200 } }],
@@ -162,12 +176,18 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
         );
         setPostImageUri(manipulatedImage.uri);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error picking image:", error);
+      const isFormatError = isFormatOrImagePickerError(error);
+
       Alert.alert(
         t("Main.Sorry") || "Error",
-        t("EditProfile.PleaseAllowAccessToYourGalleryToProceed") ||
-          "Failed to select image. Please try again.",
+        isFormatError
+          ? t("PublicForum.OnlyHeicJpgPngAllowed") ||
+            t("Main.OnlyHeicJpgPngAllowed") ||
+            "Only HEIC, JPG, and PNG files are allowed."
+          : t("Main.SomethingWentWrongPleaseTryAgainlater") ||
+            "Failed to select image. Please try again.",
         [{ text: t("Main.OK") }],
       );
     }

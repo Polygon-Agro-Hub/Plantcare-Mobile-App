@@ -29,6 +29,7 @@ import districtData from "@/assets/jsons/common/district.json";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../../component/common/CustomHeader";
 import LoadingPage from "../common/LoadingPage";
+import { isAllowedImageFormat, isFormatOrImagePickerError } from "@/utils/imageValidation";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectUserPersonal,
@@ -241,9 +242,18 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
         "Error uploading profile image:",
         error?.response?.data || error?.message || error,
       );
+      const serverMsg = error?.response?.data?.message || "";
+      const isFormatError =
+        isFormatOrImagePickerError(error) ||
+        /image|format|heic|jpg|png|file/i.test(serverMsg);
+
       Alert.alert(
         t("Main.Error"),
-        t("Main.SomethingWentWrongPleaseTryAgainlater"),
+        isFormatError
+          ? t("EditProfile.OnlyHeicJpgPngAllowed") ||
+            t("Main.OnlyHeicJpgPngAllowed") ||
+            "Only HEIC, JPG, and PNG files are allowed."
+          : t("Main.SomethingWentWrongPleaseTryAgainlater"),
         [{ text: t("Main.OK") }],
       );
     } finally {
@@ -274,6 +284,18 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
 
       if (!result.canceled && result.assets?.length > 0) {
         const asset = result.assets[0];
+
+        if (!isAllowedImageFormat(asset)) {
+          Alert.alert(
+            t("Main.Error") || "Error",
+            t("EditProfile.OnlyHeicJpgPngAllowed") ||
+              t("Main.OnlyHeicJpgPngAllowed") ||
+              "Only HEIC, JPG, and PNG files are allowed.",
+            [{ text: t("Main.OK") || "OK" }],
+          );
+          return;
+        }
+
         let imageUri = asset.uri;
 
         const isHeic =
@@ -292,8 +314,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
             console.error("HEIC conversion failed:", conversionError);
             Alert.alert(
               t("Main.Error") || "Error",
-              t("EditProfile.UnsupportedImageFormat") ||
-                "Couldn't process this photo format. Please try a different photo.",
+              t("EditProfile.OnlyHeicJpgPngAllowed") ||
+                t("Main.OnlyHeicJpgPngAllowed") ||
+                "Only HEIC, JPG, and PNG files are allowed.",
               [{ text: t("Main.OK") }],
             );
             return;
@@ -305,10 +328,16 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
       }
     } catch (error: any) {
       console.error("Error picking profile image:", error?.message || error);
+      const isFormatError = isFormatOrImagePickerError(error);
+
       Alert.alert(
         t("Main.Error") || "Error",
-        t("Main.SomethingWentWrongPleaseTryAgainlater") ||
-          "Failed to select image. Please try again.",
+        isFormatError
+          ? t("EditProfile.OnlyHeicJpgPngAllowed") ||
+            t("Main.OnlyHeicJpgPngAllowed") ||
+            "Only HEIC, JPG, and PNG files are allowed."
+          : t("Main.SomethingWentWrongPleaseTryAgainlater") ||
+            "Failed to select image. Please try again.",
         [{ text: t("Main.OK") }],
       );
     }

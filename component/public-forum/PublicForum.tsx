@@ -742,11 +742,11 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
           navigation.navigate("PublicForumPost");
         }}
       >
-        <Text className="text-white font-bold text-base ml-2">
+        <Text className="text-white font-bold text-base ml-2 flex-1 mr-3">
           {t("PublicForum.StartANewDiscussion")}
         </Text>
-        <View className="bg-white rounded-lg ">
-          <Feather name="plus" size={24} color="black" />
+        <View className="bg-white rounded-lg w-8 h-8 items-center justify-center">
+          <Feather name="plus" size={22} color="black" />
         </View>
       </TouchableOpacity>
 

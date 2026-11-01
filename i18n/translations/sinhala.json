@@ -22,7 +22,8 @@
     "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "මෙම උපාංගයෙන් ඉල්ලීම් රාශියක් සිදු කර ඇත, කරුණාකර විනාඩි 30 කින් නැවත උත්සාහ කරන්න.",
     "Done": "අවසන්",
     "NoSearchResultFound": "සෙවුම් ප්‍රතිඵල කිසිවක් හමු නොවීය",
-    "NoResultsFoundForYourSearch": "ඔබගේ සෙවුමට ගැලපෙන ප්‍රතිඵල කිසිවක් හමු නොවීය"
+    "NoResultsFoundForYourSearch": "ඔබගේ සෙවුමට ගැලපෙන ප්‍රතිඵල කිසිවක් හමු නොවීය",
+    "OnlyHeicJpgPngAllowed": "HEIC, JPG සහ PNG වර්ගයේ ගොනු පමණක් වලංගු වේ."
   },
   "Inputs": {
     "FirstName": "මුල් නම",
@@ -289,7 +290,7 @@
     "LocationNotFound": "ස්ථානය හමු නොවීය.",
     "AnErrorOccurredWhileFetchingWeatherData": "කාලගුණ දත්ත ලබා ගැනීමේදී දෝෂයක් ඇති විය.",
     "UnableToFetchCurrentLocation": "වත්මන් ස්ථානය ලබා ගැනීමට නොහැක.",
-    "NoResultsFound":"ඔබේ සෙවුම සඳහා ප්‍රතිඵල කිසිවක් හමු නොවීය."
+    "NoResultsFound": "ඔබේ සෙවුම සඳහා ප්‍රතිඵල කිසිවක් හමු නොවීය."
   },
   "FiveDayForcast": {
     "5DaysForecast": "දින 5 ක අනාවැකිය",
@@ -574,11 +575,6 @@
     "DuplicateNumbersAreNotAllowed.": "අනුපිටපත් අංකවලට අවසර නැත.",
     "DuplicateNICNumbersAreNotAllowed": "අනුපිටපත් ජාතික හැඳුනුම්පත් අංකවලට අවසර නැත.",
     "PleaseFixPhoneNumberValidationErrorsBeforeSaving": "කරුණාකර සුරැකීමට පෙර දුරකථන අංක වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
-    "Please fix NIC validation errors before saving.": "කරුණාකර සුරැකීමට පෙර ජාතික හැඳුනුම්පත් වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
-    "OneOrMorePhoneNumbersAlreadyRegistered": "දුරකථන අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් දුරකථන අංක භාවිතා කරන්න.",
-    "One or more phone numbers are already registered. Please use different phone numbers.": "දුරකථන අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් දුරකථන අංක භාවිතා කරන්න.",
-    "OneOrMoreNICNumbersAlreadyRegistered": "ජාතික හැඳුනුම්පත් අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් ජාතික හැඳුනුම්පත් අංක භාවිතා කරන්න.",
-    "One or more NIC numbers are already registered. Please use different NIC numbers.": "ජාතික හැඳුනුම්පත් අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් ජාතික හැඳුනුම්පත් අංක භාවිතා කරන්න.",
     "DuplicatePhoneNumbersFoundPleaseUseUnique": "අනුපිටපත් දුරකථන අංක හමු විය. කරුණාකර එක් එක් කාර්ය මණ්ඩල සාමාජිකයා සඳහා අනන්‍ය දුරකථන අංක භාවිතා කරන්න.",
     "Duplicate phone numbers found. Please use unique phone numbers for each staff member.": "අනුපිටපත් දුරකථන අංක හමු විය. කරුණාකර එක් එක් කාර්ය මණ්ඩල සාමාජිකයා සඳහා අනන්‍ය දුරකථන අංක භාවිතා කරන්න.",
     "DuplicateNICNumbersFoundPleaseUseUnique": "අනුපිටපත් ජාතික හැඳුනුම්පත් අංක හමු විය. කරුණාකර එක් එක් කාර්ය මණ්ඩල සාමාජිකයා සඳහා අනන්‍ය ජාතික හැඳුනුම්පත් අංක භාවිතා කරන්න.",
@@ -619,7 +615,6 @@
     "PleaseEnterAtLeastOneExtentValue": "කරුණාකර අවම වශයෙන් එක් විශාලත්ව අගයක් ඇතුළත් කරන්න",
     "NotAllowedToBeEmpty": "හිස්ව තැබිය නොහැක",
     "PleaseFixNICValidationErrorsBeforeSaving": "කරුණාකර සුරැකීමට පෙර ජාතික හැඳුනුම්පත් අංක වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
-    "PleaseFixDuplicateNICValidationErrorsBeforeSaving": "කරුණාකර සුරැකීමට පෙර අනුපිටපත් ජාතික හැඳුනුම්පත් අංක වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
     "OneOrMorePhoneNumbersAreAlreadyRegistered": "එක් හෝ ඊට වඩා වැඩි දුරකථන අංක දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් දුරකථන අංකයක් ඇතුළත් කරන්න.",
     "OneOrMoreNICNumbersAreAlreadyRegistered": "එක් හෝ ඊට වඩා වැඩි ජාතික හැඳුනුම්පත් අංක දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් ජාතික හැඳුනුම්පත් අංකයක් ඇතුළත් කරන්න."
   },
@@ -1259,7 +1254,8 @@
     "SeeMore": "තවත් බලන්න",
     "SeeLess": "අඩුවෙන් බලන්න",
     "Maximum250charactersAllowed": "උපරිම අක්ෂර 250 කට අවසර ඇත.",
-    "Change": "වෙනස් කරන්න"
+    "Change": "වෙනස් කරන්න",
+    "OnlyHeicJpgPngAllowed": "HEIC, JPG සහ PNG වර්ගයේ ගොනු පමණක් වලංගු වේ."
   },
   "Govicapital": {
     "HowCanWeHelpYou": "අපට ඔබට උදව් කළ හැක්කේ කෙසේද?",
@@ -1749,7 +1745,15 @@
       "සිකුරාදා",
       "සෙනසුරාදා"
     ],
-    "DaysShort": ["ඉරි", "සඳු", "අඟ", "බදා", "බ්‍ර", "සිකු", "සෙන"]
+    "DaysShort": [
+      "ඉරි",
+      "සඳු",
+      "අඟ",
+      "බදා",
+      "බ්‍ර",
+      "සිකු",
+      "සෙන"
+    ]
   },
   "EditProfile": {
     "EditProfile": "පැතිකඩ සංස්කරණය කරන්න",
@@ -1758,6 +1762,7 @@
     "ProfileImageUpdatedSuccessfully": "පැතිකඩ රූපය සාර්ථකව යාවත්කාලීන කරන ලදී.",
     "FirstNameAndLastNameCannotBeEmpty": "මුල් නම සහ අවසාන නම හිස් විය නොහැක.",
     "YourProfileHasBeenUpdatedSuccessfully": "ඔබගේ පැතිකඩ සාර්ථකව යාවත්කාලීන කරන ලදී.",
-    "FailedToUpdateProfileTryAgainLater": "පැතිකඩ යාවත්කාලීන කිරීමට අසමත් විය. කරුණාකර පසුව නැවත උත්සාහ කරන්න."
+    "FailedToUpdateProfileTryAgainLater": "පැතිකඩ යාවත්කාලීන කිරීමට අසමත් විය. කරුණාකර පසුව නැවත උත්සාහ කරන්න.",
+    "OnlyHeicJpgPngAllowed": "HEIC, JPG සහ PNG වර්ගයේ ගොනු පමණක් වලංගු වේ."
   }
 }
