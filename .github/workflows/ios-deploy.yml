@@ -163,14 +163,16 @@ jobs:
           path: |
               ~/Library/Caches/CocoaPods
               ~/.cocoapods
-          key: pods-v57-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          key: pods-v58-p2-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
           restore-keys: |
-            pods-v57-${{ runner.os }}-
+            pods-v58-p2-${{ runner.os }}-
 
       # ─────────────────────────────────────────────────────────────────
       # STEP 8: Install CocoaPods dependencies
       # ─────────────────────────────────────────────────────────────────
       - name: "🍫 Install CocoaPods dependencies"
+        env:
+          EXPO_USE_SOURCE: "1"
         run: |
           cd ios
           # Clean any stale cached pods from previous SDKs
@@ -199,6 +201,7 @@ jobs:
           GITHUB_RUN_NUMBER: ${{ github.run_number }}
           #Apple Team ID
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          EXPO_USE_SOURCE: "1"
 
       # ─────────────────────────────────────────────────────────────────
       # STEP 9b: Deploy to App Store (main branch)
@@ -221,6 +224,7 @@ jobs:
           GITHUB_RUN_NUMBER: ${{ github.run_number }}
           #Apple Team ID
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          EXPO_USE_SOURCE: "1"
 
       # ─────────────────────────────────────────────────────────────────
       # STEP 10: Print & Upload Xcode/Gym build logs on failure

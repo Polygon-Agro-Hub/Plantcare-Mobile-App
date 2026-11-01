@@ -57,14 +57,19 @@
       "bundleIdentifier": "com.polygonagro.GoviCare",
       "supportsTablet": true,
       "infoPlist": {
+        "UIBackgroundModes": [
+          "remote-notification"
+        ],
         "ITSAppUsesNonExemptEncryption": false,
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true
         },
         "NSCameraUsageDescription": "Camera access is required to scan QR codes and capture crop photos.",
+        "NSMicrophoneUsageDescription": "Microphone access is required to record audio when capturing video.",
         "NSPhotoLibraryUsageDescription": "Photo library access is required to upload related images.",
         "NSPhotoLibraryAddUsageDescription": "Photo library access is required to save and upload related images.",
-        "NSLocationWhenInUseUsageDescription": "Location access is required to receive local weather forecasts and log crop activities accurately."
+        "NSLocationWhenInUseUsageDescription": "Location access is required to receive local weather forecasts and log crop activities accurately.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Location access is required to receive local weather forecasts and log crop activities accurately."
       }
     },
     "web": {
@@ -103,6 +108,13 @@
         }
       ],
       "expo-location",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/public/favicon.png",
+          "color": "#26D041"
+        }
+      ],
       [
         "expo-splash-screen",
         {
