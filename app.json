@@ -56,10 +56,10 @@
       "icon": "./assets/images/public/app-icon-ios.png",
       "bundleIdentifier": "com.polygonagro.GoviCare",
       "supportsTablet": true,
-      "UIBackgroundModes": [
-        "remote-notification"
-      ],
       "infoPlist": {
+        "UIBackgroundModes": [
+          "remote-notification"
+        ],
         "ITSAppUsesNonExemptEncryption": false,
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true
