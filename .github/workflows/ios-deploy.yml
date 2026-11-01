@@ -163,9 +163,9 @@ jobs:
           path: |
               ~/Library/Caches/CocoaPods
               ~/.cocoapods
-          key: pods-v57-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          key: pods-v58-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
           restore-keys: |
-            pods-v57-${{ runner.os }}-
+            pods-v58-${{ runner.os }}-
 
       # ─────────────────────────────────────────────────────────────────
       # STEP 8: Install CocoaPods dependencies

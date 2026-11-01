@@ -43,8 +43,8 @@ import * as FileSystem from "expo-file-system/legacy";
 
 let Notifications: any = null;
 try {
-  if (Constants.appOwnership !== "expo") {
-    Notifications = require("expo-notifications");
+  Notifications = require("expo-notifications");
+  if (Notifications && typeof Notifications.setNotificationHandler === "function") {
     Notifications.setNotificationHandler({
       handleNotification: async () => ({
         shouldShowAlert: true,
@@ -54,7 +54,7 @@ try {
     });
   }
 } catch (e) {
-  console.log("Push notifications not supported in Expo Go");
+  console.warn("Notifications setup skipped:", e);
 }
 
 interface CropItem {
