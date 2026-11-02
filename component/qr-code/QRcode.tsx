@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -7,11 +7,10 @@ import {
   Alert,
   ScrollView,
   BackHandler,
-  Platform,
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import * as FileSystem from "expo-file-system/legacy";
 import * as Sharing from "expo-sharing";
+import { captureRef } from "react-native-view-shot";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { saveImageToGallery } from "@/utils/mediaSave";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -29,6 +28,8 @@ interface QRcodeProps {
   navigation: QRcodeNavigationPrps;
 }
 
+const LOGO = require("../../assets/images/qr-code/polygon-logo.webp");
+
 const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
@@ -37,6 +38,10 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
   const [profileImage, setProfileImage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [language, setLanguage] = useState("en");
+  const [hiddenQrLoaded, setHiddenQrLoaded] = useState<boolean>(false);
+
+  // Hidden card used ONLY for Download / Share
+  const shareCardRef = useRef<View>(null);
 
   const adjustFontSize = (size: number) =>
     language !== "en" ? size * 0.9 : size;
@@ -123,49 +128,16 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
     }, []),
   );
 
-  const ensureLocalQRFile = async (): Promise<string> => {
-    if (!QR) {
-      throw new Error("No QR code data available.");
+  // Snapshot of the hidden card (logo + QR + name) as a PNG
+  const captureShareCard = async (): Promise<string> => {
+    if (!shareCardRef.current) {
+      throw new Error("QR card is not ready yet.");
     }
-
-    const fileUri = `${FileSystem.documentDirectory}QRCode_${Date.now()}.png`;
-
-    if (QR.startsWith("data:image/") || QR.includes(";base64,")) {
-      const base64Data = QR.includes(";base64,") ? QR.split(";base64,")[1] : QR;
-
-      if (!base64Data) {
-        throw new Error("QR data URI did not contain any base64 payload.");
-      }
-
-      await FileSystem.writeAsStringAsync(fileUri, base64Data, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-      return fileUri;
-    }
-
-    if (QR.startsWith("http://") || QR.startsWith("https://")) {
-      const token = await AsyncStorage.getItem("userToken");
-
-      const downloadResult = await FileSystem.downloadAsync(QR, fileUri, {
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-      });
-
-      if (downloadResult.status !== 200) {
-        throw new Error(
-          `QR download failed with HTTP status ${downloadResult.status}`,
-        );
-      }
-      return downloadResult.uri;
-    }
-
-    if (QR.startsWith("file://")) {
-      return QR;
-    }
-
-    await FileSystem.writeAsStringAsync(fileUri, QR, {
-      encoding: FileSystem.EncodingType.Base64,
+    return await captureRef(shareCardRef, {
+      format: "png",
+      quality: 1,
+      result: "tmpfile",
     });
-    return fileUri;
   };
 
   const getErrorMessage = (error: unknown, fallback: string): string => {
@@ -180,7 +152,7 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
 
   const downloadQRCode = async () => {
     try {
-      if (!QR) {
+      if (!QR || !hiddenQrLoaded) {
         Alert.alert(
           t("Main.Error") || "Error",
           t("QRcode.noQRCodeAvailable") || "No QR code available",
@@ -189,7 +161,7 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
         return;
       }
 
-      const localUri = await ensureLocalQRFile();
+      const localUri = await captureShareCard();
 
       const saved = await saveImageToGallery(localUri, "QRCode");
 
@@ -219,7 +191,7 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
 
   const shareQRCode = async () => {
     try {
-      if (!QR) {
+      if (!QR || !hiddenQrLoaded) {
         Alert.alert(
           t("Main.Error") || "Error",
           t("QRcode.noQRCodeAvailable") || "No QR code available",
@@ -228,7 +200,7 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
         return;
       }
 
-      const localUri = await ensureLocalQRFile();
+      const localUri = await captureShareCard();
 
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync(localUri, {
@@ -279,6 +251,67 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
         onBackPress={() => navigation.navigate("EngProfile")}
       />
 
+      {/* ===== Hidden card: only used for Download / Share image ===== */}
+      {QR ? (
+        <View
+          pointerEvents="none"
+          style={{ position: "absolute", left: -2000, top: 0 }}
+        >
+          <View
+            ref={shareCardRef}
+            collapsable={false}
+            style={{
+              width: 360,
+              backgroundColor: "#FFFFFF",
+              alignItems: "center",
+              paddingVertical: 24,
+              paddingHorizontal: 20,
+            }}
+          >
+            {/* 1. Logo */}
+            <Image
+              source={LOGO}
+              style={{ width: 180, height: 70, marginBottom: 16 }}
+              resizeMode="contain"
+            />
+
+            {/* 2. QR with yellow rounded frame */}
+            <View
+              style={{
+                backgroundColor: "#FFFFFF",
+                borderWidth: 4,
+                borderColor: "#00A896",
+                borderRadius: 28,
+                padding: 24,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Image
+                source={{ uri: `${QR}` }}
+                onLoad={() => setHiddenQrLoaded(true)}
+                style={{ width: 240, height: 240 }}
+                resizeMode="contain"
+              />
+            </View>
+
+            {/* 3. Name */}
+            <Text
+              style={{
+                marginTop: 18,
+                fontSize: 22,
+                fontWeight: "700",
+                color: "#111827",
+                textAlign: "center",
+              }}
+            >
+              {`${firstName} ${lastName}`}
+            </Text>
+          </View>
+        </View>
+      ) : null}
+
+      {/* ===== Original visible UI (unchanged) ===== */}
       <View className="items-center mt-12 mb-6">
         <Image
           source={
@@ -293,7 +326,7 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
 
       <View className="items-center mb-8 mt-4 px-4">
         {QR ? (
-          <View className="bg-white p-6 rounded-xl border-2 border-black">
+          <View className="bg-white p-6 rounded-xl border-2 border-[#00A896]">
             <Image
               source={{ uri: `${QR}` }}
               style={{
