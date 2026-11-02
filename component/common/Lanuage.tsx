@@ -88,7 +88,7 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
             onPress={() => handleLanguageSelect("en")}
           >
             <Text className="text-white text-center text-xl font-semibold">
-              ENGLISH
+              English
             </Text>
           </TouchableOpacity>
 
