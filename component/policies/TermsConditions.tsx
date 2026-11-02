@@ -51,7 +51,7 @@ const TermsConditions: React.FC<TermsConditionsProps> = ({ navigation }) => {
         onBackPress={() => navigation.goBack()}
       />
       <Text className="text-sm text-blue-500  text-center font-bold ">
-        {t("Terms&Condisions.By")} 11/08/2024
+        {t("Terms&Condisions.By")} 2026/11/02
       </Text>
 
       <View className="py-2 px-6">
