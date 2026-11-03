@@ -21,6 +21,7 @@ import type { NativeEventSubscription } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../common/CustomHeader";
 import LoadingPage from "../common/LoadingPage";
+import DownloadShareButtons from "../common/DownloadShareButtons";
 
 type QRcodeNavigationPrps = StackNavigationProp<RootStackParamList, "QRcode">;
 
@@ -128,11 +129,12 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
     }, []),
   );
 
-  // Snapshot of the hidden card (logo + QR + name) as a PNG
+  // Snapshot of the hidden card (logo + QR + name) as a PNG matching Transport project layout
   const captureShareCard = async (): Promise<string> => {
     if (!shareCardRef.current) {
       throw new Error("QR card is not ready yet.");
     }
+    await new Promise((resolve) => setTimeout(resolve, 150));
     return await captureRef(shareCardRef, {
       format: "png",
       quality: 1,
@@ -152,7 +154,7 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
 
   const downloadQRCode = async () => {
     try {
-      if (!QR || !hiddenQrLoaded) {
+      if (!QR) {
         Alert.alert(
           t("Main.Error") || "Error",
           t("QRcode.noQRCodeAvailable") || "No QR code available",
@@ -163,7 +165,7 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
 
       const localUri = await captureShareCard();
 
-      const saved = await saveImageToGallery(localUri, "QRCode");
+      const saved = await saveImageToGallery(localUri, `Farmer_QR_${firstName || "Card"}`);
 
       if (!saved) {
         return;
@@ -191,7 +193,7 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
 
   const shareQRCode = async () => {
     try {
-      if (!QR || !hiddenQrLoaded) {
+      if (!QR) {
         Alert.alert(
           t("Main.Error") || "Error",
           t("QRcode.noQRCodeAvailable") || "No QR code available",
@@ -251,38 +253,51 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
         onBackPress={() => navigation.navigate("EngProfile")}
       />
 
-      {/* ===== Hidden card: only used for Download / Share image ===== */}
+      {/* ===== Off-screen Printable Card (used strictly for downloading & sharing — matching Transport design) ===== */}
       {QR ? (
         <View
           pointerEvents="none"
-          style={{ position: "absolute", left: -2000, top: 0 }}
+          style={{
+            position: "absolute",
+            left: -9999,
+            top: 0,
+            width: 440,
+            backgroundColor: "#FFFFFF",
+          }}
         >
           <View
             ref={shareCardRef}
             collapsable={false}
             style={{
-              width: 360,
+              width: 440,
+              minHeight: 580,
               backgroundColor: "#FFFFFF",
+              paddingTop: 40,
+              paddingBottom: 70,
+              paddingHorizontal: 30,
               alignItems: "center",
-              paddingVertical: 24,
-              paddingHorizontal: 20,
+              borderWidth: 2,
+              borderColor: "#E5E7EB",
+              borderRadius: 24,
             }}
           >
-            {/* 1. Logo */}
-            <Image
-              source={LOGO}
-              style={{ width: 180, height: 70, marginBottom: 16 }}
-              resizeMode="contain"
-            />
+            {/* Top: Polygon logo */}
+            <View style={{ alignItems: "center", marginBottom: 22 }}>
+              <Image
+                source={LOGO}
+                style={{ width: 240, height: 72 }}
+                resizeMode="contain"
+              />
+            </View>
 
-            {/* 2. QR with yellow rounded frame */}
+            {/* Middle: QR Code Container (dimensions and white BG padding matching Transport app) */}
             <View
               style={{
                 backgroundColor: "#FFFFFF",
-                borderWidth: 4,
+                padding: 16,
+                borderRadius: 20,
+                borderWidth: 2.5,
                 borderColor: "#00A896",
-                borderRadius: 28,
-                padding: 24,
                 alignItems: "center",
                 justifyContent: "center",
               }}
@@ -290,48 +305,82 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
               <Image
                 source={{ uri: `${QR}` }}
                 onLoad={() => setHiddenQrLoaded(true)}
-                style={{ width: 240, height: 240 }}
+                style={{ width: 270, height: 270 }}
                 resizeMode="contain"
               />
             </View>
 
-            {/* 3. Name */}
-            <Text
-              style={{
-                marginTop: 18,
-                fontSize: 22,
-                fontWeight: "700",
-                color: "#111827",
-                textAlign: "center",
-              }}
-            >
-              {`${firstName} ${lastName}`}
-            </Text>
+            {/* Bottom: Farmer Info */}
+            <View style={{ alignItems: "center", marginTop: 22, width: "100%" }}>
+              <Text
+                style={{
+                  fontSize: 23,
+                  fontWeight: "bold",
+                  color: "#111827",
+                  textAlign: "center",
+                }}
+              >
+                {`${firstName} ${lastName}`.trim()}
+              </Text>
+            </View>
           </View>
         </View>
       ) : null}
 
-      {/* ===== Original visible UI (unchanged) ===== */}
-      <View className="items-center mt-12 mb-6">
+      {/* ===== Visible UI (Matching Transport app design) ===== */}
+      {/* Top: Polygon Logo */}
+      <View className="items-center mb-4 mt-6">
         <Image
-          source={
-            profileImage
-              ? { uri: profileImage }
-              : require("../../assets/images/auth/profile.webp")
-          }
-          className="w-24 h-24 rounded-full border-2 border-gray-300"
+          source={LOGO}
+          style={{ width: 180, height: 54 }}
+          resizeMode="contain"
         />
-        <Text className="text-lg font-semibold mt-3 text-center">{`${firstName} ${lastName}`}</Text>
       </View>
 
-      <View className="items-center mb-8 mt-4 px-4">
+      {/* User / Farmer Name */}
+      <View className="items-center mb-6">
+        <Text className="text-2xl font-bold text-gray-900 text-center">
+          {`${firstName} ${lastName}`.trim()}
+        </Text>
+      </View>
+
+      {/* QR Code Container (Aligned with bottom button side lines) */}
+      <View
+        style={{
+          width: "100%",
+          paddingHorizontal: 32,
+          maxWidth: 500,
+          alignSelf: "center",
+          alignItems: "center",
+          marginBottom: 32,
+        }}
+      >
         {QR ? (
-          <View className="bg-white p-6 rounded-xl border-2 border-[#00A896]">
+          <View
+            style={{
+              width: "100%",
+              aspectRatio: 1,
+              backgroundColor: "#FFFFFF",
+              borderRadius: 24,
+              borderWidth: 2,
+              borderColor: "#00A896",
+              alignItems: "center",
+              justifyContent: "center",
+              shadowColor: "#000000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 6,
+              elevation: 4,
+              padding: 16,
+            }}
+          >
             <Image
               source={{ uri: `${QR}` }}
               style={{
-                width: dynamicStyles.qrSize,
-                height: dynamicStyles.qrSize,
+                width: "90%",
+                height: "90%",
+                maxWidth: 280,
+                maxHeight: 280,
                 resizeMode: "contain",
               }}
             />
@@ -445,40 +494,14 @@ const QRcode: React.FC<QRcodeProps> = ({ navigation }) => {
       </View>
 
       {QR && (
-        <View className="flex-row justify-center items-center gap-6 mb-12 mt-4 px-4">
-          <TouchableOpacity
-            className="bg-[#1E1E1E] w-1/3 h-24 rounded-xl items-center justify-center"
-            onPress={downloadQRCode}
-            style={{
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.1,
-              shadowRadius: 4,
-              elevation: 3,
-            }}
-          >
-            <MaterialIcons name="download" size={28} color="white" />
-            <Text className="text-white text-sm mt-2 font-medium">
-              {t("QRcode.Download")}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            className="bg-[#1E1E1E] w-1/3 h-24 rounded-xl items-center justify-center"
-            onPress={shareQRCode}
-            style={{
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.1,
-              shadowRadius: 4,
-              elevation: 3,
-            }}
-          >
-            <MaterialIcons name="share" size={28} color="white" />
-            <Text className="text-white text-sm mt-2 font-medium">
-              {t("QRcode.Share")}
-            </Text>
-          </TouchableOpacity>
+        <View style={{ width: "100%", alignItems: "center", justifyContent: "center", marginTop: 8, marginBottom: 24 }}>
+          <DownloadShareButtons
+            onDownload={downloadQRCode}
+            onShare={shareQRCode}
+            downloadLabel={t("QRcode.Download")}
+            shareLabel={t("QRcode.Share")}
+            disabled={!QR}
+          />
         </View>
       )}
     </ScrollView>

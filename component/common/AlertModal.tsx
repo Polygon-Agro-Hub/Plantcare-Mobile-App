@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, Text, Modal, Animated, TouchableOpacity, Alert } from "react-native";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
@@ -36,6 +36,7 @@ export const AlertModal: React.FC<AlertModalProps> = ({
   const { t } = useTranslation();
   const isOkButtonVisible = showOkButton !== undefined ? showOkButton : !autoClose;
   const loadingBarWidth = useRef(new Animated.Value(1)).current; // 1 = 100%
+  const [modalWidth, setModalWidth] = useState(320);
 
   const onCloseRef = useRef(onClose);
   useEffect(() => {
@@ -57,7 +58,7 @@ export const AlertModal: React.FC<AlertModalProps> = ({
       const animation = Animated.timing(loadingBarWidth, {
         toValue: 0,
         duration: duration,
-        useNativeDriver: false,
+        useNativeDriver: true,
       });
 
       animation.start();
@@ -188,15 +189,26 @@ export const AlertModal: React.FC<AlertModalProps> = ({
                 borderBottomLeftRadius: 16,
                 borderBottomRightRadius: 16,
               }}
+              onLayout={(e) => {
+                const w = e.nativeEvent.layout.width;
+                if (w > 0) setModalWidth(w);
+              
+              }}
             >
               <Animated.View
-                className="h-full rounded-b-3xl"
+
                 style={{
-                  width: loadingBarWidth.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: ["0%", "100%"],
-                  }),
+                  height: "100%",
+                  width: "100%",
                   backgroundColor: "#10A37D",
+                  transform: [
+                    {
+                      translateX: loadingBarWidth.interpolate({
+                    inputRange: [0, 1],
+                        outputRange: [-modalWidth, 0],
+                  }),
+                    },
+                  ],
                 }}
               />
             </View>
