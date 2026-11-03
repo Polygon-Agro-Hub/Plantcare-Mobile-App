@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   ActivityIndicator,
   BackHandler,
+  Keyboard,
 } from "react-native";
 import axios from "axios";
 import { RootStackParamList } from "../types/types";
@@ -61,6 +62,24 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
   const [accountNumbermisMatchError, setAccountNumbermisMatchError] =
     useState("");
   const [accountNumberError, setAccountNumberError] = useState("");
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  useEffect(() => {
+    const showEvent = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+    const hideEvent = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+
+    const showSub = Keyboard.addListener(showEvent, (e) => {
+      setKeyboardHeight(e.endCoordinates.height);
+    });
+    const hideSub = Keyboard.addListener(hideEvent, () => {
+      setKeyboardHeight(0);
+    });
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   const isSignUp = route?.name === "BankDetailsSignUp";
 
@@ -68,12 +87,18 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
   const hasNavigatedRef = useRef(false);
   const isSubmittingRef = useRef(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const nameErrorTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     return () => {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
         timerRef.current = null;
+      }
+      if (nameErrorTimerRef.current) {
+        clearTimeout(nameErrorTimerRef.current);
+        nameErrorTimerRef.current = null;
       }
     };
   }, []);
@@ -85,27 +110,25 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
     }
     if (hasNavigatedRef.current) return;
     hasNavigatedRef.current = true;
-    try {
-      if (isSignUp) {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "Main", params: { screen: "Dashboard" } }],
-        });
-      } else {
+
+    const performNavigation = () => {
+      try {
         navigation.reset({
           index: 0,
           routes: [{ name: "Main", params: { screen: "QRcode" } }],
         });
+      } catch (err) {
+        console.error("Navigation reset error:", err);
+        try {
+          navigation.navigate("Main", { screen: "QRcode" });
+        } catch (fallbackErr) {
+          console.error("Navigation fallback error:", fallbackErr);
+        }
       }
-    } catch (err) {
-      console.error("Navigation reset error:", err);
-      try {
-        navigation.navigate("Main", { screen: isSignUp ? "Dashboard" : "QRcode" });
-      } catch (fallbackErr) {
-        console.error("Navigation fallback error:", fallbackErr);
-      }
-    }
-  }, [isSignUp, navigation]);
+    };
+
+    setTimeout(performNavigation, Platform.OS === "ios" ? 250 : 50);
+  }, [navigation]);
 
   const adjustFontSize = (size: number) =>
     language !== "en" ? size * 0.9 : size;
@@ -332,14 +355,20 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
   };
 
   const isFormValid = () => {
+    const trimmedAcc = accountNumber.trim();
+    const trimmedConfirmAcc = confirmAccountNumber.trim();
+    const trimmedName = accountHolderName.trim();
+    const trimmedBank = bankName.trim();
+    const trimmedBranch = branchName.trim();
+
     return (
-      accountNumber.trim().length > 0 &&
-      confirmAccountNumber.trim().length > 0 &&
-      accountHolderName.trim().length > 0 &&
-      bankName.trim().length > 0 &&
-      branchName.trim().length > 0 &&
-      accountNumber.trim() === confirmAccountNumber.trim() &&
-      !holdernameNameError &&
+      trimmedAcc.length > 0 &&
+      trimmedConfirmAcc.length > 0 &&
+      trimmedName.length > 0 &&
+      validateName(trimmedName) &&
+      trimmedBank.length > 0 &&
+      trimmedBranch.length > 0 &&
+      trimmedAcc === trimmedConfirmAcc &&
       !accountNumberError &&
       !accountNumbermisMatchError
     );
@@ -355,13 +384,24 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
   };
 
   const handleFirstNameChange = (text: string) => {
-    const cleaned = text.startsWith(" ") ? text.trimStart() : text;
+    if (nameErrorTimerRef.current) {
+      clearTimeout(nameErrorTimerRef.current);
+      nameErrorTimerRef.current = null;
+    }
+
+    const hasLeadingSpace = text.startsWith(" ");
+    const cleaned = hasLeadingSpace ? text.trimStart() : text;
     setAccountHolderName(cleaned);
 
-    if (text.startsWith(" ")) {
+    if (hasLeadingSpace) {
       setHoldernameNameError(
         t("SignUp.UserNameMustStartWithALetterAndContainNoSpaces"),
       );
+      nameErrorTimerRef.current = setTimeout(() => {
+        if (cleaned === "" || validateName(cleaned)) {
+          setHoldernameNameError("");
+        }
+      }, 2000);
     } else if (cleaned !== "" && !validateName(cleaned)) {
       setHoldernameNameError(
         t("SignUp.UserNameMustStartWithALetterAndContainNoSpaces"),
@@ -423,11 +463,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
   }, [filteredBranches]);
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-      style={{ flex: 1 }}
-      className="flex-1 bg-white"
-    >
+    <View style={{ flex: 1, backgroundColor: "white" }}>
       <GlobalSearchModal
         visible={bankModalVisible}
         onClose={() => setBankModalVisible(false)}
@@ -467,11 +503,23 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
         onBackPress={handleBackPress}
       />
 
-      <ScrollView
-        contentContainerClassName="pb-6"
-        className="flex-1 bg-white"
-        keyboardShouldPersistTaps="handled"
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        style={{ flex: 1, backgroundColor: "white" }}
+        enabled
       >
+        <ScrollView
+          ref={scrollViewRef}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingBottom: keyboardHeight > 0 ? keyboardHeight + 120 : 40,
+          }}
+          className="flex-1 bg-white"
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          nestedScrollEnabled={true}
+        >
         <View className="items-center mb-4">
           <Image
             source={require("../../assets/images/bank-details/qr-screen.webp")}
@@ -502,6 +550,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
                 backgroundColor: "#F4F4F4",
                 borderRadius: 25,
                 paddingVertical: 16,
+                letterSpacing: 0,
                 textDecorationLine: "none",
                 borderBottomWidth: 0,
                 borderBottomColor: "transparent",
@@ -531,6 +580,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
               placeholder={t("BankDetails.EnterAccountNumber")}
               placeholderTextColor="#5e5d5d"
               className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4"
+              style={{ letterSpacing: 0 }}
               keyboardType="number-pad"
               value={accountNumber}
               onChangeText={handleAccountNumberChange}
@@ -553,6 +603,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
               placeholder={t("BankDetails.ReEnterAccountNumber")}
               placeholderTextColor="#5e5d5d"
               className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4"
+              style={{ letterSpacing: 0 }}
               keyboardType="number-pad"
               value={confirmAccountNumber}
               onChangeText={handleConfirmAccountNumberChange}
@@ -678,6 +729,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
                   <Text className="text-sm text-black font-thin">View </Text>
                   <TouchableOpacity
                     onPress={() => navigation.navigate("TermsConditions")}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                   >
                     <Text className="text-sm text-black font-bold underline">
                       Terms & Conditions
@@ -686,6 +738,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
                   <Text className="text-sm text-black font-thin"> and </Text>
                   <TouchableOpacity
                     onPress={() => navigation.navigate("PrivacyPolicy")}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                   >
                     <Text className="text-sm text-black font-bold underline">
                       Privacy Policy
@@ -696,6 +749,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
                 <View className="flex-row justify-center flex-wrap">
                   <TouchableOpacity
                     onPress={() => navigation.navigate("TermsConditions")}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                   >
                     <Text
                       className="text-black font-bold underline"
@@ -712,6 +766,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
                   </Text>
                   <TouchableOpacity
                     onPress={() => navigation.navigate("PrivacyPolicy")}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                   >
                     <Text
                       className="text-black font-bold underline"
@@ -731,8 +786,9 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
             </View>
           )}
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
