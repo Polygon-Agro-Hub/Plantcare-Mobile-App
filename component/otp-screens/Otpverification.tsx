@@ -490,6 +490,9 @@ try {
                   fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
                 }}
                 keyboardType="numeric"
+                textContentType="oneTimeCode"
+                autoComplete="sms-otp"
+                importantForAutofill="yes"
                 maxLength={5}
                 value={otpCode}
                 onChangeText={handleInputChange}

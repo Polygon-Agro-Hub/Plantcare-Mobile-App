@@ -111,16 +111,18 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
     if (hasNavigatedRef.current) return;
     hasNavigatedRef.current = true;
 
+    const targetScreen = isSignUp ? "Dashboard" : "QRcode";
+
     const performNavigation = () => {
       try {
         navigation.reset({
           index: 0,
-          routes: [{ name: "Main", params: { screen: "QRcode" } }],
+          routes: [{ name: "Main", params: { screen: targetScreen } }],
         });
       } catch (err) {
         console.error("Navigation reset error:", err);
         try {
-          navigation.navigate("Main", { screen: "QRcode" });
+          navigation.navigate("Main", { screen: targetScreen });
         } catch (fallbackErr) {
           console.error("Navigation fallback error:", fallbackErr);
         }
@@ -128,7 +130,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
     };
 
     setTimeout(performNavigation, Platform.OS === "ios" ? 250 : 50);
-  }, [navigation]);
+  }, [isSignUp, navigation]);
 
   const adjustFontSize = (size: number) =>
     language !== "en" ? size * 0.9 : size;
