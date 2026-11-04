@@ -171,6 +171,7 @@ LogBox.ignoreAllLogs(true);
     {
       paddingVertical: Platform.OS === "ios" ? 0 : undefined,
       includeFontPadding: false,
+      color: "#000000",
     },
     (TextInput as any).defaultProps?.style,
   ],

@@ -363,6 +363,7 @@
     "FailedToRegisterBankDetailsPleaseTryAgain": "Failed to register bank details. Please try again.",
     "ExistingBankDetails": "Existing Bank Details",
     "AccountNumberMustBeANumber": "Account Number must be a number",
+    "CanNotStartWithSpace": "Can not Start with Space",
     "EnterAccountNumber": "Enter Account Number",
     "ReEnterAccountNumber": "Re-enter Account Number",
     "SelectBankName": "Select Bank Name",
