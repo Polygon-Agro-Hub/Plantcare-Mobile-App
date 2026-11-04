@@ -1,0 +1,50 @@
+diff --git a/node_modules/react-native/types_generated/Libraries/Components/StatusBar/StatusBar.d.ts b/node_modules/react-native/types_generated/Libraries/Components/StatusBar/StatusBar.d.ts
+index 89f3d51..9873813 100644
+--- a/node_modules/react-native/types_generated/Libraries/Components/StatusBar/StatusBar.d.ts
++++ b/node_modules/react-native/types_generated/Libraries/Components/StatusBar/StatusBar.d.ts
+@@ -81,7 +81,7 @@ type StatusBarBaseProps = Readonly<{
+    */
+   barStyle?: ("default" | "auto" | "light-content" | "dark-content") | undefined;
+ }>;
+-export type StatusBarProps = Readonly<Omit<StatusBarPropsIOS, keyof StatusBarBaseProps | keyof {}> & Omit<StatusBarBaseProps, keyof {}> & {}>;
++export type StatusBarProps = Readonly<Omit<StatusBarPropsIOS, keyof StatusBarBaseProps | keyof {}> & Omit<StatusBarBaseProps, keyof {}> & { backgroundColor?: string }>;
+ type StackProps = {
+   barStyle: {
+     value: StatusBarStyle;
+diff --git a/node_modules/react-native/types_generated/index.d.ts b/node_modules/react-native/types_generated/index.d.ts
+index b4567c6..325b168 100644
+--- a/node_modules/react-native/types_generated/index.d.ts
++++ b/node_modules/react-native/types_generated/index.d.ts
+@@ -45,7 +45,9 @@ export { default as RefreshControl } from "./Libraries/Components/RefreshControl
+ export type { SafeAreaViewInstance } from "./Libraries/Components/SafeAreaView/SafeAreaView";
+ export { default as SafeAreaView } from "./Libraries/Components/SafeAreaView/SafeAreaView";
+ export type { ScrollViewImperativeMethods, ScrollViewInstance, ScrollViewScrollToOptions, ScrollResponderType, ScrollViewProps, ScrollViewPropsAndroid, ScrollViewPropsIOS } from "./Libraries/Components/ScrollView/ScrollView";
+-export { default as ScrollView } from "./Libraries/Components/ScrollView/ScrollView";
++import _ScrollView, { type ScrollViewInstance } from "./Libraries/Components/ScrollView/ScrollView";
++export const ScrollView: typeof _ScrollView;
++export type ScrollView = ScrollViewInstance;
+ export type { SectionListInstance, SectionListProps, SectionListRenderItem, SectionListRenderItemInfo, SectionListData } from "./Libraries/Lists/SectionList";
+ export { default as SectionList } from "./Libraries/Lists/SectionList";
+ export type { StatusBarAnimation, StatusBarInstance, StatusBarProps, StatusBarStyle } from "./Libraries/Components/StatusBar/StatusBar";
+@@ -58,7 +60,9 @@ export type { NativeTextProps as unstable_NativeTextProps } from "./Libraries/Te
+ export { NativeText as unstable_NativeText } from "./Libraries/Text/TextNativeComponent";
+ export { default as unstable_TextAncestorContext } from "./Libraries/Text/TextAncestorContext";
+ export type { AutoCapitalize, EnterKeyHintTypeOptions, KeyboardTypeOptions, InputModeOptions, TextContentType, TextInputAndroidProps, TextInputInstance, TextInputIOSProps, TextInputProps, TextInputBlurEvent, TextInputChangeEvent, TextInputContentSizeChangeEvent, TextInputEndEditingEvent, TextInputFocusEvent, TextInputKeyPressEvent, TextInputSelectionChangeEvent, TextInputSubmitEditingEvent, ReturnKeyTypeOptions, SubmitBehavior } from "./Libraries/Components/TextInput/TextInput";
+-export { default as TextInput } from "./Libraries/Components/TextInput/TextInput";
++import _TextInput, { type TextInputInstance } from "./Libraries/Components/TextInput/TextInput";
++export const TextInput: typeof _TextInput;
++export type TextInput = TextInputInstance;
+ export type { TouchableHighlightInstance, TouchableHighlightProps } from "./Libraries/Components/Touchable/TouchableHighlight";
+ export { default as TouchableHighlight } from "./Libraries/Components/Touchable/TouchableHighlight";
+ export type { TouchableNativeFeedbackInstance, TouchableNativeFeedbackProps } from "./Libraries/Components/Touchable/TouchableNativeFeedback";
+@@ -70,7 +74,9 @@ export { default as TouchableWithoutFeedback } from "./Libraries/Components/Touc
+ export type { AccessibilityActionEvent, AccessibilityActionInfo, AccessibilityProps, AccessibilityRole, AccessibilityState, AccessibilityValue, Role } from "./Libraries/Components/View/ViewAccessibility";
+ export type { GestureResponderHandlers, TVViewPropsIOS, ViewProps, ViewPropsAndroid, ViewPropsIOS } from "./Libraries/Components/View/ViewPropTypes";
+ export type { ViewInstance } from "./Libraries/Components/View/View";
+-export { default as View } from "./Libraries/Components/View/View";
++import _View, { type ViewInstance } from "./Libraries/Components/View/View";
++export const View: typeof _View;
++export type View = ViewInstance;
+ export { default as unstable_NativeView } from "./Libraries/Components/View/ViewNativeComponent";
+ export type { ListRenderItemInfo, ListRenderItem, ListViewToken, Separators, VirtualizedListProps } from "./Libraries/Lists/VirtualizedList";
+ export type { VirtualizedListInstance } from "./Libraries/Lists/VirtualizedList";

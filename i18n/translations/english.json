@@ -21,7 +21,9 @@
     "PleaseTurnOnMobileDataOrWiFiToContinue": "Please Turn On Mobile Data or Wi-Fi to Continue.",
     "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "Too many requests from this device, please try again in 30 minutes.",
     "Done": "Done",
-    "NoSearchResultFound": "No Search Result Found"
+    "NoSearchResultFound": "No Search Result Found",
+    "NoResultsFoundForYourSearch": "No results found for your search",
+    "OnlyHeicJpgPngAllowed": "Only HEIC, JPG, and PNG files are allowed."
   },
   "Inputs": {
     "FirstName": "First Name",
@@ -153,15 +155,6 @@
     "UnableToOpenTheDialerPleaseTryAgain": "Unable to open the dialer. Please try again.",
     "NeedGoViCareHelpTapTheCallButtonForInstantSupport": "Need GoViCare help? Tap the call button for instant support."
   },
-  "EditProfile": {
-    "EditProfile": "Edit Profile",
-    "ViewProfile": "View Profile",
-    "FirstNameAndLastNameCannotBeEmpty": "First name and last name cannot be empty.",
-    "YourProfileHasBeenUpdatedSuccessfully": "Your profile has been updated successfully!",
-    "FailedToUpdateProfileTryAgainLater": "Failed to update profile. Try again later.",
-    "PermissionDenied": "Permission Denied",
-    "PleaseAllowAccessToYourGalleryToProceed": "Please allow access to your gallery to proceed!"
-  },
   "PrivacyPolicy": {
     "PrivacyPolicy": "Privacy Policy",
     "By": "By",
@@ -245,7 +238,8 @@
   },
   "LocationAccess": {
     "Allow": "Allow",
-    "AgreeAndContinue": "Agree & Continue",
+    "Continue": "Continue",
+    "AgreeAndContinue": "Continue",
     "NotNow": "Not Now",
     "OpenSettings": "Open Settings",
     "Requesting...": "Requesting...",
@@ -265,7 +259,8 @@
   },
   "CameraAccess": {
     "Allow": "Allow",
-    "AgreeAndContinue": "Agree & Continue",
+    "Continue": "Continue",
+    "AgreeAndContinue": "Continue",
     "NotNow": "Not Now",
     "OpenSettings": "Open Settings",
     "Requesting...": "Requesting...",
@@ -294,7 +289,8 @@
     "PleaseCheckYourInternetConnectionAndTryAgain": "Please check your internet connection and try again.",
     "LocationNotFound": "Location not found.",
     "AnErrorOccurredWhileFetchingWeatherData": "An error occurred while fetching weather data.",
-    "UnableToFetchCurrentLocation": "Unable to fetch current location."
+    "UnableToFetchCurrentLocation": "Unable to fetch current location.",
+    "NoResultsFound": "No results found for your search"
   },
   "FiveDayForcast": {
     "5DaysForecast": "5 Days Forecast",
@@ -327,7 +323,7 @@
     "ResendIt": "Resend it",
     "ResendAgain": "Resend again!",
     "Verify": "Verify",
-    "TheOTPYouEnteredIsInvalidPleaseTryAgain": "The OTP you entered is invalid. Please try again",
+    "TheOTPYouEnteredIsInvalidPleaseTryAgain": "The OTP you entered is incorrect. Please try again",
     "PleaseEnterTheFullOTPCode": "Please enter the full OTP code",
     "OTPVerificationFailedPleaseCheckTheCodeAndTryAgain": "OTP verification failed. Please check the code and try again.",
     "OTPHasBeenResentSuccessfully": "OTP has been resent successfully!",
@@ -580,11 +576,6 @@
     "DuplicateNICNumbersAreNotAllowed": "Duplicate NIC numbers are not allowed.",
     "PleaseFixPhoneNumberValidationErrorsBeforeSaving": "Please fix phone number validation errors before saving.",
     "PleaseFixNICValidationErrorsBeforeSaving": "Please fix NIC validation errors before saving.",
-    "Please fix NIC validation errors before saving.": "Please fix NIC validation errors before saving.",
-    "OneOrMorePhoneNumbersAlreadyRegistered": "One or more phone numbers are already registered. Please use different phone numbers.",
-    "One or more phone numbers are already registered. Please use different phone numbers.": "One or more phone numbers are already registered. Please use different phone numbers.",
-    "OneOrMoreNICNumbersAlreadyRegistered": "One or more NIC numbers are already registered. Please use different NIC numbers.",
-    "One or more NIC numbers are already registered. Please use different NIC numbers.": "One or more NIC numbers are already registered. Please use different NIC numbers.",
     "DuplicatePhoneNumbersFoundPleaseUseUnique": "Duplicate phone numbers found. Please use unique phone numbers for each staff member.",
     "Duplicate phone numbers found. Please use unique phone numbers for each staff member.": "Duplicate phone numbers found. Please use unique phone numbers for each staff member.",
     "DuplicateNICNumbersFoundPleaseUseUnique": "Duplicate NIC numbers found. Please use unique NIC numbers for each staff member.",
@@ -1255,7 +1246,7 @@
     "EditYourComment...": "Edit your comment...",
     "RemoveImage": "Remove Image",
     "AreYouSureYouWantToRemovThisImage?": "Are you sure you want to remove this image?",
-    "Remove": "REMOVE",
+    "Remove": "Remove",
     "TitleIsRequired": "Title is required",
     "PostUpdatedSuccessfully!": "Post updated successfully!",
     "FailedToUpdatePost": "Failed to update post.",
@@ -1263,7 +1254,8 @@
     "SeeMore": "See More",
     "SeeLess": "See Less",
     "Maximum250charactersAllowed": "Maximum 250 characters allowed.",
-    "Change": "Change"
+    "Change": "Change",
+    "OnlyHeicJpgPngAllowed": "Only HEIC, JPG, and PNG files are allowed."
   },
   "Govicapital": {
     "HowCanWeHelpYou": "How can we help you?",
@@ -1500,7 +1492,22 @@
     "LoadingStatus": "Loading status..."
   },
   "MyPensionAccount": {
-    "GoViPension": "GoViPension"
+    "GoViPension": "GoViPension",
+    "TotalPensionValue": "Total Pension Value",
+    "YouWillGetYourPensionIn": "You will get your pension in...",
+    "Year": "Year",
+    "Years": "Years",
+    "Month": "Month",
+    "Months": "Months",
+    "Day": "Day",
+    "Days": "Days",
+    "LoadingPensionData": "Loading pension data...",
+    "Currency": "Rs.",
+    "NotApproved": "Not Approved",
+    "PensionRequestNotApproved": "Your pension request has not been approved yet. Please check your status.",
+    "NoPensionFound": "No Pension Found",
+    "NoApprovedPensionAccount": "You don't have an approved pension account yet.",
+    "FailedToFetchPensionData": "Failed to fetch pension data. Please try again."
   },
   "Calculator": {
     "Calculator": "Calculator",
@@ -1738,7 +1745,15 @@
       "Friday",
       "Saturday"
     ],
-    "DaysShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    "DaysShort": [
+      "Sun",
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat"
+    ]
   },
   "EditProfile": {
     "EditProfile": "Edit Profile",
@@ -1747,6 +1762,7 @@
     "ProfileImageUpdatedSuccessfully": "Profile image updated successfully.",
     "FirstNameAndLastNameCannotBeEmpty": "First name and last name cannot be empty.",
     "YourProfileHasBeenUpdatedSuccessfully": "Your profile has been updated successfully.",
-    "FailedToUpdateProfileTryAgainLater": "Failed to update profile. Please try again later."
+    "FailedToUpdateProfileTryAgainLater": "Failed to update profile. Please try again later.",
+    "OnlyHeicJpgPngAllowed": "Only HEIC, JPG, and PNG files are allowed."
   }
 }

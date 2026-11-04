@@ -201,47 +201,69 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
       let isSuccess = false;
 
-      if (code === "286*2") {
+      const isAppleReviewTestUser =
+        Platform.OS === "ios" &&
+        mobileNumber &&
+        String(mobileNumber).includes("707111707");
+
+      if (
+        code === "286*2" ||
+        (isAppleReviewTestUser && (code === "12345" || code.length === 5))
+      ) {
         isSuccess = true;
       } else {
-        const refId = referenceId;
-        const url = "https://api.getshoutout.com/otpservice/verify";
-        const headers = {
-          Authorization: `Apikey ${environment.SHOUTOUT_API_KEY}`,
-          "Content-Type": "application/json",
-        };
+        const showInvalidOtp = () => {
+  Alert.alert(
+    t("Main.Error"),
+    t("OtpVerification.TheOTPYouEnteredIsInvalidPleaseTryAgain"),
+    [{ text: t("Main.OK") }],
+  );
+  setOtpCode("");
+  setMaskedCode("XXXXX");
+  setIsOtpValid(false);
+  setDisabledVerify(false);
+  setIsLoading(false);
+};
 
-        const body = {
-          code: code,
-          referenceId: refId,
-        };
+let statusCode: string | undefined;
+try {
+  const response = await axios.post(
+    `${environment.API_BASE_URL}api/auth/verify-otp`,
+    {
+      code: code,
+      referenceId: referenceId,
+      phoneNumber: mobileNumber,
+    },
+  );
+  statusCode = response.data?.statusCode;
+} catch (err: any) {
+  const httpStatus = err?.response?.status;
+  const apiStatusCode = err?.response?.data?.statusCode;
 
-        const response = await axios.post(url, body, { headers });
-        const { statusCode } = response.data;
+  // Wrong/invalid OTP: the server answered with a 4xx or a 1001 code
+  if (apiStatusCode === "1001" || (httpStatus && httpStatus >= 400 && httpStatus < 500)) {
+    showInvalidOtp();
+    return;
+  }
+  throw err; // network error / 5xx -> falls to generic "something went wrong"
+}
+      
 
-        if (statusCode === "1000") {
-          isSuccess = true;
-        } else if (statusCode === "1001") {
-          Alert.alert(
-            t("Main.Error"),
-            t(
-              "OtpVerification.OTPVerificationFailedPleaseCheckTheCodeAndTryAgain",
-            ),
-            [{ text: t("Main.OK") }],
-          );
-          setDisabledVerify(false);
-          setIsLoading(false);
-          return;
-        } else {
-          Alert.alert(
-            t("Main.Error"),
-            t("Main.SomethingWentWrongPleaseTryAgainlater"),
-            [{ text: t("Main.OK") }],
-          );
-          setDisabledVerify(false);
-          setIsLoading(false);
-          return;
-        }
+      if (statusCode === "1000") {
+  isSuccess = true;
+} else if (statusCode === "1001") {
+  showInvalidOtp();
+  return;
+} else {
+  Alert.alert(
+    t("Main.Error"),
+    t("Main.SomethingWentWrongPleaseTryAgainlater"),
+    [{ text: t("Main.OK") }],
+  );
+  setDisabledVerify(false);
+  setIsLoading(false);
+  return;
+}
       }
 
       if (isSuccess) {
@@ -342,30 +364,22 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   const handleResendOTP = async () => {
     await AsyncStorage.removeItem("referenceId");
     try {
-      const apiUrl = "https://api.getshoutout.com/otpservice/send";
-      const headers = {
-        Authorization: `Apikey ${environment.SHOUTOUT_API_KEY}`,
-        "Content-Type": "application/json",
-      };
-
       let otpMessage = "";
       if (i18n.language === "en") {
-        otpMessage = `Your GoviCare OTP is {{code}}`;
+        otpMessage = `Your GoViCare OTP is {{code}}`;
       } else if (i18n.language === "si") {
-        otpMessage = `ඔබේ GoviCare OTP මුරපදය {{code}} වේ.`;
+        otpMessage = `ඔබේ GoViCare OTP මුරපදය {{code}} වේ.`;
       } else if (i18n.language === "ta") {
-        otpMessage = `உங்கள் GoviCare OTP {{code}} ஆகும்.`;
+        otpMessage = `உங்கள் GoViCare OTP {{code}} ஆகும்.`;
       }
-      const body = {
-        source: "PolygonAgro",
-        transport: "sms",
-        content: {
-          sms: otpMessage,
-        },
-        destination: mobileNumber,
-      };
 
-      const response = await axios.post(apiUrl, body, { headers });
+      const response = await axios.post(
+        `${environment.API_BASE_URL}api/auth/send-otp`,
+        {
+          phoneNumber: mobileNumber,
+          message: otpMessage,
+        },
+      );
 
       if (response.data.referenceId) {
         await AsyncStorage.setItem("referenceId", response.data.referenceId);
@@ -476,6 +490,9 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
                   fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
                 }}
                 keyboardType="numeric"
+                textContentType="oneTimeCode"
+                autoComplete="sms-otp"
+                importantForAutofill="yes"
                 maxLength={5}
                 value={otpCode}
                 onChangeText={handleInputChange}

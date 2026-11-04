@@ -1,0 +1,24 @@
+diff --git a/node_modules/expo-modules-core/ios/Core/Protocols/AnyModule.swift b/node_modules/expo-modules-core/ios/Core/Protocols/AnyModule.swift
+--- a/node_modules/expo-modules-core/ios/Core/Protocols/AnyModule.swift
++++ b/node_modules/expo-modules-core/ios/Core/Protocols/AnyModule.swift
+@@ -21,6 +21,9 @@ public protocol AnyModule: AnyObject, AnyArgument {
+   /// Modules that don't use the macro fall back to the default, which is the class name.
+   static var _jsName: String { get }
+ 
++  /// Shared object classes associated with the module.
++  static var _classTypes: [SharedObject.Type] { get }
++
+   /// Returns definitions synthesized from `@JS`-annotated members by the `@ExpoModule` macro.
+   /// Framework-internal: the leading underscore signals this is not part of the public API and
+   /// should only be called by `expo-modules-core` itself. Modules that don't use the macro fall
+@@ -55,6 +58,10 @@ extension AnyModule {
+   public static var _jsName: String {
+     return unqualifiedTypeName(self)
+   }
++
++  public static var _classTypes: [SharedObject.Type] {
++    return []
++  }
+ 
+   /// An empty definition by default, so `@ExpoModule`-macro modules that describe their whole surface
+   /// through `@JS` members don't have to write an empty `definition()` of their own. Modules that use

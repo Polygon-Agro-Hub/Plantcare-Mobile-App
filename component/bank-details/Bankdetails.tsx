@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   ActivityIndicator,
   BackHandler,
+  Keyboard,
 } from "react-native";
 import axios from "axios";
 import { RootStackParamList } from "../types/types";
@@ -50,7 +51,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
   const [branchName, setBranchName] = useState("");
   const [accountHolderName, setAccountHolderName] = useState("");
   const [filteredBranches, setFilteredBranches] = useState<allBranches[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [language, setLanguage] = useState("en");
   const { t } = useTranslation();
   const [bankModalVisible, setBankModalVisible] = useState(false);
@@ -61,8 +62,75 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
   const [accountNumbermisMatchError, setAccountNumbermisMatchError] =
     useState("");
   const [accountNumberError, setAccountNumberError] = useState("");
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
-  const isSignUp = route.name === "BankDetailsSignUp";
+  useEffect(() => {
+    const showEvent = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+    const hideEvent = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+
+    const showSub = Keyboard.addListener(showEvent, (e) => {
+      setKeyboardHeight(e.endCoordinates.height);
+    });
+    const hideSub = Keyboard.addListener(hideEvent, () => {
+      setKeyboardHeight(0);
+    });
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
+
+  const isSignUp = route?.name === "BankDetailsSignUp";
+
+  const isRegisteredSuccessRef = useRef(false);
+  const hasNavigatedRef = useRef(false);
+  const isSubmittingRef = useRef(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const nameErrorTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+      if (nameErrorTimerRef.current) {
+        clearTimeout(nameErrorTimerRef.current);
+        nameErrorTimerRef.current = null;
+      }
+    };
+  }, []);
+
+  const navigateToNextScreen = useCallback(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    if (hasNavigatedRef.current) return;
+    hasNavigatedRef.current = true;
+
+    const targetScreen = isSignUp ? "Dashboard" : "QRcode";
+
+    const performNavigation = () => {
+      try {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Main", params: { screen: targetScreen } }],
+        });
+      } catch (err) {
+        console.error("Navigation reset error:", err);
+        try {
+          navigation.navigate("Main", { screen: targetScreen });
+        } catch (fallbackErr) {
+          console.error("Navigation fallback error:", fallbackErr);
+        }
+      }
+    };
+
+    setTimeout(performNavigation, Platform.OS === "ios" ? 250 : 50);
+  }, [isSignUp, navigation]);
 
   const adjustFontSize = (size: number) =>
     language !== "en" ? size * 0.9 : size;
@@ -72,7 +140,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
     setLanguage(selectedLanguage);
   }, [t]);
 
-  const handleBackPress = React.useCallback(() => {
+  const handleBackPress = useCallback(() => {
     if (navigation.canGoBack()) {
       navigation.goBack();
     } else {
@@ -85,7 +153,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
   }, [navigation, isSignUp]);
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       const backAction = () => {
         handleBackPress();
         return true;
@@ -104,12 +172,15 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
       const selectedBank = bankNames.find((bank) => bank.name === bankName);
       if (selectedBank) {
         try {
+          setLoading(true);
           const data = require("@/assets/jsons/bank-details/branches.json");
-          const branchesList = data[selectedBank.ID] || [];
+          const branchesList = Array.isArray(data[selectedBank.ID])
+            ? data[selectedBank.ID]
+            : [];
 
-          const sortedBranches = branchesList.sort(
-            (a: { name: string }, b: { name: any }) =>
-              a.name.localeCompare(b.name),
+          const sortedBranches = [...branchesList].sort(
+            (a: { name?: string }, b: { name?: string }) =>
+              (a?.name || "").localeCompare(b?.name || ""),
           );
 
           setFilteredBranches(sortedBranches);
@@ -125,15 +196,19 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
         }
       } else {
         setFilteredBranches([]);
+        setLoading(false);
       }
     } else {
       setFilteredBranches([]);
+      setLoading(false);
     }
 
     setBranchName("");
-  }, [bankName]);
+  }, [bankName, t]);
 
   const handleRegister = async () => {
+    if (isSubmittingRef.current || disableSubmit) return;
+
     if (loading && bankName) {
       Alert.alert(
         t("Main.Loading..."),
@@ -174,6 +249,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
       return;
     }
 
+    isSubmittingRef.current = true;
     setDisableSubmit(true);
     setIsLoading(true);
 
@@ -192,6 +268,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
           t("Main.SomethingWentWrongPleaseTryAgainlater"),
           [{ text: t("Main.OK") }],
         );
+        isSubmittingRef.current = false;
         setDisableSubmit(false);
         setIsLoading(false);
         return;
@@ -208,29 +285,25 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
       );
 
       if (response.status === 200) {
+        isRegisteredSuccessRef.current = true;
+        setDisableSubmit(true);
+        setIsLoading(false);
+
         Alert.alert(
           t("Main.Success"),
           t("BankDetails.BankDetailsRegisteredSuccessfully"),
           [
             {
-              onPress: () => {
-                if (isSignUp) {
-                  navigation.reset({
-                    index: 0,
-                    routes: [{ name: "Main", params: { screen: "Dashboard" } }],
-                  });
-                } else {
-                  navigation.reset({
-                    index: 0,
-                    routes: [{ name: "Main", params: { screen: "QRcode" } }],
-                  });
-                }
-              },
+              text: t("Main.OK") || "OK",
+              onPress: navigateToNextScreen,
             },
           ],
         );
-        setDisableSubmit(false);
-        setIsLoading(false);
+
+        timerRef.current = setTimeout(() => {
+          navigateToNextScreen();
+        }, 3200);
+        return;
       } else {
         Alert.alert(
           t("BankDetails.Failed"),
@@ -241,28 +314,25 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 400) {
+          isRegisteredSuccessRef.current = true;
+          setDisableSubmit(true);
+          setIsLoading(false);
+
           Alert.alert(
             t("BankDetails.Failed"),
             t("BankDetails.ExistingBankDetails"),
             [
               {
-                text: t("Main.OK"),
-                onPress: () => {
-                  if (isSignUp) {
-                    navigation.reset({
-                      index: 0,
-                      routes: [{ name: "Main", params: { screen: "Dashboard" } }],
-                    });
-                  } else {
-                    navigation.reset({
-                      index: 0,
-                      routes: [{ name: "Main", params: { screen: "QRcode" } }],
-                    });
-                  }
-                },
+                text: t("Main.OK") || "OK",
+                onPress: navigateToNextScreen,
               },
             ],
           );
+
+          timerRef.current = setTimeout(() => {
+            navigateToNextScreen();
+          }, 3200);
+          return;
         } else {
           Alert.alert(
             t("Main.Error"),
@@ -278,93 +348,124 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
         );
       }
     } finally {
-      setDisableSubmit(false);
-      setIsLoading(false);
+      isSubmittingRef.current = false;
+      if (!isRegisteredSuccessRef.current) {
+        setDisableSubmit(false);
+        setIsLoading(false);
+      }
     }
   };
 
   const isFormValid = () => {
+    const trimmedAcc = accountNumber.trim();
+    const trimmedConfirmAcc = confirmAccountNumber.trim();
+    const trimmedName = accountHolderName.trim();
+    const trimmedBank = bankName.trim();
+    const trimmedBranch = branchName.trim();
+
     return (
-      accountNumber &&
-      confirmAccountNumber &&
-      accountHolderName &&
-      bankName &&
-      branchName
+      trimmedAcc.length > 0 &&
+      trimmedConfirmAcc.length > 0 &&
+      trimmedName.length > 0 &&
+      validateName(trimmedName) &&
+      trimmedBank.length > 0 &&
+      trimmedBranch.length > 0 &&
+      trimmedAcc === trimmedConfirmAcc &&
+      !accountNumberError &&
+      !accountNumbermisMatchError
     );
   };
 
   const validateName = (name: string) => {
-    const regex = /^[\p{L}\s\u0B80-\u0BFF\u0D80-\u0DFF]+$/u;
-    return regex.test(name);
-  };
-
-  const handleFirstNameChange = (text: string) => {
-    const trimmedText = text.replace(/^\s+/, "");
-
-    if (validateName(trimmedText) || trimmedText === "") {
-      setAccountHolderName(trimmedText);
-      setHoldernameNameError("");
-    } else {
-      setHoldernameNameError(
-        t("SignUp.UserNameMustStartWithALetterAndContainNoSpaces"),
-      );
+    try {
+      const regex = /^[a-zA-Z\u0B80-\u0BFF\u0D80-\u0DFF\s.'-]+$/;
+      return regex.test(name);
+    } catch {
+      return true;
     }
   };
 
-  const validateAccountNumber = (text: string) => {
-    const regex = /^\d*$/;
-    return regex.test(text);
+  const handleFirstNameChange = (text: string) => {
+    if (nameErrorTimerRef.current) {
+      clearTimeout(nameErrorTimerRef.current);
+      nameErrorTimerRef.current = null;
+    }
+
+    const hasLeadingSpace = text.startsWith(" ");
+    const cleaned = hasLeadingSpace ? text.trimStart() : text;
+    setAccountHolderName(cleaned);
+
+    if (hasLeadingSpace) {
+      setHoldernameNameError(
+        t("SignUp.UserNameMustStartWithALetterAndContainNoSpaces"),
+      );
+      nameErrorTimerRef.current = setTimeout(() => {
+        if (cleaned === "" || validateName(cleaned)) {
+          setHoldernameNameError("");
+        }
+      }, 2000);
+    } else if (cleaned !== "" && !validateName(cleaned)) {
+      setHoldernameNameError(
+        t("SignUp.UserNameMustStartWithALetterAndContainNoSpaces"),
+      );
+    } else {
+      setHoldernameNameError("");
+    }
   };
 
   const handleAccountNumberChange = (text: string) => {
-    if (validateAccountNumber(text) || text === "") {
-      setAccountNumber(text);
-      setAccountNumberError("");
+    const sanitized = text.replace(/[^0-9]/g, "");
+    setAccountNumber(sanitized);
 
-      if (confirmAccountNumber !== "" && confirmAccountNumber !== text) {
-        setAccountNumbermisMatchError(
-          t("BankDetails.AccountNumbersDoNotMatch"),
-        );
-      } else if (confirmAccountNumber === text) {
-        setAccountNumbermisMatchError("");
-      }
-    } else {
+    if (text !== sanitized) {
       setAccountNumberError(t("BankDetails.AccountNumberMustBeANumber"));
+    } else {
+      setAccountNumberError("");
+    }
+
+    if (confirmAccountNumber !== "" && confirmAccountNumber !== sanitized) {
+      setAccountNumbermisMatchError(
+        t("BankDetails.AccountNumbersDoNotMatch"),
+      );
+    } else {
+      setAccountNumbermisMatchError("");
     }
   };
 
   const handleConfirmAccountNumberChange = (text: string) => {
-    if (validateAccountNumber(text) || text === "") {
-      setConfirmAccountNumber(text);
-      setAccountNumberError("");
+    const sanitized = text.replace(/[^0-9]/g, "");
+    setConfirmAccountNumber(sanitized);
 
-      if (text !== "" && accountNumber !== text) {
-        setAccountNumbermisMatchError(
-          t("BankDetails.AccountNumbersDoNotMatch"),
-        );
-      } else {
-        setAccountNumbermisMatchError("");
-      }
-    } else {
+    if (text !== sanitized) {
       setAccountNumberError(t("BankDetails.AccountNumberMustBeANumber"));
+    } else {
+      setAccountNumberError("");
+    }
+
+    if (sanitized !== "" && accountNumber !== sanitized) {
+      setAccountNumbermisMatchError(
+        t("BankDetails.AccountNumbersDoNotMatch"),
+      );
+    } else {
+      setAccountNumbermisMatchError("");
     }
   };
 
-  const bankItems = bankNames
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .map((bank) => ({ label: bank.name, value: bank.name }));
+  const bankItems = useMemo(() => {
+    return [...bankNames]
+      .sort((a, b) => (a?.name || "").localeCompare(b?.name || ""))
+      .map((bank) => ({ label: bank.name, value: bank.name }));
+  }, []);
 
-  const branchItems = filteredBranches.map((branch) => ({
-    label: branch.name,
-    value: branch.name,
-  }));
+  const branchItems = useMemo(() => {
+    return filteredBranches.map((branch) => ({
+      label: branch.name,
+      value: branch.name,
+    }));
+  }, [filteredBranches]);
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      enabled
-      className="flex-1 bg-white"
-    >
+    <View style={{ flex: 1, backgroundColor: "white" }}>
       <GlobalSearchModal
         visible={bankModalVisible}
         onClose={() => setBankModalVisible(false)}
@@ -404,11 +505,23 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
         onBackPress={handleBackPress}
       />
 
-      <ScrollView
-        contentContainerClassName="pb-6"
-        className="flex-1 bg-white"
-        keyboardShouldPersistTaps="handled"
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        style={{ flex: 1, backgroundColor: "white" }}
+        enabled
       >
+        <ScrollView
+          ref={scrollViewRef}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingBottom: keyboardHeight > 0 ? keyboardHeight + 120 : 40,
+          }}
+          className="flex-1 bg-white"
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          nestedScrollEnabled={true}
+        >
         <View className="items-center mb-4">
           <Image
             source={require("../../assets/images/bank-details/qr-screen.webp")}
@@ -439,6 +552,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
                 backgroundColor: "#F4F4F4",
                 borderRadius: 25,
                 paddingVertical: 16,
+                letterSpacing: 0,
                 textDecorationLine: "none",
                 borderBottomWidth: 0,
                 borderBottomColor: "transparent",
@@ -468,11 +582,12 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
               placeholder={t("BankDetails.EnterAccountNumber")}
               placeholderTextColor="#5e5d5d"
               className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4"
+              style={{ letterSpacing: 0 }}
               keyboardType="number-pad"
               value={accountNumber}
               onChangeText={handleAccountNumberChange}
             />
-            {accountNumberError && !validateAccountNumber(accountNumber) ? (
+            {accountNumberError && accountNumber ? (
               <Text className="text-red-500 text-xs mt-2">
                 {accountNumberError}
               </Text>
@@ -490,12 +605,12 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
               placeholder={t("BankDetails.ReEnterAccountNumber")}
               placeholderTextColor="#5e5d5d"
               className="bg-[#F4F4F4] rounded-3xl h-[50px] px-4"
+              style={{ letterSpacing: 0 }}
               keyboardType="number-pad"
               value={confirmAccountNumber}
               onChangeText={handleConfirmAccountNumberChange}
             />
-            {accountNumberError &&
-            !validateAccountNumber(confirmAccountNumber) ? (
+            {accountNumberError && confirmAccountNumber ? (
               <Text className="text-red-500 text-xs mt-2">
                 {accountNumberError}
               </Text>
@@ -616,6 +731,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
                   <Text className="text-sm text-black font-thin">View </Text>
                   <TouchableOpacity
                     onPress={() => navigation.navigate("TermsConditions")}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                   >
                     <Text className="text-sm text-black font-bold underline">
                       Terms & Conditions
@@ -624,6 +740,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
                   <Text className="text-sm text-black font-thin"> and </Text>
                   <TouchableOpacity
                     onPress={() => navigation.navigate("PrivacyPolicy")}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                   >
                     <Text className="text-sm text-black font-bold underline">
                       Privacy Policy
@@ -634,6 +751,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
                 <View className="flex-row justify-center flex-wrap">
                   <TouchableOpacity
                     onPress={() => navigation.navigate("TermsConditions")}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                   >
                     <Text
                       className="text-black font-bold underline"
@@ -650,6 +768,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
                   </Text>
                   <TouchableOpacity
                     onPress={() => navigation.navigate("PrivacyPolicy")}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                   >
                     <Text
                       className="text-black font-bold underline"
@@ -669,8 +788,9 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
             </View>
           )}
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 

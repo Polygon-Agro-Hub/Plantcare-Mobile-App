@@ -533,13 +533,6 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
             mimeType: "application/pdf",
             UTI: "com.adobe.pdf",
           });
-          Alert.alert(
-            t("TransactionList.Info"),
-            t(
-              'TransactionList.UseTheSave',
-            ),
-            [{ text: t("Main.OK") }],
-          );
         } else {
           Alert.alert(
             t("Main.Sorry"),

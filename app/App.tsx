@@ -24,7 +24,6 @@ import store, { RootState } from "@/services/reducxStore";
 import NetInfo from "@react-native-community/netinfo";
 import { useTranslation } from "react-i18next";
 import * as SplashScreen from "expo-splash-screen";
-import { requestTrackingIfNeeded } from "@/utils/ios/trackingPermissions";
 import Splash from "../component/auth/Splash";
 import Lanuage from "../component/common/Lanuage";
 import Signin from "@/component/auth/Signin";
@@ -55,6 +54,7 @@ import UpdateAsset from "@/component/fixed-assets/UpdateAsset";
 import CropEnrol from "@/component/crop-cultivation/CropEnrol";
 import { LogBox } from "react-native";
 import { AlertModal, setGlobalAlertListener } from "@/component/common/AlertModal";
+import { AppUpdateProvider } from "@/app-update";
 import MembershipScreen from "@/component/membership-screens/MembershipScreen";
 import BankDetailsScreen from "@/component/bank-details/Bankdetails";
 import PrivacyPolicy from "@/component/policies/PrivacyPolicy";
@@ -317,9 +317,6 @@ function AppContent() {
     SplashScreen.hideAsync().catch((err) => {
       console.warn("Failed to hide splash screen:", err);
     });
-
-    // Request iOS AppTrackingTransparency permission if needed (iOS only)
-    requestTrackingIfNeeded();
   }, []);
 
   useEffect(() => {
@@ -738,7 +735,9 @@ export default function App() {
     <SafeAreaProvider>
       <Provider store={store}>
         <LanguageProvider>
-          <AppContent />
+          <AppUpdateProvider>
+            <AppContent />
+          </AppUpdateProvider>
         </LanguageProvider>
       </Provider>
     </SafeAreaProvider>

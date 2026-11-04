@@ -117,6 +117,14 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
   const [natureOfCultivation, setNatureOfCultivation] = useState<string>("");
 
   const [farmExtent, setFarmExtent] = useState<FarmExtent | null>(null);
+  // Track the extent that was already booked when we entered edit mode.
+  // validateExtent() adds it back to availableExtent so editing your own
+  // record isn't double-counted against you.
+  const [originalExtent, setOriginalExtent] = useState<{
+    ha: string;
+    ac: string;
+    p: string;
+  }>({ ha: "0", ac: "0", p: "0" });
   const [cultivationMethod, setCultivationMethod] = useState<string>("");
 
   const [extentha, setExtentha] = useState<string>("");
@@ -305,7 +313,19 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
       return false;
     }
     const cultivationPerches = convertToPerches(extentha, extentac, extentp);
-    if (cultivationPerches > farmExtent.availableExtent.totalPerches) {
+
+    // In edit mode the current record's extent is already counted in
+    // "cultivated" by the server, so we add it back to get the true
+    // effective available perches for this user's own update.
+    const originalExtentPerches =
+      formStatus === "edit"
+        ? convertToPerches(originalExtent.ha, originalExtent.ac, originalExtent.p)
+        : 0;
+
+    const effectiveAvailablePerches =
+      farmExtent.availableExtent.totalPerches + originalExtentPerches;
+
+    if (cultivationPerches > effectiveAvailablePerches) {
       const {
         hectares: aHa,
         acres: aAc,
@@ -527,6 +547,13 @@ const FarmCropEnroll: React.FC<FarmCropEnrollProps> = ({
         setExtentha(crop.extentha.toString());
         setExtentac(crop.extentac.toString());
         setExtentp(crop.extentp.toString());
+        // Remember the original extent so validateExtent() can add it back
+        // to availableExtent — the server already counts it in "cultivated".
+        setOriginalExtent({
+          ha: crop.extentha.toString(),
+          ac: crop.extentac.toString(),
+          p: crop.extentp.toString(),
+        });
         setStartDate(new Date(formatted));
       } catch (err) {
         console.error("Error fetching ongoing cultivations:", err);

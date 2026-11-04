@@ -21,7 +21,9 @@
     "PleaseTurnOnMobileDataOrWiFiToContinue": "කරුණාකර දිගටම කරගෙන යාමට ජංගම දත්ත හෝ Wi-Fi සක්‍රිය කරන්න.",
     "TooManyRequestsFromThisDevicePleaseTryAgainIn30Minutes": "මෙම උපාංගයෙන් ඉල්ලීම් රාශියක් සිදු කර ඇත, කරුණාකර විනාඩි 30 කින් නැවත උත්සාහ කරන්න.",
     "Done": "අවසන්",
-    "NoSearchResultFound": "සෙවුම් ප්‍රතිඵල කිසිවක් හමු නොවීය"
+    "NoSearchResultFound": "සෙවුම් ප්‍රතිඵල කිසිවක් හමු නොවීය",
+    "NoResultsFoundForYourSearch": "ඔබගේ සෙවුමට ගැලපෙන ප්‍රතිඵල කිසිවක් හමු නොවීය",
+    "OnlyHeicJpgPngAllowed": "HEIC, JPG සහ PNG වර්ගයේ ගොනු පමණක් වලංගු වේ."
   },
   "Inputs": {
     "FirstName": "මුල් නම",
@@ -102,10 +104,10 @@
     "CreateAccount": "ගිණුමක් සාදන්න",
     "NoSpacesAllowed": "අවකාශයන්ට අවසර නැත",
     "OnlyLettersAllowed": "අකුරු පමණක් අවසර දෙනු ලැබේ",
-    "CanNotStartWithSpace": "අවකාශයකින් ආරම්භ කළ නොහැක",
+    "CanNotStartWithSpace": "හිස්තැනකින් ආරම්භ කළ නොහැක",
     "AlreadyHaveAnAccount": "දැනටමත් ගිණුමක් තිබේද?",
     "PleaseEnterAValidNICNumber": "කරුණාකර වලංගු ජාතික හැඳුනුම්පත් අංකයක් ඇතුළත් කරන්න",
-    "UserNameMustStartWithALetterAndContainNoSpaces": "පරිශීලක නාමය අකුරකින් ආරම්භ විය යුතු අතර අවකාශයන් අඩංගු නොවිය යුතුය",
+    "UserNameMustStartWithALetterAndContainNoSpaces": "පරිශීලක නාමය අකුරකින් ආරම්භ විය යුතු අතර ආරම්භයේ හිස්තැන් අඩංගු නොවිය යුතුය",
     "FailedToSendOTPPleaseCheckYourNumberAndTryAgain": "OTP එවීමට අසමත් විය. කරුණාකර ඔබගේ අංකය පරීක්ෂා කර නැවත උත්සාහ කරන්න.",
     "PleaseEnterAValid9DigitMobileNumberExcludeTheLeadingZero": "කරුණාකර වලංගු ඉලක්කම් 9 ක ජංගම දුරකථන අංකයක් ඇතුළත් කරන්න (ඉදිරියෙන් ඇති ශුන්‍යය බැහැර කරන්න).",
     "TheNICNumberYouEnteredIsAlreadyRegisteredPleaseCheckYourDetailsOrLogIn": "ඔබ ඇතුළත් කළ ජාතික හැඳුනුම්පත් අංකය දැනටමත් ලියාපදිංචි කර ඇත, කරුණාකර ඔබගේ විස්තර පරීක්ෂා කරන්න හෝ පුරන්න.",
@@ -152,15 +154,6 @@
     "NeedHelp": "උදව් අවශ්‍යයි",
     "UnableToOpenTheDialerPleaseTryAgain": "අමතන්න විවෘත කළ නොහැක. කරුණාකර නැවත උත්සාහ කරන්න.",
     "NeedGoViCareHelpTapTheCallButtonForInstantSupport": "GoViCare උදව් අවශ්‍යද? ක්ෂණික සහාය සඳහා ඇමතුම් බොත්තම ඔබන්න."
-  },
-  "EditProfile": {
-    "EditProfile": "පැතිකඩ සංස්කරණය කරන්න",
-    "ViewProfile": "පැතිකඩ බලන්න",
-    "FirstNameAndLastNameCannotBeEmpty": "මුල් නම සහ අවසන් නම හිස් විය නොහැක.",
-    "YourProfileHasBeenUpdatedSuccessfully": "ඔබගේ පැතිකඩ සාර්ථකව යාවත්කාලීන කර ඇත!",
-    "FailedToUpdateProfileTryAgainLater": "පැතිකඩ යාවත්කාලීන කිරීමට අසමත් විය. පසුව නැවත උත්සාහ කරන්න.",
-    "PermissionDenied": "අවසර ප්‍රතික්ෂේප කරන ලදී",
-    "PleaseAllowAccessToYourGalleryToProceed": "කරුණාකර ඉදිරියට යාමට ඔබගේ ගැලරියට ප්‍රවේශය ලබා දෙන්න!"
   },
   "PrivacyPolicy": {
     "PrivacyPolicy": "රහස්‍යතා ප්‍රතිපත්තිය",
@@ -245,7 +238,8 @@
   },
   "LocationAccess": {
     "Allow": "ඉඩ දෙන්න",
-    "AgreeAndContinue": "එකඟ වී ඉදිරියට යන්න",
+    "Continue": "ඉදිරියට යන්න",
+    "AgreeAndContinue": "ඉදිරියට යන්න",
     "NotNow": "දැන් නොවේ",
     "OpenSettings": "සැකසුම් විවෘත කරන්න",
     "Requesting...": "ඉල්ලමින්...",
@@ -265,7 +259,8 @@
   },
   "CameraAccess": {
     "Allow": "ඉඩ දෙන්න",
-    "AgreeAndContinue": "එකඟ වී ඉදිරියට යන්න",
+    "Continue": "ඉදිරියට යන්න",
+    "AgreeAndContinue": "ඉදිරියට යන්න",
     "NotNow": "දැන් නොවේ",
     "OpenSettings": "සැකසුම් විවෘත කරන්න",
     "Requesting...": "ඉල්ලමින්...",
@@ -294,7 +289,8 @@
     "PleaseCheckYourInternetConnectionAndTryAgain": "කරුණාකර ඔබගේ අන්තර්ජාල සම්බන්ධතාවය පරීක්ෂා කර නැවත උත්සාහ කරන්න.",
     "LocationNotFound": "ස්ථානය හමු නොවීය.",
     "AnErrorOccurredWhileFetchingWeatherData": "කාලගුණ දත්ත ලබා ගැනීමේදී දෝෂයක් ඇති විය.",
-    "UnableToFetchCurrentLocation": "වත්මන් ස්ථානය ලබා ගැනීමට නොහැක."
+    "UnableToFetchCurrentLocation": "වත්මන් ස්ථානය ලබා ගැනීමට නොහැක.",
+    "NoResultsFound": "ඔබේ සෙවුම සඳහා ප්‍රතිඵල කිසිවක් හමු නොවීය."
   },
   "FiveDayForcast": {
     "5DaysForecast": "දින 5 ක අනාවැකිය",
@@ -579,12 +575,6 @@
     "DuplicateNumbersAreNotAllowed.": "අනුපිටපත් අංකවලට අවසර නැත.",
     "DuplicateNICNumbersAreNotAllowed": "අනුපිටපත් ජාතික හැඳුනුම්පත් අංකවලට අවසර නැත.",
     "PleaseFixPhoneNumberValidationErrorsBeforeSaving": "කරුණාකර සුරැකීමට පෙර දුරකථන අංක වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
-    "PleaseFixNICValidationErrorsBeforeSaving": "කරුණාකර සුරැකීමට පෙර ජාතික හැඳුනුම්පත් වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
-    "Please fix NIC validation errors before saving.": "කරුණාකර සුරැකීමට පෙර ජාතික හැඳුනුම්පත් වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
-    "OneOrMorePhoneNumbersAlreadyRegistered": "දුරකථන අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් දුරකථන අංක භාවිතා කරන්න.",
-    "One or more phone numbers are already registered. Please use different phone numbers.": "දුරකථන අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් දුරකථන අංක භාවිතා කරන්න.",
-    "OneOrMoreNICNumbersAlreadyRegistered": "ජාතික හැඳුනුම්පත් අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් ජාතික හැඳුනුම්පත් අංක භාවිතා කරන්න.",
-    "One or more NIC numbers are already registered. Please use different NIC numbers.": "ජාතික හැඳුනුම්පත් අංක එකක් හෝ කිහිපයක් දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් ජාතික හැඳුනුම්පත් අංක භාවිතා කරන්න.",
     "DuplicatePhoneNumbersFoundPleaseUseUnique": "අනුපිටපත් දුරකථන අංක හමු විය. කරුණාකර එක් එක් කාර්ය මණ්ඩල සාමාජිකයා සඳහා අනන්‍ය දුරකථන අංක භාවිතා කරන්න.",
     "Duplicate phone numbers found. Please use unique phone numbers for each staff member.": "අනුපිටපත් දුරකථන අංක හමු විය. කරුණාකර එක් එක් කාර්ය මණ්ඩල සාමාජිකයා සඳහා අනන්‍ය දුරකථන අංක භාවිතා කරන්න.",
     "DuplicateNICNumbersFoundPleaseUseUnique": "අනුපිටපත් ජාතික හැඳුනුම්පත් අංක හමු විය. කරුණාකර එක් එක් කාර්ය මණ්ඩල සාමාජිකයා සඳහා අනන්‍ය ජාතික හැඳුනුම්පත් අංක භාවිතා කරන්න.",
@@ -625,7 +615,6 @@
     "PleaseEnterAtLeastOneExtentValue": "කරුණාකර අවම වශයෙන් එක් විශාලත්ව අගයක් ඇතුළත් කරන්න",
     "NotAllowedToBeEmpty": "හිස්ව තැබිය නොහැක",
     "PleaseFixNICValidationErrorsBeforeSaving": "කරුණාකර සුරැකීමට පෙර ජාතික හැඳුනුම්පත් අංක වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
-    "PleaseFixDuplicateNICValidationErrorsBeforeSaving": "කරුණාකර සුරැකීමට පෙර අනුපිටපත් ජාතික හැඳුනුම්පත් අංක වලංගු කිරීමේ දෝෂ නිවැරදි කරන්න.",
     "OneOrMorePhoneNumbersAreAlreadyRegistered": "එක් හෝ ඊට වඩා වැඩි දුරකථන අංක දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් දුරකථන අංකයක් ඇතුළත් කරන්න.",
     "OneOrMoreNICNumbersAreAlreadyRegistered": "එක් හෝ ඊට වඩා වැඩි ජාතික හැඳුනුම්පත් අංක දැනටමත් ලියාපදිංචි කර ඇත. කරුණාකර වෙනත් ජාතික හැඳුනුම්පත් අංකයක් ඇතුළත් කරන්න."
   },
@@ -1265,7 +1254,8 @@
     "SeeMore": "තවත් බලන්න",
     "SeeLess": "අඩුවෙන් බලන්න",
     "Maximum250charactersAllowed": "උපරිම අක්ෂර 250 කට අවසර ඇත.",
-    "Change": "වෙනස් කරන්න"
+    "Change": "වෙනස් කරන්න",
+    "OnlyHeicJpgPngAllowed": "HEIC, JPG සහ PNG වර්ගයේ ගොනු පමණක් වලංගු වේ."
   },
   "Govicapital": {
     "HowCanWeHelpYou": "අපට ඔබට උදව් කළ හැක්කේ කෙසේද?",
@@ -1290,7 +1280,7 @@
     "RequestLetter": "ඉල්ලීම් ලිපිය",
     "DearSirMadam": "ප්‍රිය ස්වාමිනි/මැතිනිය,",
     "SendForApproval": "අනුමැතිය සඳහා යවන්න",
-    "IFarmersNameAFarmerFromDistrictAmWritingToFormallyRequestAnAgriculturalInvestmentForTheUpcomingCultivationSeason": "මම, [ගොවියාගේ නම], [දිස්ත්‍රික්කය] හි ගොවියෙකු, ඉදිරි වගා කන්නය සඳහා කෘෂිකාර්මික ආයෝජනයක් විධිමත් ලෙස ඉල්ලා සිටීමට ලියන්නෙමි.",
+    "IFarmersNameAFarmerFromDistrictAmWritingToFormallyRequestAnAgriculturalInvestmentForTheUpcomingCultivationSeason": "මම, [Farmer's Name], [District] හි ගොවියෙකු, ඉදිරි වගා කන්නය සඳහා කෘෂිකාර්මික ආයෝජනයක් විධිමත් ලෙස ඉල්ලා සිටීමට ලියන්නෙමි.",
     "TheProjectDetailsAreAsFollows": "ව්‍යාපෘති විස්තර පහත පරිදි වේ:",
     "ThisInvestmentIsEssentialForCoveringTheCostsOfHighQualitySeedsFertilizersPesticidesIrrigationFacilitiesAndLaborExpensesForTheProjectedYearTheExpectedHarvestIsSufficientToGenerateSufficientRevenueForTheTimelyRepaymentOfTheLoanAlongWithAccruedInterest": "මෙම ආයෝජනය උසස් තත්ත්වයේ බීජ, පොහොර, පළිබෝධනාශක, වාරි පහසුකම් සහ අපේක්ෂිත අස්වැන්න සාක්ෂාත් කර ගැනීමට අවශ්‍ය ශ්‍රම වියදම් ආවරණය කිරීම සඳහා අත්‍යවශ්‍ය වේ. අපේක්ෂිත අස්වැන්න උපචිත පොලී සමඟ ණය නියමිත වේලාවට ආපසු ගෙවීම සඳහා ප්‍රමාණවත් ආදායමක් උත්පාදනය කිරීමට අපේක්ෂා කෙරේ.",
     "IHaveAAttachedTheNecessaryDocumentsForYourPerusal": "ඔබගේ බැල්ම සඳහා අවශ්‍ය ලියකියවිලි අමුණා ඇත.",
@@ -1502,7 +1492,22 @@
     "LoadingStatus": "තත්වය පූරණය වෙමින්..."
   },
   "MyPensionAccount": {
-    "GoViPension": "ගොවිපෙන්ෂන්"
+    "GoViPension": "ගොවිපෙන්ෂන්",
+    "TotalPensionValue": "මුළු විශ්‍රාම වැටුප් වටිනාකම",
+    "YouWillGetYourPensionIn": "ඔබට විශ්‍රාම වැටුප ලැබෙනුයේ...",
+    "Year": "වසර",
+    "Years": "වසර",
+    "Month": "මාස",
+    "Months": "මාස",
+    "Day": "දින",
+    "Days": "දින",
+    "LoadingPensionData": "විශ්‍රාම වැටුප් දත්ත පූරණය වෙමින් පවතී...",
+    "Currency": "රු.",
+    "NotApproved": "අනුමත කර නැත",
+    "PensionRequestNotApproved": "ඔබගේ විශ්‍රාම වැටුප් ඉල්ලීම තවමත් අනුමත කර නොමැත. කරුණාකර ඔබගේ තත්වය පරීක්ෂා කරන්න.",
+    "NoPensionFound": "විශ්‍රාම වැටුපක් හමු නොවීය",
+    "NoApprovedPensionAccount": "ඔබට තවමත් අනුමත විශ්‍රාම වැටුප් ගිණුමක් නොමැත.",
+    "FailedToFetchPensionData": "විශ්‍රාම වැටුප් දත්ත ලබා ගැනීමට අපොහොසත් විය. කරුණාකර නැවත උත්සාහ කරන්න."
   },
   "Calculator": {
     "Calculator": "ගණක යන්ත්‍රය",
@@ -1740,7 +1745,15 @@
       "සිකුරාදා",
       "සෙනසුරාදා"
     ],
-    "DaysShort": ["ඉරි", "සඳු", "අඟ", "බදා", "බ්‍ර", "සිකු", "සෙන"]
+    "DaysShort": [
+      "ඉරි",
+      "සඳු",
+      "අඟ",
+      "බදා",
+      "බ්‍ර",
+      "සිකු",
+      "සෙන"
+    ]
   },
   "EditProfile": {
     "EditProfile": "පැතිකඩ සංස්කරණය කරන්න",
@@ -1749,6 +1762,7 @@
     "ProfileImageUpdatedSuccessfully": "පැතිකඩ රූපය සාර්ථකව යාවත්කාලීන කරන ලදී.",
     "FirstNameAndLastNameCannotBeEmpty": "මුල් නම සහ අවසාන නම හිස් විය නොහැක.",
     "YourProfileHasBeenUpdatedSuccessfully": "ඔබගේ පැතිකඩ සාර්ථකව යාවත්කාලීන කරන ලදී.",
-    "FailedToUpdateProfileTryAgainLater": "පැතිකඩ යාවත්කාලීන කිරීමට අසමත් විය. කරුණාකර පසුව නැවත උත්සාහ කරන්න."
+    "FailedToUpdateProfileTryAgainLater": "පැතිකඩ යාවත්කාලීන කිරීමට අසමත් විය. කරුණාකර පසුව නැවත උත්සාහ කරන්න.",
+    "OnlyHeicJpgPngAllowed": "HEIC, JPG සහ PNG වර්ගයේ ගොනු පමණක් වලංගු වේ."
   }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, Text, Modal, Animated, TouchableOpacity, Alert } from "react-native";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
@@ -36,11 +36,20 @@ export const AlertModal: React.FC<AlertModalProps> = ({
   const { t } = useTranslation();
   const isOkButtonVisible = showOkButton !== undefined ? showOkButton : !autoClose;
   const loadingBarWidth = useRef(new Animated.Value(1)).current; // 1 = 100%
+  const [modalWidth, setModalWidth] = useState(320);
 
   const onCloseRef = useRef(onClose);
   useEffect(() => {
     onCloseRef.current = onClose;
   }, [onClose]);
+
+  const handleClose = () => {
+    if (onCloseRef.current) {
+      onCloseRef.current();
+    } else if (onClose) {
+      onClose();
+    }
+  };
 
   useEffect(() => {
     if (visible && autoClose) {
@@ -49,7 +58,7 @@ export const AlertModal: React.FC<AlertModalProps> = ({
       const animation = Animated.timing(loadingBarWidth, {
         toValue: 0,
         duration: duration,
-        useNativeDriver: false,
+        useNativeDriver: true,
       });
 
       animation.start();
@@ -113,12 +122,13 @@ export const AlertModal: React.FC<AlertModalProps> = ({
       transparent 
       animationType="fade"
       supportedOrientations={['portrait', 'portrait-upside-down', 'landscape', 'landscape-left', 'landscape-right']}
+      onRequestClose={handleClose}
     >
       <View className="flex-1 bg-black/50 justify-center items-center p-4">
         <View className="bg-white p-6 rounded-2xl items-center shadow-lg w-full max-w-md relative">
           <TouchableOpacity
             className="absolute top-5 right-5 z-10 w-8 h-8 rounded-full bg-[#F7FAFF] items-center justify-center"
-            onPress={onClose}
+            onPress={handleClose}
           >
             <Ionicons name="close" size={20} color="#000000" />
           </TouchableOpacity>
@@ -159,7 +169,7 @@ export const AlertModal: React.FC<AlertModalProps> = ({
 
             {isOkButtonVisible && (
               <TouchableOpacity
-                onPress={onClose}
+                onPress={handleClose}
                 activeOpacity={0.8}
                 className="bg-[#10A37D] py-3 px-6 rounded-full flex-row items-center justify-center gap-x-2 shadow-md"
               >
@@ -179,15 +189,26 @@ export const AlertModal: React.FC<AlertModalProps> = ({
                 borderBottomLeftRadius: 16,
                 borderBottomRightRadius: 16,
               }}
+              onLayout={(e) => {
+                const w = e.nativeEvent.layout.width;
+                if (w > 0) setModalWidth(w);
+              
+              }}
             >
               <Animated.View
-                className="h-full rounded-b-3xl"
+
                 style={{
-                  width: loadingBarWidth.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: ["0%", "100%"],
-                  }),
+                  height: "100%",
+                  width: "100%",
                   backgroundColor: "#10A37D",
+                  transform: [
+                    {
+                      translateX: loadingBarWidth.interpolate({
+                    inputRange: [0, 1],
+                        outputRange: [-modalWidth, 0],
+                  }),
+                    },
+                  ],
                 }}
               />
             </View>

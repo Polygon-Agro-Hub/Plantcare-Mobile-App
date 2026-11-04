@@ -16,7 +16,7 @@ import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
-import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import {  MaterialIcons } from "@expo/vector-icons";
 import { environment } from "@/environment/environment";
 import { useTranslation } from "react-i18next";
 import * as ImagePicker from "expo-image-picker";
@@ -29,6 +29,7 @@ import districtData from "@/assets/jsons/common/district.json";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../../component/common/CustomHeader";
 import LoadingPage from "../common/LoadingPage";
+import { isAllowedImageFormat, isFormatOrImagePickerError } from "@/utils/imageValidation";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectUserPersonal,
@@ -59,6 +60,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
     require("../../assets/images/auth/profile.webp"),
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [phoneNumberError, setPhoneNumberError] = useState("");
   const [isMenuVisible, setMenuVisible] = useState(false);
@@ -159,8 +161,8 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
     fetchProfileData();
   }, []);
 
-
   const uploadImage = async (imageUri: string) => {
+    setIsUploadingPhoto(true);
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
@@ -240,11 +242,22 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
         "Error uploading profile image:",
         error?.response?.data || error?.message || error,
       );
+      const serverMsg = error?.response?.data?.message || "";
+      const isFormatError =
+        isFormatOrImagePickerError(error) ||
+        /image|format|heic|jpg|png|file/i.test(serverMsg);
+
       Alert.alert(
         t("Main.Error"),
-        t("Main.SomethingWentWrongPleaseTryAgainlater"),
+        isFormatError
+          ? t("EditProfile.OnlyHeicJpgPngAllowed") ||
+            t("Main.OnlyHeicJpgPngAllowed") ||
+            "Only HEIC, JPG, and PNG files are allowed."
+          : t("Main.SomethingWentWrongPleaseTryAgainlater"),
         [{ text: t("Main.OK") }],
       );
+    } finally {
+      setIsUploadingPhoto(false);
     }
   };
 
@@ -270,23 +283,65 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
       });
 
       if (!result.canceled && result.assets?.length > 0) {
-        const imageUri = result.assets[0].uri;
-        // Show the picked image immediately in UI
+        const asset = result.assets[0];
+
+        if (!isAllowedImageFormat(asset)) {
+          Alert.alert(
+            t("Main.Error") || "Error",
+            t("EditProfile.OnlyHeicJpgPngAllowed") ||
+              t("Main.OnlyHeicJpgPngAllowed") ||
+              "Only HEIC, JPG, and PNG files are allowed.",
+            [{ text: t("Main.OK") || "OK" }],
+          );
+          return;
+        }
+
+        let imageUri = asset.uri;
+
+        const isHeic =
+          /\.(heic|heif)$/i.test(imageUri) ||
+          /image\/hei[cf]/i.test(asset.mimeType || "");
+
+        if (isHeic) {
+          try {
+            const manipulated = await ImageManipulator.manipulateAsync(
+              imageUri,
+              [],
+              { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG },
+            );
+            imageUri = manipulated.uri;
+          } catch (conversionError) {
+            console.error("HEIC conversion failed:", conversionError);
+            Alert.alert(
+              t("Main.Error") || "Error",
+              t("EditProfile.OnlyHeicJpgPngAllowed") ||
+                t("Main.OnlyHeicJpgPngAllowed") ||
+                "Only HEIC, JPG, and PNG files are allowed.",
+              [{ text: t("Main.OK") }],
+            );
+            return;
+          }
+        }
+
         setProfileImage({ uri: imageUri });
-        // Upload directly — no ImageManipulator to avoid iOS crashes
         await uploadImage(imageUri);
       }
     } catch (error: any) {
       console.error("Error picking profile image:", error?.message || error);
+      const isFormatError = isFormatOrImagePickerError(error);
+
       Alert.alert(
         t("Main.Error") || "Error",
-        t("Main.SomethingWentWrongPleaseTryAgainlater") ||
-          "Failed to select image. Please try again.",
+        isFormatError
+          ? t("EditProfile.OnlyHeicJpgPngAllowed") ||
+            t("Main.OnlyHeicJpgPngAllowed") ||
+            "Only HEIC, JPG, and PNG files are allowed."
+          : t("Main.SomethingWentWrongPleaseTryAgainlater") ||
+            "Failed to select image. Please try again.",
         [{ text: t("Main.OK") }],
       );
     }
   };
-
 
   const handleDistrictSelect = (items: string[]) => {
     if (!items.length) return;
@@ -462,11 +517,34 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                 <View style={{ width: 100, height: 100, position: "relative" }}>
                   <Image
                     source={profileImage}
-                    style={{ width: 100, height: 100, borderRadius: 50 }}
+                    style={{
+                      width: 100,
+                      height: 100,
+                      borderRadius: 50,
+                      opacity: isUploadingPhoto ? 0.5 : 1,
+                    }}
                   />
+                  {isUploadingPhoto && (
+                    <View
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "rgba(0,0,0,0.35)",
+                        borderRadius: 50,
+                      }}
+                    >
+                      <ActivityIndicator size="small" color="#ffffff" />
+                    </View>
+                  )}
                   <TouchableOpacity
                     className="absolute bottom-0 right-0 p-2 bg-black rounded-full"
                     onPress={pickImage}
+                    disabled={isUploadingPhoto}
                     style={{
                       shadowColor: "#000",
                       shadowOffset: { width: 0, height: 2 },
@@ -495,7 +573,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       }
                       placeholderTextColor="#9CA3AF"
                       value={firstName}
-                      onChangeText={setFirstName}
+                      onChangeText={(text) =>
+                        setFirstName(text.replace(/^\s+/, ""))
+                      }
                       maxLength={20}
                     />
                   </View>
@@ -512,7 +592,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       }
                       placeholderTextColor="#9CA3AF"
                       value={lastName}
-                      onChangeText={setLastName}
+                      onChangeText={(text) =>
+                        setLastName(text.replace(/^\s+/, ""))
+                      }
                       maxLength={20}
                     />
                   </View>
@@ -572,7 +654,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       }
                       placeholderTextColor="#9CA3AF"
                       value={buidingname}
-                      onChangeText={setBuildingName}
+                      onChangeText={(text) =>
+                        setBuildingName(text.replace(/^\s+/, ""))
+                      }
                     />
                   </View>
                 </View>
@@ -589,7 +673,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       }
                       placeholderTextColor="#9CA3AF"
                       value={streetname}
-                      onChangeText={setStreetName}
+                      onChangeText={(text) =>
+                        setStreetName(text.replace(/^\s+/, ""))
+                      }
                     />
                   </View>
                 </View>
@@ -605,7 +691,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       }
                       placeholderTextColor="#9CA3AF"
                       value={city}
-                      onChangeText={setCity}
+                      onChangeText={(text) => setCity(text.replace(/^\s+/, ""))}
                     />
                   </View>
                 </View>
@@ -653,8 +739,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                     onPress={handleSave}
                     disabled={isLoading}
                     activeOpacity={0.8}
-                    className={`w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 ${isLoading ? "bg-[#9CA3AF]" : "bg-[#353535]"
-                      }`}
+                    className={`w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 ${
+                      isLoading ? "bg-[#9CA3AF]" : "bg-[#353535]"
+                    }`}
                   >
                     {isLoading ? (
                       <ActivityIndicator size="small" color="#fff" />

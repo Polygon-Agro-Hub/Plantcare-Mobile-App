@@ -33,6 +33,8 @@ import countryData from "@/assets/jsons/common/country-flag.json";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import { MaterialIcons } from "@expo/vector-icons";
 import CustomHeader from "../common/CustomHeader";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../../store/userSlice";
 
 type SigninNavigationProp = StackNavigationProp<RootStackParamList, "Signin">;
 
@@ -45,6 +47,7 @@ const sign = require("../../assets/images/auth/loginpc.webp");
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const Signin: React.FC<SigninProps> = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [phonenumber, setPhonenumber] = useState("");
   const [selectedCountryCode, setSelectedCountryCode] = useState("+94");
   const [selectedCountryFlag, setSelectedCountryFlag] = useState("🇱🇰");
@@ -55,6 +58,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
   const { t, i18n } = useTranslation();
   const screenWidth = Dimensions.get("window").width;
   const [isValid, setIsValid] = useState(false);
+  const [headerHeight, setHeaderHeight] = useState(0);
 
   const countryItems = useMemo(() => {
     return countryData.map((country) => {
@@ -107,7 +111,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
 
   const handlePhoneNumberChange = (text: string) => {
     const cleaned = text.replace(/[^0-9]/g, "");
-    if (cleaned.length <= 10) {
+    if (cleaned.length <= 9) {
       setPhonenumber(cleaned);
       validateMobileNumber(cleaned);
     }
@@ -144,6 +148,11 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
     try {
       const fullPhoneNumber = selectedCountryCode + phonenumber;
 
+      const isAppleReviewTestUser =
+        Platform.OS === "ios" &&
+        (selectedCountryCode === "+94" || selectedCountryCode === "94") &&
+        phonenumber.replace(/[^0-9]/g, "") === "707111707";
+
       const response = await fetch(
         `${environment.API_BASE_URL}api/auth/user-login`,
         {
@@ -158,30 +167,44 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
         const data = await response.json();
 
         if (data.status === "success") {
-          try {
-            const apiUrl = "https://api.getshoutout.com/otpservice/send";
-            const headers = {
-              Authorization: `Apikey ${environment.SHOUTOUT_API_KEY}`,
-              "Content-Type": "application/json",
-            };
+          // iOS Apple Review test account bypass: skip OTP and login directly
+          if (isAppleReviewTestUser && data.token) {
+            const timestamp = new Date();
+            const expirationTime = new Date(
+              timestamp.getTime() + 8 * 60 * 60 * 1000,
+            );
+            await AsyncStorage.setItem("userToken", data.token);
+            await AsyncStorage.multiSet([
+              ["tokenStoredTime", timestamp.toISOString()],
+              ["tokenExpirationTime", expirationTime.toISOString()],
+            ]);
+            if (data.user) {
+              dispatch(setUserData(data.user));
+            }
+            setIsButtonDisabled(false);
+            setIsLoading(false);
+            (navigation as any).navigate("Main");
+            return;
+          }
 
+          try {
             let otpMessage = "";
             if (i18n.language === "en") {
-              otpMessage = `Your GoviCare OTP is {{code}}`;
+              otpMessage = `Your GoViCare OTP is {{code}}`;
             } else if (i18n.language === "si") {
-              otpMessage = `ඔබේ GoviCare OTP මුරපදය {{code}} වේ.`;
+              otpMessage = `ඔබේ GoViCare OTP මුරපදය {{code}} වේ.`;
             } else if (i18n.language === "ta") {
-              otpMessage = `உங்கள் GoviCare OTP {{code}} ஆகும்.`;
+              otpMessage = `உங்கள் GoViCare OTP {{code}} ஆகும்.`;
             }
 
-            const body = {
-              source: "PolygonAgro",
-              transport: "sms",
-              content: { sms: otpMessage },
-              destination: fullPhoneNumber,
-            };
+            const otpResponse = await axios.post(
+              `${environment.API_BASE_URL}api/auth/send-otp`,
+              {
+                phoneNumber: fullPhoneNumber,
+                message: otpMessage,
+              },
+            );
 
-            const otpResponse = await axios.post(apiUrl, body, { headers });
             await AsyncStorage.setItem(
               "referenceId",
               otpResponse.data.referenceId,
@@ -269,18 +292,20 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-        style={{ flex: 1, backgroundColor: "white" }}
-        enabled
-      >
+      <View onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}>
         <CustomHeader
           title=""
           navigation={navigation}
           onBackPress={() => navigation.navigate("Lanuage")}
         />
+      </View>
 
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 20 : 20}
+        style={{ flex: 1, backgroundColor: "white" }}
+        enabled
+      >
         <ScrollView
           contentContainerStyle={{
             flexGrow: 1,
@@ -358,7 +383,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                         value={phonenumber}
                         onChangeText={handlePhoneNumberChange}
                         keyboardType="phone-pad"
-                        maxLength={10}
+                        maxLength={9}
                         autoFocus
                         underlineColorAndroid="transparent"
                         cursorColor="#141415ff"
@@ -447,8 +472,11 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                 </TouchableOpacity>
 
                 {/* Signup Link */}
-                <View className="mt-6 flex-row justify-center items-center">
-                  <Text className="font-bold text-[#3F3F3F] mr-2">
+                <View
+                  className="mt-6 flex-row justify-center items-center px-6 flex-wrap"
+                  style={{ paddingHorizontal: 24 }}
+                >
+                  <Text className="font-bold text-[#3F3F3F] mr-2 text-center">
                     {t("SignIn.DontHaveAnAccount")}
                   </Text>
 
@@ -462,7 +490,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                       }
                     }}
                   >
-                    <Text className="text-[#0085FF] font-semibold underline">
+                    <Text className="text-[#0085FF] font-semibold underline text-center">
                       {t("SignIn.SignUpHere")}
                     </Text>
                   </TouchableOpacity>
@@ -485,7 +513,12 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
           "SignUp.SearchCountry",
           "Search country or dial code...",
         )}
-        searchKeys={["label", "countryName", "translatedCountryName", "dialCode"]}
+        searchKeys={[
+          "label",
+          "countryName",
+          "translatedCountryName",
+          "dialCode",
+        ]}
         multiSelect={false}
         noResultsText={t("SignUp.NoCountryFound")}
       />

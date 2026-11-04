@@ -136,7 +136,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ navigation }) => {
   }, [isLaborer]);
 
   const handleCall = () => {
-    const phoneNumber = "+94770111999";
+    const phoneNumber = "+94114313433";
     const url = `tel:${phoneNumber}`;
     Linking.openURL(url).catch((err) =>
       Alert.alert(
@@ -325,7 +325,9 @@ const UserProfile: React.FC<UserProfileProps> = ({ navigation }) => {
                 )}
                 <View className="mt-1 self-start px-2.5 py-0.5 bg-[#EDF7EE] rounded-full">
                   <Text className="text-xs text-[#2E7D32] font-semibold">
-                    {t("Farms.FarmLaborer") || t("Farms.Laborer") || "Farm Laborer"}
+                    {t("Farms.FarmLaborer") ||
+                      t("Farms.Laborer") ||
+                      "Farm Laborer"}
                   </Text>
                 </View>
               </View>
@@ -368,36 +370,36 @@ const UserProfile: React.FC<UserProfileProps> = ({ navigation }) => {
 
           {isLanguageDropdownOpen && (
             <View className="pl-8">
-              {["ENGLISH", "தமிழ்", "SINHALA"].map((language) => {
-                const displayLanguage =
-                  language === "SINHALA" ? "සිංහල" : language;
-                return (
-                  <TouchableOpacity
-                    key={language}
-                    onPress={() => handleLanguageSelect(language)}
-                    className={`flex-row items-center py-2 px-4 rounded-lg my-1 ${
-                      selectedLanguage === language ? "bg-[#E6FFFB]" : ""
+              {[
+                { value: "ENGLISH", label: "English" },
+                { value: "தமிழ்", label: "தமிழ்" },
+                { value: "SINHALA", label: "සිංහල" },
+              ].map(({ value, label }) => (
+                <TouchableOpacity
+                  key={value}
+                  onPress={() => handleLanguageSelect(value)}
+                  className={`flex-row items-center py-2 px-4 rounded-lg my-1 ${
+                    selectedLanguage === value ? "bg-[#E6FFFB]" : ""
+                  }`}
+                >
+                  <Text
+                    className={`text-base ${
+                      selectedLanguage === value
+                        ? "text-black"
+                        : isLaborer
+                          ? "text-gray-700"
+                          : "text-[#434343]"
                     }`}
                   >
-                    <Text
-                      className={`text-base ${
-                        selectedLanguage === language
-                          ? "text-black"
-                          : isLaborer
-                            ? "text-gray-700"
-                            : "text-[#434343]"
-                      }`}
-                    >
-                      {displayLanguage}
-                    </Text>
-                    {selectedLanguage === language && (
-                      <View className="absolute right-4">
-                        <Ionicons name="checkmark" size={20} color="#00A896" />
-                      </View>
-                    )}
-                  </TouchableOpacity>
-                );
-              })}
+                    {label}
+                  </Text>
+                  {selectedLanguage === value && (
+                    <View className="absolute right-4">
+                      <Ionicons name="checkmark" size={20} color="#00A896" />
+                    </View>
+                  )}
+                </TouchableOpacity>
+              ))}
             </View>
           )}
 

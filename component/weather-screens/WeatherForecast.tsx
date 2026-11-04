@@ -58,6 +58,8 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
     boolean | null
   >(null);
   const [showLocationAccess, setShowLocationAccess] = useState(false);
+  const [noResultsFound, setNoResultsFound] = useState(false);
+  const [currentCityName, setCurrentCityName] = useState<string>("");
 
   const apiKey = "8561cb293616fe29259448fd098f654b";
 
@@ -73,10 +75,41 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
         }
       }
 
-      // 2. Try last known position first (fastest on Android & iOS, cached by Google Play Services)
+      // 2. Request current position with High accuracy (GPS satellite fix, ~10m accuracy)
+      try {
+        const positionPromise = Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.High,
+        });
+        const timeoutPromise = new Promise<null>((resolve) =>
+          setTimeout(() => resolve(null), 7000),
+        );
+        const highAccuracyPos = await Promise.race([
+          positionPromise,
+          timeoutPromise,
+        ]);
+        if (highAccuracyPos?.coords) {
+          return highAccuracyPos;
+        }
+      } catch (e) {
+        console.log("High accuracy GPS error:", e);
+      }
+
+      // 3. Fallback: Balanced accuracy (Wi-Fi + Cellular)
+      try {
+        const balanced = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Balanced,
+        });
+        if (balanced?.coords) {
+          return balanced;
+        }
+      } catch (e) {
+        console.log("getCurrentPositionAsync Balanced error:", e);
+      }
+
+      // 4. Fallback to fresh last known position (within last 2 minutes only)
       try {
         const lastKnown = await Location.getLastKnownPositionAsync({
-          maxAge: 60000,
+          maxAge: 120000,
         });
         if (lastKnown?.coords) {
           return lastKnown;
@@ -85,31 +118,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
         console.log("getLastKnownPositionAsync error:", e);
       }
 
-      // 3. Request current position with Balanced accuracy (Wi-Fi + Cellular, fast & reliable indoors)
-      try {
-        const current = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.Balanced,
-        });
-        if (current?.coords) {
-          return current;
-        }
-      } catch (e) {
-        console.log("getCurrentPositionAsync Balanced error:", e);
-      }
-
-      // 4. Fallback with Lowest accuracy
-      try {
-        const lowest = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.Lowest,
-        });
-        if (lowest?.coords) {
-          return lowest;
-        }
-      } catch (e) {
-        console.log("getCurrentPositionAsync Lowest error:", e);
-      }
-
-      // 5. Final fallback: any cached last known position
+      // 5. Final fallback
       return await Location.getLastKnownPositionAsync({});
     } catch (err) {
       console.error("Error in getDeviceLocation:", err);
@@ -117,19 +126,105 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
     }
   };
 
+  const getCityNameFromCoords = async (
+    lat: number,
+    lon: number,
+  ): Promise<string | null> => {
+    // 1. Try OpenStreetMap Nominatim reverse geocode first (most accurate for Sri Lanka towns/suburbs)
+    try {
+      const res = await axios.get(
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&zoom=18&addressdetails=1`,
+        {
+          headers: { "User-Agent": "Plantcare-Mobile-App" },
+          timeout: 4000,
+        },
+      );
+      if (res.data?.address) {
+        const addr = res.data.address;
+        const candidate =
+          addr.town ||
+          addr.suburb ||
+          addr.neighbourhood ||
+          addr.city_district ||
+          addr.village ||
+          addr.city ||
+          addr.hamlet ||
+          addr.municipality;
+        if (candidate && candidate.trim() !== "") {
+          return candidate.trim();
+        }
+      }
+    } catch (err) {
+      console.log("Nominatim reverse geocode error:", err);
+    }
+
+    // 2. Try native Expo Location reverse geocode (Google Play Services / iOS Apple Maps)
+    try {
+      const reverseResult = await Location.reverseGeocodeAsync({
+        latitude: lat,
+        longitude: lon,
+      });
+
+      if (reverseResult && reverseResult.length > 0) {
+        const place = reverseResult[0];
+        const isHouseNumber = (val?: string | null) =>
+          !val || /^[0-9\/\-\s]+$/.test(val.trim());
+
+        // Prioritize local subregion/district over broader administrative city
+        let candidate: string | null = null;
+        if (place.subregion && !isHouseNumber(place.subregion)) {
+          candidate = place.subregion;
+        } else if (place.district && !isHouseNumber(place.district)) {
+          candidate = place.district;
+        } else if (place.city && !isHouseNumber(place.city)) {
+          candidate = place.city;
+        } else if (place.name && !isHouseNumber(place.name)) {
+          candidate = place.name;
+        }
+
+        if (candidate) {
+          return candidate.trim();
+        }
+      }
+    } catch (err) {
+      console.log("Location.reverseGeocodeAsync error:", err);
+    }
+
+    // 3. Fallback to OpenWeatherMap weather endpoint
+    try {
+      const response = await axios.get(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`,
+        { timeout: 4000 },
+      );
+      if (response.data?.name) {
+        return response.data.name;
+      }
+    } catch (err) {
+      console.error("Error fetching city name from coordinates:", err);
+    }
+
+    return null;
+  };
+
   const fetchWeatherByName = async (cityName: string) => {
     try {
       const geoRes = await fetch(
-        `https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${apiKey}`,
+        `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(cityName)}&limit=1&appid=${apiKey}`,
       );
       const geoData = await geoRes.json();
+    
       if (geoData && geoData.length > 0) {
-        await fetchWeather(geoData[0].lat, geoData[0].lon, true);
+        await fetchWeather(
+          geoData[0].lat,
+          geoData[0].lon,
+          true,
+          geoData[0].name || cityName,
+        );
       } else {
-        await fetchWeather(6.9271, 79.8612, true);
+        await fetchWeather(6.9271, 79.8612, true, cityName);
       }
     } catch {
-      await fetchWeather(6.9271, 79.8612, true);
+      await fetchWeather(6.9271, 79.8612, true, cityName);
     }
   };
 
@@ -149,19 +244,29 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
 
       const location = await getDeviceLocation();
       if (location?.coords) {
-        await fetchWeather(
-          location.coords.latitude,
-          location.coords.longitude,
-          true,
-        );
-
         const cityName = await getCityNameFromCoords(
           location.coords.latitude,
           location.coords.longitude,
         );
+
+        await fetchWeather(
+          location.coords.latitude,
+          location.coords.longitude,
+          true,
+          cityName || undefined,
+        );
+
         if (cityName) {
           try {
             await AsyncStorage.setItem("lastSearchedCity", cityName);
+            await AsyncStorage.setItem(
+              "lastSearchedLat",
+              location.coords.latitude.toString(),
+            );
+            await AsyncStorage.setItem(
+              "lastSearchedLon",
+              location.coords.longitude.toString(),
+            );
           } catch (error) {
             console.error("Error storing city name in local storage:", error);
           }
@@ -169,10 +274,20 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
       } else {
         // Fallback to last searched city or Colombo
         const lastCity = await AsyncStorage.getItem("lastSearchedCity");
-        if (lastCity) {
+        const lastLat = await AsyncStorage.getItem("lastSearchedLat");
+        const lastLon = await AsyncStorage.getItem("lastSearchedLon");
+
+        if (lastLat && lastLon) {
+          await fetchWeather(
+            parseFloat(lastLat),
+            parseFloat(lastLon),
+            true,
+            lastCity || undefined,
+          );
+        } else if (lastCity) {
           await fetchWeatherByName(lastCity);
         } else {
-          await fetchWeather(6.9271, 79.8612, true);
+          await fetchWeather(6.9271, 79.8612, true, "Colombo");
         }
       }
     } catch (error) {
@@ -189,7 +304,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
   };
 
   // Every time Weather screen comes into focus:
-  // Until "Agree & Continue" is selected and granted, Location Access UI continues to be displayed.
+  // If location permission has not been granted, Location Access UI is displayed.
   useFocusEffect(
     useCallback(() => {
       let isMounted = true;
@@ -241,6 +356,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
     lat: number,
     lon: number,
     clearSearch: boolean = true,
+    customCityName?: string,
   ) => {
     const netState = await NetInfo.fetch();
     if (!netState.isConnected) {
@@ -263,9 +379,17 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
       const weatherData = await weatherResponse.json();
 
       if (weatherResponse.ok && weatherData) {
+        if (customCityName) {
+          setCurrentCityName(customCityName);
+        } else {
+          const resolved = await getCityNameFromCoords(lat, lon);
+          setCurrentCityName(resolved || weatherData.name);
+        }
+
         setWeatherData(weatherData);
 
         setSuggestions([]);
+        setNoResultsFound(false);
         if (clearSearch) {
           setSearchQuery("");
         }
@@ -294,38 +418,53 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
     }
   };
 
-  const getCityNameFromCoords = async (lat: number, lon: number) => {
-    try {
-      const response = await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`,
-      );
-      return response.data.name;
-    } catch (error) {
-      console.error("Error fetching city name from coordinates:", error);
-      return null;
-    }
-  };
-
   const fetchSuggestions = async (query: string) => {
-    if (query.length < 3) {
+    const trimmed = query.trim();
+    if (trimmed.length < 3) {
       setSuggestions([]);
+      setNoResultsFound(false);
       return;
     }
 
     try {
       const response = await fetch(
-        `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${apiKey}`,
+        `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(trimmed)}&limit=5&appid=${apiKey}`,
       );
       const data = await response.json();
 
-      if (data.length > 0) {
+      if (Array.isArray(data) && data.length > 0) {
         setSuggestions(data);
-      } else {
-        setSuggestions([]);
+        setNoResultsFound(false);
+        return;
       }
+
+      // Fallback to OSM Nominatim if OpenWeather didn't find the location
+      const osmRes = await axios.get(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(trimmed)}&format=json&limit=5`,
+        {
+          headers: { "User-Agent": "Plantcare-Mobile-App" },
+          timeout: 4000,
+        },
+      );
+      if (Array.isArray(osmRes.data) && osmRes.data.length > 0) {
+        const mapped = osmRes.data.map((item: any) => ({
+          name: item.name || item.display_name.split(",")[0].trim(),
+          state: item.display_name.split(",").slice(1, 3).join(",").trim(),
+          country: "LK",
+          lat: parseFloat(item.lat),
+          lon: parseFloat(item.lon),
+        }));
+        setSuggestions(mapped);
+        setNoResultsFound(false);
+        return;
+      }
+
+      setSuggestions([]);
+      setNoResultsFound(true);
     } catch (error) {
       console.error("Error fetching suggestions:", error);
       setSuggestions([]);
+      setNoResultsFound(false);
     }
   };
 
@@ -340,14 +479,71 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
     name: string,
   ) => {
     setSuggestions([]);
+    setNoResultsFound(false);
     setSearchQuery("");
 
-    fetchWeather(lat, lon, true);
+    await fetchWeather(lat, lon, true, name);
 
     try {
       await AsyncStorage.setItem("lastSearchedCity", name);
+      await AsyncStorage.setItem("lastSearchedLat", lat.toString());
+      await AsyncStorage.setItem("lastSearchedLon", lon.toString());
     } catch (error) {
       console.error("Error storing city name in local storage:", error);
+    }
+  };
+
+  const handleDirectSearch = async (query: string) => {
+    const trimmed = query.trim();
+    if (!trimmed) return;
+
+    setLoading(true);
+    setSuggestions([]);
+    setNoResultsFound(false);
+
+    try {
+      // 1. Try OpenWeather Direct Geocoding
+      const geoRes = await fetch(
+        `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(trimmed)}&limit=5&appid=${apiKey}`,
+      );
+      const geoData = await geoRes.json();
+
+      if (Array.isArray(geoData) && geoData.length > 0) {
+        const topResult = geoData[0];
+        const selectedName = topResult.name || trimmed;
+        await fetchWeather(topResult.lat, topResult.lon, true, selectedName);
+        await AsyncStorage.setItem("lastSearchedCity", selectedName);
+        await AsyncStorage.setItem("lastSearchedLat", topResult.lat.toString());
+        await AsyncStorage.setItem("lastSearchedLon", topResult.lon.toString());
+        return;
+      }
+
+      // 2. Fallback to Nominatim OSM Search
+      const osmRes = await axios.get(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(trimmed)}&format=json&limit=5`,
+        {
+          headers: { "User-Agent": "Plantcare-Mobile-App" },
+          timeout: 5000,
+        },
+      );
+      if (Array.isArray(osmRes.data) && osmRes.data.length > 0) {
+        const topResult = osmRes.data[0];
+        const lat = parseFloat(topResult.lat);
+        const lon = parseFloat(topResult.lon);
+        const selectedName = topResult.name || trimmed;
+        await fetchWeather(lat, lon, true, selectedName);
+        await AsyncStorage.setItem("lastSearchedCity", selectedName);
+        await AsyncStorage.setItem("lastSearchedLat", lat.toString());
+        await AsyncStorage.setItem("lastSearchedLon", lon.toString());
+        return;
+      }
+
+      Alert.alert(t("WeatherForecast.LocationNotFound"));
+    } catch (error) {
+      console.error("Error in direct search:", error);
+      Alert.alert(t("WeatherForecast.LocationNotFound"));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -356,6 +552,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
 
     if (text.length < 3) {
       setSuggestions([]);
+      setNoResultsFound(false);
       return;
     }
 
@@ -374,23 +571,34 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
       setShowLocationAccess(false);
       setSearchQuery("");
       setSuggestions([]);
+      setNoResultsFound(false);
       setLoading(true);
 
       const location = await getDeviceLocation();
       if (location?.coords) {
-        await fetchWeather(
-          location.coords.latitude,
-          location.coords.longitude,
-          true,
-        );
-
         const cityName = await getCityNameFromCoords(
           location.coords.latitude,
           location.coords.longitude,
         );
+
+        await fetchWeather(
+          location.coords.latitude,
+          location.coords.longitude,
+          true,
+          cityName || undefined,
+        );
+
         if (cityName) {
           try {
             await AsyncStorage.setItem("lastSearchedCity", cityName);
+            await AsyncStorage.setItem(
+              "lastSearchedLat",
+              location.coords.latitude.toString(),
+            );
+            await AsyncStorage.setItem(
+              "lastSearchedLon",
+              location.coords.longitude.toString(),
+            );
           } catch (error) {
             console.error("Error storing city name in local storage:", error);
           }
@@ -525,6 +733,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
     setRefreshing(true);
     setSearchQuery("");
     setSuggestions([]);
+    setNoResultsFound(false);
 
     try {
       const { status } = await Location.getForegroundPermissionsAsync();
@@ -536,18 +745,28 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
 
       const location = await getDeviceLocation();
       if (location?.coords) {
-        await fetchWeather(
-          location.coords.latitude,
-          location.coords.longitude,
-          true,
-        );
-
         const cityName = await getCityNameFromCoords(
           location.coords.latitude,
           location.coords.longitude,
         );
+
+        await fetchWeather(
+          location.coords.latitude,
+          location.coords.longitude,
+          true,
+          cityName || undefined,
+        );
+
         if (cityName) {
           await AsyncStorage.setItem("lastSearchedCity", cityName);
+          await AsyncStorage.setItem(
+            "lastSearchedLat",
+            location.coords.latitude.toString(),
+          );
+          await AsyncStorage.setItem(
+            "lastSearchedLon",
+            location.coords.longitude.toString(),
+          );
         }
       }
     } catch (error) {
@@ -591,6 +810,8 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
                   placeholderTextColor="#999"
                   value={searchQuery}
                   onChangeText={handleInputChange}
+                  returnKeyType="search"
+                  onSubmitEditing={() => handleDirectSearch(searchQuery)}
                   style={{
                     flex: 1,
                     marginLeft: 8,
@@ -600,40 +821,58 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
                     includeFontPadding: false,
                   }}
                 />
-                <View className="mr-4">
+                <TouchableOpacity
+                  className="mr-4"
+                  onPress={() => handleDirectSearch(searchQuery)}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                >
                   <Ionicons
                     name="search"
                     size={24}
                     color="black"
                     className="ml-2"
                   />
-                </View>
+                </TouchableOpacity>
               </View>
 
-              {suggestions.length > 0 && (
+              {(suggestions.length > 0 ||
+                (noResultsFound && searchQuery.length >= 3)) && (
                 <View
                   style={[styles.suggestionsContainer]}
                   className="absolute top-12 left-0 right-0 bg-white shadow-lg rounded-lg"
                 >
-                  <FlatList
-                    data={suggestions}
-                    keyExtractor={(item) =>
-                      `${item.lat}-${item.lon}-${item.name}`
-                    }
-                    renderItem={({ item }) => (
-                      <TouchableWithoutFeedback
-                        onPress={() =>
-                          handleSuggestionPress(item.lat, item.lon, item.name)
-                        }
-                      >
-                        <View className="px-4 py-2 border-b border-gray-200">
-                          <Text className="text-lg text-black">
-                            {item.name}, {item.state}, {item.country}
-                          </Text>
-                        </View>
-                      </TouchableWithoutFeedback>
-                    )}
-                  />
+                  {suggestions.length > 0 ? (
+                    <FlatList
+                      data={suggestions}
+                      keyExtractor={(item) =>
+                        `${item.lat}-${item.lon}-${item.name}`
+                      }
+                      renderItem={({ item }) => (
+                        <TouchableWithoutFeedback
+                          onPress={() =>
+                            handleSuggestionPress(
+                              item.lat,
+                              item.lon,
+                              item.name,
+                            )
+                          }
+                        >
+                          <View className="px-4 py-2 border-b border-gray-200">
+                            <Text className="text-lg text-black">
+                              {item.name}, {item.state}, {item.country}
+                            </Text>
+                          </View>
+                        </TouchableWithoutFeedback>
+                      )}
+                    />
+                  ) : (
+                    <View className="px-4 py-3">
+                      <Text className="text-base text-gray-500">
+                        {t("WeatherForecast.NoResultsFound") ||
+                          "No results found for your search"}
+                      </Text>
+                    </View>
+                  )}
                 </View>
               )}
             </View>
@@ -693,7 +932,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ navigation }) => {
                       className="ml-2 mt-2"
                     />
                     <Text className="text-xl font-semibold">
-                      {weatherData.name}, {weatherData.sys.country}
+                      {currentCityName || weatherData.name}, {weatherData.sys?.country}
                     </Text>
                   </View>
 

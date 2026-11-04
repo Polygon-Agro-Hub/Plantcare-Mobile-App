@@ -1303,12 +1303,14 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
         >
           {startIndex > 0 && (
             <TouchableOpacity
-              className="py-2 px-4 flex-row items-center justify-center"
               onPress={viewPreviousTasks}
+              activeOpacity={0.7}
+              className="mx-6 mt-2 mb-1 py-3 rounded-xl bg-gray-50 border border-gray-200 flex-row items-center justify-center"
             >
-              <Text className="text-black font-bold">
+              <Text className="text-black font-bold mr-2">
                 {t("CropCalender.ViewPrevious")}
               </Text>
+              <Ionicons name="chevron-up-outline" size={18} color="black" />
             </TouchableOpacity>
           )}
 
@@ -1496,12 +1498,14 @@ const FarmCropCalander: React.FC<FarmCropCalanderProps> = ({
           </Modal>
           {startIndex + tasksPerPage < crops.length && (
             <TouchableOpacity
-              className="py-2 pb-8 px-4 flex-row items-center justify-center"
               onPress={viewNextTasks}
+              activeOpacity={0.7}
+              className="mx-6 mt-7 mb-8 py-3  rounded-xl bg-gray-50 border border-gray-200 flex-row items-center justify-center"
             >
-              <Text className="text-black font-bold mt-4">
+              <Text className="text-black font-bold mr-2">
                 {t("CropCalender.ViewMore")}
               </Text>
+              <Ionicons name="chevron-down-outline" size={18} color="black" />
             </TouchableOpacity>
           )}
         </ScrollView>
