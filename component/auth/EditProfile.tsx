@@ -577,6 +577,11 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                         setFirstName(text.replace(/^\s+/, ""))
                       }
                       maxLength={20}
+                      autoCorrect={false}
+                      spellCheck={false}
+                      autoComplete="off"
+                      selectionColor="#0FC7B2"
+                      style={{ color: "#000000" }}
                     />
                   </View>
                 </View>
@@ -596,6 +601,11 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                         setLastName(text.replace(/^\s+/, ""))
                       }
                       maxLength={20}
+                      autoCorrect={false}
+                      spellCheck={false}
+                      autoComplete="off"
+                      selectionColor="#0FC7B2"
+                      style={{ color: "#000000" }}
                     />
                   </View>
                 </View>
@@ -615,6 +625,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       value={phoneNumber}
                       keyboardType="phone-pad"
                       editable={false}
+                      autoCorrect={false}
+                      spellCheck={false}
+                      style={{ color: "#000000" }}
                     />
                   </View>
                   {phoneNumberError ? (
@@ -638,6 +651,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       placeholderTextColor="#9CA3AF"
                       value={NICnumber}
                       editable={false}
+                      autoCorrect={false}
+                      spellCheck={false}
+                      style={{ color: "#000000" }}
                     />
                   </View>
                 </View>
@@ -657,6 +673,10 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       onChangeText={(text) =>
                         setBuildingName(text.replace(/^\s+/, ""))
                       }
+                      autoCorrect={false}
+                      spellCheck={false}
+                      selectionColor="#0FC7B2"
+                      style={{ color: "#000000" }}
                     />
                   </View>
                 </View>
@@ -676,6 +696,10 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       onChangeText={(text) =>
                         setStreetName(text.replace(/^\s+/, ""))
                       }
+                      autoCorrect={false}
+                      spellCheck={false}
+                      selectionColor="#0FC7B2"
+                      style={{ color: "#000000" }}
                     />
                   </View>
                 </View>
@@ -692,6 +716,10 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       placeholderTextColor="#9CA3AF"
                       value={city}
                       onChangeText={(text) => setCity(text.replace(/^\s+/, ""))}
+                      autoCorrect={false}
+                      spellCheck={false}
+                      selectionColor="#0FC7B2"
+                      style={{ color: "#000000" }}
                     />
                   </View>
                 </View>

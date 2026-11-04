@@ -363,6 +363,7 @@
     "FailedToRegisterBankDetailsPleaseTryAgain": "බැංකු විස්තර ලියාපදිංචි කිරීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.",
     "ExistingBankDetails": "පවතින බැංකු විස්තර",
     "AccountNumberMustBeANumber": "ගිණුම් අංකය අංකයක් විය යුතුය",
+    "CanNotStartWithSpace": "හිස්තැනකින් ආරම්භ කළ නොහැක",
     "EnterAccountNumber": "ගිණුම් අංකය ඇතුළත් කරන්න",
     "ReEnterAccountNumber": "ගිණුම් අංකය නැවත ඇතුළත් කරන්න",
     "SelectBankName": "බැංකුවේ නම තෝරන්න",

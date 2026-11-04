@@ -98,7 +98,8 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.navigate("Signup");
+        AsyncStorage.removeItem("@user_language");
+        navigation.navigate("Lanuage");
         return true;
       };
       const subscription = BackHandler.addEventListener(
@@ -296,7 +297,10 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
         <CustomHeader
           title=""
           navigation={navigation}
-          onBackPress={() => navigation.navigate("Lanuage")}
+          onBackPress={() => {
+            AsyncStorage.removeItem("@user_language");
+            navigation.navigate("Lanuage");
+          }}
         />
       </View>
 
