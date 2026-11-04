@@ -364,6 +364,7 @@
     "ExistingBankDetails": "Existing Bank Details",
     "AccountNumberMustBeANumber": "Account Number must be a number",
     "CanNotStartWithSpace": "Can not Start with Space",
+    "NoSpacesAllowed": "No Spaces Allowed",
     "EnterAccountNumber": "Enter Account Number",
     "ReEnterAccountNumber": "Re-enter Account Number",
     "SelectBankName": "Select Bank Name",

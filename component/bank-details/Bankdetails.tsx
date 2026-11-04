@@ -64,8 +64,8 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
   const [accountNumberError, setAccountNumberError] = useState("");
   const [confirmAccountNumberError, setConfirmAccountNumberError] =
     useState("");
-  const [isAccLeadingSpaceError, setIsAccLeadingSpaceError] = useState(false);
-  const [isConfirmAccLeadingSpaceError, setIsConfirmAccLeadingSpaceError] =
+  const [isAccSpaceError, setIsAccSpaceError] = useState(false);
+  const [isConfirmAccSpaceError, setIsConfirmAccSpaceError] =
     useState(false);
 
 
@@ -369,8 +369,8 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
       trimmedBank.length > 0 &&
       trimmedBranch.length > 0 &&
       trimmedAcc === trimmedConfirmAcc &&
-      (!accountNumberError || isAccLeadingSpaceError) &&
-      (!confirmAccountNumberError || isConfirmAccLeadingSpaceError) &&
+      (!accountNumberError || isAccSpaceError) &&
+      (!confirmAccountNumberError || isConfirmAccSpaceError) &&
       !accountNumbermisMatchError
     );
   };
@@ -419,6 +419,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
     }
 
     const hasLeadingSpace = text.startsWith(" ");
+    const hasSpace = text.includes(" ");
     const sanitized = text.replace(/[^0-9]/g, "");
     setAccountNumber(sanitized);
 
@@ -429,18 +430,31 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
           t("SignUp.CanNotStartWithSpace", "Can not Start with Space"),
         ),
       );
-      setIsAccLeadingSpaceError(true);
+      setIsAccSpaceError(true);
       accountErrorTimerRef.current = setTimeout(() => {
         setAccountNumberError("");
-        setIsAccLeadingSpaceError(false);
+        setIsAccSpaceError(false);
+        accountErrorTimerRef.current = null;
+      }, 5000);
+    } else if (hasSpace) {
+      setAccountNumberError(
+        t(
+          "BankDetails.NoSpacesAllowed",
+          t("SignUp.NoSpacesAllowed", "No Spaces Allowed"),
+        ),
+      );
+      setIsAccSpaceError(true);
+      accountErrorTimerRef.current = setTimeout(() => {
+        setAccountNumberError("");
+        setIsAccSpaceError(false);
         accountErrorTimerRef.current = null;
       }, 5000);
     } else if (text !== sanitized) {
       setAccountNumberError(t("BankDetails.AccountNumberMustBeANumber"));
-      setIsAccLeadingSpaceError(false);
+      setIsAccSpaceError(false);
     } else {
       setAccountNumberError("");
-      setIsAccLeadingSpaceError(false);
+      setIsAccSpaceError(false);
     }
 
     if (
@@ -463,6 +477,7 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
     }
 
     const hasLeadingSpace = text.startsWith(" ");
+    const hasSpace = text.includes(" ");
     const sanitized = text.replace(/[^0-9]/g, "");
     setConfirmAccountNumber(sanitized);
 
@@ -473,18 +488,31 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
           t("SignUp.CanNotStartWithSpace", "Can not Start with Space"),
         ),
       );
-      setIsConfirmAccLeadingSpaceError(true);
+      setIsConfirmAccSpaceError(true);
       confirmAccountErrorTimerRef.current = setTimeout(() => {
         setConfirmAccountNumberError("");
-        setIsConfirmAccLeadingSpaceError(false);
+        setIsConfirmAccSpaceError(false);
+        confirmAccountErrorTimerRef.current = null;
+      }, 5000);
+    } else if (hasSpace) {
+      setConfirmAccountNumberError(
+        t(
+          "BankDetails.NoSpacesAllowed",
+          t("SignUp.NoSpacesAllowed", "No Spaces Allowed"),
+        ),
+      );
+      setIsConfirmAccSpaceError(true);
+      confirmAccountErrorTimerRef.current = setTimeout(() => {
+        setConfirmAccountNumberError("");
+        setIsConfirmAccSpaceError(false);
         confirmAccountErrorTimerRef.current = null;
       }, 5000);
     } else if (text !== sanitized) {
       setConfirmAccountNumberError(t("BankDetails.AccountNumberMustBeANumber"));
-      setIsConfirmAccLeadingSpaceError(false);
+      setIsConfirmAccSpaceError(false);
     } else {
       setConfirmAccountNumberError("");
-      setIsConfirmAccLeadingSpaceError(false);
+      setIsConfirmAccSpaceError(false);
     }
 
     if (
