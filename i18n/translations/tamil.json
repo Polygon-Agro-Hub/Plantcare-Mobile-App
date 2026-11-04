@@ -364,6 +364,7 @@
     "ExistingBankDetails": "தற்போதைய வங்கி விவரங்கள்",
     "AccountNumberMustBeANumber": "கணக்கு எண் எண்களால் மட்டுமே இருக்க வேண்டும்",
     "CanNotStartWithSpace": "தொடக்கத்தில் இடைவெளி இருக்கக்கூடாது",
+    "NoSpacesAllowed": "இடைவெளிகள் அனுமதிக்கப்படாது",
     "EnterAccountNumber": "கணக்கு எண்ணை உள்ளிடவும்",
     "ReEnterAccountNumber": "கணக்கு எண்ணை மீண்டும் உள்ளிடவும்",
     "SelectBankName": "வங்கியின் பெயரைத் தேர்ந்தெடுக்கவும்",
