@@ -782,14 +782,17 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
                     )}
                   </TouchableOpacity>
                 </View>
-                <View className="flex-row items-center justify-center mt-4">
-                  <Text className="font-bold text-black">
-                    {t("SignUp.AlreadyHaveAnAccount")}{" "}
+                <View
+                  className="flex-row items-center justify-center mt-4 px-6 flex-wrap"
+                  style={{ paddingHorizontal: 24 }}
+                >
+                  <Text className="font-bold text-black mr-2 text-center">
+                    {t("SignUp.AlreadyHaveAnAccount")}
                   </Text>
                   <TouchableOpacity
                     onPress={() => navigation.navigate("Signin")}
                   >
-                    <Text className="text-[#0085FF] font-semibold underline">
+                    <Text className="text-[#0085FF] font-semibold underline text-center">
                       {t("SignUp.SignInHere")}
                     </Text>
                   </TouchableOpacity>

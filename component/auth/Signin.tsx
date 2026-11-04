@@ -472,8 +472,11 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                 </TouchableOpacity>
 
                 {/* Signup Link */}
-                <View className="mt-6 flex-row justify-center items-center">
-                  <Text className="font-bold text-[#3F3F3F] mr-2">
+                <View
+                  className="mt-6 flex-row justify-center items-center px-6 flex-wrap"
+                  style={{ paddingHorizontal: 24 }}
+                >
+                  <Text className="font-bold text-[#3F3F3F] mr-2 text-center">
                     {t("SignIn.DontHaveAnAccount")}
                   </Text>
 
@@ -487,7 +490,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                       }
                     }}
                   >
-                    <Text className="text-[#0085FF] font-semibold underline">
+                    <Text className="text-[#0085FF] font-semibold underline text-center">
                       {t("SignIn.SignUpHere")}
                     </Text>
                   </TouchableOpacity>
