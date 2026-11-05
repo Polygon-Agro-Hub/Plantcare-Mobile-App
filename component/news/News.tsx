@@ -58,14 +58,20 @@ const formatDate = (dateString: string) => {
 const prepareHtml = (htmlContent?: string) => {
   if (!htmlContent) return "";
   let content = htmlContent;
-  if (content.includes("&lt;") && content.includes("&gt;")) {
-    content = content
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
-      .replace(/&amp;/g, "&")
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'");
-  }
+  content = content
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&rsquo;/g, "'")
+    .replace(/&lsquo;/g, "'")
+    .replace(/&ldquo;/g, '"')
+    .replace(/&rdquo;/g, '"')
+    .replace(/&nbsp;/g, " ")
+    .replace(/<span class="ql-ui"[^>]*><\/span>/gi, "")
+    .replace(/<li([^>]*)>\s*<p[^>]*>([\s\S]*?)<\/p>\s*<\/li>/gi, "<li$1>$2</li>");
+
   return content;
 };
 
@@ -190,9 +196,69 @@ const contentTagsStyles = {
   span: { color: "#374151" },
   div: { color: "#374151" },
   body: { color: "#374151" },
-  ul: { marginVertical: 4 },
-  ol: { marginVertical: 4 },
-  li: { marginVertical: 2, color: "#374151" },
+  ul: {
+    marginTop: 6,
+    marginBottom: 6,
+    marginLeft: 12,
+    paddingLeft: 20,
+  },
+  ol: {
+    marginTop: 6,
+    marginBottom: 6,
+    marginLeft: 12,
+    paddingLeft: 24,
+  },
+  li: {
+    marginTop: 0,
+    marginBottom: 6,
+    color: "#374151",
+    fontSize: 16,
+    lineHeight: 22,
+  },
+};
+
+const contentClassesStyles = {
+  "ql-align-center": { textAlign: "center" as const },
+  "ql-align-right": { textAlign: "right" as const },
+  "ql-align-justify": { textAlign: "justify" as const },
+  "ql-size-small": { fontSize: 13, lineHeight: 18 },
+  "ql-size-large": { fontSize: 20, lineHeight: 26 },
+  "ql-size-huge": { fontSize: 24, lineHeight: 30 },
+  "ql-font-monospace": { fontFamily: "monospace" },
+  "ql-indent-1": { marginLeft: 20 },
+  "ql-indent-2": { marginLeft: 40 },
+  "ql-indent-3": { marginLeft: 60 },
+};
+
+const contentRenderersProps = {
+  ol: {
+    enableDynamicMarkerBoxWidth: true,
+    markerBoxStyle: {
+      alignSelf: "flex-start" as const,
+      paddingRight: 6,
+      marginTop: 0,
+    },
+    markerTextStyle: {
+      fontSize: 16,
+      lineHeight: 22,
+      color: "#374151",
+      marginTop: 0,
+    },
+  },
+  ul: {
+    enableDynamicMarkerBoxWidth: true,
+    markerBoxStyle: {
+      alignSelf: "flex-start" as const,
+      paddingRight: 6,
+      marginTop: 0,
+    },
+    markerTextStyle: {
+      fontSize: 16,
+      lineHeight: 22,
+      color: "#374151",
+      marginTop: 0,
+    },
+  },
 };
 
 const News: React.FC<NewsProps> = ({ navigation, route }) => {
@@ -380,6 +446,9 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
               source={{ html: prepareHtml(news.descriptionEnglish) }}
               baseStyle={{ fontSize: 16, color: "#333", marginTop: 8 }}
               tagsStyles={contentTagsStyles}
+              classesStyles={contentClassesStyles}
+              renderersProps={contentRenderersProps}
+              enableUserAgentStyles={true}
             />
           )}
           {language === "si" && news?.descriptionSinhala && (
@@ -388,6 +457,9 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
               source={{ html: prepareHtml(news.descriptionSinhala) }}
               baseStyle={{ fontSize: 16, color: "#333", marginTop: 8 }}
               tagsStyles={contentTagsStyles}
+              classesStyles={contentClassesStyles}
+              renderersProps={contentRenderersProps}
+              enableUserAgentStyles={true}
             />
           )}
           {language === "ta" && news?.descriptionTamil && (
@@ -396,6 +468,9 @@ const News: React.FC<NewsProps> = ({ navigation, route }) => {
               source={{ html: prepareHtml(news.descriptionTamil) }}
               baseStyle={{ fontSize: 16, color: "#333", marginTop: 8 }}
               tagsStyles={contentTagsStyles}
+              classesStyles={contentClassesStyles}
+              renderersProps={contentRenderersProps}
+              enableUserAgentStyles={true}
             />
           )}
         </View>

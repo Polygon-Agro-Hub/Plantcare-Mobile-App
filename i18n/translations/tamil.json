@@ -122,7 +122,7 @@
     "Welcome": "வரவேற்கிறோம்!",
     "SignUpHere": "இங்கே பதிவு செய்யுங்கள்",
     "LoginFailed": "உள்நுழைவு தோல்வியடைந்தது",
-    "DontHaveAnAccount": "உங்களிடம் கணக்கு இல்லையா??",
+    "DontHaveAnAccount": "உங்களிடம் கணக்கு இல்லையா?",
     "PhoneNumberIsRequired": "தொலைபேசி எண் தேவை.",
     "EnterYourPhoneNumberOfYourLoginID": "உங்கள் உள்நுழைவு அடையாளமாக உங்கள் தொலைபேசி எண்ணை உள்ளிடவும்",
     "ThisUserIsNotRegisteredPleaseSignUpFirst": "இந்தப் பயனர் பதிவு செய்யப்படவில்லை. தயவுசெய்து முதலில் பதிவு செய்யுங்கள்"
@@ -363,6 +363,8 @@
     "FailedToRegisterBankDetailsPleaseTryAgain": "வங்கி விவரங்களைப் பதிவு செய்யத் தவறியது. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.",
     "ExistingBankDetails": "தற்போதைய வங்கி விவரங்கள்",
     "AccountNumberMustBeANumber": "கணக்கு எண் எண்களால் மட்டுமே இருக்க வேண்டும்",
+    "CanNotStartWithSpace": "தொடக்கத்தில் இடைவெளி இருக்கக்கூடாது",
+    "NoSpacesAllowed": "இடைவெளிகள் அனுமதிக்கப்படாது",
     "EnterAccountNumber": "கணக்கு எண்ணை உள்ளிடவும்",
     "ReEnterAccountNumber": "கணக்கு எண்ணை மீண்டும் உள்ளிடவும்",
     "SelectBankName": "வங்கியின் பெயரைத் தேர்ந்தெடுக்கவும்",
@@ -795,7 +797,10 @@
     "Delivered on": "வழங்கப்பட்டது",
     "of Items": "பொருட்களின்",
     "Info": "தகவல்",
-    "UseTheSave": "பதிவிறக்கங்களில் சேமிக்க, 'கோப்புகளில் சேமி' என்ற விருப்பத்தைப் பயன்படுத்தவும்."
+    "UseTheSave": "பதிவிறக்கங்களில் சேமிக்க, 'கோப்புகளில் சேமி' என்ற விருப்பத்தைப் பயன்படுத்தவும்.",
+    "AM": "மு.ப",
+    "PM": "பி.ப",
+    "Rs": "ரூ."
   },
   "EarnCertificate": {
     "EarnACertificate": "சான்றிதழைப் பெறுங்கள்",

@@ -169,14 +169,25 @@ const FiveDayForecast: React.FC<FiveDayForecastProps> = ({ navigation }) => {
     }
   };
 
-  const fetchWeather = async (name: string): Promise<void> => {
+  const fetchWeather = async (
+    cityName?: string,
+    lat?: number,
+    lon?: number,
+  ): Promise<void> => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${name}&appid=${API_KEY}`,
-      );
+      let url = `https://api.openweathermap.org/data/2.5/forecast?appid=${API_KEY}`;
+      if (lat !== undefined && lon !== undefined) {
+        url += `&lat=${lat}&lon=${lon}`;
+      } else if (cityName) {
+        url += `&q=${encodeURIComponent(cityName)}`;
+      } else {
+        url += `&lat=6.9271&lon=79.8612`;
+      }
 
+      const response = await axios.get(url);
       const data = response.data;
+      console.log(data)
 
       const todayStr = new Date().toISOString().split("T")[0];
       const dailyMap = new Map<string, ForecastItem>();
@@ -241,22 +252,34 @@ const FiveDayForecast: React.FC<FiveDayForecastProps> = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
-      const loadLastSearchedCity = async () => {
+      const loadWeather = async () => {
         try {
           const storedCityName = await AsyncStorage.getItem("lastSearchedCity");
+          const storedLat = await AsyncStorage.getItem("lastSearchedLat");
+          const storedLon = await AsyncStorage.getItem("lastSearchedLon");
+
           if (storedCityName) {
             setName(storedCityName);
           }
+
+          if (storedLat && storedLon) {
+            await fetchWeather(
+              storedCityName || undefined,
+              parseFloat(storedLat),
+              parseFloat(storedLon),
+            );
+          } else if (storedCityName) {
+            await fetchWeather(storedCityName);
+          } else {
+            await fetchWeather("Colombo", 6.9271, 79.8612);
+          }
         } catch (error) {
-          console.error("Error loading city name from local storage:", error);
+          console.error("Error loading weather data:", error);
         }
       };
 
-      loadLastSearchedCity();
-      if (name) {
-        fetchWeather(name);
-      }
-    }, [name]),
+      loadWeather();
+    }, []),
   );
 
   if (loading) {

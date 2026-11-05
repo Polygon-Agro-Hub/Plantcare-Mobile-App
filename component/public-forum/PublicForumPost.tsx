@@ -293,19 +293,13 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
     }
 
     try {
-      const response = await axios.post(
-        `${environment.API_BASE_URL}api/auth/add/post`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
+      await axios.post(`${environment.API_BASE_URL}api/auth/add/post`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
-      setLoading(false);
-      isSubmittingRef.current = false;
       setHeading("");
       setMessage("");
       setPostImageUri(null);
@@ -326,8 +320,6 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       }, 100);
     } catch (error: any) {
       console.error("Error creating post:", error);
-      setLoading(false);
-      isSubmittingRef.current = false;
       const errorMsg =
         error?.response?.data?.code === "PROFANITY_DETECTED"
           ? t("PublicForum.ProhibitedLanguageDetected")
@@ -341,6 +333,14 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
       setLoading(false);
       isSubmittingRef.current = false;
     }
+  };
+
+  // Called when the user presses Enter / Send on the keyboard.
+  // Does nothing if a field is empty or a request is already running,
+  // so the same rules as the Publish button apply.
+  const handleEnterSubmit = () => {
+    if (heading.trim() === "" || message.trim() === "" || loading) return;
+    handleSubmit();
   };
 
   return (
@@ -376,6 +376,8 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
             maxLength={250}
             placeholderTextColor="#525252"
             onFocus={() => handleFocus("title")}
+            returnKeyType="send"
+            onSubmitEditing={handleEnterSubmit}
           />
           {heading.length >= 250 && (
             <Text className="text-red-500 mt-1 text-sm">
@@ -398,6 +400,11 @@ const PublicForumPost: React.FC<PublicForumPostProps> = ({ navigation }) => {
             textAlignVertical="top"
             placeholderTextColor="#525252"
             onFocus={() => handleFocus("message")}
+            returnKeyType="send"
+            // Enter submits instead of inserting a new line.
+            // RN 0.73+ uses submitBehavior; on older RN use blurOnSubmit={true}.
+            submitBehavior="submit"
+            onSubmitEditing={handleEnterSubmit}
           />
         </View>
 

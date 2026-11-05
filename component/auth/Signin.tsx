@@ -14,7 +14,7 @@ import {
   TextInput,
   SafeAreaView,
 } from "react-native";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/types";
@@ -59,6 +59,28 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
   const screenWidth = Dimensions.get("window").width;
   const [isValid, setIsValid] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(0);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const scrollRef = useRef<ScrollView>(null);
+
+  useEffect(() => {
+    const showSub = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
+      (e) => {
+        setKeyboardHeight(e.endCoordinates.height);
+      },
+    );
+    const hideSub = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
+      () => {
+        setKeyboardHeight(0);
+      },
+    );
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   const countryItems = useMemo(() => {
     return countryData.map((country) => {
@@ -98,7 +120,8 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.navigate("Signup");
+        AsyncStorage.removeItem("@user_language");
+        navigation.navigate("Lanuage");
         return true;
       };
       const subscription = BackHandler.addEventListener(
@@ -296,24 +319,37 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
         <CustomHeader
           title=""
           navigation={navigation}
-          onBackPress={() => navigation.navigate("Lanuage")}
+          onBackPress={() => {
+            AsyncStorage.removeItem("@user_language");
+            navigation.navigate("Lanuage");
+          }}
         />
       </View>
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 20 : 20}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
         style={{ flex: 1, backgroundColor: "white" }}
         enabled
       >
         <ScrollView
+          ref={scrollRef}
+          style={{ flex: 1, backgroundColor: "white" }}
           contentContainerStyle={{
             flexGrow: 1,
             backgroundColor: "white",
-            justifyContent: "center",
+            justifyContent: keyboardHeight > 0 ? "flex-start" : "center",
+            paddingBottom:
+              keyboardHeight > 0
+                ? (Platform.OS === "ios" ? 120 : 40)
+                : 20,
           }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
+          nestedScrollEnabled={true}
+          overScrollMode="always"
+          bounces={true}
+          alwaysBounceVertical={true}
         >
           <View className="flex-1 bg-white justify-center">
             <View className="items-center justify-center px-4">
@@ -378,6 +414,11 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                     >
                       <TextInput
                         className="flex-1 px-4"
+                        style={{
+                          fontSize: 12,
+                          color: "#000000",
+                          letterSpacing: 0,
+                        }}
                         placeholder={t("Inputs.PhoneNumber")}
                         placeholderTextColor="#585858"
                         value={phonenumber}
@@ -387,6 +428,13 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                         autoFocus
                         underlineColorAndroid="transparent"
                         cursorColor="#141415ff"
+                        onFocus={() => {
+                          if (Platform.OS === "ios") {
+                            setTimeout(() => {
+                              scrollRef.current?.scrollToEnd({ animated: true });
+                            }, 150);
+                          }
+                        }}
                       />
 
                       {isValid &&
@@ -472,8 +520,11 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                 </TouchableOpacity>
 
                 {/* Signup Link */}
-                <View className="mt-6 flex-row justify-center items-center">
-                  <Text className="font-bold text-[#3F3F3F] mr-2">
+                <View
+                  className="mt-6 flex-row justify-center items-center px-6 flex-wrap"
+                  style={{ paddingHorizontal: 24 }}
+                >
+                  <Text className="font-bold text-[#3F3F3F] mr-2 text-center">
                     {t("SignIn.DontHaveAnAccount")}
                   </Text>
 
@@ -487,7 +538,7 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                       }
                     }}
                   >
-                    <Text className="text-[#0085FF] font-semibold underline">
+                    <Text className="text-[#0085FF] font-semibold underline text-center">
                       {t("SignIn.SignUpHere")}
                     </Text>
                   </TouchableOpacity>

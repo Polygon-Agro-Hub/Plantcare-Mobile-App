@@ -404,11 +404,11 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
 
       let otpMessage = "";
       if (i18n.language === "en") {
-        otpMessage = `Thank you for joining Polygon Holdings!\nYour GoViCare OTP is {{code}}`;
+        otpMessage = `Your GoViCare OTP is {{code}}. Thank you for joining Polygon Holdings!`;
       } else if (i18n.language === "si") {
-        otpMessage = `Polygon Holdings සමඟ සම්බන්ධ වීම ගැන ඔබට ස්තූතියි!\nඔබේ GoViCare OTP මුරපදය {{code}} වේ.`;
+        otpMessage = `ඔබේ GoViCare OTP මුරපදය {{code}} වේ. Polygon Holdings සමඟ සම්බන්ධ වීම ගැන ඔබට ස්තූතියි!`;
       } else if (i18n.language === "ta") {
-        otpMessage = `Polygon Holdings ல் இணைந்ததற்கு நன்றி!\nஉங்கள் GoViCare OTP {{code}} ஆகும்.`;
+        otpMessage = `உங்கள் GoViCare OTP {{code}} ஆகும். Polygon Holdings ல் இணைந்ததற்கு நன்றி!`;
       }
 
       const otpResponse = await axios.post(
@@ -527,10 +527,15 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
                       maxLength={9}
                       placeholderTextColor="#585858"
                       autoFocus
+                      autoCorrect={false}
+                      spellCheck={false}
+                      selectionColor="#0FC7B2"
                       className="flex-1 bg-[#F4F4F4] rounded-3xl py-3 px-4 h-[50px]"
                       underlineColorAndroid="transparent"
                       style={{
                         fontSize: 12,
+                        color: "#000000",
+                        letterSpacing: 0,
                       }}
                       cursorColor="#141415ff"
                     />
@@ -550,6 +555,9 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
                     placeholderTextColor="#585858"
                     underlineColorAndroid="transparent"
                     cursorColor="#141415ff"
+                    selectionColor="#0FC7B2"
+                    autoCorrect={false}
+                    spellCheck={false}
                     value={firstName}
                     onChangeText={(text) =>
                       handleFirstNameChange(
@@ -560,6 +568,8 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
                     autoComplete="given-name"
                     style={{
                       fontSize: 12,
+                      color: "#000000",
+                      letterSpacing: 0,
                     }}
                     className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px]"
                   />
@@ -578,8 +588,13 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
                     value={lastName}
                     placeholderTextColor="#585858"
                     underlineColorAndroid="transparent"
+                    selectionColor="#0FC7B2"
+                    autoCorrect={false}
+                    spellCheck={false}
                     style={{
                       fontSize: 12,
+                      color: "#000000",
+                      letterSpacing: 0,
                     }}
                     cursorColor="#141415ff"
                     onChangeText={(text) =>
@@ -607,8 +622,14 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
                     value={nic}
                     underlineColorAndroid="transparent"
                     cursorColor="#141415ff"
+                    selectionColor="#0FC7B2"
+                    autoCorrect={false}
+                    spellCheck={false}
+                    autoComplete="off"
                     style={{
                       fontSize: 12,
+                      color: "#000000",
+                      letterSpacing: 0,
                     }}
                     maxLength={12}
                     onChangeText={handleNicChange}
@@ -782,14 +803,17 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
                     )}
                   </TouchableOpacity>
                 </View>
-                <View className="flex-row items-center justify-center mt-4">
-                  <Text className="font-bold text-black">
-                    {t("SignUp.AlreadyHaveAnAccount")}{" "}
+                <View
+                  className="flex-row items-center justify-center mt-4 px-6 flex-wrap"
+                  style={{ paddingHorizontal: 24 }}
+                >
+                  <Text className="font-bold text-black mr-2 text-center">
+                    {t("SignUp.AlreadyHaveAnAccount")}
                   </Text>
                   <TouchableOpacity
                     onPress={() => navigation.navigate("Signin")}
                   >
-                    <Text className="text-[#0085FF] font-semibold underline">
+                    <Text className="text-[#0085FF] font-semibold underline text-center">
                       {t("SignUp.SignInHere")}
                     </Text>
                   </TouchableOpacity>
