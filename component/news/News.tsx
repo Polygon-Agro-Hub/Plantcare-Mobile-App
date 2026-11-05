@@ -68,7 +68,9 @@ const prepareHtml = (htmlContent?: string) => {
     .replace(/&lsquo;/g, "'")
     .replace(/&ldquo;/g, '"')
     .replace(/&rdquo;/g, '"')
-    .replace(/&nbsp;/g, " ");
+    .replace(/&nbsp;/g, " ")
+    .replace(/<span class="ql-ui"[^>]*><\/span>/gi, "")
+    .replace(/<li([^>]*)>\s*<p[^>]*>([\s\S]*?)<\/p>\s*<\/li>/gi, "<li$1>$2</li>");
 
   return content;
 };
@@ -207,7 +209,8 @@ const contentTagsStyles = {
     paddingLeft: 24,
   },
   li: {
-    marginVertical: 3,
+    marginTop: 0,
+    marginBottom: 6,
     color: "#374151",
     fontSize: 16,
     lineHeight: 22,
@@ -233,22 +236,27 @@ const contentRenderersProps = {
     markerBoxStyle: {
       alignSelf: "flex-start" as const,
       paddingRight: 6,
+      marginTop: 0,
     },
     markerTextStyle: {
       fontSize: 16,
       lineHeight: 22,
       color: "#374151",
+      marginTop: 0,
     },
   },
   ul: {
+    enableDynamicMarkerBoxWidth: true,
     markerBoxStyle: {
       alignSelf: "flex-start" as const,
       paddingRight: 6,
+      marginTop: 0,
     },
     markerTextStyle: {
       fontSize: 16,
       lineHeight: 22,
       color: "#374151",
+      marginTop: 0,
     },
   },
 };

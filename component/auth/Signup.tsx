@@ -404,11 +404,11 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
 
       let otpMessage = "";
       if (i18n.language === "en") {
-        otpMessage = `Thank you for joining Polygon Holdings!\nYour GoViCare OTP is {{code}}`;
+        otpMessage = `Your GoViCare OTP is {{code}}. Thank you for joining Polygon Holdings!`;
       } else if (i18n.language === "si") {
-        otpMessage = `Polygon Holdings සමඟ සම්බන්ධ වීම ගැන ඔබට ස්තූතියි!\nඔබේ GoViCare OTP මුරපදය {{code}} වේ.`;
+        otpMessage = `ඔබේ GoViCare OTP මුරපදය {{code}} වේ. Polygon Holdings සමඟ සම්බන්ධ වීම ගැන ඔබට ස්තූතියි!`;
       } else if (i18n.language === "ta") {
-        otpMessage = `Polygon Holdings ல் இணைந்ததற்கு நன்றி!\nஉங்கள் GoViCare OTP {{code}} ஆகும்.`;
+        otpMessage = `உங்கள் GoViCare OTP {{code}} ஆகும். Polygon Holdings ல் இணைந்ததற்கு நன்றி!`;
       }
 
       const otpResponse = await axios.post(
@@ -535,6 +535,7 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
                       style={{
                         fontSize: 12,
                         color: "#000000",
+                        letterSpacing: 0,
                       }}
                       cursorColor="#141415ff"
                     />
@@ -568,6 +569,7 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
                     style={{
                       fontSize: 12,
                       color: "#000000",
+                      letterSpacing: 0,
                     }}
                     className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px]"
                   />
@@ -592,6 +594,7 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
                     style={{
                       fontSize: 12,
                       color: "#000000",
+                      letterSpacing: 0,
                     }}
                     cursorColor="#141415ff"
                     onChangeText={(text) =>
@@ -626,6 +629,7 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
                     style={{
                       fontSize: 12,
                       color: "#000000",
+                      letterSpacing: 0,
                     }}
                     maxLength={12}
                     onChangeText={handleNicChange}

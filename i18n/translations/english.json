@@ -797,7 +797,10 @@
     "Delivered on": "Delivered on",
     "of Items": "of Items",
     "Info": "Info",
-    "UseTheSave": "Use the 'Save to Files' option to save to Downloads"
+    "UseTheSave": "Use the 'Save to Files' option to save to Downloads",
+    "AM": "AM",
+    "PM": "PM",
+    "Rs": "Rs."
   },
   "EarnCertificate": {
     "EarnACertificate": "Earn a Certificate",
