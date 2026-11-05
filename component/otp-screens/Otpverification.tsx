@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -63,25 +63,19 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const screenWidth = Dimensions.get("window").width;
+  const isVerifyingRef = useRef<boolean>(false);
+  const autoVerifyTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const inputRef = useRef<TextInput>(null);
+  const [sessionKey, setSessionKey] = useState<number>(0);
   useEffect(() => {
     const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
-    const fetchReferenceId = async () => {
-      try {
-        const refId = await AsyncStorage.getItem("referenceId");
-        if (refId) {
-          setReferenceId(refId);
-        }
-      } catch (error) {
-        console.error("Failed to load referenceId:", error);
-      }
-    };
-
-    fetchReferenceId();
-  }, []);
+  }, [t]);
 
   const handleBackPress = React.useCallback(() => {
-    if (isSignup) {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else if (isSignup) {
       navigation.navigate("Signup", {
         firstName,
         lastName,
@@ -129,42 +123,100 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      if (timer === 0) {
-        setReferenceId("c0000000-0e0c-1000-b000-100000000000");
-        setIsOtpExpired(true);
-      }
+      setOtpCode("");
+      setMaskedCode("XXXXX");
+      setIsOtpValid(false);
+      setIsVerified(false);
+      setIsOtpExpired(false);
+      setDisabledVerify(false);
+      setIsLoading(false);
+      isVerifyingRef.current = false;
+      setTimer(240);
+      setDisabledResend(true);
+      setSessionKey((prev) => prev + 1);
 
-      if (timer > 0 && !isVerified) {
-        const interval = setInterval(() => {
-          setTimer((prevTimer) => prevTimer - 1);
-        }, 1000);
+      const fetchReferenceId = async () => {
+        try {
+          const refId = await AsyncStorage.getItem("referenceId");
+          if (refId) {
+            setReferenceId(refId);
+          }
+        } catch (error) {
+          console.error("Failed to load referenceId:", error);
+        }
+      };
 
-        setDisabledResend(true);
+      fetchReferenceId();
 
-        return () => clearInterval(interval);
-      } else if (timer === 0 && !isVerified) {
-        setDisabledResend(false);
-      }
-    }, [timer, isVerified]),
+      const focusTimer = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 200);
+
+      return () => {
+        clearTimeout(focusTimer);
+        if (autoVerifyTimerRef.current) {
+          clearTimeout(autoVerifyTimerRef.current);
+          autoVerifyTimerRef.current = null;
+        }
+      };
+    }, []),
   );
 
+  useEffect(() => {
+    if (isVerified) return;
+
+    if (timer === 0) {
+      setReferenceId("c0000000-0e0c-1000-b000-100000000000");
+      setIsOtpExpired(true);
+      setDisabledResend(false);
+      return;
+    }
+
+    setDisabledResend(true);
+    const interval = setInterval(() => {
+      setTimer((prevTimer) => {
+        if (prevTimer <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return prevTimer - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timer, isVerified, sessionKey]);
+
   const handleInputChange = (text: string) => {
+    if (autoVerifyTimerRef.current) {
+      clearTimeout(autoVerifyTimerRef.current);
+      autoVerifyTimerRef.current = null;
+    }
+
     const sanitizedText = text.slice(0, 5);
     setOtpCode(sanitizedText);
 
     const masked = sanitizedText.padEnd(5, "X");
     setMaskedCode(masked);
-    setIsOtpValid(sanitizedText.length === 5);
-    if (sanitizedText.length === 5) {
+    const isValid = sanitizedText.length === 5;
+    setIsOtpValid(isValid);
+    if (isValid) {
       Keyboard.dismiss();
+      autoVerifyTimerRef.current = setTimeout(() => {
+        handleVerify(sanitizedText);
+      }, 100);
     }
   };
 
-  const handleVerify = async () => {
-    if (disabledVerify) return;
+  const handleVerify = async (codeToVerify?: string) => {
+    if (disabledVerify || isLoading || isVerifyingRef.current) return;
+    if (autoVerifyTimerRef.current) {
+      clearTimeout(autoVerifyTimerRef.current);
+      autoVerifyTimerRef.current = null;
+    }
+    isVerifyingRef.current = true;
     setIsLoading(true);
     setDisabledVerify(true);
-    const code = otpCode;
+    const code = typeof codeToVerify === "string" ? codeToVerify : otpCode;
 
     if (code.length !== 5) {
       Alert.alert(
@@ -174,6 +226,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       );
       setDisabledVerify(false);
       setIsLoading(false);
+      isVerifyingRef.current = false;
       return;
     }
 
@@ -186,6 +239,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       );
       setDisabledVerify(false);
       setIsLoading(false);
+      isVerifyingRef.current = false;
       return;
     }
 
@@ -213,57 +267,64 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
         isSuccess = true;
       } else {
         const showInvalidOtp = () => {
-  Alert.alert(
-    t("Main.Error"),
-    t("OtpVerification.TheOTPYouEnteredIsInvalidPleaseTryAgain"),
-    [{ text: t("Main.OK") }],
-  );
-  setOtpCode("");
-  setMaskedCode("XXXXX");
-  setIsOtpValid(false);
-  setDisabledVerify(false);
-  setIsLoading(false);
-};
+          Alert.alert(
+            t("Main.Error"),
+            t("OtpVerification.TheOTPYouEnteredIsInvalidPleaseTryAgain"),
+            [{ text: t("Main.OK") }],
+          );
+          setOtpCode("");
+          setMaskedCode("XXXXX");
+          setIsOtpValid(false);
+          setDisabledVerify(false);
+          setIsLoading(false);
+          isVerifyingRef.current = false;
+        };
 
-let statusCode: string | undefined;
-try {
-  const response = await axios.post(
-    `${environment.API_BASE_URL}api/auth/verify-otp`,
-    {
-      code: code,
-      referenceId: referenceId,
-      phoneNumber: mobileNumber,
-    },
-  );
-  statusCode = response.data?.statusCode;
-} catch (err: any) {
-  const httpStatus = err?.response?.status;
-  const apiStatusCode = err?.response?.data?.statusCode;
+        const activeRefId =
+          referenceId || (await AsyncStorage.getItem("referenceId"));
 
-  // Wrong/invalid OTP: the server answered with a 4xx or a 1001 code
-  if (apiStatusCode === "1001" || (httpStatus && httpStatus >= 400 && httpStatus < 500)) {
-    showInvalidOtp();
-    return;
-  }
-  throw err; // network error / 5xx -> falls to generic "something went wrong"
-}
-      
+        let statusCode: string | undefined;
+        try {
+          const response = await axios.post(
+            `${environment.API_BASE_URL}api/auth/verify-otp`,
+            {
+              code: code,
+              referenceId: activeRefId,
+              phoneNumber: mobileNumber,
+            },
+          );
+          statusCode = response.data?.statusCode;
+        } catch (err: any) {
+          const httpStatus = err?.response?.status;
+          const apiStatusCode = err?.response?.data?.statusCode;
 
-      if (statusCode === "1000") {
-  isSuccess = true;
-} else if (statusCode === "1001") {
-  showInvalidOtp();
-  return;
-} else {
-  Alert.alert(
-    t("Main.Error"),
-    t("Main.SomethingWentWrongPleaseTryAgainlater"),
-    [{ text: t("Main.OK") }],
-  );
-  setDisabledVerify(false);
-  setIsLoading(false);
-  return;
-}
+          // Wrong/invalid OTP: the server answered with a 4xx or a 1001 code
+          if (
+            apiStatusCode === "1001" ||
+            (httpStatus && httpStatus >= 400 && httpStatus < 500)
+          ) {
+            showInvalidOtp();
+            return;
+          }
+          throw err; // network error / 5xx -> falls to generic "something went wrong"
+        }
+
+        if (statusCode === "1000") {
+          isSuccess = true;
+        } else if (statusCode === "1001") {
+          showInvalidOtp();
+          return;
+        } else {
+          Alert.alert(
+            t("Main.Error"),
+            t("Main.SomethingWentWrongPleaseTryAgainlater"),
+            [{ text: t("Main.OK") }],
+          );
+          setDisabledVerify(false);
+          setIsLoading(false);
+          isVerifyingRef.current = false;
+          return;
+        }
       }
 
       if (isSuccess) {
@@ -299,6 +360,7 @@ try {
           navigation.navigate("Verify");
           setIsLoading(false);
           setDisabledVerify(false);
+          isVerifyingRef.current = false;
         } else {
           const response = await fetch(
             `${environment.API_BASE_URL}api/auth/user-login`,
@@ -326,6 +388,7 @@ try {
               navigation.navigate("Main");
               setDisabledVerify(false);
               setIsLoading(false);
+              isVerifyingRef.current = false;
             } else {
               Alert.alert(
                 t("Main.Error"),
@@ -334,6 +397,7 @@ try {
               );
               setDisabledVerify(false);
               setIsLoading(false);
+              isVerifyingRef.current = false;
             }
           } else {
             Alert.alert(
@@ -343,6 +407,7 @@ try {
             );
             setDisabledVerify(false);
             setIsLoading(false);
+            isVerifyingRef.current = false;
           }
         }
       }
@@ -358,10 +423,15 @@ try {
       );
       setDisabledVerify(false);
       setIsLoading(false);
+      isVerifyingRef.current = false;
     }
   };
 
   const handleResendOTP = async () => {
+    if (autoVerifyTimerRef.current) {
+      clearTimeout(autoVerifyTimerRef.current);
+      autoVerifyTimerRef.current = null;
+    }
     await AsyncStorage.removeItem("referenceId");
     try {
       let otpMessage = "";
@@ -384,14 +454,24 @@ try {
       if (response.data.referenceId) {
         await AsyncStorage.setItem("referenceId", response.data.referenceId);
         setReferenceId(response.data.referenceId);
+        setOtpCode("");
+        setMaskedCode("XXXXX");
+        setIsOtpValid(false);
         setIsOtpExpired(false);
+        setIsVerified(false);
+        setDisabledVerify(false);
+        isVerifyingRef.current = false;
+        setTimer(240);
+        setDisabledResend(true);
+        setSessionKey((prev) => prev + 1);
+        setTimeout(() => {
+          inputRef.current?.focus();
+        }, 150);
         Alert.alert(
           t("Main.Success"),
           t("OtpVerification.OTPHasBeenResentSuccessfully"),
           [{ text: t("Main.OK") }],
         );
-        setTimer(240);
-        setDisabledResend(true);
       } else {
         Alert.alert(
           t("Main.Error"),
@@ -478,6 +558,8 @@ try {
             {/* OTP Input */}
             <View className="mt-6 w-full items-center">
               <TextInput
+                key={`otp-input-${sessionKey}`}
+                ref={inputRef}
                 style={{
                   width: wp(60),
                   height: hp(7),
@@ -489,9 +571,9 @@ try {
                   color: "black",
                   fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
                 }}
-                keyboardType="numeric"
+                keyboardType="number-pad"
                 textContentType="oneTimeCode"
-                autoComplete="sms-otp"
+                autoComplete={Platform.OS === "android" ? "sms-otp" : "one-time-code"}
                 importantForAutofill="yes"
                 maxLength={5}
                 value={otpCode}
@@ -501,6 +583,7 @@ try {
                 underlineColorAndroid="transparent"
                 cursorColor="#141415ff"
                 autoFocus
+                selectTextOnFocus
               />
             </View>
 
@@ -531,11 +614,11 @@ try {
             {/* Verify Button */}
             <View className="mt-8 w-full px-6">
               <TouchableOpacity
-                onPress={handleVerify}
-                disabled={!isOtpValid || disabledVerify}
+                onPress={() => handleVerify()}
+                disabled={!isOtpValid || disabledVerify || isLoading}
                 activeOpacity={0.8}
                 className={`w-full rounded-3xl h-[50px] justify-center items-center shadow-lg elevation-6 ${
-                  !isOtpValid || disabledVerify
+                  !isOtpValid || disabledVerify || isLoading
                     ? "bg-[#9CA3AF]"
                     : "bg-[#353535]"
                 }`}

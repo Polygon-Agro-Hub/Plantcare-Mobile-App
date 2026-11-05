@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -66,6 +66,93 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
   const [isMenuVisible, setMenuVisible] = useState(false);
 
   const [districtModalVisible, setDistrictModalVisible] = useState(false);
+  const [firstNameError, setFirstNameError] = useState("");
+  const [lastNameError, setLastNameError] = useState("");
+  const firstNameErrorTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const lastNameErrorTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (firstNameErrorTimerRef.current) {
+        clearTimeout(firstNameErrorTimerRef.current);
+        firstNameErrorTimerRef.current = null;
+      }
+      if (lastNameErrorTimerRef.current) {
+        clearTimeout(lastNameErrorTimerRef.current);
+        lastNameErrorTimerRef.current = null;
+      }
+    };
+  }, []);
+
+  const letterRegex = /^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]*$/u;
+
+  const handleFirstNameChange = (text: string) => {
+    if (firstNameErrorTimerRef.current) {
+      clearTimeout(firstNameErrorTimerRef.current);
+      firstNameErrorTimerRef.current = null;
+    }
+
+    if (text === "") {
+      setFirstName("");
+      setFirstNameError("");
+      return;
+    }
+
+    const hasSpace = text.startsWith(" ") || text.includes(" ");
+    const hasInvalidChars = !letterRegex.test(text);
+
+    if (hasSpace || hasInvalidChars) {
+      const errorMsg = hasSpace
+        ? t("SignUp.NoSpacesAllowed") || "No Spaces Allowed"
+        : t("SignUp.OnlyLettersAllowed") || "Only Letters Allowed";
+      setFirstNameError(errorMsg);
+      firstNameErrorTimerRef.current = setTimeout(() => {
+        setFirstNameError("");
+      }, 3000);
+
+      // Block numbers and special characters: retain only allowed letters
+      const sanitized = text.replace(/[^\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]/gu, "");
+      setFirstName(sanitized);
+      return;
+    }
+
+    setFirstNameError("");
+    setFirstName(text);
+  };
+
+  const handleLastNameChange = (text: string) => {
+    if (lastNameErrorTimerRef.current) {
+      clearTimeout(lastNameErrorTimerRef.current);
+      lastNameErrorTimerRef.current = null;
+    }
+
+    if (text === "") {
+      setLastName("");
+      setLastNameError("");
+      return;
+    }
+
+    const hasSpace = text.startsWith(" ") || text.includes(" ");
+    const hasInvalidChars = !letterRegex.test(text);
+
+    if (hasSpace || hasInvalidChars) {
+      const errorMsg = hasSpace
+        ? t("SignUp.NoSpacesAllowed") || "No Spaces Allowed"
+        : t("SignUp.OnlyLettersAllowed") || "Only Letters Allowed";
+      setLastNameError(errorMsg);
+      lastNameErrorTimerRef.current = setTimeout(() => {
+        setLastNameError("");
+      }, 3000);
+
+      // Block numbers and special characters: retain only allowed letters
+      const sanitized = text.replace(/[^\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]/gu, "");
+      setLastName(sanitized);
+      return;
+    }
+
+    setLastNameError("");
+    setLastName(text);
+  };
 
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -380,6 +467,16 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
       return;
     }
 
+    const nameValidationRegex = /^[\p{L}\u0B80-\u0BFF\u0D80-\u0DFF]+$/u;
+    if (!nameValidationRegex.test(trimmedFirstName) || !nameValidationRegex.test(trimmedLastName)) {
+      Alert.alert(
+        t("Main.Sorry") || "Sorry",
+        t("SignUp.OnlyLettersAllowed") || "Only Letters Allowed",
+        [{ text: t("Main.OK") || "OK" }],
+      );
+      return;
+    }
+
     setIsLoading(true);
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -573,12 +670,20 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       }
                       placeholderTextColor="#9CA3AF"
                       value={firstName}
-                      onChangeText={(text) =>
-                        setFirstName(text.replace(/^\s+/, ""))
-                      }
+                      onChangeText={handleFirstNameChange}
                       maxLength={20}
+                      autoCorrect={false}
+                      spellCheck={false}
+                      autoComplete="off"
+                      selectionColor="#0FC7B2"
+                      style={{ color: "#000000" }}
                     />
                   </View>
+                  {firstNameError ? (
+                    <Text className="text-red-500 text-xs mt-1">
+                      {firstNameError}
+                    </Text>
+                  ) : null}
                 </View>
 
                 <View className="mb-4">
@@ -592,12 +697,20 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       }
                       placeholderTextColor="#9CA3AF"
                       value={lastName}
-                      onChangeText={(text) =>
-                        setLastName(text.replace(/^\s+/, ""))
-                      }
+                      onChangeText={handleLastNameChange}
                       maxLength={20}
+                      autoCorrect={false}
+                      spellCheck={false}
+                      autoComplete="off"
+                      selectionColor="#0FC7B2"
+                      style={{ color: "#000000" }}
                     />
                   </View>
+                  {lastNameError ? (
+                    <Text className="text-red-500 text-xs mt-1">
+                      {lastNameError}
+                    </Text>
+                  ) : null}
                 </View>
 
                 <View className="mb-4">
@@ -615,6 +728,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       value={phoneNumber}
                       keyboardType="phone-pad"
                       editable={false}
+                      autoCorrect={false}
+                      spellCheck={false}
+                      style={{ color: "#000000" }}
                     />
                   </View>
                   {phoneNumberError ? (
@@ -638,6 +754,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       placeholderTextColor="#9CA3AF"
                       value={NICnumber}
                       editable={false}
+                      autoCorrect={false}
+                      spellCheck={false}
+                      style={{ color: "#000000" }}
                     />
                   </View>
                 </View>
@@ -657,6 +776,10 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       onChangeText={(text) =>
                         setBuildingName(text.replace(/^\s+/, ""))
                       }
+                      autoCorrect={false}
+                      spellCheck={false}
+                      selectionColor="#0FC7B2"
+                      style={{ color: "#000000" }}
                     />
                   </View>
                 </View>
@@ -676,6 +799,10 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       onChangeText={(text) =>
                         setStreetName(text.replace(/^\s+/, ""))
                       }
+                      autoCorrect={false}
+                      spellCheck={false}
+                      selectionColor="#0FC7B2"
+                      style={{ color: "#000000" }}
                     />
                   </View>
                 </View>
@@ -692,6 +819,10 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       placeholderTextColor="#9CA3AF"
                       value={city}
                       onChangeText={(text) => setCity(text.replace(/^\s+/, ""))}
+                      autoCorrect={false}
+                      spellCheck={false}
+                      selectionColor="#0FC7B2"
+                      style={{ color: "#000000" }}
                     />
                   </View>
                 </View>

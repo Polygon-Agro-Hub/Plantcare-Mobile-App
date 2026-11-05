@@ -70,6 +70,8 @@ interface PersonalAndBankDetails {
   bankName: string | null;
   branchName: string | null;
   companyNameEnglish: string | null;
+  companyNameSinhala: string | null;
+  companyNameTamil: string | null;
   collectionCenterName: string | null;
 }
 
@@ -249,7 +251,9 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
           accHolderName: data.accHolderName ?? "",
           bankName: data.bankName ?? "",
           branchName: data.branchName ?? "",
-          companyNameEnglish: data.companyNameEnglish ?? "company name",
+          companyNameEnglish: data.companyNameEnglish ?? "",
+          companyNameSinhala: data.companyNameSinhala ?? "",
+          companyNameTamil: data.companyNameTamil ?? "",
           collectionCenterName: data.centerName ?? "Collection Center",
         });
       } catch (detailsError) {
@@ -285,6 +289,42 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
     }
   };
 
+  const getCompanyName = (): string => {
+    if (!details) return "";
+    const lang = i18next.language;
+    if (lang === "si") {
+      if (details.companyNameSinhala && details.companyNameSinhala.trim()) {
+        return details.companyNameSinhala;
+      }
+      const eng = (details.companyNameEnglish || "").trim().toLowerCase();
+      if (
+        eng === "agroworld (pvt) ltd" ||
+        eng === "agroworld" ||
+        eng === "agro world" ||
+        eng === "agroworld (pvt) ltd."
+      ) {
+        return "ඇග්‍රො වර්ල්ඩ් පුද්. සමාගම";
+      }
+      return details.companyNameEnglish || "";
+    }
+    if (lang === "ta") {
+      if (details.companyNameTamil && details.companyNameTamil.trim()) {
+        return details.companyNameTamil;
+      }
+      const eng = (details.companyNameEnglish || "").trim().toLowerCase();
+      if (
+        eng === "agroworld (pvt) ltd" ||
+        eng === "agroworld" ||
+        eng === "agro world" ||
+        eng === "agroworld (pvt) ltd."
+      ) {
+        return "அக்ரோ வேர்ல்ட் பிரைவேட்";
+      }
+      return details.companyNameEnglish || "";
+    }
+    return details.companyNameEnglish || "";
+  };
+
   const formatDateTime = (dateString: string) => {
     if (!dateString) return "N/A";
     try {
@@ -315,7 +355,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
       const day = String(date.getDate()).padStart(2, "0");
       let hours = date.getHours();
       const minutes = String(date.getMinutes()).padStart(2, "0");
-      const period = hours >= 12 ? "PM" : "AM";
+      const period = hours >= 12 ? (t("TransactionList.PM") || "PM") : (t("TransactionList.AM") || "AM");
       let displayHours = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
       return `${year}/${month}/${day} ${String(displayHours).padStart(2, "0")}.${minutes} ${period}`;
     } catch (error) {
@@ -405,7 +445,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         <div class="received-by-section">
           <div>
             <div class="section-title">${t("TransactionList.ReceivedBy")} :</div>
-            <div>${t("TransactionList.CompanyName")} : ${details.companyNameEnglish || ""}</div>
+            <div>${t("TransactionList.CompanyName")} : ${getCompanyName()}</div>
           </div>
           <div>
             <div>&nbsp;</div>
@@ -457,7 +497,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         <div class="total-row">
           <div class="total-box">
             <div class="total-label">${t("TransactionList.FullTotalRs")} </div>
-            <div class="total-value"> Rs. ${formatNumberWithCommas(total)}</div>
+            <div class="total-value">${t("TransactionList.Rs") || "Rs."} ${formatNumberWithCommas(total)}</div>
           </div>
         </div>
 
@@ -716,7 +756,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
               <Text style={getTextStyle(i18next.language)}>
                 {t("TransactionList.CompanyName")}:
               </Text>{" "}
-              {details?.companyNameEnglish || ""}
+              {getCompanyName()}
             </Text>
             <Text>
               <Text style={getTextStyle(i18next.language)}>
@@ -803,7 +843,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({
         {/* Total */}
         <View className="mb-2 mt-2 items-end">
           <Text className="font-bold" style={getTextStyle(i18next.language)}>
-            {t("TransactionList.FullTotalRs")} Rs.{" "}
+            {t("TransactionList.FullTotalRs")} {t("TransactionList.Rs") || "Rs."}{" "}
             {formatNumberWithCommas(totalSum)}
           </Text>
         </View>

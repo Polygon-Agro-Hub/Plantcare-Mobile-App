@@ -527,10 +527,14 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
                       maxLength={9}
                       placeholderTextColor="#585858"
                       autoFocus
+                      autoCorrect={false}
+                      spellCheck={false}
+                      selectionColor="#0FC7B2"
                       className="flex-1 bg-[#F4F4F4] rounded-3xl py-3 px-4 h-[50px]"
                       underlineColorAndroid="transparent"
                       style={{
                         fontSize: 12,
+                        color: "#000000",
                       }}
                       cursorColor="#141415ff"
                     />
@@ -550,6 +554,9 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
                     placeholderTextColor="#585858"
                     underlineColorAndroid="transparent"
                     cursorColor="#141415ff"
+                    selectionColor="#0FC7B2"
+                    autoCorrect={false}
+                    spellCheck={false}
                     value={firstName}
                     onChangeText={(text) =>
                       handleFirstNameChange(
@@ -560,6 +567,7 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
                     autoComplete="given-name"
                     style={{
                       fontSize: 12,
+                      color: "#000000",
                     }}
                     className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px]"
                   />
@@ -578,8 +586,12 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
                     value={lastName}
                     placeholderTextColor="#585858"
                     underlineColorAndroid="transparent"
+                    selectionColor="#0FC7B2"
+                    autoCorrect={false}
+                    spellCheck={false}
                     style={{
                       fontSize: 12,
+                      color: "#000000",
                     }}
                     cursorColor="#141415ff"
                     onChangeText={(text) =>
@@ -607,8 +619,13 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
                     value={nic}
                     underlineColorAndroid="transparent"
                     cursorColor="#141415ff"
+                    selectionColor="#0FC7B2"
+                    autoCorrect={false}
+                    spellCheck={false}
+                    autoComplete="off"
                     style={{
                       fontSize: 12,
+                      color: "#000000",
                     }}
                     maxLength={12}
                     onChangeText={handleNicChange}

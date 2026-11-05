@@ -2,7 +2,7 @@
   "expo": {
     "name": "GoviCare",
     "slug": "GoviCare",
-    "version": "2.0.6",
+    "version": "2.0.7",
     "orientation": "portrait",
     "icon": "./assets/images/public/favicon.png",
     "userInterfaceStyle": "automatic",
@@ -61,15 +61,10 @@
           "remote-notification"
         ],
         "ITSAppUsesNonExemptEncryption": false,
-        "NSAppTransportSecurity": {
-          "NSAllowsArbitraryLoads": true
-        },
         "NSCameraUsageDescription": "Camera access is required to scan QR codes and capture crop photos.",
-        "NSMicrophoneUsageDescription": "Microphone access is required to record audio when capturing video.",
         "NSPhotoLibraryUsageDescription": "Photo library access is required to upload related images.",
         "NSPhotoLibraryAddUsageDescription": "Photo library access is required to save and upload related images.",
-        "NSLocationWhenInUseUsageDescription": "Location access is required to receive local weather forecasts and log crop activities accurately.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "Location access is required to receive local weather forecasts and log crop activities accurately."
+        "NSLocationWhenInUseUsageDescription": "Location access is required to receive local weather forecasts and log crop activities accurately."
       }
     },
     "web": {
