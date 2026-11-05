@@ -363,6 +363,8 @@
     "FailedToRegisterBankDetailsPleaseTryAgain": "Failed to register bank details. Please try again.",
     "ExistingBankDetails": "Existing Bank Details",
     "AccountNumberMustBeANumber": "Account Number must be a number",
+    "CanNotStartWithSpace": "Can not Start with Space",
+    "NoSpacesAllowed": "No Spaces Allowed",
     "EnterAccountNumber": "Enter Account Number",
     "ReEnterAccountNumber": "Re-enter Account Number",
     "SelectBankName": "Select Bank Name",
@@ -795,7 +797,10 @@
     "Delivered on": "Delivered on",
     "of Items": "of Items",
     "Info": "Info",
-    "UseTheSave": "Use the 'Save to Files' option to save to Downloads"
+    "UseTheSave": "Use the 'Save to Files' option to save to Downloads",
+    "AM": "AM",
+    "PM": "PM",
+    "Rs": "Rs."
   },
   "EarnCertificate": {
     "EarnACertificate": "Earn a Certificate",

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { View, Text, Image, TouchableOpacity, BackHandler } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -19,20 +19,6 @@ interface LanuageProps {
 const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
   const { changeLanguage } = useContext(LanguageContext);
 
-  useEffect(() => {
-    const checkLanguagePreference = async () => {
-      try {
-        const storedLanguage = await AsyncStorage.getItem("@user_language");
-        if (storedLanguage) {
-          handleLanguageSelect(storedLanguage);
-        }
-      } catch (error) {
-        console.error("Failed to retrieve language preference:", error);
-      }
-    };
-
-    checkLanguagePreference();
-  }, []);
 
   const handleLanguageSelect = async (language: string) => {
     try {
@@ -88,7 +74,7 @@ const Lanuage: React.FC<LanuageProps> = ({ navigation }) => {
             onPress={() => handleLanguageSelect("en")}
           >
             <Text className="text-white text-center text-xl font-semibold">
-              ENGLISH
+              English
             </Text>
           </TouchableOpacity>
 

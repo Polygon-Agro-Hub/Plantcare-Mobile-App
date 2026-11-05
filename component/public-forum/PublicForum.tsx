@@ -725,6 +725,12 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
               paddingVertical: 0,
               includeFontPadding: false,
             }}
+            onFocus={() => {
+              setKeyboardVisible(true);
+            }}
+            onBlur={() => {
+              setKeyboardVisible(false);
+            }}
           />
           <TouchableOpacity
             className="bg-black rounded-full w-[50px] h-[50px] items-center justify-center"
@@ -762,18 +768,31 @@ const PublicForum: React.FC<PublicForumProps> = ({ navigation, route }) => {
             .includes(searchText.trim().toLowerCase()),
       ).length === 0 && !loading ? (
         <View
-          className="flex-1 items-center justify-center"
+          className="flex-1 items-center"
           style={{
-            // Reserve exactly the real keyboard height (only relevant on
-            // iOS, since Android already resizes the root view for us via
-            // adjustResize). This keeps the Lottie/NoData content centered
-            // within the space actually visible above the keyboard instead
-            // of drifting under it or off-screen.
+            justifyContent:
+              Platform.OS === "android"
+                ? keyboardVisible
+                  ? "flex-start"
+                  : "center"
+                : "center",
+            paddingTop:
+              Platform.OS === "android" && keyboardVisible ? 20 : 0,
             paddingBottom:
               Platform.OS === "ios" && keyboardVisible ? keyboardHeight : 0,
           }}
         >
           <NoData
+            style={{
+              justifyContent:
+                Platform.OS === "android"
+                  ? keyboardVisible
+                    ? "flex-start"
+                    : "center"
+                  : "center",
+              paddingTop:
+                Platform.OS === "android" && keyboardVisible ? 10 : 0,
+            }}
             text={
               searchText.trim() !== ""
                 ? t("PublicForum.NoResultsFoundForYourSearch") ||
