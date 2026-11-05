@@ -79,6 +79,33 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
   const accountErrorTimerRef = useRef<NodeJS.Timeout | null>(null);
   const confirmAccountErrorTimerRef = useRef<NodeJS.Timeout | null>(null);
   const scrollViewRef = useRef<ScrollView>(null);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  useEffect(() => {
+    const showSub = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
+      (e) => {
+        setKeyboardHeight(e.endCoordinates.height);
+        setTimeout(() => {
+          scrollViewRef.current?.scrollTo({
+            y: Platform.OS === "ios" ? 220 : 180,
+            animated: true,
+          });
+        }, 100);
+      },
+    );
+    const hideSub = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
+      () => {
+        setKeyboardHeight(0);
+      },
+    );
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -590,14 +617,20 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
       >
         <ScrollView
           ref={scrollViewRef}
+          style={{ flex: 1, backgroundColor: "white" }}
           contentContainerStyle={{
             flexGrow: 1,
-            paddingBottom: 24,
+            paddingBottom:
+              keyboardHeight > 0
+                ? (Platform.OS === "ios" ? 160 : 120)
+                : 32,
           }}
-          className="flex-1 bg-white"
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled={true}
+          overScrollMode="always"
+          bounces={true}
+          alwaysBounceVertical={true}
         >
         <View className="items-center mb-4">
           <Image
@@ -672,6 +705,14 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
               selectionColor="#0FC7B2"
               value={accountNumber}
               onChangeText={handleAccountNumberChange}
+              onFocus={() => {
+                setTimeout(() => {
+                  scrollViewRef.current?.scrollTo({
+                    y: Platform.OS === "ios" ? 280 : 220,
+                    animated: true,
+                  });
+                }, 150);
+              }}
             />
             {accountNumberError ? (
               <Text className="text-red-500 text-xs mt-2">
@@ -699,6 +740,11 @@ const BankDetailsScreen: React.FC<BankDetailsScreenProps> = ({
               selectionColor="#0FC7B2"
               value={confirmAccountNumber}
               onChangeText={handleConfirmAccountNumberChange}
+              onFocus={() => {
+                setTimeout(() => {
+                  scrollViewRef.current?.scrollToEnd({ animated: true });
+                }, 150);
+              }}
             />
             {confirmAccountNumberError ? (
               <Text className="text-red-500 text-xs mt-2">
