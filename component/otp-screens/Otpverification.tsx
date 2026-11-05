@@ -66,13 +66,14 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   const isVerifyingRef = useRef<boolean>(false);
   const autoVerifyTimerRef = useRef<NodeJS.Timeout | null>(null);
   const inputRef = useRef<TextInput>(null);
-  const [sessionKey, setSessionKey] = useState<number>(0);
   useEffect(() => {
     const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
   }, [t]);
 
   const handleBackPress = React.useCallback(() => {
+    inputRef.current?.blur();
+    Keyboard.dismiss();
     if (navigation.canGoBack()) {
       navigation.goBack();
     } else if (isSignup) {
@@ -123,6 +124,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
   useFocusEffect(
     React.useCallback(() => {
+      inputRef.current?.blur();
       setOtpCode("");
       setMaskedCode("XXXXX");
       setIsOtpValid(false);
@@ -133,7 +135,6 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       isVerifyingRef.current = false;
       setTimer(240);
       setDisabledResend(true);
-      setSessionKey((prev) => prev + 1);
 
       const fetchReferenceId = async () => {
         try {
@@ -150,7 +151,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
       const focusTimer = setTimeout(() => {
         inputRef.current?.focus();
-      }, 200);
+      }, 250);
 
       return () => {
         clearTimeout(focusTimer);
@@ -184,7 +185,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [timer, isVerified, sessionKey]);
+  }, [timer, isVerified]);
 
   const handleInputChange = (text: string) => {
     if (autoVerifyTimerRef.current) {
@@ -432,6 +433,17 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       clearTimeout(autoVerifyTimerRef.current);
       autoVerifyTimerRef.current = null;
     }
+    // Blur immediately so OS keyboard ends previous autofill session and is ready for the new SMS
+    inputRef.current?.blur();
+    setOtpCode("");
+    setMaskedCode("XXXXX");
+    setIsOtpValid(false);
+    setIsOtpExpired(false);
+    setIsVerified(false);
+    setDisabledVerify(false);
+    isVerifyingRef.current = false;
+    setDisabledResend(true);
+
     await AsyncStorage.removeItem("referenceId");
     try {
       let otpMessage = "";
@@ -454,24 +466,25 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       if (response.data.referenceId) {
         await AsyncStorage.setItem("referenceId", response.data.referenceId);
         setReferenceId(response.data.referenceId);
-        setOtpCode("");
-        setMaskedCode("XXXXX");
-        setIsOtpValid(false);
-        setIsOtpExpired(false);
-        setIsVerified(false);
-        setDisabledVerify(false);
-        isVerifyingRef.current = false;
         setTimer(240);
-        setDisabledResend(true);
-        setSessionKey((prev) => prev + 1);
-        setTimeout(() => {
-          inputRef.current?.focus();
-        }, 150);
         Alert.alert(
           t("Main.Success"),
           t("OtpVerification.OTPHasBeenResentSuccessfully"),
-          [{ text: t("Main.OK") }],
+          [
+            {
+              text: t("Main.OK"),
+              onPress: () => {
+                setTimeout(() => {
+                  inputRef.current?.focus();
+                }, 200);
+              },
+            },
+          ],
         );
+        // Fallback focus in case alert dismisses or on platforms where alert does not block
+        setTimeout(() => {
+          inputRef.current?.focus();
+        }, 400);
       } else {
         Alert.alert(
           t("Main.Error"),
@@ -558,7 +571,6 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
             {/* OTP Input */}
             <View className="mt-6 w-full items-center">
               <TextInput
-                key={`otp-input-${sessionKey}`}
                 ref={inputRef}
                 style={{
                   width: wp(60),
@@ -573,7 +585,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
                 }}
                 keyboardType="number-pad"
                 textContentType="oneTimeCode"
-                autoComplete={Platform.OS === "android" ? "sms-otp" : "one-time-code"}
+                autoComplete="sms-otp"
                 importantForAutofill="yes"
                 maxLength={5}
                 value={otpCode}
@@ -582,7 +594,6 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
                 placeholderTextColor="#B0B0B0"
                 underlineColorAndroid="transparent"
                 cursorColor="#141415ff"
-                autoFocus
                 selectTextOnFocus
               />
             </View>
