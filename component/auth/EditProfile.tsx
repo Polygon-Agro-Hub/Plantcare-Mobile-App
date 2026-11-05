@@ -676,7 +676,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       spellCheck={false}
                       autoComplete="off"
                       selectionColor="#0FC7B2"
-                      style={{ color: "#000000" }}
+                      style={{ color: "#000000", letterSpacing: 0 }}
                     />
                   </View>
                   {firstNameError ? (
@@ -703,7 +703,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       spellCheck={false}
                       autoComplete="off"
                       selectionColor="#0FC7B2"
-                      style={{ color: "#000000" }}
+                      style={{ color: "#000000", letterSpacing: 0 }}
                     />
                   </View>
                   {lastNameError ? (
@@ -730,7 +730,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       editable={false}
                       autoCorrect={false}
                       spellCheck={false}
-                      style={{ color: "#000000" }}
+                      style={{ color: "#000000", letterSpacing: 0 }}
                     />
                   </View>
                   {phoneNumberError ? (
@@ -756,7 +756,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       editable={false}
                       autoCorrect={false}
                       spellCheck={false}
-                      style={{ color: "#000000" }}
+                      style={{ color: "#000000", letterSpacing: 0 }}
                     />
                   </View>
                 </View>
@@ -779,7 +779,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       autoCorrect={false}
                       spellCheck={false}
                       selectionColor="#0FC7B2"
-                      style={{ color: "#000000" }}
+                      style={{ color: "#000000", letterSpacing: 0 }}
                     />
                   </View>
                 </View>
@@ -802,7 +802,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       autoCorrect={false}
                       spellCheck={false}
                       selectionColor="#0FC7B2"
-                      style={{ color: "#000000" }}
+                      style={{ color: "#000000", letterSpacing: 0 }}
                     />
                   </View>
                 </View>
@@ -822,7 +822,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                       autoCorrect={false}
                       spellCheck={false}
                       selectionColor="#0FC7B2"
-                      style={{ color: "#000000" }}
+                      style={{ color: "#000000", letterSpacing: 0 }}
                     />
                   </View>
                 </View>

@@ -535,6 +535,7 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
                       style={{
                         fontSize: 12,
                         color: "#000000",
+                        letterSpacing: 0,
                       }}
                       cursorColor="#141415ff"
                     />
@@ -568,6 +569,7 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
                     style={{
                       fontSize: 12,
                       color: "#000000",
+                      letterSpacing: 0,
                     }}
                     className="bg-[#F4F4F4] rounded-3xl px-4 py-3 mb-2 mt-2 h-[50px]"
                   />
@@ -592,6 +594,7 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
                     style={{
                       fontSize: 12,
                       color: "#000000",
+                      letterSpacing: 0,
                     }}
                     cursorColor="#141415ff"
                     onChangeText={(text) =>
@@ -626,6 +629,7 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
                     style={{
                       fontSize: 12,
                       color: "#000000",
+                      letterSpacing: 0,
                     }}
                     maxLength={12}
                     onChangeText={handleNicChange}

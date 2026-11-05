@@ -414,6 +414,11 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
                     >
                       <TextInput
                         className="flex-1 px-4"
+                        style={{
+                          fontSize: 12,
+                          color: "#000000",
+                          letterSpacing: 0,
+                        }}
                         placeholder={t("Inputs.PhoneNumber")}
                         placeholderTextColor="#585858"
                         value={phonenumber}
