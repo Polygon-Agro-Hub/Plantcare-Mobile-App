@@ -65,25 +65,17 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
   const screenWidth = Dimensions.get("window").width;
   const isVerifyingRef = useRef<boolean>(false);
   const autoVerifyTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const inputRef = useRef<TextInput>(null);
+  const [sessionKey, setSessionKey] = useState<number>(0);
   useEffect(() => {
     const selectedLanguage = t("Main.LNG");
     setLanguage(selectedLanguage);
-    const fetchReferenceId = async () => {
-      try {
-        const refId = await AsyncStorage.getItem("referenceId");
-        if (refId) {
-          setReferenceId(refId);
-        }
-      } catch (error) {
-        console.error("Failed to load referenceId:", error);
-      }
-    };
-
-    fetchReferenceId();
-  }, []);
+  }, [t]);
 
   const handleBackPress = React.useCallback(() => {
-    if (isSignup) {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else if (isSignup) {
       navigation.navigate("Signup", {
         firstName,
         lastName,
@@ -131,24 +123,68 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      if (timer === 0) {
-        setReferenceId("c0000000-0e0c-1000-b000-100000000000");
-        setIsOtpExpired(true);
-      }
+      setOtpCode("");
+      setMaskedCode("XXXXX");
+      setIsOtpValid(false);
+      setIsVerified(false);
+      setIsOtpExpired(false);
+      setDisabledVerify(false);
+      setIsLoading(false);
+      isVerifyingRef.current = false;
+      setTimer(240);
+      setDisabledResend(true);
+      setSessionKey((prev) => prev + 1);
 
-      if (timer > 0 && !isVerified) {
-        const interval = setInterval(() => {
-          setTimer((prevTimer) => prevTimer - 1);
-        }, 1000);
+      const fetchReferenceId = async () => {
+        try {
+          const refId = await AsyncStorage.getItem("referenceId");
+          if (refId) {
+            setReferenceId(refId);
+          }
+        } catch (error) {
+          console.error("Failed to load referenceId:", error);
+        }
+      };
 
-        setDisabledResend(true);
+      fetchReferenceId();
 
-        return () => clearInterval(interval);
-      } else if (timer === 0 && !isVerified) {
-        setDisabledResend(false);
-      }
-    }, [timer, isVerified]),
+      const focusTimer = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 200);
+
+      return () => {
+        clearTimeout(focusTimer);
+        if (autoVerifyTimerRef.current) {
+          clearTimeout(autoVerifyTimerRef.current);
+          autoVerifyTimerRef.current = null;
+        }
+      };
+    }, []),
   );
+
+  useEffect(() => {
+    if (isVerified) return;
+
+    if (timer === 0) {
+      setReferenceId("c0000000-0e0c-1000-b000-100000000000");
+      setIsOtpExpired(true);
+      setDisabledResend(false);
+      return;
+    }
+
+    setDisabledResend(true);
+    const interval = setInterval(() => {
+      setTimer((prevTimer) => {
+        if (prevTimer <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return prevTimer - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timer, isVerified, sessionKey]);
 
   const handleInputChange = (text: string) => {
     if (autoVerifyTimerRef.current) {
@@ -418,14 +454,24 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       if (response.data.referenceId) {
         await AsyncStorage.setItem("referenceId", response.data.referenceId);
         setReferenceId(response.data.referenceId);
+        setOtpCode("");
+        setMaskedCode("XXXXX");
+        setIsOtpValid(false);
         setIsOtpExpired(false);
+        setIsVerified(false);
+        setDisabledVerify(false);
+        isVerifyingRef.current = false;
+        setTimer(240);
+        setDisabledResend(true);
+        setSessionKey((prev) => prev + 1);
+        setTimeout(() => {
+          inputRef.current?.focus();
+        }, 150);
         Alert.alert(
           t("Main.Success"),
           t("OtpVerification.OTPHasBeenResentSuccessfully"),
           [{ text: t("Main.OK") }],
         );
-        setTimer(240);
-        setDisabledResend(true);
       } else {
         Alert.alert(
           t("Main.Error"),
@@ -512,6 +558,8 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
             {/* OTP Input */}
             <View className="mt-6 w-full items-center">
               <TextInput
+                key={`otp-input-${sessionKey}`}
+                ref={inputRef}
                 style={{
                   width: wp(60),
                   height: hp(7),
@@ -523,9 +571,9 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
                   color: "black",
                   fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
                 }}
-                keyboardType="numeric"
+                keyboardType="number-pad"
                 textContentType="oneTimeCode"
-                autoComplete="sms-otp"
+                autoComplete={Platform.OS === "android" ? "sms-otp" : "one-time-code"}
                 importantForAutofill="yes"
                 maxLength={5}
                 value={otpCode}
@@ -535,6 +583,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
                 underlineColorAndroid="transparent"
                 cursorColor="#141415ff"
                 autoFocus
+                selectTextOnFocus
               />
             </View>
 

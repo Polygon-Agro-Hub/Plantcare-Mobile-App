@@ -2,7 +2,7 @@
   "expo": {
     "name": "GoviCare",
     "slug": "GoviCare",
-    "version": "2.0.6",
+    "version": "2.0.7",
     "orientation": "portrait",
     "icon": "./assets/images/public/favicon.png",
     "userInterfaceStyle": "automatic",

@@ -98,7 +98,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
         const formattedTransactions = response.data.data.map((item: any) => ({
           id: item.invNo || String(Math.random()),
           grnNo: item.invNo || "N/A",
-          amount: `Rs. ${parseFloat(item.totalAmount || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+          amount: `${t("TransactionList.Rs") || "Rs."} ${parseFloat(item.totalAmount || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
           itemCount: item.cropRecordCount || 0,
           deliveryDate: item.transactionDate
             ? new Date(item.transactionDate)
