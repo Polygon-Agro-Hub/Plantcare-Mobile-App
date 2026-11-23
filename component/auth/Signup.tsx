@@ -27,6 +27,10 @@ import countryData from "@/assets/jsons/common/country-flag.json";
 import districtData from "@/assets/jsons/common/district.json";
 import GlobalSearchModal from "../../component/common/GlobalSearchModal";
 import CustomHeader from "../common/CustomHeader";
+import {
+  isAppleReviewPhone,
+  triggerAppleReviewOtpNotification,
+} from "../../utils/appleReviewOtpNotification";
 
 type SignupNavigationProp = StackNavigationProp<RootStackParamList, "Signup">;
 type SignupRouteProp = RouteProp<RootStackParamList, "Signup">;
@@ -344,6 +348,37 @@ const Signup: React.FC<SignupProps> = ({ navigation, route }) => {
 
     try {
       const fullPhoneNumber = selectedCountryCode + mobileNumber;
+
+      const isAppleReviewTestUser = isAppleReviewPhone(
+        mobileNumber,
+        selectedCountryCode,
+      );
+
+      if (isAppleReviewTestUser) {
+        await AsyncStorage.setItem("referenceId", "apple-review-reference-id");
+        await AsyncStorage.setItem("firstName", firstName);
+        await AsyncStorage.setItem("lastName", lastName);
+        await AsyncStorage.setItem("nic", nic);
+        await AsyncStorage.setItem("mobileNumber", fullPhoneNumber);
+        await AsyncStorage.setItem("district", district);
+
+        await triggerAppleReviewOtpNotification("12345");
+
+        navigation.navigate("OTPE", {
+          firstName,
+          lastName,
+          nic,
+          mobileNumber: fullPhoneNumber,
+          rawMobileNumber: mobileNumber,
+          selectedCountryCode,
+          selectedCountryFlag,
+          district,
+        });
+        setIsButtonDisabled(false);
+        setIsLoading(false);
+        return;
+      }
+
       const checkResponse = await axios.post(
         `${environment.API_BASE_URL}api/auth/user-register-checker`,
         { phoneNumber: fullPhoneNumber, NICnumber: nic },

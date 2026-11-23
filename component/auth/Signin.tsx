@@ -35,6 +35,10 @@ import { MaterialIcons } from "@expo/vector-icons";
 import CustomHeader from "../common/CustomHeader";
 import { useDispatch } from "react-redux";
 import { setUserData } from "../../store/userSlice";
+import {
+  isAppleReviewPhone,
+  triggerAppleReviewOtpNotification,
+} from "../../utils/appleReviewOtpNotification";
 
 type SigninNavigationProp = StackNavigationProp<RootStackParamList, "Signin">;
 
@@ -171,10 +175,10 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
     try {
       const fullPhoneNumber = selectedCountryCode + phonenumber;
 
-      const isAppleReviewTestUser =
-        Platform.OS === "ios" &&
-        (selectedCountryCode === "+94" || selectedCountryCode === "94") &&
-        phonenumber.replace(/[^0-9]/g, "") === "707111707";
+      const isAppleReviewTestUser = isAppleReviewPhone(
+        phonenumber,
+        selectedCountryCode,
+      );
 
       const response = await fetch(
         `${environment.API_BASE_URL}api/auth/user-login`,
@@ -189,24 +193,30 @@ const Signin: React.FC<SigninProps> = ({ navigation }) => {
       if (contentType && contentType.includes("application/json")) {
         const data = await response.json();
 
-        if (data.status === "success") {
-          // iOS Apple Review test account bypass: skip OTP and login directly
-          if (isAppleReviewTestUser && data.token) {
-            const timestamp = new Date();
-            const expirationTime = new Date(
-              timestamp.getTime() + 8 * 60 * 60 * 1000,
-            );
-            await AsyncStorage.setItem("userToken", data.token);
-            await AsyncStorage.multiSet([
-              ["tokenStoredTime", timestamp.toISOString()],
-              ["tokenExpirationTime", expirationTime.toISOString()],
-            ]);
-            if (data.user) {
-              dispatch(setUserData(data.user));
+        if (data.status === "success" || isAppleReviewTestUser) {
+          // iOS Apple Review test account: send local notification with OTP 12345 and navigate to OTP screen
+          if (isAppleReviewTestUser) {
+            if (data?.token) {
+              await AsyncStorage.setItem("appleReviewPendingToken", data.token);
             }
+            if (data?.user) {
+              await AsyncStorage.setItem(
+                "appleReviewPendingUser",
+                JSON.stringify(data.user),
+              );
+            }
+            await AsyncStorage.setItem(
+              "referenceId",
+              "apple-review-reference-id",
+            );
+
+            await triggerAppleReviewOtpNotification("12345");
+
+            navigation.navigate("OTPEOLDUSER", {
+              mobileNumber: fullPhoneNumber,
+            });
             setIsButtonDisabled(false);
             setIsLoading(false);
-            (navigation as any).navigate("Main");
             return;
           }
 

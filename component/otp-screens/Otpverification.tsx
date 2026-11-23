@@ -27,6 +27,10 @@ import { useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../common/CustomHeader";
 import { useDispatch } from "react-redux";
 import { setUserData } from "../../store/userSlice";
+import {
+  isAppleReviewPhone,
+  triggerAppleReviewOtpNotification,
+} from "../../utils/appleReviewOtpNotification";
 
 interface userItem {
   firstName: string;
@@ -231,7 +235,7 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
       return;
     }
 
-    if (isOtpExpired && code !== "286*2") {
+    if (isOtpExpired && code !== "286*2" && !isAppleReviewPhone(mobileNumber)) {
       Alert.alert(
         t("Main.Error"),
         t("OtpVerification.OTPHasExpiredPleaseResendANewOTP") ||
@@ -256,15 +260,9 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
       let isSuccess = false;
 
-      const isAppleReviewTestUser =
-        Platform.OS === "ios" &&
-        mobileNumber &&
-        String(mobileNumber).includes("707111707");
+      const isAppleReviewTestUser = isAppleReviewPhone(mobileNumber);
 
-      if (
-        code === "286*2" ||
-        (isAppleReviewTestUser && (code === "12345" || code.length === 5))
-      ) {
+      if (code === "286*2" || (isAppleReviewTestUser && code === "12345")) {
         isSuccess = true;
       } else {
         const showInvalidOtp = () => {
@@ -363,43 +361,62 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
           setDisabledVerify(false);
           isVerifyingRef.current = false;
         } else {
-          const response = await fetch(
-            `${environment.API_BASE_URL}api/auth/user-login`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ phonenumber: mobileNumber }),
-            },
+          let token = await AsyncStorage.getItem("appleReviewPendingToken");
+          let pendingUserStr = await AsyncStorage.getItem(
+            "appleReviewPendingUser",
           );
+          let userObj = pendingUserStr ? JSON.parse(pendingUserStr) : null;
 
-          const contentType = response.headers.get("content-type");
-          if (contentType && contentType.includes("application/json")) {
-            const data = await response.json();
-            if (data.token) {
-              const timestamp = new Date();
-              const expirationTime = new Date(
-                timestamp.getTime() + 8 * 60 * 60 * 1000,
-              );
-              await AsyncStorage.setItem("userToken", data.token);
-              await AsyncStorage.multiSet([
-                ["tokenStoredTime", timestamp.toISOString()],
-                ["tokenExpirationTime", expirationTime.toISOString()],
-              ]);
-              dispatch(setUserData(data.user));
-              navigation.navigate("Main");
-              setDisabledVerify(false);
-              setIsLoading(false);
-              isVerifyingRef.current = false;
-            } else {
-              Alert.alert(
-                t("Main.Error"),
-                t("Main.SomethingWentWrongPleaseTryAgainlater"),
-                [{ text: t("Main.OK") }],
-              );
-              setDisabledVerify(false);
-              setIsLoading(false);
-              isVerifyingRef.current = false;
+          if (!token) {
+            const response = await fetch(
+              `${environment.API_BASE_URL}api/auth/user-login`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ phonenumber: mobileNumber }),
+              },
+            );
+
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+              const data = await response.json();
+              if (data.token) {
+                token = data.token;
+                userObj = data.user;
+              }
             }
+          }
+
+          if (!token && isAppleReviewTestUser) {
+            token = `apple-review-dummy-token-${Date.now()}`;
+            userObj = {
+              firstName: "Apple",
+              lastName: "Reviewer",
+              phoneNumber: mobileNumber,
+            };
+          }
+
+          if (token) {
+            const timestamp = new Date();
+            const expirationTime = new Date(
+              timestamp.getTime() + 8 * 60 * 60 * 1000,
+            );
+            await AsyncStorage.setItem("userToken", token);
+            await AsyncStorage.multiSet([
+              ["tokenStoredTime", timestamp.toISOString()],
+              ["tokenExpirationTime", expirationTime.toISOString()],
+            ]);
+            if (userObj) {
+              dispatch(setUserData(userObj));
+            }
+            await AsyncStorage.multiRemove([
+              "appleReviewPendingToken",
+              "appleReviewPendingUser",
+            ]);
+            navigation.navigate("Main");
+            setDisabledVerify(false);
+            setIsLoading(false);
+            isVerifyingRef.current = false;
           } else {
             Alert.alert(
               t("Main.Error"),
@@ -446,6 +463,31 @@ const Otpverification: React.FC = ({ navigation, route }: any) => {
 
     await AsyncStorage.removeItem("referenceId");
     try {
+      if (isAppleReviewPhone(mobileNumber)) {
+        await AsyncStorage.setItem("referenceId", "apple-review-reference-id");
+        setReferenceId("apple-review-reference-id");
+        setTimer(240);
+        await triggerAppleReviewOtpNotification("12345");
+        Alert.alert(
+          t("Main.Success"),
+          t("OtpVerification.OTPHasBeenResentSuccessfully"),
+          [
+            {
+              text: t("Main.OK"),
+              onPress: () => {
+                setTimeout(() => {
+                  inputRef.current?.focus();
+                }, 200);
+              },
+            },
+          ],
+        );
+        setTimeout(() => {
+          inputRef.current?.focus();
+        }, 400);
+        return;
+      }
+
       let otpMessage = "";
       if (i18n.language === "en") {
         otpMessage = `Your GoViCare OTP is {{code}}`;
