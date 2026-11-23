@@ -8,7 +8,7 @@
     "userInterfaceStyle": "automatic",
     "android": {
       "package": "com.polygonagro.GoviCare",
-      "versionCode": 27,
+      "versionCode": 29,
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "resize",
@@ -20,7 +20,6 @@
         "android.permission.INTERNET",
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION",
-        "android.permission.ACCESS_WIFI_STATE",
         "android.permission.CAMERA",
         "android.permission.ACCESS_NETWORK_STATE"
       ],
@@ -122,7 +121,7 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "e4fd9368-3650-4dcc-9f29-0efaa901a74d"
+        "projectId": ""
       }
     }
   }
